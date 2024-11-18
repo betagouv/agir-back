@@ -472,6 +472,7 @@ export class TestUtil {
       version: 0,
       article_interactions: [],
       quizz_interactions: [],
+      aide_interactions: [],
     };
 
     const notifications: NotificationHistory_v0 = {

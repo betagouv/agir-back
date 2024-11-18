@@ -26,7 +26,14 @@ describe('History', () => {
     // GIVEN
     const history = new History({
       version: 0,
-      quizz_interactions: [],
+      quizz_interactions: [
+        {
+          content_id: '1',
+          like_level: 2,
+          points_en_poche: true,
+          attempts: [{ date: new Date(), score: 34 }],
+        },
+      ],
       article_interactions: [
         {
           content_id: '1',
@@ -35,6 +42,9 @@ describe('History', () => {
           read_date: new Date(123),
           favoris: true,
         },
+      ],
+      aide_interactions: [
+        { clicked_demande: true, clicked_infos: false, content_id: '1' },
       ],
     });
 
@@ -51,7 +61,14 @@ describe('History', () => {
     // WHEN
     const history = new History({
       version: 0,
-      quizz_interactions: [],
+      quizz_interactions: [
+        {
+          content_id: '1',
+          like_level: 2,
+          points_en_poche: true,
+          attempts: [{ date: new Date(), score: 34 }],
+        },
+      ],
       article_interactions: [
         {
           content_id: '1',
@@ -60,6 +77,9 @@ describe('History', () => {
           read_date: new Date(123),
           favoris: undefined,
         },
+      ],
+      aide_interactions: [
+        { clicked_demande: true, clicked_infos: false, content_id: '1' },
       ],
     });
 
@@ -188,6 +208,7 @@ describe('History', () => {
         },
         { content_id: '4', points_en_poche: true, favoris: false },
       ],
+      aide_interactions: [],
     });
 
     // WHEN
@@ -203,6 +224,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       quizz_interactions: [],
+      aide_interactions: [],
       article_interactions: [
         { content_id: '1', favoris: true, points_en_poche: true },
         { content_id: '2', favoris: null, points_en_poche: true },
@@ -223,6 +245,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       article_interactions: [],
+      aide_interactions: [],
       quizz_interactions: [
         {
           content_id: '1',
@@ -258,6 +281,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       article_interactions: [],
+      aide_interactions: [],
       quizz_interactions: [
         {
           content_id: '1',
@@ -286,6 +310,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       quizz_interactions: [],
+      aide_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -334,6 +359,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       quizz_interactions: [],
+      aide_interactions: [],
       article_interactions: [
         {
           content_id: '1',
@@ -383,6 +409,7 @@ describe('History', () => {
     const history = new History({
       version: 0,
       quizz_interactions: [],
+      aide_interactions: [],
       article_interactions: [
         {
           content_id: '1',

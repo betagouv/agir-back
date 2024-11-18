@@ -12,7 +12,7 @@ import { ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { QuizzData } from '../domain/contenu/quizz';
-import { Aide } from '../domain/aides/aide';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { DefiDefinition } from '../domain/defis/defiDefinition';
@@ -254,7 +254,7 @@ export class CMSWebhookUsecase {
     return result;
   }
 
-  private buildAideFromCMSData(entry: CMSWebhookEntryAPI): Aide {
+  private buildAideFromCMSData(entry: CMSWebhookEntryAPI): AideDefinition {
     return {
       content_id: entry.id.toString(),
       titre: entry.titre,

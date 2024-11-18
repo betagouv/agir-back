@@ -7,7 +7,7 @@ import { ArticleRepository } from '../../src/infrastructure/repository/article.r
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { QuizzData } from '../domain/contenu/quizz';
 import axios from 'axios';
-import { Aide } from '../../src/domain/aides/aide';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
@@ -172,12 +172,12 @@ export class CMSImportUsecase {
 
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_aides: Aide[] = [];
+    const liste_aides: AideDefinition[] = [];
     const CMS_AIDE_DATA = await this.loadDataFromCMS('aides');
 
     for (let index = 0; index < CMS_AIDE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_AIDE_DATA[index];
-      let aide: Aide;
+      let aide: AideDefinition;
       try {
         aide = this.buildAideFromCMSPopulateData(element);
         liste_aides.push(aide);
@@ -370,7 +370,9 @@ export class CMSImportUsecase {
     }
     return result;
   }
-  private buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
+  private buildAideFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): AideDefinition {
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,

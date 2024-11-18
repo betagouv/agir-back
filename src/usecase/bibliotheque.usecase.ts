@@ -28,7 +28,7 @@ export class BibliothequeUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz, Scope.logement],
+      [Scope.history_article_quizz_aides, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -79,7 +79,7 @@ export class BibliothequeUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz, Scope.logement],
+      [Scope.history_article_quizz_aides, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 

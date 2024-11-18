@@ -1,8 +1,8 @@
 import { Thematique } from '../contenu/thematique';
 import { Besoin } from './besoin';
 
-export class Aide {
-  constructor(data: Aide) {
+export class AideDefinition {
+  constructor(data: AideDefinition) {
     Object.assign(this, data);
   }
   content_id: string;
@@ -26,4 +26,6 @@ export class Aide {
   cu?: string[];
   cc?: string[];
   metropoles?: string[];
+  clicked_demande?: boolean;
+  clicked_infos?: boolean;
 }

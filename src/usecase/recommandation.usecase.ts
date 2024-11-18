@@ -41,7 +41,7 @@ export class RecommandationUsecase {
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.history_article_quizz, Scope.logement],
+      [Scope.kyc, Scope.history_article_quizz_aides, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -75,7 +75,7 @@ export class RecommandationUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.logement,
         Scope.defis,
         Scope.unlocked_features,

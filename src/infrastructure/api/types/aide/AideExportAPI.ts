@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Aide } from '../../../../../src/domain/aides/aide';
+import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
 
 export class AideExportAPI {
@@ -20,7 +20,7 @@ export class AideExportAPI {
   @ApiProperty() com_urbaine: string[];
   @ApiProperty() com_com: string[];
 
-  public static mapToAPI(aide: Aide): AideExportAPI {
+  public static mapToAPI(aide: AideDefinition): AideExportAPI {
     return {
       content_id: aide.content_id,
       titre: aide.titre,

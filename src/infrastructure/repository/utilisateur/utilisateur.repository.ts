@@ -63,7 +63,7 @@ export class UtilisateurRepository {
       omit: {
         todo: !scopes.includes(Scope.todo),
         gamification: !scopes.includes(Scope.gamification),
-        history: !scopes.includes(Scope.history_article_quizz),
+        history: !scopes.includes(Scope.history_article_quizz_aides),
         kyc: !scopes.includes(Scope.kyc),
         unlocked_features: !scopes.includes(Scope.unlocked_features),
         logement: !scopes.includes(Scope.logement),

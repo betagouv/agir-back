@@ -2,13 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpStatus,
-  NotFoundException,
   Param,
   Request,
   Post,
-  Query,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AidesUsecase } from '../../usecase/aides.usecase';
@@ -19,12 +15,10 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AideVeloAPI as AideVeloAPI } from './types/aide/AideVeloAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
-import { Response } from 'express';
 import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 import { AideExportAPI } from './types/aide/AideExportAPI';
@@ -79,6 +73,33 @@ export class AidesController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const aides = await this.aidesUsecase.getCatalogueAides(utilisateurId);
     return aides.aides.map((elem) => AideAPI.mapToAPI(elem));
+  }
+
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_infos')
+  @ApiOperation({
+    summary: `Indique que l'utilisateur est allé voir la page source de présentation de l'aide`,
+  })
+  @UseGuards(AuthGuard)
+  async vuInfo(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('aideId') aideId: string,
+    @Request() req,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    await this.aidesUsecase.clickAideInfosLink(utilisateurId, aideId);
+  }
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')
+  @ApiOperation({
+    summary: `Indique que l'utilisateur est allé voir la page source de demande de l'aide`,
+  })
+  @UseGuards(AuthGuard)
+  async vuDemande(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('aideId') aideId: string,
+    @Request() req,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    await this.aidesUsecase.clickAideDemandeLink(utilisateurId, aideId);
   }
 
   @ApiOkResponse({ type: AideAPI_v2 })

@@ -86,7 +86,7 @@ export class TodoUsecase {
   async getUtilisateurTodo(utilisateurId: string): Promise<Todo> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.todo, Scope.logement, Scope.history_article_quizz],
+      [Scope.todo, Scope.logement, Scope.history_article_quizz_aides],
     );
     Utilisateur.checkState(utilisateur);
 

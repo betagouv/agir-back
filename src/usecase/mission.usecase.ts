@@ -194,7 +194,7 @@ export class MissionUsecase {
         Scope.missions,
         Scope.gamification,
         Scope.kyc,
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.defis,
       ],
     );

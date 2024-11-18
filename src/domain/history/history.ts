@@ -1,6 +1,7 @@
 import { Article, PersonalArticle } from '../contenu/article';
 import { Categorie } from '../contenu/categorie';
 import { History_v0 } from '../object_store/history/history_v0';
+import { AideHistory } from './aideHistory';
 import { ArticleHistory } from './articleHistory';
 import { QuizzHistory } from './quizzHistory';
 
@@ -13,6 +14,7 @@ export type SearchArticleFilter = {
 export class History {
   article_interactions: ArticleHistory[];
   quizz_interactions: QuizzHistory[];
+  aide_interactions: AideHistory[];
 
   constructor(data?: History_v0) {
     this.reset();
@@ -28,13 +30,47 @@ export class History {
           this.quizz_interactions.push(new QuizzHistory(quizzh)),
         );
       }
+      if (data.aide_interactions) {
+        data.aide_interactions.forEach((aideH) =>
+          this.aide_interactions.push(new AideHistory(aideH)),
+        );
+      }
     }
   }
 
   public reset() {
     this.article_interactions = [];
     this.quizz_interactions = [];
+    this.aide_interactions = [];
   }
+
+  public clickAideInfosLink(id_cms: string) {
+    const interaction = this.getAideInteractionByIdCms(id_cms);
+    if (interaction) {
+      interaction.clicked_infos = true;
+    } else {
+      const new_interaction = new AideHistory({
+        content_id: id_cms,
+        clicked_infos: true,
+        clicked_demande: false,
+      });
+      this.aide_interactions.push(new_interaction);
+    }
+  }
+  public clickAideDemandeLink(id_cms: string) {
+    const interaction = this.getAideInteractionByIdCms(id_cms);
+    if (interaction) {
+      interaction.clicked_demande = true;
+    } else {
+      const new_interaction = new AideHistory({
+        content_id: id_cms,
+        clicked_infos: false,
+        clicked_demande: true,
+      });
+      this.aide_interactions.push(new_interaction);
+    }
+  }
+
   public getArticleHistoryById(content_id: string): ArticleHistory {
     return this.article_interactions.find(
       (article) => article.content_id === content_id,
@@ -44,6 +80,10 @@ export class History {
     return this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );
+  }
+
+  public getAideInteractionByIdCms(id_cms: string): AideHistory {
+    return this.aide_interactions.find((a) => a.content_id === id_cms);
   }
 
   public nombreArticles(): number {

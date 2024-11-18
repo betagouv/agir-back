@@ -482,6 +482,9 @@ export class ApplicationError {
       `le nombre de reponses attendu pour la mosaic [${id}] est de [${nbr}]`,
     );
   }
+  static throwAideNotFound(content_id: string) {
+    this.throwAppError('093', `l'aide d'id [${content_id}] n'existe pas`, 404);
+  }
 
   private static throwAppError(
     code: string,

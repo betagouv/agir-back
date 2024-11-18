@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
-import { Aide } from '../../../../../src/domain/aides/aide';
+import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Besoin } from '../../../../../src/domain/aides/besoin';
 
@@ -20,8 +20,10 @@ export class AideAPI {
   @ApiProperty() montant_max: number;
   @ApiProperty() besoin: Besoin;
   @ApiProperty() besoin_desc: string;
+  @ApiProperty() clicked_demande: boolean;
+  @ApiProperty() clicked_infos: boolean;
 
-  public static mapToAPI(aide: Aide): AideAPI {
+  public static mapToAPI(aide: AideDefinition): AideAPI {
     return {
       content_id: aide.content_id,
       titre: aide.titre,
@@ -38,6 +40,8 @@ export class AideAPI {
       montant_max: aide.montant_max,
       besoin_desc: aide.besoin_desc,
       besoin: aide.besoin,
+      clicked_demande: aide.clicked_demande,
+      clicked_infos: aide.clicked_infos,
     };
   }
 }

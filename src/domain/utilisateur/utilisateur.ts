@@ -14,7 +14,6 @@ import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
-import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
@@ -39,7 +38,7 @@ export enum Scope {
   ALL = 'ALL',
   todo = 'todo',
   gamification = 'gamification',
-  history_article_quizz = 'history_article_quizz',
+  history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
   unlocked_features = 'unlocked_features',
   logement = 'logement',
