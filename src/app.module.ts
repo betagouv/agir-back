@@ -118,6 +118,7 @@ import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
+import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -256,6 +257,7 @@ function getControllers(): any[] {
     EmailTemplateRepository,
     MailerUsecase,
     LongueVieObjetsRepository,
+    NewServiceCatalogue,
   ],
 })
 export class AppModule {}

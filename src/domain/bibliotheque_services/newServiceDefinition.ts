@@ -3,7 +3,7 @@ import { ServiceRechercheID } from './recherche/serviceRechercheID';
 import { ServiceAsyncID } from './serviceAsyncID';
 import { Thematique } from '../contenu/thematique';
 
-export class NewServiceDefinition {
+export type NewServiceDefinition = {
   id: ServiceRechercheID | ServiceExterneID | ServiceAsyncID;
   titre: string;
   sous_titre: string;
@@ -11,8 +11,4 @@ export class NewServiceDefinition {
   thematique: Thematique;
   external_url?: string;
   is_available_inhouse: boolean;
-
-  constructor(serviceDef?: NewServiceDefinition) {
-    Object.assign(this, serviceDef);
-  }
-}
+};

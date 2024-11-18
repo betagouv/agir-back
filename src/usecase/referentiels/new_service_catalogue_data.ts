@@ -1,6 +1,4 @@
 import { NewServiceDefinition } from '../../domain/bibliotheque_services/newServiceDefinition';
-import { generateFishUrlForCurrentMonth } from '../../domain/bibliotheque_services/poissonsDeSaisonUrlsGenerator';
-import { CategorieRechercheManager } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ServiceAsyncID } from '../../domain/bibliotheque_services/serviceAsyncID';
 import { ServiceExterneID } from '../../domain/bibliotheque_services/serviceExterneID';
@@ -12,7 +10,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
     icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.webp',
     titre: 'Fruits et légumes de saison',
-    sous_titre: CategorieRechercheManager.getMoisCourant(),
+    sous_titre: 'dynamic data',
     thematique: Thematique.alimentation,
     is_available_inhouse: true,
   },
@@ -56,7 +54,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
   },
   {
     id: ServiceExterneID.poisson_de_saison,
-    external_url: generateFishUrlForCurrentMonth(new Date().getMonth()),
+    external_url: 'dynamic data',
     icon_url:
       'https://www.mangerbouger.fr/var/mb/storage/images/_aliases/reference/9/9/9/1/11999-1-eng-GB/Poissons@3x.png',
     titre: 'Poissons de saison',
