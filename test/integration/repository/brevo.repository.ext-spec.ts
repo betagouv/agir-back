@@ -19,7 +19,7 @@ describe('ImpactTransportRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('doesContactExists : true', async () => {
+  it('getContactCreationDate : true', async () => {
     // GIVEN
 
     // WHEN
@@ -28,7 +28,7 @@ describe('ImpactTransportRepository', () => {
     // THEN
     expect(result).toEqual(new Date('2024-04-26T11:59:55.562+02:00'));
   });
-  it('doesContactExists : false', async () => {
+  it('getContactCreationDate : false', async () => {
     // GIVEN
 
     // WHEN

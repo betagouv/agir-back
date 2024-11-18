@@ -159,6 +159,115 @@ describe('/utilisateurs/id/defis (API test)', () => {
       },
     ],
   };
+
+  const missions_all_defi_unlocked: MissionsUtilisateur_v1 = {
+    version: 1,
+    missions: [
+      {
+        id: '1',
+        done_at: null,
+        code: CodeMission.cereales,
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
+        is_first: false,
+        objectifs: [
+          {
+            id: '1',
+            content_id: '12',
+            type: ContentType.article,
+            titre: 'Super article',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(0),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '3',
+            content_id: '001',
+            type: ContentType.defi,
+            titre: 'Action à faire',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        est_visible: true,
+      },
+      {
+        id: '2',
+        done_at: null,
+        code: CodeMission.gaspillage_alimentaire,
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
+        is_first: false,
+        objectifs: [
+          {
+            id: '1',
+            content_id: '13',
+            type: ContentType.article,
+            titre: 'Super article',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '3',
+            content_id: '002',
+            type: ContentType.defi,
+            titre: 'Action à faire',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        est_visible: true,
+      },
+      {
+        id: '3',
+        done_at: null,
+        code: CodeMission.mobilite_quotidien,
+        image_url: 'image',
+        thematique: Thematique.alimentation,
+        titre: 'titre',
+        is_first: false,
+        objectifs: [
+          {
+            id: '1',
+            content_id: '14',
+            type: ContentType.article,
+            titre: 'Super article',
+            points: 10,
+            is_locked: false,
+            done_at: new Date(),
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+          {
+            id: '3',
+            content_id: '003',
+            type: ContentType.defi,
+            titre: 'Action à faire',
+            points: 10,
+            is_locked: false,
+            done_at: null,
+            sont_points_en_poche: false,
+            est_reco: true,
+          },
+        ],
+        est_visible: true,
+      },
+    ],
+  };
+
   const DEFI_1: Defi_v0 = {
     id: '1',
     points: 5,
@@ -571,7 +680,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.body.length).toBe(0);
   });
 
-  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu (v2), pas les défis locked', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis_v2 - liste defis de l utilisateur tout confondu (v2), pas les défis locked', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -632,7 +741,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.body[0].id).toEqual('003');
     expect(response.body[1].id).toEqual('001');
   });
-  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu en cours ou todo, donc pas le reste (v2)', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -675,7 +784,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       defis: defis,
-      missions: missions,
+      missions: missions_all_defi_unlocked,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -688,8 +797,195 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(0);
+    expect(response.body.length).toBe(3);
   });
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo, reste des status', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.deja_fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.en_cours,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.todo,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 2,
+      code: Thematique.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 3,
+      code: Thematique.alimentation,
+      label: 'Alimentation',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions_all_defi_unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+    await TestUtil.create(DB.article, { content_id: '14' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(2);
+    expect(response.body.find((d) => d.id === '003')).toEqual(undefined);
+  });
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo, + filtrage par status', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.abondon,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 2,
+      code: Thematique.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 3,
+      code: Thematique.alimentation,
+      label: 'Alimentation',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions_all_defi_unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+    await TestUtil.create(DB.article, { content_id: '14' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2?status=fait&status=abondon',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(2);
+    expect(response.body.find((d) => d.id === '003')).toEqual(undefined);
+  });
+
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo, + filtrage par thematique', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.abondon,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 2,
+      code: Thematique.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 3,
+      code: Thematique.alimentation,
+      label: 'Alimentation',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions_all_defi_unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+    await TestUtil.create(DB.article, { content_id: '14' });
+
+    // WHEN
+    let response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2?thematique=climat',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(0);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2?thematique=alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(3);
+  });
+
   it('GET /utilisateurs/utilisateur-id/defis - filtre status encours', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {

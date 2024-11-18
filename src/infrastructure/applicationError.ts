@@ -485,6 +485,12 @@ export class ApplicationError {
   static throwAideNotFound(content_id: string) {
     this.throwAppError('093', `l'aide d'id [${content_id}] n'existe pas`, 404);
   }
+  static throwUnknownDefiStatus(status: string) {
+    this.throwAppError(
+      '094',
+      `Status de défi inconnu pour filtrage : [${status}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,
