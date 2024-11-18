@@ -464,7 +464,6 @@ export class KYCHistory {
       let union = true;
       for (const cond of and_set) {
         const kyc = this.getAnsweredQuestionByCMS_ID(cond.id_kyc);
-        console.log(kyc);
         if (!(kyc && kyc.isSelectedReponseCode(cond.code_reponse))) {
           union = false;
         }

@@ -21,7 +21,6 @@ export class KycStatistiqueUsecase {
       );
 
       for (const question of utilisateur.kyc_history.answered_questions) {
-        console.log(question);
         const label_reponse = question.getSelectedLabels();
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
           utilisateurId,
