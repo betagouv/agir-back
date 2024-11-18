@@ -62,29 +62,29 @@ export class BrevoRepository {
   }
   */
 
-  public async createContact(utilisateur: Utilisateur): Promise<boolean> {
+  public async createContact(
+    email: string,
+    utilisateurId: string,
+  ): Promise<boolean> {
     if (this.is_synchro_disabled()) {
       console.log(
-        `BREVO creation would have been done for contact ${utilisateur.email} - disable on that environment `,
+        `BREVO creation would have been done for contact ${email} - disable on that environment `,
       );
       return true;
     }
 
-    const contact = Contact.newContactFromEmail(
-      utilisateur.email,
-      utilisateur.id,
-    );
+    const contact = Contact.newContactFromEmail(email, utilisateurId);
 
     contact.listIds = [App.getWelcomeListId()];
     try {
       await this.apiInstance.createContact(contact);
       console.log(
-        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+        `BREVO contact ${email} created and added to list ${contact.listIds}`,
       );
       return true;
     } catch (error) {
       console.warn(error.response.text);
-      console.log(`BREVO ERROR creating contact ${utilisateur.email}`);
+      console.log(`BREVO ERROR creating contact ${email}`);
       return false;
     }
   }

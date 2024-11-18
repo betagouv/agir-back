@@ -53,7 +53,8 @@ export class ContactUsecase {
         await this.utilisateurRepository.updateUtilisateur(utilisateur);
       } else {
         const created_ok = await this.brevoRepository.createContact(
-          utilisateur,
+          utilisateur.email,
+          utilisateur.id,
         );
         if (created_ok) {
           result.push(`[${utilisateur.email}] CREATE OK`);
