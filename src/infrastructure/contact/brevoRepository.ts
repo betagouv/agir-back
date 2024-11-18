@@ -4,6 +4,7 @@ import { Contact } from './contact';
 import Brevo from '@getbrevo/brevo';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { App } from '../../domain/app';
+import { isDate } from 'util/types';
 
 @Injectable()
 export class BrevoRepository {
@@ -91,7 +92,20 @@ export class BrevoRepository {
   public async getContactCreationDate(email: string): Promise<Date | null> {
     try {
       const brevo_contact = await this.apiInstance.getContactInfo(email);
-      return new Date(brevo_contact.createdAt);
+      if (!brevo_contact) {
+        return null;
+      }
+
+      const date_creation = new Date(brevo_contact.createdAt);
+
+      if (isDate(date_creation)) {
+        return date_creation;
+      } else {
+        console.log(
+          `BAD date retrieved from BREVO : [${date_creation}] => setting to now() as default`,
+        );
+        return new Date();
+      }
     } catch (error) {
       // Contact existant
       return null;
