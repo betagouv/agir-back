@@ -52,11 +52,17 @@ export class ContactUsecase {
           utilisateur,
         );
         if (created_ok) {
-          result.push(`[${utilisateur.email}] OK`);
+          result.push(`[${utilisateur.email}] CREATE OK`);
           utilisateur.brevo_created_at = new Date();
           await this.utilisateurRepository.updateUtilisateur(utilisateur);
         } else {
-          result.push(`[${utilisateur.email}] ECHEC`);
+          result.push(`[${utilisateur.email}] CREATE ECHEC`);
+        }
+      } else {
+        if (!utilisateur.brevo_created_at) {
+          result.push(`[${utilisateur.email}] ALREADY THERE`);
+          utilisateur.brevo_created_at = new Date();
+          await this.utilisateurRepository.updateUtilisateur(utilisateur);
         }
       }
     }
