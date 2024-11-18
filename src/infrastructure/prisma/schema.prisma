@@ -71,6 +71,8 @@ model Utilisateur {
   source_inscription         String    @default("web")
   unsubscribe_mail_token     String?   @unique
   est_valide_pour_classement Boolean   @default(true)
+  brevo_created_at           DateTime? @db.Timestamptz(3)
+  brevo_updated_at           DateTime? @db.Timestamptz(3)
 }
 
 model Statistique {

@@ -51,7 +51,7 @@ import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { ContactSynchro } from './infrastructure/contact/contactSynchro';
+import { BrevoRepository } from './infrastructure/contact/brevoRepository';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
@@ -211,7 +211,7 @@ function getControllers(): any[] {
     QuizzRepository,
     RecommandationUsecase,
     ContactUsecase,
-    ContactSynchro,
+    BrevoRepository,
     MigrationUsecase,
     ReferentielUsecase,
     BibliothequeUsecase,

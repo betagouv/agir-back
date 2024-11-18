@@ -4,7 +4,6 @@ export class Contact {
   attributes: {
     POINTS: number;
     EMAIL: string;
-    NIVEAU: number;
     CODE_POSTAL: string;
     DERNIERE_ACTIVITE: Date;
     FIRSTNAME: string;
@@ -24,19 +23,39 @@ export class Contact {
     }
   }
 
-  public static newContactFromUser(user: Utilisateur): Contact {
+  public static buildContactFromUtilisateur(user: Utilisateur): Contact {
     const result = new Contact();
     result.attributes = {
       POINTS: user.gamification.points,
       EMAIL: user.email,
       CODE_POSTAL: user.logement.code_postal,
       DERNIERE_ACTIVITE: user.derniere_activite,
-      NIVEAU: user.gamification.getNiveau(),
       FIRSTNAME: user.prenom,
       LASTNAME: user.nom,
     };
     result.email = user.email;
     result.ext_id = user.id;
+    result.emailBlacklisted = false;
+    result.smtpBlacklistSender = [];
+    result.smsBlacklisted = false;
+
+    return result;
+  }
+  public static newContactFromEmail(
+    email: string,
+    utilisateurId: string,
+  ): Contact {
+    const result = new Contact();
+    result.attributes = {
+      POINTS: 0,
+      EMAIL: email,
+      CODE_POSTAL: null,
+      DERNIERE_ACTIVITE: null,
+      FIRSTNAME: null,
+      LASTNAME: null,
+    };
+    result.email = email;
+    result.ext_id = utilisateurId;
     result.emailBlacklisted = false;
     result.smtpBlacklistSender = [];
     result.smsBlacklisted = false;

@@ -48,7 +48,7 @@ export enum Scope {
   notification_history = 'notification_history',
 }
 
-export class UtilisateurData {
+export class Utilisateur {
   id: string;
   email: string;
   nom: string;
@@ -97,11 +97,10 @@ export class UtilisateurData {
   notification_history: NotificationHistory;
   unsubscribe_mail_token: string;
   est_valide_pour_classement: boolean;
-}
+  brevo_created_at: Date;
+  brevo_updated_at: Date;
 
-export class Utilisateur extends UtilisateurData {
-  constructor(data?: UtilisateurData) {
-    super();
+  constructor(data?: Utilisateur) {
     if (data) {
       Object.assign(this, data);
     }
@@ -181,6 +180,8 @@ export class Utilisateur extends UtilisateurData {
       notification_history: new NotificationHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
       est_valide_pour_classement: false,
+      brevo_created_at: null,
+      brevo_updated_at: null,
     });
   }
 

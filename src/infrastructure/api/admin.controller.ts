@@ -16,7 +16,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { CMSWebhookUsecase } from '../../usecase/cms.webhook.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
@@ -302,5 +301,14 @@ export class AdminController extends GenericControler {
   ): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
+  }
+
+  @Post('/admin/create_brevo_contacts')
+  @ApiOperation({
+    summary: `crée les contacts manquants dans Brevo`,
+  })
+  async create_brevo_contacts(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.createMissingContacts();
   }
 }

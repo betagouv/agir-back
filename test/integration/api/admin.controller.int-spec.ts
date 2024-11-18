@@ -65,7 +65,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(5);
+    expect(services).toHaveLength(2);
 
     const service = await TestUtil.prisma.serviceDefinition.findUnique({
       where: { id: 'ecowatt' },
@@ -100,7 +100,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(5);
+    expect(services).toHaveLength(2);
 
     const service = await TestUtil.prisma.serviceDefinition.findUnique({
       where: { id: 'ecowatt' },
@@ -2434,5 +2434,55 @@ describe('Admin (API test)', () => {
         prenom: 'C',
       },
     ]);
+  });
+  it('POST /admin/create_brevo_contacts', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'A',
+      email: 'email1',
+      brevo_created_at: new Date(),
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      email: 'email2',
+      brevo_created_at: null,
+    });
+    // WHEN
+    const response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('email2');
+
+    const userDB = await utilisateurRepository.getById('2', []);
+    expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
+  });
+  it(`POST /admin/create_brevo_contacts 2 fois n'ajoute plus`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      email: 'email2',
+      brevo_created_at: null,
+    });
+    // WHEN
+    let response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('email2');
+
+    // WHEN
+    response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(0);
   });
 });

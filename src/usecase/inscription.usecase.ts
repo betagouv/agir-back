@@ -112,7 +112,6 @@ export class InscriptionUsecase {
     const codeOkAction = async () => {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
-      await _this.contactUsecase.create(utilisateur);
 
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,
