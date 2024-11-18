@@ -2456,7 +2456,7 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('email2');
+    expect(response.body[0]).toEqual('[email2] OK');
 
     const userDB = await utilisateurRepository.getById('2', []);
     expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
@@ -2476,7 +2476,7 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('email2');
+    expect(response.body[0]).toEqual('[email2] OK');
 
     // WHEN
     response = await TestUtil.POST('/admin/create_brevo_contacts');
