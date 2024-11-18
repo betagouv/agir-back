@@ -88,14 +88,14 @@ export class BrevoRepository {
       return false;
     }
   }
-  public async doesContactExists(email: string): Promise<boolean> {
-    let brevo_contact;
+  public async getContactCreationDate(email: string): Promise<Date | null> {
     try {
-      brevo_contact = await this.apiInstance.getContactInfo(email);
+      const brevo_contact = await this.apiInstance.getContactInfo(email);
+      return new Date(brevo_contact.createdAt);
     } catch (error) {
       // Contact existant
+      return null;
     }
-    return !!brevo_contact;
   }
 
   public async addContactsToList(emails: string[], listId: number) {

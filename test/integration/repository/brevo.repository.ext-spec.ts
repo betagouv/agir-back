@@ -23,18 +23,18 @@ describe('ImpactTransportRepository', () => {
     // GIVEN
 
     // WHEN
-    const result = await brevoRepository.doesContactExists('haho@dev.com');
+    const result = await brevoRepository.getContactCreationDate('haho@dev.com');
 
     // THEN
-    expect(result).toEqual(true);
+    expect(result).toEqual(new Date('2024-04-26T11:59:55.562+02:00'));
   });
   it('doesContactExists : false', async () => {
     // GIVEN
 
     // WHEN
-    const result = await brevoRepository.doesContactExists('nawak.com');
+    const result = await brevoRepository.getContactCreationDate('nawak.com');
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).toEqual(null);
   });
 });

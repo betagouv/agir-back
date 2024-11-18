@@ -44,10 +44,14 @@ export class ContactUsecase {
 
     for (const user_id of list_missing_contacts) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, []);
-      const exists = await this.brevoRepository.doesContactExists(
+      const creation_date = await this.brevoRepository.getContactCreationDate(
         utilisateur.email,
       );
-      if (!exists) {
+      if (creation_date) {
+        result.push(`[${utilisateur.email}] ALREADY THERE`);
+        utilisateur.brevo_created_at = creation_date;
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      } else {
         const created_ok = await this.brevoRepository.createContact(
           utilisateur,
         );
@@ -57,12 +61,6 @@ export class ContactUsecase {
           await this.utilisateurRepository.updateUtilisateur(utilisateur);
         } else {
           result.push(`[${utilisateur.email}] CREATE ECHEC`);
-        }
-      } else {
-        if (!utilisateur.brevo_created_at) {
-          result.push(`[${utilisateur.email}] ALREADY THERE`);
-          utilisateur.brevo_created_at = new Date();
-          await this.utilisateurRepository.updateUtilisateur(utilisateur);
         }
       }
     }
