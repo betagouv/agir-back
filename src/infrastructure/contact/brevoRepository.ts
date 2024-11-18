@@ -100,7 +100,7 @@ export class BrevoRepository {
 
       if (isNaN(date_creation.getTime())) {
         console.log(
-          `BAD date retrieved from BREVO : [${brevo_contact.createdAt}] => setting to now() as default`,
+          `BAD date retrieved from BREVO for ${email}: [${brevo_contact.createdAt}] => setting to now() as default`,
         );
         return new Date();
       } else {
