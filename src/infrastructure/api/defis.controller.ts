@@ -23,6 +23,8 @@ import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
+import { ApplicationError } from '../applicationError';
+import { App } from '../../domain/app';
 
 @Controller()
 @ApiBearerAuth()
@@ -162,6 +164,9 @@ export class DefisController extends GenericControler {
     @Query('univers') univers: string,
     @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
+    ApplicationError.throwThatURLIsGone(
+      `${App.getBaseURLBack()}/utilisateurs/${utilisateurId}/defis`,
+    );
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi_deprecated(
       utilisateurId,
