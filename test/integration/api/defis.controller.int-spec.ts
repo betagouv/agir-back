@@ -62,6 +62,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -96,6 +97,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -130,6 +133,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -170,6 +175,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -204,6 +211,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -238,6 +247,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -397,6 +408,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
+
           is_first: false,
           objectifs: [
             {
@@ -497,6 +510,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
+
           is_first: false,
           objectifs: [
             {

@@ -20,6 +20,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: [
         {
@@ -80,6 +81,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: [
         {
@@ -137,6 +139,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
     });
 
@@ -159,6 +162,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: [
         {
@@ -216,6 +220,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: [
         {
@@ -273,6 +278,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: [
         {
@@ -341,6 +347,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
 
       objectifs: [
@@ -410,6 +417,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
 
       objectifs: [
@@ -479,6 +487,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
 
       objectifs: [
@@ -538,6 +547,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
     };
     const m2: Mission_v1 = {
@@ -549,6 +559,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
     };
     const m3: Mission_v1 = {
@@ -560,6 +571,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.climat,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
     };
     const m4: Mission_v1 = {
@@ -571,6 +583,7 @@ describe('Missions', () => {
       image_url: 'image',
       thematique: Thematique.climat,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
     };
 

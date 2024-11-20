@@ -374,6 +374,7 @@ export class CMSWebhookUsecase {
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
       titre: entry.titre,
+      introduction: entry.introduction,
       code: entry.code,
       image_url: this.getImageUrl(entry),
       is_first: entry.is_first,

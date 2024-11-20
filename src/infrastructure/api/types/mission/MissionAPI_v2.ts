@@ -43,6 +43,7 @@ export class ObjectifAPI_v2 {
 export class MissionAPI_v2 {
   @ApiProperty() id: string;
   @ApiProperty() titre: string;
+  @ApiProperty() introduction: string;
   @ApiProperty() done_at: Date;
   @ApiProperty() terminable: boolean;
   @ApiProperty() is_new: boolean;
@@ -57,6 +58,7 @@ export class MissionAPI_v2 {
     return {
       id: mission.id_cms,
       titre: mission.titre,
+      introduction: mission.introduction,
       done_at: mission.done_at,
       objectifs: mission.objectifs.map((o) => ObjectifAPI_v2.mapToAPI(o)),
       code: mission.code,

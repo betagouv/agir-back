@@ -528,6 +528,7 @@ export class CMSImportUsecase {
       code: entry.attributes.code,
       is_first: entry.attributes.is_first,
       titre: entry.attributes.titre,
+      introduction: entry.attributes.introduction,
       image_url: this.getImageUrlFromPopulate(entry),
       objectifs:
         entry.attributes.objectifs.length > 0

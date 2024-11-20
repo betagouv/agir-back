@@ -178,6 +178,7 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
       titre: 'YOO',
+      introduction: 'The intro',
       code: CodeMission.cereales,
       imageUrl: {
         formats: {
@@ -588,6 +589,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.code).toEqual(CodeMission.cereales);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.titre).toEqual('YOO');
+    expect(item.introduction).toEqual('The intro');
     expect(item.image_url).toEqual('https://');
     expect(item.objectifs).toEqual([
       {

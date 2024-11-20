@@ -36,6 +36,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -59,6 +60,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -93,6 +95,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -116,6 +119,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -139,6 +143,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -162,6 +167,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -185,6 +191,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -213,6 +220,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -241,6 +249,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -270,6 +279,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -293,6 +303,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -522,6 +533,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -595,6 +607,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
@@ -672,6 +685,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
@@ -750,6 +764,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
