@@ -124,7 +124,9 @@ export class KYCHistory_v1 extends Versioned_v1 {
           ) {
             new_question.reponse_simple = {
               unite: question.unite,
-              value: question.reponses[0].label,
+              value: question.reponses[0]
+                ? question.reponses[0].label
+                : undefined,
             };
           } else if (question.type === TypeReponseQuestionKYC.choix_unique) {
             new_question.reponse_complexe = [];
