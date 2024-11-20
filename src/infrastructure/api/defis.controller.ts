@@ -164,9 +164,6 @@ export class DefisController extends GenericControler {
     @Query('univers') univers: string,
     @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
-    ApplicationError.throwThatURLIsGone(
-      `${App.getBaseURLBack()}/utilisateurs/${utilisateurId}/defis`,
-    );
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi_deprecated(
       utilisateurId,
