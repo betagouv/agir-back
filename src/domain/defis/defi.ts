@@ -30,7 +30,7 @@ export class Defi implements TaggedContent {
   private status: DefiStatus;
   date_acceptation: Date;
   score: number;
-  universes: string[];
+  universes: string[]; // FIXME : A SUPPRIMER
   accessible: boolean;
   motif: string;
   categorie: Categorie;
@@ -51,7 +51,7 @@ export class Defi implements TaggedContent {
     this.date_acceptation = data.date_acceptation;
     this.status = data.status;
     this.score = 0;
-    this.universes = data.universes;
+    this.universes = data.universes; // FIXME : A SUPPRIMER
     this.accessible = !!data.accessible;
     this.motif = data.motif;
     this.categorie = data.categorie;

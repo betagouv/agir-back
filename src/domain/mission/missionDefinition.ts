@@ -1,4 +1,6 @@
 import { ContentType } from '../contenu/contentType';
+import { Thematique } from '../contenu/thematique';
+import { PriorityContent } from '../scoring/priorityContent';
 
 export class ObjectifDefinition {
   titre: string;
@@ -18,18 +20,20 @@ export class ObjectifDefinition {
   }
 }
 
-export class MissionDefinition {
+export class MissionDefinition implements PriorityContent {
   id_cms: number;
-  thematique_univers: string;
+  thematique: Thematique;
+  titre: string;
+  is_first: boolean;
+  code: string;
+  image_url: string;
   objectifs: ObjectifDefinition[];
   est_visible: boolean;
-  univers: string;
 
   constructor(data: MissionDefinition) {
-    this.thematique_univers = data.thematique_univers;
-    this.est_visible = data.est_visible;
-    this.id_cms = data.id_cms;
-    this.univers = data.univers;
+    Object.assign(this, data);
+
+    this.is_first = !!data.is_first;
 
     this.objectifs = [];
     if (data.objectifs) {

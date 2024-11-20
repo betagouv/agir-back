@@ -21,6 +21,38 @@ describe('UtilisateurRepository', () => {
     await TestUtil.appclose();
   });
 
+  it('listUtilisateurIdsToCreateInBrevo : list utilisateur Ids OK, avec limite aussi', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: 'email1@truc.com',
+      brevo_created_at: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: 'email2@truc.com',
+      brevo_created_at: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: 'email3@truc.com',
+      brevo_created_at: new Date(),
+    });
+
+    // WHEN
+    let result =
+      await utilisateurRepository.listUtilisateurIdsToCreateInBrevo();
+
+    // THEN
+    expect(result).toStrictEqual(['1', '2']);
+
+    // WHEN
+    result = await utilisateurRepository.listUtilisateurIdsToCreateInBrevo(1);
+
+    // THEN
+    expect(result).toStrictEqual(['1']);
+  });
+
   it('listUtilisateurIds : list utilisateur Ids OK', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

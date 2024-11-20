@@ -13,9 +13,6 @@ export class App {
   public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
   }
-  public static isFirstStart(): boolean {
-    return process.env.FIRST_START === 'true';
-  }
   public static getFixedOTP_DEVCode(): string {
     return process.env.OTP_DEV;
   }
@@ -39,9 +36,6 @@ export class App {
   }
   public static areServiceAPIEnabled(): boolean {
     return process.env.SERVICE_APIS_ENABLED === 'true';
-  }
-  public static areCachedUnivers(): boolean {
-    return process.env.UNIVERS_CACHE_ENABLED === 'true';
   }
   public static getEcoWattApiSecret(): string {
     return process.env.ECOWATT_CLIENT_ID_SECRET;
@@ -117,6 +111,9 @@ export class App {
   }
   public static getNGC_API_KEY(): string {
     return process.env.NGC_API_KEY || '';
+  }
+  public static getLVO_API_URL(): string {
+    return process.env.LVO_API_URL || '';
   }
 
   public static getBasicLoginPwdBase64(): string {

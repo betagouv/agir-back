@@ -72,8 +72,22 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie un article  lu', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
+    await thematiqueRepository.upsert({
+      code: Thematique.alimentation,
+      titre: 'Alimentation !!',
+      id_cms: 1,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.climat,
+      titre: 'Climat !!',
+      id_cms: 2,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur, {
       history: {
@@ -131,9 +145,30 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque - renvoie les articles de bonne thematique', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(1, 'Alimentation !!');
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
-    await thematiqueRepository.upsertThematique(5, 'Logement !!');
+    await thematiqueRepository.upsert({
+      code: Thematique.alimentation,
+      titre: 'Alimentation !!',
+      id_cms: 1,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.climat,
+      titre: 'Cliamt !!',
+      id_cms: 2,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.logement,
+      titre: 'Logement !!',
+      id_cms: 5,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur, {
       history: {

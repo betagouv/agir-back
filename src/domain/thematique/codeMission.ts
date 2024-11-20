@@ -1,4 +1,4 @@
-export enum ThematiqueUnivers {
+export enum CodeMission {
   manger_saison = 'manger_saison',
   manger_local = 'manger_local',
   gaspillage_alimentaire = 'gaspillage_alimentaire',

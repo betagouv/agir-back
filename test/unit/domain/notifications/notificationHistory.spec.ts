@@ -10,7 +10,6 @@ import {
 } from '../../../../src/domain/notification/notificationHistory';
 import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import { Tag } from '../../../../src/domain/scoring/tag';
-import { Univers } from '../../../../src/domain/univers/univers';
 import {
   SourceInscription,
   Utilisateur,
@@ -267,12 +266,12 @@ describe('NotificationHistory', () => {
       pourquoi: 'pourquoi',
       sous_titre: 'sous_titre',
       status: DefiStatus.todo,
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
       accessible: true,
       motif: 'truc',
       categorie: Categorie.recommandation,
       mois: [1],
-      conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
       sont_points_en_poche: true,
       impact_kg_co2: 5,
     };

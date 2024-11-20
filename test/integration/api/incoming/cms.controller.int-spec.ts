@@ -2,8 +2,7 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
-import { Univers } from '../../../../src/domain/univers/univers';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
@@ -12,6 +11,7 @@ import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
+import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -25,7 +25,11 @@ describe('/api/incoming/cms (API test)', () => {
       pourquoi: 'parce que !!',
       points: 10,
       impact_kg_co2: 10,
-      thematique: { id: 1, titre: 'Alimentation' },
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tags: [
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
@@ -34,13 +38,13 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       thematique_univers: [
         {
           id: 1,
-          code: ThematiqueUnivers.dechets_compost,
+          code: CodeMission.dechets_compost,
         },
       ],
       mois: '0,1',
@@ -69,19 +73,23 @@ describe('/api/incoming/cms (API test)', () => {
       astuces: 'facile',
       pourquoi: 'parce que !!',
       points: 10,
-      thematique: { id: 1, titre: 'Alimentation' },
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tags: [{ id: 1, code: 'VERY_BAD' }],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       thematique_univers: [
         {
           id: 1,
-          code: ThematiqueUnivers.dechets_compost,
+          code: CodeMission.dechets_compost,
         },
       ],
       mois: '0,1',
@@ -114,6 +122,7 @@ describe('/api/incoming/cms (API test)', () => {
       emoji: '🔥',
       unite: 'kg (kilogramme)',
       is_ngc: false,
+      A_SUPPRIMER: true,
       ngc_key: 'a . b . c',
       imageUrl: {
         formats: {
@@ -134,7 +143,7 @@ describe('/api/incoming/cms (API test)', () => {
           ngc_code: '456',
         },
       ],
-      thematique: { id: 1 },
+      thematique: { id: 1, code: Thematique.alimentation },
       tags: [
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
@@ -143,7 +152,7 @@ describe('/api/incoming/cms (API test)', () => {
       univers: [
         {
           id: 1,
-          code: Univers.climat,
+          code: Thematique.climat,
         },
       ],
       OR_Conditions: [
@@ -168,9 +177,17 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
-      thematique_univers_unique: {
+      titre: 'YOO',
+      code: CodeMission.cereales,
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+      },
+      thematique: {
         id: 1,
-        code: ThematiqueUnivers.cereales,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
       },
       objectifs: [
         { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
@@ -199,11 +216,13 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       description: "Contenu de l'aide",
       url_detail_front: '/aide/velo',
+      url_source: 'haha',
+      url_demande: 'hihi',
       is_simulation: true,
       montantMaximum: '123',
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
@@ -225,11 +244,15 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       tag_article: { code: 'composter' },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       rubriques: [
         { id: 1, titre: 'A' },
@@ -266,10 +289,14 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       partenaire: {
         id: 1,
@@ -301,10 +328,14 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
-      thematique_gamification: { id: 1, titre: 'Alimentation' },
+      thematique_gamification: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
       thematiques: [
-        { id: 1, titre: 'Alimentation' },
-        { id: 2, titre: 'Climat' },
+        { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+        { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
       partenaire: {
         id: 1,
@@ -329,6 +360,8 @@ describe('/api/incoming/cms (API test)', () => {
       mois: '0,1',
     },
   };
+  const kycRepository = new KycRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -417,6 +450,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.titre).toEqual('titre');
     expect(aide.contenu).toEqual("Contenu de l'aide");
     expect(aide.url_simulateur).toEqual('/aide/velo');
+    expect(aide.url_source).toEqual('haha');
+    expect(aide.url_demande).toEqual('hihi');
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
@@ -457,6 +492,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.unite).toEqual('kg');
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
+    expect(item.a_supprimer).toEqual(true);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {
@@ -474,7 +510,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -482,6 +518,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates kyc', async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, { id_cms: 123 });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -507,6 +544,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.unite).toEqual('kg');
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
+    expect(item.a_supprimer).toEqual(true);
     expect(item.ngc_key).toEqual('a . b . c');
     expect(item.reponses).toEqual([
       {
@@ -524,7 +562,7 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Univers.climat]);
+    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -547,7 +585,10 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.est_visible).toEqual(true);
     expect(item.id_cms).toEqual(123);
-    expect(item.thematique_univers).toEqual(ThematiqueUnivers.cereales);
+    expect(item.code).toEqual(CodeMission.cereales);
+    expect(item.thematique).toEqual(Thematique.alimentation);
+    expect(item.titre).toEqual('YOO');
+    expect(item.image_url).toEqual('https://');
     expect(item.objectifs).toEqual([
       {
         titre: 'do it article',
@@ -614,10 +655,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Univers.climat]);
-    expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
+    expect(defi.universes).toEqual([Thematique.climat]);
+    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
@@ -665,10 +704,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Univers.climat]);
-    expect(defi.thematiquesUnivers).toEqual([
-      ThematiqueUnivers.dechets_compost,
-    ]);
+    expect(defi.universes).toEqual([Thematique.climat]);
+    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
@@ -694,6 +731,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.contenu).toEqual("Contenu de l'aide");
     expect(aide.url_simulateur).toEqual('/aide/velo');
     expect(aide.is_simulateur).toEqual(true);
+    expect(aide.url_source).toEqual('haha');
+    expect(aide.url_demande).toEqual('hihi');
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
@@ -860,7 +899,7 @@ describe('/api/incoming/cms (API test)', () => {
       ...CMS_DATA_ARTICLE,
       model: CMSModel.thematique,
       event: CMSEvent['entry.publish'],
-      entry: { id: 1, titre: 'yo' },
+      entry: { id: 1, titre: 'yo', code: Thematique.logement },
     });
 
     // THEN
@@ -869,131 +908,41 @@ describe('/api/incoming/cms (API test)', () => {
     expect(thematiqueDB).toHaveLength(1);
     expect(thematiqueDB[0].id_cms).toEqual(1);
     expect(thematiqueDB[0].titre).toEqual('yo');
+    expect(thematiqueDB[0].code).toEqual('logement');
   });
-  it('POST /api/incoming/cms - create 1 univers', async () => {
+  it('POST /api/incoming/cms - create 1 thematique', async () => {
     // GIVEN
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send({
       ...CMS_DATA_ARTICLE,
-      model: CMSModel.univers,
+      model: CMSModel.thematique,
       event: CMSEvent['entry.publish'],
       entry: {
         id: 1,
         label: 'yo',
-        code: Univers.climat,
+        titre: 'titre',
+        code: Thematique.climat,
         imageUrl: {
           formats: {
             thumbnail: { url: 'https://haha' },
           },
         },
+        emoji: '🔥',
       },
     });
 
     // THEN
     expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.univers.findMany({});
+    const universDB = await TestUtil.prisma.thematique.findMany({});
     expect(universDB).toHaveLength(1);
     expect(universDB[0].id_cms).toEqual(1);
     expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].code).toEqual(Univers.climat);
+    expect(universDB[0].titre).toEqual('titre');
+    expect(universDB[0].emoji).toEqual('🔥');
+    expect(universDB[0].code).toEqual(Thematique.climat);
     expect(universDB[0].image_url).toEqual('https://haha');
   });
 
-  it('POST /api/incoming/cms - create 1 thematiqueUnivers', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA_ARTICLE,
-      model: CMSModel['thematique-univers'],
-      event: CMSEvent['entry.publish'],
-      entry: {
-        id: 1,
-        label: 'yo',
-        code: ThematiqueUnivers.cereales,
-        univers_parent: { id: 1, code: 'climat' },
-        imageUrl: {
-          formats: {
-            thumbnail: { url: 'https://haha' },
-          },
-        },
-        famille: { id: 5, nom: 'yop', ordre: 3 },
-      },
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
-    expect(universDB).toHaveLength(1);
-    expect(universDB[0].id_cms).toEqual(1);
-    expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
-    expect(universDB[0].image_url).toEqual('https://haha');
-    expect(universDB[0].univers_parent).toEqual(Univers.climat);
-    expect(universDB[0].famille_id_cms).toEqual(5);
-    expect(universDB[0].famille_ordre).toEqual(3);
-  });
-  it('POST /api/incoming/cms - create 1 thematiqueUnivers sans parent OK', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA_ARTICLE,
-      model: CMSModel['thematique-univers'],
-      event: CMSEvent['entry.publish'],
-      entry: {
-        id: 1,
-        label: 'yo',
-        code: ThematiqueUnivers.cereales,
-        univers_parent: null,
-        imageUrl: {
-          formats: {
-            thumbnail: { url: 'https://haha' },
-          },
-        },
-        famille: { id: 5, nom: 'yop', ordre: 3 },
-      },
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
-    expect(universDB).toHaveLength(1);
-    expect(universDB[0].id_cms).toEqual(1);
-    expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].univers_parent).toEqual(null);
-  });
-  it('POST /api/incoming/cms - create 1 thematiqueUnivers sans famille', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send({
-      ...CMS_DATA_ARTICLE,
-      model: CMSModel['thematique-univers'],
-      event: CMSEvent['entry.publish'],
-      entry: {
-        id: 1,
-        label: 'yo',
-        code: ThematiqueUnivers.cereales,
-        univers_parent: { id: 1, code: 'climat' },
-        imageUrl: {
-          formats: {
-            thumbnail: { url: 'https://haha' },
-          },
-        },
-        famille: null,
-      },
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const universDB = await TestUtil.prisma.thematiqueUnivers.findMany({});
-    expect(universDB).toHaveLength(1);
-    expect(universDB[0].id_cms).toEqual(1);
-    expect(universDB[0].label).toEqual('yo');
-    expect(universDB[0].code).toEqual(ThematiqueUnivers.cereales);
-    expect(universDB[0].image_url).toEqual('https://haha');
-    expect(universDB[0].univers_parent).toEqual(Univers.climat);
-    expect(universDB[0].famille_id_cms).toEqual(-1);
-    expect(universDB[0].famille_ordre).toEqual(999);
-  });
   it('POST /api/incoming/cms - updates existing article, 1 user in db ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

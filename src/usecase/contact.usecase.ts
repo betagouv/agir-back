@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ContactSynchro } from '../infrastructure/contact/contactSynchro';
+import { BrevoRepository } from '../infrastructure/contact/brevoRepository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 
 const H24 = 24 * 60 * 60 * 1000;
@@ -9,7 +9,7 @@ const H24 = 24 * 60 * 60 * 1000;
 export class ContactUsecase {
   constructor(
     public utilisateurRepository: UtilisateurRepository,
-    public contactSynchro: ContactSynchro,
+    public brevoRepository: BrevoRepository,
   ) {}
 
   async batchUpdate(): Promise<string[]> {
@@ -26,17 +26,45 @@ export class ContactUsecase {
           index,
           hier,
         );
-      this.contactSynchro.BatchUpdateContacts(utilisateurs);
+      this.brevoRepository.BatchUpdateContacts(utilisateurs);
       result = result.concat(utilisateurs.map((u) => u.id));
     }
     return result;
   }
 
   async delete(email: string): Promise<boolean> {
-    return await this.contactSynchro.deleteContact(email);
+    return await this.brevoRepository.deleteContact(email);
   }
 
-  async create(utilisateur: Utilisateur): Promise<boolean> {
-    return await this.contactSynchro.createContact(utilisateur);
+  async createMissingContacts(): Promise<string[]> {
+    const result = [];
+
+    const list_missing_contacts =
+      await this.utilisateurRepository.listUtilisateurIdsToCreateInBrevo(100);
+
+    for (const user_id of list_missing_contacts) {
+      const utilisateur = await this.utilisateurRepository.getById(user_id, []);
+      const creation_date = await this.brevoRepository.getContactCreationDate(
+        utilisateur.email,
+      );
+      if (creation_date) {
+        result.push(`[${utilisateur.email}] ALREADY THERE`);
+        utilisateur.brevo_created_at = creation_date;
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      } else {
+        const created_ok = await this.brevoRepository.createContact(
+          utilisateur.email,
+          utilisateur.id,
+        );
+        if (created_ok) {
+          result.push(`[${utilisateur.email}] CREATE OK`);
+          utilisateur.brevo_created_at = new Date();
+          await this.utilisateurRepository.updateUtilisateur(utilisateur);
+        } else {
+          result.push(`[${utilisateur.email}] CREATE ECHEC`);
+        }
+      }
+    }
+    return result;
   }
 }

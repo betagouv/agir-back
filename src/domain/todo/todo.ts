@@ -6,7 +6,7 @@ import {
   Todo_v0,
 } from '../object_store/parcoursTodo/parcoursTodo_v0';
 import { Celebration } from '../gamification/celebrations/celebration';
-import { QuestionGeneric } from '../kyc/questionGeneric';
+import { QuestionKYC } from '../kyc/questionKYC';
 
 export class TodoElement {
   id: string;
@@ -18,7 +18,7 @@ export class TodoElement {
   service_id?: string;
   interaction_id?: string;
   points: number;
-  questions?: QuestionGeneric[];
+  questions?: QuestionKYC[];
   sont_points_en_poche: boolean;
   progression: { current: number; target: number };
   url?: string;

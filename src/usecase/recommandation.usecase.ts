@@ -37,22 +37,21 @@ export class RecommandationUsecase {
 
   async listRecommandationsV2(
     utilisateurId: string,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.history_article_quizz, Scope.logement],
+      [Scope.kyc, Scope.history_article_quizz_aides, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
-    const articles = await this.getArticles(utilisateur, univers);
+    const articles = await this.getArticles(utilisateur, thematique);
 
-    const quizzes = await this.getQuizzes(utilisateur, univers);
+    const quizzes = await this.getQuizzes(utilisateur, thematique);
 
-    let kycs = await this.getKYC(utilisateur, univers);
+    let kycs = await this.getKYC(utilisateur, thematique);
 
     if (kycs.length > 0) {
       PonderationApplicativeManager.sortContent(kycs);
@@ -76,7 +75,7 @@ export class RecommandationUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.logement,
         Scope.defis,
         Scope.unlocked_features,
@@ -84,8 +83,7 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const articles = await this.getArticles(utilisateur);
 
@@ -139,10 +137,13 @@ export class RecommandationUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
-  private getKYC(utilisateur: Utilisateur, univers?: string): Recommandation[] {
-    const kycs = utilisateur.kyc_history.getKYCRestantes(
+  private getKYC(
+    utilisateur: Utilisateur,
+    thematique?: Thematique,
+  ): Recommandation[] {
+    const kycs = utilisateur.kyc_history.getKYCsNeverAnswered(
       Categorie.recommandation,
-      univers,
+      thematique,
     );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
@@ -197,7 +198,7 @@ export class RecommandationUsecase {
 
   private mapKYCToRecommandation(kycs: QuestionKYC[]): Recommandation[] {
     return kycs.map((e) => ({
-      content_id: e.id,
+      content_id: e.code,
       image_url:
         'https://res.cloudinary.com/dq023imd8/image/upload/v1720704333/Screenshot_2024_07_11_at_15_24_52_f5226c666e.png',
       points: e.points,
@@ -210,7 +211,7 @@ export class RecommandationUsecase {
 
   private async getArticles(
     utilisateur: Utilisateur,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const articles_lus = utilisateur.history.searchArticlesIds({
       est_lu: true,
@@ -235,8 +236,8 @@ export class RecommandationUsecase {
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     };
-    if (univers) {
-      filtre.thematiques = [Thematique[univers]];
+    if (thematique) {
+      filtre.thematiques = [Thematique[thematique]];
     }
     let articles = await this.articleRepository.searchArticles(filtre);
 
@@ -253,7 +254,7 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
-    univers?: string,
+    thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
 
@@ -264,8 +265,8 @@ export class RecommandationUsecase {
       date: new Date(),
     };
 
-    if (univers) {
-      filtre.thematiques = [Thematique[univers]];
+    if (thematique) {
+      filtre.thematiques = [Thematique[thematique]];
     }
 
     let quizzes = await this.quizzRepository.searchQuizzes(filtre);

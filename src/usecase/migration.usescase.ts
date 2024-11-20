@@ -155,10 +155,10 @@ export class MigrationUsecase {
     utilisateur: Utilisateur,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    const kyc_def_liste = await _this.kycRepository.getAllDefs();
+    const kyc_def_liste = KycRepository.getCatalogue();
     const result = [];
     for (const question of utilisateur.kyc_history.answered_questions) {
-      const kyc_def = kyc_def_liste.find((k) => k.code === question.id);
+      const kyc_def = kyc_def_liste.find((k) => k.code === question.code);
       if (kyc_def) {
         question.id_cms = kyc_def.id_cms;
         result.push(kyc_def.id_cms);
@@ -201,6 +201,11 @@ export class MigrationUsecase {
     return { ok: true, info: 'reset user car todo pas terminée' };
   }
   private async migrate_12(
+    utilisateur: Utilisateur,
+  ): Promise<{ ok: boolean; info: string }> {
+    return { ok: false, info: 'to implement' };
+  }
+  private async migrate_13(
     utilisateur: Utilisateur,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };

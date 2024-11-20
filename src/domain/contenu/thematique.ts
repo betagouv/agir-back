@@ -6,4 +6,5 @@ export enum Thematique {
   climat = 'climat',
   dechet = 'dechet',
   loisir = 'loisir',
+  services_societaux = 'services_societaux',
 }

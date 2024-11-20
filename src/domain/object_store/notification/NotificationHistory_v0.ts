@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import {
   CanalNotification,
   NotificationHistory,
@@ -20,7 +20,7 @@ export class Notification_v0 {
   }
 }
 
-export class NotificationHistory_v0 extends Versioned {
+export class NotificationHistory_v0 extends Versioned_v0 {
   sent_notifications: Notification_v0[];
   enabled_canals: CanalNotification[];
 

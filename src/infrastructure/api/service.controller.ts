@@ -22,9 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
-import { ServiceDefinitionAPI } from './types/service/serviceDefinitionAPI';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { AddServiceAPI } from './types/service/addServiceAPI';
 import { ServiceAPI } from './types/service/serviceAPI';
 import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
 import { ApplicationError } from '../applicationError';

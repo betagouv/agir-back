@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TuileUnivers } from '../../../../domain/univers/tuileUnivers';
+import { ThematiqueDefinition } from '../../../../domain/thematique/thematiqueDefinition';
 
+// FIXME : A SUPPRIMER
 export class UniversAPI {
   @ApiProperty() titre: string;
   @ApiProperty() type: string;
@@ -8,13 +9,13 @@ export class UniversAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() is_done: boolean;
 
-  public static mapToAPI(uni: TuileUnivers): UniversAPI {
+  public static mapToAPI(uni: ThematiqueDefinition): UniversAPI {
     return {
-      titre: uni.titre,
-      etoiles: uni.etoiles,
-      type: uni.type,
+      titre: uni.label,
+      etoiles: 0,
+      type: uni.code,
       image_url: uni.image_url,
-      is_done: uni.is_done,
+      is_done: false,
     };
   }
 }

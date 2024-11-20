@@ -3,10 +3,14 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
 import { DB, TestUtil } from '../../TestUtil';
 import { Besoin } from '../../../src/domain/aides/besoin';
-import { ProfileUsecase } from '../../../src/usecase/profile.usecase';
+import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -90,8 +94,22 @@ describe('Aide (API test)', () => {
   });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
-    await thematiqueRepository.upsertThematique(2, 'Climat !!');
-    await thematiqueRepository.upsertThematique(5, 'Logement !!');
+    await thematiqueRepository.upsert({
+      code: Thematique.climat,
+      titre: 'Climat !!',
+      id_cms: 2,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.logement,
+      titre: 'Logement !!',
+      id_cms: 5,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide);
@@ -108,6 +126,8 @@ describe('Aide (API test)', () => {
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
     expect(aideBody.is_simulateur).toEqual(true);
+    expect(aideBody.url_source).toEqual('https://hello');
+    expect(aideBody.url_demande).toEqual('https://demande');
     expect(aideBody.montant_max).toEqual(999);
     expect(aideBody.thematiques).toEqual([
       Thematique.climat,
@@ -142,6 +162,129 @@ describe('Aide (API test)', () => {
 
     const aideBody = response.body[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
+  });
+  it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [
+        { content_id: '1', clicked_demande: true, clicked_infos: false },
+        { content_id: '2', clicked_demande: false, clicked_infos: true },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222' },
+      history: history,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: undefined,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+
+    const aideBody = response.body[0] as AideAPI;
+    expect(aideBody.clicked_infos).toEqual(false);
+    expect(aideBody.clicked_demande).toEqual(true);
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/vu_infos marque l'aide comme cliqué sur le lien d'infos `, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      history: history,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: undefined,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/vu_infos',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.history.aide_interactions).toHaveLength(1);
+    expect(userDB.history.aide_interactions[0]).toEqual({
+      clicked_demande: false,
+      clicked_infos: true,
+      content_id: '1',
+    });
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/vu_demande marque l'aide comme cliqué sur le lien demande `, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      history: history,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: undefined,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/vu_demande',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.history.aide_interactions).toHaveLength(1);
+    expect(userDB.history.aide_interactions[0]).toEqual({
+      clicked_demande: true,
+      clicked_infos: false,
+      content_id: '1',
+    });
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/vu_demande aide 404`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/vu_demande',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/vu_infos aide 404`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/vu_infos',
+    );
+
+    // THEN
+    expect(response.status).toBe(404);
   });
   it('GET /utilisateurs/:utilisateurId/aides_v2 info de couvertur true', async () => {
     // GIVEN
@@ -197,7 +340,7 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(2);
     expect(response.body.couverture_aides_ok).toEqual(false);
   });
-  it('GET /aides toutes les aides avec les bonnes meta données', async () => {
+  it('GET /aides toutes les aides avec les bonnes meta données en mode export', async () => {
     // GIVEN
     process.env.CRON_API_KEY = TestUtil.token;
 
@@ -237,6 +380,9 @@ describe('Aide (API test)', () => {
       com_urbaine: [],
       com_com: [],
       metropoles: ['Dijon Métropole'],
+      echelle: 'National',
+      url_source: 'https://hello',
+      url_demande: 'https://demande',
     });
     expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
     expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);

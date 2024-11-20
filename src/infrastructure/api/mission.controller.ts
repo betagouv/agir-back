@@ -21,6 +21,9 @@ import { MissionAPI } from './types/mission/MissionAPI';
 import { MissionUsecase } from '../../../src/usecase/mission.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
+import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
+import { Thematique } from '../../domain/contenu/thematique';
+import { MissionAPI_v2 } from './types/mission/MissionAPI_v2';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
 @Controller()
 @ApiBearerAuth()
@@ -28,6 +31,58 @@ import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 export class MissionController extends GenericControler {
   constructor(private missionUsecase: MissionUsecase) {
     super();
+  }
+
+  // NEW NEW NEW
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [TuileMissionAPI],
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    required: true,
+    description: `la thematique des missions demandées`,
+  })
+  @ApiOperation({
+    summary: `Retourne une liste de tuile de mission correspondant à la thématique demandée, ordonnée par reco`,
+  })
+  async getTuilesMissions(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+  ): Promise<TuileMissionAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = this.castThematiqueOrException(code_thematique);
+
+    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
+      utilisateurId,
+      them,
+    );
+    return result.map((e) => TuileMissionAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/tuiles_missions')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [TuileMissionAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les missions recommandées pour la home (toute thématique confondue)`,
+  })
+  async getMissionsRecommandees(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<TuileMissionAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result =
+      await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
+        utilisateurId,
+      );
+    return result.map((e) => TuileMissionAPI.mapToAPI(e));
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')
@@ -49,7 +104,8 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
-    summary: `Retourne la mission de la thématique`,
+    deprecated: true,
+    summary: `DEPRECATED : Retourne la mission de la thématique`,
   })
   async getMission(
     @Request() req,
@@ -57,11 +113,44 @@ export class MissionController extends GenericControler {
     @Param('thematique') thematique: string,
   ): Promise<MissionAPI> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.missionUsecase.getMissionOfThematique(
+    const result = await this.missionUsecase.getMissionByCode(
       utilisateurId,
       thematique,
     );
     return MissionAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions/:code_mission')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: MissionAPI_v2,
+  })
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `Le code de la mission`,
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiOperation({
+    summary: `Retourne la mission de code donné`,
+  })
+  async getMissionByCode(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ): Promise<MissionAPI_v2> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.missionUsecase.getMissionByCode(
+      utilisateurId,
+      code_mission,
+    );
+    return MissionAPI_v2.mapToAPI(result);
   }
 
   @Post('utilisateurs/:utilisateurId/thematiques/:thematique/mission/terminer')
@@ -80,7 +169,8 @@ export class MissionController extends GenericControler {
     description: `id de l'utilisateur`,
   })
   @ApiOperation({
-    summary: `Declare la mission de cette thematique comme terminée`,
+    deprecated: true,
+    summary: `DEPRECATED : Declare la mission de cette thematique comme terminée`,
   })
   async terminerMission(
     @Request() req,
@@ -88,7 +178,36 @@ export class MissionController extends GenericControler {
     @Param('thematique') thematique: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.missionUsecase.terminerMission(utilisateurId, thematique);
+    await this.missionUsecase.terminerMissionByCode(utilisateurId, thematique);
+  }
+
+  @Post('utilisateurs/:utilisateurId/missions/:code_mission/terminer')
+  @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `le code de la mission`,
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiOperation({
+    summary: `Declare la mission de code argument comme terminée`,
+  })
+  async terminerMissionByCode(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.missionUsecase.terminerMissionByCode(
+      utilisateurId,
+      code_mission,
+    );
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/kycs')
@@ -116,7 +235,8 @@ export class MissionController extends GenericControler {
     description: `Thematique de la mission`,
   })
   @ApiOperation({
-    summary: `Liste l'ensemble des kycs associées à la thématique argument, avec leur état respectif, incluant des mosaics`,
+    deprecated: true,
+    summary: `DEPRECATED : Liste l'ensemble des kycs associées à la thématique argument, avec leur état respectif, incluant des mosaics`,
   })
   async getMissionKYCs(
     @Request() req,
@@ -126,16 +246,65 @@ export class MissionController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
 
     const all_kyc_and_mosaic =
-      await this.missionUsecase.getMissionKYCsAndMosaics(
+      await this.missionUsecase.getMissionKYCsAndMosaicsByCodeMission(
         utilisateurId,
         thematique,
       );
 
     return all_kyc_and_mosaic.map((k) => {
-      if (k.kyc) {
-        return QuestionKYCAPI.mapToAPI(k.kyc);
+      if (k.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(k);
       } else {
-        return MosaicKYCAPI.mapToAPI(k.mosaic);
+        return QuestionKYCAPI.mapToAPI(k);
+      }
+    });
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions/:code_mission/kycs')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    schema: {
+      items: {
+        allOf: [
+          { $ref: getSchemaPath(QuestionKYCAPI) },
+          { $ref: getSchemaPath(MosaicKYCAPI) },
+        ],
+      },
+    },
+  })
+  @ApiParam({
+    name: 'utilisateurId',
+    type: String,
+    required: true,
+    description: `id de l'utilisateur`,
+  })
+  @ApiParam({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `Code de la mission`,
+  })
+  @ApiOperation({
+    summary: `Liste l'ensemble des kycs associées à la mission de code argument, avec leur état respectif, incluant des mosaics`,
+  })
+  async getMissionKYCsByCodeMission(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_mission') code_mission: string,
+  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
+    this.checkCallerId(req, utilisateurId);
+
+    const all_kyc_and_mosaic =
+      await this.missionUsecase.getMissionKYCsAndMosaicsByCodeMission(
+        utilisateurId,
+        code_mission,
+      );
+
+    return all_kyc_and_mosaic.map((k) => {
+      if (k.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(k);
+      } else {
+        return QuestionKYCAPI.mapToAPI(k);
       }
     });
   }

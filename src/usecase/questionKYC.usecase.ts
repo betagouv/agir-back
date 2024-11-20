@@ -9,17 +9,14 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
-import { MosaicKYC, TypeReponseMosaicKYC } from '../domain/kyc/mosaicKYC';
+import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionGeneric } from '../domain/kyc/questionGeneric';
-import { EnchainementQuestions } from '../domain/kyc/enchainementQuestions';
 
 @Injectable()
 export class QuestionKYCUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private kycRepository: KycRepository,
     private defiRepository: DefiRepository,
     private personnalisator: Personnalisator,
   ) {}
@@ -83,15 +80,14 @@ export class QuestionKYCUsecase {
     ],
   };
 
-  async getALL(utilisateurId: string): Promise<QuestionGeneric[]> {
+  async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -104,15 +100,14 @@ export class QuestionKYCUsecase {
   async getEnchainementQuestions(
     utilisateurId: string,
     enchainementId: string,
-  ): Promise<EnchainementQuestions> {
+  ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const liste_kycs_ids = QuestionKYCUsecase.ENCHAINEMENTS[enchainementId];
 
@@ -131,26 +126,26 @@ export class QuestionKYCUsecase {
   async getQuestion(
     utilisateurId: string,
     questionId: string,
-  ): Promise<QuestionGeneric> {
+  ): Promise<QuestionKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     let result_kyc: QuestionKYC;
-    let result_mosaic: MosaicKYC;
 
-    if (MosaicKYC.isMosaicID(questionId)) {
-      const mosaic_def = MosaicKYC.findMosaicDefByID(KYCMosaicID[questionId]);
+    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
+      const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(
+        KYCMosaicID[questionId],
+      );
 
       if (!mosaic_def) {
         ApplicationError.throwUnknownMosaicId(questionId);
       }
-      result_mosaic = utilisateur.kyc_history.getUpToDateMosaic(mosaic_def);
+      result_kyc = utilisateur.kyc_history.getUpToDateMosaic(mosaic_def);
     } else {
       result_kyc =
         utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
@@ -159,14 +154,41 @@ export class QuestionKYCUsecase {
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    return {
-      kyc: this.personnalisator.personnaliser(result_kyc, utilisateur, [
-        CLE_PERSO.espace_insecable,
-      ]),
-      mosaic: this.personnalisator.personnaliser(result_mosaic, utilisateur, [
-        CLE_PERSO.espace_insecable,
-      ]),
-    };
+    return this.personnalisator.personnaliser(result_kyc, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
+  }
+
+  async updateResponseKYC_v2(
+    utilisateurId: string,
+    code_question: string,
+    reponse: { code?: string; value: string }[],
+  ): Promise<void> {
+    if (!reponse || reponse.length === 0) {
+      ApplicationError.throwNoKYCResponse(code_question);
+    }
+
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [
+        Scope.kyc,
+        Scope.todo,
+        Scope.gamification,
+        Scope.missions,
+        Scope.gamification,
+        Scope.logement,
+      ],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+    this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
+
+    const catalogue_defis = await this.defiRepository.list({});
+    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   async updateResponseKYC(
@@ -187,8 +209,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     this.updateQuestionOfCode(code_question, null, reponse, utilisateur, true);
 
@@ -204,13 +225,29 @@ export class QuestionKYCUsecase {
   ) {
     const question_depart =
       utilisateur.kyc_history.getAnsweredQuestionByCode(code_question);
-    switch (question_depart.id) {
+    switch (question_depart.code) {
       case KYCID.KYC_alimentation_regime:
         this.synchroAlimentationRegime(question_depart, utilisateur);
         break;
       default:
         break;
     }
+  }
+
+  async updateResponseMosaic_v2(
+    utilisateurId: string,
+    mosaicId: string,
+    reponses: { code: string; value: string }[],
+  ): Promise<void> {
+    if (!reponses || reponses.length === undefined || reponses.length === 0) {
+      ApplicationError.throwMissingMosaicData();
+    }
+
+    const reponse_reformat = reponses.map((r) => ({
+      code: r.code,
+      boolean_value: QuestionKYC.isTrueBooleanString(r.value),
+    }));
+    await this.updateResponseMosaic(utilisateurId, mosaicId, reponse_reformat);
   }
 
   async updateResponseMosaic(
@@ -235,15 +272,27 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const mosaic = MosaicKYC.findMosaicDefByID(KYCMosaicID[mosaicId]);
+    const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {
       ApplicationError.throwUnknownMosaicId(mosaicId);
     }
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    if (reponses.length !== mosaic.question_kyc_codes.length) {
+      ApplicationError.throwBadMosaicDataNumber(
+        mosaicId,
+        mosaic.question_kyc_codes.length,
+      );
+    }
 
-    if (mosaic.type === TypeReponseMosaicKYC.mosaic_boolean) {
+    for (const reponse of reponses) {
+      if (!MosaicKYC_CATALOGUE.hasCode(mosaic.id, reponse.code)) {
+        ApplicationError.throwQuestionBadCodeValue(reponse.code, mosaicId);
+      }
+    }
+
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+    if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const reponse of reponses) {
         const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
           reponse.code,
@@ -312,13 +361,84 @@ export class QuestionKYCUsecase {
           labels_reponse,
         );
     } else {
-      updated_kyc = utilisateur.kyc_history.updateQuestionByCodeWithCode(
+      updated_kyc = utilisateur.kyc_history.selectCodeInQuestionByCode(
         code_question,
         code_reponse,
       );
     }
     utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
       updated_kyc,
+      utilisateur,
+    );
+
+    utilisateur.missions.answerKyc(code_question);
+
+    this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
+
+    utilisateur.recomputeRecoTags();
+  }
+
+  private updateQuestionOfCode_v2(
+    code_question: string,
+    reponses: { code?: string; value: string }[],
+    utilisateur: Utilisateur,
+    gain_points: boolean,
+  ) {
+    const question_to_update =
+      utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
+        code_question,
+      );
+
+    this.updateUserTodo(utilisateur, code_question);
+
+    if (!question_to_update.is_answererd && gain_points) {
+      utilisateur.gamification.ajoutePoints(
+        question_to_update.points,
+        utilisateur,
+      );
+    }
+
+    if (question_to_update.isSimpleQuestion()) {
+      if (reponses.length !== 1) {
+        ApplicationError.throwUniqueReponseExpected(code_question);
+      }
+      if (!reponses[0].value) {
+        ApplicationError.throwMissingValue(code_question);
+      }
+      question_to_update.setReponseSimpleValue(reponses[0].value);
+    } else if (question_to_update.isChoixUnique()) {
+      if (reponses.length !== 1) {
+        ApplicationError.throwUniqueReponseExpected(code_question);
+      }
+      if (!reponses[0].code) {
+        ApplicationError.throwMissingCode(code_question);
+      }
+      if (!question_to_update.getAllCodes().includes(reponses[0].code)) {
+        ApplicationError.throwQuestionBadCodeValue(
+          reponses[0].code,
+          code_question,
+        );
+      }
+      question_to_update.selectChoixByCode(reponses[0].code);
+    } else if (question_to_update.isChoixMultiple()) {
+      for (const code_ref of question_to_update.getAllCodes()) {
+        const answered_element = reponses.find((r) => r.code === code_ref);
+        if (!answered_element) {
+          ApplicationError.throwMissingYesNoValueForCode(
+            code_question,
+            code_ref,
+          );
+        }
+        question_to_update.setResponseValueForCode(
+          code_ref,
+          answered_element.value,
+        );
+      }
+    }
+    utilisateur.kyc_history.updateQuestionInHistory(question_to_update);
+
+    utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
+      question_to_update,
       utilisateur,
     );
 
@@ -343,7 +463,7 @@ export class QuestionKYCUsecase {
     kyc: QuestionKYC,
     utilisateur: Utilisateur,
   ) {
-    const code_reponse_unique = kyc.getCodeReponseUniqueSaisie();
+    const code_reponse_unique = kyc.getCodeReponseQuestionChoixUnique();
     if (!code_reponse_unique) return;
 
     if (code_reponse_unique === 'vegetalien') {

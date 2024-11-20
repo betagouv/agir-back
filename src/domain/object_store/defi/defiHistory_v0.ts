@@ -38,7 +38,7 @@ export class Defi_v0 {
       sous_titre: elem.sous_titre,
       status: elem.getStatus(),
       date_acceptation: elem.date_acceptation,
-      universes: elem.universes,
+      universes: elem.universes, // FIXME : A SUPPRIMER
       accessible: elem.accessible,
       motif: elem.motif,
       categorie: elem.categorie,

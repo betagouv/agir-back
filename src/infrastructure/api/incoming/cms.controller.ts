@@ -8,13 +8,15 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { App } from '../../../../src/domain/app';
-import { CMSUsecase } from '../../../usecase/cms.usecase';
+import { CMSWebhookUsecase } from '../../../usecase/cms.webhook.usecase';
 import { CMSWebhookAPI } from '../types/cms/CMSWebhookAPI';
 
 @Controller()
 @ApiTags('Incoming Data')
 export class CMSController {
-  constructor(private readonly interactionsDefinitionUsecase: CMSUsecase) {}
+  constructor(
+    private readonly interactionsDefinitionUsecase: CMSWebhookUsecase,
+  ) {}
   @ApiBody({
     schema: {
       type: 'object',

@@ -11,6 +11,8 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ReferentielUsecase } from './referentiels/referentiel.usecase';
+import { Thematique } from '../domain/contenu/thematique';
+import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
 @Injectable()
 export class RechercheServicesUsecase {
@@ -19,6 +21,7 @@ export class RechercheServicesUsecase {
     private rechercheServiceManager: RechercheServiceManager,
     private serviceFavorisStatistiqueRepository: ServiceFavorisStatistiqueRepository,
     private personnalisator: Personnalisator,
+    private newServiceCatalogue: NewServiceCatalogue,
   ) {}
 
   async search(
@@ -235,15 +238,16 @@ export class RechercheServicesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = ReferentielUsecase.getNewServiceCatalogue();
+    let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.is_available_inhouse);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
+  // DEPRECATED
   async getListServiceDef(
     utilisateurId: string,
-    univers: string,
+    thematique: string,
   ): Promise<NewServiceDefinition[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -251,8 +255,24 @@ export class RechercheServicesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = ReferentielUsecase.getNewServiceCatalogue();
-    result = result.filter((r) => r.univers === univers);
+    let result = this.newServiceCatalogue.getCatalogue();
+    result = result.filter((r) => r.thematique === thematique);
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  async getListServicesOfThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<NewServiceDefinition[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    let result = this.newServiceCatalogue.getCatalogue();
+    result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

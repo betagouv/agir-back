@@ -21,7 +21,7 @@ export class DefiAPI {
   @ApiProperty() thematique_label: string;
   @ApiProperty({ enum: DefiStatus }) status: DefiStatus;
   @ApiProperty() jours_restants: number;
-  @ApiProperty() universes: string[];
+  @ApiProperty() universes: string[]; // FIXME : A SUPPRIMER
   @ApiProperty() nombre_de_fois_realise: number;
 
   public static mapToAPI(
@@ -41,7 +41,7 @@ export class DefiAPI {
         defi.thematique,
       ),
       titre: defi.titre,
-      universes: defi.universes,
+      universes: defi.universes, // FIXME : A SUPPRIMER
       motif: defi.motif,
       nombre_de_fois_realise: defiStatistique
         ? defiStatistique.nbr_realise

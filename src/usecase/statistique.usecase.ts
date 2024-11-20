@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { StatistiqueRepository } from '../../src/infrastructure/repository/statitstique.repository';
-import { Mission, Objectif } from '../../src/domain/mission/mission';
+import { Mission } from '../../src/domain/mission/mission';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class StatistiqueUsecase {
@@ -28,7 +28,7 @@ export class StatistiqueUsecase {
         thematiquesEnCoursAsc,
         universTerminesAsc,
         universEncoursAsc,
-      } = this.calculerThematiques(user);
+      } = this.calculerMissions(user);
 
       const nombreDefisEnCours = user.defi_history.getNombreDefisEnCours();
       const nombreDefisRealises = user.defi_history.getNombreDefisRealises();
@@ -54,58 +54,54 @@ export class StatistiqueUsecase {
     return reponse;
   }
 
-  private calculerThematiques(user: Utilisateur) {
-    const universCompletions: Record<
+  private calculerMissions(user: Utilisateur) {
+    const thematiqueCompletions: Record<
       string,
       { termines: boolean; enCours: boolean }
     > = {};
 
-    const thematiquesTerminees: string[] = [];
-    const thematiquesEnCours: string[] = [];
+    const missionsTerminees: string[] = [];
+    const missionsEnCours: string[] = [];
 
-    user.missions.missions.forEach((mission) => {
+    for (const mission of user.missions.missions) {
       const pourcentageCompletion = this.calculPourcentageDeCompletion(mission);
 
-      const universParent = ThematiqueRepository.getUniversParent(
-        mission.thematique_univers,
-      );
-
-      if (!universCompletions[universParent]) {
-        universCompletions[universParent] = {
+      if (!thematiqueCompletions[mission.thematique]) {
+        thematiqueCompletions[mission.thematique] = {
           termines: false,
           enCours: false,
         };
       }
 
       if (pourcentageCompletion === 100) {
-        thematiquesTerminees.push(mission.thematique_univers);
+        missionsTerminees.push(mission.code);
 
-        if (!universCompletions[universParent].enCours) {
-          universCompletions[universParent].termines = true;
+        if (!thematiqueCompletions[mission.thematique].enCours) {
+          thematiqueCompletions[mission.thematique].termines = true;
         }
       } else if (pourcentageCompletion > 0) {
-        thematiquesEnCours.push(mission.thematique_univers);
-        universCompletions[universParent].enCours = true;
+        missionsEnCours.push(mission.code);
+        thematiqueCompletions[mission.thematique].enCours = true;
 
-        if (!universCompletions[universParent].enCours) {
-          universCompletions[universParent].termines = false;
+        if (!thematiqueCompletions[mission.thematique].enCours) {
+          thematiqueCompletions[mission.thematique].termines = false;
         }
       }
-    });
+    }
 
-    const universTermines = Object.entries(universCompletions)
+    const universTermines = Object.entries(thematiqueCompletions)
       .filter(([key, value]) => value.termines)
       .map(([key]) => key);
 
-    const universEncours = Object.entries(universCompletions)
+    const universEncours = Object.entries(thematiqueCompletions)
       .filter(([key, value]) => value.enCours)
       .map(([key]) => key);
 
-    const thematiquesTermineesAsc = thematiquesTerminees.length
-      ? this.ordonnerEtStringifier(thematiquesTerminees)
+    const thematiquesTermineesAsc = missionsTerminees.length
+      ? this.ordonnerEtStringifier(missionsTerminees)
       : null;
-    const thematiquesEnCoursAsc = thematiquesEnCours.length
-      ? this.ordonnerEtStringifier(thematiquesEnCours)
+    const thematiquesEnCoursAsc = missionsEnCours.length
+      ? this.ordonnerEtStringifier(missionsEnCours)
       : null;
     const universTerminesAsc = universTermines.length
       ? this.ordonnerEtStringifier(universTermines)

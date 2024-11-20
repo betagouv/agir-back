@@ -14,7 +14,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -31,7 +31,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -48,7 +48,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -65,7 +65,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
     linky: {
@@ -86,7 +86,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -103,7 +103,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -120,7 +120,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -137,7 +137,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -154,7 +154,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -171,7 +171,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -188,7 +188,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -205,7 +205,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -222,7 +222,7 @@ const utilisateurs = {
     },
     unlocked_features: {
       version: 1,
-      unlocked_features: [Feature.univers, Feature.services],
+      unlocked_features: [Feature.services],
     },
     services: [],
   },

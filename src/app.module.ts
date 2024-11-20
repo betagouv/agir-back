@@ -7,7 +7,7 @@ import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
 import { ImportNGCUsecase } from './usecase/importNGC.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { CMSUsecase } from './usecase/cms.usecase';
+import { CMSWebhookUsecase } from './usecase/cms.webhook.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { SituationNGCRepository } from './infrastructure/repository/situationNGC.repository';
@@ -51,7 +51,7 @@ import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { ContactSynchro } from './infrastructure/contact/contactSynchro';
+import { BrevoRepository } from './infrastructure/contact/brevoRepository';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
@@ -72,7 +72,6 @@ import { StatistiqueRepository } from './infrastructure/repository/statitstique.
 import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { UniversController } from './infrastructure/api/univers.controller';
-import { UniversUsecase } from './usecase/univers.usecase';
 import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
@@ -84,10 +83,10 @@ import { KycStatistiqueRepository } from './infrastructure/repository/kycStatist
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { MissionStatistiqueUsecase } from './usecase/missionStatistique.usecase';
+import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
-import { ThematiqueStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
-import { UniversStatistiqueUsecase } from './usecase/universStatistique.usecase';
-import { UniversStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
+import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
@@ -117,6 +116,9 @@ import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
+import { CMSImportUsecase } from './usecase/cms.import.usecase';
+import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
+import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -146,6 +148,7 @@ function getControllers(): any[] {
     BilanCarboneController,
     PreviewController,
     NotificationsController,
+    LoadCMSController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -184,7 +187,8 @@ function getControllers(): any[] {
     ProfileUsecase,
     ImportNGCUsecase,
     AidesUsecase,
-    CMSUsecase,
+    CMSWebhookUsecase,
+    CMSImportUsecase,
     EmailSender,
     CommuneRepository,
     CommunesUsecase,
@@ -207,7 +211,7 @@ function getControllers(): any[] {
     QuizzRepository,
     RecommandationUsecase,
     ContactUsecase,
-    ContactSynchro,
+    BrevoRepository,
     MigrationUsecase,
     ReferentielUsecase,
     BibliothequeUsecase,
@@ -222,7 +226,6 @@ function getControllers(): any[] {
     StatistiqueRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
-    UniversUsecase,
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
     MissionUsecase,
@@ -232,10 +235,10 @@ function getControllers(): any[] {
     KycStatistiqueRepository,
     MissionRepository,
     KycRepository,
+    MissionStatistiqueUsecase,
+    MissionStatistiqueRepository,
     ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
-    UniversStatistiqueUsecase,
-    UniversStatistiqueRepository,
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,
@@ -254,6 +257,7 @@ function getControllers(): any[] {
     EmailTemplateRepository,
     MailerUsecase,
     LongueVieObjetsRepository,
+    NewServiceCatalogue,
   ],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Mission } from '../../src/domain/mission/mission';
-import { ThematiqueStatistiqueRepository } from '../../src/infrastructure/repository/thematiqueStatistique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { Mission } from '../domain/mission/mission';
+import { ThematiqueStatistiqueRepository } from '../infrastructure/repository/universStatistique.repository';
 import { Scope } from '../domain/utilisateur/utilisateur';
 
 type ThematiqueRecord = {
@@ -18,7 +18,7 @@ type ThematiqueRecord = {
 export class ThematiqueStatistiqueUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private thematiqueStatistiqueRepository: ThematiqueStatistiqueRepository,
+    private universStatistiqueRepository: ThematiqueStatistiqueRepository,
   ) {}
 
   async calculStatistique(): Promise<string[]> {
@@ -28,17 +28,34 @@ export class ThematiqueStatistiqueUsecase {
       await this.utilisateurRepository.listUtilisateurIds();
 
     for (const userId of listeUtilisateursIds) {
+      const missionRecord: Record<string, number[]> = {};
+
       const user = await this.utilisateurRepository.getById(userId, [
         Scope.missions,
       ]);
 
-      user.missions.missions.forEach((mission) => {
+      for (const mission of user.missions.missions) {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);
 
-        if (!thematiqueRecord[mission.id]) {
-          thematiqueRecord[mission.id] = {
-            titre: mission.thematique_univers,
+        if (!missionRecord[mission.thematique]) {
+          missionRecord[mission.thematique] = [pourcentageCompletionMission];
+        } else {
+          missionRecord[mission.thematique].push(pourcentageCompletionMission);
+        }
+      }
+
+      for (const mission in missionRecord) {
+        const sum = missionRecord[mission].reduce(
+          (accumulator, currentValue) => accumulator + currentValue,
+          0,
+        );
+        const pourcentageCompletionThematique =
+          sum / missionRecord[mission].length;
+
+        if (!thematiqueRecord[mission]) {
+          thematiqueRecord[mission] = {
+            titre: mission,
             range_1_20: 0,
             range_21_40: 0,
             range_41_60: 0,
@@ -49,16 +66,14 @@ export class ThematiqueStatistiqueUsecase {
         }
 
         this.incrementeRange(
-          thematiqueRecord[mission.id],
-          pourcentageCompletionMission,
+          thematiqueRecord[mission],
+          pourcentageCompletionThematique,
         );
-      });
+      }
     }
 
-    const thematiqueRecordEntries = Object.entries(thematiqueRecord);
-
-    for (const [key, value] of thematiqueRecordEntries) {
-      await this.thematiqueStatistiqueRepository.upsertThematiqueStatistiques(
+    for (const [key, value] of Object.entries(thematiqueRecord)) {
+      await this.universStatistiqueRepository.upsert(
         key,
         value.titre,
         value.range_1_20,

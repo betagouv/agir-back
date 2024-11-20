@@ -1,7 +1,8 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { ApplicationError } from '../../../infrastructure/applicationError';
 
 export class Objectif_v0 {
   id: string;
@@ -15,17 +16,7 @@ export class Objectif_v0 {
   est_reco: boolean;
 
   static map(objectif: Objectif): Objectif_v0 {
-    return {
-      id: objectif.id,
-      titre: objectif.titre,
-      content_id: objectif.content_id,
-      is_locked: objectif.is_locked,
-      done_at: objectif.done_at,
-      type: objectif.type,
-      points: objectif.points,
-      sont_points_en_poche: !!objectif.sont_points_en_poche,
-      est_reco: !!objectif.est_reco,
-    };
+    throw ApplicationError.throwUnsupportedSerialisationVersion('Objectif_v0');
   }
 }
 
@@ -38,30 +29,18 @@ export class Mission_v0 {
   univers: string;
 
   static map(mission: Mission): Mission_v0 {
-    return {
-      id: mission.id,
-      done_at: mission.done_at,
-      thematique_univers: mission.thematique_univers,
-      objectifs: mission.objectifs
-        ? mission.objectifs.map((m) => Objectif_v0.map(m))
-        : [],
-      est_visible: !!mission.est_visible,
-      univers: mission.univers,
-    };
+    throw ApplicationError.throwUnsupportedSerialisationVersion('Mission_v0');
   }
 }
 
-export class MissionsUtilisateur_v0 extends Versioned {
+export class MissionsUtilisateur_v0 extends Versioned_v0 {
   missions: Mission_v0[];
 
   static serialise(
     missionsUtilisateur: MissionsUtilisateur,
   ): MissionsUtilisateur_v0 {
-    return {
-      version: 0,
-      missions: missionsUtilisateur.missions.map((elem) =>
-        Mission_v0.map(elem),
-      ),
-    };
+    throw ApplicationError.throwUnsupportedSerialisationVersion(
+      'MissionsUtilisateur_v0',
+    );
   }
 }

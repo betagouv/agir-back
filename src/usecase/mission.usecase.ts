@@ -23,7 +23,10 @@ import {
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionGeneric } from '../domain/kyc/questionGeneric';
+import { TuileMission } from '../domain/thematique/tuileMission';
+import { Thematique } from '../domain/contenu/thematique';
+import { PriorityContent } from '../domain/scoring/priorityContent';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 
 @Injectable()
 export class MissionUsecase {
@@ -36,9 +39,89 @@ export class MissionUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
-  async terminerMission(
+  async getTuilesMissionsRecommandeesToutesThematiques(
     utilisateurId: string,
-    thematique: string,
+  ): Promise<TuileMission[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const final_result: TuileMission[] = [];
+
+    const liste_thematiques = Object.values(Thematique);
+    for (const thematique of liste_thematiques) {
+      const liste_missions = await this.getOrderedListeMissionsOfThematique(
+        thematique,
+        utilisateur,
+        true,
+      );
+      if (liste_missions.length > 0) {
+        final_result.push(liste_missions[0]);
+      }
+    }
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
+  }
+
+  async getTuilesMissionsOfThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<TuileMission[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.missions, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const final_result = await this.getOrderedListeMissionsOfThematique(
+      thematique,
+      utilisateur,
+    );
+
+    return this.personnalisator.personnaliser(final_result, utilisateur);
+  }
+
+  private async getOrderedListeMissionsOfThematique(
+    thematique: Thematique,
+    utilisateur: Utilisateur,
+    exclude_done?: boolean,
+  ): Promise<TuileMission[]> {
+    const listMissionDefs = this.missionRepository.getByThematique(thematique);
+
+    const result: TuileMission[] = [];
+
+    for (const mission_def of listMissionDefs) {
+      if (!mission_def.est_visible) {
+        continue; // on passe à la misison suivante
+      }
+
+      const existing_mission = utilisateur.missions.getMissionByCode(
+        mission_def.code,
+      );
+
+      if (existing_mission) {
+        if (exclude_done && existing_mission.isDone()) {
+          // SKIP
+        } else {
+          result.push(
+            TuileMission.newFromMissionANDMissionDefinition(
+              existing_mission,
+              mission_def,
+            ),
+          );
+        }
+      } else {
+        result.push(TuileMission.newFromMissionDefinition(mission_def));
+      }
+    }
+    return this.ordonneTuilesMission(result);
+  }
+
+  async terminerMissionByCode(
+    utilisateurId: string,
+    code_mission: string,
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -46,20 +129,20 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    let mission = utilisateur.missions.getMissionByCode(code_mission);
 
     if (!mission) {
-      ApplicationError.throwMissionNotFound(thematique);
+      ApplicationError.throwMissionNotFoundOfCode(code_mission);
     }
     if (mission.estTerminable()) {
       mission.terminer(utilisateur);
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
-  async getMissionOfThematique(
+
+  async getMissionByCode(
     utilisateurId: string,
-    thematique: string,
+    code_mission: string,
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -67,13 +150,10 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let mission_resultat =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
 
     if (!mission_resultat || mission_resultat.isNew()) {
-      const mission_def = await this.missionRepository.getByThematique(
-        thematique,
-      );
+      const mission_def = MissionRepository.getByCode(code_mission);
       if (mission_def) {
         const completed_mission = await this.completeMissionDef(
           mission_def,
@@ -88,23 +168,23 @@ export class MissionUsecase {
       }
     }
 
-    if (mission_resultat) {
-      for (const objectif of mission_resultat.objectifs) {
-        if (objectif.type === ContentType.defi) {
-          const defi = utilisateur.defi_history.getDefiFromHistory(
-            objectif.content_id,
-          );
-          if (defi) {
-            objectif.defi_status = defi.getStatus();
-          } else {
-            objectif.defi_status = DefiStatus.todo;
-          }
+    if (!mission_resultat) {
+      throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
+    }
+
+    for (const objectif of mission_resultat.objectifs) {
+      if (objectif.type === ContentType.defi) {
+        const defi = utilisateur.defi_history.getDefiFromHistory(
+          objectif.content_id,
+        );
+        if (defi) {
+          objectif.defi_status = defi.getStatus();
+        } else {
+          objectif.defi_status = DefiStatus.todo;
         }
       }
-      return this.personnalisator.personnaliser(mission_resultat, utilisateur);
-    } else {
-      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
     }
+    return this.personnalisator.personnaliser(mission_resultat, utilisateur);
   }
 
   async gagnerPointsDeObjectif(utilisateurId: string, objectifId: string) {
@@ -114,7 +194,7 @@ export class MissionUsecase {
         Scope.missions,
         Scope.gamification,
         Scope.kyc,
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.defis,
       ],
     );
@@ -150,43 +230,42 @@ export class MissionUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async getMissionKYCsAndMosaics(
+  async getMissionKYCsAndMosaicsByCodeMission(
     utilisateurId: string,
-    thematique: string,
-  ): Promise<QuestionGeneric[]> {
+    code_mission: string,
+  ): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.missions, Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
-    const mission =
-      utilisateur.missions.getMissionByThematiqueUnivers(thematique);
+    const mission = utilisateur.missions.getMissionByCode(code_mission);
 
     if (!mission) {
-      throw ApplicationError.throwMissionNotFoundOfThematique(thematique);
+      throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
     }
 
-    const result: QuestionGeneric[] = [];
+    const result: QuestionKYC[] = [];
 
     const liste_objectifs_kyc = mission.getAllKYCsandMosaics();
 
     for (const objectif_kyc of liste_objectifs_kyc) {
       if (objectif_kyc.type === ContentType.kyc) {
-        result.push({
-          kyc: utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-            objectif_kyc.content_id,
-          ),
-        });
+        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+          objectif_kyc.content_id,
+        );
+        if (kyc) {
+          result.push(kyc);
+        }
       } else {
         const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
           KYCMosaicID[objectif_kyc.content_id],
         );
         if (mosaic) {
-          result.push({ mosaic: mosaic });
+          result.push(mosaic);
         }
       }
     }
@@ -252,5 +331,14 @@ export class MissionUsecase {
       }
     }
     return mission_def;
+  }
+
+  public ordonneTuilesMission<T extends PriorityContent>(liste: T[]): T[] {
+    const first = liste.find((t) => t.is_first);
+    if (first) {
+      return [first].concat(liste.filter((t) => !t.is_first));
+    } else {
+      return liste;
+    }
   }
 }

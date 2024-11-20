@@ -23,8 +23,9 @@ import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
-import { MosaicKYC } from '../../domain/kyc/mosaicKYC';
+import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
+import { ReponseKYCAPI_v2 } from './types/kyc/reponseKYCAPI_v2';
 
 @Controller()
 @ApiExtraModels(
@@ -53,7 +54,9 @@ export class QuestionsKYCController extends GenericControler {
     },
   })
   @ApiOperation({
-    summary: "Retourne l'ensemble des question (avec ou sans réponses)",
+    deprecated: true,
+    summary:
+      "DEPRECATED : Retourne l'ensemble des question (avec ou sans réponses)",
   })
   async getAll(
     @Request() req,
@@ -62,17 +65,35 @@ export class QuestionsKYCController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const result = await this.questionKYCUsecase.getALL(utilisateurId);
     return result.map((k) => {
-      if (k.kyc) {
-        return QuestionKYCAPI.mapToAPI(k.kyc);
+      if (k.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(k);
       } else {
-        return MosaicKYCAPI.mapToAPI(k.mosaic);
+        return QuestionKYCAPI.mapToAPI(k);
       }
     });
   }
 
+  @Get('utilisateurs/:utilisateurId/questionsKYC_v2')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [QuestionKYCAPI_v2],
+  })
   @ApiOperation({
+    summary: "Retourne l'ensemble des question (avec ou sans réponses)",
+  })
+  async getAll_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<QuestionKYCAPI_v2[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.questionKYCUsecase.getALL(utilisateurId);
+    return result.map((k) => QuestionKYCAPI_v2.mapToAPI(k));
+  }
+
+  @ApiOperation({
+    deprecated: true,
     summary:
-      "Retourne une question d'id questionId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
+      "DEPRECATED : Retourne une question d'id questionId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
   })
   @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
   @UseGuards(AuthGuard)
@@ -94,10 +115,10 @@ export class QuestionsKYCController extends GenericControler {
       utilisateurId,
       questionId,
     );
-    if (result.kyc) {
-      return QuestionKYCAPI.mapToAPI(result.kyc);
+    if (result.isMosaic()) {
+      return MosaicKYCAPI.mapToAPI(result);
     } else {
-      return MosaicKYCAPI.mapToAPI(result.mosaic);
+      return QuestionKYCAPI.mapToAPI(result);
     }
   }
 
@@ -108,32 +129,24 @@ export class QuestionsKYCController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/questionsKYC_v2/:questionId')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(QuestionKYCAPI) },
-        { $ref: getSchemaPath(MosaicKYCAPI) },
-      ],
-    },
+    type: QuestionKYCAPI_v2,
   })
   async getQuestion_v2(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('questionId') questionId: string,
-  ): Promise<QuestionKYCAPI_v2 | MosaicKYCAPI> {
+  ): Promise<QuestionKYCAPI_v2> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.questionKYCUsecase.getQuestion(
       utilisateurId,
       questionId,
     );
-    if (result.kyc) {
-      return QuestionKYCAPI_v2.mapToAPI(result.kyc);
-    } else {
-      return MosaicKYCAPI.mapToAPI(result.mosaic);
-    }
+    return QuestionKYCAPI_v2.mapToAPI(result);
   }
 
   @ApiOperation({
-    summary: 'Retourne une liste de questions à enchainer',
+    deprecated: true,
+    summary: 'DEPRECATED : Retourne une liste de questions à enchainer',
   })
   @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
   @UseGuards(AuthGuard)
@@ -157,17 +170,39 @@ export class QuestionsKYCController extends GenericControler {
       utilisateurId,
       enchainementId,
     );
-    return result.liste_questions.map((q) => {
-      if (q.kyc) {
-        return QuestionKYCAPI.mapToAPI(q.kyc);
+    return result.map((q) => {
+      if (q.isMosaic()) {
+        return MosaicKYCAPI.mapToAPI(q);
       } else {
-        return MosaicKYCAPI.mapToAPI(q.mosaic);
+        return QuestionKYCAPI.mapToAPI(q);
       }
     });
   }
 
   @ApiOperation({
-    summary: "Met à jour la réponse de la question d'id donné",
+    summary: 'Retourne une liste de questions à enchainer',
+  })
+  @Get(
+    'utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: [QuestionKYCAPI_v2] })
+  async getEnchainementQuestions_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('enchainementId') enchainementId: string,
+  ): Promise<QuestionKYCAPI_v2[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.questionKYCUsecase.getEnchainementQuestions(
+      utilisateurId,
+      enchainementId,
+    );
+    return result.map((q) => QuestionKYCAPI_v2.mapToAPI(q));
+  }
+
+  @ApiOperation({
+    deprecated: true,
+    summary: "DEPRECATED : Met à jour la réponse de la question d'id donné",
   })
   @ApiBody({
     schema: {
@@ -186,7 +221,7 @@ export class QuestionsKYCController extends GenericControler {
     @Body() body: ReponseKYCAPI | ReponseKYCMosaicAPI,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    if (MosaicKYC.isMosaicID(questionId)) {
+    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
       await this.questionKYCUsecase.updateResponseMosaic(
         utilisateurId,
         questionId,
@@ -197,6 +232,36 @@ export class QuestionsKYCController extends GenericControler {
         utilisateurId,
         questionId,
         (body as ReponseKYCAPI).reponse,
+      );
+    }
+  }
+
+  @ApiOperation({
+    summary: "Met à jour la réponse de la question d'id donné",
+  })
+  @ApiBody({
+    type: [ReponseKYCAPI_v2],
+  })
+  @Put('utilisateurs/:utilisateurId/questionsKYC_v2/:questionId')
+  @UseGuards(AuthGuard)
+  async updateResponse_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('questionId') questionId: string,
+    @Body() body: ReponseKYCAPI_v2[],
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
+      await this.questionKYCUsecase.updateResponseMosaic_v2(
+        utilisateurId,
+        questionId,
+        body,
+      );
+    } else {
+      await this.questionKYCUsecase.updateResponseKYC_v2(
+        utilisateurId,
+        questionId,
+        body,
       );
     }
   }

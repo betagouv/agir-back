@@ -66,7 +66,7 @@ export class EventUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     utilisateur.history.defavoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -75,7 +75,7 @@ export class EventUsecase {
   private async processArticleFavoris(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     utilisateur.history.favoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -84,7 +84,7 @@ export class EventUsecase {
   private async processLike(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
@@ -175,7 +175,7 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
@@ -207,7 +207,7 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.gamification,
         Scope.missions,
         Scope.kyc,

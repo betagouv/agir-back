@@ -16,6 +16,7 @@ import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import validator from 'validator';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 
 export type Phrase = {
   phrase: string;
@@ -115,8 +116,7 @@ export class ProfileUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateur.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -211,7 +211,7 @@ export class ProfileUsecase {
 
   async liste5questOnboarding(): Promise<string[]> {
     const result = [];
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
+    const kyc_catalogue = KycRepository.getCatalogue();
     let count_onboarding_7_done = 0;
     let count_onboarding_non_done = 0;
 
@@ -230,7 +230,7 @@ export class ProfileUsecase {
               'ENCHAINEMENT_KYC_mini_bilan_carbone'
             ],
           );
-        if (enchainement_mini_bilan.getProgression().current === 7) {
+        if (QuestionKYC.getProgression(enchainement_mini_bilan).current === 7) {
           count_onboarding_7_done++;
         } else {
           result.push(

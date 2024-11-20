@@ -10,10 +10,12 @@ import _situationNGCTest from './situationNGCtest.json';
 import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -68,7 +70,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(user.logement.code_postal).toEqual(null);
     expect(user.logement.commune).toEqual(null);
-    expect(user.unlocked_features.isUnlocked(Feature.univers)).toEqual(true);
+    expect(user.unlocked_features.unlocked_features).toHaveLength(0);
   });
   it('POST /utilisateurs_v2 - no user version defaults to 0', async () => {
     // GIVEN
@@ -432,6 +434,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       ],
       ngc_key: 'logement . chauffage . bois . présent',
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -464,14 +467,14 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     );
     expect(kyc_voiture).not.toBeUndefined();
     expect(kyc_voiture.hasAnyResponses()).toEqual(true);
-    expect(kyc_voiture.listeReponsesLabels()).toEqual(['20000']);
+    expect(kyc_voiture.getReponseSimpleValueAsNumber()).toEqual(20000);
 
     const kyc_bois = user.kyc_history.getAnsweredQuestionByCode(
       KYCID.KYC_chauffage_bois,
     );
     expect(kyc_bois).not.toBeUndefined();
     expect(kyc_bois.hasAnyResponses()).toEqual(true);
-    expect(kyc_bois.listeReponsesLabels()).toEqual(['Oui']);
+    expect(kyc_bois.getCodeReponseQuestionChoixUnique()).toEqual('oui');
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => set id utilisateur sur situation`, async () => {
@@ -595,6 +598,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       reponses: [],
       ngc_key: 'logement . surface',
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -664,6 +668,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       ],
       ngc_key: 'alimentation . local . consommation',
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -775,6 +780,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         { label: 'Ne sais pas', code: 'ne_sais_pas' },
       ],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()

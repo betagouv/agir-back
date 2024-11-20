@@ -71,6 +71,8 @@ model Utilisateur {
   source_inscription         String    @default("web")
   unsubscribe_mail_token     String?   @unique
   est_valide_pour_classement Boolean   @default(true)
+  brevo_created_at           DateTime? @db.Timestamptz(3)
+  brevo_updated_at           DateTime? @db.Timestamptz(3)
 }
 
 model Statistique {
@@ -186,10 +188,13 @@ model Aide {
   titre                 String
   contenu               String
   url_simulateur        String?
+  url_source            String?
+  url_demande           String?
   is_simulateur         Boolean?
   codes_postaux         String[] @default([])
   thematiques           String[] @default([])
   montant_max           Int?
+  echelle               String?
   besoin                String?
   besoin_desc           String?
   include_codes_commune String[] @default([])
@@ -281,41 +286,27 @@ model BilanCarboneStatistique {
 }
 
 model Thematique {
-  id         String   @id
   id_cms     Int      @unique
-  titre      String
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-}
-
-model Univers {
-  id_cms     Int      @unique
-  code       String
+  code       String   @default("missing")
+  emoji      String?
   label      String?
+  titre      String?
   image_url  String?
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
-model ThematiqueUnivers {
-  id_cms         Int      @unique
-  code           String
-  label          String?
-  image_url      String?
-  niveau         Int?     @default(0)
-  univers_parent String?
-  famille_id_cms Int      @default(0)
-  famille_ordre  Int      @default(0)
-  created_at     DateTime @default(now()) @db.Timestamptz(3)
-  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
 model Mission {
-  id_cms             Int      @unique
-  thematique_univers String?  @unique
-  objectifs          Json     @default("{}")
-  est_visible        Boolean
-  created_at         DateTime @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms      Int      @unique
+  image_url   String?
+  titre       String?
+  code        String?
+  is_first    Boolean?
+  thematique  String?
+  objectifs   Json     @default("{}")
+  est_visible Boolean
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model KYC {
@@ -325,6 +316,7 @@ model KYC {
   categorie      String
   points         Int
   is_ngc         Boolean
+  a_supprimer    Boolean  @default(false)
   ngc_key        String?
   question       String
   short_question String?

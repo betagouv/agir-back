@@ -1,7 +1,7 @@
 import { TestUtil } from '../../TestUtil';
 import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../src/domain/univers/univers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('StatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -30,9 +30,9 @@ describe('StatistiqueRepository', () => {
       3,
       2,
       1,
-      ThematiqueUnivers.cereales,
+      CodeMission.cereales,
       null,
-      `${Univers.alimentation}, ${Univers.consommation}`,
+      `${Thematique.alimentation}, ${Thematique.consommation}`,
       null,
     );
 
@@ -51,9 +51,9 @@ describe('StatistiqueRepository', () => {
       nombre_defis_abandonnes: 2,
       nombre_defis_pas_envie: 1,
       thematiques_en_cours: null,
-      thematiques_terminees: ThematiqueUnivers.cereales,
+      thematiques_terminees: CodeMission.cereales,
       univers_en_cours: null,
-      univers_termines: `${Univers.alimentation}, ${Univers.consommation}`,
+      univers_termines: `${Thematique.alimentation}, ${Thematique.consommation}`,
     });
   });
 });

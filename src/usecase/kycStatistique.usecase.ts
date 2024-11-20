@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KycStatistiqueRepository } from '../../src/infrastructure/repository/kycStatistique.repository';
-import { KYCReponse } from 'src/domain/kyc/questionKYC';
 import { Scope } from '../domain/utilisateur/utilisateur';
 
 @Injectable()
@@ -22,21 +21,15 @@ export class KycStatistiqueUsecase {
       );
 
       for (const question of utilisateur.kyc_history.answered_questions) {
+        const label_reponse = question.getSelectedLabels();
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
           utilisateurId,
-          question.id,
+          question.code,
           question.question,
-          this.ordonneReponse(question.reponses),
+          label_reponse.sort().join(', '),
         );
       }
     }
     return [];
-  }
-
-  private ordonneReponse(reponses: KYCReponse[]): string {
-    return reponses
-      .map((reponse) => reponse.label)
-      .sort()
-      .join(', ');
   }
 }

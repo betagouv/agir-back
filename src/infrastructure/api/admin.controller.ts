@@ -16,7 +16,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
@@ -30,8 +29,8 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistiq
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
 import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from '../../../src/usecase/thematiqueStatistique.usecase';
-import { UniversStatistiqueUsecase } from '../../../src/usecase/universStatistique.usecase';
+import { MissionStatistiqueUsecase } from '../../usecase/missionStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../usecase/thematiqueStatistique.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
@@ -57,7 +56,6 @@ export class AdminController extends GenericControler {
     private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
-    private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -66,8 +64,8 @@ export class AdminController extends GenericControler {
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
+    private missionStatistiqueUsecase: MissionStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
-    private universStatistiqueUsecase: UniversStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
   ) {
     super();
@@ -132,84 +130,6 @@ export class AdminController extends GenericControler {
     const result = await this.linkyUsecase.cleanLinkyData();
 
     return { result: `Cleaned ${result} PRMs` };
-  }
-
-  @Post('/admin/load_articles_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les articles publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSArticles(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadArticlesFromCMS();
-  }
-
-  @Post('/admin/load_univers_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les univers publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSUnivers(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadUniversFromCMS();
-  }
-
-  @Post('/admin/load_thematiqueUnivers_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les thematiques_univers publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSThematiqueUnivers(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadThematiquesUniversFromCMS();
-  }
-
-  @Post('/admin/load_missions_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les missions publiées du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSMissions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadMissionsFromCMS();
-  }
-  @Post('/admin/load_kycs_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les KYCs publiées du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllKYCMissions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadKYCFromCMS();
-  }
-  @Post('/admin/load_defi_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les défis publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSDefis(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadDefisFromCMS();
-  }
-
-  @Post('/admin/load_quizzes_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les quizz publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSquizzes(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadQuizzFromCMS();
-  }
-
-  @Post('/admin/load_aides_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toures les aides publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSaides(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadAidesFromCMS();
   }
 
   @Post('/admin/upsert_service_definitions')
@@ -328,7 +248,7 @@ export class AdminController extends GenericControler {
   })
   async calcul_thematique_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.thematiqueStatistiqueUsecase.calculStatistique();
+    return await this.missionStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/univers-statistique')
@@ -337,7 +257,7 @@ export class AdminController extends GenericControler {
   })
   async calcul_univers_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.universStatistiqueUsecase.calculStatistique();
+    return await this.thematiqueStatistiqueUsecase.calculStatistique();
   }
   @Get('/admin/prenoms_a_valider')
   @ApiOperation({
@@ -381,5 +301,14 @@ export class AdminController extends GenericControler {
   ): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
+  }
+
+  @Post('/admin/create_brevo_contacts')
+  @ApiOperation({
+    summary: `crée les contacts manquants dans Brevo`,
+  })
+  async create_brevo_contacts(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.createMissingContacts();
   }
 }

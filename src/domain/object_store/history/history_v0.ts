@@ -5,6 +5,7 @@ import {
 import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
 import { History } from '../../../../src/domain/history/history';
 import { Versioned } from '../versioned';
+import { AideHistory } from '../../history/aideHistory';
 
 export class ArticleHistory_v0 {
   content_id: string;
@@ -35,7 +36,19 @@ export class QuizzAttempt_v0 {
     };
   }
 }
+export class AideHistory_v0 {
+  content_id: string;
+  clicked_infos: boolean;
+  clicked_demande: boolean;
 
+  static map(elem: AideHistory): AideHistory_v0 {
+    return {
+      content_id: elem.content_id,
+      clicked_infos: elem.clicked_infos,
+      clicked_demande: elem.clicked_demande,
+    };
+  }
+}
 export class QuizzHistory_v0 {
   content_id: string;
   attempts: QuizzAttempt_v0[];
@@ -55,6 +68,7 @@ export class QuizzHistory_v0 {
 export class History_v0 extends Versioned {
   article_interactions: ArticleHistory_v0[];
   quizz_interactions: QuizzHistory_v0[];
+  aide_interactions: AideHistory_v0[];
 
   static serialise(domain: History): History_v0 {
     return {
@@ -64,6 +78,9 @@ export class History_v0 extends Versioned {
       ),
       quizz_interactions: domain.quizz_interactions.map((elem) =>
         QuizzHistory_v0.map(elem),
+      ),
+      aide_interactions: domain.aide_interactions.map((elem) =>
+        AideHistory_v0.map(elem),
       ),
     };
   }

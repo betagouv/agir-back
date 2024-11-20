@@ -6,7 +6,6 @@ import {
   Unite,
 } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
@@ -33,10 +32,11 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
+        a_supprimer: false,
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        thematiques: [Thematique.alimentation],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
         ngc_key: 'a . b . c',
@@ -83,10 +83,12 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC001,
         is_ngc: false,
+        a_supprimer: false,
+
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        thematiques: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -142,10 +144,12 @@ describe('UseragEvaluator', () => {
         categorie: Categorie.recommandation,
         code: KYCID.KYC_preference,
         is_ngc: false,
+        a_supprimer: false,
+
         points: 10,
         question: 'The question !',
         tags: [Tag.possede_voiture],
-        universes: [Univers.alimentation],
+        thematiques: [Thematique.alimentation],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
         type: TypeReponseQuestionKYC.choix_multiple,

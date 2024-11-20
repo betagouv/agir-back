@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
-import { Thematique } from '../src/domain/contenu/thematique';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 const request = require('supertest');
@@ -14,10 +13,8 @@ import { ThematiqueRepository } from '../src/infrastructure/repository/thematiqu
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
-import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { KYCHistory_v0 } from '../src/domain/object_store/kyc/kycHistory_v0';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
@@ -27,10 +24,9 @@ import {
 } from '../src/domain/logement/logement';
 import {
   SituationNGC,
-  Univers as UniversDB,
-  ThematiqueUnivers as ThematiqueUniversDB,
   Mission,
   KYC,
+  Thematique as ThematiqueDB,
 } from '.prisma/client';
 import {
   Aide,
@@ -49,8 +45,7 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { Univers } from '../src/domain/univers/univers';
-import { ThematiqueUnivers } from '../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../src/domain/thematique/codeMission';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -61,6 +56,9 @@ import {
 } from '../src/domain/utilisateur/utilisateur';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
+import { Thematique } from '../src/domain/contenu/thematique';
+import { KYCHistory_v1 } from '../src/domain/object_store/kyc/kycHistory_v1';
+import { History_v0 } from '../src/domain/object_store/history/history_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -71,8 +69,6 @@ export enum DB {
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
-  univers = 'univers',
-  thematiqueUnivers = 'thematiqueUnivers',
   linky = 'linky',
   article = 'article',
   quizz = 'quizz',
@@ -94,8 +90,6 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     quizz: TestUtil.quizzData,
-    univers: TestUtil.universData,
-    thematiqueUnivers: TestUtil.thematiqueUniversData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
@@ -186,8 +180,6 @@ export class TestUtil {
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
     await this.prisma.defiStatistique.deleteMany();
-    await this.prisma.univers.deleteMany();
-    await this.prisma.thematiqueUnivers.deleteMany();
     await this.prisma.quizStatistique.deleteMany();
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
@@ -220,10 +212,14 @@ export class TestUtil {
         id: 123,
         titre: 'titre',
         sousTitre: 'soustitre 222',
-        thematique_principale: { id: 1, titre: 'Alimentation' },
+        thematique_principale: {
+          id: 1,
+          titre: 'Alimentation',
+          code: Thematique.alimentation,
+        },
         thematiques: [
-          { id: 1, titre: 'Alimentation' },
-          { id: 2, titre: 'Climat' },
+          { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
+          { id: 2, titre: 'Climat', code: Thematique.climat },
         ],
         rubriques: [
           { id: 1, titre: 'A' },
@@ -304,6 +300,9 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
+      echelle: 'National',
+      url_source: 'https://hello',
+      url_demande: 'https://demande',
       ...override,
     };
   }
@@ -317,8 +316,8 @@ export class TestUtil {
       sous_titre: 'ssss',
       tags: [TagUtilisateur.appetence_cafe],
       thematique: Thematique.consommation,
-      universes: [Univers.alimentation],
-      thematiquesUnivers: [ThematiqueUnivers.manger_local],
+      universes: [Thematique.alimentation],
+      thematiquesUnivers: [CodeMission.manger_local],
       created_at: undefined,
       updated_at: undefined,
       categorie: Categorie.recommandation,
@@ -332,8 +331,12 @@ export class TestUtil {
   static missionData(override?: Partial<Mission>): Mission {
     return {
       id_cms: 1,
-      thematique_univers: ThematiqueUnivers.cereales,
       est_visible: true,
+      thematique: Thematique.alimentation,
+      code: 'code',
+      image_url: 'https://theimage',
+      titre: 'the title',
+      is_first: false,
       objectifs: [
         {
           titre: 'obj 1',
@@ -362,10 +365,11 @@ export class TestUtil {
       categorie: Categorie.recommandation,
       code: KYCID.KYC001,
       is_ngc: false,
+      a_supprimer: false,
       points: 10,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Univers.alimentation],
+      universes: [Thematique.alimentation],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_multiple,
       ngc_key: 'a . b . c',
@@ -410,7 +414,7 @@ export class TestUtil {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.todo,
-          universes: [Univers.climat],
+          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -422,34 +426,43 @@ export class TestUtil {
       ],
     };
 
-    const kyc: KYCHistory_v0 = {
-      version: 0,
+    const kyc: KYCHistory_v1 = {
+      version: 1,
       answered_mosaics: [],
       answered_questions: [
         {
-          id: KYCID._2,
+          code: KYCID._2,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-          ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              value: 'oui',
+              ngc_code: '123',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              value: 'oui',
+              ngc_code: '123',
+            },
           ],
           tags: [],
-          universes: [Univers.climat],
+          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
           unite: Unite.euro,
           emoji: '🎉',
+          ngc_key: '1223',
+          thematique: Thematique.climat,
+          reponse_simple: undefined,
         },
       ],
     };
@@ -459,6 +472,7 @@ export class TestUtil {
       version: 0,
       article_interactions: [],
       quizz_interactions: [],
+      aide_interactions: [],
     };
 
     const notifications: NotificationHistory_v0 = {
@@ -552,39 +566,14 @@ export class TestUtil {
       ...override,
     };
   }
-  static thematiqueData(override?): Thematique {
+  static thematiqueData(override?): ThematiqueDB {
     return {
-      id: 'thematique-id',
-      id_cms: 1,
+      code: Thematique.alimentation,
       titre: 'titre',
-      ...override,
-    };
-  }
-  static universData(override?: Partial<UniversDB>): UniversDB {
-    return {
       id_cms: 1,
-      label: 'Le Climat !',
-      code: Univers.climat,
-      image_url: 'https://',
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-  static thematiqueUniversData(
-    override?: Partial<ThematiqueUniversDB>,
-  ): ThematiqueUniversDB {
-    return {
-      id_cms: 1,
-      label: `C'est bon les céréales`,
-      code: ThematiqueUnivers.cereales,
-      image_url: 'https://',
-      univers_parent: Univers.climat,
-      created_at: undefined,
-      updated_at: undefined,
-      niveau: 0,
-      famille_id_cms: 1,
-      famille_ordre: 0,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
       ...override,
     };
   }

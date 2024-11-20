@@ -1,6 +1,9 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { Mission_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import {
   SourceInscription,
   Utilisateur,
@@ -13,7 +16,11 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
       objectifs: [
         {
           content_id: '1',
@@ -49,7 +56,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -70,7 +76,11 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
       objectifs: [
         {
           content_id: '1',
@@ -106,7 +116,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -124,8 +133,11 @@ describe('Missions', () => {
       est_visible: true,
       id: '123',
       objectifs: [],
-      thematique_univers: 'cereales',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
     });
 
     // WHEN
@@ -143,7 +155,11 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
       objectifs: [
         {
           content_id: '1',
@@ -179,7 +195,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -197,7 +212,11 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
       objectifs: [
         {
           content_id: '1',
@@ -233,7 +252,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -251,7 +269,11 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
       objectifs: [
         {
           content_id: '1',
@@ -298,7 +320,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -316,7 +337,12 @@ describe('Missions', () => {
       done_at: new Date(),
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+
       objectifs: [
         {
           content_id: '1',
@@ -363,7 +389,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -381,7 +406,12 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+
       objectifs: [
         {
           content_id: '1',
@@ -428,7 +458,6 @@ describe('Missions', () => {
           type: ContentType.defi,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -446,7 +475,12 @@ describe('Missions', () => {
       done_at: null,
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+
       objectifs: [
         {
           content_id: '1',
@@ -482,7 +516,6 @@ describe('Missions', () => {
           type: ContentType.quizz,
         },
       ],
-      thematique_univers: 'cereales',
     });
 
     // WHEN
@@ -496,46 +529,61 @@ describe('Missions', () => {
   });
   it('isUniversDone : ok si tout done', () => {
     // GIVEN
-    const m1 = new Mission({
+    const m1: Mission_v1 = {
       done_at: new Date(),
       est_visible: true,
       id: '123',
-      univers: 'alimentation',
       objectifs: [],
-      thematique_univers: 'cereales',
-    });
-    const m2 = new Mission({
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+    };
+    const m2: Mission_v1 = {
       done_at: new Date(),
       est_visible: true,
       id: '456',
-      univers: 'alimentation',
       objectifs: [],
-      thematique_univers: 'cereales',
-    });
-    const m3 = new Mission({
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      is_first: false,
+    };
+    const m3: Mission_v1 = {
       done_at: new Date(),
       est_visible: true,
       id: '1',
-      univers: 'climat',
       objectifs: [],
-      thematique_univers: 'cereales',
-    });
-    const m4 = new Mission({
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.climat,
+      titre: 'titre',
+      is_first: false,
+    };
+    const m4: Mission_v1 = {
       done_at: null,
       est_visible: true,
       id: '2',
-      univers: 'climat',
       objectifs: [],
-      thematique_univers: 'cereales',
-    });
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.climat,
+      titre: 'titre',
+      is_first: false,
+    };
 
     const missionsUtilisateur = new MissionsUtilisateur({
-      version: 0,
+      version: 1,
       missions: [m1, m2, m3, m4],
     });
     // THEN
-    expect(missionsUtilisateur.isUniversDone('alimentation')).toEqual(true);
-    expect(missionsUtilisateur.isUniversDone('climat')).toEqual(false);
-    expect(missionsUtilisateur.isUniversDone('anything')).toEqual(false);
+    expect(
+      missionsUtilisateur.isThematiqueDone(Thematique.alimentation),
+    ).toEqual(true);
+    expect(missionsUtilisateur.isThematiqueDone(Thematique.climat)).toEqual(
+      false,
+    );
   });
 });

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class UniversStatistiqueRepository {
+export class ThematiqueStatistiqueRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsertUniversStatistiques(
+  async upsert(
     universId: string,
     titre: string,
     completionPourcentage1_20: number,

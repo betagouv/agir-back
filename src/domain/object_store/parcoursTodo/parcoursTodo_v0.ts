@@ -1,11 +1,10 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { ParcoursTodo } from '../../todo/parcoursTodo';
 import { Thematique } from '../../contenu/thematique';
 import { ContentType } from '../../contenu/contentType';
 import { DifficultyLevel } from '../../contenu/difficultyLevel';
 import { Todo, TodoElement } from '../../todo/todo';
 import { Celebration_v0 } from '../gamification/gamification_v0';
-import { QuestionGeneric } from '../../kyc/questionGeneric';
 
 export class TodoElement_v0 {
   id: string;
@@ -66,7 +65,7 @@ export class Todo_v0 {
   }
 }
 
-export class ParcoursTodo_v0 extends Versioned {
+export class ParcoursTodo_v0 extends Versioned_v0 {
   liste_todo: Todo_v0[];
   todo_active: number;
 

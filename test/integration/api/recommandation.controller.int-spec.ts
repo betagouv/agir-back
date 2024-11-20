@@ -12,12 +12,12 @@ import {
 import { DB, TestUtil } from '../../TestUtil';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { ThematiqueUnivers } from '../../../src/domain/univers/thematiqueUnivers';
-import { Univers } from '../../../src/domain/univers/univers';
+import { CodeMission } from '../../../src/domain/thematique/codeMission';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -31,12 +31,12 @@ const DEFI_1: Defi_v0 = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   status: DefiStatus.en_cours,
-  universes: [Univers.climat],
+  universes: [Thematique.climat],
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
   mois: [],
-  conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
   sont_points_en_poche: true,
   impact_kg_co2: 5,
 };
@@ -49,8 +49,8 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Univers.climat],
-  thematiquesUnivers: [ThematiqueUnivers.dechets_compost],
+  universes: [Thematique.climat],
+  thematiquesUnivers: [CodeMission.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
@@ -60,6 +60,7 @@ const DEFI_1_DEF: Defi = {
 };
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
+  const kycRepository = new KycRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {
@@ -68,6 +69,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await kycRepository.loadDefinitions();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     process.env = { ...OLD_ENV }; // Make a copy
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
@@ -350,6 +352,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         answered_questions: [],
       },
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -602,7 +605,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       tags: [Tag.R6, Tag.R1],
       universes: [],
     });
-
+    await kycRepository.loadDefinitions();
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -812,6 +815,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       rubrique_ids: ['6', '5'],
       categorie: Categorie.mission,
     });
+    await kycRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations',
@@ -930,6 +934,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['6', '5'],
     });
+
+    await kycRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations_v2',
@@ -964,7 +970,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -977,7 +983,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Univers.logement],
+      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {
@@ -1009,6 +1015,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       thematiques: [Thematique.logement],
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations_v2?univers=logement',
@@ -1041,7 +1049,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Univers.climat],
+      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1054,7 +1062,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Univers.logement],
+      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {
@@ -1090,10 +1098,13 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematiques: [Thematique.logement],
       categorie: Categorie.mission,
     });
+    await kycRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations_v2?univers=logement',
     );
+
     // THEN
     expect(response.status).toBe(200);
 

@@ -4,10 +4,10 @@ import Engine, { ParsedRules, PublicodesError } from 'publicodes';
 import {
   BilanCarbone,
   DetailImpact,
-  ImpactUnivers,
+  ImpactThematique,
 } from '../../domain/bilan/bilanCarbone';
-import { Univers } from '../../domain/univers/univers';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
+import { Thematique } from '../../domain/contenu/thematique';
 
 @Injectable()
 export class NGCCalculator {
@@ -271,10 +271,10 @@ export class NGCCalculator {
       'services sociétaux . services marchands',
     );
 
-    const impacts: ImpactUnivers[] = [];
+    const impacts: ImpactThematique[] = [];
     impacts.push({
       pourcentage: Math.round((transport / total) * 100),
-      univers: Univers.transport,
+      thematique: Thematique.transport,
       impact_kg_annee: transport,
       emoji: '🚦',
       details: [
@@ -354,7 +354,7 @@ export class NGCCalculator {
     });
     impacts.push({
       pourcentage: Math.round((logement / total) * 100),
-      univers: Univers.logement,
+      thematique: Thematique.logement,
       impact_kg_annee: logement,
       emoji: '🏠',
       details: [
@@ -415,7 +415,7 @@ export class NGCCalculator {
     });
     impacts.push({
       pourcentage: Math.round((divers / total) * 100),
-      univers: Univers.consommation,
+      thematique: Thematique.consommation,
       impact_kg_annee: divers,
       emoji: '📦',
       details: [
@@ -483,7 +483,7 @@ export class NGCCalculator {
     });
     impacts.push({
       pourcentage: Math.round((alimentation / total) * 100),
-      univers: Univers.alimentation,
+      thematique: Thematique.alimentation,
       impact_kg_annee: alimentation,
       emoji: '🍴',
       details: [
@@ -539,7 +539,7 @@ export class NGCCalculator {
 
     impacts.push({
       pourcentage: Math.round((services_societaux / total) * 100),
-      univers: Univers.services_societaux,
+      thematique: Thematique.services_societaux,
       impact_kg_annee: services_societaux,
       emoji: '🏛️',
       details: [
@@ -568,7 +568,7 @@ export class NGCCalculator {
 
     return new BilanCarbone({
       impact_kg_annee: total,
-      impact_univers: impacts,
+      impact_thematique: impacts,
       top_3: top_3,
     });
   }
@@ -578,14 +578,16 @@ export class NGCCalculator {
     return result ? result : 0;
   }
 
-  private sortResult(liste: ImpactUnivers[]) {
+  private sortResult(liste: ImpactThematique[]) {
     liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    for (const univers of liste) {
-      univers.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+    for (const thematique of liste) {
+      thematique.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
     }
   }
 
-  private computeTop3Details(liste_impacts: ImpactUnivers[]): DetailImpact[] {
+  private computeTop3Details(
+    liste_impacts: ImpactThematique[],
+  ): DetailImpact[] {
     let liste_details: DetailImpact[] = [];
     for (const cat of liste_impacts) {
       liste_details = liste_details.concat(cat.details);

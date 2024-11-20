@@ -12,7 +12,7 @@ export class DefiDefinition {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
-  universes: string[];
+  universes: string[]; // FIXME : A SUPPRIMER
   thematiques_univers: string[];
   categorie: Categorie;
   mois: number[];

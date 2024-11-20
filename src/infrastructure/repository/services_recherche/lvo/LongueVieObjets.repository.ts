@@ -7,9 +7,7 @@ import { ResultatRecherche } from '../../../../domain/bibliotheque_services/rech
 import { ApplicationError } from '../../../applicationError';
 import { LongueVieObjetsCategorieMapping } from './LongueVieObjetsCategorieMapping';
 import { AddressesRepository } from '../addresses.repository';
-
-const API_URL =
-  'https://quefairedemesobjets-preprod.osc-fr1.scalingo.io/api/qfdmo/acteurs';
+import { App } from '../../../../domain/app';
 
 export type LVOResponse = {
   items: [
@@ -135,7 +133,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
     }
 
     try {
-      response = await axios.get(API_URL, {
+      response = await axios.get(App.getLVO_API_URL(), {
         timeout: LongueVieObjetsRepository.API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',

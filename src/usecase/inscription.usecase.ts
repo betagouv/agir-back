@@ -58,8 +58,7 @@ export class InscriptionUsecase {
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
-    const kyc_catalogue = await this.kycRepository.getAllDefs();
-    utilisateurToCreate.kyc_history.setCatalogue(kyc_catalogue);
+    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (utilisateurInput.situation_ngc_id) {
       utilisateurToCreate.parcours_todo.dropLastMission();
@@ -113,7 +112,6 @@ export class InscriptionUsecase {
     const codeOkAction = async () => {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
-      await _this.contactUsecase.create(utilisateur);
 
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,

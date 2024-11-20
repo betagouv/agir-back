@@ -22,6 +22,9 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ApplicationError } from '../applicationError';
+import { App } from '../../domain/app';
 
 @Controller()
 @ApiBearerAuth()
@@ -88,18 +91,42 @@ export class DefisController extends GenericControler {
   })
   @ApiOperation({
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur, aggrégation des défis dispo via les différents univers / thémtiques",
+      "Retourne l'ensemble des défis de l'utilisateur débloqués dans des missions, filtrage par status disponible, tout status sauf todo par défaut",
+  })
+  @ApiQuery({
+    name: 'thematique',
+    enum: Thematique,
+    enumName: 'thematique',
+    required: false,
+    description: `filtrage par une thematique`,
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: DefiStatus,
+    enumName: 'status',
+    isArray: true,
+    required: false,
+    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
   })
   async getAllUserDefi_2(
     @Request() req,
+    @Query('status') status,
+    @Query('thematique') thematique: string,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getAllDefis_v2(utilisateurId);
+    let them;
+    if (thematique) {
+      them = this.castThematiqueOrException(thematique);
+    }
+    const result = await this.defisUsecase.getAllDefis_v2(
+      utilisateurId,
+      them,
+      status,
+    );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
-  
   @Get('utilisateurs/:utilisateurId/defis')
   @ApiQuery({
     name: 'univers',
@@ -126,8 +153,9 @@ export class DefisController extends GenericControler {
     type: [DefiAPI],
   })
   @ApiOperation({
+    deprecated: true,
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc)",
+      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur (en cours, fait, abandonné, etc))",
   })
   async getAllUserDefi(
     @Request() req,
@@ -137,7 +165,7 @@ export class DefisController extends GenericControler {
     @Query('accessible') accessible: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getALLUserDefi(
+    const result = await this.defisUsecase.getALLUserDefi_deprecated(
       utilisateurId,
       status ? status : [],
       univers ? univers : undefined,
@@ -152,8 +180,9 @@ export class DefisController extends GenericControler {
     type: [DefiAPI],
   })
   @ApiOperation({
+    deprecated: true,
     summary:
-      "Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers",
+      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers)",
   })
   async getAllUserDefiInUnivers(
     @Request() req,
@@ -161,9 +190,43 @@ export class DefisController extends GenericControler {
     @Param('universId') universId: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getDefisOfUnivers(
+    const result = await this.defisUsecase.getDefisOfUnivers_deprecated(
       utilisateurId,
       universId,
+    );
+    return result.map((element) => DefiAPI.mapToAPI(element));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [DefiAPI],
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: DefiStatus,
+    enumName: 'status',
+    isArray: true,
+    required: false,
+    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
+  })
+  @ApiOperation({
+    deprecated: true,
+    summary:
+      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur visible pour une thematique donnée et débloqués par une mission, défi en_cours par défaut)",
+  })
+  async getAllUserDefisByThematique(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+    @Query('status') status: string[],
+  ): Promise<DefiAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = this.castThematiqueOrException(code_thematique);
+    const result = await this.defisUsecase.getDefisOfThematique_deprecated(
+      utilisateurId,
+      them,
+      status,
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }

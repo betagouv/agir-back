@@ -23,13 +23,13 @@ import { Categorie } from '../../domain/contenu/categorie';
 import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { MissionDefinition } from '../../domain/mission/missionDefinition';
-import { UniversUsecase } from '../../usecase/univers.usecase';
+import { MissionUsecase } from '../../usecase/mission.usecase';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
-import { AuthGuard } from '../auth/guard';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { App } from '../../domain/app';
 import axios from 'axios';
-import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookEntryAPI';
+import { Thematique } from '../../domain/contenu/thematique';
+import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
 
@@ -42,7 +42,7 @@ export class PreviewController extends GenericControler {
     private nGCCalculator: NGCCalculator,
     private missionRepository: MissionRepository,
     private articleRepository: ArticleRepository,
-    private universUsecase: UniversUsecase,
+    private missionUsecase: MissionUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {
@@ -225,7 +225,7 @@ export class PreviewController extends GenericControler {
     DATA.catgorie = kyc_def.categorie;
     DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.universes;
+    DATA.universes = kyc_def.thematiques;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
@@ -310,7 +310,7 @@ export class PreviewController extends GenericControler {
     if (!this.checkAuthHeaderOK(authorization)) {
       return this.returnBadOreMissingLoginError(res);
     }
-    let all_kyc_defs = await this.kycRepository.getAllDefs();
+    let all_kyc_defs = KycRepository.getCatalogue();
     let all_mission_defs = await this.missionRepository.list();
     let result = [];
 
@@ -464,7 +464,7 @@ export class PreviewController extends GenericControler {
     let index = 0;
     const last = list_mission_with_kyc.length - 1;
     for (const mission_def of list_mission_with_kyc) {
-      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.thematique_univers}</a>`;
+      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.code}</a>`;
       if (index !== last) {
         line += ' |';
       }
@@ -507,16 +507,17 @@ export class PreviewController extends GenericControler {
     result.push('##################################################');
     result.push(``);
     result.push(
-      `Titre : ${ThematiqueRepository.getTitreThematiqueUnivers(
-        mission_def.thematique_univers,
-      )}`,
+      `Titre : ${MissionRepository.getTitreByCode(mission_def.code)}`,
     );
     result.push(
       `Univers : <a href="/univers_preview/${
-        ThematiqueRepository.getTuileUnivers(mission_def.univers).id_cms
-      }">${ThematiqueRepository.getTitreUnivers(mission_def.univers)}</a>`,
+        mission_def.thematique
+      }">${ThematiqueRepository.getTitreThematique(
+        mission_def.thematique,
+      )}</a>`,
     );
-    result.push(`Est visible : ${mission_def.est_visible}`);
+    result.push(`Est visible                : ${mission_def.est_visible}`);
+    result.push(`Est première dans la liste : ${mission_def.est_visible}`);
 
     await this.dump_mission(result, mission_def);
 
@@ -549,7 +550,9 @@ export class PreviewController extends GenericControler {
           } else {
             result.push(``);
             result.push(
-              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${kyc_def.id_cms}]`,
+              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${
+                kyc_def.id_cms
+              }] ${kyc_def.a_supprimer ? '[🔥🔥🔥 FLAG A SUPPRIMER]' : ''}`,
             );
 
             const DATA: any = {};
@@ -714,8 +717,7 @@ export class PreviewController extends GenericControler {
 
     let DATA: any = {};
 
-    const tuiles_univers = ThematiqueRepository.getAllTuileUnivers();
-    tuiles_univers.sort((a, b) => a.id_cms - b.id_cms);
+    const all_thematiques = Object.values(Thematique);
 
     result.push(`
 
@@ -729,24 +731,29 @@ export class PreviewController extends GenericControler {
 
 `);
 
-    for (const univers of tuiles_univers) {
+    for (const thematique of all_thematiques) {
       const preview_univers = await this.univers_preview(
-        univers.id_cms.toString(),
+        thematique,
         authorization,
         res,
         true,
       );
-      const prefix = ` Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`;
+      const prefix = ` Univers [${thematique}] - <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+        thematique,
+      )}</a>`;
       if (preview_univers.includes('🔥🔥🔥')) {
         result.push(
           ` ${prefix} ${this.getSpaceString(
-            65,
-            prefix.length,
+            80,
+            prefix.length - thematique.length,
           )}> HAS SOME 🔥🔥🔥`,
         );
       } else {
         result.push(
-          ` ${prefix} ${this.getSpaceString(65, prefix.length)}> LOOKS GOOD`,
+          ` ${prefix} ${this.getSpaceString(
+            80,
+            prefix.length - thematique.length,
+          )}> LOOKS GOOD`,
         );
       }
     }
@@ -796,43 +803,60 @@ export class PreviewController extends GenericControler {
 
   @Get('univers_preview/:id')
   async univers_preview(
-    @Param('id') id: string,
+    @Param('id') input_thematique: Thematique,
     @Headers('Authorization') authorization: string,
     @Response() res: Res,
     prevent_send?: boolean,
   ): Promise<any> {
+    if (!this.checkAuthHeaderOK(authorization)) {
+      return this.returnBadOreMissingLoginError(res);
+    }
+
     let result = [];
 
     let DATA: any = {};
 
-    const tuile_univers = ThematiqueRepository.getTuileUniversByCMS_ID(
-      parseInt(id),
-    );
     result.push(`
 
-██╗░░░██╗███╗░░██╗██╗██╗░░░██╗███████╗██████╗░░██████╗
-██║░░░██║████╗░██║██║██║░░░██║██╔════╝██╔══██╗██╔════╝
-██║░░░██║██╔██╗██║██║╚██╗░██╔╝█████╗░░██████╔╝╚█████╗░
-██║░░░██║██║╚████║██║░╚████╔╝░██╔══╝░░██╔══██╗░╚═══██╗
-╚██████╔╝██║░╚███║██║░░╚██╔╝░░███████╗██║░░██║██████╔╝
-░╚═════╝░╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░
+
+████████╗██╗░░██╗███████╗███╗░░░███╗░█████╗░████████╗██╗░██████╗░██╗░░░██╗███████╗░██████╗
+╚══██╔══╝██║░░██║██╔════╝████╗░████║██╔══██╗╚══██╔══╝██║██╔═══██╗██║░░░██║██╔════╝██╔════╝
+░░░██║░░░███████║█████╗░░██╔████╔██║███████║░░░██║░░░██║██║██╗██║██║░░░██║█████╗░░╚█████╗░
+░░░██║░░░██╔══██║██╔══╝░░██║╚██╔╝██║██╔══██║░░░██║░░░██║╚██████╔╝██║░░░██║██╔══╝░░░╚═══██╗
+░░░██║░░░██║░░██║███████╗██║░╚═╝░██║██║░░██║░░░██║░░░██║░╚═██╔═╝░╚██████╔╝███████╗██████╔╝
+░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░░░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░░░╚═════╝░╚══════╝╚═════╝░
 `);
 
-    const all_univers = ThematiqueRepository.getAllTuileUnivers();
-    all_univers.sort((a, b) => a.id_cms - b.id_cms);
+    const thematiqueDef =
+      ThematiqueRepository.getThematiqueDefinition(input_thematique);
+    const all_thematiques = ThematiqueRepository.getAllThematiques();
     result.push(`################################`);
     result.push(``);
-    for (const univers of all_univers) {
-      if (univers.id_cms.toString() === id) {
+    for (const thematique of all_thematiques) {
+      if (thematique === input_thematique) {
+        const prefix = `>> Thematique [${thematique}]`;
         result.push(
-          `>> Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
+          `${prefix} ${this.getSpaceString(
+            30,
+            prefix.length,
+          )} <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+            thematique,
+          )}</a>`,
         );
       } else {
+        const prefix = `   Thematique [${thematique}]`;
+        this.getSpaceString(25, prefix.length);
         result.push(
-          `   Univers [${univers.id_cms}] - <a href="/univers_preview/${univers.id_cms}">${univers.titre}</a>`,
+          `${prefix} ${this.getSpaceString(
+            30,
+            prefix.length,
+          )} <a href="/univers_preview/${thematique}">${ThematiqueRepository.getLibelleThematique(
+            thematique,
+          )}</a>`,
         );
       }
     }
+
     result.push(``);
     result.push(`################################`);
     result.push(``);
@@ -840,39 +864,42 @@ export class PreviewController extends GenericControler {
     result.push(``);
 
     result.push(`########################`);
-    result.push(`### UNIVERS ID_CMS : ${tuile_univers.id_cms}`);
+    result.push(
+      `### Thematique : ${ThematiqueRepository.getTitreThematique(
+        input_thematique,
+      )}`,
+    );
     result.push(`########################`);
     result.push(``);
-    DATA.titre = tuile_univers.titre;
-    DATA.code = tuile_univers.type;
+    DATA.id_cms = thematiqueDef.id_cms;
+    DATA.titre = thematiqueDef.titre;
+    DATA.label = thematiqueDef.label;
+    DATA.code = thematiqueDef.code;
+    DATA.emoji = thematiqueDef.emoji;
+    DATA.image_url = thematiqueDef.image_url;
     result.push(JSON.stringify(DATA, null, 2));
     result.push(``);
 
     result.push('###############################');
-    result.push(`# Liste Missions UNIVERS [${id}]`);
+    result.push(`# Liste Missions UNIVERS [${input_thematique}]`);
     result.push('###############################');
 
-    let tuiles_thema = ThematiqueRepository.getAllTuilesThematique(
-      tuile_univers.type,
-    );
+    let missions = this.missionRepository.getByThematique(input_thematique);
 
-    tuiles_thema = await this.universUsecase.ordonneTuilesThematiques(
-      tuiles_thema,
-    );
+    missions = this.missionUsecase.ordonneTuilesMission(missions);
 
-    for (const tuile_thema of tuiles_thema) {
-      const mission_def = await this.missionRepository.getByThematique(
-        tuile_thema.type,
-      );
+    for (const mission of missions) {
+      const mission_def = MissionRepository.getByCode(mission.code);
       if (mission_def) {
         result.push('');
-        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a> [GROUPE_${tuile_thema.famille_id_cms}]`;
+        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a>`;
         result.push(
           `${prefix} ${this.getSpaceString(65, prefix.length)}> ${
-            tuile_thema.titre
+            mission.titre
           }`,
         );
-        result.push(`Est visible : ${mission_def.est_visible}`);
+        result.push(`Est visible  : ${mission_def.est_visible}`);
+        result.push(`Est première : ${mission_def.is_first}`);
 
         const result2 = [];
         await this.dump_defis_of_mission(mission_def, result2);
@@ -898,10 +925,14 @@ export class PreviewController extends GenericControler {
           result.push(
             `🔥🔥🔥 ERREUR Inconnue, allez voir le détail de la mission`,
           );
+        if (ouput3.includes('🔥🔥🔥 FLAG A SUPPRIMER'))
+          result.push(
+            `🔥🔥🔥 La mission contient au moins une KYC 'à supprimer', c-à-d à ne plus utiliser`,
+          );
       } else {
         result.push('');
         result.push(
-          `🔥🔥🔥 Thematique sans mission [${tuile_thema.type}] - ${tuile_thema.titre}`,
+          `🔥🔥🔥 Thematique sans mission [${mission.code}] - ${mission.titre}`,
         );
         result.push('');
       }

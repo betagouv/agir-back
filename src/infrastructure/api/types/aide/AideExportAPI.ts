@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Aide } from '../../../../../src/domain/aides/aide';
+import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { Thematique } from '../../../../../src/domain/contenu/thematique';
 
 export class AideExportAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
+  @ApiProperty() echelle: string;
+  @ApiProperty() url_source: string;
+  @ApiProperty() url_demande: string;
   @ApiProperty() codes_postaux: string[];
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
   thematiques: Thematique[];
@@ -17,7 +20,7 @@ export class AideExportAPI {
   @ApiProperty() com_urbaine: string[];
   @ApiProperty() com_com: string[];
 
-  public static mapToAPI(aide: Aide): AideExportAPI {
+  public static mapToAPI(aide: AideDefinition): AideExportAPI {
     return {
       content_id: aide.content_id,
       titre: aide.titre,
@@ -31,6 +34,9 @@ export class AideExportAPI {
       com_urbaine: aide.cu,
       com_com: aide.cc,
       metropoles: aide.metropoles,
+      echelle: aide.echelle,
+      url_source: aide.url_source,
+      url_demande: aide.url_demande,
     };
   }
 }

@@ -27,10 +27,6 @@ const DATA_REVEAL: Record<Feature, { titre: string; description: string }> = {
     titre: 'Votre bilan environnemental',
     description: `Evaluez et mettez à jour votre bilan environnemental`,
   },
-  univers: {
-    titre: 'Vos univers à explorer',
-    description: `Retrouvez des programmes d'accompagnement sur les thématiques de la transition écologique`,
-  },
   bilan_carbone_detail: {
     titre: 'Le détail du bilan environnemental',
     description: `Votre empreinte détaillée, sur tous les sujets de la vie quotidienne`,

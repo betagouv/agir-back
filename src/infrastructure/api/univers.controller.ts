@@ -9,15 +9,17 @@ import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { UniversAPI } from './types/univers/UniversAPI';
-import { UniversUsecase } from '../../../src/usecase/univers.usecase';
 import { ThematiqueUniversAPI } from './types/univers/ThematiqueUniversAPI';
-import { Univers } from '../../domain/univers/univers';
+import { MissionUsecase } from '../../usecase/mission.usecase';
+import { Thematique } from '../../domain/contenu/thematique';
+import { ThematiqueRepository } from '../repository/thematique.repository';
+import { ThematiqueDefinition } from '../../domain/thematique/thematiqueDefinition';
 
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Univers')
 export class UniversController extends GenericControler {
-  constructor(private universUsecase: UniversUsecase) {
+  constructor(private missionUsecase: MissionUsecase) {
     super();
   }
 
@@ -27,15 +29,29 @@ export class UniversController extends GenericControler {
     type: [UniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les univers auquels peut accéder l'utilisateur`,
+    deprecated: true,
+    summary: `DEPRECATED : Retourne les univers auquels peut accéder l'utilisateur`,
   })
   async getUnivers(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<UniversAPI[]> {
+  ) {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getALL(utilisateurId);
-    return result.map((e) => UniversAPI.mapToAPI(e));
+    const liste_thematiques: Thematique[] = [
+      Thematique.alimentation,
+      Thematique.consommation,
+      Thematique.logement,
+      Thematique.transport,
+    ];
+    const liste_them_def: ThematiqueDefinition[] = [];
+    for (const thematique of liste_thematiques) {
+      const tuile = ThematiqueRepository.getThematiqueDefinition(thematique);
+      if (tuile) {
+        liste_them_def.push(tuile);
+      }
+    }
+    return liste_them_def.map((e) => UniversAPI.mapToAPI(e));
+    // SOON ^^ ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
   @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
@@ -51,7 +67,8 @@ export class UniversController extends GenericControler {
     description: `l'univers demandé`,
   })
   @ApiOperation({
-    summary: `Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
+    deprecated: true,
+    summary: `DEPRECATED : Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
   })
   async getUniversThematiques(
     @Request() req,
@@ -59,9 +76,10 @@ export class UniversController extends GenericControler {
     @Param('univers') univers: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getThematiquesOfUnivers(
+    const them = univers ? this.castThematiqueOrException(univers) : undefined;
+    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
       utilisateurId,
-      univers,
+      them,
     );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
@@ -72,16 +90,18 @@ export class UniversController extends GenericControler {
     type: [ThematiqueUniversAPI],
   })
   @ApiOperation({
-    summary: `Retourne les thematiques recommandées pour la home`,
+    deprecated: true,
+    summary: `DEPRECATED : Retourne les thematiques recommandées pour la home`,
   })
   async getThematiquesRecommandees(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<ThematiqueUniversAPI[]> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.universUsecase.getThematiquesRecommandees(
-      utilisateurId,
-    );
+    const result =
+      await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
+        utilisateurId,
+      );
     return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
   }
 }

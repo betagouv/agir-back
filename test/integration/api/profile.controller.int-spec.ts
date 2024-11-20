@@ -502,6 +502,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'KYC_menage',
       reponses: [],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -538,49 +539,40 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // KYCs
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_DPE).reponses,
-    ).toEqual([
-      {
-        code: 'E',
-        label: 'E',
-      },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_DPE)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('E');
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_superficie)
-        .reponses,
-    ).toEqual([
-      {
-        label: '34',
-        code: null,
-        ngc_code: null,
-      },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_superficie)
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(34);
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
-        .reponses,
-    ).toEqual([
-      {
-        code: 'non',
-        label: 'B',
-      },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('non');
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage_elec)
-        .reponses,
-    ).toEqual([{ code: 'oui', label: 'OUI', ngc_code: '_oui' }]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage_elec)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('oui');
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_chauffage_bois)
-        .reponses,
-    ).toEqual([
-      { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: undefined },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_chauffage_bois)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('ne_sais_pas');
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_type_logement)
-        .reponses,
-    ).toEqual([{ code: 'type_appartement', label: 'A' }]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_type_logement)
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('type_appartement');
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_menage).reponses,
-    ).toEqual([{ code: null, label: '5', ngc_code: null }]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_menage)
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(5);
   });
 
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age', async () => {
@@ -597,6 +589,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -613,15 +606,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // KYCs
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_logement_age)
-        .reponses,
-    ).toEqual([
-      {
-        code: null,
-        label: '5',
-        ngc_code: null,
-      },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(5);
   });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
     // GIVEN
@@ -637,6 +625,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -653,15 +642,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // KYCs
     expect(
-      dbUser.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_logement_age)
-        .reponses,
-    ).toEqual([
-      {
-        code: null,
-        label: '20',
-        ngc_code: null,
-      },
-    ]);
+      dbUser.kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(20);
   });
 
   it('PATCH /utilisateurs/id/logement - maj code postal recalcul le flag de couverture d aides', async () => {
@@ -848,6 +832,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
     });
+    await kycRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -860,14 +845,13 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUser = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    const catalogue = await kycRepository.getAllDefs();
-    dbUser.kyc_history.setCatalogue(catalogue);
+    dbUser.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const question = dbUser.kyc_history.getUpToDateQuestionByCodeOrNull(
       KYCID.KYC006,
     );
     expect(question.hasAnyResponses());
-    expect(question.includesReponseCode('plus_15'));
+    expect(question.isSelectedReponseCode('plus_15'));
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN
@@ -905,7 +889,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
     expect(servicesDB).toHaveLength(0);
     expect(servicesDefDB).toHaveLength(1);
   });
@@ -926,7 +910,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(1);
+    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(0);
   });
   it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
     // GIVEN

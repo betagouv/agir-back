@@ -3,17 +3,17 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
 import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../../src/domain/kyc/questionKYC';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Univers } from '../../../../src/domain/univers/univers';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
+import { KYCHistory_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {
@@ -30,58 +30,45 @@ describe('KYC vN ', () => {
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
     const domain_start = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          code: KYCID.KYC001,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [
+          reponse_simple: {
+            unite: Unite.kg,
+            value: 'fafa',
+          },
+          reponse_complexe: [
             {
-              label: 'Le climat',
-              code: Thematique.climat,
-              ngc_code: '123',
-              value: 'fafa',
-            },
-          ],
-          reponses_possibles: [
-            {
-              label: 'Le climat',
-              code: Thematique.climat,
-              ngc_code: '123',
-              value: 'fafa',
-            },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              ngc_code: '456',
-              value: 'fifi',
-            },
-            {
-              label: 'Ce que je mange',
-              code: Thematique.alimentation,
-              ngc_code: '789',
-              value: 'fefe',
+              code: 'code',
+              ngc_code: 'ngc_code',
+              label: 'label',
+              value: '123',
             },
           ],
           tags: [Tag.consommation],
-          universes: [Univers.climat],
+          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
-          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
           unite: Unite.euro,
           emoji: '🔥',
+          ngc_key: '87654',
+          thematique: Thematique.consommation,
         },
       ],
     });
 
     // WHEN
-    const raw = KYCHistory_v0.serialise(domain_start);
+    const raw = KYCHistory_v1.serialise(domain_start);
     const domain_end = new KYCHistory(raw);
 
     // THEN
@@ -90,62 +77,495 @@ describe('KYC vN ', () => {
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
     const domain_start = new KYCHistory({
-      version: 0,
+      version: 1,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
-          id: KYCID.KYC001,
+          code: KYCID.KYC001,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
+          a_supprimer: false,
           categorie: Categorie.test,
           points: 10,
-          reponses: [
+          reponse_simple: {
+            unite: Unite.kg,
+            value: 'fafa',
+          },
+          reponse_complexe: [
             {
-              label: 'Le climat',
-              code: Thematique.climat,
-              ngc_code: '123',
-              value: 'fafa',
-            },
-          ],
-          reponses_possibles: [
-            {
-              label: 'Le climat',
-              code: Thematique.climat,
-              ngc_code: '123',
-              value: 'fifi',
-            },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              ngc_code: '456',
-              value: 'fofo',
-            },
-            {
-              label: 'Ce que je mange',
-              code: Thematique.alimentation,
-              ngc_code: '789',
-              value: 'fefe',
+              code: 'code',
+              ngc_code: 'ngc_code',
+              label: 'label',
+              value: '123',
             },
           ],
           tags: [Tag.consommation],
-          universes: [Univers.climat],
+          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
-          conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
           unite: Unite.euro,
           emoji: '🔥',
+          ngc_key: '87654',
+          thematique: Thematique.consommation,
         },
       ],
     });
 
     // WHEN
-    const raw = KYCHistory_v0.serialise(domain_start);
+    const raw = KYCHistory_v1.serialise(domain_start);
     const upgrade = Upgrader.upgradeRaw(raw, SerialisableDomain.KYCHistory);
     const domain_end = new KYCHistory(upgrade);
 
     // THEN
     expect(domain_end).toStrictEqual(domain_start);
+  });
+
+  it('upgrade v0  => v1 OK, entier', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_logement_age',
+          tags: [],
+          type: 'entier',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          reponses: [
+            {
+              code: null,
+              label: '70',
+              ngc_code: null,
+              //value: undefined,
+            },
+          ],
+          categorie: 'test',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: Thematique.logement,
+          short_question: null,
+          reponses_possibles: [],
+          //unite: undefined,
+          //a_supprimer: undefined,
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_logement_age',
+          tags: [],
+          type: 'entier',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          categorie: 'test',
+          image_url: null,
+          conditions: [],
+          thematique: 'logement',
+          a_supprimer: undefined,
+          thematiques: [],
+          reponse_simple: {
+            value: '70',
+            unite: undefined,
+          },
+          short_question: null,
+          reponse_complexe: null,
+          unite: undefined,
+        },
+      ],
+    });
+  });
+
+  it('upgrade v0  => v1 OK, decimal', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_logement_age',
+          tags: [],
+          type: 'decimal',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          reponses: [
+            {
+              code: null,
+              label: '70.8',
+              ngc_code: null,
+            },
+          ],
+          categorie: 'test',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: Thematique.logement,
+          short_question: null,
+          reponses_possibles: [],
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_logement_age',
+          tags: [],
+          type: 'decimal',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          categorie: 'test',
+          image_url: null,
+          conditions: [],
+          thematique: 'logement',
+          a_supprimer: undefined,
+          thematiques: [],
+          reponse_simple: {
+            value: '70.8',
+            unite: undefined,
+          },
+          short_question: null,
+          reponse_complexe: null,
+          unite: undefined,
+        },
+      ],
+    });
+  });
+
+  it('upgrade v0  => v1 OK, text libre', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_logement_age',
+          tags: [],
+          type: 'libre',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          reponses: [
+            {
+              code: null,
+              label: 'hello comment ça va ?',
+              ngc_code: null,
+            },
+          ],
+          categorie: 'test',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: Thematique.logement,
+          short_question: null,
+          reponses_possibles: [],
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_logement_age',
+          tags: [],
+          type: 'libre',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          categorie: 'test',
+          image_url: null,
+          conditions: [],
+          thematique: 'logement',
+          a_supprimer: undefined,
+          thematiques: [],
+          reponse_simple: {
+            value: 'hello comment ça va ?',
+            unite: undefined,
+          },
+          short_question: null,
+          reponse_complexe: null,
+          unite: undefined,
+        },
+      ],
+    });
+  });
+
+  it('upgrade v0  => v1 OK, choix unique', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_bilan',
+          tags: [],
+          type: 'choix_unique',
+          emoji: null,
+          id_cms: 52,
+          is_NGC: false,
+          points: 5,
+          ngc_key: null,
+          question: 'Avez-vous déjà réalisé votre bilan environnemental ?',
+          reponses: [
+            {
+              code: 'oui',
+              label: 'Oui',
+              ngc_code: null,
+            },
+          ],
+          categorie: 'mission',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: 'climat',
+          short_question: null,
+          reponses_possibles: [
+            {
+              code: 'oui',
+              label: 'Oui',
+              ngc_code: null,
+            },
+            {
+              code: 'non',
+              label: 'Non',
+              ngc_code: null,
+            },
+            {
+              code: 'ne_sait_pas',
+              label: "Je ne sais pas ce que c'est",
+              ngc_code: null,
+            },
+          ],
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_bilan',
+          tags: [],
+          type: 'choix_unique',
+          emoji: null,
+          id_cms: 52,
+          is_NGC: false,
+          points: 5,
+          ngc_key: null,
+          question: 'Avez-vous déjà réalisé votre bilan environnemental ?',
+          categorie: 'mission',
+          image_url: null,
+          conditions: [],
+          thematique: 'climat',
+          a_supprimer: undefined,
+          thematiques: [],
+          reponse_simple: null,
+          short_question: null,
+          unite: undefined,
+          reponse_complexe: [
+            {
+              code: 'oui',
+              label: 'Oui',
+              ngc_code: null,
+              value: 'oui',
+            },
+            {
+              code: 'non',
+              label: 'Non',
+              ngc_code: null,
+              value: 'non',
+            },
+            {
+              code: 'ne_sait_pas',
+              label: "Je ne sais pas ce que c'est",
+              ngc_code: null,
+              value: 'non',
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('upgrade v0  => v1 OK, choix multiple', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_preference',
+          tags: [],
+          type: 'choix_multiple',
+          emoji: null,
+          id_cms: 57,
+          is_NGC: false,
+          points: 0,
+          ngc_key: null,
+          question:
+            'Sur quels thèmes recherchez-vous en priorité des aides et conseils ?',
+          reponses: [
+            {
+              code: 'alimentation',
+              label: 'La cuisine et l’alimentation',
+              ngc_code: null,
+            },
+            {
+              code: 'transport',
+              label: 'Mes déplacements',
+              ngc_code: null,
+            },
+          ],
+          categorie: 'recommandation',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: 'climat',
+          short_question: null,
+          reponses_possibles: [
+            {
+              code: 'alimentation',
+              label: 'La cuisine et l’alimentation',
+              ngc_code: null,
+            },
+            {
+              code: 'transport',
+              label: 'Mes déplacements',
+              ngc_code: null,
+            },
+            {
+              code: 'logement',
+              label: 'Mon logement',
+              ngc_code: null,
+            },
+            {
+              code: 'consommation',
+              label: 'Ma consommation',
+              ngc_code: null,
+            },
+            {
+              code: 'ne_sais_pas',
+              label: 'Je ne sais pas encore',
+              ngc_code: null,
+            },
+          ],
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_preference',
+          tags: [],
+          type: 'choix_multiple',
+          emoji: null,
+          id_cms: 57,
+          is_NGC: false,
+          points: 0,
+          ngc_key: null,
+          question:
+            'Sur quels thèmes recherchez-vous en priorité des aides et conseils ?',
+          categorie: 'recommandation',
+          image_url: null,
+          conditions: [],
+          thematique: 'climat',
+          a_supprimer: undefined,
+          thematiques: [],
+          reponse_simple: null,
+          short_question: null,
+          unite: undefined,
+          reponse_complexe: [
+            {
+              code: 'alimentation',
+              label: 'La cuisine et l’alimentation',
+              ngc_code: null,
+              value: 'oui',
+            },
+            {
+              code: 'transport',
+              label: 'Mes déplacements',
+              ngc_code: null,
+              value: 'oui',
+            },
+            {
+              code: 'logement',
+              label: 'Mon logement',
+              ngc_code: null,
+              value: 'non',
+            },
+            {
+              code: 'consommation',
+              label: 'Ma consommation',
+              ngc_code: null,
+              value: 'non',
+            },
+            {
+              code: 'ne_sais_pas',
+              label: 'Je ne sais pas encore',
+              ngc_code: null,
+              value: 'non',
+            },
+          ],
+        },
+      ],
+    });
   });
 });

@@ -360,7 +360,7 @@ export class ApplicationError {
   static throwMissingMosaicData() {
     this.throwAppError(
       '072',
-      `Les données sont manquantes pour mettre à jour la mosaic argument`,
+      `Les données sont manquantes pour mettre à jour la mosaic argument, tableau de code/value attendu`,
     );
   }
   static throwRFRNotNumer() {
@@ -424,6 +424,71 @@ export class ApplicationError {
       '083',
       `l'URL [${url}] n'est définitivement plus disponible`,
       410,
+    );
+  }
+  static throwThematiqueNotFound(them: string) {
+    this.throwAppError('084', `Thematique [${them}] inconnue`);
+  }
+  static throwMissionNotFoundOfCode(code: string) {
+    this.throwAppError('085', `Mission de code [${code}] non trouvée`, 404);
+  }
+  static throwUnsupportedSerialisationVersion(className: string) {
+    this.throwAppError(
+      '086',
+      `Classe de serialisation non supportée : [${className}]`,
+      500,
+    );
+  }
+
+  static throwNoKYCResponse(code_kyc: string) {
+    this.throwAppError(
+      '087',
+      `Aucune réponse fournie à la question [${code_kyc}]`,
+    );
+  }
+  static throwUniqueReponseExpected(code_kyc: string) {
+    this.throwAppError(
+      '088',
+      `Une réponse de valeur unique était attendue pour la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingValue(code_kyc: string) {
+    this.throwAppError(
+      '089',
+      `Valeur réponse manquante pour la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingYesNoValueForCode(code_kyc: string, code: string) {
+    this.throwAppError(
+      '089',
+      `Valeur [oui/non] manquante pour le code [${code}] de la question [${code_kyc}]`,
+    );
+  }
+  static throwMissingCode(code_kyc: string) {
+    this.throwAppError(
+      '090',
+      `Code réponse manquant pour la question [${code_kyc}]`,
+    );
+  }
+  static throwQuestionBadCodeValue(code: string, kyc_code: string) {
+    this.throwAppError(
+      '091',
+      `Code réponse [${code}] inconnu pour la KYC [${kyc_code}]`,
+    );
+  }
+  static throwBadMosaicDataNumber(id: string, nbr: number) {
+    this.throwAppError(
+      '092',
+      `le nombre de reponses attendu pour la mosaic [${id}] est de [${nbr}]`,
+    );
+  }
+  static throwAideNotFound(content_id: string) {
+    this.throwAppError('093', `l'aide d'id [${content_id}] n'existe pas`, 404);
+  }
+  static throwUnknownDefiStatus(status: string) {
+    this.throwAppError(
+      '094',
+      `Status de défi inconnu pour filtrage : [${status}]`,
     );
   }
 

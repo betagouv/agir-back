@@ -16,43 +16,43 @@ export class UserTagEvaluator {
   private static kyc_001(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.transport,
-      kyc.includesReponseCode(Thematique.transport),
+      kyc.isSelectedReponseCode(Thematique.transport),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.alimentation,
-      kyc.includesReponseCode(Thematique.alimentation),
+      kyc.isSelectedReponseCode(Thematique.alimentation),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.climat,
-      kyc.includesReponseCode(Thematique.climat),
+      kyc.isSelectedReponseCode(Thematique.climat),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.dechet,
-      kyc.includesReponseCode(Thematique.dechet),
+      kyc.isSelectedReponseCode(Thematique.dechet),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.logement,
-      kyc.includesReponseCode(Thematique.logement),
+      kyc.isSelectedReponseCode(Thematique.logement),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.loisir,
-      kyc.includesReponseCode(Thematique.loisir),
+      kyc.isSelectedReponseCode(Thematique.loisir),
       50,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.consommation,
-      kyc.includesReponseCode(Thematique.consommation),
+      kyc.isSelectedReponseCode(Thematique.consommation),
       50,
       0,
     );
@@ -61,25 +61,25 @@ export class UserTagEvaluator {
   private static kyc_002(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.appetence_covoit,
-      kyc.includesReponseCode('co_voit'),
+      kyc.isSelectedReponseCode('co_voit'),
       -100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_velo,
-      kyc.includesReponseCode('faire_velo'),
+      kyc.isSelectedReponseCode('faire_velo'),
       -100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_marche,
-      kyc.includesReponseCode('marcher'),
+      kyc.isSelectedReponseCode('marcher'),
       -100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_tec,
-      kyc.includesReponseCode('TEC'),
+      kyc.isSelectedReponseCode('TEC'),
       -100,
       0,
     );
@@ -88,7 +88,7 @@ export class UserTagEvaluator {
   private static kyc_003(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.possede_velo,
-      kyc.includesReponseCode(BooleanKYC.oui),
+      kyc.isSelectedReponseCode(BooleanKYC.oui),
       100,
       -100,
     );
@@ -114,13 +114,13 @@ export class UserTagEvaluator {
   private static kyc_006(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.logement_plus_15_ans,
-      kyc.includesReponseCode('plus_15'),
+      kyc.isSelectedReponseCode('plus_15'),
       100,
       -100,
     );
   }
   private static kyc_logement_age(user: Utilisateur, kyc: QuestionKYC) {
-    const value = kyc.getValeurEntiereReponseUniqueSaisie();
+    const value = kyc.getReponseSimpleValueAsNumber();
     if (value) {
       user.increaseTagValueIfElse(
         Tag.logement_plus_15_ans,
@@ -134,7 +134,7 @@ export class UserTagEvaluator {
   private static kyc_007(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.appetence_cafe,
-      kyc.includesReponseCode('cafe'),
+      kyc.isSelectedReponseCode('cafe'),
       100,
       0,
     );
@@ -152,13 +152,13 @@ export class UserTagEvaluator {
   private static kyc_009(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.possede_voiture,
-      kyc.includesReponseCode('ma_voit'),
+      kyc.isSelectedReponseCode('ma_voit'),
       100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_covoit,
-      kyc.includesReponseCode('co_voit'),
+      kyc.isSelectedReponseCode('co_voit'),
       100,
       0,
     );
@@ -167,7 +167,7 @@ export class UserTagEvaluator {
   private static kyc_010(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.possede_jardin,
-      kyc.includesReponseCode(BooleanKYC.oui),
+      kyc.isSelectedReponseCode(BooleanKYC.oui),
       100,
       -100,
     );
@@ -176,13 +176,13 @@ export class UserTagEvaluator {
   private static kyc_011(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.possede_voiture_thermique,
-      kyc.includesReponseCode('voit_therm'),
+      kyc.isSelectedReponseCode('voit_therm'),
       100,
       -100,
     );
     user.increaseTagValueIfElse(
       Tag.possede_voiture_elec_hybride,
-      kyc.includesReponseCode('voit_elec_hybride'),
+      kyc.isSelectedReponseCode('voit_elec_hybride'),
       100,
       -100,
     );
@@ -191,13 +191,13 @@ export class UserTagEvaluator {
   private static kyc_012(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.trajet_court_voiture,
-      kyc.includesReponseCode(BooleanKYC.oui),
+      kyc.isSelectedReponseCode(BooleanKYC.oui),
       100,
       -100,
     );
     user.increaseTagValueIfElse(
       Tag.trajet_long_voiture,
-      kyc.includesReponseCode(BooleanKYC.non),
+      kyc.isSelectedReponseCode(BooleanKYC.non),
       100,
       -100,
     );
@@ -206,25 +206,25 @@ export class UserTagEvaluator {
   private static kyc_013(user: Utilisateur, kyc: QuestionKYC) {
     user.increaseTagValueIfElse(
       Tag.appetence_limiter_impact_trajets,
-      kyc.includesReponseCode('limiter_impact'),
+      kyc.isSelectedReponseCode('limiter_impact'),
       100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_changement_voit,
-      kyc.includesReponseCode('achat_voit'),
+      kyc.isSelectedReponseCode('achat_voit'),
       100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_economies,
-      kyc.includesReponseCode('economie'),
+      kyc.isSelectedReponseCode('economie'),
       100,
       0,
     );
     user.increaseTagValueIfElse(
       Tag.appetence_bouger_sante,
-      kyc.includesReponseCode('bouger'),
+      kyc.isSelectedReponseCode('bouger'),
       100,
       0,
     );

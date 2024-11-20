@@ -6,8 +6,7 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
-import { Univers } from '../../../../src/domain/univers/univers';
-import { ThematiqueUnivers } from '../../../../src/domain/univers/thematiqueUnivers';
+import { CodeMission } from '../../../../src/domain/thematique/codeMission';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -23,12 +22,12 @@ const DEFI_1: Defi_v0 = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   status: DefiStatus.todo,
-  universes: [Univers.climat],
+  universes: [Thematique.climat],
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
   mois: [1],
-  conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
   sont_points_en_poche: false,
   impact_kg_co2: 5,
 };
@@ -41,11 +40,11 @@ const DEFI_1_DEF: DefiDefinition = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Univers.climat],
-  thematiques_univers: [ThematiqueUnivers.dechets_compost],
+  universes: [Thematique.climat],
+  thematiques_univers: [CodeMission.dechets_compost],
   categorie: Categorie.recommandation,
   mois: [0],
-  conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
+  conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
   impact_kg_co2: 5,
 };
 
@@ -57,13 +56,13 @@ describe('DefiHistory', () => {
       {
         ...DEFI_1_DEF,
         content_id: '1',
-        universes: [Univers.climat],
+        universes: [Thematique.climat],
         categorie: Categorie.mission,
       },
       {
         ...DEFI_1_DEF,
         content_id: '2',
-        universes: [Univers.climat],
+        universes: [Thematique.climat],
         categorie: Categorie.recommandation,
       },
     ]);
@@ -76,16 +75,16 @@ describe('DefiHistory', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
     defiHistory.setCatalogue([
-      { ...DEFI_1_DEF, content_id: '1', universes: [Univers.climat] },
-      { ...DEFI_1_DEF, content_id: '2', universes: [Univers.consommation] },
+      { ...DEFI_1_DEF, content_id: '1', universes: [Thematique.climat] },
+      { ...DEFI_1_DEF, content_id: '2', universes: [Thematique.consommation] },
     ]);
 
     // THEN
     expect(
-      defiHistory.getDefisRestants(undefined, Univers.consommation),
+      defiHistory.getDefisRestants(undefined, Thematique.consommation),
     ).toHaveLength(1);
     expect(
-      defiHistory.getDefisRestants(undefined, Univers.consommation)[0].id,
+      defiHistory.getDefisRestants(undefined, Thematique.consommation)[0].id,
     ).toEqual('2');
   });
   it('getDefisRestants : select si pas d univers setté ', () => {
@@ -93,12 +92,12 @@ describe('DefiHistory', () => {
     const defiHistory = new DefiHistory();
     defiHistory.setCatalogue([
       { ...DEFI_1_DEF, content_id: '1', universes: [] },
-      { ...DEFI_1_DEF, content_id: '2', universes: [Univers.consommation] },
+      { ...DEFI_1_DEF, content_id: '2', universes: [Thematique.consommation] },
     ]);
 
     // THEN
     expect(
-      defiHistory.getDefisRestants(undefined, Univers.consommation),
+      defiHistory.getDefisRestants(undefined, Thematique.consommation),
     ).toHaveLength(2);
   });
   it('getDefisRestants : quand hisotrique vide ', () => {
