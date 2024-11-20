@@ -458,10 +458,10 @@ export class ApplicationError {
       `Valeur réponse manquante pour la question [${code_kyc}]`,
     );
   }
-  static throwMissingYesNoValueForCode(code_kyc: string, code: string) {
+  static throwMissingValueForCode(code_kyc: string, code: string) {
     this.throwAppError(
       '089',
-      `Valeur [oui/non] manquante pour le code [${code}] de la question [${code_kyc}]`,
+      `Valeur manquante pour le code [${code}] de la question [${code_kyc}]`,
     );
   }
   static throwMissingCode(code_kyc: string) {
@@ -489,6 +489,26 @@ export class ApplicationError {
     this.throwAppError(
       '094',
       `Status de défi inconnu pour filtrage : [${status}]`,
+    );
+  }
+  static throwMissingSelectedAttributeForCode(code_kyc: string, code: string) {
+    this.throwAppError(
+      '095',
+      `Attribut 'selected' manquant pour le code [${code}] de la question [${code_kyc}]`,
+    );
+  }
+
+  static throwMissingValueAttributeForCode(code_kyc: string, code: string) {
+    this.throwAppError(
+      '096',
+      `Attribut 'value' manquant pour le code [${code}] de la question [${code_kyc}]`,
+    );
+  }
+
+  static throwToManySelectedAttributesForKYC(code_kyc: string, code: string) {
+    this.throwAppError(
+      '097',
+      `Un choix unique est attendu pour la question [${code_kyc}], selection excédentaire observée pour le code [${code}] `,
     );
   }
 

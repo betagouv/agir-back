@@ -494,13 +494,21 @@ export class QuestionKYC implements TaggedContent {
     return result;
   }
 
-  public selectChoixByCode(code: string) {
+  public selectChoixUniqueByCode(code: string) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
       if (rep.code === code) {
         rep.value = BooleanKYC.oui;
       } else {
         rep.value = BooleanKYC.non;
+      }
+    }
+  }
+  public selectChoixByCode(code: string, selected: boolean) {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      if (rep.code === code) {
+        rep.value = selected ? BooleanKYC.oui : BooleanKYC.non;
       }
     }
   }
