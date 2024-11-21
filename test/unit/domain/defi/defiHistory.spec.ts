@@ -73,7 +73,7 @@ describe('DefiHistory', () => {
         .id,
     ).toEqual('1');
   });
-  it('getDefisRestants :filtrage sur univers ', () => {
+  it('getDefisRestants :filtrage sur thematique ', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
     defiHistory.setCatalogue([
