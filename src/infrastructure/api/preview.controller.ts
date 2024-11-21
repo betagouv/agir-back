@@ -980,8 +980,6 @@ export class PreviewController extends GenericControler {
     DATA.tags = defi_def.tags;
     DATA.thematique = defi_def.thematique;
     DATA.categorie = defi_def.categorie;
-    DATA.thematiques_univers = defi_def.thematiques_univers;
-    DATA.universes = defi_def.universes;
     result.push(JSON.stringify(DATA, null, 2));
 
     await this.dump_defi_conditions(result, defi_def);

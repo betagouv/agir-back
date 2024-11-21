@@ -442,16 +442,6 @@ export class CMSImportUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      universes:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => u.attributes.code)
-          : [],
-      thematiques_univers:
-        entry.attributes.thematique_univers.data.length > 0
-          ? entry.attributes.thematique_univers.data.map(
-              (t) => t.attributes.code,
-            )
-          : [],
       categorie: Categorie[entry.attributes.categorie],
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))

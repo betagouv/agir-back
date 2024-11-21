@@ -1,5 +1,6 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
+import { Thematique } from '../contenu/thematique';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Defi, DefiStatus } from './defi';
@@ -27,30 +28,32 @@ export class DefiHistory {
     this.catalogue = cat;
   }
 
-  public getDefisRestants(categorie?: Categorie, univers?: string): Defi[] {
-    let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
-    this.defis.forEach((defi_courant) => {
-      const index = defis_def_restants.findIndex(
-        (d) => d.content_id === defi_courant.id,
+  public getDefisRestantsByCategorieAndThematique(
+    categorie?: Categorie,
+    thematique?: Thematique,
+  ): Defi[] {
+    let liste_nouveaux_defis = [];
+    for (const defi_catalogue of this.catalogue) {
+      const defi_utilisateur = this.getDefiFromHistory(
+        defi_catalogue.content_id,
       );
-      if (index !== -1) {
-        defis_def_restants.splice(index, 1);
+      if (!defi_utilisateur) {
+        liste_nouveaux_defis.push(defi_catalogue);
       }
-    });
+    }
 
-    if (univers) {
-      defis_def_restants = defis_def_restants.filter(
-        (defi) =>
-          defi.universes.includes(univers) || defi.universes.length === 0,
+    if (thematique) {
+      liste_nouveaux_defis = liste_nouveaux_defis.filter(
+        (defi) => defi.thematique === thematique,
       );
     }
     if (categorie) {
-      defis_def_restants = defis_def_restants.filter(
+      liste_nouveaux_defis = liste_nouveaux_defis.filter(
         (defi) => defi.categorie === categorie,
       );
     }
 
-    return defis_def_restants.map((d) => this.buildDefiFromDefinition(d));
+    return liste_nouveaux_defis.map((d) => this.buildDefiFromDefinition(d));
   }
 
   public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {

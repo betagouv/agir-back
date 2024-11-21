@@ -155,9 +155,10 @@ export class RecommandationUsecase {
   }
 
   private getDefisRestantsAvecTri(utilisateur: Utilisateur): Recommandation[] {
-    const defis = utilisateur.defi_history.getDefisRestants(
-      Categorie.recommandation,
-    );
+    const defis =
+      utilisateur.defi_history.getDefisRestantsByCategorieAndThematique(
+        Categorie.recommandation,
+      );
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       defis,

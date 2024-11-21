@@ -37,8 +37,6 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Thematique.climat],
-  thematiquesUnivers: [CodeMission.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
@@ -290,7 +288,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     pourquoi: 'pourquoi',
     sous_titre: 'sous_titre',
     status: DefiStatus.todo,
-    universes: [Thematique.climat],
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
@@ -373,7 +370,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
-    expect(defi.universes[0]).toBe(Thematique.climat);
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers', async () => {
     // GIVEN
@@ -1162,7 +1158,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('2');
   });
-  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et univers', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et thematique', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -1175,17 +1171,17 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '1',
-      universes: [Thematique.alimentation],
+      thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '2',
-      universes: [Thematique.climat],
+      thematique: Thematique.climat,
     });
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '3',
-      universes: [Thematique.logement],
+      thematique: Thematique.logement,
     });
 
     // WHEN
@@ -1312,7 +1308,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [],
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
@@ -1388,7 +1383,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [],
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,

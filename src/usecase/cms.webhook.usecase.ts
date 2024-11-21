@@ -296,10 +296,6 @@ export class CMSWebhookUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
-      thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((u) => u.code)
-        : [],
       categorie: Categorie[entry.categorie],
       mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
       conditions: entry.OR_Conditions.map((or) =>

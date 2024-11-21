@@ -12,8 +12,6 @@ export class DefiDefinition {
   astuces: string;
   thematique: Thematique;
   tags: Tag[];
-  universes: string[]; // FIXME : A SUPPRIMER
-  thematiques_univers: string[];
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];
@@ -21,10 +19,6 @@ export class DefiDefinition {
 
   constructor(data: DefiDefinition) {
     Object.assign(this, data);
-    this.thematiques_univers = data.thematiques_univers
-      ? data.thematiques_univers
-      : [];
-    this.universes = data.universes ? data.universes : [];
     this.mois = data.mois ? data.mois : [];
     this.mois = data.mois ? data.mois : [];
     this.conditions = data.conditions ? data.conditions : [];
