@@ -508,7 +508,13 @@ export class ApplicationError {
   static throwToManySelectedAttributesForKYC(code_kyc: string, code: string) {
     this.throwAppError(
       '097',
-      `Un choix unique est attendu pour la question [${code_kyc}], selection excédentaire observée pour le code [${code}] `,
+      `Un choix unique est attendu pour la question [${code_kyc}], selection excédentaire observée pour le code [${code}]`,
+    );
+  }
+  static throwNoneSelectedButNeededOne(code_kyc: string) {
+    this.throwAppError(
+      '098',
+      `Un choix unique est attendu pour la question [${code_kyc}], aucune réponse selectionnée !`,
     );
   }
 

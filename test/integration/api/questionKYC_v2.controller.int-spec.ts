@@ -1782,6 +1782,178 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     expect(userDB.gamification.points).toEqual(10);
   });
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1, 2 options', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
+    ).send([
+      { code: Thematique.climat, selected: true },
+      { code: Thematique.logement, selected: true },
+      { code: Thematique.alimentation, selected: false },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('_2')
+        .getSelectedCodes(),
+    ).toStrictEqual([Thematique.climat, Thematique.logement]);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.gamification.points).toEqual(10);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1 type choix unique , deselect la réponse précédente', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: '1',
+          id_cms: 1,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              value: 'oui',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              value: 'non',
+            },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              value: 'non',
+            },
+          ],
+          tags: [TagUtilisateur.appetence_bouger_sante],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+    ).send([
+      { code: Thematique.climat, selected: false },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: true },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('1')
+        .getSelectedCodes(),
+    ).toStrictEqual([Thematique.alimentation]);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1 type choix unique , trop de choix !', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+    ).send([
+      { code: Thematique.climat, selected: true },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: true },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Un choix unique est attendu pour la question [1], selection excédentaire observée pour le code [alimentation]',
+    );
+  });
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1 type choix unique , auncun choix !', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+    ).send([
+      { code: Thematique.climat, selected: false },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: false },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Un choix unique est attendu pour la question [1], aucune réponse selectionnée !',
+    );
+  });
 
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - erreur si code réponse inconnue', async () => {
     // GIVEN
