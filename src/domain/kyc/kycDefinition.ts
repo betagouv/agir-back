@@ -24,7 +24,6 @@ export class KycDefinition {
   reponses?: ReponseDefinition[];
   thematique: Thematique;
   tags: Tag[];
-  thematiques: Thematique[];
   image_url: string;
   conditions: ConditionKYC[][];
   unite: Unite;
@@ -34,7 +33,6 @@ export class KycDefinition {
     Object.assign(this, data);
     this.reponses = data.reponses ? data.reponses : [];
     this.tags = data.tags ? data.tags : [];
-    this.thematiques = data.thematiques ? data.thematiques : [];
     this.conditions = data.conditions ? data.conditions : [];
   }
 

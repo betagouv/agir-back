@@ -1,12 +1,13 @@
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
+import { Thematique } from '../contenu/thematique';
 import { DefiHistory_v0 } from '../object_store/defi/defiHistory_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Defi, DefiStatus } from './defi';
 import { DefiDefinition } from './defiDefinition';
 
 export class DefiHistory {
-  defis: Defi[];
+  private defis: Defi[];
   private catalogue: DefiDefinition[];
 
   constructor(data?: DefiHistory_v0) {
@@ -27,37 +28,39 @@ export class DefiHistory {
     this.catalogue = cat;
   }
 
-  public getDefisRestants(categorie?: Categorie, univers?: string): Defi[] {
-    let defis_def_restants: DefiDefinition[] = [].concat(this.catalogue);
-    this.defis.forEach((defi_courant) => {
-      const index = defis_def_restants.findIndex(
-        (d) => d.content_id === defi_courant.id,
+  public getDefisRestantsByCategorieAndThematique(
+    categorie?: Categorie,
+    thematique?: Thematique,
+  ): Defi[] {
+    let liste_nouveaux_defis = [];
+    for (const defi_catalogue of this.catalogue) {
+      const defi_utilisateur = this.getDefiFromHistory(
+        defi_catalogue.content_id,
       );
-      if (index !== -1) {
-        defis_def_restants.splice(index, 1);
+      if (!defi_utilisateur) {
+        liste_nouveaux_defis.push(defi_catalogue);
       }
-    });
+    }
 
-    if (univers) {
-      defis_def_restants = defis_def_restants.filter(
-        (defi) =>
-          defi.universes.includes(univers) || defi.universes.length === 0,
+    if (thematique) {
+      liste_nouveaux_defis = liste_nouveaux_defis.filter(
+        (defi) => defi.thematique === thematique,
       );
     }
     if (categorie) {
-      defis_def_restants = defis_def_restants.filter(
+      liste_nouveaux_defis = liste_nouveaux_defis.filter(
         (defi) => defi.categorie === categorie,
       );
     }
 
-    return defis_def_restants.map((d) => this.buildDefiFromDefinition(d));
+    return liste_nouveaux_defis.map((d) => this.buildDefiFromDefinition(d));
   }
 
   public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {
     if (status_list.length === 0) {
-      return this.defis.filter(
-        (e) => e.accessible || e.getStatus() !== DefiStatus.todo,
-      );
+      return this.defis
+        .filter((e) => e.accessible || e.getStatus() !== DefiStatus.todo)
+        .map((d) => this.refreshDefiFromCatalogue(d));
     }
     const result = [];
     this.defis.forEach((defi_courant) => {
@@ -69,12 +72,14 @@ export class DefiHistory {
         result.push(defi_courant);
       }
     });
-    return result;
+    return result.map((d) => this.refreshDefiFromCatalogue(d));
   }
 
   public getDefiOrException(id: string): Defi {
     let defi = this.getDefiFromHistory(id);
-    if (defi) return defi;
+    if (defi) {
+      return this.refreshDefiFromCatalogue(defi);
+    }
 
     return this.getFromCatalogueOrException(id);
   }
@@ -123,7 +128,9 @@ export class DefiHistory {
   }
 
   public getDefiFromHistory(id: string): Defi {
-    return this.defis.find((element) => element.id === id);
+    return this.refreshDefiFromCatalogue(
+      this.defis.find((element) => element.id === id),
+    );
   }
 
   public estDefiEnCoursOuPlus(id: string): boolean {
@@ -133,7 +140,6 @@ export class DefiHistory {
         DefiStatus.en_cours,
         DefiStatus.fait,
         DefiStatus.pas_envie,
-        DefiStatus.deja_fait,
       ].includes(defi.getStatus());
     }
     return false;
@@ -149,7 +155,7 @@ export class DefiHistory {
     );
 
     if (defis_encours_avec_date.length > 0) {
-      return defis_encours_avec_date[0];
+      return this.refreshDefiFromCatalogue(defis_encours_avec_date[0]);
     }
     return null;
   }
@@ -162,6 +168,33 @@ export class DefiHistory {
       return this.buildDefiFromDefinition(definition);
     }
     ApplicationError.throwDefiInconnue(id);
+  }
+
+  private refreshDefiFromCatalogue(defi: Defi) {
+    if (!defi) {
+      return undefined;
+    }
+    const defi_cat = this.catalogue.find(
+      (element) => element.content_id === defi.id,
+    );
+    if (defi_cat) {
+      defi.astuces = defi_cat.astuces;
+      defi.categorie = defi_cat.categorie;
+      defi.conditions = defi_cat.conditions;
+      defi.impact_kg_co2 = defi_cat.impact_kg_co2;
+      defi.mois = defi_cat.mois;
+      defi.points = defi_cat.points;
+      defi.pourquoi = defi.pourquoi;
+      defi.titre = defi_cat.titre;
+      defi.sous_titre = defi_cat.sous_titre;
+      defi.tags = defi_cat.tags;
+      defi.thematique = defi_cat.thematique;
+    }
+    return defi;
+  }
+
+  public getRAWDefiListe(): Defi[] {
+    return this.defis;
   }
 
   private buildDefiFromDefinition(def: DefiDefinition) {

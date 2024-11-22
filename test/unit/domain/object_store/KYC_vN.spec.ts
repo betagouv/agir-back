@@ -55,7 +55,6 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -102,7 +101,6 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -183,7 +181,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: '70',
             unite: undefined,
@@ -247,7 +244,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: undefined,
             unite: undefined,
@@ -317,7 +313,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: '70.8',
             unite: undefined,
@@ -387,7 +382,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: 'hello comment ça va ?',
             unite: undefined,
@@ -473,7 +467,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'climat',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: null,
           short_question: null,
           unite: undefined,
@@ -592,7 +585,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'climat',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: null,
           short_question: null,
           unite: undefined,

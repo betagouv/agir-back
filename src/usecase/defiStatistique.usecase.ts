@@ -26,7 +26,7 @@ export class DefiStatistiqueUsecase {
         Scope.defis,
       ]);
 
-      utilisateur.defi_history.defis.forEach((defi) => {
+      utilisateur.defi_history.getRAWDefiListe().forEach((defi) => {
         const defi_agrega = this.getDefiAgregationRefById(defi.id, defi_map);
         switch (defi.getStatus()) {
           case DefiStatus.abondon:

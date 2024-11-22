@@ -149,12 +149,6 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 2, code: 'possede_velo' },
       ],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-      univers: [
-        {
-          id: 1,
-          code: Thematique.climat,
-        },
-      ],
       OR_Conditions: [
         {
           AND_Conditions: [
@@ -178,6 +172,7 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
       titre: 'YOO',
+      introduction: 'The intro',
       code: CodeMission.cereales,
       imageUrl: {
         formats: {
@@ -510,7 +505,6 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -562,7 +556,6 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -588,6 +581,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.code).toEqual(CodeMission.cereales);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.titre).toEqual('YOO');
+    expect(item.introduction).toEqual('The intro');
     expect(item.image_url).toEqual('https://');
     expect(item.objectifs).toEqual([
       {
@@ -655,8 +649,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Thematique.climat]);
-    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
@@ -704,8 +696,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.impact_kg_co2).toEqual(10);
     expect(defi.thematique).toEqual('alimentation');
     expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.universes).toEqual([Thematique.climat]);
-    expect(defi.thematiquesUnivers).toEqual([CodeMission.dechets_compost]);
     expect(defi.mois).toStrictEqual([0, 1]);
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],

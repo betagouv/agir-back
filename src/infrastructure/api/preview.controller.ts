@@ -225,7 +225,6 @@ export class PreviewController extends GenericControler {
     DATA.catgorie = kyc_def.categorie;
     DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.thematiques;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
@@ -980,8 +979,6 @@ export class PreviewController extends GenericControler {
     DATA.tags = defi_def.tags;
     DATA.thematique = defi_def.thematique;
     DATA.categorie = defi_def.categorie;
-    DATA.thematiques_univers = defi_def.thematiques_univers;
-    DATA.universes = defi_def.universes;
     result.push(JSON.stringify(DATA, null, 2));
 
     await this.dump_defi_conditions(result, defi_def);

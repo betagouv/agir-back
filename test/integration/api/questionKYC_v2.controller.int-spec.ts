@@ -59,7 +59,6 @@ const KYC_DATA: QuestionKYC_v1 = {
   ],
   reponse_simple: undefined,
   tags: [TagUtilisateur.appetence_bouger_sante],
-  thematiques: [Thematique.consommation],
   thematique: Thematique.consommation,
   ngc_key: '123',
   short_question: 'short',
@@ -84,7 +83,6 @@ const KYC_DB_DATA: KYC = {
   thematique: Thematique.dechet,
   unite: Unite.kg,
   type: TypeReponseQuestionKYC.choix_multiple,
-  universes: [Thematique.climat],
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
   reponses: [
@@ -112,6 +110,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -184,7 +183,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -225,7 +223,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(new_kyc.id_cms).toEqual(22);
     expect(new_kyc.categorie).toEqual(Categorie.recommandation);
     expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
-    expect(new_kyc.thematiques).toEqual([Thematique.alimentation]);
     expect(new_kyc.thematique).toEqual(Thematique.alimentation);
     expect(new_kyc.ngc_key).toEqual('a . b . c');
     expect(new_kyc.getReponseComplexeByCode(Thematique.climat)).toEqual({
@@ -281,7 +278,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -330,14 +326,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         {
           code: 'oui',
           label: 'Oui',
+          selected: false,
         },
         {
           code: 'non',
           label: 'Non',
+          selected: false,
         },
         {
           code: 'sais_pas',
           label: 'Je sais pas',
+          selected: false,
         },
       ],
       categorie: 'recommandation',
@@ -355,7 +354,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           code: '_1',
           image_url: 'AAA',
           label: 'short',
-          value: 'non',
+          selected: false,
           emoji: '🔥',
           unite: Unite.kg,
         },
@@ -363,7 +362,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           code: '_2',
           image_url: 'AAA',
           label: 'short',
-          value: 'non',
+          selected: false,
           emoji: '🔥',
           unite: Unite.kg,
         },
@@ -432,7 +431,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             },
           ],
           tags: [],
-          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
@@ -465,7 +463,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       thematique: Thematique.dechet,
       unite: Unite.kg,
       type: TypeReponseQuestionKYC.choix_multiple,
-      universes: [Thematique.climat],
       question: `Quel est votre sujet principal d'intéret ?`,
       reponses: [
         { label: 'Le climat', code: Thematique.climat },
@@ -493,16 +490,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       {
         code: 'climat',
         label: 'Le climat',
-        value: 'oui',
+        selected: true,
       },
       {
         code: 'logement',
         label: 'Mon logement',
-        value: 'oui',
+        selected: true,
       },
       {
         code: 'alimentation',
         label: 'Ce que je mange',
+        selected: false,
       },
     ]);
   });
@@ -544,14 +542,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       {
         code: 'oui',
         label: 'Oui',
+        selected: false,
       },
       {
         code: 'non',
         label: 'Non',
+        selected: false,
       },
       {
         code: 'peut_etre',
         label: 'A voir',
+        selected: false,
       },
     ]);
     expect(response.body.categorie).toEqual(Categorie.test);
@@ -617,12 +618,12 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       {
         code: 'climat',
         label: 'AAA',
-        value: 'oui',
+        selected: true,
       },
       {
         code: 'logement',
         label: 'BBB',
-        value: 'non',
+        selected: false,
       },
     ]);
   });
@@ -695,47 +696,19 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       {
         code: 'climat',
         label: 'Le climat',
-        value: 'oui',
+        selected: true,
       },
       {
         code: 'logement',
         label: 'Mon logement',
-        value: 'oui',
+        selected: true,
       },
       {
         code: 'alimentation',
         label: 'Ce que je mange',
-        value: 'non',
+        selected: false,
       },
     ]);
-  });
-
-  it('PUT /utilisateurs/id/questionsKYC_v2/1 - erreur si réponse inconnue', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-      type: TypeReponseQuestionKYC.choix_unique,
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
-    ).send([{ code: 'haaha' }]);
-
-    // THEN
-    expect(response.status).toBe(400);
-    expect(response.body.message).toEqual(
-      'Code réponse [haaha] inconnu pour la KYC [_2]',
-    );
   });
 
   it('PUT /utilisateurs/id/questionsKYC_v2/KYC001 - met à jour les tags de reco - suppression boost', async () => {
@@ -763,20 +736,20 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
     ).send([
-      { code: Thematique.transport, value: 'oui' },
-      { code: Thematique.alimentation, value: 'non' },
-      { code: Thematique.climat, value: 'non' },
-      { code: Thematique.logement, value: 'non' },
+      { code: Thematique.transport, selected: true },
+      { code: Thematique.alimentation, selected: false },
+      { code: Thematique.climat, selected: false },
+      { code: Thematique.logement, selected: false },
     ]);
 
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
     ).send([
-      { code: Thematique.transport, value: 'non' },
-      { code: Thematique.alimentation, value: 'non' },
-      { code: Thematique.climat, value: 'oui' },
-      { code: Thematique.logement, value: 'non' },
+      { code: Thematique.transport, selected: false },
+      { code: Thematique.alimentation, selected: false },
+      { code: Thematique.climat, selected: true },
+      { code: Thematique.logement, selected: false },
     ]);
 
     // THEN
@@ -826,7 +799,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC006',
-    ).send([{ code: 'plus_15' }]);
+    ).send([
+      { code: 'plus_15', selected: true },
+      { code: 'moins_15', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -922,7 +898,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_DPE',
-    ).send([{ code: 'F' }]);
+    ).send([
+      { code: 'F', selected: true },
+
+      { code: 'A', selected: false },
+      { code: 'B', selected: false },
+      { code: 'C', selected: false },
+      { code: 'D', selected: false },
+      { code: 'E', selected: false },
+      { code: 'G', selected: false },
+      { code: 'ne_sais_pas', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1022,7 +1008,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_proprietaire',
-    ).send([{ code: 'oui' }]);
+    ).send([
+      { code: 'oui', selected: true },
+      { code: 'non', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1085,7 +1074,19 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_chauffage',
-    ).send([{ code: 'gaz' }]);
+    ).send([
+      { code: 'gaz', selected: true },
+      {
+        code: 'electricite',
+        selected: false,
+      },
+      { code: 'bois', selected: false },
+      { code: 'fioul', selected: false },
+      {
+        code: 'ne_sais_pas',
+        selected: false,
+      },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1136,7 +1137,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_type_logement',
-    ).send([{ code: 'type_appartement' }]);
+    ).send([
+      { code: 'type_appartement', selected: true },
+      { code: 'type_maison', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1211,7 +1215,12 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_alimentation_regime',
-    ).send([{ code: 'peu_viande' }]);
+    ).send([
+      { code: 'vegetalien', selected: false },
+      { code: 'vegetarien', selected: false },
+      { code: 'peu_viande', selected: true },
+      { code: 'chaque_jour_viande', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1220,32 +1229,32 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(7);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(4);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(0);
   });
@@ -1279,7 +1288,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -1341,14 +1349,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           {
             code: 'oui',
             label: 'Oui',
+            selected: false,
           },
           {
             code: 'non',
             label: 'Non',
+            selected: false,
           },
           {
             code: 'sais_pas',
             label: 'Je sais pas',
+            selected: false,
           },
         ],
         categorie: 'recommandation',
@@ -1368,7 +1379,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             label: 'short 2',
             emoji: '🔥',
             unite: 'kg',
-            value: 'non',
+            selected: false,
           },
           {
             code: 'KYC003',
@@ -1376,7 +1387,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             label: 'short 3',
             emoji: '🔥',
             unite: 'kg',
-            value: 'non',
+            selected: false,
           },
         ],
         categorie: 'test',
@@ -1457,9 +1468,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
       reponse_multiple: [
-        { code: 'climat', label: 'Le climat', value: 'oui' },
-        { code: 'logement', label: 'Mon logement', value: 'non' },
-        { code: 'alimentation', label: 'Ce que je mange' },
+        { code: 'climat', label: 'Le climat', selected: true },
+        { code: 'logement', label: 'Mon logement', selected: false },
+        { code: 'alimentation', label: 'Ce que je mange', selected: false },
       ],
       categorie: 'recommandation',
       points: 10,
@@ -1493,9 +1504,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
       reponse_multiple: [
-        { code: 'climat', label: 'Le climat' },
-        { code: 'logement', label: 'Mon logement' },
-        { code: 'alimentation', label: 'Ce que je mange' },
+        { code: 'climat', label: 'Le climat', selected: false },
+        { code: 'logement', label: 'Mon logement', selected: false },
+        { code: 'alimentation', label: 'Ce que je mange', selected: false },
       ],
       categorie: 'mission',
       points: 123,
@@ -1605,6 +1616,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -1690,7 +1702,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     let response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
-    ).send([{ code: 'yos', value: 'oui' }]);
+    ).send([
+      { code: 'yos', selected: true },
+      { code: 'yi', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1704,7 +1719,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     // WHEN
     response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
-    ).send([{ code: 'yi', value: 'oui' }]);
+    ).send([
+      { code: 'yi', selected: true },
+      { code: 'yos', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);
@@ -1732,9 +1750,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
     ).send([
-      { code: Thematique.climat, value: 'oui' },
-      { code: Thematique.logement, value: 'non' },
-      { code: Thematique.alimentation, value: 'non' },
+      { code: Thematique.climat, selected: true },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: false },
     ]);
 
     // THEN
@@ -1775,15 +1793,15 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/_2',
     ).send([
-      { code: 'hahah', value: 'oui' },
-      { code: Thematique.logement, value: 'non' },
-      { code: Thematique.alimentation, value: 'non' },
+      { code: 'hahah', selected: true },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: false },
     ]);
 
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(
-      'Valeur [oui/non] manquante pour le code [climat] de la question [_2]',
+      'Valeur manquante pour le code [climat] de la question [_2]',
     );
   });
 
@@ -1815,10 +1833,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
     ).send([
-      { code: Thematique.climat, value: 'non' },
-      { code: Thematique.logement, value: 'non' },
-      { code: Thematique.alimentation, value: 'non' },
-      { code: Thematique.transport, value: 'oui' },
+      { code: Thematique.climat, selected: false },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: false },
+      { code: Thematique.transport, selected: true },
     ]);
 
     // THEN

@@ -55,6 +55,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -116,6 +117,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -166,6 +168,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -194,6 +197,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -233,6 +237,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -272,6 +277,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -311,6 +317,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -339,6 +346,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -379,6 +387,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -418,6 +427,7 @@ describe('Mission (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: true,
         objectifs: [
           {
@@ -479,7 +489,6 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -508,6 +517,8 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(false);
+    expect(response.body.titre).toEqual('titre');
+    expect(response.body.introduction).toEqual('intro');
     expect(response.body.image_url).toEqual('image');
     expect(response.body.progression).toEqual({ current: 1, target: 5 });
     expect(response.body.thematique_univers).toEqual('cereales');
@@ -546,7 +557,6 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -580,6 +590,7 @@ describe('Mission (API test)', () => {
     expect(response.body.code).toEqual('cereales');
     expect(response.body.thematique).toEqual(Thematique.alimentation);
     expect(response.body.titre).toEqual('titre');
+    expect(response.body.introduction).toEqual('intro');
     expect(response.body.done_at).toEqual(null);
     expect(response.body.terminable).toEqual(false);
     expect(response.body.objectifs).toHaveLength(4);
@@ -614,7 +625,6 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -664,7 +674,6 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -876,6 +885,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -975,6 +985,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -1073,6 +1084,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       objectifs: objectifs as any,
       is_first: false,
       created_at: undefined,
@@ -1161,6 +1173,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       objectifs: objectifs as any,
       is_first: false,
       created_at: undefined,
@@ -1496,6 +1509,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       objectifs: objectifs as any,
       is_first: false,
       created_at: undefined,
@@ -1571,6 +1585,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       objectifs: objectifs as any,
       is_first: false,
       created_at: undefined,
@@ -2273,7 +2288,6 @@ describe('Mission (API test)', () => {
           ],
           ngc_key: undefined,
           tags: [],
-          thematiques: [],
           thematique: Thematique.alimentation,
           reponse_simple: undefined,
           short_question: 'short',
@@ -2511,6 +2525,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -2565,6 +2580,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -2599,6 +2615,7 @@ describe('Mission (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -2653,7 +2670,6 @@ describe('Mission (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [Thematique.climat],
           accessible: false,
           motif: 'bidon',
           categorie: Categorie.recommandation,
@@ -2682,6 +2698,7 @@ describe('Mission (API test)', () => {
       image_url: 'NEW img',
       thematique: Thematique.alimentation,
       titre: 'NEW titre',
+      introduction: 'NEW intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -2771,6 +2788,7 @@ describe('Mission (API test)', () => {
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {

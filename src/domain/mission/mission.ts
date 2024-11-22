@@ -68,6 +68,7 @@ export class Mission {
   done_at: Date;
   thematique: Thematique;
   titre: string;
+  introduction: string;
   code: string;
   image_url: string;
   objectifs: Objectif[];
@@ -80,6 +81,7 @@ export class Mission {
     this.est_visible = data.est_visible;
     this.thematique = data.thematique;
     this.titre = data.titre;
+    this.introduction = data.introduction;
     this.code = data.code;
     this.image_url = data.image_url;
     this.is_first = !!data.is_first;
@@ -105,6 +107,7 @@ export class Mission {
       code: def.code,
       image_url: def.image_url,
       titre: def.titre,
+      introduction: def.introduction,
       is_first: def.is_first,
       objectifs: def.objectifs.map((o) => ({
         content_id: o.content_id,
@@ -125,6 +128,7 @@ export class Mission {
     this.image_url = def.image_url;
     this.thematique = def.thematique;
     this.titre = def.titre;
+    this.introduction = def.introduction;
     this.code = def.code;
     this.is_first = def.is_first;
   }

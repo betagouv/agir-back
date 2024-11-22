@@ -404,7 +404,6 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
             },
           ],
           tags: [],
-          thematiques: [Thematique.climat],
           thematique: Thematique.alimentation,
           reponse_simple: undefined,
           short_question: 'short',

@@ -442,16 +442,6 @@ export class CMSImportUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      universes:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => u.attributes.code)
-          : [],
-      thematiques_univers:
-        entry.attributes.thematique_univers.data.length > 0
-          ? entry.attributes.thematique_univers.data.map(
-              (t) => t.attributes.code,
-            )
-          : [],
       categorie: Categorie[entry.attributes.categorie],
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
@@ -496,12 +486,6 @@ export class CMSImportUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      thematiques:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map(
-              (u) => Thematique[u.attributes.code],
-            )
-          : [],
       short_question: entry.attributes.short_question,
       image_url: this.getImageUrlFromPopulate(entry),
       conditions: entry.attributes.OR_Conditions
@@ -528,6 +512,7 @@ export class CMSImportUsecase {
       code: entry.attributes.code,
       is_first: entry.attributes.is_first,
       titre: entry.attributes.titre,
+      introduction: entry.attributes.introduction,
       image_url: this.getImageUrlFromPopulate(entry),
       objectifs:
         entry.attributes.objectifs.length > 0

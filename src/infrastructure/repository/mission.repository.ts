@@ -54,6 +54,7 @@ export class MissionRepository {
       id_cms: missionDef.id_cms,
       thematique: missionDef.thematique,
       titre: missionDef.titre,
+      introduction: missionDef.introduction,
       code: missionDef.code,
       image_url: missionDef.image_url,
       est_visible: missionDef.est_visible,
@@ -109,6 +110,7 @@ export class MissionRepository {
       image_url: missionDB.image_url,
       titre: missionDB.titre,
       is_first: missionDB.is_first,
+      introduction: missionDB.introduction,
     });
   }
 }

@@ -73,7 +73,7 @@ export class InscriptionUsecase {
           utilisateurInput.situation_ngc_id,
         );
 
-        utilisateurToCreate.kyc_history.tryUpdateQuestionByCodeWithCode(
+        utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
           KYCID.KYC_bilan,
           BooleanKYC.oui,
         );

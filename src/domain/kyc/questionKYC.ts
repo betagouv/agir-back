@@ -110,7 +110,6 @@ export class QuestionKYC implements TaggedContent {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
-    this.thematiques = data.thematiques;
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
 
@@ -139,7 +138,6 @@ export class QuestionKYC implements TaggedContent {
       type: def.type,
       ngc_key: def.ngc_key,
       thematique: def.thematique,
-      thematiques: def.thematiques,
       question: def.question,
       conditions: def.conditions ? def.conditions : [],
       a_supprimer: !!def.a_supprimer,
@@ -192,7 +190,6 @@ export class QuestionKYC implements TaggedContent {
           : TypeReponseQuestionKYC.mosaic_number,
       is_NGC: false,
       tags: [],
-      thematiques: undefined,
       conditions: [],
       a_supprimer: false,
       reponse_simple: undefined,
@@ -270,7 +267,6 @@ export class QuestionKYC implements TaggedContent {
     this.a_supprimer = !!def.a_supprimer;
     this.ngc_key = def.ngc_key;
     this.thematique = def.thematique;
-    this.thematiques = def.thematiques;
     this.tags = def.tags ? def.tags : [];
     this.conditions = def.conditions ? def.conditions : [];
     this.id_cms = def.id_cms;
@@ -494,13 +490,21 @@ export class QuestionKYC implements TaggedContent {
     return result;
   }
 
-  public selectChoixByCode(code: string) {
+  public selectChoixUniqueByCode(code: string) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
       if (rep.code === code) {
         rep.value = BooleanKYC.oui;
       } else {
         rep.value = BooleanKYC.non;
+      }
+    }
+  }
+  public selectChoixByCode(code: string, selected: boolean) {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      if (rep.code === code) {
+        rep.value = selected ? BooleanKYC.oui : BooleanKYC.non;
       }
     }
   }
@@ -599,7 +603,6 @@ export class QuestionKYC implements TaggedContent {
         : null,
       thematique: elem.thematique,
       tags: elem.tags,
-      thematiques: elem.thematiques ? elem.thematiques : [],
       id_cms: elem.id_cms,
       short_question: elem.short_question,
       image_url: elem.image_url,

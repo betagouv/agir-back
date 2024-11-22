@@ -47,7 +47,6 @@ export class KycRepository {
       reponses: kycDef.reponses,
       thematique: kycDef.thematique ? kycDef.thematique.toString() : null,
       tags: kycDef.tags.map((t) => t.toString()),
-      universes: kycDef.thematiques.map((u) => u.toString()),
       image_url: kycDef.image_url,
       short_question: kycDef.short_question,
       conditions: kycDef.conditions as any,
@@ -97,9 +96,6 @@ export class KycRepository {
       reponses: kycDB.reponses as any,
       thematique: Thematique[kycDB.thematique],
       tags: kycDB.tags ? kycDB.tags.map((t) => Tag[t]).filter((e) => !!e) : [],
-      thematiques: kycDB.universes
-        ? kycDB.universes.map((u) => Thematique[u])
-        : [],
       ngc_key: kycDB.ngc_key,
       short_question: kycDB.short_question,
       image_url: kycDB.image_url,

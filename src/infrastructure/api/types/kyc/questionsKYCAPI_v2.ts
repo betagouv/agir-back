@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Categorie } from '../../../../../src/domain/contenu/categorie';
 import {
-  KYCReponse,
-  KYCReponseComplexe,
   KYCReponseSimple,
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -24,20 +22,10 @@ export class ReponseMultipleAPI {
   @ApiProperty() code: string;
   @ApiProperty() label: string;
   @ApiProperty({ required: false }) value?: string;
+  @ApiProperty({ required: false }) selected?: boolean;
   @ApiProperty({ required: false }) emoji?: string;
   @ApiProperty({ required: false }) image_url?: string;
   @ApiProperty({ enum: Unite, required: false }) unite?: Unite;
-
-  public static mapToAPI(reponse: KYCReponseComplexe): ReponseMultipleAPI {
-    return {
-      code: reponse.code,
-      label: reponse.label,
-      value: reponse.value,
-      emoji: reponse.emoji,
-      image_url: reponse.image_url,
-      unite: reponse.unite,
-    };
-  }
 }
 
 export class QuestionKYCAPI_v2 {
@@ -96,19 +84,31 @@ export class QuestionKYCAPI_v2 {
         .map((r) => ({
           code: r.code,
           label: r.label,
-          value: r.value,
+          selected: QuestionKYC.isTrueBooleanString(r.value),
         }));
     } else if (question.isMosaic()) {
       result.reponse_multiple = question
         .getListeReponsesComplexes()
-        .map((r) => ({
-          code: r.code,
-          label: r.label,
-          value: r.value,
-          emoji: r.emoji,
-          image_url: r.image_url,
-          unite: r.unite,
-        }));
+        .map((r) => {
+          const common = {
+            code: r.code,
+            label: r.label,
+            emoji: r.emoji,
+            image_url: r.image_url,
+            unite: r.unite,
+          };
+          if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
+            return {
+              ...common,
+              selected: QuestionKYC.isTrueBooleanString(r.value),
+            };
+          } else {
+            return {
+              ...common,
+              value: r.value,
+            };
+          }
+        });
       result.is_answered = question.is_mosaic_answered;
     }
     return result;

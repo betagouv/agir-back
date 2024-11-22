@@ -296,10 +296,6 @@ export class CMSWebhookUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
-      thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((u) => u.code)
-        : [],
       categorie: Categorie[entry.categorie],
       mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
       conditions: entry.OR_Conditions.map((or) =>
@@ -341,9 +337,6 @@ export class CMSWebhookUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      thematiques: entry.univers
-        ? entry.univers.map((u) => Thematique[u.code])
-        : [],
       image_url: this.getImageUrl(entry),
       short_question: entry.short_question,
       conditions: entry.OR_Conditions
@@ -374,6 +367,7 @@ export class CMSWebhookUsecase {
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
       titre: entry.titre,
+      introduction: entry.introduction,
       code: entry.code,
       image_url: this.getImageUrl(entry),
       is_first: entry.is_first,

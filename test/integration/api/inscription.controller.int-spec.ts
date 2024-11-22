@@ -462,14 +462,14 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    const kyc_voiture = user.kyc_history.getAnsweredQuestionByCode(
+    const kyc_voiture = user.kyc_history.getUpToDateAnsweredQuestionByCode(
       KYCID.KYC_transport_voiture_km,
     );
     expect(kyc_voiture).not.toBeUndefined();
     expect(kyc_voiture.hasAnyResponses()).toEqual(true);
     expect(kyc_voiture.getReponseSimpleValueAsNumber()).toEqual(20000);
 
-    const kyc_bois = user.kyc_history.getAnsweredQuestionByCode(
+    const kyc_bois = user.kyc_history.getUpToDateAnsweredQuestionByCode(
       KYCID.KYC_chauffage_bois,
     );
     expect(kyc_bois).not.toBeUndefined();
@@ -694,7 +694,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
     expect(
-      user.kyc_history.getAnsweredQuestionByCode(KYCID.KYC_local_frequence),
+      user.kyc_history.getUpToDateAnsweredQuestionByCode(
+        KYCID.KYC_local_frequence,
+      ),
     ).not.toBeNull();
   });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs si clé pas connu`, async () => {
@@ -770,7 +772,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       points: 10,
       question: 'The question !',
       tags: [],
-      universes: [],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'logement . chauffage . fioul . présent',

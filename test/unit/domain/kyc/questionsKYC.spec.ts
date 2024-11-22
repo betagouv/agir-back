@@ -37,7 +37,6 @@ const QUESTION_TEST: QuestionKYC_v1 = {
     },
   ],
   tags: [],
-  thematiques: [],
   short_question: 'short',
   image_url: 'https://',
   conditions: [],
@@ -618,19 +617,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       new KycDefinition({
         ...KYC_DEF,
         id_cms: 1,
-        thematiques: [Thematique.alimentation],
+        thematique: Thematique.alimentation,
         code: KYCID.KYC001,
       }),
       new KycDefinition({
         ...KYC_DEF,
         id_cms: 2,
-        thematiques: [Thematique.logement],
+        thematique: Thematique.logement,
         code: KYCID.KYC002,
       }),
       new KycDefinition({
         ...KYC_DEF,
         id_cms: 3,
-        thematiques: [Thematique.dechet],
+        thematique: Thematique.dechet,
         code: KYCID.KYC003,
       }),
     ]);
@@ -896,7 +895,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
@@ -934,7 +933,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
@@ -972,7 +971,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
@@ -1010,7 +1009,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(123.34);
   });
@@ -1152,12 +1151,12 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getCodeReponseQuestionChoixUnique(),
     ).toEqual('a');
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('a'),
     ).toEqual({
       code: 'a',
@@ -1167,7 +1166,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('b'),
     ).toEqual({
       code: 'b',
@@ -1177,7 +1176,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       code: 'ne_sais_pas',
@@ -1255,13 +1254,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(history.answered_questions).toHaveLength(1);
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getCodeReponseQuestionChoixUnique(),
     ).toEqual('b');
 
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('a'),
     ).toEqual({
       code: 'a',
@@ -1271,7 +1270,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('b'),
     ).toEqual({
       code: 'b',
@@ -1281,7 +1280,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       code: 'ne_sais_pas',

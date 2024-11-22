@@ -12,8 +12,6 @@ export enum DefiStatus {
   todo = 'todo',
   en_cours = 'en_cours',
   pas_envie = 'pas_envie',
-  // FIXME : status a supprimer pour utilisateurs version >= 7
-  deja_fait = 'deja_fait',
   abondon = 'abondon',
   fait = 'fait',
 }
@@ -30,7 +28,6 @@ export class Defi implements TaggedContent {
   private status: DefiStatus;
   date_acceptation: Date;
   score: number;
-  universes: string[]; // FIXME : A SUPPRIMER
   accessible: boolean;
   motif: string;
   categorie: Categorie;
@@ -51,7 +48,6 @@ export class Defi implements TaggedContent {
     this.date_acceptation = data.date_acceptation;
     this.status = data.status;
     this.score = 0;
-    this.universes = data.universes; // FIXME : A SUPPRIMER
     this.accessible = !!data.accessible;
     this.motif = data.motif;
     this.categorie = data.categorie;
@@ -71,10 +67,7 @@ export class Defi implements TaggedContent {
     if (status === DefiStatus.en_cours) {
       this.date_acceptation = new Date();
     }
-    if (
-      (status === DefiStatus.deja_fait || status === DefiStatus.fait) &&
-      !this.sont_points_en_poche
-    ) {
+    if (status === DefiStatus.fait && !this.sont_points_en_poche) {
       this.sont_points_en_poche = true;
       utilisateur.gamification.ajoutePoints(this.points, utilisateur);
     }

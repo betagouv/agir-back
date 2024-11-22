@@ -122,10 +122,9 @@ export class KYCHistory {
     let result: QuestionKYC[] = [];
 
     this.catalogue.forEach((question) => {
-      const answered_question = this.getAnsweredQuestionByCode(question.code);
-      if (answered_question) {
-        answered_question.refreshFromDef(question);
-      }
+      const answered_question = this.getUpToDateAnsweredQuestionByCode(
+        question.code,
+      );
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
     if (kyc_only) {
@@ -179,7 +178,7 @@ export class KYCHistory {
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             const code_reponse = kyc.getCodeByNGCCode(string_value);
             if (code_reponse) {
-              const updated_kyc = this.selectCodeInQuestionByCode(
+              const updated_kyc = this.selectChoixUniqueByCode(
                 kyc.code,
                 code_reponse,
               );
@@ -206,7 +205,7 @@ export class KYCHistory {
 
   public patchLogement(input: LogementInput) {
     if (input.dpe && this.doesQuestionExistsByCode(KYCID.KYC_DPE)) {
-      this.selectCodeInQuestionByCode(KYCID.KYC_DPE, input.dpe);
+      this.selectChoixUniqueByCode(KYCID.KYC_DPE, input.dpe);
     }
     if (
       input.superficie &&
@@ -228,7 +227,7 @@ export class KYCHistory {
       input.proprietaire !== null &&
       this.doesQuestionExistsByCode(KYCID.KYC_proprietaire)
     ) {
-      this.selectCodeInQuestionByCode(
+      this.selectChoixUniqueByCode(
         KYCID.KYC_proprietaire,
         input.proprietaire ? 'oui' : 'non',
       );
@@ -243,29 +242,20 @@ export class KYCHistory {
       };
 
       if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_gaz)) {
-        this.selectCodeInQuestionByCode(KYCID.KYC_chauffage_gaz, 'ne_sais_pas');
+        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_gaz, 'ne_sais_pas');
       }
       if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_fioul)) {
-        this.selectCodeInQuestionByCode(
-          KYCID.KYC_chauffage_fioul,
-          'ne_sais_pas',
-        );
+        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_fioul, 'ne_sais_pas');
       }
       if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_bois)) {
-        this.selectCodeInQuestionByCode(
-          KYCID.KYC_chauffage_bois,
-          'ne_sais_pas',
-        );
+        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_bois, 'ne_sais_pas');
       }
       if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_elec)) {
-        this.selectCodeInQuestionByCode(
-          KYCID.KYC_chauffage_elec,
-          'ne_sais_pas',
-        );
+        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_elec, 'ne_sais_pas');
       }
       if (input.chauffage !== Chauffage.autre) {
         if (this.doesQuestionExistsByCode(target_KYC[input.chauffage]))
-          this.selectCodeInQuestionByCode(target_KYC[input.chauffage], 'oui');
+          this.selectChoixUniqueByCode(target_KYC[input.chauffage], 'oui');
       }
     }
 
@@ -280,7 +270,7 @@ export class KYCHistory {
     }
     if (input.type) {
       if (this.doesQuestionExistsByCode(KYCID.KYC_type_logement)) {
-        this.selectCodeInQuestionByCode(
+        this.selectChoixUniqueByCode(
           KYCID.KYC_type_logement,
           input.type === TypeLogement.appartement
             ? 'type_appartement'
@@ -290,7 +280,7 @@ export class KYCHistory {
     }
     if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
       if (this.doesQuestionExistsByCode(KYCID.KYC006)) {
-        this.selectCodeInQuestionByCode(
+        this.selectChoixUniqueByCode(
           KYCID.KYC006,
           input.plus_de_15_ans ? 'plus_15' : 'moins_15',
         );
@@ -359,24 +349,28 @@ export class KYCHistory {
     categorie?: Categorie,
     thematique?: Thematique,
   ): QuestionKYC[] {
-    let kycs_all = this.getAllKYCByCategorie(categorie);
-    this.answered_questions.forEach((question) => {
-      const index = kycs_all.findIndex((d) => d.code === question.code);
-      if (index !== -1) {
-        kycs_all.splice(index, 1);
+    let kycs_catalogue_by_cat = this.getKYCFromCatalogueByCategorie(categorie);
+
+    let liste_nouvelles_kyc = [];
+    for (const kyc_catalogue of kycs_catalogue_by_cat) {
+      const kyc_utilisateur = this.getAnsweredQuestionByIdCMS(
+        kyc_catalogue.id_cms,
+      );
+      if (!kyc_utilisateur) {
+        liste_nouvelles_kyc.push(kyc_catalogue);
       }
-    });
+    }
 
     if (thematique) {
-      kycs_all = kycs_all.filter(
-        (k) => k.thematiques.includes(thematique) || k.thematiques.length === 0,
+      liste_nouvelles_kyc = liste_nouvelles_kyc.filter(
+        (k) => k.thematique === thematique,
       );
     }
 
-    return kycs_all;
+    return liste_nouvelles_kyc;
   }
 
-  private getAllKYCByCategorie(categorie?: Categorie): QuestionKYC[] {
+  private getKYCFromCatalogueByCategorie(categorie?: Categorie): QuestionKYC[] {
     if (!categorie) {
       return this.catalogue.map((c) => QuestionKYC.buildFromDef(c));
     }
@@ -387,9 +381,8 @@ export class KYCHistory {
 
   public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
     const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
-    let answered_question = this.getAnsweredQuestionByCode(code);
+    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
     if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
@@ -411,9 +404,8 @@ export class KYCHistory {
       return null;
     }
 
-    let answered_question = this.getAnsweredQuestionByCode(code);
+    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
     if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
@@ -474,7 +466,7 @@ export class KYCHistory {
   }
 
   public isQuestionAnsweredByCode(code: string): boolean {
-    return !!this.getAnsweredQuestionByCode(code);
+    return !!this.getUpToDateAnsweredQuestionByCode(code);
   }
 
   public updateQuestionInHistory(question: QuestionKYC) {
@@ -493,7 +485,7 @@ export class KYCHistory {
     code: string,
     reponses: string[],
   ): QuestionKYC {
-    let question = this.getAnsweredQuestionByCode(code);
+    let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {
       question.setResponseWithValueOrLabels(reponses);
       return question;
@@ -520,7 +512,7 @@ export class KYCHistory {
     }
   }
   public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
-    let question = this.getAnsweredQuestionByCode(code);
+    let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {
       question.setResponseWithValueOrLabels(reponses);
     } else {
@@ -532,29 +524,29 @@ export class KYCHistory {
     }
   }
 
-  public tryUpdateQuestionByCodeWithCode(
+  public trySelectChoixUniqueByCode(
     code_question: string,
     code_reponse: string,
   ) {
     try {
-      this.selectCodeInQuestionByCode(code_question, code_reponse);
+      this.selectChoixUniqueByCode(code_question, code_reponse);
     } catch (error) {
       return;
     }
   }
 
-  public selectCodeInQuestionByCode(
+  public selectChoixUniqueByCode(
     code_question: string,
     code_reponse: string,
   ): QuestionKYC {
     let question = this.getUpToDateAnsweredQuestionByCode(code_question);
     if (question) {
-      question.selectChoixByCode(code_reponse);
+      question.selectChoixUniqueByCode(code_reponse);
       return question;
     } else {
       let question_catalogue =
         this.getKYCByCodeFromCatalogueOrException(code_question);
-      question_catalogue.selectChoixByCode(code_reponse);
+      question_catalogue.selectChoixUniqueByCode(code_reponse);
       this.answered_questions.push(question_catalogue);
       return question_catalogue;
     }
@@ -567,19 +559,17 @@ export class KYCHistory {
     return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
   }
 
-  // FIXME : DEPRECATED (=> refresh version)
-  public getAnsweredQuestionByCode(code: string): QuestionKYC {
-    const result = this.answered_questions.find(
+  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
+    const answered = this.answered_questions.find(
       (element) => element.code === code,
     );
-    if (result) {
-      result.is_answererd = true;
+    if (answered) {
+      answered.is_answererd = true;
     }
-    return result;
-  }
-  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.getAnsweredQuestionByCode(code);
     return this.refreshQuestion(answered);
+  }
+  public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
+    return this.answered_questions.find((element) => element.id_cms === id_cms);
   }
   public getAnsweredQuestionByNGCKey(key: string): QuestionKYC {
     return this.answered_questions.find((element) => element.ngc_key === key);

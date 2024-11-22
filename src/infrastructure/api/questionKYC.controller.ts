@@ -222,13 +222,13 @@ export class QuestionsKYCController extends GenericControler {
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
     if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
-      await this.questionKYCUsecase.updateResponseMosaic(
+      await this.questionKYCUsecase.updateResponseMosaic_deprecated(
         utilisateurId,
         questionId,
         (body as ReponseKYCMosaicAPI).reponse_mosaic,
       );
     } else {
-      await this.questionKYCUsecase.updateResponseKYC(
+      await this.questionKYCUsecase.updateResponseKYC_deprecated(
         utilisateurId,
         questionId,
         (body as ReponseKYCAPI).reponse,

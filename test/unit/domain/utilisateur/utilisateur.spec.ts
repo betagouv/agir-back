@@ -161,7 +161,6 @@ describe('Objet Utilisateur', () => {
           value: undefined,
         },
       ],
-      thematiques: [],
       short_question: 'short',
       image_url: 'https://',
       conditions: [],

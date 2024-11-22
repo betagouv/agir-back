@@ -37,8 +37,6 @@ const DEFI_1_DEF: Defi = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Thematique.climat],
-  thematiquesUnivers: [CodeMission.dechets_compost],
   created_at: undefined,
   updated_at: undefined,
   categorie: Categorie.recommandation,
@@ -62,6 +60,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -96,6 +95,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -130,6 +131,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -170,6 +173,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -204,6 +209,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -238,6 +245,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
         image_url: 'image',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
+
         is_first: false,
         objectifs: [
           {
@@ -279,7 +288,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     pourquoi: 'pourquoi',
     sous_titre: 'sous_titre',
     status: DefiStatus.todo,
-    universes: [Thematique.climat],
     accessible: true,
     motif: 'truc',
     categorie: Categorie.recommandation,
@@ -315,7 +323,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -362,7 +370,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.motif).toBe('truc');
     expect(defi.sous_titre).toBe('sous_titre');
     expect(defi.status).toBe(DefiStatus.en_cours);
-    expect(defi.universes[0]).toBe(Thematique.climat);
   });
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers', async () => {
     // GIVEN
@@ -397,6 +404,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
+
           is_first: false,
           objectifs: [
             {
@@ -497,6 +506,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
+
           is_first: false,
           objectifs: [
             {
@@ -807,7 +818,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -999,7 +1010,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     };
@@ -1037,7 +1048,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -1056,7 +1067,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=deja_fait',
+      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=fait',
     );
 
     // THEN
@@ -1082,7 +1093,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     };
@@ -1147,7 +1158,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     expect(defi.id).toBe('2');
   });
-  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et univers', async () => {
+  it('GET /utilisateurs/utilisateur-id/defis - filtre status todo et thematique', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
       version: 0,
@@ -1160,17 +1171,17 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '1',
-      universes: [Thematique.alimentation],
+      thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '2',
-      universes: [Thematique.climat],
+      thematique: Thematique.climat,
     });
     await TestUtil.create(DB.defi, {
       ...DEFI_1_DEF,
       content_id: '3',
-      universes: [Thematique.logement],
+      thematique: Thematique.logement,
     });
 
     // WHEN
@@ -1297,7 +1308,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [],
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
@@ -1373,7 +1383,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
           pourquoi: 'POURQUOI',
           sous_titre: 'SOUS TITRE',
           status: DefiStatus.en_cours,
-          universes: [],
           accessible: true,
           motif: null,
           categorie: Categorie.recommandation,
@@ -1441,7 +1450,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.getStatus()).toBe(DefiStatus.en_cours);
     expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
-    expect(userDB.defi_history.defis).toHaveLength(2);
+    expect(userDB.defi_history.getRAWDefiListe()).toHaveLength(2);
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
     expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
       Feature.defis,
