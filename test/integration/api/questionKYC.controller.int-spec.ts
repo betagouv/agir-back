@@ -1366,32 +1366,32 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(7);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(4);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(0);
   });

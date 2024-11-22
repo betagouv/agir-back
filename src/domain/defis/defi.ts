@@ -12,8 +12,6 @@ export enum DefiStatus {
   todo = 'todo',
   en_cours = 'en_cours',
   pas_envie = 'pas_envie',
-  // FIXME : status a supprimer pour utilisateurs version >= 7
-  deja_fait = 'deja_fait',
   abondon = 'abondon',
   fait = 'fait',
 }
@@ -69,10 +67,7 @@ export class Defi implements TaggedContent {
     if (status === DefiStatus.en_cours) {
       this.date_acceptation = new Date();
     }
-    if (
-      (status === DefiStatus.deja_fait || status === DefiStatus.fait) &&
-      !this.sont_points_en_poche
-    ) {
+    if (status === DefiStatus.fait && !this.sont_points_en_poche) {
       this.sont_points_en_poche = true;
       utilisateur.gamification.ajoutePoints(this.points, utilisateur);
     }

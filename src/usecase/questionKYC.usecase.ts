@@ -230,7 +230,7 @@ export class QuestionKYCUsecase {
     utilisateur: Utilisateur,
   ) {
     const question_depart =
-      utilisateur.kyc_history.getAnsweredQuestionByCode(code_question);
+      utilisateur.kyc_history.getUpToDateAnsweredQuestionByCode(code_question);
     switch (question_depart.code) {
       case KYCID.KYC_alimentation_regime:
         this.synchroAlimentationRegime(question_depart, utilisateur);

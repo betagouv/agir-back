@@ -68,7 +68,6 @@ export class DefisUsecase {
         DefiStatus.pas_envie,
         DefiStatus.fait,
         DefiStatus.en_cours,
-        DefiStatus.deja_fait,
         DefiStatus.abondon,
       ];
     }

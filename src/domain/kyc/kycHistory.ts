@@ -122,10 +122,9 @@ export class KYCHistory {
     let result: QuestionKYC[] = [];
 
     this.catalogue.forEach((question) => {
-      const answered_question = this.getAnsweredQuestionByCode(question.code);
-      if (answered_question) {
-        answered_question.refreshFromDef(question);
-      }
+      const answered_question = this.getUpToDateAnsweredQuestionByCode(
+        question.code,
+      );
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
     if (kyc_only) {
@@ -382,9 +381,8 @@ export class KYCHistory {
 
   public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
     const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
-    let answered_question = this.getAnsweredQuestionByCode(code);
+    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
     if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
@@ -406,9 +404,8 @@ export class KYCHistory {
       return null;
     }
 
-    let answered_question = this.getAnsweredQuestionByCode(code);
+    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
     if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
       return answered_question;
     }
     return QuestionKYC.buildFromDef(question_catalogue);
@@ -469,7 +466,7 @@ export class KYCHistory {
   }
 
   public isQuestionAnsweredByCode(code: string): boolean {
-    return !!this.getAnsweredQuestionByCode(code);
+    return !!this.getUpToDateAnsweredQuestionByCode(code);
   }
 
   public updateQuestionInHistory(question: QuestionKYC) {
@@ -488,7 +485,7 @@ export class KYCHistory {
     code: string,
     reponses: string[],
   ): QuestionKYC {
-    let question = this.getAnsweredQuestionByCode(code);
+    let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {
       question.setResponseWithValueOrLabels(reponses);
       return question;
@@ -515,7 +512,7 @@ export class KYCHistory {
     }
   }
   public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
-    let question = this.getAnsweredQuestionByCode(code);
+    let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {
       question.setResponseWithValueOrLabels(reponses);
     } else {
@@ -562,18 +559,13 @@ export class KYCHistory {
     return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
   }
 
-  // FIXME : DEPRECATED (=> refresh version)
-  public getAnsweredQuestionByCode(code: string): QuestionKYC {
-    const result = this.answered_questions.find(
+  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
+    const answered = this.answered_questions.find(
       (element) => element.code === code,
     );
-    if (result) {
-      result.is_answererd = true;
+    if (answered) {
+      answered.is_answererd = true;
     }
-    return result;
-  }
-  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.getAnsweredQuestionByCode(code);
     return this.refreshQuestion(answered);
   }
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {

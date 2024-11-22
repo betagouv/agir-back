@@ -220,7 +220,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     });
@@ -359,7 +359,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -372,7 +372,7 @@ describe('DefiHistory', () => {
     // WHEN
     const nombreDefisRealises = defiHistory.getNombreDefisRealises();
     // THEN
-    expect(nombreDefisRealises).toStrictEqual(2);
+    expect(nombreDefisRealises).toStrictEqual(3);
   });
 
   it('getNombreDefisAbandonnes : donne le nombre de défis abandonnés', () => {
@@ -393,7 +393,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,

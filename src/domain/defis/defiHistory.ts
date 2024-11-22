@@ -136,7 +136,6 @@ export class DefiHistory {
         DefiStatus.en_cours,
         DefiStatus.fait,
         DefiStatus.pas_envie,
-        DefiStatus.deja_fait,
       ].includes(defi.getStatus());
     }
     return false;

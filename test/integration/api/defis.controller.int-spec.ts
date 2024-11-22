@@ -323,7 +323,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '002',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -818,7 +818,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '001',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -1010,7 +1010,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     };
@@ -1048,7 +1048,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -1067,7 +1067,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=deja_fait',
+      '/utilisateurs/utilisateur-id/defis?status=en_cours&status=fait',
     );
 
     // THEN
@@ -1093,7 +1093,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         {
           ...DEFI_1,
           id: '2',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     };
