@@ -47,14 +47,7 @@ export class AuthController {
       // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
       /*
       await this.inscriptionUsecase.createUtilisateur({
-        nom: user_data.family_name,
-        prenom: 'UNDEFINED',
-        email: user_data.email,
-        annee_naissance: 1900,
-        code_postal: '91120',
-        commune: 'PALAISEAU',
-        source_inscription: SourceInscription.inconnue,
-        mot_de_passe: undefined,
+        DATA à mettre à jour  
       });
       */
     }
