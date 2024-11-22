@@ -9,6 +9,7 @@ import { Feature } from '../../src/domain/gamification/feature';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class DefisUsecase {
@@ -41,6 +42,7 @@ export class DefisUsecase {
 
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let result = await this.getDefisOfThematiqueAndUtilisateur(
       utilisateur,
@@ -80,6 +82,7 @@ export class DefisUsecase {
 
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let result: Defi[] = [];
 
@@ -115,6 +118,7 @@ export class DefisUsecase {
 
     const defiDefinitions = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(defiDefinitions);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let result = await this.getDefisOfThematiqueAndUtilisateur(
       utilisateur,
@@ -204,6 +208,7 @@ export class DefisUsecase {
 
     const catalogue = await this.defiRepository.list({});
     utilisateur.defi_history.setCatalogue(catalogue);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 

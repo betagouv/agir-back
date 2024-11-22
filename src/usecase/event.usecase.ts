@@ -8,6 +8,7 @@ import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class EventUsecase {
@@ -182,6 +183,8 @@ export class EventUsecase {
         Scope.todo,
       ],
     );
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
+
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
@@ -192,7 +195,7 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
-    utilisateur.missions.validateAricleOrQuizzDone(
+    utilisateur.missions.validateArticleOrQuizzDone(
       event.content_id,
       ContentType.article,
     );
@@ -215,6 +218,7 @@ export class EventUsecase {
       ],
     );
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const quizz = await this.quizzRepository.getQuizzByContentId(
       event.content_id,
@@ -228,7 +232,7 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
-    utilisateur.missions.validateAricleOrQuizzDone(
+    utilisateur.missions.validateArticleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
       event.number_value,

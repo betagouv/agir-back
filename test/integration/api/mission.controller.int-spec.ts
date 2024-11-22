@@ -44,6 +44,46 @@ describe('Mission (API test)', () => {
       thematique: Thematique.alimentation,
     },
   ];
+  const objectifs: ObjectifDefinition[] = [
+    {
+      content_id: '11',
+      points: 5,
+      titre: 'yop',
+      type: ContentType.kyc,
+      tag_article: null,
+      id_cms: 11,
+    },
+    {
+      content_id: '222',
+      points: 5,
+      titre: 'haha',
+      type: ContentType.article,
+      tag_article: null,
+      id_cms: 222,
+    },
+    {
+      content_id: null,
+      points: 5,
+      titre: 'TTT',
+      type: ContentType.article,
+      tag_article: 'composter',
+      id_cms: null,
+    },
+  ];
+
+  const mission_articles_tag: Mission = {
+    id_cms: 1,
+    est_visible: true,
+    objectifs: objectifs as any,
+    code: CodeMission.cereales,
+    image_url: 'img',
+    thematique: Thematique.alimentation,
+    titre: 'titre',
+    introduction: 'intro',
+    is_first: false,
+    created_at: undefined,
+    updated_at: undefined,
+  };
 
   const missions: MissionsUtilisateur_v1 = {
     version: 1,
@@ -467,6 +507,7 @@ describe('Mission (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await missionRepository.onApplicationBootstrap();
   });
 
   afterAll(async () => {
@@ -568,6 +609,11 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
+    await TestUtil.create(DB.mission, {
+      ...mission_articles_tag,
+      id_cms: 1,
+      code: CodeMission.cereales,
+    });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
       label: 'Faut manger !',
@@ -767,7 +813,7 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
   });
 
   it(`NEW GET /utilisateurs/id/missions/id - renvoie la mission de la thématique - à partir du catalgue de mission`, async () => {
@@ -828,7 +874,7 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
   });
 
   it(`GET /utilisateurs/utilisateur-id/thematiques/cereales/mission - recalcul une mission avec des articles dynamiques`, async () => {
@@ -877,19 +923,6 @@ describe('Mission (API test)', () => {
         id_cms: null,
       },
     ];
-    const mission_articles_tag: Mission = {
-      id_cms: 1,
-      est_visible: true,
-      objectifs: objectifs as any,
-      code: CodeMission.cereales,
-      image_url: 'img',
-      thematique: Thematique.alimentation,
-      titre: 'titre',
-      introduction: 'intro',
-      is_first: false,
-      created_at: undefined,
-      updated_at: undefined,
-    };
     await TestUtil.create(DB.utilisateur, { missions: {} });
 
     await TestUtil.create(DB.mission, mission_articles_tag);
@@ -913,22 +946,32 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
-    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '222',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('0');
-    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].content_id).toEqual(
+      '0',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hihi');
-    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].titre).toEqual(
+      'hihi',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('hoho');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].titre).toEqual(
+      'hoho',
+    );
   });
 
   it(`NEW GET /utilisateurs/utilisateur-id/missions/id - recalcul une mission avec des articles dynamiques`, async () => {
@@ -1013,22 +1056,32 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
-    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '222',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('0');
-    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].content_id).toEqual(
+      '0',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hihi');
-    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].titre).toEqual(
+      'hihi',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('hoho');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].titre).toEqual(
+      'hoho',
+    );
   });
 
   it(`GET /utilisateurs/utilisateur-id/thematiques/cereales/mission - pas de recalcul articles dynamiques si mission plus nouvelle`, async () => {
@@ -1114,10 +1167,14 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(2);
-    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('_2');
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(2);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[0].content_id).toEqual(
+      '_1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '_2',
+    );
   });
 
   it(`NEW GET /utilisateurs/utilisateur-id/missions/id - pas de recalcul articles dynamiques si mission plus nouvelle`, async () => {
@@ -1203,10 +1260,14 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(2);
-    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('_1');
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('_2');
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(2);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[0].content_id).toEqual(
+      '_1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '_2',
+    );
   });
 
   it(`GET /utilisateurs/id/thematiques/climat/mission - 404 si pas de mission pour cette thematique`, async () => {
@@ -1279,7 +1340,7 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
   });
@@ -1322,7 +1383,7 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
   });
@@ -1361,7 +1422,7 @@ describe('Mission (API test)', () => {
     ]);
 
     expect(
-      userDB.missions.missions[0].objectifs[2].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[2].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
   });
@@ -1399,7 +1460,7 @@ describe('Mission (API test)', () => {
     ]);
 
     expect(
-      userDB.missions.missions[0].objectifs[3].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[3].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
   });
@@ -1427,7 +1488,7 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(false);
     expect(userDB.gamification.points).toEqual(10);
   });
@@ -1465,7 +1526,7 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(20);
   });
@@ -1669,10 +1730,10 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
     expect(
-      userDB.missions.missions[0].objectifs[1].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[1].sont_points_en_poche,
     ).toEqual(true);
     expect(userDB.gamification.points).toEqual(40);
   });
@@ -2089,8 +2150,12 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article`, async () => {
     // GIVEN
@@ -2120,9 +2185,15 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      true,
+    );
 
     // WHEN
     response = await TestUtil.GET(
@@ -2162,9 +2233,15 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      true,
+    );
 
     // WHEN
     response = await TestUtil.GET(
@@ -2207,9 +2284,15 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      false,
+    );
 
     // WHEN
     response = await TestUtil.GET(
@@ -2252,9 +2335,15 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      false,
+    );
 
     // WHEN
     response = await TestUtil.GET(
@@ -2322,9 +2411,15 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      true,
+    );
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz`, async () => {
     // GIVEN
@@ -2349,10 +2444,14 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '2',
+    );
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(false);
   });
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz, même si raté, et points déjà en poche`, async () => {
@@ -2378,10 +2477,14 @@ describe('Mission (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '2',
+    );
     expect(
-      userDB.missions.missions[0].objectifs[0].sont_points_en_poche,
+      userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
   });
 
@@ -2393,9 +2496,9 @@ describe('Mission (API test)', () => {
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.mission, {
-      id_cms: 2,
+      id_cms: 1,
       est_visible: false,
-      code: CodeMission.dechets_compost,
+      code: CodeMission.cereales,
     });
 
     // WHEN
@@ -2412,7 +2515,8 @@ describe('Mission (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    userDB.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const old_mission = userDB.missions.getMissionById('1');
 

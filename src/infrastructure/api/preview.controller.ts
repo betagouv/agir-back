@@ -310,7 +310,7 @@ export class PreviewController extends GenericControler {
       return this.returnBadOreMissingLoginError(res);
     }
     let all_kyc_defs = KycRepository.getCatalogue();
-    let all_mission_defs = await this.missionRepository.list();
+    let all_mission_defs = MissionRepository.getCatalogue();
     let result = [];
 
     const kyc_fire_map: Map<number, boolean> = new Map();

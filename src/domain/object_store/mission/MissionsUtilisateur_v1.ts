@@ -1,4 +1,4 @@
-import { Versioned, Versioned_v1 } from '../versioned';
+import { Versioned_v1 } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
@@ -69,9 +69,9 @@ export class MissionsUtilisateur_v1 extends Versioned_v1 {
   ): MissionsUtilisateur_v1 {
     return {
       version: 1,
-      missions: missionsUtilisateur.missions.map((elem) =>
-        Mission_v1.map(elem),
-      ),
+      missions: missionsUtilisateur
+        .getRAWMissions()
+        .map((elem) => Mission_v1.map(elem)),
     };
   }
 

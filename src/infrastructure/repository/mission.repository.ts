@@ -11,6 +11,8 @@ export class MissionRepository {
   static catalogue_missions_by_code: Map<string, MissionDefinition>;
   static catalogue_missions_by_thematique: Map<Thematique, MissionDefinition[]>;
 
+  private static catalogue_mission: MissionDefinition[];
+
   constructor(private prisma: PrismaService) {
     MissionRepository.catalogue_missions_by_idcms = new Map();
     MissionRepository.catalogue_missions_by_thematique = new Map();
@@ -32,9 +34,11 @@ export class MissionRepository {
     const new_map_id: Map<number, MissionDefinition> = new Map();
     const new_map_code: Map<string, MissionDefinition> = new Map();
     const new_map_them: Map<Thematique, MissionDefinition[]> = new Map();
+    const new_catalogue: MissionDefinition[] = [];
     const liste_missions = await this.prisma.mission.findMany();
     liste_missions.forEach((mission) => {
       const def = MissionRepository.buildMissionDefFromDB(mission);
+      new_catalogue.push(def);
       new_map_code.set(mission.code, def);
       new_map_id.set(mission.id_cms, def);
       const them_array = new_map_them.get(def.thematique);
@@ -47,6 +51,7 @@ export class MissionRepository {
     MissionRepository.catalogue_missions_by_code = new_map_code;
     MissionRepository.catalogue_missions_by_idcms = new_map_id;
     MissionRepository.catalogue_missions_by_thematique = new_map_them;
+    MissionRepository.catalogue_mission = new_catalogue;
   }
 
   async upsert(missionDef: MissionDefinition): Promise<void> {
@@ -95,8 +100,8 @@ export class MissionRepository {
     return MissionRepository.catalogue_missions_by_code.get(code_mission);
   }
 
-  list(): MissionDefinition[] {
-    return Array.from(MissionRepository.catalogue_missions_by_idcms.values());
+  public static getCatalogue(): MissionDefinition[] {
+    return MissionRepository.catalogue_mission;
   }
 
   private static buildMissionDefFromDB(missionDB: Mission): MissionDefinition {
