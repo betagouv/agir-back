@@ -54,7 +54,7 @@ export class DefiHistory_v0 extends Versioned {
   static serialise(domain: DefiHistory): DefiHistory_v0 {
     return {
       version: 0,
-      defis: domain.defis.map((e) => Defi_v0.map(e)),
+      defis: domain.getRAWDefiListe().map((e) => Defi_v0.map(e)),
     };
   }
 }

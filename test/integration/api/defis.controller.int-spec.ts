@@ -1450,7 +1450,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(defi.getStatus()).toBe(DefiStatus.en_cours);
     expect(defi.date_acceptation.getTime() + 100).toBeGreaterThan(Date.now());
     expect(defi.date_acceptation.getTime() - 100).toBeLessThan(Date.now());
-    expect(userDB.defi_history.defis).toHaveLength(2);
+    expect(userDB.defi_history.getRAWDefiListe()).toHaveLength(2);
     expect(userDB.unlocked_features.unlocked_features).toHaveLength(1);
     expect(userDB.unlocked_features.unlocked_features[0]).toEqual(
       Feature.defis,

@@ -397,7 +397,9 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(userDB.defi_history.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
   });
   it('POST /admin/migrate_users migration V8 OK', async () => {
     // GIVEN

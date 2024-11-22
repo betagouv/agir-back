@@ -21,13 +21,13 @@ describe('DefiHistory vN ', () => {
     const domain = new DefiHistory(raw);
 
     // THEN
-    expect(domain.defis).toHaveLength(0);
+    expect(domain.getRAWDefiListe()).toHaveLength(0);
   });
 
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN
     const domain_start = new DefiHistory();
-    domain_start.defis.push(
+    domain_start.getRAWDefiListe().push(
       new Defi({
         id: '1',
         thematique: Thematique.transport,
@@ -59,7 +59,7 @@ describe('DefiHistory vN ', () => {
   it('serialise <=> upgade <=> deserialise v0 OK', () => {
     // GIVEN
     const domain_start = new DefiHistory();
-    domain_start.defis.push(
+    domain_start.getRAWDefiListe().push(
       new Defi({
         id: '1',
         thematique: Thematique.transport,
@@ -126,6 +126,6 @@ describe('DefiHistory vN ', () => {
     const domain_end = new DefiHistory(upgrade);
 
     // THEN
-    expect(domain_end.defis[0].accessible).toStrictEqual(false);
+    expect(domain_end.getRAWDefiListe()[0].accessible).toStrictEqual(false);
   });
 });

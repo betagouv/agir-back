@@ -160,9 +160,11 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis).toHaveLength(1);
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()).toHaveLength(1);
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : maj status defi deja dans historique', () => {
@@ -179,8 +181,10 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : on ne gagne pas 2 fois les points', () => {
@@ -198,8 +202,10 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('getDefisOfStatus : liste les défis avec status', () => {
