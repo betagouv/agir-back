@@ -663,10 +663,10 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
     expect(userDB.gamification.points).toEqual(20);
     expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
     expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
   });
 
@@ -775,9 +775,15 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      false,
+    );
     // WHEN
     response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/1',
@@ -786,8 +792,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      true,
+    );
   });
 
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {

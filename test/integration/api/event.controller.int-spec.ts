@@ -195,7 +195,7 @@ describe('EVENT (API test)', () => {
     );
     expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
-      dbUtilisateur.missions.missions[0].objectifs[0].done_at.getTime(),
+      dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
   });
   it('POST /utilisateurs/id/events - valide objectif de mission quizz', async () => {
@@ -226,7 +226,7 @@ describe('EVENT (API test)', () => {
     );
     expect(dbUtilisateur.gamification.points).toStrictEqual(15);
     expect(
-      dbUtilisateur.missions.missions[0].objectifs[0].done_at.getTime(),
+      dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
   });
 

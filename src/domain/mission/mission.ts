@@ -123,7 +123,7 @@ export class Mission {
     });
   }
 
-  public refreshFromDef(def: MissionDefinition) {
+  public refreshFromDef(def: MissionDefinition): Mission {
     this.est_visible = def.est_visible;
     this.image_url = def.image_url;
     this.thematique = def.thematique;
@@ -131,6 +131,7 @@ export class Mission {
     this.introduction = def.introduction;
     this.code = def.code;
     this.is_first = def.is_first;
+    return this;
   }
 
   public exfiltreObjectifsNonVisibles() {

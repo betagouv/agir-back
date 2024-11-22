@@ -12,6 +12,7 @@ import {
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -182,6 +183,7 @@ export class QuestionKYCUsecase {
     Utilisateur.checkState(utilisateur);
 
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
 
@@ -210,6 +212,7 @@ export class QuestionKYCUsecase {
     Utilisateur.checkState(utilisateur);
 
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     this.updateQuestionOfCode_deprecated(
       code_question,
@@ -281,6 +284,7 @@ export class QuestionKYCUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {

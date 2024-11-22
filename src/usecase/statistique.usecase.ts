@@ -29,6 +29,7 @@ export class StatistiqueUsecase {
         universTerminesAsc,
         universEncoursAsc,
       } = this.calculerMissions(user);
+      user.missions.setCatalogue(MissionRepository.getCatalogue());
 
       const nombreDefisEnCours = user.defi_history.getNombreDefisEnCours();
       const nombreDefisRealises = user.defi_history.getNombreDefisRealises();
@@ -63,7 +64,7 @@ export class StatistiqueUsecase {
     const missionsTerminees: string[] = [];
     const missionsEnCours: string[] = [];
 
-    for (const mission of user.missions.missions) {
+    for (const mission of user.missions.getRAWMissions()) {
       const pourcentageCompletion = this.calculPourcentageDeCompletion(mission);
 
       if (!thematiqueCompletions[mission.thematique]) {

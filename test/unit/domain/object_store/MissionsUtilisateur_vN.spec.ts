@@ -18,7 +18,7 @@ describe('MissionsUilisateur vN ', () => {
     const domain = new MissionsUtilisateur(raw);
     // THEN
 
-    expect(domain.missions).toEqual([]);
+    expect(domain.getRAWMissions()).toEqual([]);
   });
   it('serialise <=> deserialise v1 OK', () => {
     // GIVEN
