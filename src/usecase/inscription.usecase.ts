@@ -30,10 +30,8 @@ export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private securityEmailManager: SecurityEmailManager,
-    private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
     private codeManager: CodeManager,
-    private kycRepository: KycRepository,
     private situationNGCRepository: SituationNGCRepository,
     private mailerUsecase: MailerUsecase,
   ) {}

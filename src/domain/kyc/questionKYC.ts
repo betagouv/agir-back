@@ -453,10 +453,13 @@ export class QuestionKYC implements TaggedContent {
       if (reponses && reponses.length === 1) {
         this.reponse_simple = { value: reponses[0] };
       }
-    } else {
-      reponses.forEach((label) => {
-        this.selectChoixByLabel(label);
-      });
+    } else if (this.isChoixUnique()) {
+      this.setChoixUniqueByLabel(reponses[0]);
+    } else if (this.isChoixMultiple()) {
+      this.deSelectAll();
+      for (const rep of reponses) {
+        this.selectChoixByLabel(rep);
+      }
     }
   }
   public setResponseValueForCode(code: string, value: string) {
@@ -473,9 +476,26 @@ export class QuestionKYC implements TaggedContent {
     for (const rep of this.reponse_complexe) {
       if (rep.label === label) {
         rep.value = BooleanKYC.oui;
+        return;
+      }
+    }
+  }
+  // DEPRECATED
+  private setChoixUniqueByLabel(label: string) {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      if (rep.label === label) {
+        rep.value = BooleanKYC.oui;
       } else {
         rep.value = BooleanKYC.non;
       }
+    }
+  }
+
+  private deSelectAll() {
+    if (!this.reponse_complexe) return;
+    for (const rep of this.reponse_complexe) {
+      rep.value = BooleanKYC.non;
     }
   }
 
@@ -485,6 +505,16 @@ export class QuestionKYC implements TaggedContent {
     for (const rep of this.reponse_complexe) {
       if (QuestionKYC.isTrueBooleanString(rep.value)) {
         result.push(rep.label);
+      }
+    }
+    return result;
+  }
+  public getSelectedCodes(): string[] {
+    if (!this.reponse_complexe) return [];
+    const result = [];
+    for (const rep of this.reponse_complexe) {
+      if (QuestionKYC.isTrueBooleanString(rep.value)) {
+        result.push(rep.code);
       }
     }
     return result;
@@ -500,11 +530,12 @@ export class QuestionKYC implements TaggedContent {
       }
     }
   }
-  public selectChoixByCode(code: string, selected: boolean) {
+  public setChoixByCode(code: string, selected: boolean) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
       if (rep.code === code) {
         rep.value = selected ? BooleanKYC.oui : BooleanKYC.non;
+        return;
       }
     }
   }

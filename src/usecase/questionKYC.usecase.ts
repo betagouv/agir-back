@@ -444,10 +444,15 @@ export class QuestionKYCUsecase {
               code_ref,
             );
           } else {
-            question_to_update.selectChoixUniqueByCode(code_ref);
+            question_to_update.setChoixByCode(code_ref, true);
             already_found_selected = true;
           }
+        } else {
+          question_to_update.setChoixByCode(code_ref, false);
         }
+      }
+      if (!already_found_selected) {
+        ApplicationError.throwNoneSelectedButNeededOne(code_question);
       }
     } else if (question_to_update.isChoixMultiple()) {
       for (const code_ref of question_to_update.getAllCodes()) {
@@ -464,10 +469,7 @@ export class QuestionKYCUsecase {
             code_ref,
           );
         }
-        question_to_update.selectChoixByCode(
-          code_ref,
-          answered_element.selected,
-        );
+        question_to_update.setChoixByCode(code_ref, answered_element.selected);
       }
     }
     utilisateur.kyc_history.updateQuestionInHistory(question_to_update);
