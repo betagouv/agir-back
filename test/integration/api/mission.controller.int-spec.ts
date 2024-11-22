@@ -2288,7 +2288,6 @@ describe('Mission (API test)', () => {
           ],
           ngc_key: undefined,
           tags: [],
-          thematiques: [],
           thematique: Thematique.alimentation,
           reponse_simple: undefined,
           short_question: 'short',

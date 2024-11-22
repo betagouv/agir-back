@@ -337,9 +337,6 @@ export class CMSWebhookUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      thematiques: entry.univers
-        ? entry.univers.map((u) => Thematique[u.code])
-        : [],
       image_url: this.getImageUrl(entry),
       short_question: entry.short_question,
       conditions: entry.OR_Conditions

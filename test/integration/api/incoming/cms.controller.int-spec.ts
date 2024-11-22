@@ -149,12 +149,6 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 2, code: 'possede_velo' },
       ],
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-      univers: [
-        {
-          id: 1,
-          code: Thematique.climat,
-        },
-      ],
       OR_Conditions: [
         {
           AND_Conditions: [
@@ -511,7 +505,6 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);
@@ -563,7 +556,6 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
-    expect(item.universes).toEqual([Thematique.climat]);
     expect(item.conditions).toStrictEqual([
       [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
     ]);

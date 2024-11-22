@@ -225,7 +225,6 @@ export class PreviewController extends GenericControler {
     DATA.catgorie = kyc_def.categorie;
     DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.thematiques;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {

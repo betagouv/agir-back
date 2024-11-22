@@ -51,7 +51,6 @@ export class QuestionKYC_v1 {
   is_NGC: boolean;
   tags: Tag[];
   thematique: Thematique;
-  thematiques: Thematique[];
   conditions: ConditionKYC[][];
 
   a_supprimer?: boolean;
@@ -106,9 +105,6 @@ export class KYCHistory_v1 extends Versioned_v1 {
           short_question: question.short_question,
           tags: question.tags,
           thematique: question.thematique,
-          thematiques: question.universes
-            ? question.universes.map((u) => Thematique[u])
-            : null,
           type: question.type,
           a_supprimer: question.a_supprimer,
           unite: question.unite,

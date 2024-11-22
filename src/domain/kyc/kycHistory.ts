@@ -350,24 +350,28 @@ export class KYCHistory {
     categorie?: Categorie,
     thematique?: Thematique,
   ): QuestionKYC[] {
-    let kycs_all = this.getAllKYCByCategorie(categorie);
-    this.answered_questions.forEach((question) => {
-      const index = kycs_all.findIndex((d) => d.code === question.code);
-      if (index !== -1) {
-        kycs_all.splice(index, 1);
+    let kycs_catalogue_by_cat = this.getKYCFromCatalogueByCategorie(categorie);
+
+    let liste_nouvelles_kyc = [];
+    for (const kyc_catalogue of kycs_catalogue_by_cat) {
+      const kyc_utilisateur = this.getAnsweredQuestionByIdCMS(
+        kyc_catalogue.id_cms,
+      );
+      if (!kyc_utilisateur) {
+        liste_nouvelles_kyc.push(kyc_catalogue);
       }
-    });
+    }
 
     if (thematique) {
-      kycs_all = kycs_all.filter(
-        (k) => k.thematiques.includes(thematique) || k.thematiques.length === 0,
+      liste_nouvelles_kyc = liste_nouvelles_kyc.filter(
+        (k) => k.thematique === thematique,
       );
     }
 
-    return kycs_all;
+    return liste_nouvelles_kyc;
   }
 
-  private getAllKYCByCategorie(categorie?: Categorie): QuestionKYC[] {
+  private getKYCFromCatalogueByCategorie(categorie?: Categorie): QuestionKYC[] {
     if (!categorie) {
       return this.catalogue.map((c) => QuestionKYC.buildFromDef(c));
     }
@@ -571,6 +575,9 @@ export class KYCHistory {
   public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
     const answered = this.getAnsweredQuestionByCode(code);
     return this.refreshQuestion(answered);
+  }
+  public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
+    return this.answered_questions.find((element) => element.id_cms === id_cms);
   }
   public getAnsweredQuestionByNGCKey(key: string): QuestionKYC {
     return this.answered_questions.find((element) => element.ngc_key === key);

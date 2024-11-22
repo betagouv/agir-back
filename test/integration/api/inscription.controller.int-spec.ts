@@ -770,7 +770,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       points: 10,
       question: 'The question !',
       tags: [],
-      universes: [],
       thematique: Thematique.climat,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'logement . chauffage . fioul . présent',

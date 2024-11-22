@@ -486,12 +486,6 @@ export class CMSImportUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      thematiques:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map(
-              (u) => Thematique[u.attributes.code],
-            )
-          : [],
       short_question: entry.attributes.short_question,
       image_url: this.getImageUrlFromPopulate(entry),
       conditions: entry.attributes.OR_Conditions

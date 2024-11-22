@@ -322,7 +322,6 @@ model KYC {
   reponses       Json     @default("{}")
   thematique     String
   tags           String[] @default([])
-  universes      String[] @default([])
   image_url      String?
   unite          String?
   emoji          String?

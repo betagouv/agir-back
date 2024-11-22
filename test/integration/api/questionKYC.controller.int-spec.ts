@@ -59,7 +59,6 @@ const KYC_DATA: QuestionKYC_v1 = {
   ],
   reponse_simple: undefined,
   tags: [TagUtilisateur.appetence_bouger_sante],
-  thematiques: [Thematique.consommation],
   thematique: Thematique.consommation,
   ngc_key: '123',
   short_question: 'short',
@@ -84,7 +83,6 @@ const KYC_DB_DATA: KYC = {
   thematique: Thematique.dechet,
   unite: Unite.kg,
   type: TypeReponseQuestionKYC.choix_multiple,
-  universes: [Thematique.climat],
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
   reponses: [
@@ -185,7 +183,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -226,7 +223,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(new_kyc.id_cms).toEqual(22);
     expect(new_kyc.categorie).toEqual(Categorie.recommandation);
     expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
-    expect(new_kyc.thematiques).toEqual([Thematique.alimentation]);
     expect(new_kyc.thematique).toEqual(Thematique.alimentation);
     expect(new_kyc.ngc_key).toEqual('a . b . c');
     expect(new_kyc.getReponseComplexeByCode(Thematique.climat)).toEqual({
@@ -282,7 +278,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -1444,7 +1439,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',

@@ -321,7 +321,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [],
       tags: [],
-      universes: [],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -339,7 +338,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [],
-      universes: [],
     });
     await TestUtil.create(DB.utilisateur, {
       history: {},
@@ -588,7 +586,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [],
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 2,
@@ -600,7 +597,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [],
     });
     await kycRepository.loadDefinitions();
     const defis: DefiHistory_v0 = {
@@ -711,7 +707,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [],
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 2,
@@ -723,7 +718,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [],
     });
 
     const defis: DefiHistory_v0 = {
@@ -840,7 +834,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -853,7 +846,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [],
     });
 
     const defis: DefiHistory_v0 = {
@@ -967,7 +959,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -977,10 +968,9 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       categorie: Categorie.recommandation,
       points: 10,
       question: `question hors recos`,
-      thematique: Thematique.consommation,
+      thematique: Thematique.logement,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {
@@ -1046,7 +1036,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         { label: 'DDD', code: Thematique.transport },
       ],
       tags: [Tag.R6],
-      universes: [Thematique.climat],
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1059,7 +1048,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematique: Thematique.consommation,
       reponses: [{ label: 'AAA', code: Thematique.climat }],
       tags: [Tag.R6, Tag.R1],
-      universes: [Thematique.logement],
     });
 
     const kyc: KYCHistory_v0 = {
