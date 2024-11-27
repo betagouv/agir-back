@@ -1,4 +1,5 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
+import { NGCRuleName } from '../bilan/ngc';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
@@ -89,7 +90,7 @@ export class QuestionKYC implements TaggedContent {
   is_answererd?: boolean;
   tags: Tag[];
   score: number;
-  ngc_key?: string;
+  ngc_key?: NGCRuleName;
   private reponse_simple: KYCReponseSimple;
   private reponse_complexe: KYCReponseComplexe[];
   private conditions: AndConditionSet[];
