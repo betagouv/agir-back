@@ -44,6 +44,8 @@ export enum Scope {
   kyc = 'kyc',
   unlocked_features = 'unlocked_features',
   logement = 'logement',
+  // TODO: implement these scopes
+  transport = 'transport',
   defis = 'defis',
   missions = 'missions',
   bilbiotheque_services = 'bilbiotheque_services',
