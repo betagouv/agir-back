@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Contact } from '../../../src/infrastructure/contact/contact';
+import { Contact } from './contact';
 import Brevo from '@getbrevo/brevo';
-import { Utilisateur } from '../../../src/domain/utilisateur/utilisateur';
-import { App } from '../../../src/domain/app';
+import { Utilisateur } from '../../domain/utilisateur/utilisateur';
+import { App } from '../../domain/app';
+import { isDate } from 'util/types';
 
 @Injectable()
-export class ContactSynchro {
+export class BrevoRepository {
   private client;
   private apiInstance;
   private batchApiUrl = 'https://api.brevo.com/v3/contacts/batch';
@@ -23,7 +24,7 @@ export class ContactSynchro {
     if (this.is_synchro_disabled()) return;
 
     const contacts = utilisateurs.map((utilisateur) =>
-      Contact.newContactFromUser(utilisateur),
+      Contact.buildContactFromUtilisateur(utilisateur),
     );
 
     const data = {
@@ -62,34 +63,52 @@ export class ContactSynchro {
   }
   */
 
-  public async createContact(utilisateur: Utilisateur): Promise<boolean> {
-    if (this.is_synchro_disabled()) return true;
+  public async createContact(
+    email: string,
+    utilisateurId: string,
+  ): Promise<boolean> {
+    if (this.is_synchro_disabled()) {
+      console.log(
+        `BREVO creation would have been done for contact ${email} - disable on that environment `,
+      );
+      return true;
+    }
 
-    const contact = Contact.newContactFromUser(utilisateur);
+    const contact = Contact.newContactFromEmail(email, utilisateurId);
 
     contact.listIds = [App.getWelcomeListId()];
     try {
       await this.apiInstance.createContact(contact);
       console.log(
-        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
+        `BREVO contact ${email} created and added to list ${contact.listIds}`,
       );
       return true;
     } catch (error) {
       console.warn(error.response.text);
+      console.log(`BREVO ERROR creating contact ${email}`);
       return false;
     }
   }
-  public async createContactFromContact(contact: Contact): Promise<boolean> {
-    contact.listIds = [App.getWelcomeListId()];
+  public async getContactCreationDate(email: string): Promise<Date | null> {
     try {
-      await this.apiInstance.createContact(contact);
-      console.log(
-        `BREVO contact ${contact.email} created and added to list ${contact.listIds}`,
-      );
-      return true;
+      const brevo_contact = await this.apiInstance.getContactInfo(email);
+      if (!brevo_contact) {
+        return null;
+      }
+
+      const date_creation = new Date(brevo_contact.createdAt);
+
+      if (isNaN(date_creation.getTime())) {
+        console.log(
+          `BAD date retrieved from BREVO for ${email}: [${brevo_contact.createdAt}] => setting to now() as default`,
+        );
+        return new Date();
+      } else {
+        return date_creation;
+      }
     } catch (error) {
-      console.warn(error.response.text);
-      return false;
+      // Contact existant
+      return null;
     }
   }
 

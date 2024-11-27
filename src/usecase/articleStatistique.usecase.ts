@@ -62,7 +62,7 @@ export class ArticleStatistiqueUsecase {
     for (let index = 0; index < listeUtilisateursIds.length; index++) {
       const user = await this.utilisateurRepository.getById(
         listeUtilisateursIds[index],
-        [Scope.history_article_quizz],
+        [Scope.history_article_quizz_aides],
       );
 
       user.history.article_interactions.forEach((article) => {

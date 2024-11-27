@@ -8,6 +8,7 @@ import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class EventUsecase {
@@ -66,7 +67,7 @@ export class EventUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     utilisateur.history.defavoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -75,7 +76,7 @@ export class EventUsecase {
   private async processArticleFavoris(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     utilisateur.history.favoriserArticle(event.content_id);
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -84,7 +85,7 @@ export class EventUsecase {
   private async processLike(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz],
+      [Scope.history_article_quizz_aides],
     );
     if (event.content_type === ContentType.article) {
       utilisateur.history.likerArticle(event.content_id, event.number_value);
@@ -175,13 +176,15 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
         Scope.todo,
       ],
     );
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
+
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
@@ -192,7 +195,7 @@ export class EventUsecase {
     }
     this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
 
-    utilisateur.missions.validateAricleOrQuizzDone(
+    utilisateur.missions.validateArticleOrQuizzDone(
       event.content_id,
       ContentType.article,
     );
@@ -207,7 +210,7 @@ export class EventUsecase {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
@@ -215,6 +218,7 @@ export class EventUsecase {
       ],
     );
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const quizz = await this.quizzRepository.getQuizzByContentId(
       event.content_id,
@@ -228,7 +232,7 @@ export class EventUsecase {
       this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
     }
 
-    utilisateur.missions.validateAricleOrQuizzDone(
+    utilisateur.missions.validateArticleOrQuizzDone(
       event.content_id,
       ContentType.quizz,
       event.number_value,

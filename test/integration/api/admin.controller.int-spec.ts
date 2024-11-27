@@ -65,7 +65,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(5);
+    expect(services).toHaveLength(2);
 
     const service = await TestUtil.prisma.serviceDefinition.findUnique({
       where: { id: 'ecowatt' },
@@ -100,7 +100,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(5);
+    expect(services).toHaveLength(2);
 
     const service = await TestUtil.prisma.serviceDefinition.findUnique({
       where: { id: 'ecowatt' },
@@ -342,7 +342,7 @@ describe('Admin (API test)', () => {
     ]);
   });
 
-  it('POST /admin/migrate_users migration V7 OK', async () => {
+  it.skip('POST /admin/migrate_users migration V7 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const defis: DefiHistory_v0 = {
@@ -357,11 +357,10 @@ describe('Admin (API test)', () => {
           date_acceptation: new Date(),
           pourquoi: 'pourquoi',
           sous_titre: 'sous_titre',
-          universes: [Thematique.climat],
           accessible: true,
           motif: 'truc',
           id: '001',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
           categorie: Categorie.recommandation,
           mois: [],
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -398,7 +397,9 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.defi_history.defis[0].getStatus()).toEqual(DefiStatus.fait);
+    expect(userDB.defi_history.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
   });
   it('POST /admin/migrate_users migration V8 OK', async () => {
     // GIVEN
@@ -1169,7 +1170,6 @@ describe('Admin (API test)', () => {
       pourquoi: 'POURQUOI',
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
-      universes: [Thematique.climat],
       accessible: true,
       motif: 'truc',
       categorie: Categorie.recommandation,
@@ -1225,6 +1225,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -1236,6 +1237,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -1247,6 +1249,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
       ],
@@ -1263,6 +1266,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -1274,6 +1278,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -1285,6 +1290,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
       ],
@@ -1503,7 +1509,6 @@ describe('Admin (API test)', () => {
       pourquoi: 'POURQUOI',
       sous_titre: 'SOUS TITRE',
       status: DefiStatus.todo,
-      universes: [Thematique.climat],
       accessible: true,
       motif: '',
       categorie: Categorie.recommandation,
@@ -1905,6 +1910,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -1939,6 +1945,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -1978,6 +1985,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -2012,6 +2020,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -2046,6 +2055,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -2175,6 +2185,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2186,6 +2197,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2197,6 +2209,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2208,6 +2221,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
       ],
@@ -2224,6 +2238,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2235,6 +2250,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2246,6 +2262,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.transport,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
         {
@@ -2257,6 +2274,7 @@ describe('Admin (API test)', () => {
           image_url: 'image',
           thematique: Thematique.climat,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
         },
       ],
@@ -2434,5 +2452,55 @@ describe('Admin (API test)', () => {
         prenom: 'C',
       },
     ]);
+  });
+  it('POST /admin/create_brevo_contacts', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      prenom: 'A',
+      email: 'email1',
+      brevo_created_at: new Date(),
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      email: 'email2',
+      brevo_created_at: null,
+    });
+    // WHEN
+    const response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('[email2] CREATE OK');
+
+    const userDB = await utilisateurRepository.getById('2', []);
+    expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
+  });
+  it(`POST /admin/create_brevo_contacts 2 fois n'ajoute plus`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      prenom: 'B',
+      email: 'email2',
+      brevo_created_at: null,
+    });
+    // WHEN
+    let response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toEqual('[email2] CREATE OK');
+
+    // WHEN
+    response = await TestUtil.POST('/admin/create_brevo_contacts');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(0);
   });
 });

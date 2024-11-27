@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Mission } from '../domain/mission/mission';
 import { MissionStatistiqueRepository } from '../infrastructure/repository/thematiqueStatistique.repository';
 import { Scope } from '../domain/utilisateur/utilisateur';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 type MissionRecord = {
   titre: string;
@@ -31,8 +32,9 @@ export class MissionStatistiqueUsecase {
       const user = await this.utilisateurRepository.getById(userId, [
         Scope.missions,
       ]);
+      user.missions.setCatalogue(MissionRepository.getCatalogue());
 
-      for (const mission of user.missions.missions) {
+      for (const mission of user.missions.getRAWMissions()) {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);
 

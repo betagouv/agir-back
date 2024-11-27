@@ -24,6 +24,7 @@ export class MissionDefinition implements PriorityContent {
   id_cms: number;
   thematique: Thematique;
   titre: string;
+  introduction: string;
   is_first: boolean;
   code: string;
   image_url: string;

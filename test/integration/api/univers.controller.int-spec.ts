@@ -36,6 +36,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -59,6 +60,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -93,6 +95,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -116,6 +119,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -139,6 +143,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -162,6 +167,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -185,6 +191,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -213,6 +220,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -241,6 +249,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -270,6 +279,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -293,6 +303,7 @@ describe('Univers (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -423,7 +434,7 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, NON ajout mission à utilisateur si PAS visible`, async () => {
     // GIVEN
@@ -466,7 +477,7 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - ajout mission correcte avec articles taggué`, async () => {
     // GIVEN
@@ -522,6 +533,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       created_at: undefined,
       updated_at: undefined,
@@ -548,22 +560,32 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('222');
-    expect(userDB.missions.missions[0].objectifs[1].type).toEqual(
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '222',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[2].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[2].titre).toEqual('hoho');
-    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('0');
-    expect(userDB.missions.missions[0].objectifs[3].type).toEqual(
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].titre).toEqual(
+      'hoho',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].content_id).toEqual(
+      '0',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].type).toEqual(
       ContentType.article,
     );
-    expect(userDB.missions.missions[0].objectifs[3].titre).toEqual('haha');
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].titre).toEqual(
+      'haha',
+    );
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - ajout Zero article tagué si aucun trouvé`, async () => {
     // GIVEN
@@ -595,6 +617,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
@@ -623,8 +646,8 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(0);
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(0);
   });
 
   it(`GET /utilisateurs/id/univers/id/thematiques - ajout  article tagué exclu pour cause de code postal`, async () => {
@@ -672,6 +695,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
@@ -702,9 +726,11 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[0].content_id).toEqual(
+      '0',
+    );
   });
   it(`GET /utilisateurs/id/univers/id/thematiques - ajout article par ordre de reco`, async () => {
     // GIVEN
@@ -750,6 +776,7 @@ describe('Univers (API test)', () => {
       image_url: 'img',
       thematique: Thematique.alimentation,
       titre: 'titre',
+      introduction: 'intro',
       is_first: false,
       objectifs: objectifs as any,
       created_at: undefined,
@@ -785,12 +812,20 @@ describe('Univers (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions).toHaveLength(1);
-    expect(userDB.missions.missions[0].objectifs).toHaveLength(4);
-    expect(userDB.missions.missions[0].objectifs[0].content_id).toEqual('0');
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('2');
-    expect(userDB.missions.missions[0].objectifs[2].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[3].content_id).toEqual('3');
+    expect(userDB.missions.getRAWMissions()).toHaveLength(1);
+    expect(userDB.missions.getRAWMissions()[0].objectifs).toHaveLength(4);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[0].content_id).toEqual(
+      '0',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '2',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[2].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[3].content_id).toEqual(
+      '3',
+    );
   });
 
   it(`GET /utilisateurs/id/univers/id/thematiques - liste les missions visibles dans le catalogue`, async () => {

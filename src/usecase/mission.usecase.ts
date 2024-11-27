@@ -33,7 +33,6 @@ export class MissionUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private missionRepository: MissionRepository,
-    private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
     private articleRepository: ArticleRepository,
     private communeRepository: CommuneRepository,
@@ -47,6 +46,8 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
+
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const final_result: TuileMission[] = [];
 
@@ -74,6 +75,7 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const final_result = await this.getOrderedListeMissionsOfThematique(
       thematique,
@@ -128,6 +130,7 @@ export class MissionUsecase {
       [Scope.missions, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -149,6 +152,7 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement, Scope.defis],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -184,6 +188,7 @@ export class MissionUsecase {
         }
       }
     }
+
     return this.personnalisator.personnaliser(mission_resultat, utilisateur);
   }
 
@@ -194,15 +199,16 @@ export class MissionUsecase {
         Scope.missions,
         Scope.gamification,
         Scope.kyc,
-        Scope.history_article_quizz,
+        Scope.history_article_quizz_aides,
         Scope.defis,
       ],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let objectifs_target: Objectif[] = [];
 
-    for (const mission of utilisateur.missions.missions) {
+    for (const mission of utilisateur.missions.getRAWMissions()) {
       if (mission.isNew()) {
         continue; // on zap, on peut pas gagner des pts sur quoi que ce soit d'une mission pas commencée
       }
@@ -239,6 +245,7 @@ export class MissionUsecase {
       [Scope.missions, Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
@@ -277,7 +284,7 @@ export class MissionUsecase {
     ]);
   }
 
-  async completeMissionDef(
+  private async completeMissionDef(
     mission_def: MissionDefinition,
     utilisateur: Utilisateur,
   ): Promise<MissionDefinition> {

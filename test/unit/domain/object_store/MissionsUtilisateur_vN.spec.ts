@@ -18,7 +18,7 @@ describe('MissionsUilisateur vN ', () => {
     const domain = new MissionsUtilisateur(raw);
     // THEN
 
-    expect(domain.missions).toEqual([]);
+    expect(domain.getRAWMissions()).toEqual([]);
   });
   it('serialise <=> deserialise v1 OK', () => {
     // GIVEN
@@ -32,6 +32,7 @@ describe('MissionsUilisateur vN ', () => {
           code: CodeMission.cereales,
           image_url: 'img',
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -70,8 +71,8 @@ describe('MissionsUilisateur vN ', () => {
           code: CodeMission.cereales,
           image_url: 'img',
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
-
           objectifs: [
             {
               id: '2',

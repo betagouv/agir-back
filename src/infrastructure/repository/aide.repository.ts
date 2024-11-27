@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
-import { Aide } from '../../../src/domain/aides/aide';
+import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Besoin } from '../../../src/domain/aides/besoin';
 
 export type AideFilter = {
@@ -18,7 +18,7 @@ export type AideFilter = {
 export class AideRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(aide: Aide): Promise<void> {
+  async upsert(aide: AideDefinition): Promise<void> {
     const data: AideDB = {
       ...aide,
       created_at: undefined,
@@ -40,14 +40,21 @@ export class AideRepository {
     });
   }
 
-  async getByContentId(content_id: string): Promise<Aide> {
+  async exists(content_id: string): Promise<boolean> {
+    const result = await this.prisma.aide.count({
+      where: { content_id: content_id },
+    });
+    return result === 1;
+  }
+
+  async getByContentId(content_id: string): Promise<AideDefinition> {
     const result = await this.prisma.aide.findUnique({
       where: { content_id: content_id },
     });
     return this.buildAideFromDB(result);
   }
 
-  async listAll(): Promise<Aide[]> {
+  async listAll(): Promise<AideDefinition[]> {
     const result = await this.prisma.aide.findMany();
     return result.map((a) => this.buildAideFromDB(a));
   }
@@ -59,7 +66,7 @@ export class AideRepository {
     return count > 0;
   }
 
-  async search(filter: AideFilter): Promise<Aide[]> {
+  async search(filter: AideFilter): Promise<AideDefinition[]> {
     const main_filter = [];
 
     if (filter.code_postal) {
@@ -123,7 +130,7 @@ export class AideRepository {
     return result.map((elem) => this.buildAideFromDB(elem));
   }
 
-  private buildAideFromDB(aideDB: AideDB): Aide {
+  private buildAideFromDB(aideDB: AideDB): AideDefinition {
     if (aideDB === null) return null;
     return {
       content_id: aideDB.content_id,

@@ -22,7 +22,6 @@ const DEFI_1: Defi_v0 = {
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
   status: DefiStatus.todo,
-  universes: [Thematique.climat],
   accessible: true,
   motif: 'truc',
   categorie: Categorie.recommandation,
@@ -40,8 +39,6 @@ const DEFI_1_DEF: DefiDefinition = {
   astuces: 'astuce',
   pourquoi: 'pourquoi',
   sous_titre: 'sous_titre',
-  universes: [Thematique.climat],
-  thematiques_univers: [CodeMission.dechets_compost],
   categorie: Categorie.recommandation,
   mois: [0],
   conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -56,49 +53,47 @@ describe('DefiHistory', () => {
       {
         ...DEFI_1_DEF,
         content_id: '1',
-        universes: [Thematique.climat],
+        thematique: Thematique.climat,
         categorie: Categorie.mission,
       },
       {
         ...DEFI_1_DEF,
         content_id: '2',
-        universes: [Thematique.climat],
+        thematique: Thematique.climat,
         categorie: Categorie.recommandation,
       },
     ]);
 
     // THEN
-    expect(defiHistory.getDefisRestants(Categorie.mission)).toHaveLength(1);
-    expect(defiHistory.getDefisRestants(Categorie.mission)[0].id).toEqual('1');
-  });
-  it('getDefisRestants :filtrage sur univers ', () => {
-    // GIVEN
-    const defiHistory = new DefiHistory();
-    defiHistory.setCatalogue([
-      { ...DEFI_1_DEF, content_id: '1', universes: [Thematique.climat] },
-      { ...DEFI_1_DEF, content_id: '2', universes: [Thematique.consommation] },
-    ]);
-
-    // THEN
     expect(
-      defiHistory.getDefisRestants(undefined, Thematique.consommation),
+      defiHistory.getDefisRestantsByCategorieAndThematique(Categorie.mission),
     ).toHaveLength(1);
     expect(
-      defiHistory.getDefisRestants(undefined, Thematique.consommation)[0].id,
-    ).toEqual('2');
+      defiHistory.getDefisRestantsByCategorieAndThematique(Categorie.mission)[0]
+        .id,
+    ).toEqual('1');
   });
-  it('getDefisRestants : select si pas d univers setté ', () => {
+  it('getDefisRestants :filtrage sur thematique ', () => {
     // GIVEN
     const defiHistory = new DefiHistory();
     defiHistory.setCatalogue([
-      { ...DEFI_1_DEF, content_id: '1', universes: [] },
-      { ...DEFI_1_DEF, content_id: '2', universes: [Thematique.consommation] },
+      { ...DEFI_1_DEF, content_id: '1', thematique: Thematique.climat },
+      { ...DEFI_1_DEF, content_id: '2', thematique: Thematique.consommation },
     ]);
 
     // THEN
     expect(
-      defiHistory.getDefisRestants(undefined, Thematique.consommation),
-    ).toHaveLength(2);
+      defiHistory.getDefisRestantsByCategorieAndThematique(
+        undefined,
+        Thematique.consommation,
+      ),
+    ).toHaveLength(1);
+    expect(
+      defiHistory.getDefisRestantsByCategorieAndThematique(
+        undefined,
+        Thematique.consommation,
+      )[0].id,
+    ).toEqual('2');
   });
   it('getDefisRestants : quand hisotrique vide ', () => {
     // GIVEN
@@ -106,7 +101,9 @@ describe('DefiHistory', () => {
     defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
-    expect(defiHistory.getDefisRestants()).toHaveLength(1);
+    expect(defiHistory.getDefisRestantsByCategorieAndThematique()).toHaveLength(
+      1,
+    );
   });
   it('getDefisRestants : quand plus de défi', () => {
     // GIVEN
@@ -117,7 +114,9 @@ describe('DefiHistory', () => {
     defiHistory.setCatalogue([DEFI_1_DEF]);
 
     // THEN
-    expect(defiHistory.getDefisRestants()).toHaveLength(0);
+    expect(defiHistory.getDefisRestantsByCategorieAndThematique()).toHaveLength(
+      0,
+    );
   });
   it('getDefiOrException : exception si id defi inconnu', () => {
     // GIVEN
@@ -161,9 +160,11 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis).toHaveLength(1);
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()).toHaveLength(1);
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : maj status defi deja dans historique', () => {
@@ -180,8 +181,10 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('updateStatus : on ne gagne pas 2 fois les points', () => {
@@ -199,8 +202,10 @@ describe('DefiHistory', () => {
     defiHistory.updateStatus('1', DefiStatus.fait, user, 'toto');
 
     // THEN
-    expect(defiHistory.defis[0].getStatus()).toEqual(DefiStatus.fait);
-    expect(defiHistory.defis[0].motif).toEqual('toto');
+    expect(defiHistory.getRAWDefiListe()[0].getStatus()).toEqual(
+      DefiStatus.fait,
+    );
+    expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
     expect(user.gamification.points).toEqual(5);
   });
   it('getDefisOfStatus : liste les défis avec status', () => {
@@ -221,7 +226,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
       ],
     });
@@ -360,7 +365,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,
@@ -373,7 +378,7 @@ describe('DefiHistory', () => {
     // WHEN
     const nombreDefisRealises = defiHistory.getNombreDefisRealises();
     // THEN
-    expect(nombreDefisRealises).toStrictEqual(2);
+    expect(nombreDefisRealises).toStrictEqual(3);
   });
 
   it('getNombreDefisAbandonnes : donne le nombre de défis abandonnés', () => {
@@ -394,7 +399,7 @@ describe('DefiHistory', () => {
         {
           ...DEFI_1,
           id: '3',
-          status: DefiStatus.deja_fait,
+          status: DefiStatus.fait,
         },
         {
           ...DEFI_1,

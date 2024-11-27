@@ -12,6 +12,7 @@ import { NewServiceDefinition } from '../domain/bibliotheque_services/newService
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ReferentielUsecase } from './referentiels/referentiel.usecase';
 import { Thematique } from '../domain/contenu/thematique';
+import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
 @Injectable()
 export class RechercheServicesUsecase {
@@ -20,6 +21,7 @@ export class RechercheServicesUsecase {
     private rechercheServiceManager: RechercheServiceManager,
     private serviceFavorisStatistiqueRepository: ServiceFavorisStatistiqueRepository,
     private personnalisator: Personnalisator,
+    private newServiceCatalogue: NewServiceCatalogue,
   ) {}
 
   async search(
@@ -236,7 +238,7 @@ export class RechercheServicesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = ReferentielUsecase.getNewServiceCatalogue();
+    let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.is_available_inhouse);
 
     return this.personnalisator.personnaliser(result, utilisateur);
@@ -253,7 +255,7 @@ export class RechercheServicesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = ReferentielUsecase.getNewServiceCatalogue();
+    let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);
@@ -269,7 +271,7 @@ export class RechercheServicesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = ReferentielUsecase.getNewServiceCatalogue();
+    let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);

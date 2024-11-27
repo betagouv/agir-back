@@ -28,8 +28,8 @@ import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { App } from '../../domain/app';
 import axios from 'axios';
-import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookEntryAPI';
 import { Thematique } from '../../domain/contenu/thematique';
+import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
 
@@ -225,7 +225,6 @@ export class PreviewController extends GenericControler {
     DATA.catgorie = kyc_def.categorie;
     DATA.tags = kyc_def.tags;
     DATA.thematique = kyc_def.thematique;
-    DATA.universes = kyc_def.thematiques;
     DATA.type = kyc_def.type;
     DATA.IS_NGC = kyc_def.is_ngc;
     if (kyc_def.is_ngc) {
@@ -311,7 +310,7 @@ export class PreviewController extends GenericControler {
       return this.returnBadOreMissingLoginError(res);
     }
     let all_kyc_defs = KycRepository.getCatalogue();
-    let all_mission_defs = await this.missionRepository.list();
+    let all_mission_defs = MissionRepository.getCatalogue();
     let result = [];
 
     const kyc_fire_map: Map<number, boolean> = new Map();
@@ -980,8 +979,6 @@ export class PreviewController extends GenericControler {
     DATA.tags = defi_def.tags;
     DATA.thematique = defi_def.thematique;
     DATA.categorie = defi_def.categorie;
-    DATA.thematiques_univers = defi_def.thematiques_univers;
-    DATA.universes = defi_def.universes;
     result.push(JSON.stringify(DATA, null, 2));
 
     await this.dump_defi_conditions(result, defi_def);

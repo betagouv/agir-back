@@ -7,7 +7,7 @@ import { CMSController } from './infrastructure/api/incoming/cms.controller';
 
 import { ImportNGCUsecase } from './usecase/importNGC.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { CMSUsecase } from './usecase/cms.usecase';
+import { CMSWebhookUsecase } from './usecase/cms.webhook.usecase';
 
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
 import { SituationNGCRepository } from './infrastructure/repository/situationNGC.repository';
@@ -51,7 +51,7 @@ import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { ContactSynchro } from './infrastructure/contact/contactSynchro';
+import { BrevoRepository } from './infrastructure/contact/brevoRepository';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
@@ -116,6 +116,9 @@ import { MailerUsecase } from './usecase/mailer.usecase';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
+import { CMSImportUsecase } from './usecase/cms.import.usecase';
+import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
+import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -145,6 +148,7 @@ function getControllers(): any[] {
     BilanCarboneController,
     PreviewController,
     NotificationsController,
+    LoadCMSController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -183,7 +187,8 @@ function getControllers(): any[] {
     ProfileUsecase,
     ImportNGCUsecase,
     AidesUsecase,
-    CMSUsecase,
+    CMSWebhookUsecase,
+    CMSImportUsecase,
     EmailSender,
     CommuneRepository,
     CommunesUsecase,
@@ -206,7 +211,7 @@ function getControllers(): any[] {
     QuizzRepository,
     RecommandationUsecase,
     ContactUsecase,
-    ContactSynchro,
+    BrevoRepository,
     MigrationUsecase,
     ReferentielUsecase,
     BibliothequeUsecase,
@@ -252,6 +257,7 @@ function getControllers(): any[] {
     EmailTemplateRepository,
     MailerUsecase,
     LongueVieObjetsRepository,
+    NewServiceCatalogue,
   ],
 })
 export class AppModule {}

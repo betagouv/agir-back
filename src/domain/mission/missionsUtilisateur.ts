@@ -1,4 +1,3 @@
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../contenu/contentType';
 import { Thematique } from '../contenu/thematique';
 import { DefiDefinition } from '../defis/defiDefinition';
@@ -9,7 +8,8 @@ import { Mission, Objectif } from './mission';
 import { MissionDefinition } from './missionDefinition';
 
 export class MissionsUtilisateur {
-  missions: Mission[];
+  private missions: Mission[];
+  private catalogue: MissionDefinition[];
 
   constructor(data?: MissionsUtilisateur_v1) {
     this.missions = [];
@@ -18,6 +18,10 @@ export class MissionsUtilisateur {
         this.missions.push(new Mission(m));
       });
     }
+  }
+
+  public setCatalogue(cat: MissionDefinition[]) {
+    this.catalogue = cat;
   }
 
   public isThematiqueDone(thematique: Thematique): boolean {
@@ -35,13 +39,22 @@ export class MissionsUtilisateur {
   }
 
   public getMissionByCode(code: string): Mission {
-    return this.missions.find((m) => m.code === code);
-  }
-  public getMissionById(missionId: string): Mission {
-    return this.missions.find((m) => m.id_cms === missionId);
+    const found = this.missions.find((m) => m.code === code);
+    if (found) {
+      return this.refreshMission(found);
+    }
+    return null;
   }
 
-  public validateAricleOrQuizzDone(
+  public getMissionById(missionId: string): Mission {
+    const found = this.missions.find((m) => m.id_cms === missionId);
+    if (found) {
+      return this.refreshMission(found);
+    }
+    return null;
+  }
+
+  public validateArticleOrQuizzDone(
     content_id: string,
     type: ContentType,
     score?: number,
@@ -106,6 +119,10 @@ export class MissionsUtilisateur {
     return result;
   }
 
+  public getRAWMissions() {
+    return this.missions;
+  }
+
   public upsertNewMission(
     mission_def: MissionDefinition,
     visible?: boolean,
@@ -123,6 +140,22 @@ export class MissionsUtilisateur {
     this.missions.push(new_mission);
 
     return new_mission;
+  }
+
+  private refreshMission(mission: Mission): Mission {
+    if (!mission) return null;
+
+    const mission_catalogue = this.getMissionDefinitionByCodeOrNull(
+      mission.code,
+    );
+    if (mission_catalogue) {
+      mission.refreshFromDef(mission_catalogue);
+    }
+    return mission;
+  }
+
+  private getMissionDefinitionByCodeOrNull(code: string) {
+    return this.catalogue.find((m) => m.code === code);
   }
 
   public getAllUnlockedDefisIdsByThematique(thematique: Thematique): string[] {

@@ -7,7 +7,6 @@ import {
   LienBilanThematique,
   NiveauImpact,
 } from '../../../../domain/bilan/bilanCarbone';
-import { ThematiqueRepository } from '../../../repository/thematique.repository';
 import { Thematique } from '../../../../domain/contenu/thematique';
 
 export class DetailImpactAPI_v3 {

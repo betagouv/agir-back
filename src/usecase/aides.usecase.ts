@@ -7,10 +7,11 @@ import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetro
 import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { Aide } from '../../src/domain/aides/aide';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ApplicationError } from '../infrastructure/applicationError';
 
 @Injectable()
 export class AidesUsecase {
@@ -32,7 +33,7 @@ export class AidesUsecase {
     );
   }
 
-  async exportAides(): Promise<Aide[]> {
+  async exportAides(): Promise<AideDefinition[]> {
     const liste = await this.aideRepository.listAll();
     for (const aide of liste) {
       const metropoles = new Set<string>();
@@ -62,34 +63,78 @@ export class AidesUsecase {
     return liste;
   }
 
+  async clickAideInfosLink(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.clickAideInfosLink(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+  async clickAideDemandeLink(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.clickAideDemandeLink(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
   async getCatalogueAides(
     utilisateurId: string,
-  ): Promise<{ aides: Aide[]; utilisateur: Utilisateur }> {
-    const user = await this.utilisateurRepository.getById(utilisateurId, [
-      Scope.logement,
-    ]);
-    Utilisateur.checkState(user);
+  ): Promise<{ aides: AideDefinition[]; utilisateur: Utilisateur }> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement, Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
 
-    const code_commune = this.communeRepository.getCodeCommune(
-      user.logement.code_postal,
-      user.logement.commune,
+    const code_commune = await this.communeRepository.getCodeCommune(
+      utilisateur.logement.code_postal,
+      utilisateur.logement.commune,
     );
 
     const dept_region =
-      this.communeRepository.findDepartementRegionByCodePostal(
-        user.logement.code_postal,
+      await this.communeRepository.findDepartementRegionByCodePostal(
+        utilisateur.logement.code_postal,
       );
 
     const result = await this.aideRepository.search({
-      code_postal: user.logement.code_postal,
+      code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     });
 
+    for (const aide of result) {
+      const aide_hist = utilisateur.history.getAideInteractionByIdCms(
+        aide.content_id,
+      );
+      if (aide_hist) {
+        aide.clicked_demande = aide_hist.clicked_demande;
+        aide.clicked_infos = aide_hist.clicked_infos;
+      }
+    }
+
     return {
-      aides: this.personnalisator.personnaliser(result, user),
-      utilisateur: user,
+      aides: this.personnalisator.personnaliser(result, utilisateur),
+      utilisateur: utilisateur,
     };
   }
 

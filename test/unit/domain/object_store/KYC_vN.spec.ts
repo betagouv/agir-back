@@ -55,7 +55,6 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -102,7 +101,6 @@ describe('KYC vN ', () => {
             },
           ],
           tags: [Tag.consommation],
-          thematiques: [Thematique.climat],
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
@@ -183,9 +181,71 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: '70',
+            unite: undefined,
+          },
+          short_question: null,
+          reponse_complexe: null,
+          unite: undefined,
+        },
+      ],
+    });
+  });
+
+  it('upgrade v0  => v1 OK, decimal : missing value', () => {
+    // GIVEN
+    const v0 = {
+      version: 0,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          id: 'KYC_logement_age',
+          tags: [],
+          type: 'decimal',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          reponses: [],
+          categorie: 'test',
+          image_url: null,
+          universes: [],
+          conditions: [],
+          thematique: Thematique.logement,
+          short_question: null,
+          reponses_possibles: [],
+        },
+      ],
+    };
+
+    // WHEN
+    const upgraded = Upgrader.upgradeRaw(v0, SerialisableDomain.KYCHistory);
+
+    // THEN
+    expect(upgraded).toStrictEqual({
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_logement_age',
+          tags: [],
+          type: 'decimal',
+          emoji: null,
+          id_cms: 191,
+          is_NGC: true,
+          points: 5,
+          ngc_key: 'logement . âge',
+          question: "Quel est l'âge de votre logement",
+          categorie: 'test',
+          image_url: null,
+          conditions: [],
+          thematique: 'logement',
+          a_supprimer: undefined,
+          reponse_simple: {
+            value: undefined,
             unite: undefined,
           },
           short_question: null,
@@ -253,7 +313,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: '70.8',
             unite: undefined,
@@ -323,7 +382,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'logement',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: {
             value: 'hello comment ça va ?',
             unite: undefined,
@@ -409,7 +467,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'climat',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: null,
           short_question: null,
           unite: undefined,
@@ -528,7 +585,6 @@ describe('KYC vN ', () => {
           conditions: [],
           thematique: 'climat',
           a_supprimer: undefined,
-          thematiques: [],
           reponse_simple: null,
           short_question: null,
           unite: undefined,

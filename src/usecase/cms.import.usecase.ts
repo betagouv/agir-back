@@ -1,20 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
 import { Thematique } from '../domain/contenu/thematique';
-import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import {
-  CMSWebhookEntryAPI,
-  CMSWebhookPopulateAPI,
-  CMSWebhookRubriqueAPI,
-} from '../../src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { QuizzData } from '../domain/contenu/quizz';
 import axios from 'axios';
-import { Aide } from '../../src/domain/aides/aide';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
@@ -32,9 +25,10 @@ import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
+import { CMSWebhookPopulateAPI } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
 
 @Injectable()
-export class CMSUsecase {
+export class CMSImportUsecase {
   constructor(
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
@@ -45,99 +39,6 @@ export class CMSUsecase {
     private kycRepository: KycRepository,
   ) {}
 
-  async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.model === CMSModel.thematique) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateThematique(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateThematique(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.kyc) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteKyc(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteKyc(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateKyc(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateKyc(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.mission) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteMission(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteMission(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateMission(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateMission(cmsWebhookAPI);
-      }
-    }
-    if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteArticleOrQuizz(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteArticleOrQuizz(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateArticleOrQuizz(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateArticleOrQuizz(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.aide) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteAide(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteAide(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateAide(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateAide(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.defi) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteDefi(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteDefi(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateDefi(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateDefi(cmsWebhookAPI);
-      }
-    }
-  }
-
-  async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
-  }
-  async deleteDefi(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.defiRepository.delete(cmsWebhookAPI.entry.id.toString());
-  }
-
-  async createOrUpdateAide(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.aideRepository.upsert(
-      CMSUsecase.buildAideFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
-  async createOrUpdateDefi(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.defiRepository.upsert(
-      CMSUsecase.buildDefiFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
-
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_articles: ArticleData[] = [];
@@ -147,7 +48,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
       let article: ArticleData;
       try {
-        article = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+        article = this.buildArticleOrQuizzFromCMSPopulateData(
           element,
           CMSModel.article,
         ) as ArticleData;
@@ -176,7 +77,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
       let defi: DefiDefinition;
       try {
-        defi = CMSUsecase.buildDefiFromCMSPopulateData(element);
+        defi = this.buildDefiFromCMSPopulateData(element);
         liste_defis.push(defi);
         loading_result.push(`loaded defi : ${defi.content_id}`);
       } catch (error) {
@@ -201,7 +102,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_KYC_DATA[index];
       let kyc: KycDefinition;
       try {
-        kyc = CMSUsecase.buildKYCFromCMSPopulateData(element);
+        kyc = this.buildKYCFromCMSPopulateData(element);
         liste_kyc.push(kyc);
         loading_result.push(`loaded kyc : ${kyc.id_cms}`);
       } catch (error) {
@@ -226,7 +127,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_MISSION_DATA[index];
       let mission_def: MissionDefinition;
       try {
-        mission_def = CMSUsecase.buildMissionFromCMSPopulateData(element);
+        mission_def = this.buildMissionFromCMSPopulateData(element);
         liste_missionsDef.push(mission_def);
         loading_result.push(`loaded missions : ${mission_def.id_cms}`);
       } catch (error) {
@@ -251,7 +152,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_THEMATIQUE_DATA[index];
       let them_def: ThematiqueDefinition;
       try {
-        them_def = CMSUsecase.buildThematiqueFromCMSPopulateData(element);
+        them_def = this.buildThematiqueFromCMSPopulateData(element);
         liste_themDef.push(them_def);
         loading_result.push(
           `loaded thematique : ${them_def.id_cms}/${them_def.code}`,
@@ -271,14 +172,14 @@ export class CMSUsecase {
 
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_aides: Aide[] = [];
+    const liste_aides: AideDefinition[] = [];
     const CMS_AIDE_DATA = await this.loadDataFromCMS('aides');
 
     for (let index = 0; index < CMS_AIDE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_AIDE_DATA[index];
-      let aide: Aide;
+      let aide: AideDefinition;
       try {
-        aide = CMSUsecase.buildAideFromCMSPopulateData(element);
+        aide = this.buildAideFromCMSPopulateData(element);
         liste_aides.push(aide);
         loading_result.push(`loaded aide : ${aide.content_id}`);
       } catch (error) {
@@ -303,7 +204,7 @@ export class CMSUsecase {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
       let quizz: QuizzData;
       try {
-        quizz = CMSUsecase.buildArticleOrQuizzFromCMSPopulateData(
+        quizz = this.buildArticleOrQuizzFromCMSPopulateData(
           element,
           CMSModel.quizz,
         );
@@ -380,45 +281,8 @@ export class CMSUsecase {
     );
     return URL.concat(page);
   }
-  async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
 
-    await this.thematiqueRepository.upsert({
-      id_cms: cmsWebhookAPI.entry.id,
-      titre: cmsWebhookAPI.entry.titre,
-      code: cmsWebhookAPI.entry.code,
-      emoji: cmsWebhookAPI.entry.emoji,
-      image_url: CMSUsecase.getImageUrl(cmsWebhookAPI.entry),
-      label: cmsWebhookAPI.entry.label,
-    });
-  }
-
-  async createOrUpdateKyc(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.kycRepository.upsert(
-      CMSUsecase.buildKycFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
-
-  async createOrUpdateMission(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.missionRepository.upsert(
-      CMSUsecase.buildMissionFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
-
-  async deleteKyc(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.kycRepository.delete(cmsWebhookAPI.entry.id);
-  }
-  async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.missionRepository.delete(cmsWebhookAPI.entry.id);
-  }
-
-  private static getImageUrlFromPopulate(
-    cmsPopulateAPI: CMSWebhookPopulateAPI,
-  ) {
+  private getImageUrlFromPopulate(cmsPopulateAPI: CMSWebhookPopulateAPI) {
     let url = null;
     if (cmsPopulateAPI.attributes.imageUrl) {
       if (cmsPopulateAPI.attributes.imageUrl.data) {
@@ -435,262 +299,14 @@ export class CMSUsecase {
     }
     return url;
   }
-  private static getImageUrl(cmsWebhookEntryAPI: CMSWebhookEntryAPI) {
-    let url = null;
-    if (cmsWebhookEntryAPI.imageUrl) {
-      if (cmsWebhookEntryAPI.imageUrl.formats.thumbnail) {
-        url = cmsWebhookEntryAPI.imageUrl.formats.thumbnail.url;
-      } else {
-        url = cmsWebhookEntryAPI.imageUrl.url;
-      }
-    }
-    return url;
-  }
-  async deleteArticleOrQuizz(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.model === CMSModel.article) {
-      await this.articleRepository.delete(cmsWebhookAPI.entry.id.toString());
-    }
-    if (cmsWebhookAPI.model === CMSModel.quizz) {
-      await this.quizzRepository.delete(cmsWebhookAPI.entry.id.toString());
-    }
-  }
 
-  async createOrUpdateArticleOrQuizz(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    if (cmsWebhookAPI.model === CMSModel.article) {
-      await this.articleRepository.upsert(
-        this.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI,
-          CMSModel.article,
-        ) as ArticleData,
-      );
-    }
-    if (cmsWebhookAPI.model === CMSModel.quizz) {
-      await this.quizzRepository.upsert(
-        this.buildArticleOrQuizzFromCMSData(cmsWebhookAPI, CMSModel.quizz),
-      );
-    }
-  }
-
-  private buildArticleOrQuizzFromCMSData(
-    hook: CMSWebhookAPI,
-    type: CMSModel,
-  ): ArticleData | QuizzData {
-    const result = {
-      content_id: hook.entry.id.toString(),
-      tags_utilisateur: [],
-      titre: hook.entry.titre,
-      soustitre: hook.entry.sousTitre,
-      source: hook.entry.source,
-      image_url: CMSUsecase.getImageUrl(hook.entry),
-      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
-      rubrique_ids: CMSUsecase.getIdsFromRubriques(hook.entry.rubriques),
-      rubrique_labels: CMSUsecase.getTitresFromRubriques(hook.entry.rubriques),
-      codes_postaux: CMSUsecase.split(hook.entry.codes_postaux),
-      duree: hook.entry.duree,
-      frequence: hook.entry.frequence,
-      difficulty: hook.entry.difficulty ? hook.entry.difficulty : 1,
-      points: hook.entry.points ? hook.entry.points : 0,
-      thematique_principale: hook.entry.thematique_gamification
-        ? Thematique[hook.entry.thematique_gamification.code]
-        : Thematique.climat,
-      thematiques: hook.entry.thematiques
-        ? hook.entry.thematiques.map((elem) => Thematique[elem.code])
-        : [],
-      score: 0,
-      tags_rubriques: [],
-      categorie: Categorie[hook.entry.categorie],
-      mois: hook.entry.mois
-        ? hook.entry.mois.split(',').map((m) => parseInt(m))
-        : [],
-    };
-    if (type === CMSModel.article) {
-      Object.assign(result, {
-        include_codes_commune: CMSUsecase.split(
-          hook.entry.include_codes_commune,
-        ),
-        exclude_codes_commune: CMSUsecase.split(
-          hook.entry.exclude_codes_commune,
-        ),
-        codes_departement: CMSUsecase.split(hook.entry.codes_departement),
-        codes_region: CMSUsecase.split(hook.entry.codes_region),
-        tag_article: hook.entry.tag_article
-          ? hook.entry.tag_article.code
-          : null,
-      });
-    }
-    return result;
-  }
-
-  static buildAideFromCMSData(entry: CMSWebhookEntryAPI): Aide {
-    return {
-      content_id: entry.id.toString(),
-      titre: entry.titre,
-      codes_postaux: CMSUsecase.split(entry.codes_postaux),
-      thematiques: entry.thematiques
-        ? entry.thematiques.map((elem) => Thematique[elem.code])
-        : [],
-      contenu: entry.description,
-      is_simulateur: entry.is_simulation ? true : false,
-      montant_max: entry.montantMaximum
-        ? Math.round(parseFloat(entry.montantMaximum))
-        : null,
-      url_simulateur: entry.url_detail_front,
-      besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
-      besoin_desc: entry.besoin ? entry.besoin.description : null,
-      include_codes_commune: CMSUsecase.split(entry.include_codes_commune),
-      exclude_codes_commune: CMSUsecase.split(entry.exclude_codes_commune),
-      codes_departement: CMSUsecase.split(entry.codes_departement),
-      codes_region: CMSUsecase.split(entry.codes_region),
-      echelle: entry.echelle,
-      url_source: entry.url_source,
-      url_demande: entry.url_demande,
-    };
-  }
-
-  static buildDefiFromCMSData(entry: CMSWebhookEntryAPI): DefiDefinition {
-    return {
-      content_id: entry.id.toString(),
-      titre: entry.titre,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
-      astuces: entry.astuces,
-      points: entry.points,
-      pourquoi: entry.pourquoi,
-      sous_titre: entry.sousTitre,
-      tags: entry.tags
-        ? entry.tags.map(
-            (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
-          )
-        : [],
-      universes: entry.univers ? entry.univers.map((u) => u.code) : [],
-      thematiques_univers: entry.thematique_univers
-        ? entry.thematique_univers.map((u) => u.code)
-        : [],
-      categorie: Categorie[entry.categorie],
-      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
-      conditions: entry.OR_Conditions.map((or) =>
-        or.AND_Conditions.map((and) => ({
-          code_kyc: and.kyc.code,
-          id_kyc: and.kyc.id,
-          code_reponse: and.code_reponse,
-        })),
-      ),
-      impact_kg_co2: entry.impact_kg_co2,
-    };
-  }
-  static buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
-    return {
-      id_cms: entry.id,
-      code: entry.code,
-      categorie: Categorie[entry.categorie],
-      type: TypeReponseQuestionKYC[entry.type],
-      is_ngc: entry.is_ngc,
-      a_supprimer: !!entry.A_SUPPRIMER,
-      ngc_key: entry.ngc_key,
-      points: entry.points,
-      emoji: entry.emoji,
-      unite: this.extractUnite(entry.unite),
-      question: entry.question,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
-      reponses: entry.reponses
-        ? entry.reponses.map((r) => ({
-            label: r.reponse,
-            code: r.code,
-            ngc_code: r.ngc_code,
-            value: r.reponse,
-          }))
-        : [],
-      tags: entry.tags
-        ? entry.tags.map(
-            (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
-          )
-        : [],
-      thematiques: entry.univers
-        ? entry.univers.map((u) => Thematique[u.code])
-        : [],
-      image_url: CMSUsecase.getImageUrl(entry),
-      short_question: entry.short_question,
-      conditions: entry.OR_Conditions
-        ? entry.OR_Conditions.map((or) =>
-            or.AND_Conditions.map((and) => ({
-              code_kyc: and.kyc.code,
-              id_kyc: and.kyc.id,
-              code_reponse: and.code_reponse,
-            })),
-          )
-        : [],
-    };
-  }
-
-  private static extractUnite(label_unite: string) {
+  private extractUnite(label_unite: string) {
     if (!label_unite) return null;
     const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
     return unite ? unite : null;
   }
 
-  static buildMissionFromCMSData(entry: CMSWebhookEntryAPI): MissionDefinition {
-    return {
-      id_cms: entry.id,
-      est_visible: entry.est_visible,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
-      titre: entry.titre,
-      code: entry.code,
-      image_url: CMSUsecase.getImageUrl(entry),
-      is_first: entry.is_first,
-      objectifs:
-        entry.objectifs.length > 0
-          ? entry.objectifs.map((obj) => {
-              const result = new ObjectifDefinition({
-                titre: obj.titre,
-                content_id: null,
-                points: obj.points,
-                type: null,
-                tag_article: null,
-                id_cms: null,
-              });
-              if (obj.article) {
-                result.type = ContentType.article;
-                result.content_id = obj.article.id.toString();
-                result.id_cms = obj.article.id;
-              }
-              if (obj.tag_article) {
-                result.type = ContentType.article;
-                result.tag_article = obj.tag_article.code;
-              }
-              if (obj.defi) {
-                result.type = ContentType.defi;
-                result.content_id = obj.defi.id.toString();
-                result.id_cms = obj.defi.id;
-              }
-              if (obj.quizz) {
-                result.type = ContentType.quizz;
-                result.content_id = obj.quizz.id.toString();
-                result.id_cms = obj.quizz.id;
-              }
-              if (obj.kyc) {
-                result.type = ContentType.kyc;
-                result.content_id = obj.kyc.code;
-                result.id_cms = obj.kyc.id;
-              }
-              if (obj.mosaic) {
-                result.type = ContentType.mosaic;
-                result.content_id = obj.mosaic.code;
-                result.id_cms = obj.mosaic.id;
-              }
-              return result;
-            })
-          : [],
-    };
-  }
-
-  static buildArticleOrQuizzFromCMSPopulateData(
+  private buildArticleOrQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
     type: CMSModel,
   ): ArticleData | QuizzData {
@@ -700,7 +316,7 @@ export class CMSUsecase {
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
-      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
+      image_url: this.getImageUrlFromPopulate(entry),
       partenaire: entry.attributes.partenaire.data
         ? entry.attributes.partenaire.data.attributes.nom
         : null,
@@ -712,7 +328,7 @@ export class CMSUsecase {
         entry.attributes.rubriques.data.length > 0
           ? entry.attributes.rubriques.data.map((elem) => elem.attributes.titre)
           : [],
-      codes_postaux: CMSUsecase.split(entry.attributes.codes_postaux),
+      codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
       duree: entry.attributes.duree,
       frequence: entry.attributes.frequence,
       difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
@@ -737,14 +353,16 @@ export class CMSUsecase {
     };
     if (type === CMSModel.article) {
       Object.assign(result, {
-        include_codes_commune: CMSUsecase.split(
+        include_codes_commune: CMSImportUsecase.split(
           entry.attributes.include_codes_commune,
         ),
-        exclude_codes_commune: CMSUsecase.split(
+        exclude_codes_commune: CMSImportUsecase.split(
           entry.attributes.exclude_codes_commune,
         ),
-        codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
-        codes_region: CMSUsecase.split(entry.attributes.codes_region),
+        codes_departement: CMSImportUsecase.split(
+          entry.attributes.codes_departement,
+        ),
+        codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
         tag_article: entry.attributes.tag_article.data
           ? entry.attributes.tag_article.data.attributes.code
           : undefined,
@@ -752,11 +370,13 @@ export class CMSUsecase {
     }
     return result;
   }
-  static buildAideFromCMSPopulateData(entry: CMSWebhookPopulateAPI): Aide {
+  private buildAideFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): AideDefinition {
     return {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
-      codes_postaux: CMSUsecase.split(entry.attributes.codes_postaux),
+      codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
       contenu: entry.attributes.description,
       thematiques:
         entry.attributes.thematiques.data.length > 0
@@ -775,21 +395,23 @@ export class CMSUsecase {
       besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description
         : null,
-      include_codes_commune: CMSUsecase.split(
+      include_codes_commune: CMSImportUsecase.split(
         entry.attributes.include_codes_commune,
       ),
-      exclude_codes_commune: CMSUsecase.split(
+      exclude_codes_commune: CMSImportUsecase.split(
         entry.attributes.exclude_codes_commune,
       ),
-      codes_departement: CMSUsecase.split(entry.attributes.codes_departement),
-      codes_region: CMSUsecase.split(entry.attributes.codes_region),
+      codes_departement: CMSImportUsecase.split(
+        entry.attributes.codes_departement,
+      ),
+      codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
       echelle: entry.attributes.echelle,
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
     };
   }
 
-  static buildThematiqueFromCMSPopulateData(
+  private buildThematiqueFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): ThematiqueDefinition {
     return {
@@ -802,7 +424,7 @@ export class CMSUsecase {
     };
   }
 
-  static buildDefiFromCMSPopulateData(
+  private buildDefiFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): DefiDefinition {
     return {
@@ -820,16 +442,6 @@ export class CMSUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      universes:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map((u) => u.attributes.code)
-          : [],
-      thematiques_univers:
-        entry.attributes.thematique_univers.data.length > 0
-          ? entry.attributes.thematique_univers.data.map(
-              (t) => t.attributes.code,
-            )
-          : [],
       categorie: Categorie[entry.attributes.categorie],
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
@@ -844,7 +456,7 @@ export class CMSUsecase {
     };
   }
 
-  static buildKYCFromCMSPopulateData(
+  private buildKYCFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): KycDefinition {
     return {
@@ -874,14 +486,8 @@ export class CMSUsecase {
         (elem) =>
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
-      thematiques:
-        entry.attributes.univers.data.length > 0
-          ? entry.attributes.univers.data.map(
-              (u) => Thematique[u.attributes.code],
-            )
-          : [],
       short_question: entry.attributes.short_question,
-      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
+      image_url: this.getImageUrlFromPopulate(entry),
       conditions: entry.attributes.OR_Conditions
         ? entry.attributes.OR_Conditions.map((or) =>
             or.AND_Conditions.map((and) => ({
@@ -894,7 +500,7 @@ export class CMSUsecase {
     };
   }
 
-  static buildMissionFromCMSPopulateData(
+  private buildMissionFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): MissionDefinition {
     return {
@@ -906,7 +512,8 @@ export class CMSUsecase {
       code: entry.attributes.code,
       is_first: entry.attributes.is_first,
       titre: entry.attributes.titre,
-      image_url: CMSUsecase.getImageUrlFromPopulate(entry),
+      introduction: entry.attributes.introduction,
+      image_url: this.getImageUrlFromPopulate(entry),
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {
@@ -951,22 +558,6 @@ export class CMSUsecase {
             })
           : [],
     };
-  }
-  private static getTitresFromRubriques(
-    rubriques: CMSWebhookRubriqueAPI[],
-  ): string[] {
-    if (rubriques) {
-      return rubriques.map((rubrique) => rubrique.titre);
-    }
-    return [];
-  }
-  private static getIdsFromRubriques(
-    rubriques: CMSWebhookRubriqueAPI[],
-  ): string[] {
-    if (rubriques) {
-      return rubriques.map((rubrique) => rubrique.id.toString());
-    }
-    return [];
   }
 
   private static split(list: string) {

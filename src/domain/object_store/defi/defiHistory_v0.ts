@@ -17,7 +17,6 @@ export class Defi_v0 {
   status: DefiStatus;
   tags: Tag[];
   date_acceptation: Date;
-  universes: string[];
   accessible: boolean;
   motif: string;
   categorie: Categorie;
@@ -38,7 +37,6 @@ export class Defi_v0 {
       sous_titre: elem.sous_titre,
       status: elem.getStatus(),
       date_acceptation: elem.date_acceptation,
-      universes: elem.universes, // FIXME : A SUPPRIMER
       accessible: elem.accessible,
       motif: elem.motif,
       categorie: elem.categorie,
@@ -56,7 +54,7 @@ export class DefiHistory_v0 extends Versioned {
   static serialise(domain: DefiHistory): DefiHistory_v0 {
     return {
       version: 0,
-      defis: domain.defis.map((e) => Defi_v0.map(e)),
+      defis: domain.getRAWDefiListe().map((e) => Defi_v0.map(e)),
     };
   }
 }

@@ -30,10 +30,8 @@ export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private securityEmailManager: SecurityEmailManager,
-    private contactUsecase: ContactUsecase,
     private oidcService: OidcService,
     private codeManager: CodeManager,
-    private kycRepository: KycRepository,
     private situationNGCRepository: SituationNGCRepository,
     private mailerUsecase: MailerUsecase,
   ) {}
@@ -73,7 +71,7 @@ export class InscriptionUsecase {
           utilisateurInput.situation_ngc_id,
         );
 
-        utilisateurToCreate.kyc_history.tryUpdateQuestionByCodeWithCode(
+        utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
           KYCID.KYC_bilan,
           BooleanKYC.oui,
         );
@@ -112,7 +110,6 @@ export class InscriptionUsecase {
     const codeOkAction = async () => {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
-      await _this.contactUsecase.create(utilisateur);
 
       const token = await _this.oidcService.createNewInnerAppToken(
         utilisateur.id,

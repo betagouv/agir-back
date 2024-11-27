@@ -14,7 +14,6 @@ import { DefiHistory } from '../defis/defiHistory';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { QuestionKYC } from '../kyc/questionKYC';
 import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
-import { Feature } from '../gamification/feature';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
 import validator from 'validator';
@@ -39,7 +38,7 @@ export enum Scope {
   ALL = 'ALL',
   todo = 'todo',
   gamification = 'gamification',
-  history_article_quizz = 'history_article_quizz',
+  history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
   unlocked_features = 'unlocked_features',
   logement = 'logement',
@@ -49,7 +48,7 @@ export enum Scope {
   notification_history = 'notification_history',
 }
 
-export class UtilisateurData {
+export class Utilisateur {
   id: string;
   email: string;
   nom: string;
@@ -98,11 +97,10 @@ export class UtilisateurData {
   notification_history: NotificationHistory;
   unsubscribe_mail_token: string;
   est_valide_pour_classement: boolean;
-}
+  brevo_created_at: Date;
+  brevo_updated_at: Date;
 
-export class Utilisateur extends UtilisateurData {
-  constructor(data?: UtilisateurData) {
-    super();
+  constructor(data?: Utilisateur) {
     if (data) {
       Object.assign(this, data);
     }
@@ -182,6 +180,8 @@ export class Utilisateur extends UtilisateurData {
       notification_history: new NotificationHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
       est_valide_pour_classement: false,
+      brevo_created_at: null,
+      brevo_updated_at: null,
     });
   }
 

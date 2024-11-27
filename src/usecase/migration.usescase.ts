@@ -136,9 +136,8 @@ export class MigrationUsecase {
       info: `migrated transport data`,
     };
   }
-  private async migrate_7(
-    utilisateur: Utilisateur,
-  ): Promise<{ ok: boolean; info: string }> {
+  private async migrate_7(utilisateur: Utilisateur) {
+    /*
     let count = 0;
     for (const defi of utilisateur.defi_history.defis) {
       if (defi.getStatus() === DefiStatus.deja_fait) {
@@ -150,6 +149,7 @@ export class MigrationUsecase {
       ok: true,
       info: `user : ${utilisateur.id} switched ${count} status deja_fait => fait`,
     };
+    */
   }
   private async migrate_8(
     utilisateur: Utilisateur,

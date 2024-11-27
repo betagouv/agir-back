@@ -24,7 +24,7 @@ export class QuizStatistiqueUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
-        [Scope.history_article_quizz],
+        [Scope.history_article_quizz_aides],
       );
 
       utilisateur.history.quizz_interactions.forEach((quiz) => {

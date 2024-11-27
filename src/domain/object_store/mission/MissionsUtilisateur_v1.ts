@@ -1,4 +1,4 @@
-import { Versioned, Versioned_v1 } from '../versioned';
+import { Versioned_v1 } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
@@ -39,6 +39,7 @@ export class Mission_v1 {
   is_first: boolean;
   thematique: Thematique;
   titre: string;
+  introduction: string;
   code: string;
   image_url: string;
 
@@ -55,6 +56,7 @@ export class Mission_v1 {
       image_url: mission.image_url,
       titre: mission.titre,
       is_first: mission.is_first,
+      introduction: mission.introduction,
     };
   }
 }
@@ -67,9 +69,9 @@ export class MissionsUtilisateur_v1 extends Versioned_v1 {
   ): MissionsUtilisateur_v1 {
     return {
       version: 1,
-      missions: missionsUtilisateur.missions.map((elem) =>
-        Mission_v1.map(elem),
-      ),
+      missions: missionsUtilisateur
+        .getRAWMissions()
+        .map((elem) => Mission_v1.map(elem)),
     };
   }
 
@@ -87,6 +89,7 @@ export class MissionsUtilisateur_v1 extends Versioned_v1 {
           objectifs: mission.objectifs ? mission.objectifs : [],
           thematique: Thematique[mission.univers], // univers => thematique
           code: mission.thematique_univers, // thematique_univers => code
+          introduction: undefined,
         });
       }
     }

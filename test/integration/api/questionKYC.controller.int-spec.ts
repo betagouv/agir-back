@@ -59,7 +59,6 @@ const KYC_DATA: QuestionKYC_v1 = {
   ],
   reponse_simple: undefined,
   tags: [TagUtilisateur.appetence_bouger_sante],
-  thematiques: [Thematique.consommation],
   thematique: Thematique.consommation,
   ngc_key: '123',
   short_question: 'short',
@@ -84,7 +83,6 @@ const KYC_DB_DATA: KYC = {
   thematique: Thematique.dechet,
   unite: Unite.kg,
   type: TypeReponseQuestionKYC.choix_multiple,
-  universes: [Thematique.climat],
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
   reponses: [
@@ -112,6 +110,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         image_url: 'img',
         thematique: Thematique.alimentation,
         titre: 'titre',
+        introduction: 'intro',
         is_first: false,
         objectifs: [
           {
@@ -184,7 +183,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -225,7 +223,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     expect(new_kyc.id_cms).toEqual(22);
     expect(new_kyc.categorie).toEqual(Categorie.recommandation);
     expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
-    expect(new_kyc.thematiques).toEqual([Thematique.alimentation]);
     expect(new_kyc.thematique).toEqual(Thematique.alimentation);
     expect(new_kyc.ngc_key).toEqual('a . b . c');
     expect(new_kyc.getReponseComplexeByCode(Thematique.climat)).toEqual({
@@ -281,7 +278,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',
@@ -667,10 +663,10 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
     expect(userDB.gamification.points).toEqual(20);
     expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
     expect(
-      userDB.missions.missions[0].objectifs[0].done_at.getTime(),
+      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
   });
 
@@ -686,6 +682,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           image_url: 'img',
           thematique: Thematique.alimentation,
           titre: 'titre',
+          introduction: 'intro',
           is_first: false,
           objectifs: [
             {
@@ -778,9 +775,15 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.missions.missions[0].objectifs[1].is_locked).toEqual(false);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(false);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
+      false,
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      false,
+    );
     // WHEN
     response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC/1',
@@ -789,8 +792,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
-    expect(userDB.missions.missions[0].objectifs[1].content_id).toEqual('1');
-    expect(userDB.missions.missions[0].objectifs[1].est_reco).toEqual(true);
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
+      '1',
+    );
+    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
+      true,
+    );
   });
 
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1', async () => {
@@ -829,6 +836,102 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       Scope.ALL,
     ]);
     expect(userDB.gamification.points).toEqual(10);
+  });
+  it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1, 2 options', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/_2',
+    ).send({ reponse: ['Le climat', 'Mon logement'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('_2')
+        .getSelectedLabels(),
+    ).toStrictEqual(['Le climat', 'Mon logement']);
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1 type choix unique , deselect la réponse précédente', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v1 = {
+      version: 1,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: '1',
+          id_cms: 1,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              value: 'oui',
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              value: 'non',
+            },
+            {
+              label: 'Ce que je mange',
+              code: Thematique.alimentation,
+              value: 'non',
+            },
+          ],
+          tags: [TagUtilisateur.appetence_bouger_sante],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: '1',
+      question: `Quel est votre sujet principal d'intéret ?`,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC/1',
+    ).send({ reponse: ['Mon logement'] });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    expect(
+      user.kyc_history
+        .getUpToDateQuestionByCodeOrException('1')
+        .getSelectedLabels(),
+    ).toStrictEqual(['Mon logement']);
   });
 
   it('PUT /utilisateurs/id/questionsKYC/1 - erreur si réponse inconnue', async () => {
@@ -1369,32 +1472,32 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
     ]);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetaliens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_vegetariens)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(7);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_blanc)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_poisson_gras)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_blanche)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(4);
     expect(
       userDB.kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
+        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(0);
   });
@@ -1442,7 +1545,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       points: 20,
       question: 'The question !',
       tags: [Tag.possede_voiture],
-      universes: [Thematique.alimentation],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
       ngc_key: 'a . b . c',

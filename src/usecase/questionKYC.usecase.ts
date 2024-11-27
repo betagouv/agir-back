@@ -12,6 +12,7 @@ import {
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -162,7 +163,7 @@ export class QuestionKYCUsecase {
   async updateResponseKYC_v2(
     utilisateurId: string,
     code_question: string,
-    reponse: { code?: string; value: string }[],
+    reponse: { code?: string; value?: string; selected?: boolean }[],
   ): Promise<void> {
     if (!reponse || reponse.length === 0) {
       ApplicationError.throwNoKYCResponse(code_question);
@@ -182,6 +183,7 @@ export class QuestionKYCUsecase {
     Utilisateur.checkState(utilisateur);
 
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
 
@@ -191,7 +193,7 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async updateResponseKYC(
+  async updateResponseKYC_deprecated(
     utilisateurId: string,
     code_question: string,
     reponse: string[],
@@ -210,8 +212,15 @@ export class QuestionKYCUsecase {
     Utilisateur.checkState(utilisateur);
 
     utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
-    this.updateQuestionOfCode(code_question, null, reponse, utilisateur, true);
+    this.updateQuestionOfCode_deprecated(
+      code_question,
+      null,
+      reponse,
+      utilisateur,
+      true,
+    );
 
     const catalogue_defis = await this.defiRepository.list({});
     utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
@@ -224,7 +233,7 @@ export class QuestionKYCUsecase {
     utilisateur: Utilisateur,
   ) {
     const question_depart =
-      utilisateur.kyc_history.getAnsweredQuestionByCode(code_question);
+      utilisateur.kyc_history.getUpToDateAnsweredQuestionByCode(code_question);
     switch (question_depart.code) {
       case KYCID.KYC_alimentation_regime:
         this.synchroAlimentationRegime(question_depart, utilisateur);
@@ -237,7 +246,7 @@ export class QuestionKYCUsecase {
   async updateResponseMosaic_v2(
     utilisateurId: string,
     mosaicId: string,
-    reponses: { code: string; value: string }[],
+    reponses: { code: string; value?: string; selected?: boolean }[],
   ): Promise<void> {
     if (!reponses || reponses.length === undefined || reponses.length === 0) {
       ApplicationError.throwMissingMosaicData();
@@ -245,12 +254,16 @@ export class QuestionKYCUsecase {
 
     const reponse_reformat = reponses.map((r) => ({
       code: r.code,
-      boolean_value: QuestionKYC.isTrueBooleanString(r.value),
+      boolean_value: r.selected,
     }));
-    await this.updateResponseMosaic(utilisateurId, mosaicId, reponse_reformat);
+    await this.updateResponseMosaic_deprecated(
+      utilisateurId,
+      mosaicId,
+      reponse_reformat,
+    );
   }
 
-  async updateResponseMosaic(
+  async updateResponseMosaic_deprecated(
     utilisateurId: string,
     mosaicId: string,
     reponses: { code: string; boolean_value: boolean }[],
@@ -271,6 +284,7 @@ export class QuestionKYCUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
+    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {
@@ -299,7 +313,7 @@ export class QuestionKYCUsecase {
         );
         if (kyc) {
           if (kyc.type === TypeReponseQuestionKYC.entier) {
-            this.updateQuestionOfCode(
+            this.updateQuestionOfCode_deprecated(
               reponse.code,
               null,
               reponse.boolean_value ? ['1'] : ['0'],
@@ -307,7 +321,7 @@ export class QuestionKYCUsecase {
               false,
             );
           } else {
-            this.updateQuestionOfCode(
+            this.updateQuestionOfCode_deprecated(
               reponse.code,
               reponse.boolean_value ? 'oui' : 'non',
               null,
@@ -332,7 +346,7 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private updateQuestionOfCode(
+  private updateQuestionOfCode_deprecated(
     code_question: string,
     code_reponse: string,
     labels_reponse: string[],
@@ -361,7 +375,7 @@ export class QuestionKYCUsecase {
           labels_reponse,
         );
     } else {
-      updated_kyc = utilisateur.kyc_history.selectCodeInQuestionByCode(
+      updated_kyc = utilisateur.kyc_history.selectChoixUniqueByCode(
         code_question,
         code_reponse,
       );
@@ -380,7 +394,7 @@ export class QuestionKYCUsecase {
 
   private updateQuestionOfCode_v2(
     code_question: string,
-    reponses: { code?: string; value: string }[],
+    reponses: { code?: string; value?: string; selected?: boolean }[],
     utilisateur: Utilisateur,
     gain_points: boolean,
   ) {
@@ -407,32 +421,55 @@ export class QuestionKYCUsecase {
       }
       question_to_update.setReponseSimpleValue(reponses[0].value);
     } else if (question_to_update.isChoixUnique()) {
-      if (reponses.length !== 1) {
-        ApplicationError.throwUniqueReponseExpected(code_question);
-      }
-      if (!reponses[0].code) {
-        ApplicationError.throwMissingCode(code_question);
-      }
-      if (!question_to_update.getAllCodes().includes(reponses[0].code)) {
-        ApplicationError.throwQuestionBadCodeValue(
-          reponses[0].code,
-          code_question,
-        );
-      }
-      question_to_update.selectChoixByCode(reponses[0].code);
-    } else if (question_to_update.isChoixMultiple()) {
+      let already_found_selected = false;
+
       for (const code_ref of question_to_update.getAllCodes()) {
         const answered_element = reponses.find((r) => r.code === code_ref);
         if (!answered_element) {
-          ApplicationError.throwMissingYesNoValueForCode(
+          ApplicationError.throwMissingValueForCode(code_question, code_ref);
+        }
+        if (
+          answered_element.selected === undefined ||
+          answered_element.selected === null
+        ) {
+          ApplicationError.throwMissingSelectedAttributeForCode(
             code_question,
             code_ref,
           );
         }
-        question_to_update.setResponseValueForCode(
-          code_ref,
-          answered_element.value,
-        );
+        if (answered_element.selected) {
+          if (already_found_selected) {
+            ApplicationError.throwToManySelectedAttributesForKYC(
+              code_question,
+              code_ref,
+            );
+          } else {
+            question_to_update.setChoixByCode(code_ref, true);
+            already_found_selected = true;
+          }
+        } else {
+          question_to_update.setChoixByCode(code_ref, false);
+        }
+      }
+      if (!already_found_selected) {
+        ApplicationError.throwNoneSelectedButNeededOne(code_question);
+      }
+    } else if (question_to_update.isChoixMultiple()) {
+      for (const code_ref of question_to_update.getAllCodes()) {
+        const answered_element = reponses.find((r) => r.code === code_ref);
+        if (!answered_element) {
+          ApplicationError.throwMissingValueForCode(code_question, code_ref);
+        }
+        if (
+          answered_element.selected === undefined ||
+          answered_element.selected === null
+        ) {
+          ApplicationError.throwMissingSelectedAttributeForCode(
+            code_question,
+            code_ref,
+          );
+        }
+        question_to_update.setChoixByCode(code_ref, answered_element.selected);
       }
     }
     utilisateur.kyc_history.updateQuestionInHistory(question_to_update);

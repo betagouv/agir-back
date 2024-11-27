@@ -63,7 +63,7 @@ export class UtilisateurRepository {
       omit: {
         todo: !scopes.includes(Scope.todo),
         gamification: !scopes.includes(Scope.gamification),
-        history: !scopes.includes(Scope.history_article_quizz),
+        history: !scopes.includes(Scope.history_article_quizz_aides),
         kyc: !scopes.includes(Scope.kyc),
         unlocked_features: !scopes.includes(Scope.unlocked_features),
         logement: !scopes.includes(Scope.logement),
@@ -213,6 +213,20 @@ export class UtilisateurRepository {
     }
     const result = await this.prisma.utilisateur.findMany(query);
 
+    return result.map((elem) => elem['id']);
+  }
+
+  async listUtilisateurIdsToCreateInBrevo(max?: number): Promise<string[]> {
+    const result = await this.prisma.utilisateur.findMany({
+      take: max ? max : undefined,
+      select: {
+        id: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+      where: { brevo_created_at: null },
+    });
     return result.map((elem) => elem['id']);
   }
 
@@ -391,6 +405,8 @@ export class UtilisateurRepository {
         notification_history: notification_history,
         unsubscribe_mail_token: user.unsubscribe_mail_token,
         est_valide_pour_classement: user.est_valide_pour_classement,
+        brevo_created_at: user.brevo_created_at,
+        brevo_updated_at: user.brevo_updated_at,
       });
     }
     return null;
@@ -476,6 +492,8 @@ export class UtilisateurRepository {
       source_inscription: user.source_inscription,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
       est_valide_pour_classement: user.est_valide_pour_classement,
+      brevo_created_at: user.brevo_created_at,
+      brevo_updated_at: user.brevo_updated_at,
     };
     return result;
   }

@@ -266,7 +266,6 @@ describe('NotificationHistory', () => {
       pourquoi: 'pourquoi',
       sous_titre: 'sous_titre',
       status: DefiStatus.todo,
-      universes: [Thematique.climat],
       accessible: true,
       motif: 'truc',
       categorie: Categorie.recommandation,

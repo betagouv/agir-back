@@ -12,7 +12,7 @@ import { LinkyRepository } from '../repository/linky.repository';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Contact } from '../contact/contact';
-import { ContactSynchro } from '../contact/contactSynchro';
+import { BrevoRepository } from '../contact/brevoRepository';
 import { GenericControler } from './genericControler';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { Scope } from '../../domain/utilisateur/utilisateur';
@@ -26,35 +26,13 @@ export class TestDataController extends GenericControler {
     private prismaStats: PrismaServiceStat,
     private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
-    public contactSynchro: ContactSynchro,
+    public contactSynchro: BrevoRepository,
     private utilisateurRepository2: UtilisateurRepository,
     private profileUsecase: ProfileUsecase,
   ) {
     super();
   }
 
-  @Post('creer_contact_brevo/:email')
-  @ApiParam({ name: 'email' })
-  async creerContact(@Param('email') email: string, @Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    const contact = new Contact({
-      email: email,
-      ext_id: uuidv4(),
-      smsBlacklisted: false,
-      smtpBlacklistSender: [],
-      emailBlacklisted: false,
-      attributes: {
-        POINTS: 15,
-        EMAIL: email,
-        CODE_POSTAL: '91120',
-        DERNIERE_ACTIVITE: new Date(),
-        NIVEAU: 2,
-        FIRSTNAME: 'toto',
-        LASTNAME: 'titi',
-      },
-    });
-    await this.contactSynchro.createContactFromContact(contact);
-  }
   @Get('stats')
   async test_stats() {
     return await this.prismaStats.testTable.findMany();

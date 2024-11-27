@@ -16,7 +16,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { CMSUsecase } from '../../../src/usecase/cms.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
@@ -57,7 +56,6 @@ export class AdminController extends GenericControler {
     private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
-    private cmsUsecase: CMSUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -132,74 +130,6 @@ export class AdminController extends GenericControler {
     const result = await this.linkyUsecase.cleanLinkyData();
 
     return { result: `Cleaned ${result} PRMs` };
-  }
-
-  @Post('/admin/load_articles_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les articles publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSArticles(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadArticlesFromCMS();
-  }
-
-  @Post('/admin/load_thematiques_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les thematiques publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSThematiques(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadThematiquesFromCMS();
-  }
-
-  @Post('/admin/load_missions_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les missions publiées du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSMissions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadMissionsFromCMS();
-  }
-  @Post('/admin/load_kycs_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les KYCs publiées du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllKYCMissions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadKYCFromCMS();
-  }
-  @Post('/admin/load_defi_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les défis publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSDefis(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadDefisFromCMS();
-  }
-
-  @Post('/admin/load_quizzes_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les quizz publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSquizzes(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadQuizzFromCMS();
-  }
-
-  @Post('/admin/load_aides_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toures les aides publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSaides(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadAidesFromCMS();
   }
 
   @Post('/admin/upsert_service_definitions')
@@ -371,5 +301,14 @@ export class AdminController extends GenericControler {
   ): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
+  }
+
+  @Post('/admin/create_brevo_contacts')
+  @ApiOperation({
+    summary: `crée les contacts manquants dans Brevo`,
+  })
+  async create_brevo_contacts(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.contactUsecase.createMissingContacts();
   }
 }
