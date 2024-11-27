@@ -57,7 +57,7 @@ import {
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
 import { Thematique } from '../src/domain/contenu/thematique';
-import { KYCHistory_v1 } from '../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 
 export enum DB {
@@ -423,8 +423,8 @@ export class TestUtil {
       ],
     };
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -440,13 +440,13 @@ export class TestUtil {
             {
               label: 'Le climat',
               code: Thematique.climat,
-              value: 'oui',
               ngc_code: '123',
+              selected: true,
             },
             {
               label: 'Mon logement',
               code: Thematique.logement,
-              value: 'oui',
+              selected: true,
               ngc_code: '123',
             },
           ],

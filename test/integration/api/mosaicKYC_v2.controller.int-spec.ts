@@ -17,9 +17,9 @@ import {
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import {
-  KYCHistory_v1,
-  QuestionKYC_v1,
-} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
@@ -95,7 +95,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
     await kycRepository.loadDefinitions();
@@ -180,8 +180,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'AAA_2',
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -193,13 +193,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           is_NGC: true,
           a_supprimer: false,
           reponse_complexe: [
-            { code: 'oui', label: 'Oui', value: 'oui' },
-            { code: 'non', label: 'Non', value: 'non' },
+            { code: 'oui', label: 'Oui', selected: true },
+            { code: 'non', label: 'Non', selected: false },
             {
               code: 'sais_pas',
               label: 'Je sais pas',
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
           ],
           ngc_key: 'a . b . c',
@@ -222,13 +222,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           is_NGC: true,
           a_supprimer: false,
           reponse_complexe: [
-            { code: 'non', label: 'Non', value: 'oui' },
-            { code: 'oui', label: 'Oui', value: 'non' },
+            { code: 'non', label: 'Non', selected: true },
+            { code: 'oui', label: 'Oui', selected: false },
             {
               code: 'sais_pas',
               label: 'Je sais pas',
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
           ],
           ngc_key: 'a . b . c',
@@ -267,7 +267,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'AAA_1',
           emoji: '🔥',
           unite: Unite.kg,
-          value: undefined,
           selected: true,
         },
         {
@@ -276,7 +275,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'AAA_2',
           emoji: '🔥',
           unite: Unite.kg,
-          value: undefined,
           selected: false,
         },
       ],
@@ -357,7 +355,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -390,7 +388,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'oui',
           label: 'Oui',
-          value: 'oui',
+          value: undefined,
+          selected: true,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -399,7 +398,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'non',
           label: 'Non',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -408,7 +408,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'sais_pas',
           label: 'Je sais pas',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -439,7 +440,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'oui',
           label: 'Oui',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -448,7 +450,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'non',
           label: 'Non',
-          value: 'oui',
+          value: undefined,
+          selected: true,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -457,7 +460,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'sais_pas',
           label: 'Je sais pas',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -519,7 +523,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -575,7 +579,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -630,7 +634,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -661,7 +665,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         unite: 'kg',
         value: '1',
       },
-      reponse_complexe: undefined,
+      reponse_complexe: [],
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
@@ -685,7 +689,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         unite: 'kg',
         value: '0',
       },
-      reponse_complexe: undefined,
+      reponse_complexe: [],
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
@@ -701,7 +705,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic avec pas de réponses', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -716,7 +720,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic réponses manquantes', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -770,8 +774,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB_1',
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -840,7 +844,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'AAA_1',
           emoji: '🔥',
           unite: Unite.kg,
-          value: undefined,
           selected: false,
         },
         {
@@ -849,7 +852,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           image_url: 'BBB_1',
           emoji: '🔥',
           unite: Unite.kg,
-          value: undefined,
           selected: true,
         },
       ],
@@ -889,7 +891,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     updated_at: undefined,
   };
 
-  const KYC_DATA: QuestionKYC_v1 = {
+  const KYC_DATA: QuestionKYC_v2 = {
     code: '1',
     id_cms: 11,
     question: `question`,
@@ -902,12 +904,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       {
         label: 'Le climat',
         code: Thematique.climat,
-        value: 'oui',
+        selected: true,
       },
       {
         label: 'Mon logement',
         code: Thematique.logement,
-        value: 'non',
+        selected: false,
       },
     ],
     reponse_simple: undefined,
@@ -934,8 +936,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         thematique: Thematique.alimentation,
       },
     ];
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1000,7 +1002,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'a',
           image_url: 'img_a',
           unite: 'kg',
-          value: undefined,
           selected: false,
         },
         {
@@ -1009,7 +1010,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'b',
           image_url: 'img_b',
           unite: 'euro',
-          value: undefined,
           selected: false,
         },
       ],
@@ -1035,8 +1035,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       },
     ];
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1045,9 +1045,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: KYCID._1,
           type: TypeReponseQuestionKYC.choix_unique,
           reponse_complexe: [
-            { label: 'Oui', code: 'oui', value: 'non' },
-            { label: 'Non', code: 'non', value: 'oui' },
-            { label: 'Je sais pas', code: 'sais_pas', value: 'non' },
+            { label: 'Oui', code: 'oui', selected: false },
+            { label: 'Non', code: 'non', selected: true },
+            {
+              label: 'Je sais pas',
+              code: 'sais_pas',
+              selected: false,
+            },
           ],
         },
       ],
@@ -1113,7 +1117,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'a',
           image_url: 'img_a',
           unite: 'kg',
-          value: undefined,
           selected: false,
         },
         {
@@ -1122,7 +1125,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'b',
           image_url: 'img_b',
           unite: 'euro',
-          value: undefined,
           selected: false,
         },
       ],
@@ -1148,8 +1150,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       },
     ];
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1158,9 +1160,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: KYCID._1,
           type: TypeReponseQuestionKYC.choix_unique,
           reponse_complexe: [
-            { label: 'Oui', code: 'oui', value: 'oui' },
-            { label: 'Non', code: 'non', value: 'non' },
-            { label: 'Je sais pas', code: 'sais_pas', value: 'non' },
+            { label: 'Oui', code: 'oui', selected: true },
+            { label: 'Non', code: 'non', selected: false },
+            {
+              label: 'Je sais pas',
+              code: 'sais_pas',
+              selected: false,
+            },
           ],
         },
       ],
@@ -1226,7 +1232,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'a',
           image_url: 'img_a',
           unite: 'kg',
-          value: undefined,
           selected: true,
         },
         {
@@ -1235,7 +1240,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           emoji: 'b',
           image_url: 'img_b',
           unite: 'euro',
-          value: undefined,
           selected: false,
         },
       ],

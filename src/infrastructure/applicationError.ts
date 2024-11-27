@@ -517,6 +517,13 @@ export class ApplicationError {
       `Un choix unique est attendu pour la question [${code_kyc}], aucune réponse selectionnée !`,
     );
   }
+  static throwBadVersionDetectedForUpgrade(version: number, expected: number) {
+    this.throwAppError(
+      '099',
+      `Mauvaise version détectée pour l'upgrade d'objet : [${version}], attendue : [${expected}]`,
+      500,
+    );
+  }
 
   private static throwAppError(
     code: string,

@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { Feature } from '../../../../src/domain/gamification/feature';
 import {
@@ -45,9 +45,15 @@ export class Celebration_v0 {
   }
 }
 
-export class Gamification_v0 extends Versioned {
+export class Gamification_v0 extends Versioned_v0 {
   points: number;
   celebrations: Celebration_v0[];
+
+  constructor() {
+    super();
+    this.points = 0;
+    this.celebrations = [];
+  }
 
   static serialise(domain: Gamification): Gamification_v0 {
     return {

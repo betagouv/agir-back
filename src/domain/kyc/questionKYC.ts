@@ -1,16 +1,24 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
-import {
-  QuestionKYC_v1,
-  ReponseComplexe_v1,
-  ReponseSimple_v1,
-} from '../object_store/kyc/kycHistory_v1';
+import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
 import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
+
+export enum TypeReponseQuestionKYC {
+  libre = 'libre',
+  entier = 'entier',
+  decimal = 'decimal',
+
+  choix_unique = 'choix_unique',
+  choix_multiple = 'choix_multiple',
+
+  mosaic_boolean = 'mosaic_boolean',
+  mosaic_number = 'mosaic_number',
+}
 
 const TRUE_STRING = [
   'true',
@@ -24,15 +32,6 @@ const TRUE_STRING = [
   'OUI',
   '1',
 ];
-export enum TypeReponseQuestionKYC {
-  libre = 'libre',
-  choix_unique = 'choix_unique',
-  choix_multiple = 'choix_multiple',
-  mosaic_boolean = 'mosaic_boolean',
-  mosaic_number = 'mosaic_number',
-  entier = 'entier',
-  decimal = 'decimal',
-}
 
 export enum BooleanKYC {
   oui = 'oui',
@@ -62,7 +61,8 @@ export type KYCReponseSimple = {
 export type KYCReponseComplexe = {
   code: string;
   label: string;
-  value: string;
+  selected: boolean;
+  value?: string;
   ngc_code?: string;
   image_url?: string;
   emoji?: string;
@@ -93,7 +93,7 @@ export class QuestionKYC implements TaggedContent {
   private reponse_complexe: KYCReponseComplexe[];
   private conditions: AndConditionSet[];
 
-  constructor(data?: QuestionKYC_v1) {
+  constructor(data?: QuestionKYC_v2) {
     if (!data) return;
     this.code = data.code;
     this.id_cms = data.id_cms;
@@ -120,6 +120,7 @@ export class QuestionKYC implements TaggedContent {
           label: r.label,
           ngc_code: r.ngc_code,
           value: r.value,
+          selected: r.selected,
           emoji: undefined,
           image_url: undefined,
           unite: undefined,
@@ -160,7 +161,7 @@ export class QuestionKYC implements TaggedContent {
           label: reponse.label,
           code: reponse.code,
           ngc_code: reponse.ngc_code,
-          value: undefined,
+          selected: false,
         });
       }
     } else {
@@ -209,18 +210,24 @@ export class QuestionKYC implements TaggedContent {
     const liste_reponses: KYCReponseComplexe[] = [];
     for (const kyc of kyc_liste) {
       let value: string;
+      let selected: boolean;
       if (kyc.hasAnyResponses()) {
         if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          value = kyc.getCodeReponseQuestionChoixUnique();
+          value =
+            kyc.getCodeReponseQuestionChoixUnique() === 'oui' ? 'oui' : 'non';
+          selected = kyc.getCodeReponseQuestionChoixUnique() === 'oui';
         } else if (kyc.type === TypeReponseQuestionKYC.entier) {
           value = kyc.getReponseSimpleValue() === '1' ? 'oui' : 'non';
+          selected = kyc.getReponseSimpleValue() === '1';
         }
       } else {
         value = 'non';
+        selected = false;
       }
       liste_reponses.push({
         code: kyc.code,
         value: value,
+        selected: selected,
         label: kyc.short_question,
         image_url: kyc.image_url,
         unite: kyc.unite,
@@ -248,7 +255,7 @@ export class QuestionKYC implements TaggedContent {
             code: def_reponse.code,
             label: def_reponse.label,
             ngc_code: def_reponse.ngc_code,
-            value: undefined,
+            selected: false,
           });
         }
       }
@@ -296,22 +303,12 @@ export class QuestionKYC implements TaggedContent {
     return this.type === TypeReponseQuestionKYC.choix_multiple;
   }
 
-  public updateQuestionValues(input: { code: string; value: string }[]) {}
-
   public hasConditions() {
     return this.conditions && this.conditions.length > 0;
   }
 
   public hasAnyResponses(): boolean {
-    if (this.reponse_simple && this.reponse_simple.value) {
-      return true;
-    }
-    if (this.reponse_complexe) {
-      for (const reponse of this.reponse_complexe) {
-        if (reponse.value) return true;
-      }
-    }
-    return false;
+    return this.hasAnySimpleResponse() || this.hasAnyComplexeResponse();
   }
   public hasAnySimpleResponse(): boolean {
     if (this.reponse_simple && this.reponse_simple.value) {
@@ -323,6 +320,7 @@ export class QuestionKYC implements TaggedContent {
     if (this.reponse_complexe) {
       for (const reponse of this.reponse_complexe) {
         if (reponse.value) return true;
+        if (reponse.selected) return true;
       }
     }
     return false;
@@ -359,7 +357,7 @@ export class QuestionKYC implements TaggedContent {
       return false;
     }
     const found = this.reponse_complexe.find((r) => r.code === code);
-    return found ? QuestionKYC.isTrueBooleanString(found.value) : false;
+    return found ? found.selected : false;
   }
 
   public listeReponseValues(): string[] {
@@ -374,18 +372,20 @@ export class QuestionKYC implements TaggedContent {
   public getCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
-      if (QuestionKYC.isTrueBooleanString(reponse.value)) {
+      if (reponse.selected) {
         return reponse.code;
       }
     }
+    return null;
   }
   public getNGCCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
-      if (QuestionKYC.isTrueBooleanString(reponse.value)) {
+      if (reponse.selected) {
         return reponse.ngc_code;
       }
     }
+    return null;
   }
 
   public getNombreReponsesPossibles(): number {
@@ -397,10 +397,10 @@ export class QuestionKYC implements TaggedContent {
       return null;
     return this.reponse_complexe.find((r) => r.code === code);
   }
-  public getListeReponsesComplexes(): KYCReponseComplexe[] {
+  public getRAWListeReponsesComplexes(): KYCReponseComplexe[] {
     return this.reponse_complexe ? this.reponse_complexe : [];
   }
-  public getReponseSimple(): KYCReponseSimple {
+  public getRAWReponseSimple(): KYCReponseSimple {
     return this.reponse_simple;
   }
   public getReponseSimpleValueAsNumber(): number {
@@ -416,6 +416,7 @@ export class QuestionKYC implements TaggedContent {
     }
     return undefined;
   }
+
   public setReponseSimpleValue(value: string) {
     this.reponse_simple.value = value;
   }
@@ -437,15 +438,6 @@ export class QuestionKYC implements TaggedContent {
   }
 
   // DEPRECATED
-  public getLabelByCode(code: string): string {
-    if (!this.reponse_complexe) {
-      return null;
-    }
-    const found = this.reponse_complexe.find((r) => r.code === code);
-    return found ? found.label : null;
-  }
-
-  // DEPRECATED
   public setResponseWithValueOrLabels(reponses: string[]) {
     this.throwExceptionIfReponseNotExists(reponses);
 
@@ -462,20 +454,13 @@ export class QuestionKYC implements TaggedContent {
       }
     }
   }
-  public setResponseValueForCode(code: string, value: string) {
-    for (const reponse of this.reponse_complexe) {
-      if (reponse.code === code) {
-        reponse.value = value;
-      }
-    }
-  }
 
   // DEPRECATED
   private selectChoixByLabel(label: string) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
       if (rep.label === label) {
-        rep.value = BooleanKYC.oui;
+        rep.selected = true;
         return;
       }
     }
@@ -484,18 +469,14 @@ export class QuestionKYC implements TaggedContent {
   private setChoixUniqueByLabel(label: string) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
-      if (rep.label === label) {
-        rep.value = BooleanKYC.oui;
-      } else {
-        rep.value = BooleanKYC.non;
-      }
+      rep.selected = rep.label === label;
     }
   }
 
   private deSelectAll() {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
-      rep.value = BooleanKYC.non;
+      rep.selected = false;
     }
   }
 
@@ -503,17 +484,18 @@ export class QuestionKYC implements TaggedContent {
     if (!this.reponse_complexe) return [];
     const result = [];
     for (const rep of this.reponse_complexe) {
-      if (QuestionKYC.isTrueBooleanString(rep.value)) {
+      if (rep.selected) {
         result.push(rep.label);
       }
     }
     return result;
   }
+
   public getSelectedCodes(): string[] {
     if (!this.reponse_complexe) return [];
     const result = [];
     for (const rep of this.reponse_complexe) {
-      if (QuestionKYC.isTrueBooleanString(rep.value)) {
+      if (rep.selected) {
         result.push(rep.code);
       }
     }
@@ -523,18 +505,14 @@ export class QuestionKYC implements TaggedContent {
   public selectChoixUniqueByCode(code: string) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
-      if (rep.code === code) {
-        rep.value = BooleanKYC.oui;
-      } else {
-        rep.value = BooleanKYC.non;
-      }
+      rep.selected = rep.code === code;
     }
   }
   public setChoixByCode(code: string, selected: boolean) {
     if (!this.reponse_complexe) return;
     for (const rep of this.reponse_complexe) {
       if (rep.code === code) {
-        rep.value = selected ? BooleanKYC.oui : BooleanKYC.non;
+        rep.selected = selected;
         return;
       }
     }
@@ -591,14 +569,6 @@ export class QuestionKYC implements TaggedContent {
     return q ? q.code : null;
   }
 
-  private getNGCCodeByLabel(label: string): string {
-    if (!this.reponse_complexe) {
-      return null;
-    }
-    const q = this.getQuestionComplexeByLabel(label);
-    return q ? q.ngc_code : null;
-  }
-
   public static getProgression(liste: QuestionKYC[]): {
     current: number;
     target: number;
@@ -614,32 +584,5 @@ export class QuestionKYC implements TaggedContent {
       }
     }
     return { current: progression, target: liste.length };
-  }
-
-  static serialise(elem: QuestionKYC): QuestionKYC_v1 {
-    return {
-      code: elem.code,
-      question: elem.question,
-      type: elem.type,
-      categorie: elem.categorie,
-      points: elem.points,
-      is_NGC: elem.is_NGC,
-      a_supprimer: elem.a_supprimer,
-      ngc_key: elem.ngc_key,
-      reponse_simple: elem.reponse_simple
-        ? ReponseSimple_v1.map(elem.reponse_simple)
-        : null,
-      reponse_complexe: elem.reponse_complexe
-        ? elem.reponse_complexe.map((r) => ReponseComplexe_v1.map(r))
-        : null,
-      thematique: elem.thematique,
-      tags: elem.tags,
-      id_cms: elem.id_cms,
-      short_question: elem.short_question,
-      image_url: elem.image_url,
-      conditions: elem.conditions ? elem.conditions : [],
-      unite: elem.unite,
-      emoji: elem.emoji,
-    };
   }
 }

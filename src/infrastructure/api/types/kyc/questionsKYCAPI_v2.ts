@@ -80,15 +80,15 @@ export class QuestionKYCAPI_v2 {
       };
     } else if (question.isChoixQuestion()) {
       result.reponse_multiple = question
-        .getListeReponsesComplexes()
+        .getRAWListeReponsesComplexes()
         .map((r) => ({
           code: r.code,
           label: r.label,
-          selected: QuestionKYC.isTrueBooleanString(r.value),
+          selected: r.selected,
         }));
     } else if (question.isMosaic()) {
       result.reponse_multiple = question
-        .getListeReponsesComplexes()
+        .getRAWListeReponsesComplexes()
         .map((r) => {
           const common = {
             code: r.code,
@@ -100,7 +100,7 @@ export class QuestionKYCAPI_v2 {
           if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
             return {
               ...common,
-              selected: QuestionKYC.isTrueBooleanString(r.value),
+              selected: r.selected,
             };
           } else {
             return {

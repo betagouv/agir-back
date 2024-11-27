@@ -14,7 +14,10 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { CodeMission } from '../../../src/domain/thematique/codeMission';
@@ -26,7 +29,32 @@ import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import {
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 
+const KYC_DATA: QuestionKYC_v2 = {
+  code: '1',
+  id_cms: 11,
+  question: `question`,
+  type: TypeReponseQuestionKYC.choix_unique,
+  is_NGC: false,
+  a_supprimer: false,
+  categorie: Categorie.test,
+  points: 10,
+  reponse_complexe: [],
+  reponse_simple: undefined,
+  tags: [TagUtilisateur.appetence_bouger_sante],
+  thematique: Thematique.consommation,
+  ngc_key: '123',
+  short_question: 'short',
+  image_url: 'AAA',
+  conditions: [],
+  unite: Unite.kg,
+  emoji: '🔥',
+};
 describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -1789,61 +1817,69 @@ describe('Admin (API test)', () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          id_cms: 1,
+          code: 'id-kyc-1',
+          type: TypeReponseQuestionKYC.choix_multiple,
+          question: `Question kyc 1`,
+          reponse_complexe: [
+            { label: 'Le climat', code: Thematique.climat, selected: true },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: true,
+            },
+          ],
+        },
+        {
+          ...KYC_DATA,
+          id_cms: 2,
+          code: 'id-kyc-2',
+          question: `Question kyc 2`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          reponse_complexe: [
+            { label: 'Une réponse', code: Thematique.climat, selected: true },
+          ],
+        },
+      ],
+    };
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
       email: 'john-doe@dev.com',
-      kyc: {
-        version: 0,
-        answered_questions: [
-          {
-            id: 'id-kyc-1',
-            type: TypeReponseQuestionKYC.choix_multiple,
-            question: `Question kyc 1`,
-            reponses: [
-              { label: 'Le climat', code: Thematique.climat },
-              { label: 'Mon logement', code: Thematique.logement },
-            ],
-            reponses_possibles: [
-              { label: 'Le climat', code: Thematique.climat },
-              { label: 'Mon logement', code: Thematique.logement },
-            ],
-          },
-          {
-            id: 'id-kyc-2',
-            question: `Question kyc 2`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            reponses: [{ label: 'Une réponse', code: Thematique.climat }],
-            reponses_possibles: [
-              { label: 'Une réponse', code: Thematique.climat },
-            ],
-          },
-        ],
-      },
+      kyc: kyc,
     });
 
+    const kyc_2: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          id_cms: 1,
+          code: 'id-kyc-1',
+          question: `Question kyc 1`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          reponse_complexe: [
+            { label: 'Le climat', code: Thematique.climat, selected: true },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: true,
+            },
+            { label: 'Appartement', code: Thematique.logement, selected: true },
+          ],
+        },
+      ],
+    };
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'john-doedoe@dev.com',
-      kyc: {
-        version: 0,
-        answered_questions: [
-          {
-            id: 'id-kyc-1',
-            question: `Question kyc 1`,
-            type: TypeReponseQuestionKYC.choix_multiple,
-            reponses: [
-              { label: 'Le climat', code: Thematique.climat },
-              { label: 'Mon logement', code: Thematique.logement },
-              { label: 'Appartement', code: Thematique.logement },
-            ],
-            reponses_possibles: [
-              { label: 'Le climat', code: Thematique.climat },
-              { label: 'Mon logement', code: Thematique.logement },
-              { label: 'Appartement', code: Thematique.logement },
-            ],
-          },
-        ],
-      },
+      kyc: kyc_2,
     });
 
     // WHEN

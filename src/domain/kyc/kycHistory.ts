@@ -2,7 +2,7 @@ import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
-import { KYCHistory_v1 } from '../object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
@@ -34,7 +34,7 @@ export class KYCHistory {
 
   catalogue: KycDefinition[];
 
-  constructor(data?: KYCHistory_v1) {
+  constructor(data?: KYCHistory_v2) {
     this.reset();
 
     if (data && data.answered_questions) {
@@ -382,6 +382,7 @@ export class KYCHistory {
   public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
     const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
     let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
+
     if (answered_question) {
       return answered_question;
     }

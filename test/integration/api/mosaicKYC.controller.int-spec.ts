@@ -17,9 +17,9 @@ import {
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import {
-  KYCHistory_v1,
-  QuestionKYC_v1,
-} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
@@ -95,7 +95,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     await kycRepository.loadDefinitions();
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
@@ -194,7 +194,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -229,7 +229,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'oui',
           label: 'Oui',
-          value: 'oui',
+          value: undefined,
+          selected: true,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -238,7 +239,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'non',
           label: 'Non',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -247,7 +249,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'sais_pas',
           label: 'Je sais pas',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -278,7 +281,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'oui',
           label: 'Oui',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -287,7 +291,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'non',
           label: 'Non',
-          value: 'oui',
+          value: undefined,
+          selected: true,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -296,7 +301,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: 'sais_pas',
           label: 'Je sais pas',
-          value: 'non',
+          value: undefined,
+          selected: false,
           emoji: undefined,
           image_url: undefined,
           ngc_code: undefined,
@@ -353,7 +359,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     await kycRepository.loadDefinitions();
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -387,7 +393,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         unite: 'kg',
         value: '1',
       },
-      reponse_complexe: undefined,
+      reponse_complexe: [],
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
@@ -411,7 +417,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         unite: 'kg',
         value: '0',
       },
-      reponse_complexe: undefined,
+      reponse_complexe: [],
       ngc_key: 'a . b . c',
       thematique: 'alimentation',
       tags: ['possede_voiture'],
@@ -427,7 +433,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic avec pas de réponses', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -444,7 +450,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic réponses manquantes', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v1() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -502,8 +508,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'AAA_2',
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -515,13 +521,23 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           is_NGC: true,
           a_supprimer: false,
           reponse_complexe: [
-            { code: 'oui', label: 'Oui', ngc_code: undefined, value: 'oui' },
-            { code: 'non', label: 'Non', ngc_code: undefined, value: 'non' },
+            {
+              code: 'oui',
+              label: 'Oui',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              code: 'non',
+              label: 'Non',
+              ngc_code: undefined,
+              selected: false,
+            },
             {
               code: 'sais_pas',
               label: 'Je sais pas',
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
           ],
           ngc_key: 'a . b . c',
@@ -544,13 +560,23 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           is_NGC: true,
           a_supprimer: false,
           reponse_complexe: [
-            { code: 'non', label: 'Non', ngc_code: undefined, value: 'oui' },
-            { code: 'oui', label: 'Oui', ngc_code: undefined, value: 'non' },
+            {
+              code: 'non',
+              label: 'Non',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              code: 'oui',
+              label: 'Oui',
+              ngc_code: undefined,
+              selected: false,
+            },
             {
               code: 'sais_pas',
               label: 'Je sais pas',
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
           ],
           ngc_key: 'a . b . c',
@@ -645,8 +671,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB_1',
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {

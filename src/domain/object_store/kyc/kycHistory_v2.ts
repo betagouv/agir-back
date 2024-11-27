@@ -1,4 +1,4 @@
-import { Versioned_v1 } from '../versioned';
+import { Versioned_v2 } from '../versioned';
 import { KYCHistory } from '../../kyc/kycHistory';
 import {
   KYCReponseComplexe,
@@ -9,40 +9,42 @@ import {
 } from '../../kyc/questionKYC';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { Categorie } from '../../contenu/categorie';
 import { ConditionKYC } from '../../kyc/conditionKYC';
-import { KYCHistory_v0 } from './kycHistory_v0';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { KYCHistory_v1 } from './kycHistory_v1';
 import { ApplicationError } from '../../../infrastructure/applicationError';
 
-export class ReponseSimple_v1 {
+export class ReponseSimple_v2 {
   unite?: Unite;
   value: string;
 
-  static map(elem: KYCReponseSimple): ReponseSimple_v1 {
+  static map(elem: KYCReponseSimple): ReponseSimple_v2 {
     return {
       unite: elem.unite,
       value: elem.value,
     };
   }
 }
-export class ReponseComplexe_v1 {
+export class ReponseComplexe_v2 {
   label: string;
   code: string;
-  value: string;
+  value?: string;
+  selected: boolean;
   ngc_code?: string;
 
-  static map(elem: KYCReponseComplexe): ReponseComplexe_v1 {
+  static map(elem: KYCReponseComplexe): ReponseComplexe_v2 {
     return {
       code: elem.code,
       label: elem.label,
       ngc_code: elem.ngc_code,
       value: elem.value,
+      selected: elem.selected,
     };
   }
 }
 
-export class QuestionKYC_v1 {
+export class QuestionKYC_v2 {
   code: string;
   id_cms: number;
   question: string;
@@ -61,10 +63,10 @@ export class QuestionKYC_v1 {
   unite?: Unite;
   emoji?: string;
 
-  reponse_simple: ReponseSimple_v1;
-  reponse_complexe: ReponseComplexe_v1[];
+  reponse_simple: ReponseSimple_v2;
+  reponse_complexe: ReponseComplexe_v2[];
 
-  static map(elem: QuestionKYC): QuestionKYC_v1 {
+  static map(elem: QuestionKYC): QuestionKYC_v2 {
     return {
       code: elem.code,
       question: elem.question,
@@ -75,11 +77,11 @@ export class QuestionKYC_v1 {
       a_supprimer: elem.a_supprimer,
       ngc_key: elem.ngc_key,
       reponse_simple: elem.getRAWReponseSimple()
-        ? ReponseSimple_v1.map(elem.getRAWReponseSimple())
+        ? ReponseSimple_v2.map(elem.getRAWReponseSimple())
         : null,
       reponse_complexe: elem
         .getRAWListeReponsesComplexes()
-        .map((r) => ReponseComplexe_v1.map(r)),
+        .map((r) => ReponseComplexe_v2.map(r)),
       thematique: elem.thematique,
       tags: elem.tags,
       id_cms: elem.id_cms,
@@ -92,8 +94,8 @@ export class QuestionKYC_v1 {
   }
 }
 
-export class KYCHistory_v1 extends Versioned_v1 {
-  answered_questions: QuestionKYC_v1[];
+export class KYCHistory_v2 extends Versioned_v2 {
+  answered_questions: QuestionKYC_v2[];
   answered_mosaics: KYCMosaicID[];
   constructor() {
     super();
@@ -101,30 +103,29 @@ export class KYCHistory_v1 extends Versioned_v1 {
     this.answered_questions = [];
   }
 
-  static serialise(domain: KYCHistory): KYCHistory_v1 {
+  static serialise(domain: KYCHistory): KYCHistory_v2 {
     return {
-      version: 1,
+      version: 2,
       answered_questions: domain.answered_questions.map((e) =>
-        QuestionKYC_v1.map(e),
+        QuestionKYC_v2.map(e),
       ),
       answered_mosaics: domain.answered_mosaics,
     };
   }
 
-  static upgrade(source: KYCHistory_v0): KYCHistory_v1 {
-    if (source.version && source.version !== 0) {
-      ApplicationError.throwBadVersionDetectedForUpgrade(source.version, 0);
+  static upgrade(source: KYCHistory_v1): KYCHistory_v2 {
+    if (source.version && source.version !== 1) {
+      ApplicationError.throwBadVersionDetectedForUpgrade(source.version, 1);
     }
-    const result: KYCHistory_v1 = {
-      version: 1,
+    const result: KYCHistory_v2 = {
+      version: 2,
       answered_questions: [],
       answered_mosaics: source.answered_mosaics,
     };
-
     if (source.answered_questions) {
       for (const question of source.answered_questions) {
-        let new_question: QuestionKYC_v1 = {
-          code: question.id,
+        let new_question: QuestionKYC_v2 = {
+          code: question.code,
           id_cms: question.id_cms,
           categorie: question.categorie,
           conditions: question.conditions,
@@ -140,52 +141,22 @@ export class KYCHistory_v1 extends Versioned_v1 {
           type: question.type,
           a_supprimer: question.a_supprimer,
           unite: question.unite,
-          reponse_simple: null,
+          reponse_simple: question.reponse_simple,
           reponse_complexe: null,
         };
 
-        if (question.reponses) {
+        if (question.reponse_complexe) {
+          new_question.reponse_complexe = [];
           if (
-            question.type === TypeReponseQuestionKYC.decimal ||
-            question.type === TypeReponseQuestionKYC.entier ||
-            question.type === TypeReponseQuestionKYC.libre
+            question.type === TypeReponseQuestionKYC.choix_unique ||
+            question.type === TypeReponseQuestionKYC.choix_multiple
           ) {
-            new_question.reponse_simple = {
-              unite: question.unite,
-              value: question.reponses[0]
-                ? question.reponses[0].label
-                : undefined,
-            };
-          } else if (question.type === TypeReponseQuestionKYC.choix_unique) {
-            new_question.reponse_complexe = [];
-            let selected_code;
-            if (question.reponses && question.reponses.length === 1) {
-              selected_code = question.reponses[0].code;
-            }
-            for (const reponse_possible of question.reponses_possibles) {
+            for (const reponse of question.reponse_complexe) {
               new_question.reponse_complexe.push({
-                code: reponse_possible.code,
-                label: reponse_possible.label,
-                ngc_code: reponse_possible.ngc_code,
-                value: reponse_possible.code === selected_code ? 'oui' : 'non',
-              });
-            }
-          } else if (question.type === TypeReponseQuestionKYC.choix_multiple) {
-            new_question.reponse_complexe = [];
-            let selected_code = [];
-            if (question.reponses) {
-              for (const rep of question.reponses) {
-                selected_code.push(rep.code);
-              }
-            }
-            for (const reponse_possible of question.reponses_possibles) {
-              new_question.reponse_complexe.push({
-                code: reponse_possible.code,
-                label: reponse_possible.label,
-                ngc_code: reponse_possible.ngc_code,
-                value: selected_code.includes(reponse_possible.code)
-                  ? 'oui'
-                  : 'non',
+                code: reponse.code,
+                label: reponse.label,
+                ngc_code: reponse.ngc_code,
+                selected: QuestionKYC.isTrueBooleanString(reponse.value),
               });
             }
           }

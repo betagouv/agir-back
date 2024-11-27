@@ -1,4 +1,4 @@
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
@@ -48,8 +48,12 @@ export class Defi_v0 {
   }
 }
 
-export class DefiHistory_v0 extends Versioned {
+export class DefiHistory_v0 extends Versioned_v0 {
   defis: Defi_v0[];
+  constructor() {
+    super();
+    this.defis = [];
+  }
 
   static serialise(domain: DefiHistory): DefiHistory_v0 {
     return {

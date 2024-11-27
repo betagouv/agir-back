@@ -25,7 +25,7 @@ import {
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('Mission (API test)', () => {
@@ -1869,8 +1869,8 @@ describe('Mission (API test)', () => {
     // GIVEN
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1990,8 +1990,8 @@ describe('Mission (API test)', () => {
     // GIVEN
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -2357,8 +2357,8 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article,  visible car condition remplie`, async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -2371,9 +2371,24 @@ describe('Mission (API test)', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_complexe: [
-            { label: 'YO', code: 'yo', ngc_code: undefined, value: 'oui' },
-            { label: 'YI', code: 'yi', ngc_code: undefined, value: 'oui' },
-            { label: 'YA', code: 'ya', ngc_code: undefined, value: 'non' },
+            {
+              label: 'YO',
+              code: 'yo',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              label: 'YI',
+              code: 'yi',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              label: 'YA',
+              code: 'ya',
+              ngc_code: undefined,
+              selected: false,
+            },
           ],
           ngc_key: undefined,
           tags: [],
