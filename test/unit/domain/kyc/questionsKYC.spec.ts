@@ -1266,7 +1266,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         .getCodeReponseQuestionChoixUnique(),
     ).toEqual('b');
 
-    console.log(history.getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage));
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
