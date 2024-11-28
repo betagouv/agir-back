@@ -175,7 +175,7 @@ export class AidesUsecase {
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.transport],
+      [Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
