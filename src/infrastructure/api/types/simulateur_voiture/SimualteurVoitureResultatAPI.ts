@@ -20,12 +20,12 @@ export class ValeurCalculeeAPI<T> {
   valeur: T;
 
   @ApiProperty({
-    description: 'Titre de la valeur calculée (à afficher)',
+    description: 'Nom de la valeur calculée (à afficher)',
     example: 'Monospace',
     type: String,
     required: false,
   })
-  titre?: string;
+  label?: string;
 
   // @ApiProperty({
   //   description: 'Unité de la valeur calculée',
@@ -49,7 +49,7 @@ export class ValeurCalculeeAPI<T> {
   ): ValeurCalculeeAPI<T> {
     return {
       valeur: valeur.value,
-      titre: valeur.title,
+      label: valeur.title,
       // NOTE: the following fields are not used in the current implementation
       // unite: valeur.unit,
       // enum: valeur.isEnumValue,
@@ -75,7 +75,7 @@ export class VoitureInfosAPI {
     type: ValeurCalculeeAPI<VoitureGabarit>,
     example: {
       valeur: 'moyenne',
-      titre: 'Monospace',
+      label: 'Monospace',
     },
   })
   gabarit: ValeurCalculeeAPI<VoitureGabarit>;
@@ -86,7 +86,7 @@ export class VoitureInfosAPI {
     type: ValeurCalculeeAPI<VoitureMotorisation>,
     example: {
       valeur: 'thermique',
-      titre: 'Thermique',
+      label: 'Thermique',
     },
   })
   motorisation: ValeurCalculeeAPI<VoitureMotorisation>;
@@ -98,7 +98,7 @@ export class VoitureInfosAPI {
     nullable: true,
     example: {
       valeur: 'essence E5 ou E10',
-      titre: 'Essence',
+      label: 'Essence',
     },
   })
   carburant?: ValeurCalculeeAPI<VoitureCarburant>;
@@ -138,7 +138,7 @@ export class VoitureCibleAPI {
     type: ValeurCalculeeAPI<VoitureGabarit>,
     example: {
       valeur: 'moyenne',
-      titre: 'Monospace',
+      label: 'Monospace',
     },
   })
   gabarit: ValeurCalculeeAPI<VoitureGabarit>;
