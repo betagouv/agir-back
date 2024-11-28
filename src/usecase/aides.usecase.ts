@@ -4,14 +4,14 @@ import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repo
 
 import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
 
-import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { AideDefinition } from '../domain/aides/aideDefinition';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AideDefinition } from '../domain/aides/aideDefinition';
+import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 
 @Injectable()
 export class AidesUsecase {
@@ -144,7 +144,7 @@ export class AidesUsecase {
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.transport],
+      [Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
