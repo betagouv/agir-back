@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { Thematique } from '../contenu/thematique';
@@ -13,7 +14,6 @@ import {
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionKYC';
-import validator from 'validator';
 
 type LogementInput = {
   nombre_adultes?: number;
@@ -582,7 +582,7 @@ export class KYCHistory {
       (element) => element.code === code,
     );
     if (answered) {
-      answered.is_answererd = true;
+      answered.is_answered = true;
     }
     return this.refreshQuestion(answered);
   }
