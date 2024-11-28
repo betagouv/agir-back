@@ -20,23 +20,11 @@ export enum TypeReponseQuestionKYC {
   mosaic_number = 'mosaic_number',
 }
 
-const TRUE_STRING = [
-  'true',
-  'True',
-  'TRUE',
-  'yes',
-  'Yes',
-  'YES',
-  'oui',
-  'Oui',
-  'OUI',
-  '1',
-];
-
 export enum BooleanKYC {
   oui = 'oui',
   non = 'non',
 }
+
 export enum Unite {
   kg = 'kg',
   g = 'l',
@@ -350,8 +338,9 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public static isTrueBooleanString(str: string): boolean {
-    return TRUE_STRING.includes(str);
+    return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
   }
+
   public isMosaic(): boolean {
     return (
       this.type === TypeReponseQuestionKYC.mosaic_boolean ||
