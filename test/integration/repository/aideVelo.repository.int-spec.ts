@@ -1,5 +1,8 @@
 import { TestUtil } from '../../TestUtil';
-import { AidesVeloRepository } from '../../../src/infrastructure/repository/aidesVelo.repository';
+import {
+  AidesVeloRepository,
+  SummaryVelosParams,
+} from '../../../src/infrastructure/repository/aidesVelo.repository';
 import {
   AideVelo,
   AidesVeloParType,
@@ -21,14 +24,21 @@ describe('AideVeloRepository', () => {
     await TestUtil.appclose();
   });
 
+  const baseParams: SummaryVelosParams = {
+    'localisation . code insee': '91477', // Palaiseau
+    'localisation . epci': 'CA Communauté Paris-Saclay',
+    'localisation . région': '11',
+    'localisation . département': '91',
+    'revenu fiscal de référence par part . revenu de référence': 800,
+    'revenu fiscal de référence par part . nombre de parts': 1,
+    'vélo . prix': 500,
+    'foyer . personnes': 1,
+    'aides . pays de la loire . abonné TER': false,
+  };
+
   it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
-    const result = await aidesVeloRepository.getSummaryVelos(
-      '91120',
-      10000,
-      2.5,
-      500,
-    );
+    const result = await aidesVeloRepository.getSummaryVelos(baseParams);
 
     // THEN
     expect(result['motorisation'][0].libelle).toBe('Île-de-France Mobilités');
@@ -43,13 +53,16 @@ describe('AideVeloRepository', () => {
 
   it("doit retourner le bon montant de l'aide avec un abonnement TER à Anger ", async () => {
     // WHEN
-    const result = await aidesVeloRepository.getSummaryVelos(
-      '49000',
-      5000,
-      1,
-      100,
-      true,
-    );
+    const result = await aidesVeloRepository.getSummaryVelos({
+      ...baseParams,
+      'localisation . code insee': '49007', // Angers
+      'localisation . epci': 'CU Angers Loire Métropole',
+      'localisation . département': '49',
+      'localisation . région': '52',
+      'aides . pays de la loire . abonné TER': true,
+      'revenu fiscal de référence par part . revenu de référence': 5000,
+      'vélo . prix': 100,
+    });
 
     // THEN
     expect(result['électrique'].length).toBe(3);
@@ -70,13 +83,14 @@ describe('AideVeloRepository', () => {
 
   it("doit retourner le bon montant de l'aide sans un abonnement TER à Anger", async () => {
     // WHEN
-    const result = await aidesVeloRepository.getSummaryVelos(
-      '49000',
-      5000,
-      1,
-      100,
-      false,
-    );
+    const result = await aidesVeloRepository.getSummaryVelos({
+      ...baseParams,
+      'localisation . code insee': '49007', // Angers
+      'localisation . epci': 'CU Angers Loire Métropole',
+      'localisation . département': '49',
+      'localisation . région': '52',
+      'aides . pays de la loire . abonné TER': false,
+    });
 
     // THEN
     expect(result['électrique'].length).toBe(2);
@@ -94,12 +108,14 @@ describe('AideVeloRepository', () => {
   describe("Département de l'Hérault", () => {
     it('devrait avoir une aide régionale, départementale pour une personne habitant à Cazouls-Lès-Béziers', async () => {
       // WHEN
-      const result = await aidesVeloRepository.getSummaryVelos(
-        '34370',
-        5000,
-        1,
-        100,
-      );
+      const result = await aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '34069', // Cazouls-Lès-Béziers
+        'localisation . epci': 'CC la Domitienne',
+        'localisation . département': '34',
+        'localisation . région': '76',
+        'aides . pays de la loire . abonné TER': false,
+      });
 
       // THEN
       expect(result['électrique'].length).toBe(4);
@@ -115,12 +131,14 @@ describe('AideVeloRepository', () => {
   describe('Vélo adapté et personne en situation de handicap', () => {
     it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
       // WHEN
-      const result = await aidesVeloRepository.getSummaryVelos(
-        '31000',
-        8000,
-        1,
-        500,
-      );
+      const result = await aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '31555', // Toulouse
+        'localisation . epci': 'Toulouse Métropole',
+        'localisation . département': '31',
+        'localisation . région': '76',
+        'aides . pays de la loire . abonné TER': false,
+      });
 
       // THEN
       expect(result['électrique'].length).toBe(3);
@@ -137,12 +155,14 @@ describe('AideVeloRepository', () => {
 
     it.skip('doit correctement cumuler les aides pour une personne habitant à Montpellier', async () => {
       // WHEN
-      const result = await aidesVeloRepository.getSummaryVelos(
-        '31000',
-        8000,
-        1,
-        500,
-      );
+      const result = await aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '34172', // Montpellier
+        'localisation . epci': 'Montpellier Méditerranée Métropole',
+        'localisation . département': '34',
+        'localisation . région': '76',
+        'aides . pays de la loire . abonné TER': false,
+      });
 
       // THEN
       expect(result['électrique'].length).toBe(3);
@@ -160,59 +180,22 @@ describe('AideVeloRepository', () => {
         'Chèque Hérault Handi-Vélo',
       );
     });
-
-    // TODO
-    // it.skip(
-    //   "'Hérault Handi Vélo' devrait être cumulable avec le 'Bonus vélo adapté PMR' de la région Occitanie",
-    //   async () => {
-    //     engine.setSituation({
-    //       'localisation . département': "'34'",
-    //       'revenu fiscal de référence': '10000€/an',
-    //       'personne en situation de handicap': 'oui',
-    //       'vélo . type': "'adapté'",
-    //       'vélo . prix': '1000€',
-    //     });
-    //
-    //     expect(
-    //       engine.evaluate('aides . département hérault vélo adapté').nodeValue,
-    //     ).toEqual(500);
-    //     expect(
-    //       engine.evaluate('aides . occitanie vélo adapté').nodeValue,
-    //     ).toEqual(500);
-    //   },
-    // );
   });
 
-  describe("Il ne devrait pas pouvoir y avoir de montant d'aide négtif", () => {
-    // TODO: needs to support extra questions such as 'demandeur . en situation de handicap'.
-    it.skip('Région Occitanie - Éco-chèque mobilité - Bonus vélo adapté PMR', async () => {
-      // WHEN
-      const result = await aidesVeloRepository.getSummaryVelos(
-        '31000',
-        8000,
-        1,
-        500,
-      );
-
-      // THEN
-      forEachAide(result, (aide: AideVelo) => {
-        expect(aide.montant).toBeGreaterThanOrEqual(0);
-      });
+  it('Villefranche Agglomération Beaujolais Saône', async () => {
+    // WHEN
+    const result = await aidesVeloRepository.getSummaryVelos({
+      ...baseParams,
+      'localisation . code insee': '69264', // Villefranche-sur-Saône
+      'localisation . epci': 'CA Villefranche Beaujolais Saône',
+      'localisation . département': '69',
+      'localisation . région': '84',
+      'aides . pays de la loire . abonné TER': false,
     });
 
-    it('Villefranche Agglomération Beaujolais Saône', async () => {
-      // WHEN
-      const result = await aidesVeloRepository.getSummaryVelos(
-        '69400',
-        2000,
-        1,
-        500,
-      );
-
-      // THEN
-      forEachAide(result, (aide: AideVelo) => {
-        expect(aide.montant).toBeGreaterThanOrEqual(0);
-      });
+    // THEN
+    forEachAide(result, (aide: AideVelo) => {
+      expect(aide.montant).toBeGreaterThanOrEqual(0);
     });
   });
 });

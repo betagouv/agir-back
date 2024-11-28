@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import Publicodes from 'publicodes';
-import rulesRetrofit from '../data/aidesRetrofit.json';
-import localisations from '../../infrastructure/repository/commune/communes.json';
+import communes from '@etalab/decoupage-administratif/data/communes.json';
 
-import { AideVelo, Localisation } from '../../domain/aides/aideVelo';
+import rulesRetrofit from '../data/aidesRetrofit.json';
+import { AideVelo } from '../../domain/aides/aideVelo';
 
 @Injectable()
 export class AidesRetrofitRepository {
@@ -57,11 +57,15 @@ async function aidesRetrofit(
     };
   });
 
+  // FIXME: should be refactored to have its own type
+  // @ts-ignore
   return result;
 }
 
-function getLocalisationByCP(cp: string): Localisation {
-  const lieux = localisations as Localisation[];
-  const lieu = lieux.find((lieu) => lieu.codesPostaux.includes(cp));
+function getLocalisationByCP(cp: string) {
+  // FIXME: this function must be removed and replaced by the CommuneRepository
+  // methods in the same way as in aidesVelo.repository.ts.
+  // @ts-ignore
+  const lieu = communes.find((lieu) => lieu.codesPostaux.includes(cp));
   return lieu;
 }

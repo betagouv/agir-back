@@ -258,6 +258,19 @@ export class Utilisateur {
     return parts_estimee === 0 ? 1 : parts_estimee;
   }
 
+  /**
+   * Returns the total number of people in the household, including adults and
+   * children (see {@link UtilisateurData.logement}).
+   *
+   * @ensures The result to be in the range [1, +∞[.
+   */
+  public getNombrePersonnesDansLogement?(): number {
+    return Math.max(
+      this.logement.nombre_adultes + this.logement.nombre_enfants,
+      1,
+    );
+  }
+
   public setPassword?(password: string) {
     PasswordManager.setUserPassword(this, password);
   }

@@ -77,7 +77,7 @@ export class Logement {
     this.dpe = this.AorB(input.dpe, this.dpe);
   }
 
-  private undefinedToNull?(val): any {
+  private undefinedToNull?<T>(val: T | undefined): T | null {
     return val === undefined ? null : val;
   }
 
