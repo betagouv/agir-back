@@ -1,6 +1,9 @@
+import {
+  CarSimulator,
+  Questions,
+  Situation,
+} from '@betagouv/publicodes-voiture';
 import { Injectable } from '@nestjs/common';
-import { Pick } from '@prisma/client/runtime/library.js';
-import { CarSimulator, Questions } from '@betagouv/publicodes-voiture';
 
 import { SimulateurVoitureResultat } from 'src/domain/simulateur_voiture/resultats';
 
@@ -11,9 +14,13 @@ import { SimulateurVoitureResultat } from 'src/domain/simulateur_voiture/resulta
  *
  * TODO: determine all the required parameters.
  */
-export type SimulateurVoitureParams = Required<
-  Pick<Questions, 'voiture . gabarit'>
->;
+export type SimulateurVoitureParams = Situation;
+// Pick<
+//   Situation,
+//   'voiture . gabarit' | 'voiture . motorisation'
+//
+//   //>
+// >;
 
 @Injectable()
 export class SimulateurVoitureRepository {
@@ -34,7 +41,9 @@ export class SimulateurVoitureRepository {
   async getResultat(
     params: SimulateurVoitureParams,
   ): Promise<SimulateurVoitureResultat> {
-    const contextualizedEngine = this.simulator.shallowCopy().setInputs(params);
+    const contextualizedEngine = this.simulator
+      .shallowCopy()
+      .setSituation(params);
 
     return {
       voiture_actuelle: contextualizedEngine.evaluateCar(),

@@ -1,22 +1,13 @@
+import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { GenericControler } from './genericControler';
-import { AuthGuard } from '../auth/guard';
 import { SimulateurVoitureUsecase } from 'src/usecase/simulateurVoiture.usecase';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
 import { SimulateurVoitureResultatAPI } from './types/simulateur_voiture/SimualteurVoitureResultatAPI';
 
 @Controller()
@@ -30,27 +21,23 @@ export class SimulateurVoitureController extends GenericControler {
   }
 
   // TODO
-  // @ApiOkResponse({ type: BilanCarboneDashboardAPI_v3 })
-  @ApiQuery({
-    name: 'force',
-    type: String,
-    required: false,
-    description: `si renseigné (à n'importe quoi), alors force le calcul du bilan complet, ainsi que tout ce qui peut être calculé dans le bilan approximatif`,
-  })
-  @Get('utilisateurs/:utilisateurId/simulateur_voiture')
+  @ApiOkResponse({ type: SimulateurVoitureResultatAPI })
+  @Get('utilisateurs/:utilisateurId/simulateur_voiture/resultat')
   @ApiOperation({
     summary:
-      "Renvoie le bilan carbone courant de l'utilisateur - nouveau format - plus d'univers !",
+      "Renvoie le résultat du simulateur voiture pour l'utilisateur donné",
   })
   @UseGuards(AuthGuard)
-  async getBilan_V3(
+  async getResultat(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<SimulateurVoitureResultatAPI> {
     this.checkCallerId(req, utilisateurId);
+
     const results = await this.simulateurVoitureUsecase.calculerResultat(
       utilisateurId,
     );
+
     return SimulateurVoitureResultatAPI.mapToAPI(results);
   }
 }
