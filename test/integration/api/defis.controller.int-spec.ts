@@ -929,6 +929,67 @@ describe('/utilisateurs/id/defis (API test)', () => {
     expect(response.body.find((d) => d.id === '003')).toEqual(undefined);
   });
 
+  it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo, + filtrage par status unique', async () => {
+    // GIVEN
+    const defis: DefiHistory_v0 = {
+      version: 0,
+      defis: [
+        {
+          ...DEFI_1,
+          id: '001',
+          status: DefiStatus.fait,
+        },
+        {
+          ...DEFI_1,
+          id: '002',
+          status: DefiStatus.abondon,
+        },
+        {
+          ...DEFI_1,
+          id: '003',
+          status: DefiStatus.pas_envie,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.climat,
+      label: 'Climat',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 2,
+      code: Thematique.transport,
+      label: 'Transport',
+    });
+    await TestUtil.create(DB.thematique, {
+      id_cms: 3,
+      code: Thematique.alimentation,
+      label: 'Alimentation',
+    });
+
+    await thematiqueRepository.onApplicationBootstrap();
+
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis,
+      missions: missions_all_defi_unlocked,
+    });
+    await TestUtil.create(DB.article, { content_id: '12' });
+    await TestUtil.create(DB.article, { content_id: '13' });
+    await TestUtil.create(DB.article, { content_id: '14' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/defis_v2?status=fait',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].id).toEqual('001');
+  });
+
   it('GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur tout confondu sauf todo, + filtrage par thematique', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {

@@ -22,9 +22,9 @@ export class DefisUsecase {
   async getDefisOfThematique_deprecated(
     utilisateurId: string,
     thematique: Thematique,
-    filtre_status?: string[],
+    filtre_status: string[],
   ): Promise<Defi[]> {
-    if (filtre_status) {
+    if (filtre_status.length > 0) {
       for (const status of filtre_status) {
         if (!DefiStatus[status]) {
           ApplicationError.throwUnknownDefiStatus(status);
@@ -59,7 +59,7 @@ export class DefisUsecase {
     thematique: Thematique,
     filtre_status: string[],
   ): Promise<Defi[]> {
-    if (filtre_status) {
+    if (filtre_status.length > 0) {
       for (const status of filtre_status) {
         if (!DefiStatus[status]) {
           ApplicationError.throwUnknownDefiStatus(status);
@@ -133,11 +133,17 @@ export class DefisUsecase {
   // DEPRECATED
   async getALLUserDefi_deprecated(
     utilisateurId: string,
-    filtre_status: DefiStatus[],
+    filtre_status: string[],
     univers: string,
     accessible: boolean,
   ): Promise<Defi[]> {
     let result: Defi[] = [];
+
+    for (const status of filtre_status) {
+      if (!DefiStatus[status]) {
+        ApplicationError.throwUnknownDefiStatus(status);
+      }
+    }
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -155,7 +161,7 @@ export class DefisUsecase {
       result = result.concat(
         utilisateur.defi_history.getDefisRestantsByCategorieAndThematique(
           undefined,
-          Thematique[univers],
+          univers ? Thematique[univers] : undefined,
         ),
       );
 
@@ -169,7 +175,7 @@ export class DefisUsecase {
       result = result.filter((d) => d.score > -50);
     }
     result = result.concat(
-      utilisateur.defi_history.getDefisOfStatus(filtre_status),
+      utilisateur.defi_history.getDefisOfStatus(filtre_status as DefiStatus[]),
     );
 
     return this.personnalisator.personnaliser(result, utilisateur);

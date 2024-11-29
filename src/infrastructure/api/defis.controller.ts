@@ -110,7 +110,7 @@ export class DefisController extends GenericControler {
   })
   async getAllUserDefi_2(
     @Request() req,
-    @Query('status') status,
+    @Query('status') status: string[] | string,
     @Query('thematique') thematique: string,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<DefiAPI[]> {
@@ -122,7 +122,7 @@ export class DefisController extends GenericControler {
     const result = await this.defisUsecase.getAllDefis_v2(
       utilisateurId,
       them,
-      status,
+      this.getStringListFromStringArrayAPIInput(status),
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
@@ -167,8 +167,8 @@ export class DefisController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const result = await this.defisUsecase.getALLUserDefi_deprecated(
       utilisateurId,
-      status ? status : [],
-      univers ? univers : undefined,
+      this.getStringListFromStringArrayAPIInput(status),
+      univers,
       accessible === 'true',
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
@@ -219,14 +219,14 @@ export class DefisController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_thematique') code_thematique: string,
-    @Query('status') status: string[],
+    @Query('status') status: string,
   ): Promise<DefiAPI[]> {
     this.checkCallerId(req, utilisateurId);
     const them = this.castThematiqueOrException(code_thematique);
     const result = await this.defisUsecase.getDefisOfThematique_deprecated(
       utilisateurId,
       them,
-      status,
+      this.getStringListFromStringArrayAPIInput(status),
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
