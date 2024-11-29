@@ -13,7 +13,6 @@ import {
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
