@@ -40,10 +40,6 @@ export class DefisUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const defiDefinitions = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(defiDefinitions);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     let result = await this.getDefisOfThematiqueAndUtilisateur(
       utilisateur,
       thematique,
@@ -80,10 +76,6 @@ export class DefisUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const defiDefinitions = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(defiDefinitions);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     let result: Defi[] = [];
 
     let filtre_thematiques: Thematique[];
@@ -116,10 +108,6 @@ export class DefisUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const defiDefinitions = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(defiDefinitions);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     let result = await this.getDefisOfThematiqueAndUtilisateur(
       utilisateur,
       Thematique[univers],
@@ -150,9 +138,6 @@ export class DefisUsecase {
       [Scope.defis, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-
-    const defiDefinitions = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(defiDefinitions);
 
     if (
       (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) &&
@@ -188,9 +173,6 @@ export class DefisUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const catalogue = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(catalogue);
-
     const defi = utilisateur.defi_history.getDefiOrException(defiId);
 
     return this.personnalisator.personnaliser(defi, utilisateur);
@@ -211,10 +193,6 @@ export class DefisUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
-
-    const catalogue = await this.defiRepository.list({});
-    utilisateur.defi_history.setCatalogue(catalogue);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     utilisateur.defi_history.updateStatus(defiId, status, utilisateur, motif);
 

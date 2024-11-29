@@ -35,8 +35,6 @@ export class ThematiqueStatistiqueUsecase {
         Scope.missions,
       ]);
 
-      user.missions.setCatalogue(MissionRepository.getCatalogue());
-
       for (const mission of user.missions.getRAWMissions()) {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);

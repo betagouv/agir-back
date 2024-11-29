@@ -45,8 +45,6 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     const articles = await this.getArticles(utilisateur, thematique);
 
     const quizzes = await this.getQuizzes(utilisateur, thematique);
@@ -83,8 +81,6 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     const articles = await this.getArticles(utilisateur);
 
     const quizzes = await this.getQuizzes(utilisateur);
@@ -98,12 +94,6 @@ export class RecommandationUsecase {
       App.defiEnabled() &&
       utilisateur.unlocked_features.isUnlocked(Feature.defis)
     ) {
-      const defiDefinitions = await this.defiRepository.list({
-        categorie: Categorie.recommandation,
-        date: new Date(),
-      });
-      utilisateur.defi_history.setCatalogue(defiDefinitions);
-
       defis_en_cours = this.getDefisEnCours(utilisateur);
 
       defis_restants = this.getDefisRestantsAvecTri(utilisateur);

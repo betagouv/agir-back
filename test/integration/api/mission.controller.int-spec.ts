@@ -27,11 +27,13 @@ import { MissionRepository } from '../../../src/infrastructure/repository/missio
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
 
   const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {
@@ -548,6 +550,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -621,6 +624,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -692,6 +696,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -741,6 +746,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1442,6 +1448,7 @@ describe('Mission (API test)', () => {
       content_id: '2',
       points: 0,
     });
+    await defiRepository.loadDefinitions();
 
     await TestUtil.PATCH('/utilisateurs/utilisateur-id/defis/2').send({
       status: DefiStatus.fait,
@@ -1822,6 +1829,7 @@ describe('Mission (API test)', () => {
       code: Thematique.alimentation,
       label: 'Faut manger !',
     });
+    await defiRepository.loadDefinitions();
 
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -1872,6 +1880,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1923,6 +1932,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1974,6 +1984,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -2065,6 +2076,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2097,6 +2109,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2130,6 +2143,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2169,6 +2183,7 @@ describe('Mission (API test)', () => {
       est_visible: false,
       code: CodeMission.cereales,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -2462,6 +2477,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     const mission_article: Mission = {
       id_cms: 1,

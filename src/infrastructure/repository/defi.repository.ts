@@ -5,6 +5,7 @@ import { Thematique } from '../../domain/contenu/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Cron } from '@nestjs/schedule';
 
 export type DefiFilter = {
   date?: Date;
@@ -14,6 +15,29 @@ export type DefiFilter = {
 @Injectable()
 export class DefiRepository {
   constructor(private prisma: PrismaService) {}
+
+  private static catalogue_defi: DefiDefinition[];
+
+  async onApplicationBootstrap(): Promise<void> {
+    try {
+      await this.loadDefinitions();
+    } catch (error) {
+      console.error(
+        `Error loading Defi definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+  }
+  @Cron('* * * * *')
+  async loadDefinitions(): Promise<void> {
+    const result = await this.prisma.defi.findMany();
+    DefiRepository.catalogue_defi = result.map((elem) =>
+      this.buildDefiDefinitionFromDB(elem),
+    );
+  }
+
+  public static getCatalogue(): DefiDefinition[] {
+    return DefiRepository.catalogue_defi;
+  }
 
   async upsert(defi: DefiDefinition): Promise<void> {
     const defi_db: Defi = {
@@ -52,7 +76,7 @@ export class DefiRepository {
     const result = await this.prisma.defi.findUnique({
       where: { content_id: content_id },
     });
-    return this.buildDefiFromDB(result);
+    return this.buildDefiDefinitionFromDB(result);
   }
 
   async list(filter: DefiFilter): Promise<DefiDefinition[]> {
@@ -76,10 +100,10 @@ export class DefiRepository {
         AND: main_filter,
       },
     });
-    return result.map((elem) => this.buildDefiFromDB(elem));
+    return result.map((elem) => this.buildDefiDefinitionFromDB(elem));
   }
 
-  private buildDefiFromDB(defiDB: DefiDB): DefiDefinition {
+  private buildDefiDefinitionFromDB(defiDB: DefiDB): DefiDefinition {
     if (defiDB === null) return null;
     return new DefiDefinition({
       content_id: defiDB.content_id,

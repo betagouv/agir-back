@@ -116,8 +116,6 @@ export class ProfileUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
         ApplicationError.throwNbrAdultesEnfants();
@@ -222,7 +220,6 @@ export class ProfileUsecase {
         Scope.todo,
         Scope.kyc,
       ]);
-      utilisateur.kyc_history.setCatalogue(kyc_catalogue);
       if (utilisateur.parcours_todo.isEndedTodo()) {
         const enchainement_mini_bilan =
           utilisateur.kyc_history.getEnchainementKYCsEligibles(

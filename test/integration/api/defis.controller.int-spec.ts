@@ -27,6 +27,7 @@ import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFe
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -48,6 +49,8 @@ const DEFI_1_DEF: Defi = {
 describe('/utilisateurs/id/defis (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
+
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
   const missions: MissionsUtilisateur_v1 = {
@@ -304,6 +307,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await defiRepository.loadDefinitions();
   });
 
   afterAll(async () => {
@@ -350,6 +354,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       defis: defis,
       logement,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis');
@@ -984,7 +989,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     );
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
     expect(response.body[0].id).toEqual('001');
@@ -1083,6 +1087,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
 
+    await defiRepository.loadDefinitions();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/defis?status=en_cours',
@@ -1125,6 +1130,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1165,6 +1171,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1205,6 +1212,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '1' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '2' });
     await TestUtil.create(DB.defi, { ...DEFI_1_DEF, content_id: '3' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1244,6 +1252,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       content_id: '3',
       thematique: Thematique.logement,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1291,6 +1300,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       content_id: '3',
       tags: [TagRubrique.R2],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1332,6 +1342,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       label: 't1',
     });
     await thematiqueRepository.loadThematiques();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis/1');
@@ -1492,6 +1503,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       gamification: gamification,
     });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -1523,6 +1535,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.create(DB.defi, DEFI_1_DEF);
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(

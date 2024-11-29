@@ -33,6 +33,7 @@ describe('DefiRepository', () => {
       content_id: '2',
       categorie: Categorie.recommandation,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -49,6 +50,7 @@ describe('DefiRepository', () => {
     await TestUtil.create(DB.defi, {
       content_id: '1',
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -66,6 +68,7 @@ describe('DefiRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -83,6 +86,7 @@ describe('DefiRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const liste = await defiRepository.list({

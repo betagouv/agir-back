@@ -18,6 +18,7 @@ import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -58,6 +59,7 @@ const DEFI_1_DEF: Defi = {
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {
@@ -152,6 +154,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         defis: [DEFI_1],
       },
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -429,6 +432,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '2',
       rubrique_ids: ['2'],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -460,6 +464,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       tag_ponderation_set: { utilise_moto_ou_voiture: 100 },
       unlocked_features: unlocked,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -674,6 +679,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['6', '5'],
     });
+    await defiRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations',
@@ -807,6 +814,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       categorie: Categorie.mission,
     });
     await kycRepository.loadDefinitions();
+    await defiRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations',
@@ -925,6 +934,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
 
     await kycRepository.loadDefinitions();
+    await defiRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations_v2',
@@ -1195,6 +1206,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['6'],
     });
+    await defiRepository.loadDefinitions();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/recommandations',
@@ -1230,6 +1243,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         answered_questions: [],
       },
     });
+
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(

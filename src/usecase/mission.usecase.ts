@@ -41,8 +41,6 @@ export class MissionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     const final_result: TuileMission[] = [];
 
     const liste_thematiques = Object.values(Thematique);
@@ -69,7 +67,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const final_result = await this.getOrderedListeMissionsOfThematique(
       thematique,
@@ -124,7 +121,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -146,7 +142,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement, Scope.defis],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -198,7 +193,6 @@ export class MissionUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let objectifs_target: Objectif[] = [];
 

@@ -41,8 +41,6 @@ export class BilanCarboneUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
@@ -189,13 +187,10 @@ export class BilanCarboneUsecase {
   async computeBilanTousUtilisateurs(): Promise<string[]> {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
-    const kyc_catalogue = KycRepository.getCatalogue();
-
     for (const user_id of user_id_liste) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
         Scope.kyc,
       ]);
-      utilisateur.kyc_history.setCatalogue(kyc_catalogue);
 
       const situation = this.computeSituation(utilisateur);
 

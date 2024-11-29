@@ -183,8 +183,6 @@ export class EventUsecase {
         Scope.todo,
       ],
     );
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     utilisateur.history.lireArticle(event.content_id);
     const article = await this.articleRepository.getArticleByContentId(
       event.content_id,
@@ -200,8 +198,10 @@ export class EventUsecase {
       ContentType.article,
     );
 
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+    utilisateur.missions.recomputeRecoDefi(
+      utilisateur,
+      DefiRepository.getCatalogue(),
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -218,7 +218,6 @@ export class EventUsecase {
       ],
     );
     utilisateur.history.quizzAttempt(event.content_id, event.number_value);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const quizz = await this.quizzRepository.getQuizzByContentId(
       event.content_id,
@@ -238,8 +237,10 @@ export class EventUsecase {
       event.number_value,
     );
 
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+    utilisateur.missions.recomputeRecoDefi(
+      utilisateur,
+      DefiRepository.getCatalogue(),
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

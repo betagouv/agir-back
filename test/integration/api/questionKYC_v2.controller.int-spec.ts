@@ -35,6 +35,7 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -98,6 +99,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
   const missions_with_kyc: MissionsUtilisateur_v1 = {
@@ -1723,6 +1725,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await kycRepository.loadDefinitions();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.PUT(
