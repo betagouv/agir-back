@@ -68,7 +68,7 @@ export class MailerUsecase {
   async envoyerEmailsAutomatiques(): Promise<string[]> {
     const result: string[] = [];
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds(undefined, true);
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
