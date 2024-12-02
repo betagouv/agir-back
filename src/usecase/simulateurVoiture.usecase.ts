@@ -19,34 +19,54 @@ export class SimulateurVoitureUsecase {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
     ]);
-    const params = getKYCValues(utilisateur);
+    const params = getParams(utilisateur);
 
     return this.simulateurVoitureRepository.getResultat(params);
   }
 }
 
-function getKYCValues(utilisateur: Utilisateur): SimulateurVoitureParams {
+function getParams(utilisateur: Utilisateur): SimulateurVoitureParams {
   const questions = utilisateur.kyc_history.answered_questions;
-  const res: SimulateurVoitureParams = {};
+  const params = new SimulateurVoitureParams();
 
   for (const question of questions) {
     switch (question.code) {
-      case KYCID.KYC_transport_voiture_motorisation: {
-        const selectedAnswered =
-          question.getSelectedAnswer<KYCID.KYC_transport_voiture_motorisation>();
-        // NOTE: there is no typecheck error if the rule name is incorrect
-        res['voiture . motorisation'] = selectedAnswered?.ngc_code;
-        break;
+      case KYCID.KYC_transport_voiture_gabarit: {
+        params.set(
+          'voiture . gabarit',
+          question.getSelectedAnswer<KYCID.KYC_transport_voiture_gabarit>()
+            ?.ngc_code,
+        );
       }
 
       case KYCID.KYC_transport_voiture_km: {
-        const answer = question.getReponseSimpleValueAsNumber();
-        res['usage . km annuels . connus'] = 'oui';
-        res['usage . km annuels . renseignés'] = answer;
+        params.set('usage . km annuels . connus', 'oui');
+        params.set(
+          'usage . km annuels . renseignés',
+          question.getReponseSimpleValueAsNumber(),
+        );
+        break;
+      }
+
+      case KYCID.KYC_transport_voiture_motorisation: {
+        params.set(
+          'voiture . motorisation',
+          question.getSelectedAnswer<KYCID.KYC_transport_voiture_motorisation>()
+            ?.ngc_code,
+        );
+        break;
+      }
+
+      case KYCID.KYC_transport_voiture_thermique_carburant: {
+        params.set(
+          'voiture . thermique . carburant',
+          question.getSelectedAnswer<KYCID.KYC_transport_voiture_thermique_carburant>()
+            ?.ngc_code,
+        );
         break;
       }
     }
   }
 
-  return res;
+  return params;
 }
