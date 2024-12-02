@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from 'src/domain/kyc/KYCID';
-import { KYCReponseComplexe } from 'src/domain/kyc/questionKYC';
 import { SimulateurVoitureResultat } from 'src/domain/simulateur_voiture/resultats';
 import { Scope, Utilisateur } from 'src/domain/utilisateur/utilisateur';
 import {
@@ -20,35 +19,34 @@ export class SimulateurVoitureUsecase {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
     ]);
-    const params = this.getKYCValues(utilisateur);
+    const params = getKYCValues(utilisateur);
 
     return this.simulateurVoitureRepository.getResultat(params);
   }
+}
 
-  getKYCValues(utilisateur: Utilisateur): SimulateurVoitureParams {
-    const questions = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
-    const res: SimulateurVoitureParams = {};
+function getKYCValues(utilisateur: Utilisateur): SimulateurVoitureParams {
+  const questions = utilisateur.kyc_history.answered_questions;
+  const res: SimulateurVoitureParams = {};
 
-    for (const question of questions) {
-      // const id = KYCID[question.code] as KYCID;
-      switch (question.code) {
-        case KYCID.KYC_transport_voiture_motorisation: {
-          const answer =
-            question.getRAWListeReponsesComplexes()[0] as KYCReponseComplexe<KYCID.KYC_transport_voiture_motorisation>;
-          // NOTE: there is no typecheck error if the rule name is incorrect
-          res['voiture . motorisation'] = answer.ngc_code;
-          break;
-        }
+  for (const question of questions) {
+    switch (question.code) {
+      case KYCID.KYC_transport_voiture_motorisation: {
+        const selectedAnswered =
+          question.getSelectedAnswer<KYCID.KYC_transport_voiture_motorisation>();
+        // NOTE: there is no typecheck error if the rule name is incorrect
+        res['voiture . motorisation'] = selectedAnswered?.ngc_code;
+        break;
+      }
 
-        case KYCID.KYC_transport_voiture_km: {
-          const answer = question.getReponseSimpleValueAsNumber();
-          res['usage . km annuels . connus'] = 'oui';
-          res['usage . km annuels . renseignés'] = answer;
-          break;
-        }
+      case KYCID.KYC_transport_voiture_km: {
+        const answer = question.getReponseSimpleValueAsNumber();
+        res['usage . km annuels . connus'] = 'oui';
+        res['usage . km annuels . renseignés'] = answer;
+        break;
       }
     }
-
-    return res;
   }
+
+  return res;
 }
