@@ -21,5 +21,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test
-        run: npm run test
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Integration tests
+        run: npm run db:up && npm run test:int && npm run db:down
