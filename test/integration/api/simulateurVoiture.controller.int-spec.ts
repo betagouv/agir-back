@@ -87,10 +87,78 @@ describe('/simulateur_voiture (API test)', () => {
       await TestUtil.create(DB.kYC, {
         code: KYCID.KYC_transport_voiture_km,
         id_cms: 142,
-        question:
-          "Quelle distance parcourez-vous à l'année en voiture ? (en km)",
         type: TypeReponseQuestionKYC.entier,
         is_ngc: true,
+      });
+      await TestUtil.create(DB.kYC, {
+        code: KYCID.KYC_transport_voiture_gabarit,
+        id_cms: 143,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_ngc: true,
+        reponses: [
+          {
+            code: 'petite',
+            label: 'Petite',
+            ngc_code: "'petite'",
+            selected: false,
+          },
+          {
+            code: 'moyenne',
+            label: 'Moyenne',
+            ngc_code: "'moyenne'",
+            selected: false,
+          },
+          {
+            code: 'berline',
+            label: 'Berline',
+            ngc_code: "'berline'",
+            selected: false,
+          },
+          {
+            code: 'SUV',
+            label: 'SUV',
+            ngc_code: "'SUV'",
+            selected: false,
+          },
+          {
+            code: 'VUL',
+            label: 'VUL',
+            ngc_code: "'VUL'",
+            selected: false,
+          },
+        ],
+      });
+      await TestUtil.create(DB.kYC, {
+        code: KYCID.KYC_transport_voiture_thermique_carburant,
+        id_cms: 144,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_ngc: true,
+        reponses: [
+          {
+            code: 'gazole_B7_B10',
+            label: 'Gazole B7/B10',
+            ngc_code: "'gazole B7 ou B10'",
+            selected: false,
+          },
+          {
+            code: 'essence_E5_E10',
+            label: 'Essence E5/E10',
+            ngc_code: "'essence E5 ou E10'",
+            selected: false,
+          },
+          {
+            code: 'essence_E85',
+            label: 'Essence E85',
+            ngc_code: "'essence E85'",
+            selected: false,
+          },
+          {
+            code: 'GPL',
+            label: 'GPL',
+            ngc_code: "'GPL'",
+            selected: false,
+          },
+        ],
       });
 
       await TestUtil.create(DB.utilisateur);
@@ -106,14 +174,35 @@ describe('/simulateur_voiture (API test)', () => {
         },
         {
           code: 'hybride',
-          selected: false,
+          selected: true,
         },
         {
           code: 'electrique',
-          selected: true,
+          selected: false,
         },
       ]);
       expect(resp.status).toBe(200);
+
+      const respCarburant = await TestUtil.PUT(
+        `/utilisateurs/utilisateur-id/questionsKYC_v2/${KYCID.KYC_transport_voiture_thermique_carburant}`,
+      ).send([
+        { code: 'gazole_B7_B10', selected: false },
+        { code: 'essence_E5_E10', selected: false },
+        { code: 'essence_E85', selected: true },
+        { code: 'GPL', selected: false },
+      ]);
+      expect(respCarburant.status).toBe(200);
+
+      const respGabarit = await TestUtil.PUT(
+        `/utilisateurs/utilisateur-id/questionsKYC_v2/${KYCID.KYC_transport_voiture_gabarit}`,
+      ).send([
+        { code: 'petite', selected: false },
+        { code: 'moyenne', selected: false },
+        { code: 'berline', selected: false },
+        { code: 'SUV', selected: true },
+        { code: 'VUL', selected: false },
+      ]);
+      expect(respGabarit.status).toBe(200);
 
       // THEN
       const response = await TestUtil.GET(
@@ -122,17 +211,21 @@ describe('/simulateur_voiture (API test)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.voiture_actuelle).toEqual({
-        couts: 5236.6576469052225,
-        empreinte: 940.8894928531117,
+        couts: 5410.099744675109,
+        empreinte: 1615.288885445806,
         gabarit: {
-          label: 'Berline',
-          valeur: 'berline',
+          label: 'SUV',
+          valeur: 'SUV',
         },
         motorisation: {
-          label: 'Électrique',
-          valeur: 'électrique',
+          label: 'Hybride',
+          valeur: 'hybride',
         },
-        carburant: undefined,
+        carburant: {
+          // NOTE: do we want to map back to the KYC label?
+          label: 'Essence (E85)',
+          valeur: 'essence E85',
+        },
       });
 
       // WHEN (km = 0)
@@ -148,7 +241,7 @@ describe('/simulateur_voiture (API test)', () => {
       expect(response2.status).toBe(200);
       expect(response2.body.voiture_actuelle.empreinte).toEqual(0);
       expect(response2.body.voiture_actuelle.motorisation.valeur).toEqual(
-        'électrique',
+        'hybride',
       );
     });
   });

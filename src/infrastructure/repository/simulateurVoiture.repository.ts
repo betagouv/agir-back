@@ -8,19 +8,38 @@ import { Injectable } from '@nestjs/common';
 import { SimulateurVoitureResultat } from 'src/domain/simulateur_voiture/resultats';
 
 /**
- * Required parameters to get the results of the car simulator.
- *
- * @note This is a subset of the {@link Questions} type.
- *
- * TODO: determine all the required parameters.
+ * Subsets of the {@link Situation} corresponding to {@link Questions} (i.e.
+ * parameters) in the * car simulator.
  */
-export type SimulateurVoitureParams = Situation;
-// Pick<
-//   Situation,
-//   'voiture . gabarit' | 'voiture . motorisation'
-//
-//   //>
-// >;
+type Params = Pick<Situation, keyof Questions>;
+
+/**
+ * Encapsulates the car simulator {@link Situation} and provides
+ * a way to update it with type safety.
+ *
+ * PERF: How extra memory is used by this class in comparison to using a plain object?
+ */
+export class SimulateurVoitureParams {
+  private params: Params;
+
+  constructor(params?: Params) {
+    this.params = params ?? {};
+  }
+
+  public getSituation(): Situation {
+    return this.params;
+  }
+
+  /**
+   * Type-safe way to set a parameter.
+   *
+   * @param key The key of the parameter to set.
+   * @param value The value to set.
+   */
+  public set<K extends keyof Params>(key: K, value: Params[K]) {
+    this.params[key] = value;
+  }
+}
 
 @Injectable()
 export class SimulateurVoitureRepository {
@@ -43,7 +62,7 @@ export class SimulateurVoitureRepository {
   ): Promise<SimulateurVoitureResultat> {
     const contextualizedEngine = this.simulator
       .shallowCopy()
-      .setSituation(params);
+      .setSituation(params.getSituation());
 
     return {
       voiture_actuelle: contextualizedEngine.evaluateCar(),
