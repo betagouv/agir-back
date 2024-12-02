@@ -512,6 +512,27 @@ export class QuestionKYC implements TaggedContent {
     return result;
   }
 
+  /**
+   * Returns the selected answer for a question of type {@link TypeReponseQuestionKYC.choix_unique}
+   *
+   * @returns The selected answer or undefined if no answer is selected or the question is not of type {@link TypeReponseQuestionKYC.choix_unique}.
+   *
+   * @note The methode could be parametrized to type check the return value according to {@link KYCComplexValues}.
+   *
+   * NOTE: The class should be parametrized instead of the method, however it
+   * will require a lot of refactoring so this is a temporary solution.
+   */
+  public getSelectedAnswer<ID extends keyof KYCComplexValues>():
+    | KYCReponseComplexe<ID>
+    | undefined {
+    if (
+      this.type === TypeReponseQuestionKYC.choix_unique &&
+      this.reponse_complexe
+    ) {
+      return this.reponse_complexe.find((r) => r.selected);
+    }
+  }
+
   public selectChoixUniqueByCode(code: string) {
     if (!this.reponse_complexe) return;
     this.touch();
