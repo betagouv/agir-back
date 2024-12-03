@@ -59,6 +59,9 @@ import { CanalNotification } from '../src/domain/notification/notificationHistor
 import { Thematique } from '../src/domain/contenu/thematique';
 import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
+import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
+import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -191,7 +194,10 @@ export class TestUtil {
 
     await this.prisma_stats.testTable.deleteMany();
 
-    ThematiqueRepository.resetAllRefs();
+    ThematiqueRepository.resetCache();
+    DefiRepository.resetCache();
+    KycRepository.resetCache();
+    MissionRepository.resetCache();
   }
 
   static getDate(date: string) {

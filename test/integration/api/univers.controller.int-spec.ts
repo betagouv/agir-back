@@ -852,7 +852,7 @@ describe('Univers (API test)', () => {
       code: CodeMission.dechets_compost,
       titre: 'dechets compost',
     });
-    await ThematiqueRepository.resetAllRefs();
+    await ThematiqueRepository.resetCache();
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
 

@@ -1336,7 +1336,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       },
       logement,
     });
-    ThematiqueRepository.resetAllRefs();
+    ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
       label: 't1',
@@ -1406,7 +1406,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, { defis: defis, logement });
 
-    ThematiqueRepository.resetAllRefs();
+    ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
       label: 't1',

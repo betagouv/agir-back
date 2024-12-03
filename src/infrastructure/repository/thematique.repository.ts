@@ -31,7 +31,7 @@ export class ThematiqueRepository {
     return def ? def.label : thematique.toString();
   }
 
-  public static resetAllRefs() {
+  public static resetCache() {
     // FOR TEST ONLY
     ThematiqueRepository.catalogue_thematiques_by_thematiques = new Map();
   }

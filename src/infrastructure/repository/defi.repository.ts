@@ -14,7 +14,9 @@ export type DefiFilter = {
 
 @Injectable()
 export class DefiRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    DefiRepository.catalogue_defi = [];
+  }
 
   private static catalogue_defi: DefiDefinition[];
 
@@ -33,6 +35,11 @@ export class DefiRepository {
     DefiRepository.catalogue_defi = result.map((elem) =>
       this.buildDefiDefinitionFromDB(elem),
     );
+  }
+
+  public static resetCache() {
+    // FOR TEST ONLY
+    DefiRepository.catalogue_defi = [];
   }
 
   public static getCatalogue(): DefiDefinition[] {

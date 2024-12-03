@@ -113,7 +113,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandation - list article recommandation', async () => {
     // GIVEN
-    //CatalogueQuestionsKYC.setCatalogue([]);
 
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article, {
