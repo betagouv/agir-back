@@ -6,7 +6,6 @@ import {
 } from '@betagouv/publicodes-voiture';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  SimulateurVoitureResultat,
   VoitureCarburant,
   VoitureGabarit,
   VoitureMotorisation,
@@ -118,17 +117,28 @@ export class VoitureInfosAPI {
 
 export class AlternativeAPI extends VoitureInfosAPI {
   @ApiProperty({
-    // FIXME: this should be automatically generated from the Altreantive['kind'] type
-    enum: ['car'],
-    description: "Type de l'alternative",
+    // FIXME: this should be automatically generated from the Alternative['kind'] type
+    enum: ['voiture-individuelle'],
+    description:
+      "Type de l'alternative (pour l'instant, il n'existe qu'un seul type d'alternative mais cela pourrait évoluer)",
   })
-  type: Alternative['kind'];
+  type: 'voiture-individuelle';
 
   public static mapToAPI(alternative: Alternative): AlternativeAPI {
     return {
-      type: alternative.kind,
+      type: AlternativeAPI.mapKindToAPI(alternative.kind),
       ...VoitureInfosAPI.mapToAPI(alternative),
     };
+  }
+
+  public static mapKindToAPI(
+    kind: Alternative['kind'],
+  ): 'voiture-individuelle' {
+    switch (kind) {
+      case 'car': {
+        return 'voiture-individuelle';
+      }
+    }
   }
 }
 
@@ -157,32 +167,32 @@ export class VoitureCibleAPI {
   }
 }
 
-export class SimulateurVoitureResultatAPI {
-  @ApiProperty({
-    description: 'Résultats calculées pour la voiture actuelle',
-    type: VoitureInfosAPI,
-  })
-  voiture_actuelle: VoitureInfosAPI;
-
-  @ApiProperty({
-    description: "Liste des alternatives à l'achat de la voiture actuelle",
-    type: [AlternativeAPI],
-  })
-  alternatives: AlternativeAPI[];
-
-  @ApiProperty({
-    description: 'Informations sur la voiture cible (à acheter)',
-    type: VoitureCibleAPI,
-  })
-  voiture_cible: VoitureCibleAPI;
-
-  public static mapToAPI(
-    resultat: SimulateurVoitureResultat,
-  ): SimulateurVoitureResultatAPI {
-    return {
-      voiture_actuelle: VoitureInfosAPI.mapToAPI(resultat.voiture_actuelle),
-      alternatives: resultat.alternatives.map(AlternativeAPI.mapToAPI),
-      voiture_cible: VoitureCibleAPI.mapToAPI(resultat.voiture_cible),
-    };
-  }
-}
+// export class SimulateurVoitureResultatAPI {
+//   @ApiProperty({
+//     description: 'Résultats calculées pour la voiture actuelle',
+//     type: VoitureInfosAPI,
+//   })
+//   voiture_actuelle: VoitureInfosAPI;
+//
+//   @ApiProperty({
+//     description: "Liste des alternatives à l'achat de la voiture actuelle",
+//     type: [AlternativeAPI],
+//   })
+//   alternatives: AlternativeAPI[];
+//
+//   @ApiProperty({
+//     description: 'Informations sur la voiture cible (à acheter)',
+//     type: VoitureCibleAPI,
+//   })
+//   voiture_cible: VoitureCibleAPI;
+//
+//   public static mapToAPI(
+//     resultat: SimulateurVoitureResultat,
+//   ): SimulateurVoitureResultatAPI {
+//     return {
+//       voiture_actuelle: VoitureInfosAPI.mapToAPI(resultat.voiture_actuelle),
+//       alternatives: resultat.alternatives.map(AlternativeAPI.mapToAPI),
+//       voiture_cible: VoitureCibleAPI.mapToAPI(resultat.voiture_cible),
+//     };
+//   }
+// }
