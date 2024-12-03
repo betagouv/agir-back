@@ -8,7 +8,11 @@ import {
 import { SimulateurVoitureUsecase } from 'src/usecase/simulateurVoiture.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { SimulateurVoitureResultatAPI } from './types/simulateur_voiture/SimualteurVoitureResultatAPI';
+import {
+  AlternativeAPI,
+  VoitureCibleAPI,
+  VoitureInfosAPI,
+} from './types/simulateur_voiture/SimualteurVoitureResultatAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -20,24 +24,67 @@ export class SimulateurVoitureController extends GenericControler {
     super();
   }
 
-  // TODO
-  @ApiOkResponse({ type: SimulateurVoitureResultatAPI })
-  @Get('utilisateurs/:utilisateurId/simulateur_voiture/resultat')
+  @ApiOkResponse({ type: VoitureInfosAPI })
+  @Get(
+    'utilisateurs/:utilisateurId/simulateur_voiture/resultat/voiture_actuelle',
+  )
   @ApiOperation({
     summary:
-      "Renvoie le résultat du simulateur voiture pour l'utilisateur donné",
+      "Renvoie le résultat pour la voiture actuelle de l'utilisateur donné",
+  })
+  @UseGuards(AuthGuard)
+  async getResultatVoitureActuelle(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<VoitureInfosAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const results = await this.simulateurVoitureUsecase.calculerVoitureActuelle(
+      utilisateurId,
+    );
+
+    return VoitureInfosAPI.mapToAPI(results);
+  }
+
+  @ApiOkResponse({ type: [AlternativeAPI] })
+  @Get('utilisateurs/:utilisateurId/simulateur_voiture/resultat/alternatives')
+  @ApiOperation({
+    summary:
+      "Renvoie le résultat pour les alternatives à l'achat de la voiture actuelle de l'utilisateur donné",
+    description:
+      'Le premier appel effectué pour un utilisateur donné, va effectuer le calcul qui est une opération lourde.',
   })
   @UseGuards(AuthGuard)
   async getResultat(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ): Promise<SimulateurVoitureResultatAPI> {
+  ): Promise<AlternativeAPI[]> {
     this.checkCallerId(req, utilisateurId);
 
-    const results = await this.simulateurVoitureUsecase.calculerResultat(
+    const results =
+      await this.simulateurVoitureUsecase.calculerVoitureAlternatives(
+        utilisateurId,
+      );
+
+    return results.map(AlternativeAPI.mapToAPI);
+  }
+
+  @ApiOkResponse({ type: VoitureCibleAPI })
+  @Get('utilisateurs/:utilisateurId/simulateur_voiture/resultat/voiture_cible')
+  @ApiOperation({
+    summary: "Renvoie le résultat pour la voiture cible de l'utilisateur donné",
+  })
+  @UseGuards(AuthGuard)
+  async getResultatVoitureCible(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<VoitureCibleAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const results = await this.simulateurVoitureUsecase.calculerVoitureCible(
       utilisateurId,
     );
 
-    return SimulateurVoitureResultatAPI.mapToAPI(results);
+    return VoitureCibleAPI.mapToAPI(results);
   }
 }

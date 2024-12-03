@@ -21,6 +21,11 @@ export type SimulateurVoitureResultat = {
   voiture_cible: TargetInfos;
 };
 
+/** NOTE: should we want to decouple with a specific implementation ? */
+export type VoitureActuelle = CarInfos;
+export type VoitureAlternatives = Alternative[];
+export type VoitureCible = TargetInfos;
+
 export type VoitureGabarit = RuleValue['voiture . gabarit'];
 export type VoitureMotorisation = RuleValue['voiture . motorisation'];
 export type VoitureCarburant = RuleValue['voiture . thermique . carburant'];

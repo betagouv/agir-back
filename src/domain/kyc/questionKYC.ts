@@ -47,6 +47,7 @@ export type KYCReponseSimple = {
   value: string;
   unite?: Unite;
 };
+
 export type KYCReponseComplexe<ID extends keyof KYCComplexValues = '_default'> =
   {
     code: KYCComplexValues[ID]['code'];
@@ -372,6 +373,7 @@ export class QuestionKYC implements TaggedContent {
     }
     return [];
   }
+
   public getCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
@@ -381,6 +383,7 @@ export class QuestionKYC implements TaggedContent {
     }
     return null;
   }
+
   public getNGCCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
@@ -395,19 +398,25 @@ export class QuestionKYC implements TaggedContent {
     if (!this.hasAnyComplexeResponse()) return 0;
     return this.reponse_complexe.length;
   }
+
   public getReponseComplexeByCode<ID extends keyof KYCComplexValues>(
     code: string,
   ): KYCReponseComplexe<ID> {
     if (!this.reponse_complexe || !(this.reponse_complexe.length > 0))
       return null;
-    return this.reponse_complexe.find((r) => r.code === code);
+    return this.reponse_complexe.find(
+      (r) => r.code === code,
+    ) as KYCReponseComplexe<ID>;
   }
+
   public getRAWListeReponsesComplexes(): KYCReponseComplexe[] {
     return this.reponse_complexe ? this.reponse_complexe : [];
   }
+
   public getRAWReponseSimple(): KYCReponseSimple {
     return this.reponse_simple;
   }
+
   public getReponseSimpleValueAsNumber(): number {
     if (this.reponse_simple && this.reponse_simple.value) {
       return Number(this.reponse_simple.value);
@@ -529,7 +538,9 @@ export class QuestionKYC implements TaggedContent {
       this.type === TypeReponseQuestionKYC.choix_unique &&
       this.reponse_complexe
     ) {
-      return this.reponse_complexe.find((r) => r.selected);
+      return this.reponse_complexe.find(
+        (r) => r.selected,
+      ) as KYCReponseComplexe<ID>;
     }
   }
 
@@ -540,6 +551,7 @@ export class QuestionKYC implements TaggedContent {
       rep.selected = rep.code === code;
     }
   }
+
   public setChoixByCode(code: string, selected: boolean) {
     if (!this.reponse_complexe) return;
     this.touch();
@@ -555,10 +567,12 @@ export class QuestionKYC implements TaggedContent {
     if (!this.reponse_complexe) return null;
     return this.reponse_complexe.find((r) => r.code === code);
   }
+
   private getQuestionComplexeByLabel(label: string): KYCReponseComplexe {
     if (!this.reponse_complexe) return null;
     return this.reponse_complexe.find((r) => r.label === label);
   }
+
   private getQuestionComplexeByNgcCode(ngc_code: string): KYCReponseComplexe {
     if (!this.reponse_complexe) return null;
     return this.reponse_complexe.find((r) => r.ngc_code === ngc_code);
