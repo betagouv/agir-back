@@ -13,6 +13,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory_v0 } from './kycHistory_v0';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { ApplicationError } from '../../../infrastructure/applicationError';
 
 export class ReponseSimple_v1 {
   unite?: Unite;
@@ -64,13 +65,41 @@ export class QuestionKYC_v1 {
   reponse_complexe: ReponseComplexe_v1[];
 
   static map(elem: QuestionKYC): QuestionKYC_v1 {
-    return QuestionKYC.serialise(elem);
+    return {
+      code: elem.code,
+      question: elem.question,
+      type: elem.type,
+      categorie: elem.categorie,
+      points: elem.points,
+      is_NGC: elem.is_NGC,
+      a_supprimer: elem.a_supprimer,
+      ngc_key: elem.ngc_key,
+      reponse_simple: elem.getRAWReponseSimple()
+        ? ReponseSimple_v1.map(elem.getRAWReponseSimple())
+        : null,
+      reponse_complexe: elem
+        .getRAWListeReponsesComplexes()
+        .map((r) => ReponseComplexe_v1.map(r)),
+      thematique: elem.thematique,
+      tags: elem.tags,
+      id_cms: elem.id_cms,
+      short_question: elem.short_question,
+      image_url: elem.image_url,
+      conditions: elem.getConditions(),
+      unite: elem.unite,
+      emoji: elem.emoji,
+    };
   }
 }
 
 export class KYCHistory_v1 extends Versioned_v1 {
   answered_questions: QuestionKYC_v1[];
   answered_mosaics: KYCMosaicID[];
+  constructor() {
+    super();
+    this.answered_mosaics = [];
+    this.answered_questions = [];
+  }
 
   static serialise(domain: KYCHistory): KYCHistory_v1 {
     return {
@@ -83,6 +112,9 @@ export class KYCHistory_v1 extends Versioned_v1 {
   }
 
   static upgrade(source: KYCHistory_v0): KYCHistory_v1 {
+    if (source.version && source.version !== 0) {
+      ApplicationError.throwBadVersionDetectedForUpgrade(source.version, 0);
+    }
     const result: KYCHistory_v1 = {
       version: 1,
       answered_questions: [],
@@ -161,7 +193,6 @@ export class KYCHistory_v1 extends Versioned_v1 {
         result.answered_questions.push(new_question);
       }
     }
-
     return result;
   }
 }

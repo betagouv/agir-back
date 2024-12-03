@@ -12,6 +12,7 @@ import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -356,6 +357,7 @@ describe('/api/incoming/cms (API test)', () => {
     },
   };
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -675,6 +677,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates a  defi', async () => {
     // GIVEN
     await TestUtil.create(DB.defi);
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

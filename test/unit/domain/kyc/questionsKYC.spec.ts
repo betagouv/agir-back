@@ -11,9 +11,9 @@ import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
-import { QuestionKYC_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
+import { QuestionKYC_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
 
-const QUESTION_TEST: QuestionKYC_v1 = {
+const QUESTION_TEST: QuestionKYC_v2 = {
   id_cms: 1,
   code: KYCID.KYC001,
   question: `question`,
@@ -26,14 +26,14 @@ const QUESTION_TEST: QuestionKYC_v1 = {
     {
       label: 'Le climat',
       code: Thematique.climat,
-      value: 'oui',
       ngc_code: '1234',
+      selected: true,
     },
     {
       label: 'reponse D',
       code: 'D',
-      value: undefined,
       ngc_code: '987',
+      selected: false,
     },
   ],
   tags: [],
@@ -71,7 +71,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si pas de condition', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [QUESTION_TEST],
     });
@@ -85,7 +85,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si kyc par répondu', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -107,7 +107,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si match simple', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -117,7 +117,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: Thematique.climat,
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -135,7 +135,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si non match simple', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -146,13 +146,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: 'climat',
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'Le climat',
               code: 'logement',
               ngc_code: '123',
-              value: 'non',
+              selected: false,
             },
           ],
         },
@@ -170,7 +170,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -180,7 +180,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: Thematique.climat,
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -193,7 +193,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Yo',
               code: 'yo',
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -214,7 +214,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : false si non match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -226,7 +226,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: Thematique.climat,
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -239,13 +239,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Yo',
               code: 'yo',
               ngc_code: '123',
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Yi',
               code: 'yi',
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -266,7 +266,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('areConditionsMatched : true si OU match 1 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -278,7 +278,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: Thematique.climat,
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -291,13 +291,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Yo',
               code: 'yo',
               ngc_code: '123',
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Yi',
               code: 'yi',
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
           ],
         },
@@ -333,7 +333,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :false si attribut undefined', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -357,7 +357,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :false si attribut []', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -381,7 +381,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('hasResponses :true si au moins un reponse valorisée', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -393,13 +393,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Yo',
               code: 'climat',
               ngc_code: '123',
-              value: 'non',
+              selected: true,
             },
             {
               label: 'Yi',
               code: 'yi',
               ngc_code: '123',
-              value: undefined,
+              selected: false,
             },
           ],
         },
@@ -431,7 +431,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -441,13 +441,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               label: 'Le climat',
               code: 'a',
               ngc_code: '123',
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'truc',
               code: 'b',
               ngc_code: '456',
-              value: 'non',
+              selected: false,
             },
           ],
         },
@@ -483,13 +483,13 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       label: 'yoyo',
       ngc_code: '0987',
       unite: undefined,
-      value: 'oui',
+      selected: true,
     });
     expect(question.getReponseComplexeByCode('c')).toEqual({
       code: 'c',
       label: 'hihi',
       ngc_code: '000',
-      value: undefined,
+      selected: false,
     });
 
     expect(history.answered_questions[0].getNombreReponsesPossibles()).toEqual(
@@ -503,7 +503,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         label: 'yoyo',
         ngc_code: '0987',
         unite: undefined,
-        value: 'oui',
+        selected: true,
       },
     );
     expect(history.answered_questions[0].getReponseComplexeByCode('c')).toEqual(
@@ -511,7 +511,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         code: 'c',
         label: 'hihi',
         ngc_code: '000',
-        value: undefined,
+        selected: false,
       },
     );
   });
@@ -519,7 +519,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('getQuestionOrException : si code manquant pas grave si question pas de type choix', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -542,13 +542,16 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
     // THEN
-    expect(question.getReponseSimple()).toEqual({ value: '123', unite: 'kg' });
+    expect(question.getRAWReponseSimple()).toEqual({
+      value: '123',
+      unite: 'kg',
+    });
   });
 
   it('getQuestionOrException : trouve une question répondu par id KYC CMS', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -569,7 +572,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('getKYCRestantes : kyc non repondu', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -603,7 +606,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('getKYCRestantes : kyc non repondu et thematique', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -648,7 +651,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it('patchLogement : chauffage => maj KYC chauffage et vide l autre KYC reponse', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -660,7 +663,12 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           type: TypeReponseQuestionKYC.choix_unique,
           ngc_key: 'a . b . c',
           reponse_complexe: [
-            { label: 'OUI', code: 'oui', ngc_code: '_oui', value: 'oui' },
+            {
+              label: 'OUI',
+              code: 'oui',
+              ngc_code: '_oui',
+              selected: true,
+            },
           ],
         },
       ],
@@ -737,7 +745,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       label: 'OUI',
       code: 'oui',
       ngc_code: '_oui',
-      value: 'oui',
+      selected: true,
     });
     expect(
       history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('non'),
@@ -745,7 +753,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       label: 'NON',
       code: 'non',
       ngc_code: '_non',
-      value: 'non',
+      selected: false,
     });
     expect(
       history
@@ -755,7 +763,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       label: 'Ne sais pas',
       code: 'ne_sais_pas',
       ngc_code: undefined,
-      value: 'non',
+      selected: false,
     });
     expect(
       history.getAnsweredQuestionByCMS_ID(2).getNombreReponsesPossibles(),
@@ -766,7 +774,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'oui',
       label: 'OUI',
       ngc_code: '_oui',
-      value: 'non',
+      selected: false,
     });
     expect(
       history.getAnsweredQuestionByCMS_ID(2).getReponseComplexeByCode('non'),
@@ -774,7 +782,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'non',
       label: 'NON',
       ngc_code: '_non',
-      value: 'non',
+      selected: false,
     });
     expect(
       history
@@ -784,14 +792,14 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'ne_sais_pas',
       label: 'Ne sais pas',
       ngc_code: undefined,
-      value: 'oui',
+      selected: true,
     });
   });
 
   it('patchLogement :DPE', () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -825,10 +833,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ).toEqual('B');
     expect(
       history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('A'),
-    ).toEqual({ label: 'A', code: 'A', ngc_code: undefined, value: 'non' });
+    ).toEqual({ label: 'A', code: 'A', ngc_code: undefined, selected: false });
     expect(
       history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('B'),
-    ).toEqual({ label: 'B', code: 'B', ngc_code: undefined, value: 'oui' });
+    ).toEqual({ label: 'B', code: 'B', ngc_code: undefined, selected: true });
     expect(
       history
         .getAnsweredQuestionByCMS_ID(1)
@@ -837,7 +845,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       label: 'Ne sais pas',
       code: 'ne_sais_pas',
       ngc_code: undefined,
-      value: 'non',
+      selected: false,
     });
   });
 
@@ -845,7 +853,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -866,7 +874,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -904,7 +912,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -942,7 +950,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -980,7 +988,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1018,7 +1026,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1051,7 +1059,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1084,7 +1092,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1117,7 +1125,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1162,7 +1170,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'a',
       label: 'A',
       ngc_code: 'toto . a',
-      value: 'oui',
+      selected: true,
     });
     expect(
       history
@@ -1172,7 +1180,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'b',
       label: 'B',
       ngc_code: 'toto . b',
-      value: 'non',
+      selected: false,
     });
     expect(
       history
@@ -1182,7 +1190,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'ne_sais_pas',
       label: 'Ne sais pas',
       ngc_code: null,
-      value: 'non',
+      selected: false,
     });
   });
 
@@ -1190,7 +1198,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1206,19 +1214,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               code: 'a',
               label: 'A',
               ngc_code: 'toto . a',
-              value: 'oui',
+              selected: true,
             },
             {
               code: 'b',
               label: 'B',
               ngc_code: 'toto . b',
-              value: 'non',
+              selected: false,
             },
             {
               code: 'ne_sais_pas',
               label: 'Ne sais pas',
               ngc_code: null,
-              value: 'non',
+              selected: false,
             },
           ],
         },
@@ -1266,7 +1274,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'a',
       label: 'A',
       ngc_code: 'toto . a',
-      value: 'non',
+      value: undefined,
+      selected: false,
+      emoji: undefined,
+      image_url: undefined,
+      unite: undefined,
     });
     expect(
       history
@@ -1276,7 +1288,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'b',
       label: 'B',
       ngc_code: 'toto . b',
-      value: 'oui',
+      value: undefined,
+      selected: true,
+      emoji: undefined,
+      image_url: undefined,
+      unite: undefined,
     });
     expect(
       history
@@ -1286,14 +1302,18 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       code: 'ne_sais_pas',
       label: 'Ne sais pas',
       ngc_code: null,
-      value: 'non',
+      value: undefined,
+      selected: false,
+      emoji: undefined,
+      image_url: undefined,
+      unite: undefined,
     });
   });
 
   it(`isKYCEligible : true si condition ok`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1309,19 +1329,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               code: 'a',
               label: 'A',
               ngc_code: 'toto . a',
-              value: 'oui',
+              selected: true,
             },
             {
               code: 'b',
               label: 'B',
               ngc_code: 'toto . b',
-              value: 'non',
+              selected: false,
             },
             {
               code: 'ne_sais_pas',
               label: 'Ne sais pas',
               ngc_code: null,
-              value: 'non',
+              selected: false,
             },
           ],
         },
@@ -1354,8 +1374,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         type: TypeReponseQuestionKYC.choix_unique,
         ngc_key: 'a . b . c',
         reponses: [
-          { label: 'A', code: 'haha', ngc_code: 'toto . a' },
-          { label: 'B', code: 'hihi', ngc_code: 'toto . b' },
+          { label: 'A', code: 'a', ngc_code: 'toto . a' },
+          { label: 'B', code: 'b', ngc_code: 'toto . b' },
           { label: 'Ne sais pas', code: 'ne_sais_pas', ngc_code: null },
         ],
       }),
@@ -1372,7 +1392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it(`isKYCEligible : false si condition KO`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1388,19 +1408,19 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
               code: 'a',
               label: 'A',
               ngc_code: 'toto . a',
-              value: 'oui',
+              selected: true,
             },
             {
               code: 'b',
               label: 'B',
               ngc_code: 'toto . b',
-              value: 'non',
+              selected: false,
             },
             {
               code: 'ne_sais_pas',
               label: 'Ne sais pas',
               ngc_code: null,
-              value: 'non',
+              selected: false,
             },
           ],
         },
@@ -1451,7 +1471,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it(`isKYCEligible : false si question par répondu KO`, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });
@@ -1500,7 +1520,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
   it(`isKYCEligible : true si aucune condition `, () => {
     // GIVEN
     const history = new KYCHistory({
-      version: 1,
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     });

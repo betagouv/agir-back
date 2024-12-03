@@ -32,7 +32,6 @@ export class MissionStatistiqueUsecase {
       const user = await this.utilisateurRepository.getById(userId, [
         Scope.missions,
       ]);
-      user.missions.setCatalogue(MissionRepository.getCatalogue());
 
       for (const mission of user.missions.getRAWMissions()) {
         const pourcentageCompletionMission =

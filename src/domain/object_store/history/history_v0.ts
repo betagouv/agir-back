@@ -4,7 +4,7 @@ import {
 } from '../../../../src/domain/history/quizzHistory';
 import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
 import { History } from '../../../../src/domain/history/history';
-import { Versioned } from '../versioned';
+import { Versioned, Versioned_v0 } from '../versioned';
 import { AideHistory } from '../../history/aideHistory';
 
 export class ArticleHistory_v0 {
@@ -65,10 +65,17 @@ export class QuizzHistory_v0 {
   }
 }
 
-export class History_v0 extends Versioned {
+export class History_v0 extends Versioned_v0 {
   article_interactions: ArticleHistory_v0[];
   quizz_interactions: QuizzHistory_v0[];
   aide_interactions: AideHistory_v0[];
+
+  constructor() {
+    super();
+    this.aide_interactions = [];
+    this.article_interactions = [];
+    this.quizz_interactions = [];
+  }
 
   static serialise(domain: History): History_v0 {
     return {

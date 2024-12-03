@@ -88,8 +88,6 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
@@ -107,8 +105,6 @@ export class QuestionKYCUsecase {
       [Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const liste_kycs_ids = QuestionKYCUsecase.ENCHAINEMENTS[enchainementId];
 
@@ -133,8 +129,6 @@ export class QuestionKYCUsecase {
       [Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     let result_kyc: QuestionKYC;
 
@@ -182,13 +176,12 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
 
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+    utilisateur.missions.recomputeRecoDefi(
+      utilisateur,
+      DefiRepository.getCatalogue(),
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -211,9 +204,6 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
     this.updateQuestionOfCode_deprecated(
       code_question,
       null,
@@ -222,8 +212,10 @@ export class QuestionKYCUsecase {
       true,
     );
 
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+    utilisateur.missions.recomputeRecoDefi(
+      utilisateur,
+      DefiRepository.getCatalogue(),
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -284,7 +276,6 @@ export class QuestionKYCUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {
@@ -303,8 +294,6 @@ export class QuestionKYCUsecase {
         ApplicationError.throwQuestionBadCodeValue(reponse.code, mosaicId);
       }
     }
-
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const reponse of reponses) {
@@ -340,8 +329,10 @@ export class QuestionKYCUsecase {
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
     utilisateur.missions.answerMosaic(mosaic.id);
 
-    const catalogue_defis = await this.defiRepository.list({});
-    utilisateur.missions.recomputeRecoDefi(utilisateur, catalogue_defis);
+    utilisateur.missions.recomputeRecoDefi(
+      utilisateur,
+      DefiRepository.getCatalogue(),
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

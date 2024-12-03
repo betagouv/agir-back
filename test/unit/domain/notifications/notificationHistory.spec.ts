@@ -62,6 +62,7 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
+    utilisateur.active_account = true;
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -73,6 +74,30 @@ describe('NotificationHistory', () => {
 
     // THEN
     expect(result).toEqual(true);
+  });
+  it(`isWelcomeEmailToSend : pas de mail de welcome si compte non actif`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
+    utilisateur.active_account = false;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result = notifications.isWelcomeEmailToSend(utilisateur);
+
+    // THEN
+    expect(result).toEqual(false);
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
@@ -95,7 +120,7 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toEqual(false);
   });
-  it(`isWelcomeEmailToSend : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 2j)`, () => {
+  it(`isWelcomeEmailToSend : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 30j)`, () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
@@ -104,8 +129,9 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(
-      Date.now() - Math.round(1000 * 60 * 60 * 24 * 2.1),
+      Date.now() - Math.round(1000 * 60 * 60 * 24 * 32),
     );
+    utilisateur.active_account = true;
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -127,6 +153,8 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
+    utilisateur.active_account = true;
+
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [
@@ -156,6 +184,8 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 5);
+    utilisateur.active_account = true;
+
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -178,6 +208,8 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
+    utilisateur.active_account = true;
+
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -194,6 +226,32 @@ describe('NotificationHistory', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(TypeNotification.late_onboarding);
   });
+  it(`getNouvellesNotifications : pas de notif late_onboarding si compte non actif`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
+    utilisateur.active_account = false;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result = notifications.getNouvellesNotificationsAPousser(
+      CanalNotification.email,
+      utilisateur,
+    );
+
+    // THEN
+    expect(result).toHaveLength(0);
+  });
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si moins de 8 jours`, () => {
     // GIVEN
@@ -204,6 +262,8 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 5);
+    utilisateur.active_account = true;
+
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -228,6 +288,7 @@ describe('NotificationHistory', () => {
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
+    utilisateur.active_account = true;
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [
@@ -294,6 +355,7 @@ describe('NotificationHistory', () => {
     );
     utilisateur.defi_history = defiHistory;
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
+    utilisateur.active_account = true;
 
     const notifications = new NotificationHistory({
       version: 0,

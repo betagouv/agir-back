@@ -36,6 +36,18 @@ export class GenericControler {
     return `${req.protocol}://${req.get('Host')}${req.originalUrl}`;
   }
 
+  public getStringListFromStringArrayAPIInput(input): string[] {
+    if (input) {
+      const isString = typeof input === 'string' || input instanceof String;
+      if (isString) {
+        return [input as string];
+      } else {
+        return input;
+      }
+    }
+    return [];
+  }
+
   public castThematiqueOrException(code_thematique: string): Thematique {
     const thematique = Thematique[code_thematique];
     if (!thematique) {

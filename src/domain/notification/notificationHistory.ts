@@ -86,7 +86,7 @@ export class NotificationHistory {
 
     if (!this.was_sent(TypeNotification.welcome)) {
       const age = this.getAgeCreationUtilisateur(utilisateur);
-      return age > minute_10 && age < jour_2;
+      return age > minute_10 && age < jour_30 && utilisateur.active_account;
     }
     return false;
   }
@@ -115,6 +115,7 @@ export class NotificationHistory {
     if (!this.was_sent(TypeNotification.late_onboarding)) {
       const age = this.getAgeCreationUtilisateur(utilisateur);
       if (
+        utilisateur.active_account &&
         age < jour_30 &&
         age > jour_8 &&
         !utilisateur.parcours_todo.isEndedTodo()
@@ -132,6 +133,7 @@ export class NotificationHistory {
         utilisateur.defi_history.getPlusVieuxDefiEnCours();
 
       if (
+        utilisateur.active_account &&
         plus_vieux_defi_encours &&
         Date.now() - plus_vieux_defi_encours.date_acceptation.getTime() >
           jour_10

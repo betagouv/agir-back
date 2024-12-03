@@ -23,12 +23,13 @@ import { TokenAPI } from './types/utilisateur/TokenAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { InscriptionUsecase } from '../../usecase/inscription.usecase';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { App } from '../../domain/app';
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
 import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
 import { ApplicationError } from '../applicationError';
+import { throttle } from 'rxjs';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')
@@ -96,6 +97,7 @@ export class InscriptionController extends GenericControler {
     description: 'La clé de sécurité pour soliciter cette URL',
   })
   @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
   async importFromNGC(
     @Body() body: SituationNGCAPI,
     @Headers('apikey') apikey: string,

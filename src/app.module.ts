@@ -162,6 +162,7 @@ function getControllers(): any[] {
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
+        name: 'default',
         ttl: 1000 * 60 * 60 * 24,
         limit: 10000,
       },

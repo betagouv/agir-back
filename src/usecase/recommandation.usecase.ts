@@ -16,9 +16,7 @@ import { Defi, DefiStatus } from '../../src/domain/defis/defi';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { Thematique } from '../../src/domain/contenu/thematique';
 import { App } from '../domain/app';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { Feature } from '../../src/domain/gamification/feature';
-import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
@@ -30,8 +28,6 @@ export class RecommandationUsecase {
     private communeRepository: CommuneRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
-    private defiRepository: DefiRepository,
-    private kycRepository: KycRepository,
     private personnalisator: Personnalisator,
   ) {}
 
@@ -44,8 +40,6 @@ export class RecommandationUsecase {
       [Scope.kyc, Scope.history_article_quizz_aides, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     const articles = await this.getArticles(utilisateur, thematique);
 
@@ -83,8 +77,6 @@ export class RecommandationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     const articles = await this.getArticles(utilisateur);
 
     const quizzes = await this.getQuizzes(utilisateur);
@@ -98,12 +90,6 @@ export class RecommandationUsecase {
       App.defiEnabled() &&
       utilisateur.unlocked_features.isUnlocked(Feature.defis)
     ) {
-      const defiDefinitions = await this.defiRepository.list({
-        categorie: Categorie.recommandation,
-        date: new Date(),
-      });
-      utilisateur.defi_history.setCatalogue(defiDefinitions);
-
       defis_en_cours = this.getDefisEnCours(utilisateur);
 
       defis_restants = this.getDefisRestantsAvecTri(utilisateur);
@@ -240,6 +226,7 @@ export class RecommandationUsecase {
     if (thematique) {
       filtre.thematiques = [Thematique[thematique]];
     }
+
     let articles = await this.articleRepository.searchArticles(filtre);
 
     PonderationApplicativeManager.increaseScoreContentOfList(

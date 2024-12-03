@@ -32,11 +32,12 @@ import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import {
-  KYCHistory_v1,
-  QuestionKYC_v1,
-} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 
-const KYC_DATA: QuestionKYC_v1 = {
+const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   id_cms: 11,
   question: `question`,
@@ -49,12 +50,12 @@ const KYC_DATA: QuestionKYC_v1 = {
     {
       label: 'Le climat',
       code: Thematique.climat,
-      value: 'oui',
+      selected: true,
     },
     {
       label: 'Mon logement',
       code: Thematique.logement,
-      value: 'non',
+      selected: false,
     },
   ],
   reponse_simple: undefined,
@@ -98,6 +99,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
   const missions_with_kyc: MissionsUtilisateur_v1 = {
@@ -148,8 +150,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   it('GET /utilisateurs/id/questionsKYC - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
     // GIVEN
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -161,12 +163,12 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             {
               label: 'Le climat',
               code: Thematique.climat,
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'Mon logement',
               code: Thematique.logement,
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [TagUtilisateur.appetence_bouger_sante],
@@ -232,7 +234,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       label: 'Le climat !!!',
       ngc_code: undefined,
       unite: undefined,
-      value: 'oui',
+      value: undefined,
+      selected: true,
     });
   });
   it('GET /utilisateurs/id/questionsKYC - liste N questions', async () => {
@@ -406,8 +409,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie la question sans réponse', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -447,8 +450,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie une question entière OK sans réponse', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -494,8 +497,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -508,17 +511,25 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, value: 'oui' },
-            { label: 'Mon logement', code: Thematique.logement, value: 'non' },
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              selected: true,
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: false,
+            },
             {
               label: 'Ce que je mange',
               code: Thematique.alimentation,
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Comment je bouge',
               code: Thematique.transport,
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [],
@@ -554,8 +565,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKYC/question - renvoie la quesition avec la réponse', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -568,12 +579,20 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, value: 'oui' },
-            { label: 'Mon logement', code: Thematique.logement, value: 'oui' },
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              selected: true,
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: true,
+            },
             {
               label: 'Ce que je mange',
               code: Thematique.alimentation,
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [],
@@ -610,8 +629,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -712,8 +731,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         },
       ],
     };
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -724,8 +743,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
           type: TypeReponseQuestionKYC.choix_unique,
           thematique: Thematique.climat,
           reponse_complexe: [
-            { label: 'YI', code: 'yi', value: 'oui' },
-            { label: 'YO', code: 'yos', value: 'non' },
+            { label: 'YI', code: 'yi', selected: true },
+            { label: 'YO', code: 'yos', selected: false },
           ],
           tags: [],
           short_question: 'short',
@@ -763,6 +782,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await kycRepository.loadDefinitions();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.PUT(
@@ -872,8 +892,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/1 - met à jour la reponse à la question 1 type choix unique , deselect la réponse précédente', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -885,17 +905,17 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             {
               label: 'Le climat',
               code: Thematique.climat,
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'Mon logement',
               code: Thematique.logement,
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Ce que je mange',
               code: Thematique.alimentation,
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [TagUtilisateur.appetence_bouger_sante],
@@ -975,8 +995,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1014,8 +1034,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       ],
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1043,8 +1063,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1091,8 +1111,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/006 - transpose dans logement KYC_logement_age plus de 15 ans', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1141,8 +1161,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/KYC_DPE - transpose dans logement', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1186,8 +1206,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/KYC_superficie - transpose dans logement', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1234,8 +1254,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
   });
   it('PUT /utilisateurs/id/questionsKYC/KYC_proprietaire - transpose dans logement', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1286,8 +1306,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/KYC_chauffage - transpose dans logement', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
 
       answered_questions: [],
@@ -1349,8 +1369,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/KYC_type_logement - transpose dans logement', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -1400,8 +1420,8 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/KYC_alimentation_regime - transpose dans mes KYC unitaires NGC', async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [],
     };

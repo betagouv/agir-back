@@ -15,7 +15,9 @@ export class NewServiceCatalogue {
   }
 
   public getCatalogue(): NewServiceDefinition[] {
-    return new_service_catalogue;
+    return (new_service_catalogue as NewServiceDefinition[]).map((s) => ({
+      ...s,
+    }));
   }
   @Cron('0 * * * *')
   private refreshCatalogue() {

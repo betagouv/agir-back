@@ -31,7 +31,7 @@ export class ThematiqueRepository {
     return def ? def.label : thematique.toString();
   }
 
-  public static resetAllRefs() {
+  public static resetCache() {
     // FOR TEST ONLY
     ThematiqueRepository.catalogue_thematiques_by_thematiques = new Map();
   }
@@ -40,7 +40,7 @@ export class ThematiqueRepository {
   public async loadThematiques() {
     const new_map: Map<Thematique, ThematiqueDefinition> = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
-    listeThematiques.forEach((them) => {
+    for (const them of listeThematiques) {
       new_map.set(Thematique[them.code], {
         id_cms: them.id_cms,
         code: them.code,
@@ -49,7 +49,7 @@ export class ThematiqueRepository {
         label: them.label,
         titre: them.titre,
       });
-    });
+    }
     ThematiqueRepository.catalogue_thematiques_by_thematiques = new_map;
   }
 

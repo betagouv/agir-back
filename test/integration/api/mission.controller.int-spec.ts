@@ -25,13 +25,15 @@ import {
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const defiRepository = new DefiRepository(TestUtil.prisma);
 
   const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {
@@ -548,6 +550,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -621,6 +624,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -692,6 +696,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -741,6 +746,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1442,6 +1448,7 @@ describe('Mission (API test)', () => {
       content_id: '2',
       points: 0,
     });
+    await defiRepository.loadDefinitions();
 
     await TestUtil.PATCH('/utilisateurs/utilisateur-id/defis/2').send({
       status: DefiStatus.fait,
@@ -1761,352 +1768,6 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(404);
   });
 
-  it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._3,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual({
-      id: '_3',
-      question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
-      reponse: [],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      reponses_possibles: ['Oui', 'Non', 'A voir'],
-      is_NGC: false,
-      thematique: 'climat',
-    });
-  });
-
-  it(`NEW GET /utilisateurs/id/missions/cereales/kycs - renvoie la liste des questions à poser`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._3,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/cereales/kycs',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual({
-      id: '_3',
-      question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
-      reponse: [],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      reponses_possibles: ['Oui', 'Non', 'A voir'],
-      is_NGC: false,
-      thematique: 'climat',
-    });
-  });
-
-  it(`GET /utilisateurs/id/thematiques/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
-    // GIVEN
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-
-    const kyc: KYCHistory_v1 = {
-      version: 1,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      missions: mission_avec_mosaic,
-      kyc: kyc,
-    });
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
-      short_question: 'short 1',
-      image_url: 'AAA',
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Encore une question`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-      short_question: 'short 2',
-      image_url: 'BBB',
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 3,
-      code: KYCID._3,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-      short_question: 'short 3',
-      image_url: 'CCC',
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/cereales/kycs',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0]).toEqual({
-      id: '_1',
-      question: 'Comment avez vous connu le service ?',
-      reponse: [],
-      reponses_possibles: [
-        'Moins de 15 ans (neuf ou récent)',
-        'Plus de 15 ans (ancien)',
-      ],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      is_NGC: false,
-      thematique: 'climat',
-    });
-    expect(response.body[1]).toEqual({
-      id: 'TEST_MOSAIC_ID',
-      titre: 'Titre test',
-      is_answered: false,
-      reponses: [
-        {
-          code: '_2',
-          image_url: 'BBB',
-          label: 'short 2',
-          boolean_value: false,
-          emoji: '🎉',
-        },
-        {
-          code: '_3',
-          image_url: 'CCC',
-          label: 'short 3',
-          boolean_value: false,
-          emoji: '🎉',
-        },
-      ],
-      categorie: 'test',
-      points: 10,
-      type: 'mosaic_boolean',
-    });
-    expect(response.body[2]).toEqual({
-      id: '_3',
-      question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
-      reponse: [],
-      reponses_possibles: ['Oui', 'Non', 'A voir'],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      is_NGC: false,
-      thematique: 'climat',
-    });
-  });
-
-  it(`NEW GET /utilisateurs/id/missions/cereales/kycs - renvoie la liste des questions à poser avec une mosaic`, async () => {
-    // GIVEN
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-
-    const kyc: KYCHistory_v1 = {
-      version: 1,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      missions: mission_avec_mosaic,
-      kyc: kyc,
-    });
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [
-        { label: 'Moins de 15 ans (neuf ou récent)', code: 'moins_15' },
-        { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
-      ],
-      short_question: 'short 1',
-      image_url: 'AAA',
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Encore une question`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-      short_question: 'short 2',
-      image_url: 'BBB',
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 3,
-      code: KYCID._3,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.test,
-      points: 10,
-      question: `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-      reponses: [
-        { label: 'Oui', code: BooleanKYC.oui },
-        { label: 'Non', code: BooleanKYC.non },
-        { label: 'A voir', code: 'peut_etre' },
-      ],
-      short_question: 'short 3',
-      image_url: 'CCC',
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/missions/cereales/kycs',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0]).toEqual({
-      id: '_1',
-      question: 'Comment avez vous connu le service ?',
-      reponse: [],
-      reponses_possibles: [
-        'Moins de 15 ans (neuf ou récent)',
-        'Plus de 15 ans (ancien)',
-      ],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      is_NGC: false,
-      thematique: 'climat',
-    });
-    expect(response.body[1]).toEqual({
-      id: 'TEST_MOSAIC_ID',
-      titre: 'Titre test',
-      is_answered: false,
-      reponses: [
-        {
-          code: '_2',
-          image_url: 'BBB',
-          label: 'short 2',
-          boolean_value: false,
-          emoji: '🎉',
-        },
-        {
-          code: '_3',
-          image_url: 'CCC',
-          label: 'short 3',
-          boolean_value: false,
-          emoji: '🎉',
-        },
-      ],
-      categorie: 'test',
-      points: 10,
-      type: 'mosaic_boolean',
-    });
-    expect(response.body[2]).toEqual({
-      id: '_3',
-      question:
-        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
-      reponse: [],
-      reponses_possibles: ['Oui', 'Non', 'A voir'],
-      categorie: 'test',
-      points: 10,
-      type: 'choix_unique',
-      is_NGC: false,
-      thematique: 'climat',
-    });
-  });
-
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -2168,6 +1829,7 @@ describe('Mission (API test)', () => {
       code: Thematique.alimentation,
       label: 'Faut manger !',
     });
+    await defiRepository.loadDefinitions();
 
     await thematiqueRepository.onApplicationBootstrap();
 
@@ -2218,6 +1880,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -2269,6 +1932,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -2320,6 +1984,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
+    await defiRepository.loadDefinitions();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -2357,8 +2022,8 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué lecture du dernier article,  visible car condition remplie`, async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -2371,9 +2036,24 @@ describe('Mission (API test)', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_complexe: [
-            { label: 'YO', code: 'yo', ngc_code: undefined, value: 'oui' },
-            { label: 'YI', code: 'yi', ngc_code: undefined, value: 'oui' },
-            { label: 'YA', code: 'ya', ngc_code: undefined, value: 'non' },
+            {
+              label: 'YO',
+              code: 'yo',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              label: 'YI',
+              code: 'yi',
+              ngc_code: undefined,
+              selected: true,
+            },
+            {
+              label: 'YA',
+              code: 'ya',
+              ngc_code: undefined,
+              selected: false,
+            },
           ],
           ngc_key: undefined,
           tags: [],
@@ -2396,6 +2076,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2428,6 +2109,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2461,6 +2143,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -2500,6 +2183,7 @@ describe('Mission (API test)', () => {
       est_visible: false,
       code: CodeMission.cereales,
     });
+    await defiRepository.loadDefinitions();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -2793,6 +2477,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
+    await defiRepository.loadDefinitions();
 
     const mission_article: Mission = {
       id_cms: 1,

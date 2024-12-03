@@ -9,7 +9,6 @@ import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { OidcService } from '../infrastructure/auth/oidc.service';
-import { ContactUsecase } from './contact.usecase';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';

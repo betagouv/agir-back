@@ -10,6 +10,7 @@ import { AuthGuard } from '../auth/guard';
 import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
 import { GamificationAPI } from './types/gamification/gamificationAPI';
 import { BoardAPI } from './types/gamification/boardAPI';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller()
 @ApiBearerAuth()
@@ -47,6 +48,8 @@ export class GamificationController extends GenericControler {
     summary: `Retourne le classement de l'utilisateur ainsi que le top 3 à l'échelle nationale`,
   })
   @UseGuards(AuthGuard)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
   async classementNational(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
@@ -66,6 +69,8 @@ export class GamificationController extends GenericControler {
     summary: `Retourne le classement de l'utilisateur ainsi que le top 3 dans sa commune`,
   })
   @UseGuards(AuthGuard)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
   async classementLocal(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,

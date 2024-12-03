@@ -156,12 +156,23 @@ export class AidesUsecase {
         ? false
         : utilisateur.abonnement_ter_loire;
 
-    return this.aidesVeloRepository.getSummaryVelos(
+    const code_insee = this.communeRepository.getCodeCommune(
       utilisateur.logement.code_postal,
-      RFR,
-      PARTS,
-      prix_velo,
-      ABONNEMENT,
+      utilisateur.logement.commune,
     );
+    const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
+    const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+
+    return this.aidesVeloRepository.getSummaryVelos({
+      'localisation . code insee': code_insee,
+      'localisation . epci': epci?.nom,
+      'localisation . région': commune?.region,
+      'localisation . département': commune?.departement,
+      'vélo . prix': prix_velo,
+      'aides . pays de la loire . abonné TER': ABONNEMENT,
+      'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
+      'revenu fiscal de référence par part . revenu de référence': RFR,
+      'revenu fiscal de référence par part . nombre de parts': PARTS,
+    });
   }
 }

@@ -31,7 +31,7 @@ describe('UtilisateurView', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
       email: 'user1@dev.com',
-      created_at: new Date(2024, 0, 1),
+      created_at: new Date(1704063600000),
       derniere_activite: new Date(2024, 0, 2),
       rank: 2,
       source_inscription: 'inconnue',
@@ -60,7 +60,7 @@ describe('UtilisateurView', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@dev.com',
-      created_at: new Date(2024, 0, 2),
+      created_at: new Date(1704150000000),
       points_classement: 2222,
       rank: 25,
       rank_commune: 11,
@@ -79,7 +79,7 @@ describe('UtilisateurView', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur3',
       email: 'user3@dev.com',
-      created_at: new Date(2024, 0, 3),
+      created_at: new Date(1704236400000),
       rank: 2,
       rank_commune: 1,
       logement: {
@@ -110,7 +110,7 @@ describe('UtilisateurView', () => {
         nombre_points: 123,
         source_inscription: 'inconnue',
         date_derniere_connexion: new Date(2024, 0, 2),
-        date_inscription: new Date(2024, 0, 1),
+        date_inscription: new Date(1704063600000),
         commune: 'St Brieuc',
         dpe: 'B',
         nombre_adultes: 2,
@@ -131,7 +131,7 @@ describe('UtilisateurView', () => {
         nombre_points: 666,
         source_inscription: 'web',
         date_derniere_connexion: null,
-        date_inscription: new Date(2024, 0, 2),
+        date_inscription: new Date(1704150000000),
         commune: null,
         dpe: null,
         nombre_adultes: null,
@@ -152,7 +152,7 @@ describe('UtilisateurView', () => {
         nombre_points: 0,
         source_inscription: 'web',
         date_derniere_connexion: null,
-        date_inscription: new Date(2024, 0, 3),
+        date_inscription: new Date(1704236400000),
         commune: null,
         dpe: null,
         nombre_adultes: null,

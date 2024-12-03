@@ -13,12 +13,12 @@ import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFe
 import { Feature } from '../../../src/domain/gamification/feature';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import {
-  KYCHistory_v1,
-  QuestionKYC_v1,
-} from '../../../src/domain/object_store/kyc/kycHistory_v1';
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
-const KYC_DATA: QuestionKYC_v1 = {
+const KYC_DATA: QuestionKYC_v2 = {
   code: 'KYC_saison_frequence',
   id_cms: 21,
   question: `À quelle fréquence mangez-vous de saison ? `,
@@ -32,19 +32,19 @@ const KYC_DATA: QuestionKYC_v1 = {
       label: 'Souvent',
       code: 'souvent',
       ngc_code: '"souvent"',
-      value: 'oui',
+      selected: true,
     },
     {
       label: 'Jamais',
       code: 'jamais',
       ngc_code: '"bof"',
-      value: 'non',
+      selected: false,
     },
     {
       label: 'Parfois',
       code: 'parfois',
       ngc_code: '"burp"',
-      value: 'non',
+      selected: false,
     },
   ],
   tags: [],
@@ -427,8 +427,8 @@ describe('/bilan (API test)', () => {
       type: TypeReponseQuestionKYC.choix_unique,
     });
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -446,18 +446,19 @@ describe('/bilan (API test)', () => {
               code: 'souvent',
               ngc_code: '"souvent"',
               value: 'oui',
+              selected: true,
             },
             {
               label: 'Jamais',
               code: 'jamais',
               ngc_code: '"bof"',
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Parfois',
               code: 'parfois',
               ngc_code: '"burp"',
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [],
@@ -484,25 +485,25 @@ describe('/bilan (API test)', () => {
               code: 'vegetalien',
               label: 'Vegetalien',
               ngc_code: null,
-              value: 'oui',
+              selected: true,
             },
             {
               code: 'vegetarien',
               label: 'Vegetarien',
               ngc_code: null,
-              value: undefined,
+              selected: false,
             },
             {
               code: 'peu_viande',
               label: 'Peu de viande',
               ngc_code: null,
-              value: undefined,
+              selected: false,
             },
             {
               code: 'chaque_jour_viande',
               label: 'Tous les jours',
               ngc_code: null,
-              value: undefined,
+              selected: false,
             },
           ],
           tags: [],
@@ -1072,8 +1073,8 @@ describe('/bilan (API test)', () => {
       unlocked_features: [Feature.bilan_carbone_detail],
     };
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1237,8 +1238,8 @@ describe('/bilan (API test)', () => {
   });
   it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur avec une reponse alimentationNGC`, async () => {
     // GIVEN
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1252,19 +1253,19 @@ describe('/bilan (API test)', () => {
               label: 'Souvent',
               code: 'souvent',
               ngc_code: '"souvent"',
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'Jamais',
               code: 'jamais',
               ngc_code: '"bof"',
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Parfois',
               code: 'parfois',
               ngc_code: '"burp"',
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [],

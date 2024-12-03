@@ -33,7 +33,7 @@ import {
 } from '../../../src/domain/kyc/mosaicKYC';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('TODO list (API test)', () => {
@@ -1338,8 +1338,8 @@ describe('TODO list (API test)', () => {
   });
 
   it('POST KYC met à jour la todo si la question correspond', async () => {
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1352,12 +1352,20 @@ describe('TODO list (API test)', () => {
           categorie: Categorie.recommandation,
           points: 10,
           reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, value: 'oui' },
-            { label: 'Mon logement', code: Thematique.logement, value: 'oui' },
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              selected: true,
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: true,
+            },
             {
               label: 'Ce que je mange',
               code: Thematique.alimentation,
-              value: 'oui',
+              selected: true,
             },
           ],
           tags: [],

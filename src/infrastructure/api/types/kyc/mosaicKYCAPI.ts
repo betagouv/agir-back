@@ -55,7 +55,7 @@ export class MosaicKYCAPI {
       id: mosaic.code,
       titre: mosaic.question,
       reponses: mosaic
-        .getListeReponsesComplexes()
+        .getRAWListeReponsesComplexes()
         .map((r) => KYCMosaicReponseAPI.mapToAPI(r)),
       categorie: mosaic.categorie,
       points: mosaic.points,

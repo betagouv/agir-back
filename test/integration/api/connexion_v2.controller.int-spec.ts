@@ -12,7 +12,7 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
-import { KYCHistory_v1 } from '../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 
 function getFakeUtilisteur() {
   return {
@@ -370,8 +370,8 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     const utilisateur = getFakeUtilisteur();
     PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
 
-    const kyc: KYCHistory_v1 = {
-      version: 1,
+    const kyc: KYCHistory_v2 = {
+      version: 2,
       answered_mosaics: [],
       answered_questions: [
         {
@@ -388,19 +388,19 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
               label: 'Le climat',
               code: Thematique.climat,
               ngc_code: undefined,
-              value: 'oui',
+              selected: true,
             },
             {
               label: 'Mon logement',
               code: Thematique.logement,
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
             {
               label: 'Ce que je mange',
               code: Thematique.alimentation,
               ngc_code: undefined,
-              value: 'non',
+              selected: false,
             },
           ],
           tags: [],

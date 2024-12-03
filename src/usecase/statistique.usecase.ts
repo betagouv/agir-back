@@ -29,7 +29,6 @@ export class StatistiqueUsecase {
         universTerminesAsc,
         universEncoursAsc,
       } = this.calculerMissions(user);
-      user.missions.setCatalogue(MissionRepository.getCatalogue());
 
       const nombreDefisEnCours = user.defi_history.getNombreDefisEnCours();
       const nombreDefisRealises = user.defi_history.getNombreDefisRealises();

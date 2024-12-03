@@ -4,11 +4,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ContentType } from '../../src/domain/contenu/contentType';
-import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import {
-  CLE_PERSO,
-  Personnalisator,
-} from '../infrastructure/personnalisation/personnalisator';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { DefiStatus } from '../../src/domain/defis/defi';
 import {
   MissionDefinition,
@@ -22,11 +18,9 @@ import {
 } from '../infrastructure/repository/article.repository';
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
-import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { TuileMission } from '../domain/thematique/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
 import { PriorityContent } from '../domain/scoring/priorityContent';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
 
 @Injectable()
 export class MissionUsecase {
@@ -46,8 +40,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const final_result: TuileMission[] = [];
 
@@ -75,7 +67,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     const final_result = await this.getOrderedListeMissionsOfThematique(
       thematique,
@@ -130,7 +121,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -152,7 +142,6 @@ export class MissionUsecase {
       [Scope.missions, Scope.logement, Scope.defis],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let mission_resultat = utilisateur.missions.getMissionByCode(code_mission);
 
@@ -204,7 +193,6 @@ export class MissionUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
 
     let objectifs_target: Objectif[] = [];
 
@@ -234,54 +222,6 @@ export class MissionUsecase {
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  async getMissionKYCsAndMosaicsByCodeMission(
-    utilisateurId: string,
-    code_mission: string,
-  ): Promise<QuestionKYC[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.missions, Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-    utilisateur.missions.setCatalogue(MissionRepository.getCatalogue());
-
-    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
-    const mission = utilisateur.missions.getMissionByCode(code_mission);
-
-    if (!mission) {
-      throw ApplicationError.throwMissionNotFoundOfCode(code_mission);
-    }
-
-    const result: QuestionKYC[] = [];
-
-    const liste_objectifs_kyc = mission.getAllKYCsandMosaics();
-
-    for (const objectif_kyc of liste_objectifs_kyc) {
-      if (objectif_kyc.type === ContentType.kyc) {
-        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          objectif_kyc.content_id,
-        );
-        if (kyc) {
-          result.push(kyc);
-        }
-      } else {
-        const mosaic = utilisateur.kyc_history.getUpToDateMosaicById(
-          KYCMosaicID[objectif_kyc.content_id],
-        );
-        if (mosaic) {
-          result.push(mosaic);
-        }
-      }
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
-    return this.personnalisator.personnaliser(result, utilisateur, [
-      CLE_PERSO.espace_insecable,
-    ]);
   }
 
   private async completeMissionDef(

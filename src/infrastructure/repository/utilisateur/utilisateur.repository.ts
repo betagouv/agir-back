@@ -23,6 +23,9 @@ import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
 import { NotificationHistory } from '../../../domain/notification/notificationHistory';
+import { KycRepository } from '../kyc.repository';
+import { MissionRepository } from '../mission.repository';
+import { DefiRepository } from '../defi.repository';
 
 @Injectable()
 export class UtilisateurRepository {
@@ -37,6 +40,9 @@ export class UtilisateurRepository {
       where: {
         est_valide_pour_classement: false,
         active_account: true,
+        prenom: {
+          not: null,
+        },
       },
       select: {
         id: true,
@@ -251,7 +257,7 @@ export class UtilisateurRepository {
   }
 
   async update_last_activite(utilisateurId: string) {
-    return this.prisma.utilisateur.update({
+    await this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: {
         derniere_activite: new Date(),
@@ -289,127 +295,138 @@ export class UtilisateurRepository {
   }
 
   private buildUtilisateurFromDB(user: Partial<UtilisateurDB>): Utilisateur {
-    if (user) {
-      const unlocked_features = user.unlocked_features
-        ? new UnlockedFeatures(
-            Upgrader.upgradeRaw(
-              user.unlocked_features,
-              SerialisableDomain.UnlockedFeatures,
-            ),
-          )
-        : undefined;
-      const bibliotheque_services = user.bilbiotheque_services
-        ? new BibliothequeServices(
-            Upgrader.upgradeRaw(
-              user.bilbiotheque_services,
-              SerialisableDomain.BibliothequeServices,
-            ),
-          )
-        : undefined;
-      const parcours_todo = user.todo
-        ? new ParcoursTodo(
-            Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
-          )
-        : undefined;
-      const history = user.history
-        ? new History(
-            Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
-          )
-        : undefined;
-      const gamification = user.gamification
-        ? new Gamification(
-            Upgrader.upgradeRaw(
-              user.gamification,
-              SerialisableDomain.Gamification,
-            ),
-          )
-        : undefined;
-      const kyc = user.kyc
-        ? new KYCHistory(
-            Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
-          )
-        : undefined;
-      const defis = user.defis
-        ? new DefiHistory(
-            Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
-          )
-        : undefined;
-      const logement = user.logement
-        ? new Logement(
-            Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
-          )
-        : undefined;
-      const missions = user.missions
-        ? new MissionsUtilisateur(
-            Upgrader.upgradeRaw(
-              user.missions,
-              SerialisableDomain.MissionsUtilisateur,
-            ),
-          )
-        : undefined;
-      const notification_history = user.notification_history
-        ? new NotificationHistory(
-            Upgrader.upgradeRaw(
-              user.notification_history,
-              SerialisableDomain.NotificationHistory,
-            ),
-          )
-        : undefined;
-
-      return new Utilisateur({
-        id: user.id,
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
-        revenu_fiscal: user.revenu_fiscal,
-        parts: user.parts ? user.parts.toNumber() : null,
-        abonnement_ter_loire: user.abonnement_ter_loire,
-        passwordHash: user.passwordHash,
-        passwordSalt: user.passwordSalt,
-        failed_login_count: user.failed_login_count,
-        prevent_login_before: user.prevent_login_before,
-        code: user.code,
-        code_generation_time: user.code_generation_time,
-        prevent_checkcode_before: user.prevent_checkcode_before,
-        failed_checkcode_count: user.failed_checkcode_count,
-        active_account: user.active_account,
-        sent_email_count: user.sent_email_count,
-        prevent_sendemail_before: user.prevent_sendemail_before,
-        created_at: user.created_at,
-        updated_at: user.updated_at,
-        parcours_todo: parcours_todo,
-        gamification: gamification,
-        history: history,
-        kyc_history: kyc,
-        unlocked_features: unlocked_features,
-        version: user.version,
-        migration_enabled: user.migration_enabled,
-        logement: logement,
-        tag_ponderation_set: user.tag_ponderation_set as any,
-        defi_history: defis,
-        force_connexion: user.force_connexion,
-        derniere_activite: user.derniere_activite,
-        missions: missions,
-        annee_naissance: user.annee_naissance,
-        db_version: user.db_version,
-        bilbiotheque_services: bibliotheque_services,
-        is_magic_link_user: user.is_magic_link_user,
-        code_postal_classement: user.code_postal_classement,
-        commune_classement: user.commune_classement,
-        points_classement: user.points_classement,
-        rank: user.rank,
-        rank_commune: user.rank_commune,
-        status: UtilisateurStatus[user.status],
-        couverture_aides_ok: user.couverture_aides_ok,
-        source_inscription: SourceInscription[user.source_inscription],
-        notification_history: notification_history,
-        unsubscribe_mail_token: user.unsubscribe_mail_token,
-        est_valide_pour_classement: user.est_valide_pour_classement,
-        brevo_created_at: user.brevo_created_at,
-        brevo_updated_at: user.brevo_updated_at,
-      });
+    if (!user) {
+      return null;
     }
-    return null;
+    const unlocked_features = user.unlocked_features
+      ? new UnlockedFeatures(
+          Upgrader.upgradeRaw(
+            user.unlocked_features,
+            SerialisableDomain.UnlockedFeatures,
+          ),
+        )
+      : undefined;
+    const bibliotheque_services = user.bilbiotheque_services
+      ? new BibliothequeServices(
+          Upgrader.upgradeRaw(
+            user.bilbiotheque_services,
+            SerialisableDomain.BibliothequeServices,
+          ),
+        )
+      : undefined;
+    const parcours_todo = user.todo
+      ? new ParcoursTodo(
+          Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
+        )
+      : undefined;
+    const history = user.history
+      ? new History(
+          Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
+        )
+      : undefined;
+    const gamification = user.gamification
+      ? new Gamification(
+          Upgrader.upgradeRaw(
+            user.gamification,
+            SerialisableDomain.Gamification,
+          ),
+        )
+      : undefined;
+    const kyc = user.kyc
+      ? new KYCHistory(
+          Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
+        )
+      : undefined;
+    const defis = user.defis
+      ? new DefiHistory(
+          Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
+        )
+      : undefined;
+    const logement = user.logement
+      ? new Logement(
+          Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
+        )
+      : undefined;
+    const missions = user.missions
+      ? new MissionsUtilisateur(
+          Upgrader.upgradeRaw(
+            user.missions,
+            SerialisableDomain.MissionsUtilisateur,
+          ),
+        )
+      : undefined;
+    const notification_history = user.notification_history
+      ? new NotificationHistory(
+          Upgrader.upgradeRaw(
+            user.notification_history,
+            SerialisableDomain.NotificationHistory,
+          ),
+        )
+      : undefined;
+
+    const result = new Utilisateur({
+      id: user.id,
+      nom: user.nom,
+      prenom: user.prenom,
+      email: user.email,
+      revenu_fiscal: user.revenu_fiscal,
+      parts: user.parts ? user.parts.toNumber() : null,
+      abonnement_ter_loire: user.abonnement_ter_loire,
+      passwordHash: user.passwordHash,
+      passwordSalt: user.passwordSalt,
+      failed_login_count: user.failed_login_count,
+      prevent_login_before: user.prevent_login_before,
+      code: user.code,
+      code_generation_time: user.code_generation_time,
+      prevent_checkcode_before: user.prevent_checkcode_before,
+      failed_checkcode_count: user.failed_checkcode_count,
+      active_account: user.active_account,
+      sent_email_count: user.sent_email_count,
+      prevent_sendemail_before: user.prevent_sendemail_before,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      parcours_todo: parcours_todo,
+      gamification: gamification,
+      history: history,
+      kyc_history: kyc,
+      unlocked_features: unlocked_features,
+      version: user.version,
+      migration_enabled: user.migration_enabled,
+      logement: logement,
+      tag_ponderation_set: user.tag_ponderation_set as any,
+      defi_history: defis,
+      force_connexion: user.force_connexion,
+      derniere_activite: user.derniere_activite,
+      missions: missions,
+      annee_naissance: user.annee_naissance,
+      db_version: user.db_version,
+      bilbiotheque_services: bibliotheque_services,
+      is_magic_link_user: user.is_magic_link_user,
+      code_postal_classement: user.code_postal_classement,
+      commune_classement: user.commune_classement,
+      points_classement: user.points_classement,
+      rank: user.rank,
+      rank_commune: user.rank_commune,
+      status: UtilisateurStatus[user.status],
+      couverture_aides_ok: user.couverture_aides_ok,
+      source_inscription: SourceInscription[user.source_inscription],
+      notification_history: notification_history,
+      unsubscribe_mail_token: user.unsubscribe_mail_token,
+      est_valide_pour_classement: user.est_valide_pour_classement,
+      brevo_created_at: user.brevo_created_at,
+      brevo_updated_at: user.brevo_updated_at,
+    });
+
+    if (result.kyc_history) {
+      result.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    }
+    if (result.missions) {
+      result.missions.setCatalogue(MissionRepository.getCatalogue());
+    }
+    if (result.defi_history) {
+      result.defi_history.setCatalogue(DefiRepository.getCatalogue());
+    }
+    return result;
   }
 
   private buildDBFromUtilisateur(user: Utilisateur): UtilisateurDB {

@@ -34,6 +34,11 @@ export class KycRepository {
     );
   }
 
+  public static resetCache() {
+    // FOR TEST ONLY
+    KycRepository.catalogue_kyc = [];
+  }
+
   async upsert(kycDef: KycDefinition): Promise<void> {
     const kycDB: KYC = {
       id_cms: kycDef.id_cms,

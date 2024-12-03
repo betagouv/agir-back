@@ -54,6 +54,13 @@ export class MissionRepository {
     MissionRepository.catalogue_mission = new_catalogue;
   }
 
+  public static resetCache() {
+    // FOR TEST ONLY
+    MissionRepository.catalogue_missions_by_idcms = new Map();
+    MissionRepository.catalogue_missions_by_thematique = new Map();
+    MissionRepository.catalogue_missions_by_code = new Map();
+  }
+
   async upsert(missionDef: MissionDefinition): Promise<void> {
     const mission_db: Mission = {
       id_cms: missionDef.id_cms,
