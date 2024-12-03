@@ -52,4 +52,4 @@ jobs:
         env:
           DATABASE_URL: 'postgresql://prisma:prisma@localhost:5432/tests'
           DATABASE_STATS_URL: 'postgresql://prisma:prisma@localhost:5432/stats'
-          INTERNAL_TOKEN_SECRET: ${{ secrets.INTERNAL_TOKEN_SECRET }}
+          INTERNAL_TOKEN_SECRET: '123456789012345678901234567890'
