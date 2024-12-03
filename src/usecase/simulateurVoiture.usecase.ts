@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from 'src/domain/kyc/KYCID';
-import { SimulateurVoitureResultat } from 'src/domain/simulateur_voiture/resultats';
+import {
+  VoitureActuelle,
+  VoitureAlternatives,
+  VoitureCible,
+} from 'src/domain/simulateur_voiture/resultats';
 import { Scope, Utilisateur } from 'src/domain/utilisateur/utilisateur';
 import {
   SimulateurVoitureParams,
@@ -15,13 +19,33 @@ export class SimulateurVoitureUsecase {
     private utilisateurRepository: UtilisateurRepository,
   ) {}
 
-  async calculerResultat(userId: string): Promise<SimulateurVoitureResultat> {
+  async calculerVoitureActuelle(userId: string): Promise<VoitureActuelle> {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
     ]);
     const params = getParams(utilisateur);
 
-    return this.simulateurVoitureRepository.getResultat(params);
+    return this.simulateurVoitureRepository.evaluateVoitureActuelle(params);
+  }
+
+  async calculerVoitureAlternatives(
+    userId: string,
+  ): Promise<VoitureAlternatives> {
+    const utilisateur = await this.utilisateurRepository.getById(userId, [
+      Scope.kyc,
+    ]);
+    const params = getParams(utilisateur);
+
+    return this.simulateurVoitureRepository.evaluateAlternatives(params);
+  }
+
+  async calculerVoitureCible(userId: string): Promise<VoitureCible> {
+    const utilisateur = await this.utilisateurRepository.getById(userId, [
+      Scope.kyc,
+    ]);
+    const params = getParams(utilisateur);
+
+    return this.simulateurVoitureRepository.evaluateVoitureCible(params);
   }
 }
 

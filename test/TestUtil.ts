@@ -1,13 +1,13 @@
 import {
+  Action,
+  AideExpirationWarning,
+  Conformite,
   KYC,
   Mission,
+  OIDC_STATE,
+  Partenaire,
   SituationNGC,
   Thematique as ThematiqueDB,
-  Partenaire,
-  Conformite,
-  AideExpirationWarning,
-  Action,
-  OIDC_STATE,
 } from '.prisma/client';
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -24,11 +24,13 @@ import {
   UniversStatistique,
   Utilisateur,
 } from '@prisma/client';
+import { request } from 'express';
+import { ThematiqueRepository } from 'src/infrastructure/repository/thematique.repository';
 import { AppModule } from '../src/app.module';
+import { TypeAction } from '../src/domain/actions/typeAction';
 import { Besoin } from '../src/domain/aides/besoin';
-import { ContentType } from '../src/domain/contenu/contentType';
-import { Tag } from '../src/domain/scoring/tag';
-import { KYCID } from '../src/domain/kyc/KYCID';
+import { EchelleAide } from '../src/domain/aides/echelle';
+import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Thematique } from '../src/domain/contenu/thematique';
@@ -64,14 +66,12 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
-import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
-import { EchelleAide } from '../src/domain/aides/echelle';
-import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
-import { TypeAction } from '../src/domain/actions/typeAction';
+const request = require('supertest');
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
