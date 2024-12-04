@@ -15,3 +15,5 @@ export type AideVelo = {
 export type AidesVeloParType = {
   [category in Questions['vélo . type']]: AideVelo[];
 };
+
+export const NB_VELO_TYPES = 8;

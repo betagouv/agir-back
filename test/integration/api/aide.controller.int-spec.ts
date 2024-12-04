@@ -1,11 +1,12 @@
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
-import { DB, TestUtil } from '../../TestUtil';
+import { NB_VELO_TYPES } from '../../../src/domain/aides/aideVelo';
 import { Besoin } from '../../../src/domain/aides/besoin';
+import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Aide (API test)', () => {
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -37,12 +38,14 @@ describe('Aide (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
+    expect(Object.keys(response.body)).toHaveLength(NB_VELO_TYPES);
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].description).toEqual(
       'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.\n',
     );
     expect(response.body['électrique'][0].montant).toEqual(40);
   });
+
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
