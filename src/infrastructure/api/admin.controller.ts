@@ -15,6 +15,7 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
+import { v4 as uuidv4 } from 'uuid';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { GenericControler } from './genericControler';
@@ -36,6 +37,9 @@ import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 import { ApplicationError } from '../applicationError';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { PrismaService } from '../prisma/prisma.service';
+import { uuid4 } from '@sentry/utils';
 
 class VersionAPI {
   @ApiProperty()
@@ -67,6 +71,7 @@ export class AdminController extends GenericControler {
     private missionStatistiqueUsecase: MissionStatistiqueUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
+    private prisma: PrismaService,
   ) {
     super();
   }
@@ -310,5 +315,45 @@ export class AdminController extends GenericControler {
   async create_brevo_contacts(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.contactUsecase.createMissingContacts();
+  }
+  @Get('/admin/:utilisateurId/raw_sql_user')
+  @ApiOperation({
+    summary: `extrait un utilisateur au format brut BDD`,
+  })
+  async get_raw_sql_user(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+    });
+  }
+  @Post('/admin/:utilisateurId/raw_sql_user')
+  @ApiOperation({
+    summary: `inject un utilisateur via un format brut BDD, set un mot de passe par défaut`,
+  })
+  @ApiBody({
+    type: Object,
+    description: `format SQL brut de l'utilisateut à injecter`,
+  })
+  async post_raw_sql_user(@Request() req, @Body() body: any): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+
+    const new_id = uuidv4();
+    const new_email = `${new_id}@agir.dev`;
+
+    await this.prisma.utilisateur.create({
+      data: {
+        ...body,
+        id: new_id,
+        email: new_email,
+        unsubscribe_mail_token: undefined,
+        passwordSalt: 'dc19d1a68c672b3116533d2dfa117c95',
+        passwordHash:
+          '900730fe39880b6eaca391a5f4858e4de0600aea058fd6fe1215167ddaaa6260571699f563d012fd9789c015a4eae9f82dd20d42736ef96130060734b73a2743',
+      },
+    });
+    return { id: new_id, email: new_email };
   }
 }

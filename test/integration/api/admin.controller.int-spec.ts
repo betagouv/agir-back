@@ -2539,4 +2539,26 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(0);
   });
+  it(`GET/POST /admin/id/raw_sql_user lit / écrit un utilisateur en BDD`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    // GIVEN
+    let response = await TestUtil.GET('/admin/utilisateur-id/raw_sql_user');
+
+    //WHEN
+    let response2 = await TestUtil.POST(
+      '/admin/utilisateur-id/raw_sql_user',
+    ).send(response.body);
+
+    // THEN
+    expect(response2.status).toBe(201);
+    expect(response2.body.email).toEqual(response2.body.id + '@agir.dev');
+    expect(response2.body.id.length).toBeGreaterThan(20);
+
+    const dbUser = await utilisateurRepository.getById(response2.body.id, [
+      Scope.ALL,
+    ]);
+    expect(dbUser.prenom).toEqual('prenom');
+  });
 });
