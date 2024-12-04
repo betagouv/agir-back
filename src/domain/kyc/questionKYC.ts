@@ -4,6 +4,7 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
+import { KYCComplexValues } from './KYCID';
 import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
 import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
@@ -20,23 +21,11 @@ export enum TypeReponseQuestionKYC {
   mosaic_number = 'mosaic_number',
 }
 
-const TRUE_STRING = [
-  'true',
-  'True',
-  'TRUE',
-  'yes',
-  'Yes',
-  'YES',
-  'oui',
-  'Oui',
-  'OUI',
-  '1',
-];
-
 export enum BooleanKYC {
   oui = 'oui',
   non = 'non',
 }
+
 export enum Unite {
   kg = 'kg',
   g = 'l',
@@ -58,16 +47,17 @@ export type KYCReponseSimple = {
   value: string;
   unite?: Unite;
 };
-export type KYCReponseComplexe = {
-  code: string;
-  label: string;
-  selected: boolean;
-  value?: string;
-  ngc_code?: string;
-  image_url?: string;
-  emoji?: string;
-  unite?: Unite;
-};
+export type KYCReponseComplexe<ID extends keyof KYCComplexValues = '_default'> =
+  {
+    code: KYCComplexValues[ID]['code'];
+    label: string;
+    selected: boolean;
+    value?: string;
+    ngc_code?: KYCComplexValues[ID]['ngc_code'];
+    image_url?: string;
+    emoji?: string;
+    unite?: Unite;
+  };
 
 export class QuestionKYC implements TaggedContent {
   code: string;
@@ -85,9 +75,10 @@ export class QuestionKYC implements TaggedContent {
   is_NGC: boolean;
   a_supprimer: boolean;
   is_mosaic_answered?: boolean;
-  is_answererd?: boolean;
+  is_answered?: boolean;
   tags: Tag[];
   score: number;
+  // TODO: should use the generated DottedName instead of string
   ngc_key?: string;
   private reponse_simple: KYCReponseSimple;
   private reponse_complexe: KYCReponseComplexe[];
@@ -149,7 +140,7 @@ export class QuestionKYC implements TaggedContent {
       short_question: def.short_question,
       unite: def.unite,
     });
-    result.is_answererd = false;
+    result.is_answered = false;
 
     if (
       def.type === TypeReponseQuestionKYC.choix_unique ||
@@ -338,8 +329,9 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public static isTrueBooleanString(str: string): boolean {
-    return TRUE_STRING.includes(str);
+    return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
   }
+
   public isMosaic(): boolean {
     return (
       this.type === TypeReponseQuestionKYC.mosaic_boolean ||
@@ -392,7 +384,9 @@ export class QuestionKYC implements TaggedContent {
     if (!this.hasAnyComplexeResponse()) return 0;
     return this.reponse_complexe.length;
   }
-  public getReponseComplexeByCode(code: string): KYCReponseComplexe {
+  public getReponseComplexeByCode<ID extends keyof KYCComplexValues>(
+    code: string,
+  ): KYCReponseComplexe<ID> {
     if (!this.reponse_complexe || !(this.reponse_complexe.length > 0))
       return null;
     return this.reponse_complexe.find((r) => r.code === code);
@@ -500,6 +494,27 @@ export class QuestionKYC implements TaggedContent {
       }
     }
     return result;
+  }
+
+  /**
+   * Returns the selected answer for a question of type {@link TypeReponseQuestionKYC.choix_unique}
+   *
+   * @returns The selected answer or undefined if no answer is selected or the question is not of type {@link TypeReponseQuestionKYC.choix_unique}.
+   *
+   * @note The methode could be parametrized to type check the return value according to {@link KYCComplexValues}.
+   *
+   * NOTE: The class should be parametrized instead of the method, however it
+   * will require a lot of refactoring so this is a temporary solution.
+   */
+  public getSelectedAnswer<ID extends keyof KYCComplexValues>():
+    | KYCReponseComplexe<ID>
+    | undefined {
+    if (
+      this.type === TypeReponseQuestionKYC.choix_unique &&
+      this.reponse_complexe
+    ) {
+      return this.reponse_complexe.find((r) => r.selected);
+    }
   }
 
   public selectChoixUniqueByCode(code: string) {
