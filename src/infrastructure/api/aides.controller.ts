@@ -3,11 +3,10 @@ import {
   Controller,
   Get,
   Param,
-  Request,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
-import { AidesUsecase } from '../../usecase/aides.usecase';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -15,13 +14,14 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
-import { GenericControler } from './genericControler';
+import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
-import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
+import { GenericControler } from './genericControler';
 import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 import { AideExportAPI } from './types/aide/AideExportAPI';
+import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
+import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -128,12 +128,12 @@ export class AidesController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Body() body: InputAideVeloAPI,
     @Request() req,
-  ) {
+  ): Promise<AidesVeloParTypeAPI> {
     this.checkCallerId(req, utilisateurId);
     const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
     );
-    return result;
+    return AidesVeloParTypeAPI.mapToAPI(result);
   }
 }
