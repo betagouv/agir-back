@@ -1,9 +1,12 @@
-import { NB_VELO_TYPES } from '../../../src/domain/aides/aideVelo';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
+import {
+  AideVeloAPI,
+  AidesVeloParTypeAPI,
+} from '../../../src/infrastructure/api/types/aide/AidesVeloParTypeAPI';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -33,17 +36,154 @@ describe('Aide (API test)', () => {
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
-      prix_du_velo: 100,
+      prix_du_velo: 5000,
     });
+
+    const bonusVelo: AideVeloAPI = {
+      libelle: 'Bonus vélo',
+      montant: 150,
+      plafond: 150,
+      description:
+        'Nouveau bonus vélo mécanique simple applicable à partir du 14 février 2024.',
+      lien: 'https://www.economie.gouv.fr/particuliers/prime-velo-electrique#',
+      collectivite: {
+        kind: 'pays',
+        value: 'France',
+      },
+      logo: 'http://localhost:3000/logo_etat_francais.webp',
+    };
+
+    const idfMobilites: AideVeloAPI = {
+      libelle: 'Île-de-France Mobilités',
+      montant: 50,
+      plafond: 50,
+      description:
+        "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+      lien: 'https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo',
+      collectivite: {
+        kind: 'région',
+        value: '11',
+      },
+      logo: 'http://localhost:3000/logo_ile_de_france.webp',
+    };
 
     // THEN
     expect(response.status).toBe(201);
-    expect(Object.keys(response.body)).toHaveLength(NB_VELO_TYPES);
-    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
-    expect(response.body['électrique'][0].description).toEqual(
-      'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.\n',
-    );
-    expect(response.body['électrique'][0].montant).toEqual(40);
+    expect(response.body).toEqual<AidesVeloParTypeAPI>({
+      'mécanique simple': [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo mécanique simple applicable à partir du 14 février 2024.',
+        },
+      ],
+      électrique: [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.',
+          montant: 400,
+          plafond: 400,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      cargo: [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo cargo applicable à partir du 14 février 2024.',
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo cargo à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      'cargo électrique': [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo cargo électrique applicable à partir du 14 février 2024.',
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo cargo électrique à hauteur de 50% et jusqu'à un plafond de 600 €.",
+          montant: 600,
+          plafond: 600,
+        },
+      ],
+      pliant: [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo pliant applicable à partir du 14 février 2024.',
+          montant: 2000,
+          plafond: 2000,
+        },
+
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo pliant à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      'pliant électrique': [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo pliant électrique applicable à partir du 14 février 2024.',
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo pliant électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      motorisation: [
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un kit de motorisation à hauteur de 50% et jusqu'à un plafond de 200 €.",
+          montant: 200,
+          plafond: 200,
+        },
+      ],
+      adapté: [
+        {
+          ...bonusVelo,
+          description:
+            'Nouveau bonus vélo adapté applicable à partir du 14 février 2024.',
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo adapté à hauteur de 50% et jusqu'à un plafond de 1 200 €.",
+          montant: 1200,
+          plafond: 1200,
+        },
+      ],
+    });
   });
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
