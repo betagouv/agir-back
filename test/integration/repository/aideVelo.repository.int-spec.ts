@@ -1,13 +1,14 @@
-import { TestUtil } from '../../TestUtil';
-import {
-  AidesVeloRepository,
-  SummaryVelosParams,
-} from '../../../src/infrastructure/repository/aidesVelo.repository';
 import {
   AideVelo,
   AidesVeloParType,
   Collectivite,
-} from 'src/domain/aides/aideVelo';
+  NB_VELO_TYPES,
+} from '../../../src/domain/aides/aideVelo';
+import {
+  AidesVeloRepository,
+  SummaryVelosParams,
+} from '../../../src/infrastructure/repository/aidesVelo.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('AideVeloRepository', () => {
   let aidesVeloRepository = new AidesVeloRepository();
@@ -41,6 +42,7 @@ describe('AideVeloRepository', () => {
     const result = await aidesVeloRepository.getSummaryVelos(baseParams);
 
     // THEN
+    expect(Object.keys(result)).toHaveLength(NB_VELO_TYPES);
     expect(result['motorisation'][0].libelle).toBe('Île-de-France Mobilités');
     expect(result['motorisation'][0].montant).toBe(200);
 

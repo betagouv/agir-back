@@ -1522,6 +1522,43 @@ describe('Admin (API test)', () => {
     expect(article3.titre).toBe('Titre de mon article 3');
   });
 
+  it("POST /admin/article-statistique - cas où l'article n'est plus présent dans la base des articles", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: true,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/article-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body).toEqual(['article-id-1']);
+
+    const article1 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-1' },
+    });
+
+    expect(article1.rating.toString()).toBe('3');
+    expect(article1.nombre_de_rating).toBe(1);
+    expect(article1.nombre_de_mise_en_favoris).toBe(1);
+    expect(article1.titre).toBe(`Article [article-id-1] supprimé`);
+  });
+
   it("POST /admin/defi-statistique - calcul des statistiques de l'ensemble des défis", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1811,6 +1848,42 @@ describe('Admin (API test)', () => {
     expect(quiz2.nombre_de_bonne_reponse).toEqual(2);
     expect(quiz2.nombre_de_mauvaise_reponse).toEqual(0);
     expect(quiz2.titre).toEqual('Question quiz 2');
+  });
+
+  it("POST /admin/quiz-statistique - pas d'erreur si un quizz n'hesiste plus dans la base des quizz", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: false,
+            attempts: [{ score: 0, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/quiz-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body).toEqual(['id-quiz-1']);
+
+    const quiz1 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-1' },
+    });
+
+    expect(quiz1.nombre_de_bonne_reponse).toEqual(0);
+    expect(quiz1.nombre_de_mauvaise_reponse).toEqual(1);
+    expect(quiz1.titre).toEqual(`Quizz [id-quiz-1] supprimé`);
   });
 
   it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
@@ -2538,5 +2611,27 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(0);
+  });
+  it(`GET/POST /admin/id/raw_sql_user lit / écrit un utilisateur en BDD`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    // GIVEN
+    let response = await TestUtil.GET('/admin/utilisateur-id/raw_sql_user');
+
+    //WHEN
+    let response2 = await TestUtil.POST(
+      '/admin/utilisateur-id/raw_sql_user',
+    ).send(response.body);
+
+    // THEN
+    expect(response2.status).toBe(201);
+    expect(response2.body.email).toEqual(response2.body.id + '@agir.dev');
+    expect(response2.body.id.length).toBeGreaterThan(20);
+
+    const dbUser = await utilisateurRepository.getById(response2.body.id, [
+      Scope.ALL,
+    ]);
+    expect(dbUser.prenom).toEqual('prenom');
   });
 });

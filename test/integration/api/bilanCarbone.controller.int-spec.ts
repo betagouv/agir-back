@@ -1222,8 +1222,7 @@ describe('/bilan (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('utilisateur-id');
+    expect(response.body).toHaveLength(0);
 
     const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: {
@@ -1308,8 +1307,7 @@ describe('/bilan (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('utilisateur-id');
+    expect(response.body).toHaveLength(0);
 
     const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: {
@@ -1323,5 +1321,127 @@ describe('/bilan (API test)', () => {
     expect(stats.total_g).toEqual(8781353);
     expect(stats.transport_g).toEqual(1869815);
     expect(stats.alimenation_g).toEqual(2302621);
+  });
+
+  it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur une erreur pour un des utilisateurs`, async () => {
+    // GIVEN
+    const kyc_bad: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: 'KYC alcool_bad',
+          id_cms: 1,
+          type: TypeReponseQuestionKYC.entier,
+          is_NGC: true,
+          reponse_simple: {
+            value: '10',
+          },
+          reponse_complexe: undefined,
+          tags: [],
+          ngc_key: 'alimentation . boisson . alcool . litres',
+        },
+      ],
+    };
+    const kyc_ok: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: 'KYC alcool_good',
+          id_cms: 2,
+          type: TypeReponseQuestionKYC.entier,
+          is_NGC: true,
+          reponse_simple: {
+            value: '5',
+          },
+          reponse_complexe: undefined,
+          tags: [],
+          ngc_key: 'alimentation . boisson . alcool . litres',
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC alcool_bad',
+      id_cms: 1,
+      question: `Combien de litres ^^`,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [],
+      tags: [],
+      ngc_key: 'very bad key',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: Unite.kg,
+      created_at: undefined,
+      is_ngc: true,
+      a_supprimer: false,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC alcool_good',
+      id_cms: 2,
+      question: `Combien de litres ^^`,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [],
+      tags: [],
+      ngc_key: 'alimentation . boisson . alcool . litres',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: Unite.kg,
+      created_at: undefined,
+      is_ngc: true,
+      a_supprimer: false,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    await TestUtil.create(DB.utilisateur, { kyc: kyc_bad });
+    await TestUtil.create(DB.utilisateur, { id: '2', email: '2', kyc: kyc_ok });
+
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+
+    expect(response.body[0]).toEqual(
+      'BC KO [utilisateur-id] : {"name":"SituationError","info":{"dottedName":"very bad key"}}',
+    );
+
+    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
+      where: {
+        utilisateurId: '2',
+      },
+    });
+
+    expect(stats.situation).toEqual({
+      'alimentation . boisson . alcool . litres': 5,
+    });
+    expect(stats.total_g).toEqual(9052679);
+
+    const stats2 = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
+      where: {
+        utilisateurId: 'utilisateur-id',
+      },
+    });
+    expect(stats2).toBeNull();
   });
 });

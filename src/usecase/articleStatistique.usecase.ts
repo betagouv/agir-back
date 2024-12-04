@@ -26,7 +26,7 @@ export class ArticleStatistiqueUsecase {
 
       await this.articleStatistiqueRepository.upsertStatistiquesDUnArticle(
         key,
-        titreDeLArticle.titre,
+        titreDeLArticle ? titreDeLArticle.titre : `Article [${key}] supprimé`,
         value.compteurDesNotes
           ? value.totalDesNotes / value.compteurDesNotes
           : null,
