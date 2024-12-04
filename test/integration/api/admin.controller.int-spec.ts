@@ -1522,6 +1522,43 @@ describe('Admin (API test)', () => {
     expect(article3.titre).toBe('Titre de mon article 3');
   });
 
+  it("POST /admin/article-statistique - cas où l'article n'est plus présent dans la base des articles", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      history: {
+        version: 0,
+        article_interactions: [
+          {
+            content_id: 'article-id-1',
+            read_date: new Date(),
+            like_level: 3,
+            points_en_poche: false,
+            favoris: true,
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/article-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body).toEqual(['article-id-1']);
+
+    const article1 = await TestUtil.prisma.articleStatistique.findUnique({
+      where: { articleId: 'article-id-1' },
+    });
+
+    expect(article1.rating.toString()).toBe('3');
+    expect(article1.nombre_de_rating).toBe(1);
+    expect(article1.nombre_de_mise_en_favoris).toBe(1);
+    expect(article1.titre).toBe(`Article [article-id-1] supprimé`);
+  });
+
   it("POST /admin/defi-statistique - calcul des statistiques de l'ensemble des défis", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
