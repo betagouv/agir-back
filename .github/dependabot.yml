@@ -10,3 +10,4 @@ updates:
       - dependencies
     allow:
       - dependency-name: '@betagouv/aides-velo'
+      - dependency-name: '@incubateur-ademe/nosgestesclimat'
