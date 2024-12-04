@@ -185,6 +185,7 @@ export class BilanCarboneUsecase {
   }
 
   async computeBilanTousUtilisateurs(): Promise<string[]> {
+    const error_liste = [];
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
 
     for (const user_id of user_id_liste) {
@@ -193,18 +194,20 @@ export class BilanCarboneUsecase {
       ]);
 
       const situation = this.computeSituation(utilisateur);
-
-      const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
-
-      await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
-        user_id,
-        situation,
-        bilan.bilan_carbone_annuel * 1000,
-        bilan.details.transport * 1000,
-        bilan.details.alimentation * 1000,
-      );
+      try {
+        const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
+        await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
+          user_id,
+          situation,
+          bilan.bilan_carbone_annuel * 1000,
+          bilan.details.transport * 1000,
+          bilan.details.alimentation * 1000,
+        );
+      } catch (error) {
+        error_liste.push(`BC KO [${user_id}] : ` + JSON.stringify(error));
+      }
     }
-    return user_id_liste;
+    return error_liste;
   }
 
   public computeSituation(utilisateur: Utilisateur): Object {
@@ -229,7 +232,8 @@ export class BilanCarboneUsecase {
             kyc.type === TypeReponseQuestionKYC.decimal
           ) {
             if (kyc.hasAnySimpleResponse()) {
-              situation[kyc.ngc_key] = kyc.getReponseSimpleValue();
+              const value = kyc.getReponseSimpleValueAsNumber();
+              situation[kyc.ngc_key] = Number.isNaN(value) ? 0 : value;
             }
           }
         }
