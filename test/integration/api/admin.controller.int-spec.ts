@@ -1813,6 +1813,42 @@ describe('Admin (API test)', () => {
     expect(quiz2.titre).toEqual('Question quiz 2');
   });
 
+  it("POST /admin/quiz-statistique - pas d'erreur si un quizz n'hesiste plus dans la base des quizz", async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'test-id-1',
+      email: 'john-doe@dev.com',
+      history: {
+        version: 0,
+        quizz_interactions: [
+          {
+            content_id: 'id-quiz-1',
+            points_en_poche: false,
+            attempts: [{ score: 0, date: new Date() }],
+          },
+        ],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/quiz-statistique');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(1);
+    expect(response.body).toEqual(['id-quiz-1']);
+
+    const quiz1 = await TestUtil.prisma.quizStatistique.findUnique({
+      where: { quizId: 'id-quiz-1' },
+    });
+
+    expect(quiz1.nombre_de_bonne_reponse).toEqual(0);
+    expect(quiz1.nombre_de_mauvaise_reponse).toEqual(1);
+    expect(quiz1.titre).toEqual(`Quizz [id-quiz-1] supprimé`);
+  });
+
   it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

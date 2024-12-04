@@ -15,7 +15,10 @@ export class QuizStatistiqueUsecase {
   async calculStatistique(): Promise<string[]> {
     const quizRecord: Record<
       string,
-      { nombreDeBonneReponse: number; nombreDeMauvaiseReponse: number }
+      {
+        nombreDeBonneReponse: number;
+        nombreDeMauvaiseReponse: number;
+      }
     > = {};
 
     const listeUtilisateursIds =
@@ -50,7 +53,7 @@ export class QuizStatistiqueUsecase {
 
       await this.quizStatistiqueRepository.upsertStatistiquesDUnQuiz(
         key,
-        titreDuQuiz.titre,
+        titreDuQuiz ? titreDuQuiz.titre : `Quizz [${key}] supprimé`,
         value.nombreDeBonneReponse,
         value.nombreDeMauvaiseReponse,
       );
