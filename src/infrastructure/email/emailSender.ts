@@ -20,6 +20,10 @@ export class EmailSender {
     text_content_html: string,
     subject: string,
   ) {
+    if (!name || name === '') {
+      name = 'utilisateur';
+    }
+
     const smtpEmail = new Brevo.SendSmtpEmail();
     smtpEmail.to = [{ email: email_to, name: name }];
     smtpEmail.sender = { name: `J'agis`, email: 'noreply-jagis@beta.gouv.fr' };
