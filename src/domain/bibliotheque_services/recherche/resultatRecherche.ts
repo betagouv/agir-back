@@ -68,6 +68,8 @@ export class ResultatRecherche {
   ingredients?: IngredientRecette[];
   etapes_recette?: EtapeRecette[];
 
+  nbr_resultats_max_dispo?: number;
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;

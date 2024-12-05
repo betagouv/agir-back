@@ -127,7 +127,14 @@ export class RechercheServicesUsecase {
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
     let encore_plus_resultats_dispo = false;
-    if (result.length < finder.getMaxResultOfCategorie(filtre.categorie)) {
+    let max_resultat: number;
+
+    if (result.length > 0 && result[0].nbr_resultats_max_dispo) {
+      max_resultat = result[0].nbr_resultats_max_dispo;
+    } else {
+      max_resultat = finder.getMaxResultOfCategorie(filtre.categorie);
+    }
+    if (result.length < max_resultat) {
       encore_plus_resultats_dispo = true;
     }
 
