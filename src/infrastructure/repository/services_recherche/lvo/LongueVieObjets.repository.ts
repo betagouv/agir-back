@@ -72,7 +72,6 @@ export class LongueVieObjetsRepository implements FinderInterface {
       LongueVieObjetsCategorieMapping.getFiltreFromCategorie(
         CategorieRecherche[filtre.categorie],
       );
-
     if (!filtre.hasPoint()) {
       const location =
         await this.addressesRepository.findLocationFromCodePostalCommune(

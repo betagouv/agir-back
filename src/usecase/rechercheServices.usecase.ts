@@ -10,7 +10,6 @@ import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repositor
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { ReferentielUsecase } from './referentiels/referentiel.usecase';
 import { Thematique } from '../domain/contenu/thematique';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
@@ -105,7 +104,10 @@ export class RechercheServicesUsecase {
       );
     }
 
-    if (serviceId === ServiceRechercheID.proximite) {
+    if (
+      serviceId === ServiceRechercheID.proximite ||
+      serviceId === ServiceRechercheID.longue_vie_objets
+    ) {
       if (!filtre.hasPoint()) {
         if (!utilisateur.logement.code_postal) {
           ApplicationError.throwUnkonwnUserLocation();
