@@ -38,8 +38,8 @@
     "kube:stop": "minikube stop",
     "kube:env": "eval $(minikube docker-env)",
     "scripts:images": "node scripts/generate-images.mjs",
-    "execute_local": "dotenv -e .env.run -- ts-node ./scripts/console.ts",
-    "execute": "ts-node ./scripts/console.ts"
+    "execute_local": "dotenv -e .env.run -- node dist/src/console.js",
+    "execute": "node dist/src/console.js"
   },
   "dependencies": {
     "@betagouv/aides-velo": "^0.2.1",
