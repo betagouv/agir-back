@@ -166,8 +166,8 @@ export class MailerUsecase {
           type_notif,
           CanalNotification.email,
         );
+        return true;
       }
-      return true;
     }
     return false;
   }
