@@ -1,9 +1,6 @@
 {
   "jobs": [
     {
-      "command": "0 */3 * * * ./scripts/refresh_service_dynamic_data.sh"
-    },
-    {
       "command": "*/10 * * * * ./scripts/ten_minute_jobs.sh"
     },
     {
