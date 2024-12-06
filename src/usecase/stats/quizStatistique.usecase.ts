@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuizStatistiqueRepository } from '../../src/infrastructure/repository/quizStatistique.repository';
-import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../infrastructure/repository/utilisateur/utilisateur.repository';
+import { QuizStatistiqueRepository } from '../../infrastructure/repository/quizStatistique.repository';
+import { QuizzRepository } from '../../infrastructure/repository/quizz.repository';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class QuizStatistiqueUsecase {

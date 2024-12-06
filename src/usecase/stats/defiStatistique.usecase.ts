@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { DefiStatistiqueRepository } from '../../src/infrastructure/repository/defiStatistique.repository';
-import { DefiStatus } from '../../src/domain/defis/defi';
-import { DefiStatistique } from '../../src/domain/defis/defiStatistique';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../infrastructure/repository/utilisateur/utilisateur.repository';
+import { DefiStatistiqueRepository } from '../../../src/infrastructure/repository/defiStatistique.repository';
+import { DefiStatus } from '../../../src/domain/defis/defi';
+import { DefiStatistique } from '../../../src/domain/defis/defiStatistique';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class DefiStatistiqueUsecase {

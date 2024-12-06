@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { StatistiqueRepository } from '../../src/infrastructure/repository/statitstique.repository';
-import { Mission } from '../../src/domain/mission/mission';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
+import { Mission } from '../../../src/domain/mission/mission';
+import {
+  Scope,
+  Utilisateur,
+} from '../../../src/domain/utilisateur/utilisateur';
 
 @Injectable()
 export class StatistiqueUsecase {
