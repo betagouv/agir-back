@@ -10,7 +10,6 @@ import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repositor
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { ReferentielUsecase } from './referentiels/referentiel.usecase';
 import { Thematique } from '../domain/contenu/thematique';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
@@ -105,7 +104,10 @@ export class RechercheServicesUsecase {
       );
     }
 
-    if (serviceId === ServiceRechercheID.proximite) {
+    if (
+      serviceId === ServiceRechercheID.proximite ||
+      serviceId === ServiceRechercheID.longue_vie_objets
+    ) {
       if (!filtre.hasPoint()) {
         if (!utilisateur.logement.code_postal) {
           ApplicationError.throwUnkonwnUserLocation();
@@ -125,7 +127,14 @@ export class RechercheServicesUsecase {
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
     let encore_plus_resultats_dispo = false;
-    if (result.length < finder.getMaxResultOfCategorie(filtre.categorie)) {
+    let max_resultat: number;
+
+    if (result.length > 0 && result[0].nbr_resultats_max_dispo) {
+      max_resultat = result[0].nbr_resultats_max_dispo;
+    } else {
+      max_resultat = finder.getMaxResultOfCategorie(filtre.categorie);
+    }
+    if (result.length < max_resultat) {
       encore_plus_resultats_dispo = true;
     }
 

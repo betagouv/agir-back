@@ -19,7 +19,11 @@ export class EmailSender {
     name: string,
     text_content_html: string,
     subject: string,
-  ) {
+  ): Promise<boolean> {
+    if (!name || name === '') {
+      name = 'utilisateur';
+    }
+
     const smtpEmail = new Brevo.SendSmtpEmail();
     smtpEmail.to = [{ email: email_to, name: name }];
     smtpEmail.sender = { name: `J'agis`, email: 'noreply-jagis@beta.gouv.fr' };
@@ -33,14 +37,17 @@ export class EmailSender {
         console.log(`Sending email to ${email_to}`);
         await this.apiInstance.sendTransacEmail(smtpEmail);
         console.log(`Sending email to ${email_to} OK`);
+        return true;
       } catch (error) {
         console.error(error);
+        return false;
       }
     } else {
       console.log(`Email not sent in test mode: 
       subject: ${subject}
       email: ${email_to}
       name: ${name}`);
+      return true;
     }
   }
 }

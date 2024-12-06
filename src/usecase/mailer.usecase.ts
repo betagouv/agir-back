@@ -155,19 +155,19 @@ export class MailerUsecase {
     );
 
     if (email) {
-      await this.emailSender.sendEmail(
+      const sent_email = await this.emailSender.sendEmail(
         utilisateur.email,
         utilisateur.prenom,
         email.body,
         email.subject,
       );
-      if (update_history && utilisateur.notification_history) {
+      if (update_history && utilisateur.notification_history && sent_email) {
         utilisateur.notification_history.declareSentNotification(
           type_notif,
           CanalNotification.email,
         );
+        return true;
       }
-      return true;
     }
     return false;
   }

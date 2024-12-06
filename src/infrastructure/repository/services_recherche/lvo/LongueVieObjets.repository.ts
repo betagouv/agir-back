@@ -42,6 +42,7 @@ export type LVOResponse = {
       siret: string; //'35351809500016';
     },
   ];
+  count: number;
 };
 
 @Injectable()
@@ -72,7 +73,6 @@ export class LongueVieObjetsRepository implements FinderInterface {
       LongueVieObjetsCategorieMapping.getFiltreFromCategorie(
         CategorieRecherche[filtre.categorie],
       );
-
     if (!filtre.hasPoint()) {
       const location =
         await this.addressesRepository.findLocationFromCodePostalCommune(
@@ -95,6 +95,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
       (r) =>
         new ResultatRecherche({
           id: r.identifiant_unique,
+          nbr_resultats_max_dispo: result.count,
           titre: r.nom,
           adresse_rue: r.adresse,
           siret: r.siret,
