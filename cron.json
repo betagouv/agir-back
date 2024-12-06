@@ -1,10 +1,12 @@
 {
   "jobs": [
     {
-      "command": "*/10 * * * * ./scripts/ten_minute_jobs.sh"
+      "command": "*/10 * * * * ./scripts/ten_minute_jobs.sh",
+      "size": "M"
     },
     {
-      "command": "0 3 * * * ./scripts/nightly_processing.sh"
+      "command": "0 3 * * * ./scripts/nightly_processing.sh",
+      "size": "L"
     }
   ]
 }
