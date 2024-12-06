@@ -120,9 +120,7 @@ describe('ServiceRepository', () => {
 
     // THEN
     expect(servicesDBList).toHaveLength(1);
-    expect(servicesDBList[0].serviceDefinitionId).toEqual(
-      ScheduledService.ecowatt,
-    );
+    expect(servicesDBList[0].serviceDefinitionId).toEqual('ecowatt');
   });
   it('listeServiceDefinitionsToRefresh  : list service with no date but period', async () => {
     // GIVEN
@@ -138,9 +136,7 @@ describe('ServiceRepository', () => {
 
     // THEN
     expect(servicesDBList).toHaveLength(1);
-    expect(servicesDBList[0].serviceDefinitionId).toEqual(
-      ScheduledService.ecowatt,
-    );
+    expect(servicesDBList[0].serviceDefinitionId).toEqual('ecowatt');
   });
 
   it('updateServiceConfiguration  : saves conf ok', async () => {

@@ -569,6 +569,7 @@ export class KYCHistory {
     }
     return this.refreshQuestion(answered);
   }
+
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
     return this.answered_questions.find((element) => element.id_cms === id_cms);
   }

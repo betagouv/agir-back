@@ -34,7 +34,6 @@ import { ServiceRepository } from './infrastructure/repository/service.repositor
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
-import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { EventUsecase } from './usecase/event.usecase';
@@ -200,7 +199,6 @@ function getControllers(): any[] {
     ServiceRepository,
     TodoUsecase,
     ThematiqueRepository,
-    EcoWattServiceManager,
     FruitsEtLegumesServiceManager,
     EventUsecase,
     GamificationUsecase,
