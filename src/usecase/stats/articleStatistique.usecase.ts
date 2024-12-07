@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ArticleStatistiqueRepository } from '../../src/infrastructure/repository/articleStatistique.repository';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { ArticleStatistiqueRepository } from '../../../src/infrastructure/repository/articleStatistique.repository';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class ArticleStatistiqueUsecase {

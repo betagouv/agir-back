@@ -22,6 +22,7 @@ const QUESTION_TEST: QuestionKYC_v2 = {
   a_supprimer: false,
   categorie: Categorie.recommandation,
   points: 10,
+  last_update: undefined,
   reponse_complexe: [
     {
       label: 'Le climat',
@@ -492,28 +493,28 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: false,
     });
 
-    expect(history.answered_questions[0].getNombreReponsesPossibles()).toEqual(
-      2,
-    );
-    expect(history.answered_questions[0].getReponseComplexeByCode('a')).toEqual(
-      {
-        code: 'a',
-        emoji: undefined,
-        image_url: undefined,
-        label: 'yoyo',
-        ngc_code: '0987',
-        unite: undefined,
-        selected: true,
-      },
-    );
-    expect(history.answered_questions[0].getReponseComplexeByCode('c')).toEqual(
-      {
-        code: 'c',
-        label: 'hihi',
-        ngc_code: '000',
-        selected: false,
-      },
-    );
+    expect(
+      history.getRawAnsweredKYCs()[0].getNombreReponsesPossibles(),
+    ).toEqual(2);
+    expect(
+      history.getRawAnsweredKYCs()[0].getReponseComplexeByCode('a'),
+    ).toEqual({
+      code: 'a',
+      emoji: undefined,
+      image_url: undefined,
+      label: 'yoyo',
+      ngc_code: '0987',
+      unite: undefined,
+      selected: true,
+    });
+    expect(
+      history.getRawAnsweredKYCs()[0].getReponseComplexeByCode('c'),
+    ).toEqual({
+      code: 'c',
+      label: 'hihi',
+      ngc_code: '000',
+      selected: false,
+    });
   });
 
   it('getQuestionOrException : si code manquant pas grave si question pas de type choix', () => {
@@ -867,7 +868,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(0);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
@@ -900,7 +901,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -938,7 +939,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -976,7 +977,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -1014,7 +1015,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -1052,7 +1053,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(0);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
@@ -1085,7 +1086,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(0);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ignore pour un kyc non ngc ', () => {
@@ -1118,7 +1119,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(0);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : integre une reponse string pour une question a choix unique', () => {
@@ -1156,7 +1157,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -1259,7 +1260,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.answered_questions).toHaveLength(1);
+    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
       history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
@@ -1543,5 +1544,55 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(reponse).toEqual(true);
+  });
+  it(`last_update : le max de la date des KYC de l'historique `, () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          id_cms: 1,
+          categorie: Categorie.recommandation,
+          code: '1',
+          is_NGC: false,
+          type: TypeReponseQuestionKYC.entier,
+          reponse_simple: {
+            value: '123',
+          },
+        },
+        {
+          ...QUESTION_TEST,
+          id_cms: 1,
+          last_update: new Date(100),
+          categorie: Categorie.recommandation,
+          code: '1',
+          is_NGC: false,
+          type: TypeReponseQuestionKYC.entier,
+          reponse_simple: {
+            value: '123',
+          },
+        },
+        {
+          ...QUESTION_TEST,
+          id_cms: 1,
+          last_update: new Date(200),
+          categorie: Categorie.recommandation,
+          code: '1',
+          is_NGC: false,
+          type: TypeReponseQuestionKYC.entier,
+          reponse_simple: {
+            value: '123',
+          },
+        },
+      ],
+    });
+
+    // WHEN
+    const reponse = history.getLastUpdate();
+
+    // THEN
+    expect(reponse.getTime()).toEqual(200);
   });
 });

@@ -2,7 +2,6 @@ import { Thematique } from '../contenu/thematique';
 import { App } from '../app';
 
 export enum ScheduledService {
-  ecowatt = 'ecowatt',
   dummy_scheduled = 'dummy_scheduled',
 }
 export enum LiveService {
@@ -63,9 +62,7 @@ export class ServiceDefinition extends ServiceDefinitionData {
     }
   }
   public isEnConstruction?(): boolean {
-    return !App.getServiceActifsStringList().includes(
-      this.serviceDefinitionId,
-    );
+    return !App.getServiceActifsStringList().includes(this.serviceDefinitionId);
   }
 
   public isReadyForRefresh?(): boolean {

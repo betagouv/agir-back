@@ -29,8 +29,8 @@ type LogementInput = {
 };
 
 export class KYCHistory {
-  answered_questions: QuestionKYC[];
-  answered_mosaics: KYCMosaicID[];
+  private answered_questions: QuestionKYC[];
+  private answered_mosaics: KYCMosaicID[];
 
   catalogue: KycDefinition[];
 
@@ -45,6 +45,23 @@ export class KYCHistory {
     if (data && data.answered_mosaics) {
       this.answered_mosaics = data.answered_mosaics;
     }
+  }
+
+  public getLastUpdate(): Date {
+    let max_epoch = 0;
+    for (const kyc of this.answered_questions) {
+      if (kyc.last_update) {
+        max_epoch = Math.max(max_epoch, kyc.last_update.getTime());
+      }
+    }
+    return new Date(max_epoch);
+  }
+
+  public getRawAnsweredKYCs(): QuestionKYC[] {
+    return this.answered_questions;
+  }
+  public getRawAnsweredMosaics(): KYCMosaicID[] {
+    return this.answered_mosaics;
   }
 
   public flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered() {
@@ -569,6 +586,7 @@ export class KYCHistory {
     }
     return this.refreshQuestion(answered);
   }
+
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
     return this.answered_questions.find((element) => element.id_cms === id_cms);
   }

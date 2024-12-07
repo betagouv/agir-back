@@ -39,6 +39,7 @@ import { DefiRepository } from '../../../src/infrastructure/repository/defi.repo
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
+  last_update: undefined,
   id_cms: 11,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -217,7 +218,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    const new_kyc = userDB.kyc_history.answered_questions[0];
+    const new_kyc = userDB.kyc_history.getRawAnsweredKYCs()[0];
 
     expect(new_kyc.question).toEqual('The question !');
     expect(new_kyc.points).toEqual(20);

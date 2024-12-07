@@ -202,6 +202,7 @@ export class UtilisateurRepository {
   async listUtilisateurIds(
     created_after?: Date,
     is_active?: boolean,
+    max_number?: number,
   ): Promise<string[]> {
     let query = {
       select: {
@@ -216,6 +217,9 @@ export class UtilisateurRepository {
     }
     if (is_active) {
       query['where'].active_account = true;
+    }
+    if (max_number) {
+      query['take'] = max_number;
     }
     const result = await this.prisma.utilisateur.findMany(query);
 

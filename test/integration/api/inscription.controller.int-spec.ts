@@ -727,7 +727,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    expect(user.kyc_history.answered_questions).toHaveLength(0);
+    expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
   });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs n importe quoi `, async () => {
     // GIVEN
@@ -757,7 +757,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
 
-    expect(user.kyc_history.answered_questions).toHaveLength(0);
+    expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC touches les mosaics`, async () => {
@@ -811,7 +811,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(
       user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),
     ).toEqual(true);
-    expect(user.kyc_history.answered_mosaics).toHaveLength(2);
+    expect(user.kyc_history.getRawAnsweredMosaics()).toHaveLength(2);
     expect(
       user.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE),
     ).toEqual(true);

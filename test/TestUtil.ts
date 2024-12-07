@@ -435,6 +435,7 @@ export class TestUtil {
       answered_questions: [
         {
           code: KYCID._2,
+          last_update: undefined,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,

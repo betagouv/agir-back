@@ -72,6 +72,7 @@ export type KYCReponseComplexe = {
 export class QuestionKYC implements TaggedContent {
   code: string;
   id_cms: number;
+  last_update: Date;
   question: string;
   short_question: string;
   emoji: string;
@@ -112,6 +113,7 @@ export class QuestionKYC implements TaggedContent {
     this.score = 0;
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
+    this.last_update = data.last_update;
 
     this.reponse_simple = data.reponse_simple;
     this.reponse_complexe = data.reponse_complexe
@@ -126,6 +128,10 @@ export class QuestionKYC implements TaggedContent {
           unite: undefined,
         }))
       : undefined;
+  }
+
+  public touch() {
+    this.last_update = new Date();
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -148,6 +154,7 @@ export class QuestionKYC implements TaggedContent {
       image_url: def.image_url,
       short_question: def.short_question,
       unite: def.unite,
+      last_update: undefined,
     });
     result.is_answererd = false;
 
@@ -195,6 +202,7 @@ export class QuestionKYC implements TaggedContent {
       a_supprimer: false,
       reponse_simple: undefined,
       reponse_complexe: undefined,
+      last_update: undefined,
     });
     if (def.type === TypeMosaic.mosaic_boolean) {
       result.reponse_complexe =
@@ -418,6 +426,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public setReponseSimpleValue(value: string) {
+    this.touch();
     this.reponse_simple.value = value;
   }
 
@@ -439,6 +448,7 @@ export class QuestionKYC implements TaggedContent {
 
   // DEPRECATED
   public setResponseWithValueOrLabels(reponses: string[]) {
+    this.touch();
     this.throwExceptionIfReponseNotExists(reponses);
 
     if (this.isSimpleQuestion()) {
@@ -458,6 +468,7 @@ export class QuestionKYC implements TaggedContent {
   // DEPRECATED
   private selectChoixByLabel(label: string) {
     if (!this.reponse_complexe) return;
+    this.touch();
     for (const rep of this.reponse_complexe) {
       if (rep.label === label) {
         rep.selected = true;
@@ -468,6 +479,7 @@ export class QuestionKYC implements TaggedContent {
   // DEPRECATED
   private setChoixUniqueByLabel(label: string) {
     if (!this.reponse_complexe) return;
+    this.touch();
     for (const rep of this.reponse_complexe) {
       rep.selected = rep.label === label;
     }
@@ -475,6 +487,7 @@ export class QuestionKYC implements TaggedContent {
 
   private deSelectAll() {
     if (!this.reponse_complexe) return;
+    this.touch();
     for (const rep of this.reponse_complexe) {
       rep.selected = false;
     }
@@ -504,12 +517,14 @@ export class QuestionKYC implements TaggedContent {
 
   public selectChoixUniqueByCode(code: string) {
     if (!this.reponse_complexe) return;
+    this.touch();
     for (const rep of this.reponse_complexe) {
       rep.selected = rep.code === code;
     }
   }
   public setChoixByCode(code: string, selected: boolean) {
     if (!this.reponse_complexe) return;
+    this.touch();
     for (const rep of this.reponse_complexe) {
       if (rep.code === code) {
         rep.selected = selected;

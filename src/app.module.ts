@@ -34,7 +34,6 @@ import { ServiceRepository } from './infrastructure/repository/service.repositor
 import { TodoController } from './infrastructure/api/todo.controller';
 import { TodoUsecase } from './usecase/todo.usecase';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
-import { EcoWattServiceManager } from './infrastructure/service/ecowatt/ecoWattServiceManager';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { EventUsecase } from './usecase/event.usecase';
@@ -67,25 +66,25 @@ import { DefisController } from './infrastructure/api/defis.controller';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
-import { StatistiqueUsecase } from './usecase/statistique.usecase';
+import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
-import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
+import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { UniversController } from './infrastructure/api/univers.controller';
-import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
+import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
 import { MissionController } from './infrastructure/api/mission.controller';
-import { QuizStatistiqueUsecase } from './usecase/quizStatistique.usecase';
+import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
-import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
+import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { MissionStatistiqueUsecase } from './usecase/missionStatistique.usecase';
+import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
-import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
@@ -200,7 +199,6 @@ function getControllers(): any[] {
     ServiceRepository,
     TodoUsecase,
     ThematiqueRepository,
-    EcoWattServiceManager,
     FruitsEtLegumesServiceManager,
     EventUsecase,
     GamificationUsecase,

@@ -138,6 +138,7 @@ describe('Objet Utilisateur', () => {
 
     const kyc = new QuestionKYC({
       code: KYCID.KYC007,
+      last_update: undefined,
       id_cms: 7,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
@@ -193,6 +194,7 @@ describe('Objet Utilisateur', () => {
     const kyc = new QuestionKYC({
       ...KYC,
       id_cms: 7,
+      last_update: undefined,
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
       a_supprimer: false,
@@ -247,6 +249,7 @@ describe('Objet Utilisateur', () => {
       ...KYC,
       code: KYCID.KYC007,
       id_cms: 7,
+      last_update: undefined,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,

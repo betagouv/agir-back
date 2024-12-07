@@ -25,21 +25,19 @@ import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
-import { StatistiqueUsecase } from '../../../src/usecase/statistique.usecase';
-import { ArticleStatistiqueUsecase } from '../../../src/usecase/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
-import { QuizStatistiqueUsecase } from '../../../src/usecase/quizStatistique.usecase';
-import { KycStatistiqueUsecase } from '../../../src/usecase/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from '../../usecase/missionStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from '../../usecase/thematiqueStatistique.usecase';
+import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
+import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
+import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
+import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
+import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
+import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { App } from '../../domain/app';
 import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 import { ApplicationError } from '../applicationError';
-import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { PrismaService } from '../prisma/prisma.service';
-import { uuid4 } from '@sentry/utils';
 
 class VersionAPI {
   @ApiProperty()

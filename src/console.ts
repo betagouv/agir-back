@@ -2,18 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LinkyUsecase } from './usecase/linky.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
-import { StatistiqueUsecase } from './usecase/statistique.usecase';
-import { ArticleStatistiqueUsecase } from './usecase/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from './usecase/defiStatistique.usecase';
-import { KycStatistiqueUsecase } from './usecase/kycStatistique.usecase';
-import { QuizStatistiqueUsecase } from './usecase/quizStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from './usecase/thematiqueStatistique.usecase';
-import { MissionStatistiqueUsecase } from './usecase/missionStatistique.usecase';
+import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
+import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
+import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
+import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
+import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
+import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
+import { ServiceUsecase } from './usecase/service.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -143,6 +144,26 @@ async function bootstrap() {
         `STOP create_brevo_contacts after ${Date.now() - start_time} ms`,
       );
       console.log(result_crea_brevo);
+      break;
+    case 'process_async_service':
+      start_time = Date.now();
+      console.log(`START process_async_service ${start_time}`);
+      const result_process_async_service = await application
+        .get(ServiceUsecase)
+        .processAsyncServices();
+      console.log(
+        `STOP process_async_service after ${Date.now() - start_time} ms`,
+      );
+      console.log(result_process_async_service);
+      break;
+    case 'send_welcomes':
+      start_time = Date.now();
+      console.log(`START send_welcomes ${start_time}`);
+      const result_send_welcomes = await application
+        .get(MailerUsecase)
+        .envoyerEmailsWelcome();
+      console.log(`STOP send_welcomes after ${Date.now() - start_time} ms`);
+      console.log(result_send_welcomes);
       break;
     default:
       console.log('Command not found');

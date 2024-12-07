@@ -31,4 +31,20 @@ export class BilanCarboneStatistiqueRepository {
       },
     });
   }
+
+  public async getLastUpdateTime(utilisateurId: string): Promise<Date> {
+    const time = await this.prisma.bilanCarboneStatistique.findUnique({
+      where: {
+        utilisateurId: utilisateurId,
+      },
+      select: {
+        updated_at: true,
+      },
+    });
+
+    if (time) {
+      return time.updated_at;
+    }
+    return null;
+  }
 }

@@ -38,6 +38,7 @@ import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   id_cms: 11,
+  last_update: undefined,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
@@ -93,63 +94,32 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
 
     const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(2);
+    expect(services).toHaveLength(1);
 
     const service = await TestUtil.prisma.serviceDefinition.findUnique({
-      where: { id: 'ecowatt' },
+      where: { id: 'linky' },
     });
     expect(service.image_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335965/services/thermostat-programmable.jpg',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335771/services/multiprise-electricite-incendie-dangers.png',
     );
-    expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
-    expect(service.url).toEqual('https://www.monecowatt.fr/');
+    expect(service.titre).toEqual(
+      `Votre consommation électrique au jour le jour`,
+    );
+    expect(service.url).toEqual(
+      'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
+    );
     expect(service.icon_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335871/services/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh_w480-h960.png',
+      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335751/services/compteur-linky.jpg',
     );
     expect(service.is_url_externe).toEqual(true);
     expect(service.is_local).toEqual(false);
     expect(service.thematiques).toEqual(['logement']);
-    expect(service.minute_period).toEqual(30);
+    expect(service.minute_period).toEqual(null);
     expect(service.description).toEqual(
-      'Ecowatt aide les Français à mieux consommer l’électricité.',
+      'Conseils et suivi de consommation, en un seul endroit',
     );
     expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
-    );
-  });
-  it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/upsert_service_definitions');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(2);
-
-    const service = await TestUtil.prisma.serviceDefinition.findUnique({
-      where: { id: 'ecowatt' },
-    });
-    expect(service.image_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335965/services/thermostat-programmable.jpg',
-    );
-    expect(service.titre).toEqual(`⚡️ ÉcoWatt`);
-    expect(service.url).toEqual('https://www.monecowatt.fr/');
-    expect(service.icon_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335871/services/wtQahY_I8TVLQJ_Rcue7aC-dJ3FfZLNQe84smsyfRa9Qbs1-TG3CJvdrmQ9VUXUVO8vh_w480-h960.png',
-    );
-    expect(service.is_url_externe).toEqual(true);
-    expect(service.is_local).toEqual(false);
-    expect(service.thematiques).toEqual(['logement']);
-    expect(service.minute_period).toEqual(30);
-    expect(service.description).toEqual(
-      'Ecowatt aide les Français à mieux consommer l’électricité.',
-    );
-    expect(service.sous_description).toEqual(
-      'Véritable météo de l’électricité, Ecowatt mesure le niveau de consommation des Français au jour le jour et vous propose des conseils pour réduire votre impact et optimiser votre utilisation.',
+      'Suivez votre consommation électrique au quotidien en un clic : analysez vos habitudes, identifiez et éliminez les gaspillages pour une efficacité énergétique optimale !',
     );
   });
   it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
@@ -489,7 +459,7 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
+    expect(userDB.kyc_history.getRawAnsweredKYCs()[0].id_cms).toEqual(1);
   });
   it('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN

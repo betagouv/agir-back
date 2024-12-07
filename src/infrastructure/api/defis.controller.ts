@@ -21,10 +21,8 @@ import { GenericControler } from './genericControler';
 import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
-import { DefiStatistiqueUsecase } from '../../../src/usecase/defiStatistique.usecase';
+import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
-import { ApplicationError } from '../applicationError';
-import { App } from '../../domain/app';
 
 @Controller()
 @ApiBearerAuth()

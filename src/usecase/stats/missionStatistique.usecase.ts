@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Mission } from '../domain/mission/mission';
-import { ThematiqueStatistiqueRepository } from '../infrastructure/repository/universStatistique.repository';
-import { Scope } from '../domain/utilisateur/utilisateur';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
+import { UtilisateurRepository } from '../../infrastructure/repository/utilisateur/utilisateur.repository';
+import { Mission } from '../../domain/mission/mission';
+import { MissionStatistiqueRepository } from '../../infrastructure/repository/thematiqueStatistique.repository';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
-type ThematiqueRecord = {
+type MissionRecord = {
   titre: string;
   range_1_20: number;
   range_21_40: number;
@@ -16,21 +15,19 @@ type ThematiqueRecord = {
 };
 
 @Injectable()
-export class ThematiqueStatistiqueUsecase {
+export class MissionStatistiqueUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private universStatistiqueRepository: ThematiqueStatistiqueRepository,
+    private missionStatistiqueRepository: MissionStatistiqueRepository,
   ) {}
 
   async calculStatistique(): Promise<string[]> {
-    const thematiqueRecord: Record<string, ThematiqueRecord> = {};
+    const missionRecord: Record<string, MissionRecord> = {};
 
     const listeUtilisateursIds =
       await this.utilisateurRepository.listUtilisateurIds();
 
     for (const userId of listeUtilisateursIds) {
-      const missionRecord: Record<string, number[]> = {};
-
       const user = await this.utilisateurRepository.getById(userId, [
         Scope.missions,
       ]);
@@ -39,24 +36,9 @@ export class ThematiqueStatistiqueUsecase {
         const pourcentageCompletionMission =
           this.calculPourcentageDeCompletion(mission);
 
-        if (!missionRecord[mission.thematique]) {
-          missionRecord[mission.thematique] = [pourcentageCompletionMission];
-        } else {
-          missionRecord[mission.thematique].push(pourcentageCompletionMission);
-        }
-      }
-
-      for (const mission in missionRecord) {
-        const sum = missionRecord[mission].reduce(
-          (accumulator, currentValue) => accumulator + currentValue,
-          0,
-        );
-        const pourcentageCompletionThematique =
-          sum / missionRecord[mission].length;
-
-        if (!thematiqueRecord[mission]) {
-          thematiqueRecord[mission] = {
-            titre: mission,
+        if (!missionRecord[mission.id_cms]) {
+          missionRecord[mission.id_cms] = {
+            titre: mission.code,
             range_1_20: 0,
             range_21_40: 0,
             range_41_60: 0,
@@ -67,14 +49,16 @@ export class ThematiqueStatistiqueUsecase {
         }
 
         this.incrementeRange(
-          thematiqueRecord[mission],
-          pourcentageCompletionThematique,
+          missionRecord[mission.id_cms],
+          pourcentageCompletionMission,
         );
       }
     }
 
-    for (const [key, value] of Object.entries(thematiqueRecord)) {
-      await this.universStatistiqueRepository.upsert(
+    const missionRecordEntries = Object.entries(missionRecord);
+
+    for (const [key, value] of missionRecordEntries) {
+      await this.missionStatistiqueRepository.upsert(
         key,
         value.titre,
         value.range_1_20,
@@ -86,7 +70,7 @@ export class ThematiqueStatistiqueUsecase {
       );
     }
 
-    const thematiqueListeId = Object.keys(thematiqueRecord);
+    const thematiqueListeId = Object.keys(missionRecord);
 
     return thematiqueListeId;
   }
@@ -96,7 +80,7 @@ export class ThematiqueStatistiqueUsecase {
     return (current / target) * 100;
   }
 
-  private incrementeRange(record: ThematiqueRecord, pourcentage: number) {
+  private incrementeRange(record: MissionRecord, pourcentage: number) {
     let rangeKey;
     switch (true) {
       case pourcentage > 0 && pourcentage <= 20:

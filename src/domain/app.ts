@@ -37,9 +37,6 @@ export class App {
   public static areServiceAPIEnabled(): boolean {
     return process.env.SERVICE_APIS_ENABLED === 'true';
   }
-  public static getEcoWattApiSecret(): string {
-    return process.env.ECOWATT_CLIENT_ID_SECRET;
-  }
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;
   }

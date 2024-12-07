@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { KycStatistiqueRepository } from '../../src/infrastructure/repository/kycStatistique.repository';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../infrastructure/repository/utilisateur/utilisateur.repository';
+import { KycStatistiqueRepository } from '../../infrastructure/repository/kycStatistique.repository';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Injectable()
 export class KycStatistiqueUsecase {
@@ -20,7 +20,7 @@ export class KycStatistiqueUsecase {
         [Scope.kyc],
       );
 
-      for (const question of utilisateur.kyc_history.answered_questions) {
+      for (const question of utilisateur.kyc_history.getRawAnsweredKYCs()) {
         const label_reponse = question.getSelectedLabels();
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
           utilisateurId,

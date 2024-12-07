@@ -7,7 +7,6 @@ import {
   ServiceDefinition,
 } from '../domain/service/serviceDefinition';
 import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
-import { EcoWattServiceManager } from '../infrastructure/service/ecowatt/ecoWattServiceManager';
 import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
 import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
@@ -59,13 +58,11 @@ export class ServiceUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
-    private readonly ecoWattServiceManager: EcoWattServiceManager,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
     private readonly linkyServiceManager: LinkyServiceManager,
     private readonly eventUsecase: EventUsecase,
   ) {
     this.SCHEDULED_SERVICES = {
-      ecowatt: this.ecoWattServiceManager,
       dummy_scheduled: dummy_scheduled_manager,
     };
     this.LIVE_SERVICES = {

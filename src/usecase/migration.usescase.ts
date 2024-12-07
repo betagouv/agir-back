@@ -157,7 +157,7 @@ export class MigrationUsecase {
   ): Promise<{ ok: boolean; info: string }> {
     const kyc_def_liste = KycRepository.getCatalogue();
     const result = [];
-    for (const question of utilisateur.kyc_history.answered_questions) {
+    for (const question of utilisateur.kyc_history.getRawAnsweredKYCs()) {
       const kyc_def = kyc_def_liste.find((k) => k.code === question.code);
       if (kyc_def) {
         question.id_cms = kyc_def.id_cms;
