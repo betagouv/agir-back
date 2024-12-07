@@ -27,6 +27,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   a_supprimer: false,
   categorie: Categorie.mission,
   points: 10,
+  last_update: undefined,
   reponse_complexe: [
     {
       label: 'Souvent',
@@ -433,6 +434,7 @@ describe('/bilan (API test)', () => {
       answered_questions: [
         {
           code: 'KYC_saison_frequence',
+          last_update: undefined,
           id_cms: 21,
           question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
@@ -474,6 +476,7 @@ describe('/bilan (API test)', () => {
         {
           code: 'KYC_alimentation_regime',
           id_cms: 1,
+          last_update: undefined,
           question: `Votre regime`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
@@ -1222,7 +1225,10 @@ describe('/bilan (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(0);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0]).toEqual('Computed OK = [1]');
+    expect(response.body[1]).toEqual('Skipped = [0]');
+    expect(response.body[2]).toEqual('Errors = [0]');
 
     const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: {
@@ -1307,7 +1313,10 @@ describe('/bilan (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(0);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0]).toEqual('Computed OK = [1]');
+    expect(response.body[1]).toEqual('Skipped = [0]');
+    expect(response.body[2]).toEqual('Errors = [0]');
 
     const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: {
@@ -1321,6 +1330,111 @@ describe('/bilan (API test)', () => {
     expect(stats.total_g).toEqual(8781353);
     expect(stats.transport_g).toEqual(1869815);
     expect(stats.alimenation_g).toEqual(2302621);
+  });
+
+  it(`POST /utlilisateurs/compute_bilan_carbone bilan pas de calcul si le dernier calcul succède la dernière question maj`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: 'KYC_saison_frequence',
+          id_cms: 21,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: true,
+          last_update: new Date(1000),
+          reponse_complexe: [
+            {
+              label: 'Souvent',
+              code: 'souvent',
+              ngc_code: '"souvent"',
+              selected: true,
+            },
+            {
+              label: 'Jamais',
+              code: 'jamais',
+              ngc_code: '"bof"',
+              selected: false,
+            },
+            {
+              label: 'Parfois',
+              code: 'parfois',
+              ngc_code: '"burp"',
+              selected: false,
+            },
+          ],
+          tags: [],
+          ngc_key: 'alimentation . de saison . consommation',
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+      ],
+      tags: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: Unite.kg,
+      created_at: undefined,
+      is_ngc: true,
+      a_supprimer: false,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+
+    await TestUtil.prisma.bilanCarboneStatistique.create({
+      data: {
+        utilisateurId: 'utilisateur-id',
+        alimenation_g: 0,
+        transport_g: 0,
+        total_g: 0,
+        situation: {},
+        created_at: new Date(100),
+        updated_at: new Date(2000),
+      },
+    });
+
+    TestUtil.token = process.env.CRON_API_KEY;
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(3);
+    expect(response.body[0]).toEqual('Computed OK = [0]');
+    expect(response.body[1]).toEqual('Skipped = [1]');
+    expect(response.body[2]).toEqual('Errors = [0]');
+
+    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
+      where: {
+        utilisateurId: 'utilisateur-id',
+      },
+    });
+
+    expect(stats.situation).toEqual({});
+    expect(stats.total_g).toEqual(0);
+    expect(stats.transport_g).toEqual(0);
+    expect(stats.alimenation_g).toEqual(0);
+    expect(stats.updated_at).toEqual(new Date(2000));
   });
 
   it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur une erreur pour un des utilisateurs`, async () => {
@@ -1420,9 +1534,12 @@ describe('/bilan (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0]).toEqual('Computed OK = [1]');
+    expect(response.body[1]).toEqual('Skipped = [0]');
+    expect(response.body[2]).toEqual('Errors = [1]');
 
-    expect(response.body[0]).toEqual(
+    expect(response.body[3]).toEqual(
       'BC KO [utilisateur-id] : {"name":"SituationError","info":{"dottedName":"very bad key"}}',
     );
 

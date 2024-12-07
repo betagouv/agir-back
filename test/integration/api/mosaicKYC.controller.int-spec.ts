@@ -216,8 +216,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     expect(dbUser.gamification.points).toEqual(15);
 
-    expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
-    expect(dbUser.kyc_history.answered_questions[0]).toEqual({
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
+
+    delete dbUser.kyc_history.getRawAnsweredKYCs()[0].last_update;
+    delete dbUser.kyc_history.getRawAnsweredKYCs()[1].last_update;
+
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
       type: 'choix_unique',
@@ -269,7 +273,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       emoji: '🔥',
       unite: Unite.kg,
     });
-    expect(dbUser.kyc_history.answered_questions[1]).toEqual({
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
       type: 'choix_unique',
@@ -380,8 +384,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.kyc_history.answered_questions).toHaveLength(2);
-    expect(dbUser.kyc_history.answered_questions[0]).toEqual({
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
+
+    delete dbUser.kyc_history.getRawAnsweredKYCs()[0].last_update;
+    delete dbUser.kyc_history.getRawAnsweredKYCs()[1].last_update;
+
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
       type: 'entier',
@@ -405,7 +413,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       unite: Unite.kg,
       emoji: '🔥',
     });
-    expect(dbUser.kyc_history.answered_questions[1]).toEqual({
+    expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
       type: 'entier',
@@ -514,6 +522,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       answered_questions: [
         {
           code: '_1',
+          last_update: undefined,
           question: 'quest 1',
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -553,6 +562,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         },
         {
           code: '_2',
+          last_update: undefined,
           question: 'quest 2',
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -677,6 +687,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       answered_questions: [
         {
           code: '_1',
+          last_update: undefined,
           question: 'quest 1',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
@@ -698,6 +709,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_2',
           question: 'quest 2',
+          last_update: undefined,
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
           points: 20,

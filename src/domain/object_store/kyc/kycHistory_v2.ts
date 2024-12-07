@@ -45,6 +45,7 @@ export class ReponseComplexe_v2 {
 }
 
 export class QuestionKYC_v2 {
+  last_update: Date;
   code: string;
   id_cms: number;
   question: string;
@@ -68,6 +69,7 @@ export class QuestionKYC_v2 {
 
   static map(elem: QuestionKYC): QuestionKYC_v2 {
     return {
+      last_update: elem.last_update,
       code: elem.code,
       question: elem.question,
       type: elem.type,
@@ -106,10 +108,10 @@ export class KYCHistory_v2 extends Versioned_v2 {
   static serialise(domain: KYCHistory): KYCHistory_v2 {
     return {
       version: 2,
-      answered_questions: domain.answered_questions.map((e) =>
-        QuestionKYC_v2.map(e),
-      ),
-      answered_mosaics: domain.answered_mosaics,
+      answered_questions: domain
+        .getRawAnsweredKYCs()
+        .map((e) => QuestionKYC_v2.map(e)),
+      answered_mosaics: domain.getRawAnsweredMosaics(),
     };
   }
 
@@ -125,6 +127,7 @@ export class KYCHistory_v2 extends Versioned_v2 {
     if (source.answered_questions) {
       for (const question of source.answered_questions) {
         let new_question: QuestionKYC_v2 = {
+          last_update: undefined,
           code: question.code,
           id_cms: question.id_cms,
           categorie: question.categorie,

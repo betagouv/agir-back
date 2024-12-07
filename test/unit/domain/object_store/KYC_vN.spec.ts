@@ -24,7 +24,7 @@ describe('KYC vN ', () => {
     const domain = new KYCHistory(raw);
 
     // THEN
-    expect(domain.answered_questions).toHaveLength(0);
+    expect(domain.getRawAnsweredKYCs()).toHaveLength(0);
   });
 
   it('serialise <=> deserialise v0 OK', () => {
@@ -36,6 +36,7 @@ describe('KYC vN ', () => {
         {
           code: KYCID.KYC001,
           id_cms: 1,
+          last_update: new Date(123),
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -83,6 +84,7 @@ describe('KYC vN ', () => {
         {
           code: KYCID.KYC001,
           id_cms: 1,
+          last_update: new Date(123),
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -677,6 +679,7 @@ describe('KYC vN ', () => {
         {
           code: 'KYC_logement_age',
           tags: [],
+          last_update: undefined,
           type: TypeReponseQuestionKYC.entier,
           emoji: null,
           id_cms: 191,
@@ -760,6 +763,7 @@ describe('KYC vN ', () => {
         {
           code: 'KYC_bilan',
           tags: [],
+          last_update: undefined,
           type: 'choix_unique',
           emoji: null,
           id_cms: 52,
@@ -878,6 +882,7 @@ describe('KYC vN ', () => {
           is_NGC: false,
           points: 0,
           ngc_key: null,
+          last_update: undefined,
           question:
             'Sur quels thèmes recherchez-vous en priorité des aides et conseils ?',
           categorie: 'recommandation',

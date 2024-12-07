@@ -185,13 +185,31 @@ export class BilanCarboneUsecase {
   }
 
   async computeBilanTousUtilisateurs(): Promise<string[]> {
-    const error_liste = [];
+    const MAX_USER_TO_COMPUTE = 2000;
+
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+
+    const error_liste = [];
+    let computed_ok = 0;
+    let skipped = 0;
+    let errors = 0;
 
     for (const user_id of user_id_liste) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
         Scope.kyc,
       ]);
+
+      const last_update_time =
+        await this.bilanCarboneStatistiqueRepository.getLastUpdateTime(user_id);
+
+      if (
+        last_update_time &&
+        last_update_time.getTime() >
+          utilisateur.kyc_history.getLastUpdate().getTime()
+      ) {
+        skipped++;
+        continue; // pas besoin de reclalculer
+      }
 
       const situation = this.computeSituation(utilisateur);
       try {
@@ -203,11 +221,20 @@ export class BilanCarboneUsecase {
           bilan.details.transport * 1000,
           bilan.details.alimentation * 1000,
         );
+        computed_ok++;
+        if (computed_ok > MAX_USER_TO_COMPUTE) {
+          break; // trop de calcul pour un run de batch unique
+        }
       } catch (error) {
+        errors++;
         error_liste.push(`BC KO [${user_id}] : ` + JSON.stringify(error));
       }
     }
-    return error_liste;
+    return [
+      `Computed OK = [${computed_ok}]`,
+      `Skipped = [${skipped}]`,
+      `Errors = [${errors}]`,
+    ].concat(error_liste);
   }
 
   public computeSituation(utilisateur: Utilisateur): Object {

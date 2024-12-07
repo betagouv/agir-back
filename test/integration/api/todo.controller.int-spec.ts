@@ -1344,6 +1344,7 @@ describe('TODO list (API test)', () => {
       answered_questions: [
         {
           code: KYCID._1,
+          last_update: undefined,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,

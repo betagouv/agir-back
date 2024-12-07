@@ -38,6 +38,7 @@ import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   id_cms: 11,
+  last_update: undefined,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
@@ -458,7 +459,7 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.kyc_history.answered_questions[0].id_cms).toEqual(1);
+    expect(userDB.kyc_history.getRawAnsweredKYCs()[0].id_cms).toEqual(1);
   });
   it('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN

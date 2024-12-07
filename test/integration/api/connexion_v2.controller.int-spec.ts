@@ -377,6 +377,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
         {
           code: KYCID.KYC_preference,
           id_cms: 1,
+          last_update: undefined,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

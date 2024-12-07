@@ -20,7 +20,7 @@ export class KycStatistiqueUsecase {
         [Scope.kyc],
       );
 
-      for (const question of utilisateur.kyc_history.answered_questions) {
+      for (const question of utilisateur.kyc_history.getRawAnsweredKYCs()) {
         const label_reponse = question.getSelectedLabels();
         await this.kycStatistiqueRepository.upsertStatistiquesDUneKyc(
           utilisateurId,

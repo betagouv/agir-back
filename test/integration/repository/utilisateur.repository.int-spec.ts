@@ -306,7 +306,7 @@ describe('UtilisateurRepository', () => {
     ]);
 
     // THEN
-    expect(userDB.kyc_history.answered_questions).toHaveLength(1);
+    expect(userDB.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
   });
   it('getById  : scope kyc ', async () => {
     // GIVEN
@@ -318,7 +318,7 @@ describe('UtilisateurRepository', () => {
     ]);
 
     // THEN
-    expect(userDB.kyc_history.answered_questions).toHaveLength(1);
+    expect(userDB.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
   });
   it(`updateUtilisateur : pas d'erreur si champ json undefined`, async () => {
     // GIVEN

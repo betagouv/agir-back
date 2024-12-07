@@ -12,7 +12,6 @@ import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
-import { ApplicationError } from '../../infrastructure/applicationError';
 
 export enum SerialisableDomain {
   UnlockedFeatures = 'UnlockedFeatures',

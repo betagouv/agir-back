@@ -104,10 +104,10 @@ export class KYCHistory_v1 extends Versioned_v1 {
   static serialise(domain: KYCHistory): KYCHistory_v1 {
     return {
       version: 1,
-      answered_questions: domain.answered_questions.map((e) =>
-        QuestionKYC_v1.map(e),
-      ),
-      answered_mosaics: domain.answered_mosaics,
+      answered_questions: domain
+        .getRawAnsweredKYCs()
+        .map((e) => QuestionKYC_v1.map(e)),
+      answered_mosaics: domain.getRawAnsweredMosaics(),
     };
   }
 

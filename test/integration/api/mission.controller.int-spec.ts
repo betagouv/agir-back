@@ -2029,6 +2029,7 @@ describe('Mission (API test)', () => {
         {
           code: '1',
           id_cms: 1,
+          last_update: undefined,
           question: `Question`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
