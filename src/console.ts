@@ -129,10 +129,13 @@ async function bootstrap() {
     case 'send_notifications':
       start_time = Date.now();
       console.log(`START send_notifications ${start_time}`);
-      await application.get(MailerUsecase).envoyerEmailsAutomatiques();
+      const result_email = await application
+        .get(MailerUsecase)
+        .envoyerEmailsAutomatiques();
       console.log(
         `STOP send_notifications after ${Date.now() - start_time} ms`,
       );
+      console.log(result_email);
       break;
     case 'create_brevo_contacts':
       start_time = Date.now();

@@ -7,6 +7,10 @@
     {
       "command": "0 3 * * * ./scripts/nightly_processing.sh",
       "size": "L"
+    },
+    {
+      "command": "0 2 * * * ./scripts/nightly_bilan_carbone.sh",
+      "size": "L"
     }
   ]
 }
