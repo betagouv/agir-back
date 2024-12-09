@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { Pick } from '@prisma/client/runtime/library.js';
 
 import {
-  AidesVeloEngine,
   Aide,
   AideRuleNames,
+  AidesVeloEngine,
   Questions,
 } from '@betagouv/aides-velo';
 
-import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
 import { App } from '../../../src/domain/app';
 import miniatures from '../../../src/infrastructure/data/miniatures.json';
+import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
 
 /**
  * Aids to exclude from the results.
@@ -84,6 +84,10 @@ export class AidesVeloRepository {
           (aide: Aide) => ({
             libelle: aide.title,
             montant: aide.amount,
+            description: aide.description.trim(),
+            lien: aide.url,
+            collectivite: aide.collectivity,
+            logo: `${App.getAideVeloMiniaturesURL()}/${miniatures[aide.id]}`,
             // NOTE: this is legacy behavior, the plafond is the same as the
             // amount we should consider removing this field or implementing it
             // correctly.
@@ -91,10 +95,6 @@ export class AidesVeloRepository {
             // the aides retrofits repository, they shouldn't share the same type
             // or it should be refactored to have a generic type.
             plafond: aide.amount,
-            description: aide.description,
-            lien: aide.url,
-            collectivite: aide.collectivity,
-            logo: App.getAideVeloMiniaturesURL() + miniatures[aide.id],
           }),
           // HACK: limits of TS inference, without this, there is no error when
           // returning an array of `Aide` instead of `AideVelo`.
