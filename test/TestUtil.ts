@@ -27,6 +27,7 @@ import {
   Mission,
   KYC,
   Thematique as ThematiqueDB,
+  Partenaire,
 } from '.prisma/client';
 import {
   Aide,
@@ -75,6 +76,7 @@ export enum DB {
   thematique = 'thematique',
   linky = 'linky',
   article = 'article',
+  partenaire = 'partenaire',
   quizz = 'quizz',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
@@ -93,6 +95,7 @@ export class TestUtil {
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
+    partenaire: TestUtil.partenaireData,
     quizz: TestUtil.quizzData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
@@ -580,6 +583,15 @@ export class TestUtil {
       emoji: '🔥',
       image_url: 'https://img',
       label: 'the label',
+      ...override,
+    };
+  }
+  static partenaireData(override?): Partenaire {
+    return {
+      content_id: '123',
+      image_url: 'logo_url',
+      nom: 'ADEME',
+      url: 'https://ademe.fr',
       ...override,
     };
   }
