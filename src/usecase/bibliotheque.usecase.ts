@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { ContentType } from '../../src/domain/contenu/contentType';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { Article } from '../domain/contenu/article';
+import { EventUsecase } from './event.usecase';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -16,6 +16,7 @@ export class BibliothequeUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private personnalisator: Personnalisator,
+    private eventUsecase: EventUsecase,
   ) {}
 
   async rechercheBiblio(
@@ -75,12 +76,23 @@ export class BibliothequeUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz_aides, Scope.logement],
+      [
+        Scope.history_article_quizz_aides,
+        Scope.gamification,
+        Scope.missions,
+        Scope.kyc,
+        Scope.todo,
+        Scope.logement,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
     const result =
       utilisateur.history.getArticleFromBibliotheque(article_definition);
+
+    await this.eventUsecase.readArticle(content_id, utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

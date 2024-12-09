@@ -8,7 +8,6 @@ import { Thematique } from '../domain/contenu/thematique';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class EventUsecase {
@@ -16,7 +15,6 @@ export class EventUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
-    private defiRepository: DefiRepository,
   ) {}
 
   async processEvent(utilisateurId: string, event: AppEvent) {
@@ -183,17 +181,24 @@ export class EventUsecase {
         Scope.todo,
       ],
     );
-    utilisateur.history.lireArticle(event.content_id);
+
+    await this.readArticle(event.content_id, utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  public async readArticle(content_id: string, utilisateur: Utilisateur) {
+    utilisateur.history.lireArticle(content_id);
+
     const article_definition =
-      await this.articleRepository.getArticleDefinitionByContentId(
-        event.content_id,
-      );
-    if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
+      await this.articleRepository.getArticleDefinitionByContentId(content_id);
+
+    if (!utilisateur.history.sontPointsArticleEnPoche(content_id)) {
       utilisateur.gamification.ajoutePoints(
         article_definition.points,
         utilisateur,
       );
-      utilisateur.history.declarePointsArticleEnPoche(event.content_id);
+      utilisateur.history.declarePointsArticleEnPoche(content_id);
     }
     this.updateUserTodo(
       utilisateur,
@@ -202,7 +207,7 @@ export class EventUsecase {
     );
 
     utilisateur.missions.validateArticleOrQuizzDone(
-      event.content_id,
+      content_id,
       ContentType.article,
     );
 
@@ -210,8 +215,6 @@ export class EventUsecase {
       utilisateur,
       DefiRepository.getCatalogue(),
     );
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processQuizzScore(utilisateurId: string, event: AppEvent) {

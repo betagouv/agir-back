@@ -457,7 +457,6 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(response.status).toBe(201);
     expect(partenaire).toHaveLength(1);
-    console.log(partenaire);
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].url).toEqual('the lien');
