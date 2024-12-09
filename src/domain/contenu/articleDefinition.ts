@@ -16,9 +16,7 @@ export class ArticleDefinition {
   sources: SourceArticle[];
   contenu: string;
   image_url: string;
-  partenaire: string;
-  partenaire_url: string;
-  partenaire_logo_url: string;
+  partenaire_id: string;
   rubrique_ids: string[];
   rubrique_labels: string[];
   codes_postaux: string[];

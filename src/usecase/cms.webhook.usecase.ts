@@ -29,6 +29,8 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { Categorie } from '../domain/contenu/categorie';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhookImageURLAPI';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -38,6 +40,7 @@ export class CMSWebhookUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
+    private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
   ) {}
@@ -111,6 +114,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateDefi(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.partenaire) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deletePartenaire(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deletePartenaire(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdatePartenaire(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdatePartenaire(cmsWebhookAPI);
+      }
+    }
   }
 
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
@@ -118,6 +133,9 @@ export class CMSWebhookUsecase {
   }
   async deleteDefi(cmsWebhookAPI: CMSWebhookAPI) {
     await this.defiRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
+  async deletePartenaire(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.partenaireRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
 
   async createOrUpdateAide(cmsWebhookAPI: CMSWebhookAPI) {
@@ -132,6 +150,14 @@ export class CMSWebhookUsecase {
 
     await this.defiRepository.upsert(
       this.buildDefiFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+
+  async createOrUpdatePartenaire(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.partenaireRepository.upsert(
+      this.buildPartenaireFromCMSData(cmsWebhookAPI.entry),
     );
   }
 
@@ -209,11 +235,7 @@ export class CMSWebhookUsecase {
   private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
     console.log(JSON.stringify(hook.entry.partenaire));
     return {
-      partenaire_url: hook.entry.partenaire ? hook.entry.partenaire.lien : null,
       contenu: hook.entry.contenu,
-      partenaire_logo_url: hook.entry.partenaire
-        ? this.getImageUrlFromImageField(hook.entry.partenaire.logo[0])
-        : null,
       sources: hook.entry.sources
         ? hook.entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
         : [],
@@ -223,7 +245,9 @@ export class CMSWebhookUsecase {
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
       image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
-      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
+      partenaire_id: hook.entry.partenaire
+        ? '' + hook.entry.partenaire.id
+        : null,
       rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
       codes_postaux: this.split(hook.entry.codes_postaux),
@@ -257,7 +281,9 @@ export class CMSWebhookUsecase {
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
       image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
-      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
+      partenaire_id: hook.entry.partenaire
+        ? '' + hook.entry.partenaire.id
+        : null,
       rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
       codes_postaux: this.split(hook.entry.codes_postaux),
@@ -334,6 +360,18 @@ export class CMSWebhookUsecase {
       impact_kg_co2: entry.impact_kg_co2,
     };
   }
+  private buildPartenaireFromCMSData(
+    entry: CMSWebhookEntryAPI,
+  ): PartenaireDefinition {
+    console.log(entry.logo);
+    return {
+      id_cms: entry.id.toString(),
+      nom: entry.nom,
+      url: entry.lien,
+      image_url: this.getImageUrlFromImageField(entry.logo[0]),
+    };
+  }
+
   private buildKycFromCMSData(entry: CMSWebhookEntryAPI): KycDefinition {
     return {
       id_cms: entry.id,

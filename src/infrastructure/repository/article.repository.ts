@@ -29,41 +29,39 @@ export type ArticleFilter = {
 export class ArticleRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(article: ArticleDefinition): Promise<void> {
+  async upsert(article_def: ArticleDefinition): Promise<void> {
     const article_to_save: ArticleDB = {
-      source: article.source,
-      soustitre: article.soustitre,
-      tag_article: article.tag_article,
-      tags_utilisateur: article.tags_utilisateur,
-      thematique_principale: article.thematique_principale,
-      thematiques: article.thematiques,
-      contenu: article.contenu,
-      categorie: article.categorie,
-      codes_departement: article.codes_departement,
-      codes_postaux: article.codes_postaux,
-      codes_region: article.codes_region,
-      content_id: article.content_id,
-      difficulty: article.difficulty,
-      duree: article.duree,
-      frequence: article.frequence,
-      titre: article.titre,
-      exclude_codes_commune: article.exclude_codes_commune,
-      image_url: article.image_url,
-      include_codes_commune: article.include_codes_commune,
-      partenaire: article.partenaire,
-      partenaire_url: article.partenaire_url,
-      partenaire_logo_url: article.partenaire_logo_url,
-      mois: article.mois,
-      points: article.points,
-      rubrique_ids: article.rubrique_ids,
-      rubrique_labels: article.rubrique_labels,
-      sources: article.sources as any,
+      source: article_def.source,
+      soustitre: article_def.soustitre,
+      tag_article: article_def.tag_article,
+      partenaire_id: article_def.partenaire_id,
+      tags_utilisateur: article_def.tags_utilisateur,
+      thematique_principale: article_def.thematique_principale,
+      thematiques: article_def.thematiques,
+      contenu: article_def.contenu,
+      categorie: article_def.categorie,
+      codes_departement: article_def.codes_departement,
+      codes_postaux: article_def.codes_postaux,
+      codes_region: article_def.codes_region,
+      content_id: article_def.content_id,
+      difficulty: article_def.difficulty,
+      duree: article_def.duree,
+      frequence: article_def.frequence,
+      titre: article_def.titre,
+      exclude_codes_commune: article_def.exclude_codes_commune,
+      image_url: article_def.image_url,
+      include_codes_commune: article_def.include_codes_commune,
+      mois: article_def.mois,
+      points: article_def.points,
+      rubrique_ids: article_def.rubrique_ids,
+      rubrique_labels: article_def.rubrique_labels,
+      sources: article_def.sources as any,
       created_at: undefined,
       updated_at: undefined,
     };
 
     await this.prisma.article.upsert({
-      where: { content_id: article.content_id },
+      where: { content_id: article_def.content_id },
       create: article_to_save,
       update: article_to_save,
     });
@@ -204,13 +202,13 @@ export class ArticleRepository {
   private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
     if (articleDB === null) return null;
     return new Article({
+      partenaire_id: articleDB.partenaire_id,
       content_id: articleDB.content_id,
       categorie: Categorie[articleDB.categorie],
       titre: articleDB.titre,
       soustitre: articleDB.soustitre,
       source: articleDB.source,
       image_url: articleDB.image_url,
-      partenaire: articleDB.partenaire,
       rubrique_ids: articleDB.rubrique_ids,
       rubrique_labels: articleDB.rubrique_labels,
       codes_postaux: articleDB.codes_postaux,
@@ -231,8 +229,6 @@ export class ArticleRepository {
       tag_article: articleDB.tag_article,
       contenu: articleDB.contenu,
       sources: articleDB.sources as any,
-      partenaire_logo_url: articleDB.partenaire_logo_url,
-      partenaire_url: articleDB.partenaire_url,
     });
   }
 }

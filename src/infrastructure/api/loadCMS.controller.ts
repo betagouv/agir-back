@@ -64,6 +64,16 @@ export class LoadCMSController extends GenericControler {
     return await this.cmsUsecase.loadDefisFromCMS();
   }
 
+  @Post('/admin/load_partenaires_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les partenaires publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async load_partenaires_from_cms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadPartenairesFromCMS();
+  }
+
   @Post('/admin/load_quizzes_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les quizz publiés du CMS',

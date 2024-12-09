@@ -25,6 +25,8 @@ export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
     contenu: string;
+    nom: string;
+    lien: string;
     titre: string;
     introduction: string;
     label: string;
@@ -140,14 +142,14 @@ export type CMSWebhookPopulateAPI = {
     };
 
     imageUrl: ImageUrlAPI;
+    logo: { data: ImageUrlAPI2[] };
+
     partenaire: {
       data: {
+        id: number;
         attributes: {
           nom: string;
           lien: string;
-          logo: {
-            data: ImageUrlAPI2[];
-          };
         };
       };
     };

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Thematique } from '../domain/contenu/thematique';
-import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
@@ -30,6 +29,8 @@ import {
   ImageUrlAPI2,
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -39,6 +40,7 @@ export class CMSImportUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
+    private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
   ) {}
@@ -90,6 +92,30 @@ export class CMSImportUsecase {
     }
     for (let index = 0; index < liste_defis.length; index++) {
       await this.defiRepository.upsert(liste_defis[index]);
+    }
+    return loading_result;
+  }
+  async loadPartenairesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_partenaires: PartenaireDefinition[] = [];
+    const CMS_PART_DATA = await this.loadDataFromCMS('partenaires');
+
+    for (let index = 0; index < CMS_PART_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_PART_DATA[index];
+      let partenaire_def: PartenaireDefinition;
+      try {
+        partenaire_def = this.buildPartenaireFromCMSPopulateData(element);
+        liste_partenaires.push(partenaire_def);
+        loading_result.push(`loaded partenaire : ${partenaire_def.id_cms}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load partenaire ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_partenaires.length; index++) {
+      await this.partenaireRepository.upsert(liste_partenaires[index]);
     }
     return loading_result;
   }
@@ -229,7 +255,8 @@ export class CMSImportUsecase {
       | 'defis'
       | 'kycs'
       | 'missions'
-      | 'thematiques',
+      | 'thematiques'
+      | 'partenaires',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -275,7 +302,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=partenaire.logo&populate[27]=sources',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources',
     );
     return URL.concat(page);
   }
@@ -293,6 +320,7 @@ export class CMSImportUsecase {
     }
     return url;
   }
+
   private getFirstImageUrlFromPopulate(imageUrl: ImageUrlAPI2) {
     let url = null;
     if (imageUrl) {
@@ -306,11 +334,23 @@ export class CMSImportUsecase {
     }
     return url;
   }
-
   private extractUnite(label_unite: string) {
     if (!label_unite) return null;
     const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
     return unite ? unite : null;
+  }
+
+  private buildPartenaireFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): PartenaireDefinition {
+    return {
+      id_cms: entry.id.toString(),
+      nom: entry.attributes.nom,
+      url: entry.attributes.lien,
+      image_url: this.getFirstImageUrlFromPopulate(
+        entry.attributes.logo.data[0],
+      ),
+    };
   }
 
   private buildArticleFromCMSPopulateData(
@@ -324,24 +364,14 @@ export class CMSImportUsecase {
             url: s.lien,
           }))
         : [],
-      partenaire_logo_url:
-        entry.attributes.partenaire.data &&
-        entry.attributes.partenaire.data.attributes.logo
-          ? this.getFirstImageUrlFromPopulate(
-              entry.attributes.partenaire.data.attributes.logo.data[0],
-            )
-          : null,
-      partenaire_url: entry.attributes.partenaire.data
-        ? entry.attributes.partenaire.data.attributes.lien
-        : null,
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
-      partenaire: entry.attributes.partenaire.data
-        ? entry.attributes.partenaire.data.attributes.nom
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
         : null,
       rubrique_ids:
         entry.attributes.rubriques.data.length > 0
@@ -397,8 +427,8 @@ export class CMSImportUsecase {
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
-      partenaire: entry.attributes.partenaire.data
-        ? entry.attributes.partenaire.data.attributes.nom
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
         : null,
       rubrique_ids:
         entry.attributes.rubriques.data.length > 0

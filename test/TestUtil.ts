@@ -62,6 +62,7 @@ import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
+import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -191,6 +192,7 @@ export class TestUtil {
     await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
+    await this.prisma.partenaire.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -198,6 +200,7 @@ export class TestUtil {
     DefiRepository.resetCache();
     KycRepository.resetCache();
     MissionRepository.resetCache();
+    PartenaireRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -269,7 +272,7 @@ export class TestUtil {
       soustitre: 'sousTitre',
       source: 'ADEME',
       image_url: 'https://',
-      partenaire: 'Angers',
+      partenaire_id: undefined,
       tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
@@ -637,7 +640,7 @@ export class TestUtil {
       soustitre: 'Sous titre de mon article',
       source: undefined,
       image_url: undefined,
-      partenaire: undefined,
+      partenaire_id: undefined,
       tags_utilisateur: [],
       rubrique_ids: [],
       rubrique_labels: [],
@@ -659,8 +662,6 @@ export class TestUtil {
       tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
-      partenaire_logo_url: 'logo_url',
-      partenaire_url: 'partenaire url',
       ...override,
     };
   }

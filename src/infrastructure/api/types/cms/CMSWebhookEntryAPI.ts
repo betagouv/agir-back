@@ -69,9 +69,6 @@ export class CMSWebhookRubriqueAPI {
 }
 export class CMSWebhookPartenaireAPI {
   @ApiProperty() id: number;
-  @ApiProperty() nom: string;
-  @ApiProperty() lien: string;
-  @ApiProperty() logo: CMSWebhookImageURLAPI[];
 }
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
@@ -138,6 +135,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() url_demande: string;
   @ApiProperty() frequence: string;
   @ApiProperty({ type: CMSWebhookImageURLAPI }) imageUrl: CMSWebhookImageURLAPI;
+  @ApiProperty({ type: CMSWebhookImageURLAPI }) logo: CMSWebhookImageURLAPI[];
   @ApiProperty() difficulty: number;
   @ApiProperty() points?: number;
   @ApiProperty() unite?: string;
@@ -151,5 +149,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() is_ngc: boolean;
   @ApiProperty() A_SUPPRIMER: boolean;
   @ApiProperty() ngc_key: string;
+  @ApiProperty() nom: string;
+  @ApiProperty() lien: string;
   @ApiProperty() montantMaximum: string;
 }
