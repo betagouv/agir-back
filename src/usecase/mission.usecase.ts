@@ -21,6 +21,7 @@ import { PonderationApplicativeManager } from '../domain/scoring/ponderationAppl
 import { TuileMission } from '../domain/thematique/tuileMission';
 import { Thematique } from '../domain/contenu/thematique';
 import { PriorityContent } from '../domain/scoring/priorityContent';
+import { Article } from '../domain/contenu/article';
 
 @Injectable()
 export class MissionUsecase {
@@ -252,8 +253,12 @@ export class MissionUsecase {
     for (const objectif of objectifs) {
       if (objectif.tag_article) {
         filtre.tag_article = objectif.tag_article;
-        const article_candidat_liste =
+        const article_def_candidat_liste =
           await this.articleRepository.searchArticles(filtre);
+
+        const article_candidat_liste = article_def_candidat_liste.map(
+          (a) => new Article(a),
+        );
 
         PonderationApplicativeManager.increaseScoreContentOfList(
           article_candidat_liste,

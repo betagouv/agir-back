@@ -227,8 +227,12 @@ model Article {
   titre                 String
   soustitre             String?
   source                String?
+  sources               Json?    @default("[]")
   image_url             String?
   partenaire            String?
+  partenaire_url        String?
+  partenaire_logo_url   String?
+  contenu               String?
   tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])

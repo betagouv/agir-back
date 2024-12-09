@@ -1,47 +1,25 @@
-import { DifficultyLevel } from './difficultyLevel';
 import { ArticleHistory } from '../history/articleHistory';
-import { Thematique } from './thematique';
-import { TagUtilisateur } from '../scoring/tagUtilisateur';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Tag } from '../scoring/tag';
-import { Categorie } from './categorie';
+import { ArticleDefinition } from './articleDefinition';
 
-export class ArticleData {
-  content_id: string;
-  titre: string;
-  soustitre: string;
-  source: string;
-  image_url: string;
-  partenaire: string;
-  rubrique_ids: string[];
-  rubrique_labels: string[];
-  codes_postaux: string[];
-  duree: string;
-  frequence: string;
-  difficulty: DifficultyLevel;
-  points: number;
-  thematique_principale: Thematique;
-  thematiques: Thematique[];
-  tags_utilisateur: TagUtilisateur[];
+export class Article extends ArticleDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
-  categorie: Categorie;
-  mois: number[];
-  include_codes_commune: string[];
-  exclude_codes_commune: string[];
-  codes_departement: string[];
-  codes_region: string[];
-  tag_article: string;
-}
+  favoris: boolean;
+  read_date?: Date;
+  like_level?: number;
 
-export class Article extends ArticleData implements TaggedContent {
-  constructor(data: ArticleData) {
+  constructor(data: ArticleDefinition) {
     super();
     Object.assign(this, data);
-    if (!this.score) {
-      this.score = 0;
-    }
+
+    this.score = 0;
+    this.favoris = false;
+    this.read_date = null;
+    this.like_level = null;
+
     if (!this.mois) {
       this.mois = [];
     }
@@ -51,6 +29,7 @@ export class Article extends ArticleData implements TaggedContent {
       this.tags_rubriques = [];
     }
   }
+
   public getTags(): Tag[] {
     return [].concat(
       this.thematiques,
@@ -71,23 +50,11 @@ export class Article extends ArticleData implements TaggedContent {
       (this.codes_region && this.codes_region.length > 0)
     );
   }
-}
 
-export class PersonalArticle extends Article {
-  favoris: boolean;
-  read_date?: Date;
-  like_level?: number;
-
-  constructor(article: Article, articleHistory?: ArticleHistory) {
-    super(article);
-    if (articleHistory) {
-      this.favoris = articleHistory.favoris;
-      this.read_date = articleHistory.read_date;
-      this.like_level = articleHistory.like_level;
-    } else {
-      this.favoris = false;
-      this.read_date = null;
-      this.like_level = null;
-    }
+  public setHistory(articleHistory: ArticleHistory): Article {
+    this.favoris = articleHistory.favoris;
+    this.read_date = articleHistory.read_date;
+    this.like_level = articleHistory.like_level;
+    return this;
   }
 }

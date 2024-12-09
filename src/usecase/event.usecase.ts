@@ -184,14 +184,22 @@ export class EventUsecase {
       ],
     );
     utilisateur.history.lireArticle(event.content_id);
-    const article = await this.articleRepository.getArticleByContentId(
-      event.content_id,
-    );
+    const article_definition =
+      await this.articleRepository.getArticleDefinitionByContentId(
+        event.content_id,
+      );
     if (!utilisateur.history.sontPointsArticleEnPoche(event.content_id)) {
-      utilisateur.gamification.ajoutePoints(article.points, utilisateur);
+      utilisateur.gamification.ajoutePoints(
+        article_definition.points,
+        utilisateur,
+      );
       utilisateur.history.declarePointsArticleEnPoche(event.content_id);
     }
-    this.updateUserTodo(utilisateur, ContentType.article, article.thematiques);
+    this.updateUserTodo(
+      utilisateur,
+      ContentType.article,
+      article_definition.thematiques,
+    );
 
     utilisateur.missions.validateArticleOrQuizzDone(
       event.content_id,

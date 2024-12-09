@@ -1,3 +1,26 @@
+export type ImageUrlAPI = {
+  data: {
+    attributes: {
+      url: string;
+      formats: {
+        thumbnail: {
+          url: string;
+        };
+      };
+    };
+  };
+};
+export type ImageUrlAPI2 = {
+  attributes: {
+    url: string;
+    formats: {
+      thumbnail: {
+        url: string;
+      };
+    };
+  };
+};
+
 export type CMSWebhookPopulateAPI = {
   id: number;
   attributes: {
@@ -23,6 +46,13 @@ export type CMSWebhookPopulateAPI = {
     pourquoi: string;
     description: string;
     source: string;
+    sources: [
+      {
+        id: number;
+        libelle: string;
+        lien: string;
+      },
+    ];
     codes_postaux: string;
     mois: string;
     include_codes_commune: string;
@@ -109,22 +139,15 @@ export type CMSWebhookPopulateAPI = {
       };
     };
 
-    imageUrl: {
-      data: {
-        attributes: {
-          url: string;
-          formats: {
-            thumbnail: {
-              url: string;
-            };
-          };
-        };
-      };
-    };
+    imageUrl: ImageUrlAPI;
     partenaire: {
       data: {
         attributes: {
           nom: string;
+          lien: string;
+          logo: {
+            data: ImageUrlAPI2[];
+          };
         };
       };
     };

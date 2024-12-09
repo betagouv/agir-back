@@ -8,7 +8,6 @@ import {
   CMSWebhookEntryAPI,
   CMSWebhookRubriqueAPI,
 } from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { QuizzData } from '../domain/contenu/quizz';
@@ -28,6 +27,8 @@ import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { Categorie } from '../domain/contenu/categorie';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhookImageURLAPI';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -142,7 +143,7 @@ export class CMSWebhookUsecase {
       titre: cmsWebhookAPI.entry.titre,
       code: cmsWebhookAPI.entry.code,
       emoji: cmsWebhookAPI.entry.emoji,
-      image_url: this.getImageUrl(cmsWebhookAPI.entry),
+      image_url: this.getImageUrlFromImageField(cmsWebhookAPI.entry.imageUrl),
       label: cmsWebhookAPI.entry.label,
     });
   }
@@ -170,13 +171,13 @@ export class CMSWebhookUsecase {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
   }
 
-  private getImageUrl(cmsWebhookEntryAPI: CMSWebhookEntryAPI) {
+  private getImageUrlFromImageField(image_field: CMSWebhookImageURLAPI) {
     let url = null;
-    if (cmsWebhookEntryAPI.imageUrl) {
-      if (cmsWebhookEntryAPI.imageUrl.formats.thumbnail) {
-        url = cmsWebhookEntryAPI.imageUrl.formats.thumbnail.url;
+    if (image_field) {
+      if (image_field.formats && image_field.formats.thumbnail) {
+        url = image_field.formats.thumbnail.url;
       } else {
-        url = cmsWebhookEntryAPI.imageUrl.url;
+        url = image_field.url;
       }
     }
     return url;
@@ -195,30 +196,67 @@ export class CMSWebhookUsecase {
 
     if (cmsWebhookAPI.model === CMSModel.article) {
       await this.articleRepository.upsert(
-        this.buildArticleOrQuizzFromCMSData(
-          cmsWebhookAPI,
-          CMSModel.article,
-        ) as ArticleData,
+        this.buildArticleFromCMSData(cmsWebhookAPI),
       );
     }
     if (cmsWebhookAPI.model === CMSModel.quizz) {
       await this.quizzRepository.upsert(
-        this.buildArticleOrQuizzFromCMSData(cmsWebhookAPI, CMSModel.quizz),
+        this.buildQuizzFromCMSData(cmsWebhookAPI),
       );
     }
   }
 
-  private buildArticleOrQuizzFromCMSData(
-    hook: CMSWebhookAPI,
-    type: CMSModel,
-  ): ArticleData | QuizzData {
-    const result = {
+  private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
+    console.log(JSON.stringify(hook.entry.partenaire));
+    return {
+      partenaire_url: hook.entry.partenaire ? hook.entry.partenaire.lien : null,
+      contenu: hook.entry.contenu,
+      partenaire_logo_url: hook.entry.partenaire
+        ? this.getImageUrlFromImageField(hook.entry.partenaire.logo[0])
+        : null,
+      sources: hook.entry.sources
+        ? hook.entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
+        : [],
       content_id: hook.entry.id.toString(),
       tags_utilisateur: [],
       titre: hook.entry.titre,
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
-      image_url: this.getImageUrl(hook.entry),
+      image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
+      partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
+      rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
+      rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
+      codes_postaux: this.split(hook.entry.codes_postaux),
+      duree: hook.entry.duree,
+      frequence: hook.entry.frequence,
+      difficulty: hook.entry.difficulty ? hook.entry.difficulty : 1,
+      points: hook.entry.points ? hook.entry.points : 0,
+      thematique_principale: hook.entry.thematique_gamification
+        ? Thematique[hook.entry.thematique_gamification.code]
+        : Thematique.climat,
+      thematiques: hook.entry.thematiques
+        ? hook.entry.thematiques.map((elem) => Thematique[elem.code])
+        : [],
+      categorie: Categorie[hook.entry.categorie],
+      mois: hook.entry.mois
+        ? hook.entry.mois.split(',').map((m) => parseInt(m))
+        : [],
+      include_codes_commune: this.split(hook.entry.include_codes_commune),
+      exclude_codes_commune: this.split(hook.entry.exclude_codes_commune),
+      codes_departement: this.split(hook.entry.codes_departement),
+      codes_region: this.split(hook.entry.codes_region),
+      tag_article: hook.entry.tag_article ? hook.entry.tag_article.code : null,
+    };
+  }
+
+  private buildQuizzFromCMSData(hook: CMSWebhookAPI): QuizzData {
+    return {
+      content_id: hook.entry.id.toString(),
+      tags_utilisateur: [],
+      titre: hook.entry.titre,
+      soustitre: hook.entry.sousTitre,
+      source: hook.entry.source,
+      image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
       partenaire: hook.entry.partenaire ? hook.entry.partenaire.nom : null,
       rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
@@ -240,18 +278,6 @@ export class CMSWebhookUsecase {
         ? hook.entry.mois.split(',').map((m) => parseInt(m))
         : [],
     };
-    if (type === CMSModel.article) {
-      Object.assign(result, {
-        include_codes_commune: this.split(hook.entry.include_codes_commune),
-        exclude_codes_commune: this.split(hook.entry.exclude_codes_commune),
-        codes_departement: this.split(hook.entry.codes_departement),
-        codes_region: this.split(hook.entry.codes_region),
-        tag_article: hook.entry.tag_article
-          ? hook.entry.tag_article.code
-          : null,
-      });
-    }
-    return result;
   }
 
   private buildAideFromCMSData(entry: CMSWebhookEntryAPI): AideDefinition {
@@ -337,7 +363,7 @@ export class CMSWebhookUsecase {
             (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
           )
         : [],
-      image_url: this.getImageUrl(entry),
+      image_url: this.getImageUrlFromImageField(entry.imageUrl),
       short_question: entry.short_question,
       conditions: entry.OR_Conditions
         ? entry.OR_Conditions.map((or) =>
@@ -369,7 +395,7 @@ export class CMSWebhookUsecase {
       titre: entry.titre,
       introduction: entry.introduction,
       code: entry.code,
-      image_url: this.getImageUrl(entry),
+      image_url: this.getImageUrlFromImageField(entry.imageUrl),
       is_first: entry.is_first,
       objectifs:
         entry.objectifs.length > 0

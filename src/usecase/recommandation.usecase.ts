@@ -20,6 +20,7 @@ import { Feature } from '../../src/domain/gamification/feature';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Article } from '../domain/contenu/article';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -227,8 +228,11 @@ export class RecommandationUsecase {
       filtre.thematiques = [Thematique[thematique]];
     }
 
-    let articles = await this.articleRepository.searchArticles(filtre);
+    const articles_defs = await this.articleRepository.searchArticles(filtre);
 
+    const articles = articles_defs.map(
+      (article_def) => new Article(article_def),
+    );
     PonderationApplicativeManager.increaseScoreContentOfList(
       articles,
       utilisateur.tag_ponderation_set,

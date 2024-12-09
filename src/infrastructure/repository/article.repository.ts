@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Article, ArticleData } from '../../domain/contenu/article';
+import { Article } from '../../domain/contenu/article';
 import { Article as ArticleDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 
 export type ArticleFilter = {
   maxNumber?: number;
@@ -28,21 +29,43 @@ export type ArticleFilter = {
 export class ArticleRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(article: ArticleData): Promise<void> {
-    const article_to_save = { ...article };
-    delete article_to_save.score;
-    delete article_to_save.tags_rubriques;
+  async upsert(article: ArticleDefinition): Promise<void> {
+    const article_to_save: ArticleDB = {
+      source: article.source,
+      soustitre: article.soustitre,
+      tag_article: article.tag_article,
+      tags_utilisateur: article.tags_utilisateur,
+      thematique_principale: article.thematique_principale,
+      thematiques: article.thematiques,
+      contenu: article.contenu,
+      categorie: article.categorie,
+      codes_departement: article.codes_departement,
+      codes_postaux: article.codes_postaux,
+      codes_region: article.codes_region,
+      content_id: article.content_id,
+      difficulty: article.difficulty,
+      duree: article.duree,
+      frequence: article.frequence,
+      titre: article.titre,
+      exclude_codes_commune: article.exclude_codes_commune,
+      image_url: article.image_url,
+      include_codes_commune: article.include_codes_commune,
+      partenaire: article.partenaire,
+      partenaire_url: article.partenaire_url,
+      partenaire_logo_url: article.partenaire_logo_url,
+      mois: article.mois,
+      points: article.points,
+      rubrique_ids: article.rubrique_ids,
+      rubrique_labels: article.rubrique_labels,
+      sources: article.sources as any,
+      created_at: undefined,
+      updated_at: undefined,
+    };
+
     await this.prisma.article.upsert({
       where: { content_id: article.content_id },
-      create: {
-        ...article_to_save,
-        created_at: undefined,
-        updated_at: undefined,
-      },
-      update: {
-        ...article_to_save,
-        updated_at: undefined,
-      },
+      create: article_to_save,
+      update: article_to_save,
     });
   }
   async delete(content_id: string): Promise<void> {
@@ -51,14 +74,16 @@ export class ArticleRepository {
     });
   }
 
-  async getArticleByContentId(content_id: string): Promise<Article> {
+  async getArticleDefinitionByContentId(
+    content_id: string,
+  ): Promise<ArticleDefinition> {
     const result = await this.prisma.article.findUnique({
       where: { content_id: content_id },
     });
     return this.buildArticleFromDB(result);
   }
 
-  async searchArticles(filter: ArticleFilter): Promise<Article[]> {
+  async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {
     const main_filter = [];
 
     if (filter.date) {
@@ -176,7 +201,7 @@ export class ArticleRepository {
     return result.map((elem) => this.buildArticleFromDB(elem));
   }
 
-  private buildArticleFromDB(articleDB: ArticleDB): Article {
+  private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
     if (articleDB === null) return null;
     return new Article({
       content_id: articleDB.content_id,
@@ -198,14 +223,16 @@ export class ArticleRepository {
       tags_utilisateur: articleDB.tags_utilisateur.map(
         (t) => TagUtilisateur[t],
       ),
-      tags_rubriques: [],
-      score: 0,
       mois: articleDB.mois,
       codes_departement: articleDB.codes_departement,
       codes_region: articleDB.codes_region,
       exclude_codes_commune: articleDB.exclude_codes_commune,
       include_codes_commune: articleDB.include_codes_commune,
       tag_article: articleDB.tag_article,
+      contenu: articleDB.contenu,
+      sources: articleDB.sources as any,
+      partenaire_logo_url: articleDB.partenaire_logo_url,
+      partenaire_url: articleDB.partenaire_url,
     });
   }
 }

@@ -8,10 +8,10 @@ const BASIC_ARTICLE: Article = new Article({
   ...TestUtil.articleData(),
   thematique_principale: Thematique.alimentation,
   thematiques: [Thematique.alimentation, Thematique.climat],
-  score: 0,
-  tags_rubriques: [],
   tags_utilisateur: [],
   categorie: Categorie.recommandation,
+  source: 'source',
+  sources: [{ label: 'source 1', url: 'https//sources1' }],
 });
 
 describe('History', () => {

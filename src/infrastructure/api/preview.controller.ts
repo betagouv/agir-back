@@ -620,9 +620,10 @@ export class PreviewController extends GenericControler {
             DATA.ARTICLES_CANDIDATS = liste_article_preview;
             result.push(JSON.stringify(DATA, null, 2));
           } else {
-            const article = await this.articleRepository.getArticleByContentId(
-              objectif.content_id,
-            );
+            const article =
+              await this.articleRepository.getArticleDefinitionByContentId(
+                objectif.content_id,
+              );
             if (!article) {
               result.push(``);
               result.push(

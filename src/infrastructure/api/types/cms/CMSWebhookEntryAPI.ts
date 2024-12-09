@@ -16,6 +16,11 @@ export class CMSWebhookBesoinAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookSourceAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() libelle: string;
+  @ApiProperty() lien: string;
+}
 export class CMSWebhookFamilleAPI {
   @ApiProperty() id: number;
   @ApiProperty() nom: string;
@@ -65,6 +70,8 @@ export class CMSWebhookRubriqueAPI {
 export class CMSWebhookPartenaireAPI {
   @ApiProperty() id: number;
   @ApiProperty() nom: string;
+  @ApiProperty() lien: string;
+  @ApiProperty() logo: CMSWebhookImageURLAPI[];
 }
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
@@ -91,6 +98,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty({ type: CMSWebhookUniversAPI })
   univers_parent: CMSWebhookUniversAPI;
   @ApiProperty() sousTitre: string;
+  @ApiProperty() contenu: string;
   @ApiProperty() description: string;
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique_gamification: CMSThematiqueAPI;
@@ -124,6 +132,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() source: string;
+  @ApiProperty({ type: [CMSWebhookSourceAPI] }) sources: CMSWebhookSourceAPI[];
   @ApiProperty() echelle: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;

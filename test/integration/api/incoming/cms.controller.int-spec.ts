@@ -240,6 +240,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
+      contenu: 'Un long article très intéressant',
       thematique_gamification: {
         id: 1,
         titre: 'Alimentation',
@@ -258,6 +259,13 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         nom: 'Angers Loire Métropole',
         lien: 'https://www.angersloiremetropole.fr/',
+        logo: [
+          {
+            formats: {
+              thumbnail: { url: 'https://haha_logo' },
+            },
+          },
+        ],
       },
       source: 'La source',
       duree: 'pas trop long',
@@ -415,6 +423,11 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
     expect(articles[0].image_url).toEqual('https://haha');
+    expect(articles[0].contenu).toEqual('Un long article très intéressant');
+    expect(articles[0].partenaire_logo_url).toEqual('https://haha_logo');
+    expect(articles[0].partenaire_url).toEqual(
+      'https://www.angersloiremetropole.fr/',
+    );
     expect(articles[0].difficulty).toEqual(3);
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');

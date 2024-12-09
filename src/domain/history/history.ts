@@ -1,4 +1,5 @@
-import { Article, PersonalArticle } from '../contenu/article';
+import { Article } from '../contenu/article';
+import { ArticleDefinition } from '../contenu/articleDefinition';
 import { Categorie } from '../contenu/categorie';
 import { History_v0 } from '../object_store/history/history_v0';
 import { AideHistory } from './aideHistory';
@@ -90,11 +91,17 @@ export class History {
     return this.article_interactions.length;
   }
 
-  public personnaliserArticle(article: Article): PersonalArticle {
+  public getArticleFromBibliotheque(
+    article_definition: ArticleDefinition,
+  ): Article {
+    const article = new Article(article_definition);
     const found_article_history = this.getArticleHistoryById(
-      article.content_id,
+      article_definition.content_id,
     );
-    return new PersonalArticle(article, found_article_history);
+    if (found_article_history) {
+      article.setHistory(found_article_history);
+    }
+    return article;
   }
 
   public searchArticlesIds(filter: SearchArticleFilter): string[] {
@@ -113,24 +120,24 @@ export class History {
   }
 
   public orderArticlesByReadDateAndFavoris(
-    articles: Article[],
-  ): PersonalArticle[] {
-    const personalArticlesFavoris: PersonalArticle[] = [];
-    const personalArticlesPasFavoris: PersonalArticle[] = [];
+    articles_defs: ArticleDefinition[],
+  ): Article[] {
+    const articlesFavoris: Article[] = [];
+    const articlesPasFavoris: Article[] = [];
 
-    articles.forEach((article) => {
-      const perso = this.personnaliserArticle(article);
+    articles_defs.forEach((article_def) => {
+      const perso = this.getArticleFromBibliotheque(article_def);
       if (perso.favoris) {
-        personalArticlesFavoris.push(perso);
+        articlesFavoris.push(perso);
       } else {
-        personalArticlesPasFavoris.push(perso);
+        articlesPasFavoris.push(perso);
       }
     });
 
-    this.sortByDate(personalArticlesFavoris);
-    this.sortByDate(personalArticlesPasFavoris);
+    this.sortByDate(articlesFavoris);
+    this.sortByDate(articlesPasFavoris);
 
-    return [].concat(personalArticlesFavoris, personalArticlesPasFavoris);
+    return [].concat(articlesFavoris, articlesPasFavoris);
   }
 
   public listeIdsQuizz100Pour100(): string[] {
@@ -221,7 +228,7 @@ export class History {
     return result;
   }
 
-  private sortByDate(articles: PersonalArticle[]) {
+  private sortByDate(articles: Article[]) {
     articles.sort((a, b) => b.read_date.getTime() - a.read_date.getTime());
   }
 

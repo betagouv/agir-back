@@ -7,7 +7,7 @@ import {
   ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
 import { Thematique } from '../../../../domain/contenu/thematique';
-import { PersonalArticle } from '../../../../domain/contenu/article';
+import { Article } from '../../../../domain/contenu/article';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -42,9 +42,7 @@ export class ContenuBibliothequeAPI {
       read_date: content.read_date,
     };
   }
-  public static mapArticleToAPI(
-    content: PersonalArticle,
-  ): ContenuBibliothequeAPI {
+  public static mapArticleToAPI(content: Article): ContenuBibliothequeAPI {
     return {
       content_id: content.content_id,
       type: ContentType.article,
@@ -91,9 +89,9 @@ export class BibliothequeAPI {
 
   public static mapToAPI(biblio: Bibliotheque): BibliothequeAPI {
     return {
-      contenu: biblio.contenu.map((content) =>
-        ContenuBibliothequeAPI.mapToAPI(content),
-      ),
+      contenu: biblio
+        .getAllContenu()
+        .map((content) => ContenuBibliothequeAPI.mapToAPI(content)),
       filtres: ThematiqueFiltereAPI.mapToAPI(biblio.filtre_thematiques),
     };
   }

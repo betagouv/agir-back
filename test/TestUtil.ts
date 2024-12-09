@@ -657,6 +657,10 @@ export class TestUtil {
       codes_departement: [],
       codes_region: [],
       tag_article: 'composter',
+      contenu: 'un long article',
+      sources: [{ label: 'label', url: 'url' }],
+      partenaire_logo_url: 'logo_url',
+      partenaire_url: 'partenaire url',
       ...override,
     };
   }
