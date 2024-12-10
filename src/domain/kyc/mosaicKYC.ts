@@ -129,6 +129,7 @@ export class MosaicKYC_CATALOGUE {
         KYCID.KYC_electro_four,
         KYCID.KYC_electro_lave_vaiselle,
         KYCID.KYC_electro_seche_linge,
+        KYCID.KYC_electro_lave_linge,
       ],
       thematique: Thematique.consommation,
     },

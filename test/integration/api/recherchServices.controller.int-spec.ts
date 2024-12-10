@@ -425,12 +425,12 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
+      { code: 'nourriture', label: 'Tous les commerces', is_default: true },
       {
         code: 'circuit_court',
         label: 'Les producteurs locaux',
         is_default: false,
       },
-      { code: 'nourriture', label: 'Tous les commerces', is_default: true },
       {
         code: 'epicerie_superette',
         label: 'Les épiceries et supérettes',
