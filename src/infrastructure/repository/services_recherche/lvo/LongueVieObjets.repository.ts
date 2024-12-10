@@ -59,7 +59,6 @@ export class LongueVieObjetsRepository implements FinderInterface {
     return [
       CategorieRecherche.vos_objets,
       CategorieRecherche.donner,
-      CategorieRecherche.jeter,
       CategorieRecherche.reparer,
       CategorieRecherche.vendre,
       CategorieRecherche.louer,
@@ -151,6 +150,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
       return null;
     }
     console.log(`API_TIME:lvo:${Date.now() - call_time}`);
+
     return response.data;
   }
 }
