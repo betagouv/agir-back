@@ -1,9 +1,14 @@
 import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs/id/bibliotheque (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -469,6 +474,71 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.favoris).toEqual(true);
     expect(response.body.like_level).toEqual(1);
     expect(response.body.read_date).toEqual(new Date(1).toISOString());
+  });
+  it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, sans le méta données', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      partenaire_id: '123',
+    });
+    await partenaireRepository.loadPartenaires();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.content_id).toEqual('1');
+    expect(response.body.titre).toEqual('titreA');
+    expect(response.body.contenu).toEqual('un long article');
+    expect(response.body.favoris).toEqual(false);
+    expect(response.body.like_level).toEqual(null);
+    expect(response.body.read_date).toEqual(null);
+    expect(response.body.partenaire_nom).toEqual('ADEME');
+    expect(response.body.partenaire_url).toEqual('https://ademe.fr');
+    expect(response.body.partenaire_logo_url).toEqual('logo_url');
+  });
+  it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, celui-ci devient alors lu', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      partenaire_id: '123',
+    });
+    await partenaireRepository.loadPartenaires();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.history.estArticleLu('1')).toEqual(true);
   });
   it('GET /utilisateurs/id/bibliotheque/article/bad - 404 si article pas connu', async () => {
     // GIVEN

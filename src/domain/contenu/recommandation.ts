@@ -2,7 +2,7 @@ import { Thematique } from './thematique';
 import { ContentType } from './contentType';
 import { DefiStatus } from '../defis/defi';
 
-export class Recommandation {
+export type Recommandation = {
   content_id: string;
   type: ContentType;
   titre: string;
@@ -15,4 +15,4 @@ export class Recommandation {
   status_defi?: DefiStatus;
   soustitre?: string;
   duree?: string;
-}
+};

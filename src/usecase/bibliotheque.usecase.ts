@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { ContentType } from '../../src/domain/contenu/contentType';
 import { Thematique } from '../domain/contenu/thematique';
-import { PersonalArticle } from '../domain/contenu/article';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { Article } from '../domain/contenu/article';
+import { EventUsecase } from './event.usecase';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -16,6 +16,7 @@ export class BibliothequeUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
     private personnalisator: Personnalisator,
+    private eventUsecase: EventUsecase,
   ) {}
 
   async rechercheBiblio(
@@ -37,22 +38,19 @@ export class BibliothequeUsecase {
       est_favoris: favoris,
     });
 
-    let articles = await this.articleRepository.searchArticles({
+    let article_definitions = await this.articleRepository.searchArticles({
       include_ids: articles_lus,
       thematiques:
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
     });
 
-    const ordered_personal_articles =
-      utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
+    const ordered_articles =
+      utilisateur.history.orderArticlesByReadDateAndFavoris(
+        article_definitions,
+      );
 
-    ordered_personal_articles.forEach((personal_article) => {
-      result.contenu.push({
-        ...personal_article,
-        type: ContentType.article,
-      });
-    });
+    result.addArticles(ordered_articles);
 
     for (const thematique of ThematiqueRepository.getAllThematiques()) {
       if (thematique !== Thematique.services_societaux)
@@ -68,22 +66,33 @@ export class BibliothequeUsecase {
   public async getArticle(
     utilisateurId: string,
     content_id: string,
-  ): Promise<PersonalArticle> {
-    const article = await this.articleRepository.getArticleByContentId(
-      content_id,
-    );
+  ): Promise<Article> {
+    const article_definition =
+      await this.articleRepository.getArticleDefinitionByContentId(content_id);
 
-    if (!article) {
+    if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
     }
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.history_article_quizz_aides, Scope.logement],
+      [
+        Scope.history_article_quizz_aides,
+        Scope.gamification,
+        Scope.missions,
+        Scope.kyc,
+        Scope.todo,
+        Scope.logement,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
-    const result = utilisateur.history.personnaliserArticle(article);
+    const result =
+      utilisateur.history.getArticleFromBibliotheque(article_definition);
+
+    await this.eventUsecase.readArticle(content_id, utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

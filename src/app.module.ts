@@ -118,6 +118,7 @@ import { LongueVieObjetsRepository } from './infrastructure/repository/services_
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
+import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -257,6 +258,7 @@ function getControllers(): any[] {
     MailerUsecase,
     LongueVieObjetsRepository,
     NewServiceCatalogue,
+    PartenaireRepository,
   ],
 })
 export class AppModule {}

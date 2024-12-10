@@ -15,6 +15,7 @@ import {
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import {
+  ArticleBibliothequeAPI,
   BibliothequeAPI,
   ContenuBibliothequeAPI,
 } from './types/contenu/contenuBiblioAPI';
@@ -88,7 +89,7 @@ export class BibliothequeController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/bibliotheque/articles/:content_id')
-  @ApiOkResponse({ type: ContenuBibliothequeAPI })
+  @ApiOkResponse({ type: ArticleBibliothequeAPI })
   @ApiQuery({
     name: 'content_id',
     type: String,
@@ -100,7 +101,7 @@ export class BibliothequeController extends GenericControler {
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('content_id') content_id: string,
-  ): Promise<ContenuBibliothequeAPI> {
+  ): Promise<ArticleBibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
     const article = await this.bibliothequeUsecase.getArticle(

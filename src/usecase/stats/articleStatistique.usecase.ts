@@ -21,12 +21,14 @@ export class ArticleStatistiqueUsecase {
     );
 
     for (const [key, value] of Object.entries(statistiqueArticles)) {
-      const titreDeLArticle =
-        await this.articleRepository.getArticleByContentId(key);
+      const article_definition =
+        await this.articleRepository.getArticleDefinitionByContentId(key);
 
       await this.articleStatistiqueRepository.upsertStatistiquesDUnArticle(
         key,
-        titreDeLArticle ? titreDeLArticle.titre : `Article [${key}] supprimé`,
+        article_definition
+          ? article_definition.titre
+          : `Article [${key}] supprimé`,
         value.compteurDesNotes
           ? value.totalDesNotes / value.compteurDesNotes
           : null,

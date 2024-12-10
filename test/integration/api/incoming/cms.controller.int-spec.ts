@@ -240,6 +240,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
+      contenu: 'Un long article très intéressant',
       thematique_gamification: {
         id: 1,
         titre: 'Alimentation',
@@ -256,8 +257,6 @@ describe('/api/incoming/cms (API test)', () => {
       ],
       partenaire: {
         id: 1,
-        nom: 'Angers Loire Métropole',
-        lien: 'https://www.angersloiremetropole.fr/',
       },
       source: 'La source',
       duree: 'pas trop long',
@@ -278,6 +277,22 @@ describe('/api/incoming/cms (API test)', () => {
       codes_region: '25',
     },
   };
+  const CMS_DATA_PARTENAIRE = {
+    model: CMSModel.partenaire,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      nom: 'part',
+      lien: 'the lien',
+      logo: [
+        {
+          formats: {
+            thumbnail: { url: 'https://haha' },
+          },
+        },
+      ],
+    },
+  };
   const CMS_DATA_QUIZZ = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
@@ -296,8 +311,6 @@ describe('/api/incoming/cms (API test)', () => {
       ],
       partenaire: {
         id: 1,
-        nom: 'Angers Loire Métropole',
-        lien: 'https://www.angersloiremetropole.fr/',
       },
       rubriques: [
         { id: 1, titre: 'A' },
@@ -415,19 +428,39 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
     expect(articles[0].image_url).toEqual('https://haha');
+    expect(articles[0].contenu).toEqual('Un long article très intéressant');
     expect(articles[0].difficulty).toEqual(3);
     expect(articles[0].points).toEqual(20);
     expect(articles[0].source).toEqual('La source');
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
-    expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
+    expect(articles[0].partenaire_id).toEqual('1');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
     expect(articles[0].include_codes_commune).toEqual(['01', '02']);
     expect(articles[0].exclude_codes_commune).toEqual(['03', '04']);
     expect(articles[0].codes_departement).toEqual(['78']);
     expect(articles[0].codes_region).toEqual(['25']);
+  });
+
+  it('POST /api/incoming/cms - create a new partenaire in partenaire table', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_PARTENAIRE,
+    );
+
+    // THEN
+    const partenaire = await TestUtil.prisma.partenaire.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(partenaire).toHaveLength(1);
+    expect(partenaire[0].content_id).toEqual('123');
+    expect(partenaire[0].nom).toEqual('part');
+    expect(partenaire[0].url).toEqual('the lien');
+    expect(partenaire[0].image_url).toEqual('https://haha');
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
@@ -795,7 +828,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].points).toEqual(20);
     expect(quizzes[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(quizzes[0].content_id).toEqual('123');
-    expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
+    expect(quizzes[0].partenaire_id).toEqual('1');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
     expect(quizzes[0].mois).toStrictEqual([0, 1]);
@@ -827,7 +860,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(articles[0].mois).toStrictEqual([0, 1]);
     expect(articles[0].content_id).toEqual('123');
-    expect(articles[0].partenaire).toEqual('Angers Loire Métropole');
+    expect(articles[0].partenaire_id).toEqual('1');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
   });
@@ -857,7 +890,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].codes_postaux).toStrictEqual(['91120', '75002']);
     expect(quizzes[0].mois).toStrictEqual([0, 1]);
     expect(quizzes[0].content_id).toEqual('123');
-    expect(quizzes[0].partenaire).toEqual('Angers Loire Métropole');
+    expect(quizzes[0].partenaire_id).toEqual('1');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
   });

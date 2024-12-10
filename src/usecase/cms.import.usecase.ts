@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Thematique } from '../domain/contenu/thematique';
-import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { ArticleData } from '../domain/contenu/article';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { QuizzData } from '../domain/contenu/quizz';
@@ -25,7 +23,14 @@ import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
-import { CMSWebhookPopulateAPI } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
+import {
+  CMSWebhookPopulateAPI,
+  ImageUrlAPI,
+  ImageUrlAPI2,
+} from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -35,25 +40,23 @@ export class CMSImportUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
+    private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
   ) {}
 
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_articles: ArticleData[] = [];
+    const liste_articles: ArticleDefinition[] = [];
     const CMS_ARTICLE_DATA = await this.loadDataFromCMS('articles');
 
     for (let index = 0; index < CMS_ARTICLE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
-      let article: ArticleData;
+      let article_def: ArticleDefinition;
       try {
-        article = this.buildArticleOrQuizzFromCMSPopulateData(
-          element,
-          CMSModel.article,
-        ) as ArticleData;
-        liste_articles.push(article);
-        loading_result.push(`loaded article : ${article.content_id}`);
+        article_def = this.buildArticleFromCMSPopulateData(element);
+        liste_articles.push(article_def);
+        loading_result.push(`loaded article : ${article_def.content_id}`);
       } catch (error) {
         console.log(error);
         loading_result.push(
@@ -89,6 +92,30 @@ export class CMSImportUsecase {
     }
     for (let index = 0; index < liste_defis.length; index++) {
       await this.defiRepository.upsert(liste_defis[index]);
+    }
+    return loading_result;
+  }
+  async loadPartenairesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_partenaires: PartenaireDefinition[] = [];
+    const CMS_PART_DATA = await this.loadDataFromCMS('partenaires');
+
+    for (let index = 0; index < CMS_PART_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_PART_DATA[index];
+      let partenaire_def: PartenaireDefinition;
+      try {
+        partenaire_def = this.buildPartenaireFromCMSPopulateData(element);
+        liste_partenaires.push(partenaire_def);
+        loading_result.push(`loaded partenaire : ${partenaire_def.id_cms}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load partenaire ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste_partenaires.length; index++) {
+      await this.partenaireRepository.upsert(liste_partenaires[index]);
     }
     return loading_result;
   }
@@ -204,10 +231,7 @@ export class CMSImportUsecase {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
       let quizz: QuizzData;
       try {
-        quizz = this.buildArticleOrQuizzFromCMSPopulateData(
-          element,
-          CMSModel.quizz,
-        );
+        quizz = this.buildQuizzFromCMSPopulateData(element);
         liste_quizzes.push(quizz);
         loading_result.push(`loaded quizz : ${quizz.content_id}`);
       } catch (error) {
@@ -231,7 +255,8 @@ export class CMSImportUsecase {
       | 'defis'
       | 'kycs'
       | 'missions'
-      | 'thematiques',
+      | 'thematiques'
+      | 'partenaires',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -277,48 +302,133 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources',
     );
     return URL.concat(page);
   }
 
-  private getImageUrlFromPopulate(cmsPopulateAPI: CMSWebhookPopulateAPI) {
+  private getImageUrlFromPopulate(imageUrl: ImageUrlAPI) {
     let url = null;
-    if (cmsPopulateAPI.attributes.imageUrl) {
-      if (cmsPopulateAPI.attributes.imageUrl.data) {
-        if (
-          cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-        ) {
-          url =
-            cmsPopulateAPI.attributes.imageUrl.data.attributes.formats.thumbnail
-              .url;
+    if (imageUrl) {
+      if (imageUrl.data) {
+        if (imageUrl.data.attributes.formats.thumbnail) {
+          url = imageUrl.data.attributes.formats.thumbnail.url;
         } else {
-          url = cmsPopulateAPI.attributes.imageUrl.data.attributes.url;
+          url = imageUrl.data.attributes.url;
         }
       }
     }
     return url;
   }
 
+  private getFirstImageUrlFromPopulate(imageUrl: ImageUrlAPI2) {
+    let url = null;
+    if (imageUrl) {
+      if (imageUrl.attributes) {
+        if (imageUrl.attributes.formats.thumbnail) {
+          url = imageUrl.attributes.formats.thumbnail.url;
+        } else {
+          url = imageUrl.attributes.url;
+        }
+      }
+    }
+    return url;
+  }
   private extractUnite(label_unite: string) {
     if (!label_unite) return null;
     const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
     return unite ? unite : null;
   }
 
-  private buildArticleOrQuizzFromCMSPopulateData(
+  private buildPartenaireFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
-    type: CMSModel,
-  ): ArticleData | QuizzData {
-    const result = {
+  ): PartenaireDefinition {
+    return {
+      id_cms: entry.id.toString(),
+      nom: entry.attributes.nom,
+      url: entry.attributes.lien,
+      image_url: this.getFirstImageUrlFromPopulate(
+        entry.attributes.logo.data[0],
+      ),
+    };
+  }
+
+  private buildArticleFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): ArticleDefinition {
+    return {
+      contenu: entry.attributes.contenu,
+      sources: entry.attributes.sources
+        ? entry.attributes.sources.map((s) => ({
+            label: s.libelle,
+            url: s.lien,
+          }))
+        : [],
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
-      image_url: this.getImageUrlFromPopulate(entry),
-      partenaire: entry.attributes.partenaire.data
-        ? entry.attributes.partenaire.data.attributes.nom
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
+        : null,
+      rubrique_ids:
+        entry.attributes.rubriques.data.length > 0
+          ? entry.attributes.rubriques.data.map((elem) => elem.id.toString())
+          : [],
+      rubrique_labels:
+        entry.attributes.rubriques.data.length > 0
+          ? entry.attributes.rubriques.data.map((elem) => elem.attributes.titre)
+          : [],
+      codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
+      duree: entry.attributes.duree,
+      frequence: entry.attributes.frequence,
+      difficulty: entry.attributes.difficulty ? entry.attributes.difficulty : 1,
+      points: entry.attributes.points ? entry.attributes.points : 0,
+      thematique_principale: entry.attributes.thematique_gamification.data
+        ? Thematique[
+            entry.attributes.thematique_gamification.data.attributes.code
+          ]
+        : Thematique.climat,
+      thematiques:
+        entry.attributes.thematiques.data.length > 0
+          ? entry.attributes.thematiques.data.map(
+              (elem) => Thematique[elem.attributes.code],
+            )
+          : [Thematique.climat],
+      categorie: Categorie[entry.attributes.categorie],
+      mois: entry.attributes.mois
+        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
+        : [],
+      include_codes_commune: CMSImportUsecase.split(
+        entry.attributes.include_codes_commune,
+      ),
+      exclude_codes_commune: CMSImportUsecase.split(
+        entry.attributes.exclude_codes_commune,
+      ),
+      codes_departement: CMSImportUsecase.split(
+        entry.attributes.codes_departement,
+      ),
+      codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
+      tag_article: entry.attributes.tag_article.data
+        ? entry.attributes.tag_article.data.attributes.code
+        : undefined,
+    };
+  }
+
+  private buildQuizzFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): QuizzData {
+    return {
+      content_id: entry.id.toString(),
+      tags_utilisateur: [],
+      titre: entry.attributes.titre,
+      soustitre: entry.attributes.sousTitre,
+      source: entry.attributes.source,
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
         : null,
       rubrique_ids:
         entry.attributes.rubriques.data.length > 0
@@ -351,24 +461,6 @@ export class CMSImportUsecase {
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
         : [],
     };
-    if (type === CMSModel.article) {
-      Object.assign(result, {
-        include_codes_commune: CMSImportUsecase.split(
-          entry.attributes.include_codes_commune,
-        ),
-        exclude_codes_commune: CMSImportUsecase.split(
-          entry.attributes.exclude_codes_commune,
-        ),
-        codes_departement: CMSImportUsecase.split(
-          entry.attributes.codes_departement,
-        ),
-        codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
-        tag_article: entry.attributes.tag_article.data
-          ? entry.attributes.tag_article.data.attributes.code
-          : undefined,
-      });
-    }
-    return result;
   }
   private buildAideFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
@@ -417,7 +509,7 @@ export class CMSImportUsecase {
     return {
       id_cms: entry.id,
       label: entry.attributes.label,
-      image_url: this.getImageUrlFromPopulate(entry),
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
       code: entry.attributes.code,
       emoji: entry.attributes.emoji,
       titre: entry.attributes.titre,
@@ -487,7 +579,7 @@ export class CMSImportUsecase {
           TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
       ),
       short_question: entry.attributes.short_question,
-      image_url: this.getImageUrlFromPopulate(entry),
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
       conditions: entry.attributes.OR_Conditions
         ? entry.attributes.OR_Conditions.map((or) =>
             or.AND_Conditions.map((and) => ({
@@ -513,7 +605,7 @@ export class CMSImportUsecase {
       is_first: entry.attributes.is_first,
       titre: entry.attributes.titre,
       introduction: entry.attributes.introduction,
-      image_url: this.getImageUrlFromPopulate(entry),
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {

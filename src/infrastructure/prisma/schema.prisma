@@ -227,8 +227,10 @@ model Article {
   titre                 String
   soustitre             String?
   source                String?
+  sources               Json?    @default("[]")
   image_url             String?
-  partenaire            String?
+  partenaire_id         String?
+  contenu               String?
   tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])
@@ -250,13 +252,22 @@ model Article {
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model Partenaire {
+  content_id String   @id
+  nom        String?
+  url        String?
+  image_url  String?
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Quizz {
   content_id            String   @id
   titre                 String
   soustitre             String?
   source                String?
   image_url             String?
-  partenaire            String?
+  partenaire_id         String?
   tags_utilisateur      String[] @default([])
   rubrique_ids          String[] @default([])
   rubrique_labels       String[] @default([])

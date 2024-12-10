@@ -23,22 +23,35 @@ export class QuizzRepository {
   constructor(private prisma: PrismaService) {}
 
   async upsert(quizz: QuizzData): Promise<void> {
-    const quizz_to_save = { ...quizz };
-    delete quizz_to_save.score;
-    delete quizz_to_save.tags_rubriques;
+    const quizz_to_save: QuizzDB = {
+      categorie: quizz.categorie,
+      codes_postaux: quizz.codes_postaux,
+      content_id: quizz.content_id,
+      difficulty: quizz.difficulty,
+      duree: quizz.duree,
+      frequence: quizz.frequence,
+      image_url: quizz.image_url,
+      mois: quizz.mois,
+      partenaire_id: quizz.partenaire_id,
+      points: quizz.points,
+      rubrique_ids: quizz.rubrique_ids,
+      rubrique_labels: quizz.rubrique_labels,
+      source: quizz.source,
+      soustitre: quizz.soustitre,
+      titre: quizz.titre,
+      tags_utilisateur: quizz.tags_utilisateur,
+      thematique_principale: quizz.thematique_principale,
+      thematiques: quizz.thematiques,
+      created_at: undefined,
+      updated_at: undefined,
+    };
     await this.prisma.quizz.upsert({
       where: { content_id: quizz.content_id },
-      create: {
-        ...quizz_to_save,
-        created_at: undefined,
-        updated_at: undefined,
-      },
-      update: {
-        ...quizz_to_save,
-        updated_at: undefined,
-      },
+      create: quizz_to_save,
+      update: quizz_to_save,
     });
   }
+
   async delete(content_id: string): Promise<void> {
     await this.prisma.quizz.delete({
       where: { content_id: content_id },
@@ -114,7 +127,7 @@ export class QuizzRepository {
       soustitre: quizzDB.soustitre,
       source: quizzDB.source,
       image_url: quizzDB.image_url,
-      partenaire: quizzDB.partenaire,
+      partenaire_id: quizzDB.partenaire_id,
       rubrique_ids: quizzDB.rubrique_ids,
       rubrique_labels: quizzDB.rubrique_labels,
       codes_postaux: quizzDB.codes_postaux,

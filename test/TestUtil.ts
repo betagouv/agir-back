@@ -27,6 +27,7 @@ import {
   Mission,
   KYC,
   Thematique as ThematiqueDB,
+  Partenaire,
 } from '.prisma/client';
 import {
   Aide,
@@ -62,6 +63,7 @@ import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
+import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -74,6 +76,7 @@ export enum DB {
   thematique = 'thematique',
   linky = 'linky',
   article = 'article',
+  partenaire = 'partenaire',
   quizz = 'quizz',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
@@ -92,6 +95,7 @@ export class TestUtil {
     thematique: TestUtil.thematiqueData,
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
+    partenaire: TestUtil.partenaireData,
     quizz: TestUtil.quizzData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
@@ -191,6 +195,7 @@ export class TestUtil {
     await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
+    await this.prisma.partenaire.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -198,6 +203,7 @@ export class TestUtil {
     DefiRepository.resetCache();
     KycRepository.resetCache();
     MissionRepository.resetCache();
+    PartenaireRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -269,7 +275,7 @@ export class TestUtil {
       soustitre: 'sousTitre',
       source: 'ADEME',
       image_url: 'https://',
-      partenaire: 'Angers',
+      partenaire_id: undefined,
       tags_utilisateur: [],
       rubrique_ids: ['3', '4'],
       rubrique_labels: ['r3', 'r4'],
@@ -580,6 +586,15 @@ export class TestUtil {
       ...override,
     };
   }
+  static partenaireData(override?): Partenaire {
+    return {
+      content_id: '123',
+      image_url: 'logo_url',
+      nom: 'ADEME',
+      url: 'https://ademe.fr',
+      ...override,
+    };
+  }
   static serviceData(override?): Service {
     return {
       id: 'service-id',
@@ -637,7 +652,7 @@ export class TestUtil {
       soustitre: 'Sous titre de mon article',
       source: undefined,
       image_url: undefined,
-      partenaire: undefined,
+      partenaire_id: undefined,
       tags_utilisateur: [],
       rubrique_ids: [],
       rubrique_labels: [],
@@ -657,6 +672,8 @@ export class TestUtil {
       codes_departement: [],
       codes_region: [],
       tag_article: 'composter',
+      contenu: 'un long article',
+      sources: [{ label: 'label', url: 'url' }],
       ...override,
     };
   }
