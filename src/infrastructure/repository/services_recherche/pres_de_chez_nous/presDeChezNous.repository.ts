@@ -74,8 +74,8 @@ export class PresDeChezNousRepository implements FinderInterface {
 
   public getManagedCategories(): CategorieRecherche[] {
     return [
-      CategorieRecherche.circuit_court,
       CategorieRecherche.nourriture,
+      CategorieRecherche.circuit_court,
       CategorieRecherche.epicerie_superette,
       CategorieRecherche.marche_local,
       CategorieRecherche.zero_dechet,
