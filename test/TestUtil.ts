@@ -271,6 +271,8 @@ export class TestUtil {
   static quizzData(override?: Partial<Quizz>): Quizz {
     return {
       content_id: '1',
+      article_id: undefined,
+      questions: undefined,
       titre: 'titreA',
       soustitre: 'sousTitre',
       source: 'ADEME',

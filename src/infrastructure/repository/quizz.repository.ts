@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Quizz, QuizzData } from '../../domain/contenu/quizz';
+import { Quizz } from '../../domain/contenu/quizz';
 import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/contenu/thematique';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { QuizzDefinition } from '../../domain/contenu/quizzDefinition';
 
 export type QuizzFilter = {
   maxNumber?: number;
@@ -22,9 +23,11 @@ export type QuizzFilter = {
 export class QuizzRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(quizz: QuizzData): Promise<void> {
+  async upsert(quizz: QuizzDefinition): Promise<void> {
     const quizz_to_save: QuizzDB = {
       categorie: quizz.categorie,
+      article_id: undefined,
+      questions: undefined,
       codes_postaux: quizz.codes_postaux,
       content_id: quizz.content_id,
       difficulty: quizz.difficulty,
@@ -138,10 +141,10 @@ export class QuizzRepository {
       thematique_principale: Thematique[quizzDB.thematique_principale],
       thematiques: quizzDB.thematiques.map((th) => Thematique[th]),
       tags_utilisateur: quizzDB.tags_utilisateur.map((t) => TagUtilisateur[t]),
-      tags_rubriques: [],
-      score: 0,
       categorie: Categorie[quizzDB.categorie],
       mois: quizzDB.mois,
+      article_id: quizzDB.article_id,
+      questions: quizzDB.questions as any,
     });
   }
 }

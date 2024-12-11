@@ -1,40 +1,18 @@
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
-import { TagUtilisateur } from '../scoring/tagUtilisateur';
-import { Categorie } from './categorie';
-import { Thematique } from './thematique';
+import { QuizzDefinition } from './quizzDefinition';
 
-export class QuizzData {
-  content_id: string;
-  titre: string;
-  soustitre: string;
-  source: string;
-  image_url: string;
-  partenaire_id: string;
-  rubrique_ids: string[];
-  rubrique_labels: string[];
-  codes_postaux: string[];
-  duree: string;
-  frequence: string;
-  difficulty: number;
-  points: number;
-  thematique_principale: Thematique;
-  thematiques: Thematique[];
-  tags_utilisateur: TagUtilisateur[];
+export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
-  categorie: Categorie;
-  mois: number[];
-}
 
-export class Quizz extends QuizzData implements TaggedContent {
-  constructor(data: QuizzData) {
+  constructor(data: QuizzDefinition) {
     super();
     Object.assign(this, data);
-    if (!this.score) {
-      this.score = 0;
-    }
+
+    this.score = 0;
+
     if (!this.mois) {
       this.mois = [];
     }
