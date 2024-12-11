@@ -26,6 +26,11 @@ import { App } from '../../domain/app';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../domain/utilisateur/utilisateur';
 import { AideRepository } from '../repository/aide.repository';
+import { RechercheServiceManager } from '../../domain/bibliotheque_services/recherche/rechercheServiceManager';
+import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
+import { CommuneRepository } from '../repository/commune/commune.repository';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export class SyntheseAPI {
   @ApiProperty() nombre_inscrits: number;
@@ -35,6 +40,15 @@ export class SyntheseAPI {
   @ApiProperty() nombre_aides_region_total: number;
   @ApiProperty() nombre_aides_departement_total: number;
   @ApiProperty() nombre_aides_commune_total: number;
+  @ApiProperty() result_LVO_all: number;
+  @ApiProperty() result_LVO_donner: number;
+  @ApiProperty() result_LVO_reparer: number;
+  @ApiProperty() result_LVO_louer: number;
+  @ApiProperty() result_LVO_emprunter: number;
+  @ApiProperty() result_PDCN_circuit_court: number;
+  @ApiProperty() result_PDCN_epicerie_superette: number;
+  @ApiProperty() result_PDCN_marche_local: number;
+  @ApiProperty() result_PDCN_zero_dechet: number;
 }
 
 @ApiTags('Previews')
@@ -50,7 +64,9 @@ export class SyntheseController extends GenericControler {
     private missionUsecase: MissionUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
+    private communeRepository: CommuneRepository,
     private aideRepository: AideRepository,
+    private rechercheServiceManager: RechercheServiceManager,
   ) {
     super();
   }
@@ -87,8 +103,29 @@ export class SyntheseController extends GenericControler {
       nombre_points_moyen = nombre_points_moyen / user_ids_code_postal.length;
     }
 
+    const filtre: FiltreRecherche = {};
+
+    filtre.code_postal = code_postal;
+    const liste_commune =
+      this.communeRepository.getListCommunesParCodePostal(code_postal);
+    filtre.commune = liste_commune[0];
+    filtre.nombre_max_resultats = 200;
+
+    const code_commune = await this.communeRepository.getCodeCommune(
+      filtre.code_postal,
+      filtre.commune,
+    );
+
+    const dept_region =
+      await this.communeRepository.findDepartementRegionByCodePostal(
+        code_postal,
+      );
+
     const aides_dispo = await this.aideRepository.search({
       code_postal: code_postal,
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
     });
 
     let count_aide_nat = 0;
@@ -117,6 +154,63 @@ export class SyntheseController extends GenericControler {
         count_aide_nat++;
       }
     }
+
+    const finder_LVO = this.rechercheServiceManager.getFinderById(
+      ServiceRechercheID.longue_vie_objets,
+    );
+    const finder_PDCN = this.rechercheServiceManager.getFinderById(
+      ServiceRechercheID.proximite,
+    );
+
+    const result_LVO_donner = await finder_LVO.find(
+      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.donner }),
+    );
+    const result_LVO_reparer = await finder_LVO.find(
+      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.reparer }),
+    );
+    const result_LVO_louer = await finder_LVO.find(
+      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.louer }),
+    );
+    const result_LVO_emprunter = await finder_LVO.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.emprunter,
+      }),
+    );
+    const result_LVO_all = await finder_LVO.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.vos_objets,
+      }),
+    );
+
+    const result_PDCN_circuit_court = await finder_PDCN.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.circuit_court,
+      }),
+    );
+    const result_PDCN_epicerie_superette = await finder_PDCN.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.epicerie_superette,
+      }),
+    );
+    const result_PDCN_marche_local = await finder_PDCN.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.marche_local,
+      }),
+    );
+    const result_PDCN_zero_dechet = await finder_PDCN.find(
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.zero_dechet,
+      }),
+    );
+
+    // #####################################
+
     return res.json({
       nombre_inscrits: user_ids_code_postal.length,
       nombre_points_moyen: nombre_points_moyen,
@@ -125,6 +219,15 @@ export class SyntheseController extends GenericControler {
       nombre_aides_region_total: count_aide_region,
       nombre_aides_departement_total: count_aide_departement,
       nombre_aides_commune_total: count_aide_commune,
+      result_LVO_all: result_LVO_all.length,
+      result_LVO_donner: result_LVO_donner.length,
+      result_LVO_reparer: result_LVO_reparer.length,
+      result_LVO_louer: result_LVO_louer.length,
+      result_LVO_emprunter: result_LVO_emprunter.length,
+      result_PDCN_circuit_court: result_PDCN_circuit_court.length,
+      result_PDCN_epicerie_superette: result_PDCN_epicerie_superette.length,
+      result_PDCN_marche_local: result_PDCN_marche_local.length,
+      result_PDCN_zero_dechet: result_PDCN_zero_dechet.length,
     });
   }
 
