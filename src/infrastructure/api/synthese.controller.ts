@@ -25,10 +25,16 @@ import { MissionUsecase } from '../../usecase/mission.usecase';
 import { App } from '../../domain/app';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../domain/utilisateur/utilisateur';
+import { AideRepository } from '../repository/aide.repository';
 
 export class SyntheseAPI {
   @ApiProperty() nombre_inscrits: number;
   @ApiProperty() nombre_points_moyen: number;
+  @ApiProperty() nombre_aides_total: number;
+  @ApiProperty() nombre_aides_nat_total: number;
+  @ApiProperty() nombre_aides_region_total: number;
+  @ApiProperty() nombre_aides_departement_total: number;
+  @ApiProperty() nombre_aides_commune_total: number;
 }
 
 @ApiTags('Previews')
@@ -44,20 +50,23 @@ export class SyntheseController extends GenericControler {
     private missionUsecase: MissionUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
+    private aideRepository: AideRepository,
   ) {
     super();
   }
 
   @Get('code_postal_synthese/:code_postal')
   @ApiOkResponse({ type: SyntheseAPI })
-  async cms_urls_preview(
-    @Headers('Authorization') authorization: string,
+  async code_postal_synthese(
+    //@Headers('Authorization') authorization: string,
     @Param('code_postal') code_postal: string,
     @Response() res: Res,
   ): Promise<any> {
+    /*
     if (!this.checkAuthHeaderOK(authorization)) {
       return this.returnBadOreMissingLoginError(res);
     }
+      */
 
     const user_ids_code_postal = await this.userRepository.listUtilisateurIds(
       undefined,
@@ -77,9 +86,45 @@ export class SyntheseController extends GenericControler {
     if (user_ids_code_postal.length > 0) {
       nombre_points_moyen = nombre_points_moyen / user_ids_code_postal.length;
     }
+
+    const aides_dispo = await this.aideRepository.search({
+      code_postal: code_postal,
+    });
+
+    let count_aide_nat = 0;
+    let count_aide_region = 0;
+    let count_aide_departement = 0;
+    let count_aide_commune = 0;
+    for (const aide of aides_dispo) {
+      if (
+        aide.codes_postaux.length > 0 ||
+        aide.include_codes_commune.length > 0
+      ) {
+        count_aide_commune++;
+      }
+      if (aide.codes_departement.length > 0) {
+        count_aide_departement++;
+      }
+      if (aide.codes_region.length > 0) {
+        count_aide_region++;
+      }
+      if (
+        aide.codes_departement.length == 0 &&
+        aide.codes_region.length === 0 &&
+        aide.codes_postaux.length === 0 &&
+        aide.include_codes_commune.length === 0
+      ) {
+        count_aide_nat++;
+      }
+    }
     return res.json({
       nombre_inscrits: user_ids_code_postal.length,
       nombre_points_moyen: nombre_points_moyen,
+      nombre_aides_total: aides_dispo.length,
+      nombre_aides_nat_total: count_aide_nat,
+      nombre_aides_region_total: count_aide_region,
+      nombre_aides_departement_total: count_aide_departement,
+      nombre_aides_commune_total: count_aide_commune,
     });
   }
 

@@ -52,10 +52,8 @@ describe('Synthese (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    expect(response.body).toEqual({
-      nombre_inscrits: 1,
-      nombre_points_moyen: 10,
-    });
+    expect(response.body.nombre_inscrits).toEqual(1);
+    expect(response.body.nombre_points_moyen).toEqual(10);
   });
   it(`GET /code_postal_synthese - renvoie la synthèse du code postal, 0 inscrit`, async () => {
     // GIVEN
@@ -82,9 +80,36 @@ describe('Synthese (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    expect(response.body).toEqual({
-      nombre_inscrits: 0,
-      nombre_points_moyen: 0,
+    expect(response.body.nombre_inscrits).toEqual(0);
+    expect(response.body.nombre_points_moyen).toEqual(0);
+  });
+  it(`GET /code_postal_synthese - renvoie la synthèse du code postal, 1 aide local`, async () => {
+    // GIVEN
+    process.env.BASIC_LOGIN = 'XXX';
+    process.env.BASIC_PASSWORD = 'YYY';
+
+    const base64 = App.getBasicLoginPwdBase64();
+
+    const logement: Partial<Logement_v0> = { code_postal: '21000', version: 0 };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement,
     });
+    await TestUtil.create(DB.aide, { codes_postaux: ['21000'] });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .get('/code_postal_synthese/21000')
+      .set('Authorization', `Basic ${base64}`);
+
+    // THEN
+    expect(response.status).toBe(200);
+    console.log(response.body);
+
+    expect(response.body.nombre_aides_total).toEqual(1);
+    expect(response.body.nombre_aides_nat_total).toEqual(0);
+    expect(response.body.nombre_aides_region_total).toEqual(0);
+    expect(response.body.nombre_aides_departement_total).toEqual(0);
+    expect(response.body.nombre_aides_commune_total).toEqual(1);
   });
 });
