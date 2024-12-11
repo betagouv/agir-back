@@ -126,7 +126,7 @@ export class RechercheServicesUsecase {
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
-    let encore_plus_resultats_dispo = false;
+    let encore_plus_resultats_dispo: boolean;
     let max_resultat: number;
 
     if (result.length > 0 && result[0].nbr_resultats_max_dispo) {
@@ -134,9 +134,8 @@ export class RechercheServicesUsecase {
     } else {
       max_resultat = finder.getMaxResultOfCategorie(filtre.categorie);
     }
-    if (result.length < max_resultat) {
-      encore_plus_resultats_dispo = true;
-    }
+
+    encore_plus_resultats_dispo = result.length < max_resultat;
 
     return {
       liste: result,
