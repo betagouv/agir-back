@@ -1,3 +1,4 @@
+import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
@@ -508,6 +509,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.partenaire_nom).toEqual('ADEME');
     expect(response.body.partenaire_url).toEqual('https://ademe.fr');
     expect(response.body.partenaire_logo_url).toEqual('logo_url');
+    expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
   });
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, celui-ci devient alors lu', async () => {
     // GIVEN
@@ -563,5 +565,104 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     // THEN
     expect(response.status).toBe(404);
     expect(response.body.message).toEqual(`l'article d'id [bad] n'existe pas`);
+  });
+  it('GET /utilisateurs/id/bibliotheque/quizz/123 - renvoi un quizz non encore réalisé', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.quizz, {
+      content_id: '123',
+      article_id: '1',
+      questions: {
+        liste_questions: [
+          {
+            libelle: "Qu'est-ce qu'un embout mousseur ?",
+            reponses: [
+              {
+                reponse: "Un composant d'une bombe de crème chantilly",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un élément d'une tireuse à bière",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un dispositif réduisant le débit d'eau du robinet",
+                est_bonne_reponse: true,
+              },
+            ],
+            explication_ko: 'ko',
+            explication_ok: 'ok',
+          },
+        ],
+      },
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire_id: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: [],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      categorie: Categorie.recommandation,
+      mois: [],
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.content_id).toEqual('123');
+    expect(response.body.titre).toEqual('titreA');
+    expect(response.body.sousTitre).toEqual('sousTitre');
+    expect(response.body.points).toEqual(10);
+    expect(response.body.duree).toEqual('pas long');
+    expect(response.body.thematique_principale).toEqual(Thematique.climat);
+    expect(response.body.difficulty).toEqual(1);
+    expect(response.body.article_contenu).toEqual('un très bon article');
+    expect(response.body.questions).toEqual([
+      {
+        libelle: "Qu'est-ce qu'un embout mousseur ?",
+        explicationKO: 'ko',
+        explicationOk: 'ok',
+        reponses: [
+          {
+            reponse: "Un composant d'une bombe de crème chantilly",
+            exact: false,
+          },
+          {
+            reponse: "Un élément d'une tireuse à bière",
+            exact: false,
+          },
+          {
+            reponse: "Un dispositif réduisant le débit d'eau du robinet",
+            exact: true,
+          },
+        ],
+      },
+    ]);
   });
 });

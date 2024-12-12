@@ -119,6 +119,7 @@ import { CMSImportUsecase } from './usecase/cms.import.usecase';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
+import { SyntheseController } from './infrastructure/api/synthese.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -149,6 +150,7 @@ function getControllers(): any[] {
     PreviewController,
     NotificationsController,
     LoadCMSController,
+    SyntheseController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);

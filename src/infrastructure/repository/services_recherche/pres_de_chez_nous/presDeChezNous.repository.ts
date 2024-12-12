@@ -111,7 +111,13 @@ export class PresDeChezNousRepository implements FinderInterface {
     if (!result) {
       ApplicationError.throwExternalServiceError('Près de chez nous');
     }
-    const final_result: ResultatRecherche[] = result.data.map(
+
+    const subset = result.data.slice(
+      0,
+      filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
+    );
+
+    const final_result: ResultatRecherche[] = subset.map(
       (r) =>
         new ResultatRecherche({
           id: r.id,
@@ -130,6 +136,7 @@ export class PresDeChezNousRepository implements FinderInterface {
           open_hours: this.mapOpenHours(r.openhours),
           openhours_more_infos: r.openhours_more_infos,
           phone: r.telephone,
+          nbr_resultats_max_dispo: result.data.length,
         }),
     );
 
@@ -177,7 +184,7 @@ export class PresDeChezNousRepository implements FinderInterface {
         },
         params: {
           categories: categories,
-          limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
+          limit: 100,
           bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
         },
       });

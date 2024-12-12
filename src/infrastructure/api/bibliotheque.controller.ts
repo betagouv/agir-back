@@ -15,13 +15,14 @@ import {
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import {
-  ArticleBibliothequeAPI,
   BibliothequeAPI,
   ContenuBibliothequeAPI,
 } from './types/contenu/contenuBiblioAPI';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
+import { ArticleBibliothequeAPI } from './types/contenu/articleAPI';
+import { QuizzBibliothequeAPI } from './types/contenu/quizzAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -108,6 +109,29 @@ export class BibliothequeController extends GenericControler {
       utilisateurId,
       content_id,
     );
-    return ContenuBibliothequeAPI.mapArticleToAPI(article);
+    return ArticleBibliothequeAPI.mapArticleToAPI(article);
+  }
+
+  @Get('utilisateurs/:utilisateurId/bibliotheque/quizz/:content_id')
+  @ApiOkResponse({ type: QuizzBibliothequeAPI })
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id d'un quizz`,
+  })
+  @UseGuards(AuthGuard)
+  async getQuizz(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('content_id') content_id: string,
+  ): Promise<QuizzBibliothequeAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const quizz = await this.bibliothequeUsecase.getQuizz(
+      utilisateurId,
+      content_id,
+    );
+    return QuizzBibliothequeAPI.map(quizz);
   }
 }

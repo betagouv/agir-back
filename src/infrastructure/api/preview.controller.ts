@@ -7,7 +7,7 @@ import {
   Response,
 } from '@nestjs/common';
 import { Response as Res } from 'express';
-import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { KycRepository } from '../repository/kyc.repository';
 import { NGCCalculator } from '../ngc/NGCCalculator';
@@ -33,6 +33,7 @@ import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
 
+@ApiTags('Previews')
 @Controller()
 @ApiExcludeController()
 @ApiBearerAuth()

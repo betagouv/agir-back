@@ -10,7 +10,6 @@ import {
 } from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
-import { QuizzData } from '../domain/contenu/quizz';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
@@ -31,6 +30,7 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhookImageURLAPI';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -273,9 +273,23 @@ export class CMSWebhookUsecase {
     };
   }
 
-  private buildQuizzFromCMSData(hook: CMSWebhookAPI): QuizzData {
+  private buildQuizzFromCMSData(hook: CMSWebhookAPI): QuizzDefinition {
     return {
       content_id: hook.entry.id.toString(),
+      article_id: hook.entry.articles[0]
+        ? '' + hook.entry.articles[0].id
+        : undefined,
+      questions: {
+        liste_questions: hook.entry.questions.map((q) => ({
+          libelle: q.libelle,
+          explication_ko: q.explicationKO,
+          explication_ok: q.explicationOk,
+          reponses: q.reponses.map((r) => ({
+            reponse: r.reponse,
+            est_bonne_reponse: r.exact,
+          })),
+        })),
+      },
       tags_utilisateur: [],
       titre: hook.entry.titre,
       soustitre: hook.entry.sousTitre,
@@ -297,8 +311,6 @@ export class CMSWebhookUsecase {
       thematiques: hook.entry.thematiques
         ? hook.entry.thematiques.map((elem) => Thematique[elem.code])
         : [],
-      score: 0,
-      tags_rubriques: [],
       categorie: Categorie[hook.entry.categorie],
       mois: hook.entry.mois
         ? hook.entry.mois.split(',').map((m) => parseInt(m))

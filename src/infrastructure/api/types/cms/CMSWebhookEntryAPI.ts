@@ -26,6 +26,19 @@ export class CMSWebhookFamilleAPI {
   @ApiProperty() nom: string;
   @ApiProperty() ordre: number;
 }
+export class CMSWebhookReponseAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() reponse: string;
+  @ApiProperty() exact: boolean;
+}
+export class CMSWebhookQuestionAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() libelle: string;
+  @ApiProperty() explicationOk: string;
+  @ApiProperty() explicationKO: string;
+  @ApiProperty({ type: [CMSWebhookReponseAPI] })
+  reponses: CMSWebhookReponseAPI[];
+}
 export class CMSWebhookObjectifAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -70,6 +83,9 @@ export class CMSWebhookRubriqueAPI {
 export class CMSWebhookPartenaireAPI {
   @ApiProperty() id: number;
 }
+export class CMSWebhookArticleAPI {
+  @ApiProperty() id: number;
+}
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
@@ -85,6 +101,10 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty({ type: [CMSWebhookArticleAPI] })
+  articles: CMSWebhookArticleAPI[];
+  @ApiProperty({ type: [CMSWebhookQuestionAPI] })
+  questions: CMSWebhookQuestionAPI[];
   @ApiProperty() short_question: string;
   @ApiProperty() niveau: number;
   @ApiProperty({ type: CMSWebhookFamilleAPI })

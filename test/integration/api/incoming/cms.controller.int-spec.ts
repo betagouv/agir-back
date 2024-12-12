@@ -299,6 +299,39 @@ describe('/api/incoming/cms (API test)', () => {
     entry: {
       id: 123,
       titre: 'titre',
+      articles: [{ id: 1 }],
+      questions: [
+        {
+          libelle: 'super question',
+          explicationOk: 'OK',
+          explicationKO: 'KO',
+          reponses: [
+            {
+              reponse: 'a',
+              exact: true,
+            },
+            {
+              reponse: 'b',
+              exact: false,
+            },
+          ],
+        },
+        {
+          libelle: '2nd question',
+          explicationOk: 'OK_2',
+          explicationKO: 'KO_2',
+          reponses: [
+            {
+              reponse: 'c',
+              exact: false,
+            },
+            {
+              reponse: 'd',
+              exact: true,
+            },
+          ],
+        },
+      ],
       sousTitre: 'soustitre 222',
       thematique_gamification: {
         id: 1,
@@ -832,6 +865,41 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
     expect(quizzes[0].mois).toStrictEqual([0, 1]);
+    expect(quizzes[0].article_id).toStrictEqual('1');
+    expect(quizzes[0].questions).toStrictEqual({
+      liste_questions: [
+        {
+          libelle: 'super question',
+          reponses: [
+            {
+              est_bonne_reponse: true,
+              reponse: 'a',
+            },
+            {
+              est_bonne_reponse: false,
+              reponse: 'b',
+            },
+          ],
+          explication_ko: 'KO',
+          explication_ok: 'OK',
+        },
+        {
+          libelle: '2nd question',
+          reponses: [
+            {
+              est_bonne_reponse: false,
+              reponse: 'c',
+            },
+            {
+              est_bonne_reponse: true,
+              reponse: 'd',
+            },
+          ],
+          explication_ko: 'KO_2',
+          explication_ok: 'OK_2',
+        },
+      ],
+    });
   });
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
@@ -893,6 +961,41 @@ describe('/api/incoming/cms (API test)', () => {
     expect(quizzes[0].partenaire_id).toEqual('1');
     expect(quizzes[0].rubrique_ids).toEqual(['1', '2']);
     expect(quizzes[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(quizzes[0].article_id).toStrictEqual('1');
+    expect(quizzes[0].questions).toStrictEqual({
+      liste_questions: [
+        {
+          libelle: 'super question',
+          reponses: [
+            {
+              est_bonne_reponse: true,
+              reponse: 'a',
+            },
+            {
+              est_bonne_reponse: false,
+              reponse: 'b',
+            },
+          ],
+          explication_ko: 'KO',
+          explication_ok: 'OK',
+        },
+        {
+          libelle: '2nd question',
+          reponses: [
+            {
+              est_bonne_reponse: false,
+              reponse: 'c',
+            },
+            {
+              est_bonne_reponse: true,
+              reponse: 'd',
+            },
+          ],
+          explication_ko: 'KO_2',
+          explication_ok: 'OK_2',
+        },
+      ],
+    });
   });
   it('POST /api/incoming/cms - creates a new article then a new quizz of same id, unpublish quizz leaves article', async () => {
     // GIVEN

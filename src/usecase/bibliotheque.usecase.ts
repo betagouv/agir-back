@@ -4,17 +4,23 @@ import { ArticleRepository } from '../infrastructure/repository/article.reposito
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { Article } from '../domain/contenu/article';
 import { EventUsecase } from './event.usecase';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { Quizz } from '../domain/contenu/quizz';
 
 @Injectable()
 export class BibliothequeUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
+    private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
     private eventUsecase: EventUsecase,
   ) {}
@@ -95,5 +101,34 @@ export class BibliothequeUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  public async getQuizz(
+    utilisateurId: string,
+    content_id: string,
+  ): Promise<Quizz> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const quizz = await this.quizzRepository.getQuizzByContentId(content_id);
+
+    if (!quizz) {
+      ApplicationError.throwQuizzNotFound(content_id);
+    }
+
+    if (quizz.article_id) {
+      quizz.article_contenu = (
+        await this.articleRepository.getArticleDefinitionByContentId(
+          quizz.article_id,
+        )
+      ).contenu;
+    }
+
+    return this.personnalisator.personnaliser(quizz, utilisateur, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 }

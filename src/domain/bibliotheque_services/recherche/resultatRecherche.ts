@@ -103,5 +103,6 @@ export class ResultatRecherche {
     this.etapes_recette = res.etapes_recette
       ? res.etapes_recette.map((e) => new EtapeRecette(e))
       : [];
+    this.nbr_resultats_max_dispo = res.nbr_resultats_max_dispo;
   }
 }

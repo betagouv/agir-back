@@ -263,6 +263,7 @@ model Partenaire {
 
 model Quizz {
   content_id            String   @id
+  article_id            String?
   titre                 String
   soustitre             String?
   source                String?
@@ -280,6 +281,7 @@ model Quizz {
   thematiques           String[] @default([])
   categorie             String   @default("recommandation")
   mois                  Int[]    @default([])
+  questions             Json?    @default("{}")
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }

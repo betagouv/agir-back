@@ -203,6 +203,7 @@ export class UtilisateurRepository {
     created_after?: Date,
     is_active?: boolean,
     max_number?: number,
+    code_postal?: string,
   ): Promise<string[]> {
     let query = {
       select: {
@@ -220,6 +221,12 @@ export class UtilisateurRepository {
     }
     if (max_number) {
       query['take'] = max_number;
+    }
+    if (code_postal) {
+      query['where'].logement = {
+        path: ['code_postal'],
+        equals: code_postal,
+      };
     }
     const result = await this.prisma.utilisateur.findMany(query);
 

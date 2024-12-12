@@ -3,7 +3,6 @@ import { Thematique } from '../domain/contenu/thematique';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
-import { QuizzData } from '../domain/contenu/quizz';
 import axios from 'axios';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
@@ -31,6 +30,7 @@ import {
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -224,12 +224,12 @@ export class CMSImportUsecase {
 
   async loadQuizzFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
-    const liste_quizzes: QuizzData[] = [];
+    const liste_quizzes: QuizzDefinition[] = [];
     const CMS_QUIZZ_DATA = await this.loadDataFromCMS('quizzes');
 
     for (let index = 0; index < CMS_QUIZZ_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
-      let quizz: QuizzData;
+      let quizz: QuizzDefinition;
       try {
         quizz = this.buildQuizzFromCMSPopulateData(element);
         liste_quizzes.push(quizz);
@@ -302,7 +302,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses',
     );
     return URL.concat(page);
   }
@@ -419,9 +419,28 @@ export class CMSImportUsecase {
 
   private buildQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
-  ): QuizzData {
+  ): QuizzDefinition {
     return {
       content_id: entry.id.toString(),
+      article_id:
+        entry.attributes.articles.data.length > 0
+          ? '' + entry.attributes.articles.data[0].id
+          : undefined,
+      questions: entry.attributes.questions
+        ? {
+            liste_questions: entry.attributes.questions.map((q) => ({
+              libelle: q.libelle,
+              explication_ko: q.explicationKO,
+              explication_ok: q.explicationOk,
+              reponses: q.reponses
+                ? q.reponses.map((r) => ({
+                    reponse: r.reponse,
+                    est_bonne_reponse: r.exact,
+                  }))
+                : undefined,
+            })),
+          }
+        : undefined,
       tags_utilisateur: [],
       titre: entry.attributes.titre,
       soustitre: entry.attributes.sousTitre,
@@ -454,8 +473,6 @@ export class CMSImportUsecase {
               (elem) => Thematique[elem.attributes.code],
             )
           : [Thematique.climat],
-      score: 0,
-      tags_rubriques: [],
       categorie: Categorie[entry.attributes.categorie],
       mois: entry.attributes.mois
         ? entry.attributes.mois.split(',').map((m) => parseInt(m))
