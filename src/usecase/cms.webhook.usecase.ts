@@ -276,8 +276,20 @@ export class CMSWebhookUsecase {
   private buildQuizzFromCMSData(hook: CMSWebhookAPI): QuizzDefinition {
     return {
       content_id: hook.entry.id.toString(),
-      article_id: undefined,
-      questions: undefined,
+      article_id: hook.entry.articles[0]
+        ? '' + hook.entry.articles[0].id
+        : undefined,
+      questions: {
+        liste_questions: hook.entry.questions.map((q) => ({
+          libelle: q.libelle,
+          explication_ko: q.explicationKO,
+          explication_ok: q.explicationOk,
+          reponses: q.reponses.map((r) => ({
+            reponse: r.reponse,
+            est_bonne_reponse: r.extact,
+          })),
+        })),
+      },
       tags_utilisateur: [],
       titre: hook.entry.titre,
       soustitre: hook.entry.sousTitre,

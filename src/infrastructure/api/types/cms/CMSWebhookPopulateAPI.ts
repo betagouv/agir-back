@@ -55,6 +55,23 @@ export type CMSWebhookPopulateAPI = {
         lien: string;
       },
     ];
+    articles: {
+      data: [
+        {
+          id: number;
+        },
+      ];
+    };
+    questions: [
+      {
+        id: number;
+        libelle: string;
+        explicationOk: string;
+        explicationKO: string;
+        reponses: [{ id: number; reponse: string; exact: boolean }];
+      },
+    ];
+
     codes_postaux: string;
     mois: string;
     include_codes_commune: string;

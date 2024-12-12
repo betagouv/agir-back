@@ -26,8 +26,8 @@ export class QuizzRepository {
   async upsert(quizz: QuizzDefinition): Promise<void> {
     const quizz_to_save: QuizzDB = {
       categorie: quizz.categorie,
-      article_id: undefined,
-      questions: undefined,
+      article_id: quizz.article_id,
+      questions: quizz.questions,
       codes_postaux: quizz.codes_postaux,
       content_id: quizz.content_id,
       difficulty: quizz.difficulty,
