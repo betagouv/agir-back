@@ -6,6 +6,7 @@ import { QuizzDefinition } from './quizzDefinition';
 export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  article_contenu?: string;
 
   constructor(data: QuizzDefinition) {
     super();

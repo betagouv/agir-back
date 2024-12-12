@@ -7,10 +7,6 @@ import {
   ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
 import { Thematique } from '../../../../domain/contenu/thematique';
-import { Article } from '../../../../domain/contenu/article';
-import { PartenaireRepository } from '../../../repository/partenaire.repository';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
-import { ArticleBibliothequeAPI } from './articleAPI';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -43,37 +39,6 @@ export class ContenuBibliothequeAPI {
       favoris: content.favoris,
       like_level: content.like_level,
       read_date: content.read_date,
-    };
-  }
-  public static mapArticleToAPI(content: Article): ArticleBibliothequeAPI {
-    let partenaire: PartenaireDefinition;
-    if (content.partenaire_id) {
-      partenaire = PartenaireRepository.getPartenaire(content.partenaire_id);
-    }
-    return {
-      content_id: content.content_id,
-      titre: content.titre,
-      soustitre: content.soustitre,
-      thematique_principale: content.thematique_principale,
-      thematique_principale_label: ThematiqueRepository.getLibelleThematique(
-        content.thematique_principale,
-      ),
-      thematiques: content.thematiques,
-      image_url: content.image_url,
-      points: content.points,
-      favoris: content.favoris,
-      like_level: content.like_level,
-      read_date: content.read_date,
-      contenu: content.contenu,
-      partenaire_nom: partenaire ? partenaire.nom : null,
-      partenaire_url: partenaire ? partenaire.url : null,
-      partenaire_logo_url: partenaire ? partenaire.image_url : null,
-      sources: content.sources
-        ? content.sources.map((s) => ({
-            label: s.label,
-            url: s.url,
-          }))
-        : [],
     };
   }
 }

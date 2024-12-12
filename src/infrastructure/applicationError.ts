@@ -525,6 +525,14 @@ export class ApplicationError {
     );
   }
 
+  static throwQuizzNotFound(content_id: string) {
+    this.throwAppError(
+      '100',
+      `le quizz d'id [${content_id}] n'existe pas`,
+      404,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

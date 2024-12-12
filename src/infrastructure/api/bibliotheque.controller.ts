@@ -109,7 +109,7 @@ export class BibliothequeController extends GenericControler {
       utilisateurId,
       content_id,
     );
-    return ContenuBibliothequeAPI.mapArticleToAPI(article);
+    return ArticleBibliothequeAPI.mapArticleToAPI(article);
   }
 
   @Get('utilisateurs/:utilisateurId/bibliotheque/quizz/:content_id')
@@ -128,6 +128,10 @@ export class BibliothequeController extends GenericControler {
   ): Promise<QuizzBibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
-    return null;
+    const quizz = await this.bibliothequeUsecase.getQuizz(
+      utilisateurId,
+      content_id,
+    );
+    return QuizzBibliothequeAPI.map(quizz);
   }
 }

@@ -1,9 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Thematique } from '../../../../domain/contenu/thematique';
+import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { ThematiqueRepository } from '../../../repository/thematique.repository';
+import { Article } from '../../../../domain/contenu/article';
 
 export class SourceArticleAPI {
-  label: string;
-  url: string;
+  @ApiProperty() label: string;
+  @ApiProperty() url: string;
 }
 
 export class ArticleBibliothequeAPI {
@@ -24,4 +28,36 @@ export class ArticleBibliothequeAPI {
   @ApiProperty() partenaire_url: string;
   @ApiProperty() partenaire_logo_url: string;
   @ApiProperty({ type: [SourceArticleAPI] }) sources: SourceArticleAPI[];
+
+  public static mapArticleToAPI(content: Article): ArticleBibliothequeAPI {
+    let partenaire: PartenaireDefinition;
+    if (content.partenaire_id) {
+      partenaire = PartenaireRepository.getPartenaire(content.partenaire_id);
+    }
+    return {
+      content_id: content.content_id,
+      titre: content.titre,
+      soustitre: content.soustitre,
+      thematique_principale: content.thematique_principale,
+      thematique_principale_label: ThematiqueRepository.getLibelleThematique(
+        content.thematique_principale,
+      ),
+      thematiques: content.thematiques,
+      image_url: content.image_url,
+      points: content.points,
+      favoris: content.favoris,
+      like_level: content.like_level,
+      read_date: content.read_date,
+      contenu: content.contenu,
+      partenaire_nom: partenaire ? partenaire.nom : null,
+      partenaire_url: partenaire ? partenaire.url : null,
+      partenaire_logo_url: partenaire ? partenaire.image_url : null,
+      sources: content.sources
+        ? content.sources.map((s) => ({
+            label: s.label,
+            url: s.url,
+          }))
+        : [],
+    };
+  }
 }
