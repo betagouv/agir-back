@@ -286,7 +286,7 @@ export class CMSWebhookUsecase {
           explication_ok: q.explicationOk,
           reponses: q.reponses.map((r) => ({
             reponse: r.reponse,
-            est_bonne_reponse: r.extact,
+            est_bonne_reponse: r.exact,
           })),
         })),
       },

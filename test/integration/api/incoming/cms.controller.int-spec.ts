@@ -308,11 +308,11 @@ describe('/api/incoming/cms (API test)', () => {
           reponses: [
             {
               reponse: 'a',
-              extact: true,
+              exact: true,
             },
             {
               reponse: 'b',
-              extact: false,
+              exact: false,
             },
           ],
         },
@@ -323,11 +323,11 @@ describe('/api/incoming/cms (API test)', () => {
           reponses: [
             {
               reponse: 'c',
-              extact: false,
+              exact: false,
             },
             {
               reponse: 'd',
-              extact: true,
+              exact: true,
             },
           ],
         },

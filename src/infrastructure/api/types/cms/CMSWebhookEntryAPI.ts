@@ -29,7 +29,7 @@ export class CMSWebhookFamilleAPI {
 export class CMSWebhookReponseAPI {
   @ApiProperty() id: number;
   @ApiProperty() reponse: string;
-  @ApiProperty() extact: boolean;
+  @ApiProperty() exact: boolean;
 }
 export class CMSWebhookQuestionAPI {
   @ApiProperty() id: number;
