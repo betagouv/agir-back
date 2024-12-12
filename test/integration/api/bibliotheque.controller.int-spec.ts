@@ -508,6 +508,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.partenaire_nom).toEqual('ADEME');
     expect(response.body.partenaire_url).toEqual('https://ademe.fr');
     expect(response.body.partenaire_logo_url).toEqual('logo_url');
+    expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
   });
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, celui-ci devient alors lu', async () => {
     // GIVEN
