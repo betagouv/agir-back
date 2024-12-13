@@ -1225,6 +1225,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '2',
@@ -1237,6 +1238,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '3',
@@ -1249,6 +1251,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
       ],
     };
@@ -1266,6 +1269,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '2',
@@ -1278,6 +1282,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '3',
@@ -1290,6 +1295,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
       ],
     };
@@ -1991,6 +1997,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '1',
@@ -2051,6 +2058,7 @@ describe('Admin (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
       ],
     };
@@ -2091,6 +2099,7 @@ describe('Admin (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
         {
           id: '2',
@@ -2126,6 +2135,7 @@ describe('Admin (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
         {
           id: '3',
@@ -2161,6 +2171,7 @@ describe('Admin (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
       ],
     };
@@ -2266,6 +2277,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '2',
@@ -2278,6 +2290,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '3',
@@ -2290,6 +2303,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '4',
@@ -2302,6 +2316,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
       ],
     };
@@ -2319,6 +2334,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '2',
@@ -2331,6 +2347,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '3',
@@ -2343,6 +2360,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
         {
           id: '4',
@@ -2355,6 +2373,7 @@ describe('Admin (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
         },
       ],
     };

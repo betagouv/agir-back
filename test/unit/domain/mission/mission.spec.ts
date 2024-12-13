@@ -23,6 +23,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -84,6 +85,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -142,6 +144,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     });
 
     // WHEN
@@ -165,6 +168,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -223,6 +227,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -281,6 +286,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -350,6 +356,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -420,6 +427,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -490,6 +498,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -550,6 +559,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m2: Mission_v1 = {
       done_at: new Date(),
@@ -562,6 +572,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m3: Mission_v1 = {
       done_at: new Date(),
@@ -574,6 +585,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m4: Mission_v1 = {
       done_at: null,
@@ -586,6 +598,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
 
     const missionsUtilisateur = new MissionsUtilisateur({
@@ -622,6 +635,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {

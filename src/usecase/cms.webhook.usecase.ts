@@ -439,6 +439,7 @@ export class CMSWebhookUsecase {
     return {
       id_cms: entry.id,
       est_visible: entry.est_visible,
+      est_examen: !!entry.is_examen,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,

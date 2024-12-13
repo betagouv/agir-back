@@ -76,6 +76,7 @@ describe('Mission (API test)', () => {
   const mission_articles_tag: Mission = {
     id_cms: 1,
     est_visible: true,
+    est_examen: false,
     objectifs: objectifs as any,
     code: CodeMission.cereales,
     image_url: 'img',
@@ -146,6 +147,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -197,6 +199,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -226,6 +229,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -266,6 +270,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -306,6 +311,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -346,6 +352,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -375,6 +382,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -415,6 +423,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -456,6 +465,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -496,6 +506,7 @@ describe('Mission (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -635,6 +646,7 @@ describe('Mission (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual('1');
     expect(response.body.is_new).toEqual(false);
+    expect(response.body.is_examen).toEqual(false);
     expect(response.body.image_url).toEqual('image');
     expect(response.body.progression).toEqual({ current: 1, target: 5 });
     expect(response.body.code).toEqual('cereales');
@@ -1029,6 +1041,7 @@ describe('Mission (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       objectifs: objectifs as any,
       code: CodeMission.cereales,
       image_url: 'img',
@@ -1139,6 +1152,7 @@ describe('Mission (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -1232,6 +1246,7 @@ describe('Mission (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -1573,6 +1588,7 @@ describe('Mission (API test)', () => {
     const mission_article: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -1649,6 +1665,7 @@ describe('Mission (API test)', () => {
     const mission_article: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -2316,6 +2333,7 @@ describe('Mission (API test)', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: true,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -2352,6 +2370,7 @@ describe('Mission (API test)', () => {
       code: 'code_1',
       image_url: 'img',
       is_new: true,
+      is_examen: true,
       progression: 0,
       thematique: 'alimentation',
       thematique_label: 'Faut manger !',
@@ -2364,6 +2383,7 @@ describe('Mission (API test)', () => {
     const mission_article: Mission = {
       id_cms: 1,
       est_visible: false,
+      est_examen: false,
       objectifs: [],
       code: CodeMission.cereales,
       image_url: 'img',
@@ -2406,6 +2426,7 @@ describe('Mission (API test)', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -2490,6 +2511,7 @@ describe('Mission (API test)', () => {
       titre: 'NEW titre',
       introduction: 'NEW intro',
       is_first: false,
+      est_examen: false,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -2512,6 +2534,7 @@ describe('Mission (API test)', () => {
       code: CodeMission.cereales,
       image_url: 'NEW img',
       is_new: false,
+      is_examen: false,
       progression: 1,
       thematique: 'alimentation',
       thematique_label: 'Faut manger !',
@@ -2594,6 +2617,7 @@ describe('Mission (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
       ],
     };

@@ -316,6 +316,7 @@ model Mission {
   thematique   String?
   objectifs    Json     @default("{}")
   est_visible  Boolean
+  est_examen   Boolean  @default(false)
   introduction String?
   created_at   DateTime @default(now()) @db.Timestamptz(3)
   updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(3)

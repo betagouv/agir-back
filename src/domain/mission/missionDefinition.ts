@@ -30,11 +30,13 @@ export class MissionDefinition implements PriorityContent {
   image_url: string;
   objectifs: ObjectifDefinition[];
   est_visible: boolean;
+  est_examen: boolean;
 
   constructor(data: MissionDefinition) {
     Object.assign(this, data);
 
     this.is_first = !!data.is_first;
+    this.est_examen = !!data.est_examen;
 
     this.objectifs = [];
     if (data.objectifs) {

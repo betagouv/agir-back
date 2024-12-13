@@ -34,6 +34,7 @@ describe('MissionsUilisateur vN ', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '2',
@@ -73,6 +74,7 @@ describe('MissionsUilisateur vN ', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '2',

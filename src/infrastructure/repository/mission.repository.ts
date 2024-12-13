@@ -72,6 +72,7 @@ export class MissionRepository {
       est_visible: missionDef.est_visible,
       objectifs: missionDef.objectifs as any,
       is_first: missionDef.is_first,
+      est_examen: missionDef.est_examen,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -123,6 +124,7 @@ export class MissionRepository {
       titre: missionDB.titre,
       is_first: missionDB.is_first,
       introduction: missionDB.introduction,
+      est_examen: missionDB.est_examen,
     });
   }
 }

@@ -10,6 +10,7 @@ export class TuileMission implements PriorityContent {
   cible_progression: number;
   is_new: boolean;
   is_first: boolean;
+  est_examen: boolean;
   image_url: string;
   thematique: Thematique;
 
@@ -30,6 +31,7 @@ export class TuileMission implements PriorityContent {
       cible_progression: mission.getProgression().target,
       thematique: mission_def.thematique,
       is_first: mission_def.is_first,
+      est_examen: mission_def.est_examen,
     });
   }
 
@@ -45,6 +47,7 @@ export class TuileMission implements PriorityContent {
       cible_progression: mission_def.objectifs.length, // approximation temporaire
       thematique: mission_def.thematique,
       is_first: mission_def.is_first,
+      est_examen: mission_def.est_examen,
     });
   }
 

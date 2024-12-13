@@ -344,6 +344,7 @@ export class TestUtil {
     return {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       thematique: Thematique.alimentation,
       code: 'code',
       image_url: 'https://theimage',

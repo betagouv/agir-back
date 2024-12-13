@@ -65,6 +65,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         titre: 'titre',
         introduction: 'intro',
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -101,6 +102,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         introduction: 'intro',
 
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -137,6 +139,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         introduction: 'intro',
 
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -179,6 +182,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         introduction: 'intro',
 
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -215,6 +219,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         introduction: 'intro',
 
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -251,6 +256,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         introduction: 'intro',
 
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '1',
@@ -412,6 +418,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           introduction: 'intro',
 
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '0',
@@ -514,6 +521,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
           introduction: 'intro',
 
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '0',

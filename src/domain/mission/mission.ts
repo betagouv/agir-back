@@ -73,6 +73,7 @@ export class Mission {
   image_url: string;
   objectifs: Objectif[];
   est_visible: boolean;
+  est_examen: boolean;
   is_first: boolean;
   quizz_global_score?: number;
 
@@ -86,6 +87,7 @@ export class Mission {
     this.code = data.code;
     this.image_url = data.image_url;
     this.is_first = !!data.is_first;
+    this.est_examen = !!data.est_examen;
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -104,6 +106,7 @@ export class Mission {
       done_at: null,
       id: def.id_cms.toString(),
       est_visible: def.est_visible,
+      est_examen: def.est_examen,
       thematique: def.thematique,
       code: def.code,
       image_url: def.image_url,

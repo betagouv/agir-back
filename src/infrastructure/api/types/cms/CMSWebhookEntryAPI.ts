@@ -92,6 +92,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
   @ApiProperty() est_visible: boolean;
+  @ApiProperty() is_examen: boolean;
   @ApiProperty() is_first: boolean;
   @ApiProperty() include_codes_commune: string;
   @ApiProperty() exclude_codes_commune: string;

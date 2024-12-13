@@ -172,6 +172,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       est_visible: true,
+      is_examen: true,
       titre: 'YOO',
       introduction: 'The intro',
       code: CodeMission.cereales,
@@ -645,6 +646,7 @@ describe('/api/incoming/cms (API test)', () => {
     const item: Mission = missions[0];
 
     expect(item.est_visible).toEqual(true);
+    expect(item.est_examen).toEqual(true);
     expect(item.id_cms).toEqual(123);
     expect(item.code).toEqual(CodeMission.cereales);
     expect(item.thematique).toEqual(Thematique.alimentation);

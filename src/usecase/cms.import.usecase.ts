@@ -623,6 +623,7 @@ export class CMSImportUsecase {
       titre: entry.attributes.titre,
       introduction: entry.attributes.introduction,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
+      est_examen: !!entry.attributes.is_examen,
       objectifs:
         entry.attributes.objectifs.length > 0
           ? entry.attributes.objectifs.map((obj) => {

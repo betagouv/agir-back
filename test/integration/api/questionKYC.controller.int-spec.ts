@@ -115,6 +115,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
         titre: 'titre',
         introduction: 'intro',
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '0',
@@ -729,6 +730,7 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
             },
           ],
           est_visible: true,
+          est_examen: false,
         },
       ],
     };

@@ -46,6 +46,7 @@ export class MissionAPI_v2 {
   @ApiProperty() done_at: Date;
   @ApiProperty() terminable: boolean;
   @ApiProperty() is_new: boolean;
+  @ApiProperty() is_examen: boolean;
   @ApiProperty() image_url: string;
   @ApiProperty() code: string;
   @ApiProperty() quizz_global_score: number;
@@ -57,6 +58,7 @@ export class MissionAPI_v2 {
   public static mapToAPI(mission: Mission): MissionAPI_v2 {
     return {
       id: mission.id_cms,
+      is_examen: mission.est_examen,
       titre: mission.titre,
       introduction: mission.introduction,
       done_at: mission.done_at,
