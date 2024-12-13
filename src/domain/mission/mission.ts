@@ -152,6 +152,9 @@ export class Mission {
         }
       }
     }
+    if (nombre_quizz_done === 0) {
+      return 0;
+    }
     return Math.round(pourcent_total / nombre_quizz_done);
   }
 
@@ -188,13 +191,6 @@ export class Mission {
     return this.objectifs.filter(
       (element) => element.type === ContentType.defi,
     );
-  }
-
-  public getNextKycId(): string {
-    const objectif_kyc = this.objectifs.find(
-      (o) => o.type === ContentType.kyc && !o.isDone(),
-    );
-    return objectif_kyc ? objectif_kyc.content_id : null;
   }
 
   public answerMosaic(mosaicID: KYCMosaicID) {
