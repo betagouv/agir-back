@@ -140,7 +140,12 @@ export class MissionUsecase {
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.missions, Scope.logement, Scope.defis],
+      [
+        Scope.missions,
+        Scope.logement,
+        Scope.defis,
+        Scope.history_article_quizz_aides,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -178,6 +183,9 @@ export class MissionUsecase {
         }
       }
     }
+
+    mission_resultat.quizz_global_score =
+      mission_resultat.getGlobalQuizzPourcent(utilisateur);
 
     return this.personnalisator.personnaliser(mission_resultat, utilisateur);
   }

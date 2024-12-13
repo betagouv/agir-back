@@ -74,6 +74,7 @@ export class Mission {
   objectifs: Objectif[];
   est_visible: boolean;
   is_first: boolean;
+  quizz_global_score?: number;
 
   constructor(data: Mission_v1) {
     this.id_cms = data.id;
@@ -132,6 +133,23 @@ export class Mission {
     this.code = def.code;
     this.is_first = def.is_first;
     return this;
+  }
+
+  public getGlobalQuizzPourcent(utilisateur: Utilisateur) {
+    let pourcent_total = 0;
+    let nombre_quizz_done = 0;
+    for (const objectif of this.objectifs) {
+      if (objectif.type === ContentType.quizz) {
+        const quizz = utilisateur.history.getQuizzHistoryById(
+          objectif.content_id,
+        );
+        if (quizz) {
+          nombre_quizz_done++;
+          pourcent_total = pourcent_total + (quizz.points_en_poche ? 100 : 0);
+        }
+      }
+    }
+    return Math.round(pourcent_total / nombre_quizz_done);
   }
 
   public exfiltreObjectifsNonVisibles() {
