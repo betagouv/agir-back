@@ -43,8 +43,9 @@ describe('Aide (API test)', () => {
       libelle: 'Bonus vélo',
       montant: 150,
       plafond: 150,
-      description:
-        'Nouveau bonus vélo mécanique simple applicable à partir du 14 février 2024.',
+      description: `Supprimé depuis le 2 décembre 2024.
+
+Cependant, une période transitoire permet de pouvoir continuer de bénéficier du bonus pour tout achat effectué avant le 14 février 2025 inclus (date de facturation).`,
       lien: 'https://www.economie.gouv.fr/particuliers/prime-velo-electrique#',
       collectivite: {
         kind: 'pays',
@@ -70,18 +71,10 @@ describe('Aide (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toEqual<AidesVeloParTypeAPI>({
-      'mécanique simple': [
-        {
-          ...bonusVelo,
-          description:
-            'Nouveau bonus vélo mécanique simple applicable à partir du 14 février 2024.',
-        },
-      ],
+      'mécanique simple': [bonusVelo],
       électrique: [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.',
           montant: 400,
           plafond: 400,
         },
@@ -96,8 +89,6 @@ describe('Aide (API test)', () => {
       cargo: [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo cargo applicable à partir du 14 février 2024.',
           montant: 2000,
           plafond: 2000,
         },
@@ -112,8 +103,6 @@ describe('Aide (API test)', () => {
       'cargo électrique': [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo cargo électrique applicable à partir du 14 février 2024.',
           montant: 2000,
           plafond: 2000,
         },
@@ -128,8 +117,6 @@ describe('Aide (API test)', () => {
       pliant: [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo pliant applicable à partir du 14 février 2024.',
           montant: 2000,
           plafond: 2000,
         },
@@ -145,8 +132,6 @@ describe('Aide (API test)', () => {
       'pliant électrique': [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo pliant électrique applicable à partir du 14 février 2024.',
           montant: 2000,
           plafond: 2000,
         },
@@ -170,8 +155,6 @@ describe('Aide (API test)', () => {
       adapté: [
         {
           ...bonusVelo,
-          description:
-            'Nouveau bonus vélo adapté applicable à partir du 14 février 2024.',
           montant: 2000,
           plafond: 2000,
         },
