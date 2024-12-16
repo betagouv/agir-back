@@ -375,7 +375,6 @@ export class CMSWebhookUsecase {
   private buildPartenaireFromCMSData(
     entry: CMSWebhookEntryAPI,
   ): PartenaireDefinition {
-    console.log(entry.logo);
     return {
       id_cms: entry.id.toString(),
       nom: entry.nom,

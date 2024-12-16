@@ -87,7 +87,7 @@ export class MissionUsecase {
     const result: TuileMission[] = [];
 
     for (const mission_def of listMissionDefs) {
-      if (!mission_def.est_visible) {
+      if (!mission_def.est_visible && !utilisateur.isAdmin()) {
         continue; // on passe à la misison suivante
       }
 
@@ -154,6 +154,8 @@ export class MissionUsecase {
     if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = MissionRepository.getByCode(code_mission);
       if (mission_def) {
+        if (mission_def.est_examen) {
+        }
         const completed_mission = await this.completeMissionDef(
           mission_def,
           utilisateur,
