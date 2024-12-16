@@ -10,6 +10,7 @@ import {
 import { TestUtil } from '../../TestUtil';
 
 describe('AideVeloRepository', () => {
+  const OLD_ENV = process.env;
   let aidesVeloRepository = new AidesVeloRepository();
 
   beforeAll(async () => {
@@ -17,10 +18,12 @@ describe('AideVeloRepository', () => {
   });
 
   beforeEach(async () => {
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
@@ -38,6 +41,7 @@ describe('AideVeloRepository', () => {
 
   it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
     const result = await aidesVeloRepository.getSummaryVelos(baseParams);
 
     // THEN
