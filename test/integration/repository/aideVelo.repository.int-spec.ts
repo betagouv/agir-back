@@ -39,7 +39,7 @@ describe('AideVeloRepository', () => {
     'aides . pays de la loire . abonné TER': false,
   };
 
-  it.skip('doit correctement calculer les aides pour une situation de base', async () => {
+  it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
     process.env.MINIATURES_URL = 'http://localhost:3000';
     const result = await aidesVeloRepository.getSummaryVelos(baseParams);
