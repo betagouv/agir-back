@@ -12,6 +12,7 @@ import {
   ApiExcludeController,
   ApiOkResponse,
   ApiProperty,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
@@ -75,10 +76,17 @@ export class SyntheseController extends GenericControler {
   }
 
   @Get('code_postal_synthese/:code_postal')
+  @ApiQuery({
+    name: 'rayon',
+    type: Number,
+    required: false,
+    description: `rayon en mettres de recherche, 3000 metres par défaut`,
+  })
   @ApiOkResponse({ type: SyntheseAPI })
   async code_postal_synthese(
     //@Headers('Authorization') authorization: string,
     @Param('code_postal') code_postal: string,
+    @Query('rayon') rayon: number,
     @Response() res: Res,
   ): Promise<any> {
     /*
@@ -108,6 +116,12 @@ export class SyntheseController extends GenericControler {
       }
     }
       */
+
+    if (!rayon) {
+      rayon = 3000;
+    } else {
+      rayon = parseInt('' + rayon);
+    }
 
     const user_ids_code_postal = await this.userRepository.listUtilisateurIds(
       undefined,
@@ -158,7 +172,7 @@ export class SyntheseController extends GenericControler {
 
     filtre.commune = liste_commune[0];
 
-    filtre.rayon_metres = 3000;
+    filtre.rayon_metres = rayon;
 
     filtre.nombre_max_resultats = 2000;
 
