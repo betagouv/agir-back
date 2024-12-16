@@ -108,8 +108,12 @@ export class SyntheseController extends GenericControler {
     filtre.code_postal = code_postal;
     const liste_commune =
       this.communeRepository.getListCommunesParCodePostal(code_postal);
+
     filtre.commune = liste_commune[0];
-    filtre.nombre_max_resultats = 200;
+
+    filtre.rayon_metres = 3000;
+
+    filtre.nombre_max_resultats = 2000;
 
     const code_commune = await this.communeRepository.getCodeCommune(
       filtre.code_postal,
@@ -163,24 +167,39 @@ export class SyntheseController extends GenericControler {
     );
 
     const result_LVO_donner = await finder_LVO.find(
-      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.donner }),
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.donner,
+        nombre_max_resultats: 1,
+      }),
     );
     const result_LVO_reparer = await finder_LVO.find(
-      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.reparer }),
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.reparer,
+        nombre_max_resultats: 1,
+      }),
     );
     const result_LVO_louer = await finder_LVO.find(
-      new FiltreRecherche({ ...filtre, categorie: CategorieRecherche.louer }),
+      new FiltreRecherche({
+        ...filtre,
+        categorie: CategorieRecherche.louer,
+        nombre_max_resultats: 1,
+      }),
     );
     const result_LVO_emprunter = await finder_LVO.find(
       new FiltreRecherche({
         ...filtre,
         categorie: CategorieRecherche.emprunter,
+        nombre_max_resultats: 1,
       }),
     );
+
     const result_LVO_all = await finder_LVO.find(
       new FiltreRecherche({
         ...filtre,
         categorie: CategorieRecherche.vos_objets,
+        nombre_max_resultats: 1,
       }),
     );
 
@@ -219,11 +238,26 @@ export class SyntheseController extends GenericControler {
       nombre_aides_region_total: count_aide_region,
       nombre_aides_departement_total: count_aide_departement,
       nombre_aides_commune_total: count_aide_commune,
-      result_LVO_all: result_LVO_all.length,
-      result_LVO_donner: result_LVO_donner.length,
-      result_LVO_reparer: result_LVO_reparer.length,
-      result_LVO_louer: result_LVO_louer.length,
-      result_LVO_emprunter: result_LVO_emprunter.length,
+      result_LVO_all:
+        result_LVO_all.length > 0
+          ? result_LVO_all[0].nbr_resultats_max_dispo
+          : 0,
+      result_LVO_donner:
+        result_LVO_donner.length > 0
+          ? result_LVO_donner[0].nbr_resultats_max_dispo
+          : 0,
+      result_LVO_reparer:
+        result_LVO_reparer.length > 0
+          ? result_LVO_reparer[0].nbr_resultats_max_dispo
+          : 0,
+      result_LVO_louer:
+        result_LVO_louer.length > 0
+          ? result_LVO_louer[0].nbr_resultats_max_dispo
+          : 0,
+      result_LVO_emprunter:
+        result_LVO_emprunter.length > 0
+          ? result_LVO_emprunter[0].nbr_resultats_max_dispo
+          : 0,
       result_PDCN_circuit_court: result_PDCN_circuit_court.length,
       result_PDCN_epicerie_superette: result_PDCN_epicerie_superette.length,
       result_PDCN_marche_local: result_PDCN_marche_local.length,
