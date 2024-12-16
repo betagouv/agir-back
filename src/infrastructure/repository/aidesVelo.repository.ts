@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Pick } from '@prisma/client/runtime/library.js';
 
 import {
   Aide,
