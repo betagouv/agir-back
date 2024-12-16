@@ -44,6 +44,9 @@ export class QuizzHistory {
   public has100ScoreAmongAttempts(): boolean {
     return this.attempts.findIndex((attempt) => attempt.score === 100) >= 0;
   }
+  public has0ScoreAmongAttempts(): boolean {
+    return this.attempts.findIndex((attempt) => attempt.score === 0) >= 0;
+  }
   public hasAttempt(): boolean {
     return this.attempts.length > 0;
   }
