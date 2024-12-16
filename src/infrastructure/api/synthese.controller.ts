@@ -16,13 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
-import { KycRepository } from '../repository/kyc.repository';
-import { NGCCalculator } from '../ngc/NGCCalculator';
-import { MissionRepository } from '../repository/mission.repository';
 import { ArticleRepository } from '../repository/article.repository';
-import { QuizzRepository } from '../repository/quizz.repository';
-import { DefiRepository } from '../repository/defi.repository';
-import { MissionUsecase } from '../../usecase/mission.usecase';
 import { App } from '../../domain/app';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../domain/utilisateur/utilisateur';
