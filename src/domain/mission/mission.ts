@@ -148,9 +148,8 @@ export class Mission {
         );
         if (quizz) {
           nombre_quizz_done++;
-          const quizz_ok =
-            !quizz.has0ScoreAmongAttempts() && quizz.has100ScoreAmongAttempts();
-          pourcent_total = pourcent_total + (quizz_ok ? 100 : 0);
+          pourcent_total =
+            pourcent_total + (quizz.has100ScoreLastAttempt() ? 100 : 0);
         }
       }
     }
