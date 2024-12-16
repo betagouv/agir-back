@@ -87,6 +87,7 @@ export class SyntheseController extends GenericControler {
     }
       */
 
+    /*
     const liste_communes =
       this.communeRepository.getListCodesCommunesParCodePostal(code_postal);
     console.log(liste_communes);
@@ -106,6 +107,7 @@ export class SyntheseController extends GenericControler {
         liste_code_postaux_EPCI.add(un_code_postal);
       }
     }
+      */
 
     const user_ids_code_postal = await this.userRepository.listUtilisateurIds(
       undefined,
@@ -114,6 +116,7 @@ export class SyntheseController extends GenericControler {
       code_postal,
     );
 
+    /*
     let epci_users = [];
     for (const user_code_postal of liste_code_postaux_EPCI) {
       const user_ids_code_postal_extended =
@@ -122,12 +125,13 @@ export class SyntheseController extends GenericControler {
           undefined,
           undefined,
           user_code_postal,
-        );
+        );  
       epci_users = epci_users.concat(user_ids_code_postal_extended);
     }
 
     console.log(epci_users.length);
     console.log(user_ids_code_postal.length);
+    */
 
     let nombre_points_moyen = 0;
     let nombre_defis_encours = 0;
