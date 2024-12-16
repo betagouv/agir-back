@@ -192,6 +192,11 @@ export class Mission {
       (element) => element.type === ContentType.defi,
     );
   }
+  public findAllQuizz(): Objectif[] {
+    return this.objectifs.filter(
+      (element) => element.type === ContentType.quizz,
+    );
+  }
 
   public answerMosaic(mosaicID: KYCMosaicID) {
     const objectif = this.findObjectifByMosaicID(mosaicID);
@@ -214,7 +219,15 @@ export class Mission {
     if (this.isNew()) return false;
 
     const obj_defis = this.findAllDefis();
-    return obj_defis.findIndex((o) => o.isDone()) > -1;
+    const obj_quizz = this.findAllQuizz();
+
+    const critere_defis =
+      obj_defis.length > 0 && obj_defis.findIndex((o) => o.isDone()) > -1;
+
+    const critere_quizz =
+      obj_quizz.findIndex((o) => o.isDone()) > -1 && obj_defis.length === 0;
+
+    return critere_defis || critere_quizz;
   }
 
   public validateDefiObjectif(defi_id: string) {
