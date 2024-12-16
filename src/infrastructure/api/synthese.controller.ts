@@ -31,6 +31,7 @@ import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { CommuneRepository } from '../repository/commune/commune.repository';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { Thematique } from '../../domain/contenu/thematique';
 
 export class SyntheseAPI {
   @ApiProperty() nombre_inscrits: number;
@@ -40,6 +41,12 @@ export class SyntheseAPI {
   @ApiProperty() nombre_aides_region_total: number;
   @ApiProperty() nombre_aides_departement_total: number;
   @ApiProperty() nombre_aides_commune_total: number;
+  @ApiProperty() count_aide_alimentation: number;
+  @ApiProperty() count_aide_consommation: number;
+  @ApiProperty() count_aide_logement: number;
+  @ApiProperty() count_aide_transport: number;
+  @ApiProperty() count_aide_dechet: number;
+  @ApiProperty() count_aide_loisir: number;
   @ApiProperty() result_LVO_all: number;
   @ApiProperty() result_LVO_donner: number;
   @ApiProperty() result_LVO_reparer: number;
@@ -49,6 +56,8 @@ export class SyntheseAPI {
   @ApiProperty() result_PDCN_epicerie_superette: number;
   @ApiProperty() result_PDCN_marche_local: number;
   @ApiProperty() result_PDCN_zero_dechet: number;
+  @ApiProperty() nombre_defis_encours: number;
+  @ApiProperty() nombre_defis_realises: number;
 }
 
 @ApiTags('Previews')
@@ -57,12 +66,6 @@ export class SyntheseAPI {
 export class SyntheseController extends GenericControler {
   constructor(
     private userRepository: UtilisateurRepository,
-    private kycRepository: KycRepository,
-    private nGCCalculator: NGCCalculator,
-    private missionRepository: MissionRepository,
-    private articleRepository: ArticleRepository,
-    private missionUsecase: MissionUsecase,
-    private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
     private communeRepository: CommuneRepository,
     private aideRepository: AideRepository,
@@ -84,6 +87,26 @@ export class SyntheseController extends GenericControler {
     }
       */
 
+    const liste_communes =
+      this.communeRepository.getListCodesCommunesParCodePostal(code_postal);
+    console.log(liste_communes);
+
+    const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(
+      liste_communes[0],
+    );
+
+    const liste_code_commune_EPCI =
+      this.communeRepository.getListeCodesCommuneParCodeEPCI(epci.code);
+
+    const liste_code_postaux_EPCI = new Set<string>();
+    for (const code_commune of liste_code_commune_EPCI) {
+      const code_postaux =
+        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
+      for (const un_code_postal of code_postaux) {
+        liste_code_postaux_EPCI.add(un_code_postal);
+      }
+    }
+
     const user_ids_code_postal = await this.userRepository.listUtilisateurIds(
       undefined,
       undefined,
@@ -91,13 +114,33 @@ export class SyntheseController extends GenericControler {
       code_postal,
     );
 
+    let epci_users = [];
+    for (const user_code_postal of liste_code_postaux_EPCI) {
+      const user_ids_code_postal_extended =
+        await this.userRepository.listUtilisateurIds(
+          undefined,
+          undefined,
+          undefined,
+          user_code_postal,
+        );
+      epci_users = epci_users.concat(user_ids_code_postal_extended);
+    }
+
+    console.log(epci_users.length);
+    console.log(user_ids_code_postal.length);
+
     let nombre_points_moyen = 0;
+    let nombre_defis_encours = 0;
+    let nombre_defis_realises = 0;
 
     for (const userid of user_ids_code_postal) {
       const user = await this.userRepository.getById(userid, [
         Scope.gamification,
+        Scope.defis,
       ]);
       nombre_points_moyen += user.gamification.points;
+      nombre_defis_encours += user.defi_history.getNombreDefisEnCours();
+      nombre_defis_realises += user.defi_history.getNombreDefisRealises();
     }
     if (user_ids_code_postal.length > 0) {
       nombre_points_moyen = nombre_points_moyen / user_ids_code_postal.length;
@@ -136,7 +179,33 @@ export class SyntheseController extends GenericControler {
     let count_aide_region = 0;
     let count_aide_departement = 0;
     let count_aide_commune = 0;
+    let count_aide_alimentation = 0;
+    let count_aide_consommation = 0;
+    let count_aide_logement = 0;
+    let count_aide_transport = 0;
+    let count_aide_dechet = 0;
+    let count_aide_loisir = 0;
+
     for (const aide of aides_dispo) {
+      if (aide.thematiques.includes(Thematique.alimentation)) {
+        count_aide_alimentation++;
+      }
+      if (aide.thematiques.includes(Thematique.consommation)) {
+        count_aide_consommation++;
+      }
+      if (aide.thematiques.includes(Thematique.logement)) {
+        count_aide_logement++;
+      }
+      if (aide.thematiques.includes(Thematique.transport)) {
+        count_aide_transport++;
+      }
+      if (aide.thematiques.includes(Thematique.loisir)) {
+        count_aide_loisir++;
+      }
+      if (aide.thematiques.includes(Thematique.dechet)) {
+        count_aide_dechet++;
+      }
+
       if (
         aide.codes_postaux.length > 0 ||
         aide.include_codes_commune.length > 0
@@ -262,6 +331,14 @@ export class SyntheseController extends GenericControler {
       result_PDCN_epicerie_superette: result_PDCN_epicerie_superette.length,
       result_PDCN_marche_local: result_PDCN_marche_local.length,
       result_PDCN_zero_dechet: result_PDCN_zero_dechet.length,
+      count_aide_alimentation: count_aide_alimentation,
+      count_aide_consommation: count_aide_consommation,
+      count_aide_logement: count_aide_logement,
+      count_aide_transport: count_aide_transport,
+      count_aide_dechet: count_aide_dechet,
+      count_aide_loisir: count_aide_loisir,
+      nombre_defis_encours: nombre_defis_encours,
+      nombre_defis_realises: nombre_defis_realises,
     });
   }
 

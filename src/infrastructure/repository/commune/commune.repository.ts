@@ -101,6 +101,11 @@ export class CommuneRepository {
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
   }
+  getListCodesCommunesParCodePostal(code_postal: string): string[] {
+    const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
+    if (liste === undefined) return [];
+    return liste.map((a) => a.INSEE);
+  }
 
   getLibelleCommuneLowerCase(code_insee: string) {
     const commune = this.getCommuneByCodeINSEE(code_insee);
@@ -188,9 +193,26 @@ export class CommuneRepository {
     }
   }
 
-  private getCommunesForCodePostal(code_postal: string) {
+  getListeCodesCommuneParCodeEPCI(code_EPCI: string): string[] {
+    for (const une_epci of epci) {
+      if (une_epci.code === code_EPCI) {
+        return une_epci.membres.map((m) => m.code);
+      }
+    }
+    return [];
+  }
+
+  public getCommunesForCodePostal(code_postal: string) {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     return liste ? liste : [];
+  }
+  public getCodePostauxFromCodeCommune(code_commune: string) {
+    for (const une_commune of communes) {
+      if (une_commune.code === code_commune) {
+        return une_commune.codesPostaux;
+      }
+    }
+    return [];
   }
 
   /**
