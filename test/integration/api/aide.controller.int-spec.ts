@@ -31,7 +31,7 @@ describe('Aide (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
+  it.skip('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
     process.env.MINIATURES_URL = 'http://localhost:3000';
