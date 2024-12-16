@@ -2359,7 +2359,7 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/tuiles_missions_v2',
     );
 
     // THEN
@@ -2375,6 +2375,7 @@ describe('Mission (API test)', () => {
       thematique: 'alimentation',
       thematique_label: 'Faut manger !',
       titre: 'titre',
+      type_mission: 'examen',
     });
   });
   it(`GET /utilisateurs/id/thematiques/id/tuiles_missions - Liste pas mission de la thématique si non visible`, async () => {
@@ -2539,6 +2540,7 @@ describe('Mission (API test)', () => {
       thematique: 'alimentation',
       thematique_label: 'Faut manger !',
       titre: 'NEW titre',
+      type_mission: 'standard',
     });
   });
 

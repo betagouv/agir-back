@@ -11,6 +11,11 @@ import {
   Objectif_v1,
 } from '../object_store/mission/MissionsUtilisateur_v1';
 
+export enum TypeMission {
+  standard = 'standard',
+  examen = 'examen',
+}
+
 export class Objectif {
   id: string;
   titre: string;
@@ -76,6 +81,7 @@ export class Mission {
   est_examen: boolean;
   is_first: boolean;
   quizz_global_score?: number;
+  type_mission?: TypeMission;
 
   constructor(data: Mission_v1) {
     this.id_cms = data.id;
@@ -88,6 +94,9 @@ export class Mission {
     this.image_url = data.image_url;
     this.is_first = !!data.is_first;
     this.est_examen = !!data.est_examen;
+    this.type_mission = this.est_examen
+      ? TypeMission.examen
+      : TypeMission.standard;
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -135,6 +144,11 @@ export class Mission {
     this.introduction = def.introduction;
     this.code = def.code;
     this.is_first = def.is_first;
+    this.est_examen = def.est_examen;
+    this.type_mission = this.est_examen
+      ? TypeMission.examen
+      : TypeMission.standard;
+
     return this;
   }
 

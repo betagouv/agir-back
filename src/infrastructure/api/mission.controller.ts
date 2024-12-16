@@ -48,9 +48,42 @@ export class MissionController extends GenericControler {
     description: `la thematique des missions demandées`,
   })
   @ApiOperation({
-    summary: `Retourne une liste de tuile de mission correspondant à la thématique demandée, ordonnée par reco`,
+    summary: `Retourne une liste de tuile de mission correspondant à la thématique demandée, ordonnée par reco, sauf les examens`,
   })
   async getTuilesMissions(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+  ): Promise<TuileMissionAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const them = this.castThematiqueOrException(code_thematique);
+
+    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
+      utilisateurId,
+      them,
+    );
+    return result
+      .filter((m) => !m.est_examen)
+      .map((e) => TuileMissionAPI.mapToAPI(e));
+  }
+
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions_v2',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [TuileMissionAPI],
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    required: true,
+    description: `la thematique des missions demandées`,
+  })
+  @ApiOperation({
+    summary: `Retourne une liste de tuile de mission correspondant à la thématique demandée, ordonnée par reco, incluant les examens`,
+  })
+  async getTuilesMissions_v2(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_thematique') code_thematique: string,
@@ -71,9 +104,31 @@ export class MissionController extends GenericControler {
     type: [TuileMissionAPI],
   })
   @ApiOperation({
-    summary: `Retourne les missions recommandées pour la home (toute thématique confondue)`,
+    summary: `Retourne les missions recommandées pour la home (toute thématique confondue), sauf les examens`,
   })
   async getMissionsRecommandees(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<TuileMissionAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+    const result =
+      await this.missionUsecase.getTuilesMissionsRecommandeesToutesThematiques(
+        utilisateurId,
+      );
+    return result
+      .filter((m) => !m.est_examen)
+      .map((e) => TuileMissionAPI.mapToAPI(e));
+  }
+
+  @Get('utilisateurs/:utilisateurId/tuiles_missions_v2')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: [TuileMissionAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne les missions recommandées pour la home (toute thématique confondue), avec des examens`,
+  })
+  async getMissionsRecommandees_v2(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
   ): Promise<TuileMissionAPI[]> {
