@@ -53,3 +53,4 @@ jobs:
           DATABASE_URL: 'postgresql://prisma:prisma@localhost:5432/tests'
           DATABASE_STATS_URL: 'postgresql://prisma:prisma@localhost:5432/stats'
           INTERNAL_TOKEN_SECRET: '123456789012345678901234567890'
+          MINIATURES_URL: 'http://localhost:3000'
