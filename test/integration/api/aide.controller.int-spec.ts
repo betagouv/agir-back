@@ -12,6 +12,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Aide (API test)', () => {
+  const OLD_ENV = process.env;
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
@@ -21,16 +22,19 @@ describe('Aide (API test)', () => {
   });
 
   beforeEach(async () => {
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
+    process.env.MINIATURES_URL = 'http://localhost:3000';
 
     // WHEN
     const response = await TestUtil.POST(
