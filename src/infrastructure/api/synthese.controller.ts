@@ -33,7 +33,12 @@ import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/fi
 import { CommuneRepository } from '../repository/commune/commune.repository';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../../domain/contenu/thematique';
+import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 
+export class ArticleLocal {
+  @ApiProperty() id: string;
+  @ApiProperty() thematique: string;
+}
 export class SyntheseAPI {
   @ApiProperty() nombre_inscrits: number;
   @ApiProperty() nombre_points_moyen: number;
@@ -59,6 +64,10 @@ export class SyntheseAPI {
   @ApiProperty() result_PDCN_zero_dechet: number;
   @ApiProperty() nombre_defis_encours: number;
   @ApiProperty() nombre_defis_realises: number;
+  @ApiProperty() nombre_articles_locaux: number;
+  @ApiProperty() nombre_articles_total: number;
+  @ApiProperty({ type: [ArticleLocal] })
+  liste_id_articles_locaux: ArticleLocal[];
 }
 
 @ApiTags('Previews')
@@ -67,7 +76,7 @@ export class SyntheseAPI {
 export class SyntheseController extends GenericControler {
   constructor(
     private userRepository: UtilisateurRepository,
-    private defiRepository: DefiRepository,
+    private articleRepository: ArticleRepository,
     private communeRepository: CommuneRepository,
     private aideRepository: AideRepository,
     private rechercheServiceManager: RechercheServiceManager,
@@ -315,9 +324,30 @@ export class SyntheseController extends GenericControler {
       }),
     );
 
+    let nombre_articles_locaux = 0;
+    const articles = await this.articleRepository.searchArticles({
+      code_postal: code_postal,
+      code_commune: code_commune ? code_commune : undefined,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
+    });
+
+    const articles_locaux: ArticleDefinition[] = [];
+
+    for (const article of articles) {
+      if (
+        article.codes_postaux.length > 0 ||
+        article.codes_departement.length > 0 ||
+        article.codes_region.length > 0
+      ) {
+        articles_locaux.push(article);
+        nombre_articles_locaux++;
+      }
+    }
+
     // #####################################
 
-    return res.json({
+    const result: SyntheseAPI = {
       nombre_inscrits: user_ids_code_postal.length,
       nombre_points_moyen: nombre_points_moyen,
       nombre_aides_total: aides_dispo.length,
@@ -357,7 +387,14 @@ export class SyntheseController extends GenericControler {
       count_aide_loisir: count_aide_loisir,
       nombre_defis_encours: nombre_defis_encours,
       nombre_defis_realises: nombre_defis_realises,
-    });
+      nombre_articles_locaux: nombre_articles_locaux,
+      nombre_articles_total: articles.length,
+      liste_id_articles_locaux: articles_locaux.map((a) => ({
+        id: a.content_id,
+        thematique: a.thematique_principale,
+      })),
+    };
+    return res.json(result);
   }
 
   private returnBadOreMissingLoginError(res: Res) {
