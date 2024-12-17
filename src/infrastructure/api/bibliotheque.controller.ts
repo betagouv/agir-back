@@ -112,6 +112,24 @@ export class BibliothequeController extends GenericControler {
     return ArticleBibliothequeAPI.mapArticleToAPI(article);
   }
 
+  @Get('bibliotheque/articles/:content_id')
+  @ApiOkResponse({ type: ArticleBibliothequeAPI })
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id d'un article`,
+  })
+  async getArticleNonConnecte(
+    @Request() req,
+    @Param('content_id') content_id: string,
+  ): Promise<ArticleBibliothequeAPI> {
+    const article = await this.bibliothequeUsecase.getArticleAnonymous(
+      content_id,
+    );
+    return ArticleBibliothequeAPI.mapArticleToAPI(article);
+  }
+
   @Get('utilisateurs/:utilisateurId/bibliotheque/quizz/:content_id')
   @ApiOkResponse({ type: QuizzBibliothequeAPI })
   @ApiQuery({

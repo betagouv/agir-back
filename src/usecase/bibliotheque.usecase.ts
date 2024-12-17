@@ -69,6 +69,17 @@ export class BibliothequeUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
+  public async getArticleAnonymous(content_id: string): Promise<Article> {
+    const article_definition =
+      await this.articleRepository.getArticleDefinitionByContentId(content_id);
+
+    if (!article_definition) {
+      ApplicationError.throwArticleNotFound(content_id);
+    }
+
+    return new Article(article_definition);
+  }
+
   public async getArticle(
     utilisateurId: string,
     content_id: string,
