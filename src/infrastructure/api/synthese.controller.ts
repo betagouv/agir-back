@@ -28,10 +28,16 @@ import { CommuneRepository } from '../repository/commune/commune.repository';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
+import { AideDefinition } from '../../domain/aides/aideDefinition';
 
 export class ArticleLocal {
   @ApiProperty() id: string;
   @ApiProperty() thematique: string;
+  @ApiProperty() titre: string;
+}
+export class AideLocal {
+  @ApiProperty() id: string;
+  @ApiProperty({ type: [String] }) thematiques: string[];
   @ApiProperty() titre: string;
 }
 export class SyntheseAPI {
@@ -61,8 +67,11 @@ export class SyntheseAPI {
   @ApiProperty() nombre_defis_realises: number;
   @ApiProperty() nombre_articles_locaux: number;
   @ApiProperty() nombre_articles_total: number;
+  @ApiProperty({ type: [String] }) liste_communes: string[];
   @ApiProperty({ type: [ArticleLocal] })
   liste_id_articles_locaux: ArticleLocal[];
+  @ApiProperty({ type: [AideLocal] })
+  liste_id_aides_locales: AideLocal[];
 }
 
 @ApiTags('Previews')
@@ -208,6 +217,8 @@ export class SyntheseController extends GenericControler {
     let count_aide_dechet = 0;
     let count_aide_loisir = 0;
 
+    const liste_aides_locales: AideDefinition[] = [];
+
     for (const aide of aides_dispo) {
       if (aide.thematiques.includes(Thematique.alimentation)) {
         count_aide_alimentation++;
@@ -247,6 +258,8 @@ export class SyntheseController extends GenericControler {
         aide.include_codes_commune.length === 0
       ) {
         count_aide_nat++;
+      } else {
+        liste_aides_locales.push(aide);
       }
     }
 
@@ -343,6 +356,7 @@ export class SyntheseController extends GenericControler {
     // #####################################
 
     const result: SyntheseAPI = {
+      liste_communes: liste_commune,
       nombre_inscrits: user_ids_code_postal.length,
       nombre_points_moyen: nombre_points_moyen,
       nombre_aides_total: aides_dispo.length,
@@ -387,6 +401,11 @@ export class SyntheseController extends GenericControler {
       liste_id_articles_locaux: articles_locaux.map((a) => ({
         id: a.content_id,
         thematique: a.thematique_principale,
+        titre: a.titre,
+      })),
+      liste_id_aides_locales: liste_aides_locales.map((a) => ({
+        id: a.content_id,
+        thematiques: a.thematiques,
         titre: a.titre,
       })),
     };
