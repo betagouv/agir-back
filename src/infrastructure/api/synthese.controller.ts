@@ -32,6 +32,7 @@ import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 export class ArticleLocal {
   @ApiProperty() id: string;
   @ApiProperty() thematique: string;
+  @ApiProperty() titre: string;
 }
 export class SyntheseAPI {
   @ApiProperty() nombre_inscrits: number;
@@ -386,6 +387,7 @@ export class SyntheseController extends GenericControler {
       liste_id_articles_locaux: articles_locaux.map((a) => ({
         id: a.content_id,
         thematique: a.thematique_principale,
+        titre: a.titre,
       })),
     };
     return res.json(result);
