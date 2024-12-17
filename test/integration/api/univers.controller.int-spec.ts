@@ -52,6 +52,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '2',
@@ -87,6 +88,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '3',
@@ -111,6 +113,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '4',
@@ -135,6 +138,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '5',
@@ -159,6 +163,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '6',
@@ -183,6 +188,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
       {
         id: '7',
@@ -207,6 +213,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -236,6 +243,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -265,6 +273,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -281,6 +290,7 @@ describe('Univers (API test)', () => {
         titre: 'titre',
         introduction: 'intro',
         is_first: false,
+        est_examen: false,
         objectifs: [
           {
             id: '0',
@@ -319,6 +329,7 @@ describe('Univers (API test)', () => {
           },
         ],
         est_visible: false,
+        est_examen: false,
       },
     ],
   };
@@ -528,6 +539,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       objectifs: objectifs as any,
       code: CodeMission.cereales,
       image_url: 'img',
@@ -613,6 +625,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -691,6 +704,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,
@@ -772,6 +786,7 @@ describe('Univers (API test)', () => {
     const mission_articles_tag: Mission = {
       id_cms: 1,
       est_visible: true,
+      est_examen: false,
       code: CodeMission.cereales,
       image_url: 'img',
       thematique: Thematique.alimentation,

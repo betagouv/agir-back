@@ -1,5 +1,5 @@
 import { Thematique } from '../contenu/thematique';
-import { Mission } from '../mission/mission';
+import { Mission, TypeMission } from '../mission/mission';
 import { MissionDefinition } from '../mission/missionDefinition';
 import { PriorityContent } from '../scoring/priorityContent';
 
@@ -10,6 +10,8 @@ export class TuileMission implements PriorityContent {
   cible_progression: number;
   is_new: boolean;
   is_first: boolean;
+  est_examen: boolean;
+  type_mission: TypeMission;
   image_url: string;
   thematique: Thematique;
 
@@ -30,6 +32,10 @@ export class TuileMission implements PriorityContent {
       cible_progression: mission.getProgression().target,
       thematique: mission_def.thematique,
       is_first: mission_def.is_first,
+      est_examen: mission_def.est_examen,
+      type_mission: mission_def.est_examen
+        ? TypeMission.examen
+        : TypeMission.standard,
     });
   }
 
@@ -45,6 +51,10 @@ export class TuileMission implements PriorityContent {
       cible_progression: mission_def.objectifs.length, // approximation temporaire
       thematique: mission_def.thematique,
       is_first: mission_def.is_first,
+      est_examen: mission_def.est_examen,
+      type_mission: mission_def.est_examen
+        ? TypeMission.examen
+        : TypeMission.standard,
     });
   }
 

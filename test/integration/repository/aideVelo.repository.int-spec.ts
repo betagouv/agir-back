@@ -2,8 +2,7 @@ import {
   AideVelo,
   AidesVeloParType,
   Collectivite,
-  NB_VELO_TYPES,
-} from '../../../src/domain/aides/aideVelo';
+} from 'src/domain/aides/aideVelo';
 import {
   AidesVeloRepository,
   SummaryVelosParams,
@@ -11,6 +10,7 @@ import {
 import { TestUtil } from '../../TestUtil';
 
 describe('AideVeloRepository', () => {
+  const OLD_ENV = process.env;
   let aidesVeloRepository = new AidesVeloRepository();
 
   beforeAll(async () => {
@@ -18,10 +18,12 @@ describe('AideVeloRepository', () => {
   });
 
   beforeEach(async () => {
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
@@ -39,12 +41,22 @@ describe('AideVeloRepository', () => {
 
   it('doit correctement calculer les aides pour une situation de base', async () => {
     // WHEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
     const result = await aidesVeloRepository.getSummaryVelos(baseParams);
 
     // THEN
-    expect(Object.keys(result)).toHaveLength(NB_VELO_TYPES);
-    expect(result['motorisation'][0].libelle).toBe('Île-de-France Mobilités');
-    expect(result['motorisation'][0].montant).toBe(200);
+    expect(result['motorisation']).toEqual([
+      {
+        collectivite: { kind: 'région', value: '11' },
+        description:
+          "La région Île-de-France subventionne l'achat d'un kit de motorisation à hauteur de 50% et jusqu'à un plafond de 200 €.",
+        libelle: 'Île-de-France Mobilités',
+        lien: 'https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo',
+        logo: 'http://localhost:3000/logo_ile_de_france.webp',
+        montant: 200,
+        plafond: 200,
+      },
+    ]);
 
     // Check that all aides are in Île-de-France or France
     expectAllMatchOneOfCollectivite(result, [

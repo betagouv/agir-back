@@ -87,7 +87,7 @@ export class MissionUsecase {
     const result: TuileMission[] = [];
 
     for (const mission_def of listMissionDefs) {
-      if (!mission_def.est_visible) {
+      if (!mission_def.est_visible && !utilisateur.isAdmin()) {
         continue; // on passe à la misison suivante
       }
 
@@ -140,7 +140,12 @@ export class MissionUsecase {
   ): Promise<Mission> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.missions, Scope.logement, Scope.defis],
+      [
+        Scope.missions,
+        Scope.logement,
+        Scope.defis,
+        Scope.history_article_quizz_aides,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -149,6 +154,8 @@ export class MissionUsecase {
     if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = MissionRepository.getByCode(code_mission);
       if (mission_def) {
+        if (mission_def.est_examen) {
+        }
         const completed_mission = await this.completeMissionDef(
           mission_def,
           utilisateur,
@@ -178,6 +185,9 @@ export class MissionUsecase {
         }
       }
     }
+
+    mission_resultat.quizz_global_score =
+      mission_resultat.getGlobalQuizzPourcent(utilisateur);
 
     return this.personnalisator.personnaliser(mission_resultat, utilisateur);
   }

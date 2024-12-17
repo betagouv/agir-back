@@ -129,6 +129,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           },
         ],
         est_visible: true,
+        est_examen: false,
       },
     ],
   };
@@ -1647,6 +1648,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           titre: 'titre',
           introduction: 'intro',
           is_first: false,
+          est_examen: false,
           objectifs: [
             {
               id: '0',

@@ -1,15 +1,16 @@
 import { NGCCalculator } from '../../../../src/infrastructure/ngc/NGCCalculator';
 
 describe('NGCCalculator', () => {
+  const calculator = new NGCCalculator();
+
   it('constructor : no exception', () => {
     //WHEN
-    let calculator = new NGCCalculator();
     //THEN
     expect(calculator).toBeDefined();
   });
+
   it('computeSingleEntry : compute ok single entry, empty situation', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation = {};
     const entry = 'transport . voiture . empreinte moyenne';
 
@@ -21,7 +22,6 @@ describe('NGCCalculator', () => {
   });
   it('computeSingleEntry : compute ok single entry, minimal situation', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation = {
       'transport . voiture . km': { valeur: 11000, unité: 'km/an' },
     };
@@ -35,7 +35,6 @@ describe('NGCCalculator', () => {
   });
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation = {
       'transport . voiture . km': { valeur: 12000, unité: 'km/an' },
       'transport . voiture . gabarit': "'VUL'",
@@ -57,7 +56,6 @@ describe('NGCCalculator', () => {
   });
   it('computeSingleEntry : Cas du photovlotaique', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation1 = {
       'logement . électricité . photovoltaique . présent': 'non',
     };
@@ -75,7 +73,6 @@ describe('NGCCalculator', () => {
   });
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation = {
       'transport . voiture . km': 12000,
       'transport . voiture . gabarit': "'VUL'",
@@ -110,7 +107,6 @@ describe('NGCCalculator', () => {
 
   it(`est applicable : indique que la question n'est pas applicable`, () => {
     //GIVEN
-    let calculator = new NGCCalculator();
     const situation = { 'transport . voiture . km': 0 };
     const entry = 'transport . voiture . motorisation';
 
@@ -122,18 +118,16 @@ describe('NGCCalculator', () => {
       'transport . voiture . motorisation',
     );
   });
+
   it('listerToutesLesClésDeQuestions : liste toutes les clés', () => {
     //GIVEN
-    let calculator = new NGCCalculator();
-
     //WHEN
     const result = calculator.listerToutesLesClésDeQuestions();
     //THEN
   });
-  it(' listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
-    //GIVEN
-    let calculator = new NGCCalculator();
 
+  it('listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
+    //GIVEN
     //WHEN
     const result = calculator.listeQuestionsAvecConditionApplicabilité();
 

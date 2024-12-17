@@ -36,6 +36,7 @@ export class Mission_v1 {
   done_at: Date;
   objectifs: Objectif_v1[];
   est_visible: boolean;
+  est_examen: boolean;
   is_first: boolean;
   thematique: Thematique;
   titre: string;
@@ -57,6 +58,7 @@ export class Mission_v1 {
       titre: mission.titre,
       is_first: mission.is_first,
       introduction: mission.introduction,
+      est_examen: mission.est_examen,
     };
   }
 }
@@ -90,6 +92,7 @@ export class MissionsUtilisateur_v1 extends Versioned_v1 {
           thematique: Thematique[mission.univers], // univers => thematique
           code: mission.thematique_univers, // thematique_univers => code
           introduction: undefined,
+          est_examen: false,
         });
       }
     }

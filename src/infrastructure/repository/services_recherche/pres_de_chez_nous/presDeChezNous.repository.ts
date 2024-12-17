@@ -184,7 +184,7 @@ export class PresDeChezNousRepository implements FinderInterface {
         },
         params: {
           categories: categories,
-          limit: 100,
+          limit: 500,
           bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
         },
       });

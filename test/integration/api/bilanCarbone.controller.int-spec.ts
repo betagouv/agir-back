@@ -78,7 +78,7 @@ describe('/bilan (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('GET /utilisateur/id/bilans/last - get last bilan with proper data', async () => {
+  it('GET /utilisateurs/id/bilans/last_v3 - get last bilan with proper data', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
@@ -122,7 +122,7 @@ describe('/bilan (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
+      '/utilisateurs/utilisateur-id/bilans/last_v3',
     );
 
     //THEN
@@ -152,11 +152,10 @@ describe('/bilan (API test)', () => {
           emoji: '🧱',
         },
       ],
-      impact_univers: [
+      impact_thematique: [
         {
           pourcentage: 27,
-          univers: 'alimentation',
-          univers_label: 'Alimentation',
+          thematique: 'alimentation',
           impact_kg_annee: 2339.1671821,
           details: [
             {
@@ -199,8 +198,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 23,
-          univers: 'logement',
-          univers_label: 'Logement',
+          thematique: 'logement',
           impact_kg_annee: 2008.1154777827674,
           details: [
             {
@@ -257,8 +255,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 21,
-          univers: 'transport',
-          univers_label: 'The Transport',
+          thematique: 'transport',
           impact_kg_annee: 1869.8157455574071,
           details: [
             {
@@ -322,8 +319,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 16,
-          univers: 'services_societaux',
-          univers_label: 'Services sociétaux',
+          thematique: 'services_societaux',
           impact_kg_annee: 1450.9052263863641,
           details: [
             {
@@ -345,8 +341,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 13,
-          univers: 'consommation',
-          univers_label: 'Consommation',
+          thematique: 'consommation',
           impact_kg_annee: 1149.8963528144989,
           details: [
             {
@@ -412,7 +407,7 @@ describe('/bilan (API test)', () => {
     });
   });
 
-  it('GET /utilisateur/id/bilans/last_v2 - get last bilan with proper data', async () => {
+  it('GET /utilisateurs/id/bilans/last_v3 - get last bilan with proper data', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
     await TestUtil.create(DB.kYC, {
@@ -592,21 +587,21 @@ describe('/bilan (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last_v2?force=true',
+      '/utilisateurs/utilisateur-id/bilans/last_v3?force=true',
     );
 
     //THEN
     expect(response.status).toBe(200);
+    console.log(response.body);
     expect(response.body.pourcentage_completion_totale).toEqual(21);
-    expect(response.body.liens_bilans_univers).toEqual([
+    expect(response.body.liens_bilans_thematique).toEqual([
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
         image_url:
           'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
         nombre_total_question: 0,
         pourcentage_progression: null,
-        univers: 'transport',
-        univers_label: 'The Transport',
+        thematique: 'transport',
         temps_minutes: 5,
       },
       {
@@ -615,8 +610,7 @@ describe('/bilan (API test)', () => {
           'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
         nombre_total_question: 3,
         pourcentage_progression: 67,
-        univers: 'alimentation',
-        univers_label: 'Alimentation',
+        thematique: 'alimentation',
         temps_minutes: 3,
       },
       {
@@ -625,8 +619,7 @@ describe('/bilan (API test)', () => {
           'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
         nombre_total_question: 6,
         pourcentage_progression: 0,
-        univers: 'consommation',
-        univers_label: 'Consommation',
+        thematique: 'consommation',
         temps_minutes: 10,
       },
       {
@@ -635,8 +628,7 @@ describe('/bilan (API test)', () => {
           'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
         nombre_total_question: 3,
         pourcentage_progression: 0,
-        univers: 'logement',
-        univers_label: 'Logement',
+        thematique: 'logement',
         temps_minutes: 9,
       },
     ]);
@@ -671,11 +663,10 @@ describe('/bilan (API test)', () => {
           emoji: '🧱',
         },
       ],
-      impact_univers: [
+      impact_thematique: [
         {
           pourcentage: 26,
-          univers: 'alimentation',
-          univers_label: 'Alimentation',
+          thematique: 'alimentation',
           impact_kg_annee: 2302.6211175495578,
           details: [
             {
@@ -718,8 +709,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 23,
-          univers: 'logement',
-          univers_label: 'Logement',
+          thematique: 'logement',
           impact_kg_annee: 2008.1154777827674,
           details: [
             {
@@ -776,8 +766,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 21,
-          univers: 'transport',
-          univers_label: 'The Transport',
+          thematique: 'transport',
           impact_kg_annee: 1869.8157455574071,
           details: [
             {
@@ -841,8 +830,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 17,
-          univers: 'services_societaux',
-          univers_label: 'Services sociétaux',
+          thematique: 'services_societaux',
           impact_kg_annee: 1450.9052263863641,
           details: [
             {
@@ -864,8 +852,7 @@ describe('/bilan (API test)', () => {
         },
         {
           pourcentage: 13,
-          univers: 'consommation',
-          univers_label: 'Consommation',
+          thematique: 'consommation',
           impact_kg_annee: 1149.8963528144989,
           details: [
             {
@@ -931,106 +918,7 @@ describe('/bilan (API test)', () => {
     });
   });
 
-  it('GET /utilisateur/id/bilans/last - presence du bilan de synthese et mini bilan', async () => {
-    // GIVEN
-    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.thematique, {
-      id_cms: 1,
-      code: Thematique.transport,
-      titre: 'The Transport',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 2,
-      code: Thematique.logement,
-      titre: 'Logement',
-      image_url: 'bbbb',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 3,
-      code: Thematique.consommation,
-      titre: 'Consommation',
-      image_url: 'bbbb',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 4,
-      code: Thematique.alimentation,
-      titre: 'Alimentation',
-      image_url: 'bbbb',
-    });
-    await thematiqueRepository.loadThematiques();
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
-    );
-
-    //THEN
-    expect(response.status).toBe(200);
-    expect(response.body.mini_bilan).toEqual({
-      impact_transport: null,
-      impact_alimentation: null,
-      impact_logement: null,
-      impact_consommation: null,
-    });
-
-    expect(response.body.bilan_synthese).toEqual({
-      bilan_complet_dispo: false,
-      mini_bilan_dispo: false,
-      impact_transport: null,
-      impact_alimentation: null,
-      impact_logement: null,
-      impact_consommation: null,
-      pourcentage_completion_totale: 0,
-      liens_bilans_univers: [
-        {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
-          nombre_total_question: 0,
-          pourcentage_progression: null,
-          univers: 'transport',
-          univers_label: 'The Transport',
-          temps_minutes: 5,
-        },
-        {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
-          nombre_total_question: 1,
-          pourcentage_progression: 0,
-          univers: 'alimentation',
-          univers_label: 'Alimentation',
-          temps_minutes: 3,
-        },
-        {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-          nombre_total_question: 6,
-          pourcentage_progression: 0,
-          univers: 'consommation',
-          univers_label: 'Consommation',
-          temps_minutes: 10,
-        },
-        {
-          id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
-          nombre_total_question: 3,
-          pourcentage_progression: 0,
-          univers: 'logement',
-          univers_label: 'Logement',
-          temps_minutes: 9,
-        },
-      ],
-    });
-  });
-
-  it('GET /utilisateur/id/bilans/last - mettre à jour le profil utilisateur change le bilan', async () => {
+  it('GET /utilisateurs/id/bilans/last_v3 - mettre à jour le profil utilisateur change le bilan', async () => {
     // GIVEN
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
@@ -1059,7 +947,7 @@ describe('/bilan (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
+      '/utilisateurs/utilisateur-id/bilans/last_v3',
     );
 
     //THEN
@@ -1099,7 +987,7 @@ describe('/bilan (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
+      '/utilisateurs/utilisateur-id/bilans/last_v3',
     );
 
     //THEN
@@ -1107,21 +995,6 @@ describe('/bilan (API test)', () => {
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
       8817.899984641037,
     );
-  });
-  it('GET /utilisateur/id/bilans/last - pas de bilan détaillé si feature pas unlocked', async () => {
-    // GIVEN
-
-    await TestUtil.create(DB.utilisateur, {});
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateur/utilisateur-id/bilans/last',
-    );
-
-    //THEN
-    expect(response.status).toBe(200);
-    expect(response.body.bilan_synthese.bilan_complet_dispo).toEqual(false);
-    expect(response.body.bilan_complet).not.toBeUndefined();
   });
 
   it('POST /bilan/importFromNGC - missing API KEY', async () => {

@@ -11,6 +11,11 @@ import {
   Objectif_v1,
 } from '../object_store/mission/MissionsUtilisateur_v1';
 
+export enum TypeMission {
+  standard = 'standard',
+  examen = 'examen',
+}
+
 export class Objectif {
   id: string;
   titre: string;
@@ -73,7 +78,10 @@ export class Mission {
   image_url: string;
   objectifs: Objectif[];
   est_visible: boolean;
+  est_examen: boolean;
   is_first: boolean;
+  quizz_global_score?: number;
+  type_mission?: TypeMission;
 
   constructor(data: Mission_v1) {
     this.id_cms = data.id;
@@ -85,6 +93,10 @@ export class Mission {
     this.code = data.code;
     this.image_url = data.image_url;
     this.is_first = !!data.is_first;
+    this.est_examen = !!data.est_examen;
+    this.type_mission = this.est_examen
+      ? TypeMission.examen
+      : TypeMission.standard;
 
     if (data.done_at) {
       this.done_at = new Date(data.done_at);
@@ -103,6 +115,7 @@ export class Mission {
       done_at: null,
       id: def.id_cms.toString(),
       est_visible: def.est_visible,
+      est_examen: def.est_examen,
       thematique: def.thematique,
       code: def.code,
       image_url: def.image_url,
@@ -131,7 +144,33 @@ export class Mission {
     this.introduction = def.introduction;
     this.code = def.code;
     this.is_first = def.is_first;
+    this.est_examen = def.est_examen;
+    this.type_mission = this.est_examen
+      ? TypeMission.examen
+      : TypeMission.standard;
+
     return this;
+  }
+
+  public getGlobalQuizzPourcent(utilisateur: Utilisateur) {
+    let pourcent_total = 0;
+    let nombre_quizz_done = 0;
+    for (const objectif of this.objectifs) {
+      if (objectif.type === ContentType.quizz) {
+        const quizz = utilisateur.history.getQuizzHistoryById(
+          objectif.content_id,
+        );
+        if (quizz) {
+          nombre_quizz_done++;
+          pourcent_total =
+            pourcent_total + (quizz.has100ScoreLastAttempt() ? 100 : 0);
+        }
+      }
+    }
+    if (nombre_quizz_done === 0) {
+      return 0;
+    }
+    return Math.round(pourcent_total / nombre_quizz_done);
   }
 
   public exfiltreObjectifsNonVisibles() {
@@ -168,12 +207,10 @@ export class Mission {
       (element) => element.type === ContentType.defi,
     );
   }
-
-  public getNextKycId(): string {
-    const objectif_kyc = this.objectifs.find(
-      (o) => o.type === ContentType.kyc && !o.isDone(),
+  public findAllQuizz(): Objectif[] {
+    return this.objectifs.filter(
+      (element) => element.type === ContentType.quizz,
     );
-    return objectif_kyc ? objectif_kyc.content_id : null;
   }
 
   public answerMosaic(mosaicID: KYCMosaicID) {
@@ -197,7 +234,15 @@ export class Mission {
     if (this.isNew()) return false;
 
     const obj_defis = this.findAllDefis();
-    return obj_defis.findIndex((o) => o.isDone()) > -1;
+    const obj_quizz = this.findAllQuizz();
+
+    const critere_defis =
+      obj_defis.length > 0 && obj_defis.findIndex((o) => o.isDone()) > -1;
+
+    const critere_quizz =
+      obj_quizz.findIndex((o) => o.isDone()) > -1 && obj_defis.length === 0;
+
+    return critere_defis || critere_quizz;
   }
 
   public validateDefiObjectif(defi_id: string) {

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Mission, Objectif } from '../../../../../src/domain/mission/mission';
 import { ContentType } from '../../../../../src/domain/contenu/contentType';
-import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatus } from '../../../../../src/domain/defis/defi';
 import { Thematique } from '../../../../domain/contenu/thematique';
 
@@ -47,8 +46,10 @@ export class MissionAPI_v2 {
   @ApiProperty() done_at: Date;
   @ApiProperty() terminable: boolean;
   @ApiProperty() is_new: boolean;
+  @ApiProperty() is_examen: boolean;
   @ApiProperty() image_url: string;
   @ApiProperty() code: string;
+  @ApiProperty() quizz_global_score: number;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty({ type: ProgressionAPI }) progression: ProgressionAPI;
   @ApiProperty({ type: ProgressionAPI }) progression_kyc: ProgressionAPI;
@@ -57,6 +58,7 @@ export class MissionAPI_v2 {
   public static mapToAPI(mission: Mission): MissionAPI_v2 {
     return {
       id: mission.id_cms,
+      is_examen: mission.est_examen,
       titre: mission.titre,
       introduction: mission.introduction,
       done_at: mission.done_at,
@@ -68,6 +70,7 @@ export class MissionAPI_v2 {
       progression_kyc: mission.getProgressionKYC(),
       image_url: mission.image_url,
       terminable: mission.estTerminable(),
+      quizz_global_score: mission.quizz_global_score,
     };
   }
 }

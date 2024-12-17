@@ -120,6 +120,7 @@ import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
+import { GoneController } from './infrastructure/api/gone.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -151,6 +152,7 @@ function getControllers(): any[] {
     NotificationsController,
     LoadCMSController,
     SyntheseController,
+    GoneController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);

@@ -40,6 +40,7 @@ export type CMSWebhookPopulateAPI = {
     A_SUPPRIMER: boolean;
     is_ngc: boolean;
     is_first: boolean;
+    is_examen: boolean;
     ngc_key: string;
     code: string;
     niveau: number;

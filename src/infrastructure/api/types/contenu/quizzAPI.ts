@@ -36,6 +36,7 @@ export class QuizzQuestionAPI {
 export class QuizzBibliothequeAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() article_contenu: string;
+  @ApiProperty() article_id: string;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: Thematique }) thematique_principale: Thematique;
   @ApiProperty() duree: string;
@@ -48,6 +49,7 @@ export class QuizzBibliothequeAPI {
     return {
       content_id: quizz.content_id,
       article_contenu: quizz.article_contenu,
+      article_id: quizz.article_id,
       difficulty: quizz.difficulty,
       duree: quizz.duree,
       points: quizz.points,

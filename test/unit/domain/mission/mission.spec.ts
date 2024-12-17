@@ -1,5 +1,6 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { History } from '../../../../src/domain/history/history';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { Mission_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
@@ -22,6 +23,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -83,6 +85,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -141,6 +144,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     });
 
     // WHEN
@@ -164,6 +168,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -222,6 +227,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -280,6 +286,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
       objectifs: [
         {
           content_id: '1',
@@ -349,6 +356,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -419,6 +427,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -489,6 +498,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
 
       objectifs: [
         {
@@ -549,6 +559,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m2: Mission_v1 = {
       done_at: new Date(),
@@ -561,6 +572,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m3: Mission_v1 = {
       done_at: new Date(),
@@ -573,6 +585,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
     const m4: Mission_v1 = {
       done_at: null,
@@ -585,6 +598,7 @@ describe('Missions', () => {
       titre: 'titre',
       introduction: 'intro',
       is_first: false,
+      est_examen: false,
     };
 
     const missionsUtilisateur = new MissionsUtilisateur({
@@ -598,5 +612,72 @@ describe('Missions', () => {
     expect(missionsUtilisateur.isThematiqueDone(Thematique.climat)).toEqual(
       false,
     );
+  });
+  it('getGlobalQuizzPourcent : bonne valeur', () => {
+    // GIVEN
+    const utilisateur = new Utilisateur();
+    utilisateur.history = new History();
+
+    utilisateur.history.quizzAttempt('1', 100);
+    utilisateur.history.quizzAttempt('2', 0);
+    utilisateur.history.quizzAttempt('3', 100);
+
+    utilisateur.history.declarePointsQuizzEnPoche('1');
+    utilisateur.history.declarePointsQuizzEnPoche('3');
+
+    const mission = new Mission({
+      done_at: null,
+      est_visible: true,
+      id: '123',
+      code: CodeMission.cereales,
+      image_url: 'image',
+      thematique: Thematique.alimentation,
+      titre: 'titre',
+      introduction: 'intro',
+      is_first: false,
+      est_examen: false,
+
+      objectifs: [
+        {
+          content_id: '1',
+          id: '1',
+          done_at: new Date(),
+          est_reco: false,
+          is_locked: false,
+          sont_points_en_poche: false,
+          points: 5,
+          titre: 'yo',
+          type: ContentType.quizz,
+        },
+        {
+          content_id: '2',
+          id: '2',
+          done_at: new Date(),
+          est_reco: false,
+          is_locked: false,
+          sont_points_en_poche: false,
+          points: 5,
+          titre: 'yo',
+          type: ContentType.quizz,
+        },
+        {
+          content_id: '3',
+          id: '3',
+          done_at: new Date(),
+          est_reco: false,
+          is_locked: false,
+          sont_points_en_poche: false,
+          points: 5,
+          titre: 'yo',
+          type: ContentType.quizz,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = mission.getGlobalQuizzPourcent(utilisateur);
+
+    // THEN
+    expect(result).toEqual(67);
   });
 });

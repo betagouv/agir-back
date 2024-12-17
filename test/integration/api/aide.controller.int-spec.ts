@@ -1,14 +1,18 @@
-import { NB_VELO_TYPES } from '../../../src/domain/aides/aideVelo';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
+import {
+  AideVeloAPI,
+  AidesVeloParTypeAPI,
+} from '../../../src/infrastructure/api/types/aide/AidesVeloParTypeAPI';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Aide (API test)', () => {
+  const OLD_ENV = process.env;
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
@@ -18,32 +22,155 @@ describe('Aide (API test)', () => {
   });
 
   beforeEach(async () => {
+    process.env = { ...OLD_ENV }; // Make a copy
     await TestUtil.deleteAll();
   });
 
   afterAll(async () => {
+    process.env = OLD_ENV;
     await TestUtil.appclose();
   });
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
+    process.env.MINIATURES_URL = 'http://localhost:3000';
 
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
-      prix_du_velo: 100,
+      prix_du_velo: 5000,
     });
+
+    const bonusVelo: AideVeloAPI = {
+      libelle: 'Bonus vélo',
+      montant: 150,
+      plafond: 150,
+      description: `Supprimé depuis le 2 décembre 2024.
+
+Cependant, une période transitoire permet de pouvoir continuer de bénéficier du bonus pour tout achat effectué avant le 14 février 2025 inclus (date de facturation).`,
+      lien: 'https://www.economie.gouv.fr/particuliers/prime-velo-electrique#',
+      collectivite: {
+        kind: 'pays',
+        value: 'France',
+      },
+      logo: 'http://localhost:3000/logo_etat_francais.webp',
+    };
+
+    const idfMobilites: AideVeloAPI = {
+      libelle: 'Île-de-France Mobilités',
+      montant: 50,
+      plafond: 50,
+      description:
+        "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+      lien: 'https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo',
+      collectivite: {
+        kind: 'région',
+        value: '11',
+      },
+      logo: 'http://localhost:3000/logo_ile_de_france.webp',
+    };
 
     // THEN
     expect(response.status).toBe(201);
-    expect(Object.keys(response.body)).toHaveLength(NB_VELO_TYPES);
-    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
-    expect(response.body['électrique'][0].description).toEqual(
-      'Nouveau bonus vélo électrique applicable à partir du 14 février 2024.\n',
-    );
-    expect(response.body['électrique'][0].montant).toEqual(40);
+    expect(response.body).toEqual<AidesVeloParTypeAPI>({
+      'mécanique simple': [bonusVelo],
+      électrique: [
+        {
+          ...bonusVelo,
+          montant: 400,
+          plafond: 400,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      cargo: [
+        {
+          ...bonusVelo,
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo cargo à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      'cargo électrique': [
+        {
+          ...bonusVelo,
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo cargo électrique à hauteur de 50% et jusqu'à un plafond de 600 €.",
+          montant: 600,
+          plafond: 600,
+        },
+      ],
+      pliant: [
+        {
+          ...bonusVelo,
+          montant: 2000,
+          plafond: 2000,
+        },
+
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo pliant à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      'pliant électrique': [
+        {
+          ...bonusVelo,
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo pliant électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+          montant: 400,
+          plafond: 400,
+        },
+      ],
+      motorisation: [
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un kit de motorisation à hauteur de 50% et jusqu'à un plafond de 200 €.",
+          montant: 200,
+          plafond: 200,
+        },
+      ],
+      adapté: [
+        {
+          ...bonusVelo,
+          montant: 2000,
+          plafond: 2000,
+        },
+        {
+          ...idfMobilites,
+          description:
+            "La région Île-de-France subventionne l'achat d'un vélo adapté à hauteur de 50% et jusqu'à un plafond de 1 200 €.",
+          montant: 1200,
+          plafond: 1200,
+        },
+      ],
+    });
   });
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
@@ -118,13 +245,15 @@ describe('Aide (API test)', () => {
     await TestUtil.create(DB.aide);
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('1');
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
@@ -157,13 +286,15 @@ describe('Aide (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
   it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée', async () => {
@@ -187,13 +318,15 @@ describe('Aide (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.clicked_infos).toEqual(false);
     expect(aideBody.clicked_demande).toEqual(true);
   });

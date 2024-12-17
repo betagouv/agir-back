@@ -2,18 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import {
-  Scope,
-  SourceInscription,
-  Utilisateur,
-} from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
   NiveauImpact,
 } from '../domain/bilan/bilanCarbone';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
@@ -28,7 +23,6 @@ export class BilanCarboneUsecase {
     private nGCCalculator: NGCCalculator,
     private utilisateurRepository: UtilisateurRepository,
     private bilanCarboneStatistiqueRepository: BilanCarboneStatistiqueRepository,
-    private kycRepository: KycRepository,
   ) {}
 
   async getCurrentBilanByUtilisateurId(utilisateurId: string): Promise<{
