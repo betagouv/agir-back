@@ -643,6 +643,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.thematique_principale).toEqual(Thematique.climat);
     expect(response.body.difficulty).toEqual(1);
     expect(response.body.article_contenu).toEqual('un très bon article');
+    expect(response.body.article_id).toEqual('1');
     expect(response.body.questions).toEqual([
       {
         libelle: "Qu'est-ce qu'un embout mousseur ?",
