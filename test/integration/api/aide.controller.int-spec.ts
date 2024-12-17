@@ -245,13 +245,15 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     await TestUtil.create(DB.aide);
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('1');
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
@@ -284,13 +286,15 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
   it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée', async () => {
@@ -314,13 +318,15 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     });
 
     // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides');
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.liste_aides).toHaveLength(1);
 
-    const aideBody = response.body[0] as AideAPI;
+    const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.clicked_infos).toEqual(false);
     expect(aideBody.clicked_demande).toEqual(true);
   });
