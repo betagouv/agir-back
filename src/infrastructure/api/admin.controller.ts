@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
 } from '@nestjs/common';
 import {
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiProperty,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
@@ -38,6 +40,7 @@ import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
+import { MissionUsecase } from '../../usecase/mission.usecase';
 
 class VersionAPI {
   @ApiProperty()
@@ -67,6 +70,7 @@ export class AdminController extends GenericControler {
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private missionStatistiqueUsecase: MissionStatistiqueUsecase,
+    private missionUsecase: MissionUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
     private prisma: PrismaService,
@@ -314,6 +318,27 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.contactUsecase.createMissingContacts();
   }
+
+  @Get('/admin/liste_user_with_mission_done')
+  @ApiOperation({
+    summary: `liste tous les utilisateurs ayant terminés une certaine mission`,
+  })
+  @ApiQuery({
+    name: 'code_mission',
+    type: String,
+    required: true,
+    description: `Code de la mission`,
+  })
+  async listeUserMissionDone(
+    @Request() req,
+    @Query('code_mission') code_mission: string,
+  ): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.missionUsecase.listUsersWithMissionDoneByCode(
+      code_mission,
+    );
+  }
+
   @Get('/admin/:utilisateurId/raw_sql_user')
   @ApiOperation({
     summary: `extrait un utilisateur au format brut BDD`,
