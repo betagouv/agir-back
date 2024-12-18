@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Quizz } from '../../domain/contenu/quizz';
 import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/contenu/thematique';
@@ -61,14 +60,16 @@ export class QuizzRepository {
     });
   }
 
-  async getQuizzByContentId(content_id: string): Promise<Quizz> {
+  async getQuizzDefinitionByContentId(
+    content_id: string,
+  ): Promise<QuizzDefinition> {
     const result = await this.prisma.quizz.findUnique({
       where: { content_id: content_id },
     });
     return this.buildQuizzFromDB(result);
   }
 
-  async searchQuizzes(filter: QuizzFilter): Promise<Quizz[]> {
+  async searchQuizzes(filter: QuizzFilter): Promise<QuizzDefinition[]> {
     let codes_postaux_filter;
     let mois_filter;
 
@@ -122,9 +123,9 @@ export class QuizzRepository {
     return result.map((elem) => this.buildQuizzFromDB(elem));
   }
 
-  private buildQuizzFromDB(quizzDB: QuizzDB): Quizz {
+  private buildQuizzFromDB(quizzDB: QuizzDB): QuizzDefinition {
     if (quizzDB === null) return null;
-    return new Quizz({
+    return {
       content_id: quizzDB.content_id,
       titre: quizzDB.titre,
       soustitre: quizzDB.soustitre,
@@ -145,6 +146,6 @@ export class QuizzRepository {
       mois: quizzDB.mois,
       article_id: quizzDB.article_id,
       questions: quizzDB.questions as any,
-    });
+    };
   }
 }

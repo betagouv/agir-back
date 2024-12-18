@@ -211,6 +211,37 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
   });
+  it('PATCH /utilisateurs/id/profile - prenom trop long', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom:
+        'AaAaaaaaaehfbgsqflkqdhsfvqsdlmkhsdvkjhvksdhfkjghqsdflkqhsfvsdlkghsdlkfgh',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      `L'attribut [prenom] doit être de longueur maximale 40, longueur reçue : 72`,
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - nom trop long', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nom: 'AaAaaaaaaehfbgsqflkqdhsfvqsdlmkhsdvkjhvksdhfkjghqsdflkqhsfvsdlkghsdlkfgh',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      `L'attribut [nom] doit être de longueur maximale 40, longueur reçue : 72`,
+    );
+  });
   it('PATCH /utilisateurs/id/profile - pas possible de maj le email', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

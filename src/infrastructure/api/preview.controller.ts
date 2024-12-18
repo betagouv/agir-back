@@ -646,9 +646,10 @@ export class PreviewController extends GenericControler {
           result.push('');
           result.push(`## QUIZZ [${objectif.content_id}]`);
 
-          const quizz = await this.quizzRepository.getQuizzByContentId(
-            objectif.content_id,
-          );
+          const quizz =
+            await this.quizzRepository.getQuizzDefinitionByContentId(
+              objectif.content_id,
+            );
           if (!quizz) {
             result.push(``);
             result.push(

@@ -666,4 +666,58 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       },
     ]);
   });
+  it('GET /bibliotheque/article/123 - renvoi un article en mode non connecté', async () => {
+    // GIVEN
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      partenaire_id: '123',
+    });
+    await partenaireRepository.loadPartenaires();
+
+    // WHEN
+    const response = await TestUtil.GET('/bibliotheque/articles/1');
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.content_id).toEqual('1');
+    expect(response.body.titre).toEqual('titreA');
+    expect(response.body.contenu).toEqual('un long article');
+    expect(response.body.favoris).toEqual(false);
+    expect(response.body.like_level).toEqual(null);
+    expect(response.body.read_date).toEqual(null);
+    expect(response.body.partenaire_nom).toEqual('ADEME');
+    expect(response.body.partenaire_url).toEqual('https://ademe.fr');
+    expect(response.body.partenaire_logo_url).toEqual('logo_url');
+    expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
+  });
+
+  it('PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - ajoute un historique de quizz v2', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 55,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts,
+    ).toHaveLength(1);
+    expect(
+      dbUtilisateur.history
+        .getQuizzHistoryById('123')
+        .attempts[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(55);
+  });
 });

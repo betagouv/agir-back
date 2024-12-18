@@ -34,6 +34,7 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -61,6 +62,7 @@ describe('Admin (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const linkyRepository = new LinkyRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -2622,5 +2624,69 @@ describe('Admin (API test)', () => {
       Scope.ALL,
     ]);
     expect(dbUser.prenom).toEqual('prenom');
+  });
+  it(`GET /admin/liste_user_with_mission_done liste les user avec une mission terminée de code donné`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    // GIVEN
+    const mission_unique_done: MissionsUtilisateur_v1 = {
+      version: 1,
+      missions: [
+        {
+          id: '1',
+          done_at: new Date(),
+          code: CodeMission.cereales,
+          image_url: 'img',
+          thematique: Thematique.alimentation,
+          titre: 'titre',
+          introduction: 'intro',
+          is_first: false,
+          objectifs: [
+            {
+              id: '0',
+              content_id: '1',
+              type: ContentType.article,
+              titre: '1 article',
+              points: 10,
+              is_locked: false,
+              done_at: new Date(),
+              sont_points_en_poche: false,
+              est_reco: true,
+            },
+          ],
+          est_visible: true,
+          est_examen: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.alimentation,
+      label: 'Faut manger !',
+    });
+
+    await TestUtil.create(DB.mission, {
+      id_cms: 1,
+      code: CodeMission.cereales,
+    });
+    await missionRepository.onApplicationBootstrap();
+    await thematiqueRepository.onApplicationBootstrap();
+
+    //WHEN
+    let response = await TestUtil.GET(
+      '/admin/liste_user_with_mission_done?code_mission=cereales',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        email: 'yo@truc.com',
+        id: 'utilisateur-id',
+      },
+    ]);
   });
 });

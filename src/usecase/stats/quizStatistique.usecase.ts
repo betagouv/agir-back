@@ -49,7 +49,8 @@ export class QuizStatistiqueUsecase {
 
     for (let i = 0; i < quizRecordEntries.length; i++) {
       const [key, value] = quizRecordEntries[i];
-      const titreDuQuiz = await this.quizRepository.getQuizzByContentId(key);
+      const titreDuQuiz =
+        await this.quizRepository.getQuizzDefinitionByContentId(key);
 
       await this.quizStatistiqueRepository.upsertStatistiquesDUnQuiz(
         key,

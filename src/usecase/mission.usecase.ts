@@ -33,6 +33,29 @@ export class MissionUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
+  async listUsersWithMissionDoneByCode(
+    code_mission: string,
+  ): Promise<{ id: string; email: string }[]> {
+    const result: { id: string; email: string }[] = [];
+
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      undefined,
+      true,
+    );
+
+    for (const user_id of user_id_liste) {
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.missions,
+      ]);
+      const mission = utilisateur.missions.getMissionByCode(code_mission);
+      if (mission && mission.isDone()) {
+        result.push({ id: utilisateur.id, email: utilisateur.email });
+      }
+    }
+
+    return result;
+  }
+
   async getTuilesMissionsRecommandeesToutesThematiques(
     utilisateurId: string,
   ): Promise<TuileMission[]> {

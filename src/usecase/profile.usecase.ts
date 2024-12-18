@@ -18,6 +18,8 @@ import validator from 'validator';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
 
+const FIELD_MAX_LENGTH = 40;
+
 export type Phrase = {
   phrase: string;
   pourcent: number;
@@ -63,10 +65,21 @@ export class ProfileUsecase {
       if (!char_regexp.test(profile.nom)) {
         ApplicationError.throwNotAlhpaNom();
       }
+      if (profile.nom.length > FIELD_MAX_LENGTH) {
+        ApplicationError.throwTooBigData('nom', profile.nom, FIELD_MAX_LENGTH);
+      }
     }
+
     if (profile.prenom) {
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
+      }
+      if (profile.prenom.length > FIELD_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'prenom',
+          profile.prenom,
+          FIELD_MAX_LENGTH,
+        );
       }
       utilisateur.est_valide_pour_classement = false;
     }

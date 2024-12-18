@@ -21,6 +21,7 @@ import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Article } from '../domain/contenu/article';
+import { Quizz } from '../domain/contenu/quizz';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -44,7 +45,7 @@ export class RecommandationUsecase {
 
     const articles = await this.getArticles(utilisateur, thematique);
 
-    const quizzes = await this.getQuizzes(utilisateur, thematique);
+    const quizzes = await this.getQuizzes(utilisateur, 10, thematique);
 
     let kycs = await this.getKYC(utilisateur, thematique);
 
@@ -80,7 +81,7 @@ export class RecommandationUsecase {
 
     const articles = await this.getArticles(utilisateur);
 
-    const quizzes = await this.getQuizzes(utilisateur);
+    const quizzes = await this.getQuizzes(utilisateur, 10);
 
     let defis_en_cours = [];
     let defis_restants = [];
@@ -246,6 +247,7 @@ export class RecommandationUsecase {
 
   private async getQuizzes(
     utilisateur: Utilisateur,
+    max_number: number,
     thematique?: Thematique,
   ): Promise<Recommandation[]> {
     const quizz_attempted = utilisateur.history.listeIdsQuizzAttempted();
@@ -255,13 +257,16 @@ export class RecommandationUsecase {
       exclude_ids: quizz_attempted,
       categorie: Categorie.recommandation,
       date: new Date(),
+      maxNumber: max_number,
     };
 
     if (thematique) {
       filtre.thematiques = [Thematique[thematique]];
     }
 
-    let quizzes = await this.quizzRepository.searchQuizzes(filtre);
+    let quizzes_defs = await this.quizzRepository.searchQuizzes(filtre);
+
+    let quizzes = quizzes_defs.map((q) => new Quizz(q));
 
     PonderationApplicativeManager.increaseScoreContentOfList(
       quizzes,

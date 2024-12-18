@@ -158,7 +158,7 @@ export class History {
     article.read_date = date || new Date();
   }
   public quizzAttempt(content_id: string, score: number, date?: Date) {
-    let quizz = this.findOrCreateQuizzById(content_id);
+    let quizz = this.findQuizzByIdOrCreate(content_id);
     quizz.addAttempt(score, date);
   }
 
@@ -189,7 +189,7 @@ export class History {
     article.points_en_poche = true;
   }
   public declarePointsQuizzEnPoche(content_id: string) {
-    let quizz = this.findOrCreateQuizzById(content_id);
+    let quizz = this.findQuizzByIdOrCreate(content_id);
     quizz.points_en_poche = true;
   }
 
@@ -198,7 +198,7 @@ export class History {
     article.like_level = level;
   }
   public likerQuizz(content_id: string, level: number) {
-    let quizz = this.findOrCreateQuizzById(content_id);
+    let quizz = this.findQuizzByIdOrCreate(content_id);
     quizz.like_level = level;
   }
   public favoriserArticle(content_id: string) {
@@ -232,7 +232,7 @@ export class History {
     articles.sort((a, b) => b.read_date.getTime() - a.read_date.getTime());
   }
 
-  private findOrCreateQuizzById(content_id: string): QuizzHistory {
+  private findQuizzByIdOrCreate(content_id: string): QuizzHistory {
     let result = this.quizz_interactions.find(
       (quizz) => quizz.content_id === content_id,
     );

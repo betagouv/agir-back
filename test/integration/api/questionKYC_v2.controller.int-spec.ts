@@ -1634,6 +1634,45 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ).toBeGreaterThan(Date.now() - 200);
   });
 
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - champ libre de max 140 char', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc,
+      kyc: kyc,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.libre,
+      points: 10,
+      question: 'Comment avez vous connu le service ?',
+      reponses: [],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: `sdlfkjqsfmljqsflkqsflkhqsfliyqfilyuqsfpiysqfopiysfyqfs iqsf qsfoiy qsfoiy qsfoiy qsfi ysqfoiy qsfoiqsy fopiysfyqfs iqsf qsfoiy qsfoiy qsfoiy qsf
+          mljqsflkqsflkhqsfliyqfilyuqsfpiysqfopiysfyqfs iqsf qsfoiy qsfoiy qsfoiy qsfi ysqfoiy qsfoiqsy fopiysfyqfs iqsf qsfoiy qsfoiy qi ysqfoiy qsfoiqsy f
+          fs iqsf qsfoiy qsfoiy qsfoiy qsfi ysqfoiy qsfoiqsy `,
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `L'attribut [value] doit être de longueur maximale 280, longueur reçue : 363`,
+    );
+  });
+
   it(`PUT /utilisateurs/id/questionsKYC_v2/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
     // GIVEN
     const missions_article_plus_defi: MissionsUtilisateur_v1 = {
