@@ -307,6 +307,9 @@ export class QuestionKYC implements TaggedContent {
   public isChoixUnique(): boolean {
     return this.type === TypeReponseQuestionKYC.choix_unique;
   }
+  public isChampLibre(): boolean {
+    return this.type === TypeReponseQuestionKYC.libre;
+  }
   public isChoixMultiple(): boolean {
     return this.type === TypeReponseQuestionKYC.choix_multiple;
   }

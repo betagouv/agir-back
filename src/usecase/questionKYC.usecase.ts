@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import {
@@ -12,13 +11,13 @@ import {
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
+
+const FIELD_MAX_LENGTH = 280;
 
 @Injectable()
 export class QuestionKYCUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private defiRepository: DefiRepository,
     private personnalisator: Personnalisator,
   ) {}
 
@@ -409,6 +408,15 @@ export class QuestionKYCUsecase {
       }
       if (!reponses[0].value) {
         ApplicationError.throwMissingValue(code_question);
+      }
+      if (question_to_update.isChampLibre()) {
+        if (reponses[0].value.length > FIELD_MAX_LENGTH) {
+          ApplicationError.throwTooBigData(
+            'value',
+            reponses[0].value,
+            FIELD_MAX_LENGTH,
+          );
+        }
       }
       question_to_update.setReponseSimpleValue(reponses[0].value);
     } else if (question_to_update.isChoixUnique()) {

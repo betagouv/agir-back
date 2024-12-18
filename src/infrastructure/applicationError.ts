@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { max } from 'rxjs';
 
 export class ApplicationError {
   @ApiProperty()
@@ -537,6 +538,12 @@ export class ApplicationError {
       '101',
       `Pourcentage attendu pour mettre un score au quizz, reçu :[${pourcent}]`,
       400,
+    );
+  }
+  static throwTooBigData(field: string, value: string, max_length: number) {
+    this.throwAppError(
+      '102',
+      `L'attribut [${field}] doit être de longueur maximale ${max_length}, longueur reçue : ${value.length}`,
     );
   }
 
