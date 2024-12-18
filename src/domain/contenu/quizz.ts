@@ -17,6 +17,8 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     if (!this.mois) {
       this.mois = [];
     }
+
+    // FIXME : passer en codes côté CMS avec correspondance directe
     if (this.rubrique_ids) {
       this.tags_rubriques = this.rubrique_ids.map((r) => TagRubrique[`R${r}`]);
     } else {

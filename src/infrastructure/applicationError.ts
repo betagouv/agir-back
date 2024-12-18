@@ -532,6 +532,13 @@ export class ApplicationError {
       404,
     );
   }
+  static throwBadQuizzPourcent(pourcent: number) {
+    this.throwAppError(
+      '101',
+      `Pourcentage attendu pour mettre un score au quizz, reçu :[${pourcent}]`,
+      400,
+    );
+  }
 
   private static throwAppError(
     code: string,

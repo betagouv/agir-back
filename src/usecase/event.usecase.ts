@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { EventType, AppEvent } from '../domain/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { Scope } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
-import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { Thematique } from '../domain/contenu/thematique';
-import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { LiveService } from '../../src/domain/service/serviceDefinition';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
+import { BibliothequeUsecase } from './bibliotheque.usecase';
 
 @Injectable()
 export class EventUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private articleRepository: ArticleRepository,
-    private quizzRepository: QuizzRepository,
+    private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
   async processEvent(utilisateurId: string, event: AppEvent) {
@@ -182,39 +178,9 @@ export class EventUsecase {
       ],
     );
 
-    await this.readArticle(event.content_id, utilisateur);
+    await this.bibliothequeUsecase.readArticle(event.content_id, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  public async readArticle(content_id: string, utilisateur: Utilisateur) {
-    utilisateur.history.lireArticle(content_id);
-
-    const article_definition =
-      await this.articleRepository.getArticleDefinitionByContentId(content_id);
-
-    if (!utilisateur.history.sontPointsArticleEnPoche(content_id)) {
-      utilisateur.gamification.ajoutePoints(
-        article_definition.points,
-        utilisateur,
-      );
-      utilisateur.history.declarePointsArticleEnPoche(content_id);
-    }
-    this.updateUserTodo(
-      utilisateur,
-      ContentType.article,
-      article_definition.thematiques,
-    );
-
-    utilisateur.missions.validateArticleOrQuizzDone(
-      content_id,
-      ContentType.article,
-    );
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
   }
 
   private async processQuizzScore(utilisateurId: string, event: AppEvent) {
@@ -228,46 +194,13 @@ export class EventUsecase {
         Scope.todo,
       ],
     );
-    utilisateur.history.quizzAttempt(event.content_id, event.number_value);
 
-    const quizz = await this.quizzRepository.getQuizzByContentId(
+    await this.bibliothequeUsecase.setQuizzResult(
       event.content_id,
-    );
-    if (
-      !utilisateur.history.sontPointsQuizzEnPoche(event.content_id) &&
-      event.number_value === 100
-    ) {
-      utilisateur.gamification.ajoutePoints(quizz.points, utilisateur);
-      utilisateur.history.declarePointsQuizzEnPoche(event.content_id);
-      this.updateUserTodo(utilisateur, ContentType.quizz, quizz.thematiques);
-    }
-
-    utilisateur.missions.validateArticleOrQuizzDone(
-      event.content_id,
-      ContentType.quizz,
       event.number_value,
-    );
-
-    utilisateur.missions.recomputeRecoDefi(
       utilisateur,
-      DefiRepository.getCatalogue(),
     );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  private updateUserTodo(
-    utilisateur: Utilisateur,
-    type: ContentType,
-    thematiques: Thematique[],
-  ) {
-    const matching =
-      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-        type,
-        thematiques,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
-    }
   }
 }

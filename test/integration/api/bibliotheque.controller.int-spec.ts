@@ -691,4 +691,33 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.partenaire_logo_url).toEqual('logo_url');
     expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
   });
+
+  it('PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - ajoute un historique de quizz v2', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123' });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 55,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts,
+    ).toHaveLength(1);
+    expect(
+      dbUtilisateur.history
+        .getQuizzHistoryById('123')
+        .attempts[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(55);
+  });
 });

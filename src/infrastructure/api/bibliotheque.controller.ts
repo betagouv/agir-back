@@ -1,7 +1,9 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
+  Patch,
   Query,
   Request,
   UseGuards,
@@ -11,6 +13,7 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
   ApiQuery,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -23,6 +26,7 @@ import { Thematique } from '../../domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { ArticleBibliothequeAPI } from './types/contenu/articleAPI';
 import { QuizzBibliothequeAPI } from './types/contenu/quizzAPI';
+import { QuizzAttemptAPI } from './types/contenu/quizzAttemptAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -151,5 +155,30 @@ export class BibliothequeController extends GenericControler {
       content_id,
     );
     return QuizzBibliothequeAPI.map(quizz);
+  }
+  @Patch('utilisateurs/:utilisateurId/bibliotheque/quizz/:content_id')
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id d'un quizz`,
+  })
+  @ApiBody({
+    type: QuizzAttemptAPI,
+  })
+  @UseGuards(AuthGuard)
+  async addAttemptQuizz(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('content_id') content_id: string,
+    @Body() body: QuizzAttemptAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.bibliothequeUsecase.addQuizzAttempt(
+      utilisateurId,
+      content_id,
+      body.pourcent,
+    );
   }
 }
