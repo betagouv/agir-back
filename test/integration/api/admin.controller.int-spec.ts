@@ -2485,6 +2485,18 @@ describe('Admin (API test)', () => {
       est_valide_pour_classement: true,
       email: '3',
     });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      prenom: '',
+      est_valide_pour_classement: false,
+      email: '4',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '5',
+      prenom: null,
+      est_valide_pour_classement: false,
+      email: '5',
+    });
     // WHEN
     const response = await TestUtil.GET('/admin/prenoms_a_valider');
 

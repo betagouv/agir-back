@@ -40,8 +40,8 @@ export class UtilisateurRepository {
       where: {
         est_valide_pour_classement: false,
         active_account: true,
-        prenom: {
-          not: null,
+        NOT: {
+          OR: [{ prenom: '' }, { prenom: null }],
         },
       },
       select: {
