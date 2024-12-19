@@ -89,6 +89,7 @@ export class CMSWebhookArticleAPI {
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
+  @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
   @ApiProperty() est_visible: boolean;

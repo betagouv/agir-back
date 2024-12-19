@@ -35,6 +35,15 @@ export class LoadCMSController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadThematiquesFromCMS();
   }
+  @Post('/admin/load_conformite_from_cms')
+  @ApiOperation({
+    summary: 'Upsert toutes les pages de conformités publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSConformites(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadConformiteFromCMS();
+  }
 
   @Post('/admin/load_missions_from_cms')
   @ApiOperation({

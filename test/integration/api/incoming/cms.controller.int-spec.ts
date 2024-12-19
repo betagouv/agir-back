@@ -441,6 +441,32 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(403);
   });
 
+  it('POST /api/incoming/cms - create a conformite', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      model: CMSModel.conformite,
+      event: CMSEvent['entry.publish'],
+      entry: {
+        id: 1,
+        Titre: 'TheTitre',
+        contenu: 'Super Contenu',
+        code: 'TheCode',
+      },
+    });
+
+    // THEN
+    const confomrite = await TestUtil.prisma.conformite.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(confomrite).toHaveLength(1);
+    expect(confomrite[0].titre).toEqual('TheTitre');
+    expect(confomrite[0].id_cms).toEqual('1');
+    expect(confomrite[0].contenu).toEqual('Super Contenu');
+    expect(confomrite[0].code).toEqual('TheCode');
+  });
+
   it('POST /api/incoming/cms - create a new article in article table', async () => {
     // GIVEN
 

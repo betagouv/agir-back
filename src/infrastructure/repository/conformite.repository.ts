@@ -66,4 +66,12 @@ export class ConformiteRepository {
       update: data,
     });
   }
+
+  public async delete(id_cms: string) {
+    await this.prisma.conformite.delete({
+      where: {
+        id_cms: id_cms,
+      },
+    });
+  }
 }
