@@ -78,12 +78,6 @@ export class AdminController extends GenericControler {
     super();
   }
 
-  @Get('version')
-  @ApiOkResponse({ type: VersionAPI })
-  async getVersion(): Promise<VersionAPI> {
-    return App.getAppVersion();
-  }
-
   @Get('error_410_get')
   async error410Get() {
     ApplicationError.throwThatURLIsGone(

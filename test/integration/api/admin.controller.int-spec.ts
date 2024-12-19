@@ -2455,15 +2455,6 @@ describe('Admin (API test)', () => {
     */
   });
 
-  it('GET /version', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.getServer().get('/version');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ major: 1, minor: 0, patch: 0 });
-  });
   it('GET /admin/prenoms_a_valider', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
