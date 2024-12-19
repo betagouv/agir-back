@@ -141,8 +141,8 @@ export class BibliothequeUsecase {
     content_id: string,
     pourcent: number,
   ) {
-    if (!pourcent) {
-      ApplicationError.throwBadQuizzPourcent(pourcent);
+    if (pourcent === null || pourcent === undefined) {
+      ApplicationError.throwMissingPourcent();
     }
     const rounded_pourcent = Math.round(pourcent);
     if (isNaN(rounded_pourcent)) {
@@ -249,7 +249,6 @@ export class BibliothequeUsecase {
 
   // FIXME : should be private
   public async readArticle(content_id: string, utilisateur: Utilisateur) {
-    console.log(content_id);
     if (!content_id) return;
 
     utilisateur.history.lireArticle(content_id);

@@ -796,9 +796,56 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
     ).toEqual(55);
-    console.log(dbUtilisateur.history.article_interactions);
     expect(
       dbUtilisateur.history.getArticleHistoryById('1').read_date.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
+  });
+  it(`PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - valeur 0 OK`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123', article_id: '1' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 0,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(0);
+  });
+  it(`PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - valeur 100 OK`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123', article_id: '1' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 100,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(100);
   });
 });

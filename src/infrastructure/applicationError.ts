@@ -553,6 +553,9 @@ export class ApplicationError {
       404,
     );
   }
+  static throwMissingPourcent() {
+    this.throwAppError('104', `Attribut 'pourcent' manquant`, 400);
+  }
 
   private static throwAppError(
     code: string,
