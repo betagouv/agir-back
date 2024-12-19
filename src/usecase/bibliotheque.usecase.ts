@@ -80,6 +80,28 @@ export class BibliothequeUsecase {
     return new Article(article_definition);
   }
 
+  public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
+    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
+      content_id,
+    );
+
+    if (!quizz_def) {
+      ApplicationError.throwQuizzNotFound(content_id);
+    }
+
+    const quizz = new Quizz(quizz_def);
+
+    if (quizz_def.article_id) {
+      quizz.article_contenu = (
+        await this.articleRepository.getArticleDefinitionByContentId(
+          quizz_def.article_id,
+        )
+      )?.contenu;
+    }
+
+    return quizz;
+  }
+
   public async getArticle(
     utilisateurId: string,
     content_id: string,
@@ -227,6 +249,7 @@ export class BibliothequeUsecase {
 
   // FIXME : should be private
   public async readArticle(content_id: string, utilisateur: Utilisateur) {
+    console.log(content_id);
     if (!content_id) return;
 
     utilisateur.history.lireArticle(content_id);

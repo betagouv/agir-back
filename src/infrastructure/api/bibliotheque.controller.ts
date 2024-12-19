@@ -14,13 +14,11 @@ import {
   ApiBearerAuth,
   ApiQuery,
   ApiBody,
+  ApiOperation,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import {
-  BibliothequeAPI,
-  ContenuBibliothequeAPI,
-} from './types/contenu/contenuBiblioAPI';
+import { BibliothequeAPI } from './types/contenu/contenuBiblioAPI';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
@@ -95,6 +93,9 @@ export class BibliothequeController extends GenericControler {
 
   @Get('utilisateurs/:utilisateurId/bibliotheque/articles/:content_id')
   @ApiOkResponse({ type: ArticleBibliothequeAPI })
+  @ApiOperation({
+    summary: `Consultation d'un article, une fois récupéré il est considéré comme lu pour l'utilisateur`,
+  })
   @ApiQuery({
     name: 'content_id',
     type: String,
@@ -118,6 +119,9 @@ export class BibliothequeController extends GenericControler {
 
   @Get('bibliotheque/articles/:content_id')
   @ApiOkResponse({ type: ArticleBibliothequeAPI })
+  @ApiOperation({
+    summary: `Consultation d'un article sans connexion`,
+  })
   @ApiQuery({
     name: 'content_id',
     type: String,
@@ -125,13 +129,30 @@ export class BibliothequeController extends GenericControler {
     description: `l'id d'un article`,
   })
   async getArticleNonConnecte(
-    @Request() req,
     @Param('content_id') content_id: string,
   ): Promise<ArticleBibliothequeAPI> {
     const article = await this.bibliothequeUsecase.getArticleAnonymous(
       content_id,
     );
     return ArticleBibliothequeAPI.mapArticleToAPI(article);
+  }
+
+  @Get('bibliotheque/quizz/:content_id')
+  @ApiOkResponse({ type: QuizzBibliothequeAPI })
+  @ApiOperation({
+    summary: `Consultation d'un quizz sans connexion`,
+  })
+  @ApiQuery({
+    name: 'content_id',
+    type: String,
+    required: false,
+    description: `l'id d'un quizz`,
+  })
+  async getQuizzeNonConnecte(
+    @Param('content_id') content_id: string,
+  ): Promise<QuizzBibliothequeAPI> {
+    const quizz = await this.bibliothequeUsecase.getQuizzAnonymous(content_id);
+    return QuizzBibliothequeAPI.map(quizz);
   }
 
   @Get('utilisateurs/:utilisateurId/bibliotheque/quizz/:content_id')
@@ -162,6 +183,9 @@ export class BibliothequeController extends GenericControler {
     type: String,
     required: false,
     description: `l'id d'un quizz`,
+  })
+  @ApiOperation({
+    summary: `positionne un score de réponse sur le quizz, l'article associé est considéré comme lu`,
   })
   @ApiBody({
     type: QuizzAttemptAPI,
