@@ -4,7 +4,7 @@ import { History } from '../../../../src/domain/history/history';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { Mission_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { CodeMission } from '../../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import {
   SourceInscription,
   Utilisateur,

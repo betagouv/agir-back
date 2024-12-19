@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
@@ -9,13 +8,11 @@ import { Feature } from '../../src/domain/gamification/feature';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
 
 @Injectable()
 export class DefisUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private defiRepository: DefiRepository,
     private personnalisator: Personnalisator,
   ) {}
 

@@ -12,7 +12,7 @@ import {
 import { DB, TestUtil } from '../../TestUtil';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { Defi } from '.prisma/client';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { KYCID } from '../../../src/domain/kyc/KYCID';

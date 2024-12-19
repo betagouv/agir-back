@@ -20,7 +20,7 @@ import {
 } from '../../../src/domain/kyc/questionKYC';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';

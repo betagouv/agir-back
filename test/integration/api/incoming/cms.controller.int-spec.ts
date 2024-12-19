@@ -2,7 +2,7 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { DB, TestUtil } from '../../../TestUtil';
 import { Besoin } from '../../../../src/domain/aides/besoin';
-import { CodeMission } from '../../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
