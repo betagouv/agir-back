@@ -2,6 +2,7 @@ export enum CMSModel {
   quizz = 'quizz',
   article = 'article',
   aide = 'aide',
+  conformite = 'conformite',
   thematique = 'thematique',
   univers = 'univers',
   'thematique-univers' = 'thematique-univers',

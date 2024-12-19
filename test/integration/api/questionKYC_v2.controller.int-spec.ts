@@ -13,7 +13,7 @@ import {
   DPE,
 } from '../../../src/domain/logement/logement';
 import { ContentType } from '../../../src/domain/contenu/contentType';
-import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';

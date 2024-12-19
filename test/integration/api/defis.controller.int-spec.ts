@@ -9,7 +9,7 @@ import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { Defi } from '.prisma/client';
 import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';

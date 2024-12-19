@@ -80,6 +80,28 @@ export class BibliothequeUsecase {
     return new Article(article_definition);
   }
 
+  public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
+    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
+      content_id,
+    );
+
+    if (!quizz_def) {
+      ApplicationError.throwQuizzNotFound(content_id);
+    }
+
+    const quizz = new Quizz(quizz_def);
+
+    if (quizz_def.article_id) {
+      quizz.article_contenu = (
+        await this.articleRepository.getArticleDefinitionByContentId(
+          quizz_def.article_id,
+        )
+      )?.contenu;
+    }
+
+    return quizz;
+  }
+
   public async getArticle(
     utilisateurId: string,
     content_id: string,
@@ -119,8 +141,8 @@ export class BibliothequeUsecase {
     content_id: string,
     pourcent: number,
   ) {
-    if (!pourcent) {
-      ApplicationError.throwBadQuizzPourcent(pourcent);
+    if (pourcent === null || pourcent === undefined) {
+      ApplicationError.throwMissingPourcent();
     }
     const rounded_pourcent = Math.round(pourcent);
     if (isNaN(rounded_pourcent)) {

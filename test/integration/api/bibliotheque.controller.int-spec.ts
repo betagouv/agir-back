@@ -692,10 +692,87 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
   });
 
-  it('PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - ajoute un historique de quizz v2', async () => {
+  it('GET /bibliotheque/quizz/123 - renvoi un quizz en mode non connnecté', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.quizz, {
+      content_id: '123',
+      article_id: '1',
+      questions: {
+        liste_questions: [
+          {
+            libelle: "Qu'est-ce qu'un embout mousseur ?",
+            reponses: [
+              {
+                reponse: "Un composant d'une bombe de crème chantilly",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un élément d'une tireuse à bière",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un dispositif réduisant le débit d'eau du robinet",
+                est_bonne_reponse: true,
+              },
+            ],
+            explication_ko: 'ko',
+            explication_ok: 'ok',
+          },
+        ],
+      },
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire_id: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: [],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      categorie: Categorie.recommandation,
+      mois: [],
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().get('/bibliotheque/quizz/123');
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.content_id).toEqual('123');
+    expect(response.body.titre).toEqual('titreA');
+    expect(response.body.article_contenu).toEqual('un très bon article');
+    expect(response.body.article_id).toEqual('1');
+  });
+
+  it(`PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - ajoute un historique de quizz v2, et lecture de l'article`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
-    await TestUtil.create(DB.quizz, { content_id: '123' });
+    await TestUtil.create(DB.quizz, { content_id: '123', article_id: '1' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
@@ -719,5 +796,56 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
     ).toEqual(55);
+    expect(
+      dbUtilisateur.history.getArticleHistoryById('1').read_date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+  });
+  it(`PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - valeur 0 OK`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123', article_id: '1' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 0,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(0);
+  });
+  it(`PATCH /utilisateurs/utilisateur-id/bibliotheque/quizz/123 - valeur 100 OK`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.quizz, { content_id: '123', article_id: '1' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      contenu: 'un très bon article',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
+    ).send({
+      pourcent: 100,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUtilisateur = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.ALL],
+    );
+    expect(
+      dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
+    ).toEqual(100);
   });
 });

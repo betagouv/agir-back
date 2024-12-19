@@ -28,6 +28,7 @@ import {
   KYC,
   Thematique as ThematiqueDB,
   Partenaire,
+  Conformite,
 } from '.prisma/client';
 import {
   Aide,
@@ -46,7 +47,6 @@ import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { Besoin } from '../src/domain/aides/besoin';
-import { CodeMission } from '../src/domain/thematique/codeMission';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { Tag } from '../src/domain/scoring/tag';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -64,12 +64,14 @@ import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
+import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
   situationNGC = 'situationNGC',
   utilisateur = 'utilisateur',
   aide = 'aide',
+  conformite = 'conformite',
   defi = 'defi',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
@@ -89,6 +91,7 @@ export class TestUtil {
     situationNGC: TestUtil.situationNGCData,
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
+    conformite: TestUtil.conformiteData,
     defi: TestUtil.defiData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
@@ -196,6 +199,7 @@ export class TestUtil {
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
     await this.prisma.partenaire.deleteMany();
+    await this.prisma.conformite.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -204,6 +208,7 @@ export class TestUtil {
     KycRepository.resetCache();
     MissionRepository.resetCache();
     PartenaireRepository.resetCache();
+    ConformiteRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -317,6 +322,17 @@ export class TestUtil {
       echelle: 'National',
       url_source: 'https://hello',
       url_demande: 'https://demande',
+      ...override,
+    };
+  }
+  static conformiteData(override?: Partial<Conformite>): Conformite {
+    return {
+      id_cms: '1',
+      titre: 'titreA',
+      contenu: 'content',
+      code: 'code',
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

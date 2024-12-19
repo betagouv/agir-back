@@ -3,7 +3,7 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { CodeMission } from '../../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { MissionsUtilisateur_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';

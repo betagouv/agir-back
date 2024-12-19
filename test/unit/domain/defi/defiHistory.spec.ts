@@ -6,7 +6,7 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
-import { CodeMission } from '../../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;

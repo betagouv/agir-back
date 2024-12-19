@@ -546,6 +546,16 @@ export class ApplicationError {
       `L'attribut [${field}] doit être de longueur maximale ${max_length}, longueur reçue : ${value.length}`,
     );
   }
+  static throwConformitePageNotFound(code: string) {
+    this.throwAppError(
+      '103',
+      `la page de conformité de code [${code}] n'existe pas`,
+      404,
+    );
+  }
+  static throwMissingPourcent() {
+    this.throwAppError('104', `Attribut 'pourcent' manquant`, 400);
+  }
 
   private static throwAppError(
     code: string,

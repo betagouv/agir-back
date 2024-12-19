@@ -31,6 +31,8 @@ import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhoo
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -39,6 +41,7 @@ export class CMSWebhookUsecase {
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
+    private conformiteRepository: ConformiteRepository,
     private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
@@ -102,6 +105,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateAide(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.conformite) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteConformite(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteConformite(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateConformite(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateConformite(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.defi) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -131,6 +146,9 @@ export class CMSWebhookUsecase {
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+  async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
   async deleteDefi(cmsWebhookAPI: CMSWebhookAPI) {
     await this.defiRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -143,6 +161,13 @@ export class CMSWebhookUsecase {
 
     await this.aideRepository.upsert(
       this.buildAideFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.conformiteRepository.upsert(
+      this.buildConformiteFromCMSData(cmsWebhookAPI.entry),
     );
   }
   async createOrUpdateDefi(cmsWebhookAPI: CMSWebhookAPI) {
@@ -341,6 +366,17 @@ export class CMSWebhookUsecase {
       echelle: entry.echelle,
       url_source: entry.url_source,
       url_demande: entry.url_demande,
+    };
+  }
+
+  private buildConformiteFromCMSData(
+    entry: CMSWebhookEntryAPI,
+  ): ConformiteDefinition {
+    return {
+      content_id: entry.id.toString(),
+      titre: entry.Titre,
+      contenu: entry.contenu,
+      code: entry.code,
     };
   }
 

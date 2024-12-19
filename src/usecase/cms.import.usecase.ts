@@ -31,6 +31,8 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -38,6 +40,7 @@ export class CMSImportUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
+    private conformiteRepository: ConformiteRepository,
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
@@ -197,6 +200,33 @@ export class CMSImportUsecase {
     return loading_result;
   }
 
+  async loadConformiteFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_confoDef: ConformiteDefinition[] = [];
+    const CMS_CONFO_DATA = await this.loadDataFromCMS('conformites');
+
+    for (let index = 0; index < CMS_CONFO_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_CONFO_DATA[index];
+      let confo_def: ConformiteDefinition;
+      try {
+        confo_def = this.buildConformiteFromCMSPopulateData(element);
+        liste_confoDef.push(confo_def);
+        loading_result.push(
+          `loaded conformite : ${confo_def.content_id}/${confo_def.code}`,
+        );
+      } catch (error) {
+        loading_result.push(
+          `Could not load conformite ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const confo_def of liste_confoDef) {
+      await this.conformiteRepository.upsert(confo_def);
+    }
+    return loading_result;
+  }
+
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_aides: AideDefinition[] = [];
@@ -256,7 +286,8 @@ export class CMSImportUsecase {
       | 'kycs'
       | 'missions'
       | 'thematiques'
-      | 'partenaires',
+      | 'partenaires'
+      | 'conformites',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -530,6 +561,16 @@ export class CMSImportUsecase {
       code: entry.attributes.code,
       emoji: entry.attributes.emoji,
       titre: entry.attributes.titre,
+    };
+  }
+  private buildConformiteFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): ConformiteDefinition {
+    return {
+      content_id: '' + entry.id,
+      code: entry.attributes.code,
+      titre: entry.attributes.Titre,
+      contenu: entry.attributes.contenu,
     };
   }
 

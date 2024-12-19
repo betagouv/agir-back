@@ -121,6 +121,9 @@ import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue'
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { GoneController } from './infrastructure/api/gone.controller';
+import { ConformiteController } from './infrastructure/api/conformite.controller';
+import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
+import { ConformiteUsecase } from './usecase/conformite.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -153,6 +156,7 @@ function getControllers(): any[] {
     LoadCMSController,
     SyntheseController,
     GoneController,
+    ConformiteController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
@@ -263,6 +267,8 @@ function getControllers(): any[] {
     LongueVieObjetsRepository,
     NewServiceCatalogue,
     PartenaireRepository,
+    ConformiteRepository,
+    ConformiteUsecase,
   ],
 })
 export class AppModule {}

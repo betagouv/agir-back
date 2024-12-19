@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
-import { CodeMission } from '../../../src/domain/thematique/codeMission';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 
 describe('StatistiqueRepository', () => {

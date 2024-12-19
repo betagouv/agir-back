@@ -344,6 +344,15 @@ model KYC {
   updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
+model Conformite {
+  id_cms     String   @id
+  code       String   @unique
+  titre      String
+  contenu    String
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
 model SituationNGC {
   id            String   @id
   utilisateurId String?
