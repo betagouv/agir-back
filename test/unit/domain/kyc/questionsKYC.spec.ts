@@ -564,7 +564,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
 
     // WHEN
-    const question = history.getAnsweredQuestionByCMS_ID(1);
+    const question = history.getAnsweredQuestionByIdCMS(1);
 
     // THEN
     expect(question.code).toEqual(KYCID.KYC001);
@@ -738,10 +738,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(
-      history.getAnsweredQuestionByCMS_ID(1).getNombreReponsesPossibles(),
+      history.getAnsweredQuestionByIdCMS(1).getNombreReponsesPossibles(),
     ).toEqual(3);
     expect(
-      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('oui'),
+      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('oui'),
     ).toEqual({
       label: 'OUI',
       code: 'oui',
@@ -749,7 +749,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: true,
     });
     expect(
-      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('non'),
+      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('non'),
     ).toEqual({
       label: 'NON',
       code: 'non',
@@ -758,7 +758,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCMS_ID(1)
+        .getAnsweredQuestionByIdCMS(1)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       label: 'Ne sais pas',
@@ -767,10 +767,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: false,
     });
     expect(
-      history.getAnsweredQuestionByCMS_ID(2).getNombreReponsesPossibles(),
+      history.getAnsweredQuestionByIdCMS(2).getNombreReponsesPossibles(),
     ).toEqual(3);
     expect(
-      history.getAnsweredQuestionByCMS_ID(2).getReponseComplexeByCode('oui'),
+      history.getAnsweredQuestionByIdCMS(2).getReponseComplexeByCode('oui'),
     ).toEqual({
       code: 'oui',
       label: 'OUI',
@@ -778,7 +778,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: false,
     });
     expect(
-      history.getAnsweredQuestionByCMS_ID(2).getReponseComplexeByCode('non'),
+      history.getAnsweredQuestionByIdCMS(2).getReponseComplexeByCode('non'),
     ).toEqual({
       code: 'non',
       label: 'NON',
@@ -787,7 +787,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getAnsweredQuestionByCMS_ID(2)
+        .getAnsweredQuestionByIdCMS(2)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       code: 'ne_sais_pas',
@@ -828,19 +828,17 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(
-      history
-        .getAnsweredQuestionByCMS_ID(1)
-        .getCodeReponseQuestionChoixUnique(),
+      history.getAnsweredQuestionByIdCMS(1).getCodeReponseQuestionChoixUnique(),
     ).toEqual('B');
     expect(
-      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('A'),
+      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('A'),
     ).toEqual({ label: 'A', code: 'A', ngc_code: undefined, selected: false });
     expect(
-      history.getAnsweredQuestionByCMS_ID(1).getReponseComplexeByCode('B'),
+      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('B'),
     ).toEqual({ label: 'B', code: 'B', ngc_code: undefined, selected: true });
     expect(
       history
-        .getAnsweredQuestionByCMS_ID(1)
+        .getAnsweredQuestionByIdCMS(1)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       label: 'Ne sais pas',

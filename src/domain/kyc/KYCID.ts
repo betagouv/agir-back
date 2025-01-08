@@ -39,6 +39,8 @@ export enum KYCID {
   KYC_nbr_plats_viande_rouge = 'KYC_nbr_plats_viande_rouge',
   KYC_transport_voiture_nbr_voyageurs = 'KYC_transport_voiture_nbr_voyageurs',
   KYC_transport_type_utilisateur = 'KYC_transport_type_utilisateur',
+  KYC_changer_voiture = 'KYC_changer_voiture',
+  KYC_transport_voiture_gabarit = 'KYC_transport_voiture_gabarit',
   KYC_transport_voiture_motorisation = 'KYC_transport_voiture_motorisation',
   KYC_transport_heures_avion_court = 'KYC_transport_heures_avion_court',
   KYC_transport_heures_avion_moyen = 'KYC_transport_heures_avion_moyen',

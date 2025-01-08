@@ -41,6 +41,7 @@ import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { MissionUsecase } from '../../usecase/mission.usecase';
+import { AdminUsecase } from '../../usecase/admin.usecase';
 
 class VersionAPI {
   @ApiProperty()
@@ -61,6 +62,7 @@ export class AdminController extends GenericControler {
     private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
+    private adminUsecase: AdminUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -372,5 +374,14 @@ export class AdminController extends GenericControler {
       },
     });
     return { id: new_id, email: new_email };
+  }
+
+  @Get('/admin/utilisateur_avec_voiture')
+  @ApiOperation({
+    summary: `listes les utilisateurs avec voiture et qque infos`,
+  })
+  async get_user_with_car(@Request() req): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.adminUsecase.selectUserAvecVoiture();
   }
 }

@@ -2692,4 +2692,64 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
+
+  it('GET extract les utilisateurs avec voiture', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: KYCID.KYC_transport_voiture_km,
+          question: `km voituyre`,
+          type: TypeReponseQuestionKYC.entier,
+          is_NGC: true,
+          categorie: Categorie.test,
+          points: 10,
+          tags: [],
+          reponse_simple: {
+            unite: Unite.km,
+            value: '123',
+          },
+          conditions: [],
+          id_cms: 1,
+          last_update: new Date(),
+          reponse_complexe: undefined,
+          thematique: Thematique.alimentation,
+        },
+      ],
+    };
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_km,
+      type: TypeReponseQuestionKYC.entier,
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc,
+    });
+
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET('/admin/utilisateur_avec_voiture');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        elec: false,
+        email: 'yo@truc.com',
+        id: 'utilisateur-id',
+        km: 123,
+        proprio: false,
+        thermique: false,
+        trajet_court_voit: false,
+        trajet_ma_voiture: false,
+        changer_voiture: false,
+        motorisation: null,
+      },
+    ]);
+  });
 });
