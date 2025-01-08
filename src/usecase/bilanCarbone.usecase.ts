@@ -35,6 +35,93 @@ export class BilanCarboneUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    return await this.computeBilanComplet(utilisateur);
+  }
+
+  async getCurrentBilanValeurTotale(utilisateurId: string): Promise<number> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc, Scope.logement, Scope.unlocked_features],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const up_to_date = await this.isBilanStatUpToDate(utilisateur);
+
+    if (up_to_date) {
+      console.log('HAHAHAH');
+      const value =
+        await this.bilanCarboneStatistiqueRepository.getLastTotalValue(
+          utilisateur.id,
+        );
+      return value / 1000;
+    }
+
+    const situation = this.computeSituation(utilisateur);
+
+    const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
+    await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
+      utilisateur.id,
+      situation,
+      bilan.bilan_carbone_annuel * 1000,
+      bilan.details.transport * 1000,
+      bilan.details.alimentation * 1000,
+    );
+
+    return bilan.bilan_carbone_annuel;
+  }
+
+  async computeBilanTousUtilisateurs(): Promise<string[]> {
+    const MAX_USER_TO_COMPUTE = 2000;
+
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+
+    const error_liste = [];
+    let computed_ok = 0;
+    let skipped = 0;
+    let errors = 0;
+
+    for (const user_id of user_id_liste) {
+      const utilisateur = await this.utilisateurRepository.getById(user_id, [
+        Scope.kyc,
+      ]);
+
+      const up_to_date = await this.isBilanStatUpToDate(utilisateur);
+      if (up_to_date) {
+        skipped++;
+        continue; // pas besoin de reclalculer
+      }
+
+      const situation = this.computeSituation(utilisateur);
+
+      try {
+        const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
+        await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
+          user_id,
+          situation,
+          bilan.bilan_carbone_annuel * 1000,
+          bilan.details.transport * 1000,
+          bilan.details.alimentation * 1000,
+        );
+        computed_ok++;
+        if (computed_ok > MAX_USER_TO_COMPUTE) {
+          break; // trop de calcul pour un run de batch unique
+        }
+      } catch (error) {
+        errors++;
+        error_liste.push(`BC KO [${user_id}] : ` + JSON.stringify(error));
+      }
+    }
+    return [
+      `Computed OK = [${computed_ok}]`,
+      `Skipped = [${skipped}]`,
+      `Errors = [${errors}]`,
+    ].concat(error_liste);
+  }
+
+  private async computeBilanComplet(utilisateur: Utilisateur): Promise<{
+    bilan_complet: BilanCarbone;
+    bilan_synthese: BilanCarboneSynthese;
+  }> {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
@@ -178,59 +265,6 @@ export class BilanCarboneUsecase {
     };
   }
 
-  async computeBilanTousUtilisateurs(): Promise<string[]> {
-    const MAX_USER_TO_COMPUTE = 2000;
-
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
-
-    const error_liste = [];
-    let computed_ok = 0;
-    let skipped = 0;
-    let errors = 0;
-
-    for (const user_id of user_id_liste) {
-      const utilisateur = await this.utilisateurRepository.getById(user_id, [
-        Scope.kyc,
-      ]);
-
-      const last_update_time =
-        await this.bilanCarboneStatistiqueRepository.getLastUpdateTime(user_id);
-
-      if (
-        last_update_time &&
-        last_update_time.getTime() >
-          utilisateur.kyc_history.getLastUpdate().getTime()
-      ) {
-        skipped++;
-        continue; // pas besoin de reclalculer
-      }
-
-      const situation = this.computeSituation(utilisateur);
-      try {
-        const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
-        await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
-          user_id,
-          situation,
-          bilan.bilan_carbone_annuel * 1000,
-          bilan.details.transport * 1000,
-          bilan.details.alimentation * 1000,
-        );
-        computed_ok++;
-        if (computed_ok > MAX_USER_TO_COMPUTE) {
-          break; // trop de calcul pour un run de batch unique
-        }
-      } catch (error) {
-        errors++;
-        error_liste.push(`BC KO [${user_id}] : ` + JSON.stringify(error));
-      }
-    }
-    return [
-      `Computed OK = [${computed_ok}]`,
-      `Skipped = [${skipped}]`,
-      `Errors = [${errors}]`,
-    ].concat(error_liste);
-  }
-
   public computeSituation(utilisateur: Utilisateur): Object {
     const situation = {};
 
@@ -288,6 +322,23 @@ export class BilanCarboneUsecase {
       return NiveauImpact.tres_fort;
     }
   }
+
+  private async isBilanStatUpToDate(
+    utilisateur: Utilisateur,
+  ): Promise<boolean> {
+    const bilan_last_update_time =
+      await this.bilanCarboneStatistiqueRepository.getLastUpdateTime(
+        utilisateur.id,
+      );
+
+    const kyc_last_update = utilisateur.kyc_history.getLastUpdate().getTime();
+
+    return (
+      bilan_last_update_time &&
+      bilan_last_update_time.getTime() > kyc_last_update
+    );
+  }
+
   private computeImpactAlimentation(utilisateur: Utilisateur): NiveauImpact {
     const kyc_regime = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
       KYCID.KYC_alimentation_regime,

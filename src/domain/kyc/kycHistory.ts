@@ -434,7 +434,7 @@ export class KYCHistory {
       return null;
     }
 
-    let answered_question = this.getAnsweredQuestionByCMS_ID(cms_id);
+    let answered_question = this.getAnsweredQuestionByIdCMS(cms_id);
     if (answered_question) {
       answered_question.refreshFromDef(question_catalogue);
       return answered_question;
@@ -473,7 +473,7 @@ export class KYCHistory {
     for (const and_set of conditions) {
       let union = true;
       for (const cond of and_set) {
-        const kyc = this.getAnsweredQuestionByCMS_ID(cond.id_kyc);
+        const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
         if (!(kyc && kyc.isSelectedReponseCode(cond.code_reponse))) {
           union = false;
         }
@@ -592,12 +592,6 @@ export class KYCHistory {
   }
   public getAnsweredQuestionByNGCKey(key: string): QuestionKYC {
     return this.answered_questions.find((element) => element.ngc_key === key);
-  }
-  public getAnsweredQuestionByCMS_ID(cms_id: number): QuestionKYC {
-    const found = this.answered_questions.find(
-      (element) => element.id_cms === cms_id,
-    );
-    return found;
   }
 
   private getKYCByCodeFromCatalogueOrException(code: string): QuestionKYC {

@@ -47,4 +47,20 @@ export class BilanCarboneStatistiqueRepository {
     }
     return null;
   }
+
+  public async getLastTotalValue(utilisateurId: string): Promise<number> {
+    const reponse = await this.prisma.bilanCarboneStatistique.findUnique({
+      where: {
+        utilisateurId: utilisateurId,
+      },
+      select: {
+        total_g: true,
+      },
+    });
+
+    if (reponse) {
+      return reponse.total_g;
+    }
+    return null;
+  }
 }

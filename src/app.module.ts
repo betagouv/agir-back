@@ -124,6 +124,7 @@ import { GoneController } from './infrastructure/api/gone.controller';
 import { ConformiteController } from './infrastructure/api/conformite.controller';
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { ConformiteUsecase } from './usecase/conformite.usecase';
+import { AdminUsecase } from './usecase/admin.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -269,6 +270,7 @@ function getControllers(): any[] {
     PartenaireRepository,
     ConformiteRepository,
     ConformiteUsecase,
+    AdminUsecase,
   ],
 })
 export class AppModule {}

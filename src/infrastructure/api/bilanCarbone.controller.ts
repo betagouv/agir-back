@@ -18,6 +18,7 @@ import { GenericControler } from './genericControler';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 import { AuthGuard } from '../auth/guard';
 import { BilanCarboneDashboardAPI_v3 } from './types/ngc/bilanAPI_v3';
+import { BilanTotalAPI } from './types/ngc/bilanTotalAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -54,6 +55,24 @@ export class BilanCarboneController extends GenericControler {
       bilan.bilan_synthese,
       force,
     );
+  }
+
+  @ApiOkResponse({ type: BilanTotalAPI })
+  @Get('utilisateurs/:utilisateurId/bilans/total')
+  @ApiOperation({
+    summary:
+      'Renvoie la valeur totale annuelle du bilan carbone utilisateur en kg',
+  })
+  @UseGuards(AuthGuard)
+  async getBilanTotal(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<BilanTotalAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const bilan = await this.bilanCarboneUsecase.getCurrentBilanValeurTotale(
+      utilisateurId,
+    );
+    return { impact_kg_annee: bilan };
   }
 
   @Post('utilisateurs/compute_bilan_carbone')

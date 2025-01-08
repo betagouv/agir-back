@@ -70,6 +70,7 @@ describe('/bilan (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    await TestUtil.generateAuthorizationToken('utilisateur-id');
     process.env = { ...OLD_ENV }; // Make a copy
   });
 
@@ -1433,5 +1434,71 @@ describe('/bilan (API test)', () => {
       },
     });
     expect(stats2).toBeNull();
+  });
+
+  it('GET /utilisateurs/id/bilans/total - renvoie le total et écrit dans la base de stats', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bilans/total',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.impact_kg_annee).toEqual(8817.899984641037);
+
+    const statsDB = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
+      where: { utilisateurId: 'utilisateur-id' },
+    });
+
+    expect(statsDB.total_g).toEqual(8817899);
+  });
+  it('GET /utilisateurs/id/bilans/total - ne recalcul pas et utilise la dernière valeur dans la table de stats', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    await TestUtil.prisma.bilanCarboneStatistique.create({
+      data: {
+        total_g: 123,
+        utilisateurId: 'utilisateur-id',
+        situation: {},
+        transport_g: 0,
+        alimenation_g: 0,
+        updated_at: new Date(),
+      },
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bilans/total',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.impact_kg_annee).toEqual(0.123);
+  });
+  it('GET /utilisateurs/id/bilans/total - recalcul car la valeur de stats est trop vieille', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    await TestUtil.prisma.bilanCarboneStatistique.create({
+      data: {
+        total_g: 123,
+        utilisateurId: 'utilisateur-id',
+        situation: {},
+        transport_g: 0,
+        alimenation_g: 0,
+        updated_at: new Date(-1),
+      },
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bilans/total',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body.impact_kg_annee).toEqual(8817.899984641037);
   });
 });
