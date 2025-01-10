@@ -142,6 +142,32 @@ export class UtilisateurRepository {
       ApplicationError.throwPleaseReconnect();
     }
   }
+  async getUserByMobileToken(
+    token: string,
+    scopes: Scope[],
+  ): Promise<Utilisateur | null> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
+    const user = await this.prisma.utilisateur.findUnique({
+      omit: {
+        todo: !scopes.includes(Scope.todo),
+        gamification: !scopes.includes(Scope.gamification),
+        history: !scopes.includes(Scope.history_article_quizz_aides),
+        kyc: !scopes.includes(Scope.kyc),
+        unlocked_features: !scopes.includes(Scope.unlocked_features),
+        logement: !scopes.includes(Scope.logement),
+        defis: !scopes.includes(Scope.defis),
+        missions: !scopes.includes(Scope.missions),
+        bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
+        notification_history: !scopes.includes(Scope.notification_history),
+      },
+      where: {
+        mobile_token: token,
+      },
+    });
+    return this.buildUtilisateurFromDB(user);
+  }
 
   async updateVersion(utilisateurId: string, version: number): Promise<any> {
     return this.prisma.utilisateur.update({
@@ -426,6 +452,8 @@ export class UtilisateurRepository {
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
       brevo_updated_at: user.brevo_updated_at,
+      mobile_token: user.mobile_token,
+      mobile_token_updated_at: user.mobile_token_updated_at,
     });
 
     if (result.kyc_history) {
@@ -522,6 +550,8 @@ export class UtilisateurRepository {
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
       brevo_updated_at: user.brevo_updated_at,
+      mobile_token: user.mobile_token,
+      mobile_token_updated_at: user.mobile_token_updated_at,
     };
     return result;
   }

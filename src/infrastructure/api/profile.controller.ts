@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -32,6 +33,10 @@ import { AuthGuard } from '../auth/guard';
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
   confirmation: string;
+}
+export class MobileTokenAPI {
+  @ApiProperty({ required: true })
+  token: string;
 }
 
 @ApiExtraModels(UtilisateurAPI)
@@ -184,6 +189,35 @@ export class ProfileController extends GenericControler {
   async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.profileUsecase.resetAllUsers(body.confirmation);
+  }
+
+  @Put('utilisateurs/:utilisateurId/mobile_token')
+  @ApiBody({
+    type: MobileTokenAPI,
+  })
+  @ApiOperation({
+    summary: `Set le token mobile pour cet utilisateur, écrase le précédent`,
+  })
+  @UseGuards(AuthGuard)
+  async set_mobile_token(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: MobileTokenAPI,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.profileUsecase.setMobileToken(body.token, utilisateurId);
+  }
+  @Delete('utilisateurs/:utilisateurId/mobile_token')
+  @ApiOperation({
+    summary: `Supprime le token mobile pour cet utilisateur`,
+  })
+  @UseGuards(AuthGuard)
+  async delete_mobile_token(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.profileUsecase.deleteMobileToken(utilisateurId);
   }
 
   @ApiTags('Z - Admin')

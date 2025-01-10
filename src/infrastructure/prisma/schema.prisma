@@ -73,6 +73,8 @@ model Utilisateur {
   est_valide_pour_classement Boolean   @default(true)
   brevo_created_at           DateTime? @db.Timestamptz(3)
   brevo_updated_at           DateTime? @db.Timestamptz(3)
+  mobile_token               String?   @unique
+  mobile_token_updated_at    DateTime? @db.Timestamptz(3)
 }
 
 model Statistique {

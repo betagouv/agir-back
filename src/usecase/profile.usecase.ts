@@ -32,7 +32,6 @@ export class ProfileUsecase {
     private serviceRepository: ServiceRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
-    private kycRepository: KycRepository,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
   ) {}
@@ -199,6 +198,39 @@ export class ProfileUsecase {
 
   async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
     return this.utilisateurRepository.findByEmail(email);
+  }
+
+  async setMobileToken(token: string, utilisateurId: string) {
+    const utilisateur_existant =
+      await this.utilisateurRepository.getUserByMobileToken(token, []);
+
+    if (utilisateur_existant) {
+      utilisateur_existant.mobile_token = null;
+      utilisateur_existant.mobile_token_updated_at = new Date();
+      await this.utilisateurRepository.updateUtilisateur(utilisateur_existant);
+    }
+
+    const target_user = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
+    Utilisateur.checkState(target_user);
+
+    target_user.mobile_token = token;
+    target_user.mobile_token_updated_at = new Date();
+    await this.utilisateurRepository.updateUtilisateur(target_user);
+  }
+  async deleteMobileToken(utilisateurId: string) {
+    const target_user = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
+
+    if (target_user) {
+      target_user.mobile_token = null;
+      target_user.mobile_token_updated_at = new Date();
+      await this.utilisateurRepository.updateUtilisateur(target_user);
+    }
   }
 
   async reset(confirmation: string, utilisateurId: string) {
