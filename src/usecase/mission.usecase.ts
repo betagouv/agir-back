@@ -79,6 +79,8 @@ export class MissionUsecase {
       }
     }
 
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }
 
@@ -96,6 +98,8 @@ export class MissionUsecase {
       thematique,
       utilisateur,
     );
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }
@@ -119,6 +123,9 @@ export class MissionUsecase {
       );
 
       if (existing_mission) {
+        if (existing_mission.estTerminable() && !existing_mission.isDone()) {
+          existing_mission.terminer();
+        }
         if (exclude_done && existing_mission.isDone()) {
           // SKIP
         } else {
@@ -152,7 +159,7 @@ export class MissionUsecase {
       ApplicationError.throwMissionNotFoundOfCode(code_mission);
     }
     if (mission.estTerminable()) {
-      mission.terminer(utilisateur);
+      mission.terminer();
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
   }
@@ -177,8 +184,6 @@ export class MissionUsecase {
     if (!mission_resultat || mission_resultat.isNew()) {
       const mission_def = MissionRepository.getByCode(code_mission);
       if (mission_def) {
-        if (mission_def.est_examen) {
-        }
         const completed_mission = await this.completeMissionDef(
           mission_def,
           utilisateur,
@@ -211,6 +216,11 @@ export class MissionUsecase {
 
     mission_resultat.quizz_global_score =
       mission_resultat.getGlobalQuizzPourcent(utilisateur);
+
+    if (mission_resultat.estTerminable() && !mission_resultat.isDone()) {
+      mission_resultat.terminer();
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    }
 
     return this.personnalisator.personnaliser(mission_resultat, utilisateur);
   }

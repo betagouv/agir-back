@@ -70,11 +70,6 @@ describe('Missions', () => {
   });
   it('validateDefi : terminaison de mission', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur(
-      'mail@www.com',
-      false,
-      SourceInscription.inconnue,
-    );
     const mission = new Mission({
       done_at: null,
       est_visible: true,
@@ -124,12 +119,11 @@ describe('Missions', () => {
     });
 
     // WHEN
-    const result = mission.terminer(utilisateur);
+    mission.terminer();
 
     // THEN
     expect(mission.isDone()).toEqual(true);
     expect(mission.done_at.getTime()).toBeGreaterThan(Date.now() - 100);
-    expect(utilisateur.gamification.celebrations).toHaveLength(1);
   });
   it('getProgression : ok si mission vide', () => {
     // GIVEN

@@ -253,9 +253,8 @@ export class Mission {
     }
   }
 
-  public terminer(utilisateur: Utilisateur): void {
+  public terminer(): void {
     this.done_at = new Date();
-    utilisateur.gamification.celebrerFinMission(this.code);
   }
 
   public unlockContentIfAllKYCsDone() {
