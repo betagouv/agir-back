@@ -55,14 +55,22 @@ export class GoneController extends GenericControler {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
+  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')
+  @ApiOperation({
+    summary: `DEPRECATED : NEW => GET utilisateurs/:utilisateurId/missions/:code_mission`,
+  })
+  async getMission(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
   /*
 OK - /utilisateurs/{utilisateurId}/aides
 OK - /utilisateur/{utilisateurId}/bilans/last
 OK - /utilisateur/{utilisateurId}/bilans/last_v2
 OK - /utilisateurs/{utilisateurId}/bilans/last_v2
 OK - /utilisateurs/{utilisateurId}/defis
-- /utilisateurs/{utilisateurId}/univers/{universId}/defis
-- /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
+OK - /utilisateurs/{utilisateurId}/univers/{universId}/defis
+OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
 - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
 - /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
 - /utilisateurs/{utilisateurId}/questionsKYC
