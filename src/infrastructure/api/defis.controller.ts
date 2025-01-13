@@ -125,29 +125,6 @@ export class DefisController extends GenericControler {
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
 
-  @Get('utilisateurs/:utilisateurId/univers/:universId/defis')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [DefiAPI],
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur visible dans l'univers argument, agrégation des défis visibles des thémtiques de cet univers)",
-  })
-  async getAllUserDefiInUnivers(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('universId') universId: string,
-  ): Promise<DefiAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.defisUsecase.getDefisOfUnivers_deprecated(
-      utilisateurId,
-      universId,
-    );
-    return result.map((element) => DefiAPI.mapToAPI(element));
-  }
-
   @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
