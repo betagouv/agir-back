@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
-import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../../src/domain/gamification/feature';
@@ -91,75 +90,6 @@ export class DefisUsecase {
         defis_univers.filter((d) => filtre_status.includes(d.getStatus())),
       );
     }
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
-
-  // DEPRECATED
-  async getDefisOfUnivers_deprecated(
-    utilisateurId: string,
-    univers: string,
-  ): Promise<Defi[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.defis, Scope.logement, Scope.missions],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let result = await this.getDefisOfThematiqueAndUtilisateur(
-      utilisateur,
-      Thematique[univers],
-    );
-
-    result = result.filter((d) => d.getStatus() === DefiStatus.en_cours);
-
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
-
-  // DEPRECATED
-  async getALLUserDefi_deprecated(
-    utilisateurId: string,
-    filtre_status: string[],
-    univers: string,
-    accessible: boolean,
-  ): Promise<Defi[]> {
-    let result: Defi[] = [];
-
-    for (const status of filtre_status) {
-      if (!DefiStatus[status]) {
-        ApplicationError.throwUnknownDefiStatus(status);
-      }
-    }
-
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.defis, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    if (
-      (filtre_status.includes(DefiStatus.todo) || filtre_status.length === 0) &&
-      !accessible
-    ) {
-      result = result.concat(
-        utilisateur.defi_history.getDefisRestantsByCategorieAndThematique(
-          undefined,
-          univers ? Thematique[univers] : undefined,
-        ),
-      );
-
-      PonderationApplicativeManager.increaseScoreContentOfList(
-        result,
-        utilisateur.tag_ponderation_set,
-      );
-
-      PonderationApplicativeManager.sortContent(result);
-
-      result = result.filter((d) => d.score > -50);
-    }
-    result = result.concat(
-      utilisateur.defi_history.getDefisOfStatus(filtre_status as DefiStatus[]),
-    );
-
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
