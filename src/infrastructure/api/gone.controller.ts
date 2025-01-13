@@ -38,4 +38,37 @@ export class GoneController extends GenericControler {
   async getBilan_V2(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
+
+  @Get('utilisateurs/:utilisateurId/defis')
+  @ApiOperation({
+    summary: 'DEPRECATED : NEW => utilisateurs/:utilisateurId/defis_v2',
+  })
+  async getAllUserDefi(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  /*
+OK - /utilisateurs/{utilisateurId}/aides
+OK - /utilisateur/{utilisateurId}/bilans/last
+OK - /utilisateur/{utilisateurId}/bilans/last_v2
+OK - /utilisateurs/{utilisateurId}/bilans/last_v2
+OK - /utilisateurs/{utilisateurId}/defis
+- /utilisateurs/{utilisateurId}/univers/{universId}/defis
+- /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
+- /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
+- /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
+- /utilisateurs/{utilisateurId}/questionsKYC
+- /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
+- /utilisateurs/{utilisateurId}/recommandations
+- /utilisateurs/{utilisateurId}/recommandations_v2
+- /utilisateurs/{utilisateurId}/recherche_services/{universId}
+- /utilisateurs/{utilisateurId}/thematiques_recommandees
+- /utilisateurs/{utilisateurId}/univers
+- /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
+
+
+ recherche_services/${idService}/search => DEPRECATED => recherche_services/${idService}/search2
+  - /utilisateurs/${utilisateurId}/thematiques/${thematiqueId}/defis => DEPRECATED => /utilisateurs/{userId}/defis_v2
+
+  */
 }
