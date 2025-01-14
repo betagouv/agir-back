@@ -5,7 +5,7 @@ import { ApplicationError } from '../applicationError';
 
 @Controller()
 @ApiBearerAuth()
-@ApiTags('GONE APIs')
+@ApiTags('Z - GONE APIs')
 export class GoneController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/aides')
   @ApiOperation({
