@@ -99,6 +99,8 @@ export class Utilisateur {
   est_valide_pour_classement: boolean;
   brevo_created_at: Date;
   brevo_updated_at: Date;
+  mobile_token: string;
+  mobile_token_updated_at: Date;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -182,6 +184,8 @@ export class Utilisateur {
       est_valide_pour_classement: false,
       brevo_created_at: null,
       brevo_updated_at: null,
+      mobile_token_updated_at: null,
+      mobile_token: null,
     });
   }
 

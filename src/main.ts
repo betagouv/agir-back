@@ -7,6 +7,7 @@ import {
 import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { SentryFilter } from './infrastructure/sentry.filter';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,7 +38,8 @@ async function bootstrap() {
   });
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryFilter(httpAdapter));
-
+  //app.use(bodyParser.json({ limit: '50mb' }));
+  //app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   // Activation des requetes cross origin pour le front
   app.enableCors();
 

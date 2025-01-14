@@ -1042,4 +1042,71 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
     expect(userDB.couverture_aides_ok).toEqual(false);
   });
+
+  it(`PUT /utilisateurs/id/mobile_token ajoute le token pour l'utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/mobile_token',
+    ).send({
+      token: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.mobile_token).toEqual('haha');
+    expect(userDB.mobile_token_updated_at.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
+  it(`PUT /utilisateurs/id/mobile_token enleve le token d'un utilisateur précédent`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      mobile_token: 'haha',
+      mobile_token_updated_at: new Date(1),
+    });
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/mobile_token',
+    ).send({
+      token: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
+    expect(userDB.mobile_token).toEqual(null);
+    expect(userDB.mobile_token_updated_at.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
+  it(`DELETE /utilisateurs/id/mobile_token supprime le token pour l'utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { mobile_token: 'hihi' });
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/mobile_token',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.mobile_token).toEqual(null);
+    expect(userDB.mobile_token_updated_at.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
 });

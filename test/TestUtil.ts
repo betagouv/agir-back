@@ -591,6 +591,10 @@ export class TestUtil {
       unsubscribe_mail_token: null,
       notification_history: notifications,
       est_valide_pour_classement: true,
+      brevo_created_at: null,
+      brevo_updated_at: null,
+      mobile_token: null,
+      mobile_token_updated_at: null,
       ...override,
     };
   }

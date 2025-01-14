@@ -140,41 +140,6 @@ export class MissionController extends GenericControler {
     return result.map((e) => TuileMissionAPI.mapToAPI(e));
   }
 
-  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/mission')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: MissionAPI,
-  })
-  @ApiParam({
-    name: 'thematique',
-    type: String,
-    enumName: 'thematique',
-    required: true,
-    description: `la thématique`,
-  })
-  @ApiParam({
-    name: 'utilisateurId',
-    type: String,
-    required: true,
-    description: `id de l'utilisateur`,
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : Retourne la mission de la thématique`,
-  })
-  async getMission(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('thematique') thematique: string,
-  ): Promise<MissionAPI> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.missionUsecase.getMissionByCode(
-      utilisateurId,
-      thematique,
-    );
-    return MissionAPI.mapToAPI(result);
-  }
-
   @Get('utilisateurs/:utilisateurId/missions/:code_mission')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
