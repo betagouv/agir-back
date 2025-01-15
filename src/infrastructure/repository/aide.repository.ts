@@ -150,6 +150,8 @@ export class AideRepository {
       echelle: aideDB.echelle,
       url_source: aideDB.url_source,
       url_demande: aideDB.url_demande,
+      partenaire_id: aideDB.partenaire_id,
+      date_expiration: aideDB.date_expiration,
     };
   }
 }

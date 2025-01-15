@@ -38,6 +38,7 @@ export type CMSWebhookPopulateAPI = {
     echelle: string;
     url_source: string;
     url_demande: string;
+    date_expiration: Date;
     A_SUPPRIMER: boolean;
     is_ngc: boolean;
     is_first: boolean;

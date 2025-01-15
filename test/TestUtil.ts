@@ -305,6 +305,8 @@ export class TestUtil {
     return {
       content_id: '1',
       titre: 'titreA',
+      date_expiration: new Date(0),
+      partenaire_id: undefined,
       codes_postaux: ['91120'],
       thematiques: [Thematique.climat, Thematique.logement],
       contenu: "Contenu de l'aide",

@@ -8,6 +8,7 @@ export class AideDefinition {
   content_id: string;
   titre: string;
   contenu: string;
+  partenaire_id: string;
   url_simulateur: string;
   url_source: string;
   url_demande: string;
@@ -28,4 +29,5 @@ export class AideDefinition {
   metropoles?: string[];
   clicked_demande?: boolean;
   clicked_infos?: boolean;
+  date_expiration: Date;
 }

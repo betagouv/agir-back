@@ -186,25 +186,27 @@ model LinkyConsentement {
 }
 
 model Aide {
-  content_id            String   @id
+  content_id            String    @id
   titre                 String
   contenu               String
   url_simulateur        String?
   url_source            String?
   url_demande           String?
   is_simulateur         Boolean?
-  codes_postaux         String[] @default([])
-  thematiques           String[] @default([])
+  partenaire_id         String?
+  codes_postaux         String[]  @default([])
+  thematiques           String[]  @default([])
   montant_max           Int?
   echelle               String?
   besoin                String?
   besoin_desc           String?
-  include_codes_commune String[] @default([])
-  exclude_codes_commune String[] @default([])
-  codes_departement     String[] @default([])
-  codes_region          String[] @default([])
-  created_at            DateTime @default(now()) @db.Timestamptz(3)
-  updated_at            DateTime @updatedAt @db.Timestamptz(3)
+  include_codes_commune String[]  @default([])
+  exclude_codes_commune String[]  @default([])
+  codes_departement     String[]  @default([])
+  codes_region          String[]  @default([])
+  date_expiration       DateTime? @db.Timestamptz(3)
+  created_at            DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
 }
 
 model Defi {

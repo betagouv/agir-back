@@ -347,6 +347,10 @@ export class CMSWebhookUsecase {
     return {
       content_id: entry.id.toString(),
       titre: entry.titre,
+      date_expiration: entry.date_expiration
+        ? new Date(entry.date_expiration)
+        : null,
+      partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       codes_postaux: this.split(entry.codes_postaux),
       thematiques: entry.thematiques
         ? entry.thematiques.map((elem) => Thematique[elem.code])

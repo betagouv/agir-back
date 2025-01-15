@@ -518,6 +518,12 @@ export class CMSImportUsecase {
       titre: entry.attributes.titre,
       codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
       contenu: entry.attributes.description,
+      date_expiration: entry.attributes.date_expiration
+        ? new Date(entry.attributes.date_expiration)
+        : null,
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
+        : null,
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(
