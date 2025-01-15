@@ -2752,4 +2752,91 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
+
+  it('POST /admin/aide_expired_soon  flag les aides qui vont bientôt expirer', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const day = 1000 * 60 * 60 * 24;
+    const week = day * 7;
+    const month = day * 30;
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      date_expiration: new Date(Date.now() + 2 * month),
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      date_expiration: new Date(Date.now() + month - 10000),
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      date_expiration: new Date(Date.now() + week - 10000),
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '4',
+      date_expiration: new Date(Date.now() - 10000),
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/aide_expired_soon');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      'REMOVED : 1',
+      'SET : 2:Month[true]Week[false]Expired[false]',
+      'SET : 3:Month[true]Week[true]Expired[false]',
+      'SET : 4:Month[true]Week[true]Expired[true]',
+    ]);
+    const aides_warning =
+      await TestUtil.prisma.aideExpirationWarning.findMany();
+
+    expect(aides_warning).toHaveLength(3);
+    expect(aides_warning[0].aide_cms_id).toEqual('2');
+    expect(aides_warning[0].last_month).toEqual(true);
+    expect(aides_warning[0].last_week).toEqual(false);
+    expect(aides_warning[0].expired).toEqual(false);
+    expect(aides_warning[1].aide_cms_id).toEqual('3');
+    expect(aides_warning[1].last_month).toEqual(true);
+    expect(aides_warning[1].last_week).toEqual(true);
+    expect(aides_warning[1].expired).toEqual(false);
+    expect(aides_warning[2].aide_cms_id).toEqual('4');
+    expect(aides_warning[2].last_month).toEqual(true);
+    expect(aides_warning[2].last_week).toEqual(true);
+    expect(aides_warning[2].expired).toEqual(true);
+  });
+
+  it(`POST /admin/aide_expired_soon_emails envoie les emails pour les aides en voie d'expiration`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    process.env.EMAILS_WARNING_AIDE_EXPIRATION = 'agir@dev.com';
+
+    await TestUtil.create(DB.aideExpirationWarning, {
+      aide_cms_id: '1',
+      last_month: true,
+    });
+    await TestUtil.create(DB.aideExpirationWarning, {
+      aide_cms_id: '2',
+      last_week: true,
+    });
+    await TestUtil.create(DB.aideExpirationWarning, {
+      aide_cms_id: '3',
+      expired: true,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/aide_expired_soon_emails');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(['month:1', 'week:2', 'expired:3']);
+
+    const aides_warning =
+      await TestUtil.prisma.aideExpirationWarning.findMany();
+
+    expect(aides_warning[0].last_month_sent).toEqual(true);
+    expect(aides_warning[1].last_week_sent).toEqual(true);
+    expect(aides_warning[2].expired_sent).toEqual(true);
+  });
 });

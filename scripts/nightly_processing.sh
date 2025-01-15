@@ -27,3 +27,7 @@ npm run execute update_user_couverture
 npm run execute send_notifications
 
 npm run execute create_brevo_contacts
+
+npm run execute aide_expired_soon
+
+npm run execute aide_expired_soon_emails

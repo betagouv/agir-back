@@ -61,6 +61,54 @@ describe('AideRepository', () => {
     expect(liste).toHaveLength(1);
     expect(liste[0].content_id).toEqual('1');
   });
+  it('searchsearch : ne liste pas une aide expirée', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      date_expiration: new Date(11),
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      date_expiration: new Date(5678),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(0);
+  });
+  it('searchsearch : liste une aide NON expirée', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      date_expiration: new Date(999),
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      date_expiration: new Date(100),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
+  it('searchsearch : liste une aide SANS date d expiration', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      date_expiration: null,
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      date_expiration: new Date(100),
+    });
+
+    // THEN
+    expect(liste).toHaveLength(1);
+  });
   it('search : liste aide sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

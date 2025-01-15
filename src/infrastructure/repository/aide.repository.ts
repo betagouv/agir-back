@@ -12,6 +12,7 @@ export type AideFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
+  date_expiration?: Date;
 };
 
 @Injectable()
@@ -119,6 +120,19 @@ export class AideRepository {
       });
     }
 
+    if (filter.date_expiration) {
+      main_filter.push({
+        OR: [
+          { date_expiration: null },
+          {
+            date_expiration: {
+              gt: filter.date_expiration,
+            },
+          },
+        ],
+      });
+    }
+
     const finalQuery = {
       take: filter.maxNumber,
       where: {
@@ -150,6 +164,8 @@ export class AideRepository {
       echelle: aideDB.echelle,
       url_source: aideDB.url_source,
       url_demande: aideDB.url_demande,
+      partenaire_id: aideDB.partenaire_id,
+      date_expiration: aideDB.date_expiration,
     };
   }
 }

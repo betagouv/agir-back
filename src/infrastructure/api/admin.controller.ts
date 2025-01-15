@@ -42,6 +42,7 @@ import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
+import { AidesUsecase } from '../../usecase/aides.usecase';
 
 class VersionAPI {
   @ApiProperty()
@@ -63,6 +64,7 @@ export class AdminController extends GenericControler {
     private serviceUsecase: ServiceUsecase,
     private linkyUsecase: LinkyUsecase,
     private adminUsecase: AdminUsecase,
+    private aidesUsecase: AidesUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -383,5 +385,22 @@ export class AdminController extends GenericControler {
   async get_user_with_car(@Request() req): Promise<any> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.adminUsecase.selectUserAvecVoiture();
+  }
+
+  @Post('/admin/aide_expired_soon')
+  @ApiOperation({
+    summary: `Flags les aides qui vont bientôt expirer`,
+  })
+  async flagAideExpiration(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.aidesUsecase.reportAideSoonExpired();
+  }
+  @Post('/admin/aide_expired_soon_emails')
+  @ApiOperation({
+    summary: `Envoie les emails pour les aides falguées comme bientôt expirées`,
+  })
+  async emailsAideExpiration(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.aidesUsecase.envoyerEmailsAideExpiration();
   }
 }

@@ -125,6 +125,7 @@ import { ConformiteController } from './infrastructure/api/conformite.controller
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { ConformiteUsecase } from './usecase/conformite.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
+import { AideExpirationWarningRepository } from './infrastructure/repository/aideExpirationWarning.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -271,6 +272,7 @@ function getControllers(): any[] {
     ConformiteRepository,
     ConformiteUsecase,
     AdminUsecase,
+    AideExpirationWarningRepository,
   ],
 })
 export class AppModule {}

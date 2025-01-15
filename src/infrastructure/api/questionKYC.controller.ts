@@ -41,38 +41,6 @@ export class QuestionsKYCController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/questionsKYC')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    schema: {
-      items: {
-        allOf: [
-          { $ref: getSchemaPath(QuestionKYCAPI) },
-          { $ref: getSchemaPath(MosaicKYCAPI) },
-        ],
-      },
-    },
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : Retourne l'ensemble des question (avec ou sans réponses)",
-  })
-  async getAll(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getALL(utilisateurId);
-    return result.map((k) => {
-      if (k.isMosaic()) {
-        return MosaicKYCAPI.mapToAPI(k);
-      } else {
-        return QuestionKYCAPI.mapToAPI(k);
-      }
-    });
-  }
-
   @Get('utilisateurs/:utilisateurId/questionsKYC_v2')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
@@ -142,41 +110,6 @@ export class QuestionsKYCController extends GenericControler {
       questionId,
     );
     return QuestionKYCAPI_v2.mapToAPI(result);
-  }
-
-  @ApiOperation({
-    deprecated: true,
-    summary: 'DEPRECATED : Retourne une liste de questions à enchainer',
-  })
-  @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    schema: {
-      items: {
-        allOf: [
-          { $ref: getSchemaPath(QuestionKYCAPI) },
-          { $ref: getSchemaPath(MosaicKYCAPI) },
-        ],
-      },
-    },
-  })
-  async getEnchainementQuestions(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('enchainementId') enchainementId: string,
-  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getEnchainementQuestions(
-      utilisateurId,
-      enchainementId,
-    );
-    return result.map((q) => {
-      if (q.isMosaic()) {
-        return MosaicKYCAPI.mapToAPI(q);
-      } else {
-        return QuestionKYCAPI.mapToAPI(q);
-      }
-    });
   }
 
   @ApiOperation({

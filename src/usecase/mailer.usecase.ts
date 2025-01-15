@@ -8,6 +8,8 @@ import {
 import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
+import { App } from '../domain/app';
 
 const day_10 = 1000 * 60 * 60 * 24 * 10;
 
@@ -15,6 +17,7 @@ const day_10 = 1000 * 60 * 60 * 24 * 10;
 export class MailerUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
+    private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private emailTemplateRepository: EmailTemplateRepository,
     private emailSender: EmailSender,
   ) {}
