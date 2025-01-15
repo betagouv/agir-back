@@ -12,6 +12,7 @@ export type AideFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
+  date_expiration?: Date;
 };
 
 @Injectable()
@@ -116,6 +117,19 @@ export class AideRepository {
         thematiques: {
           hasSome: filter.thematiques,
         },
+      });
+    }
+
+    if (filter.date_expiration) {
+      main_filter.push({
+        OR: [
+          { date_expiration: null },
+          {
+            date_expiration: {
+              gt: filter.date_expiration,
+            },
+          },
+        ],
       });
     }
 

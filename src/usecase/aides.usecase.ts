@@ -120,6 +120,7 @@ export class AidesUsecase {
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
+      date_expiration: new Date(),
     });
 
     for (const aide of result) {
