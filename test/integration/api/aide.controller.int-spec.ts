@@ -7,6 +7,7 @@ import {
   AideVeloAPI,
   AidesVeloParTypeAPI,
 } from '../../../src/infrastructure/api/types/aide/AidesVeloParTypeAPI';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -15,6 +16,7 @@ describe('Aide (API test)', () => {
   const OLD_ENV = process.env;
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -224,6 +226,10 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
   });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
+
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+
     await thematiqueRepository.upsert({
       code: Thematique.climat,
       titre: 'Climat !!',
@@ -242,7 +248,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     });
     await thematiqueRepository.loadThematiques();
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.aide);
+    await TestUtil.create(DB.aide, { partenaire_id: '123' });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -260,6 +266,9 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     expect(aideBody.is_simulateur).toEqual(true);
     expect(aideBody.url_source).toEqual('https://hello');
     expect(aideBody.url_demande).toEqual('https://demande');
+    expect(aideBody.partenaire_nom).toEqual('ADEME');
+    expect(aideBody.partenaire_url).toEqual('https://ademe.fr');
+    expect(aideBody.partenaire_logo_url).toEqual('logo_url');
     expect(aideBody.montant_max).toEqual(999);
     expect(aideBody.thematiques).toEqual([
       Thematique.climat,
