@@ -145,41 +145,6 @@ export class QuestionsKYCController extends GenericControler {
   }
 
   @ApiOperation({
-    deprecated: true,
-    summary: 'DEPRECATED : Retourne une liste de questions à enchainer',
-  })
-  @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    schema: {
-      items: {
-        allOf: [
-          { $ref: getSchemaPath(QuestionKYCAPI) },
-          { $ref: getSchemaPath(MosaicKYCAPI) },
-        ],
-      },
-    },
-  })
-  async getEnchainementQuestions(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('enchainementId') enchainementId: string,
-  ): Promise<(QuestionKYCAPI | MosaicKYCAPI)[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getEnchainementQuestions(
-      utilisateurId,
-      enchainementId,
-    );
-    return result.map((q) => {
-      if (q.isMosaic()) {
-        return MosaicKYCAPI.mapToAPI(q);
-      } else {
-        return QuestionKYCAPI.mapToAPI(q);
-      }
-    });
-  }
-
-  @ApiOperation({
     summary: 'Retourne une liste de questions à enchainer',
   })
   @Get(

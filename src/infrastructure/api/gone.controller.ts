@@ -1,4 +1,4 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get, Post, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GenericControler } from './genericControler';
 import { ApplicationError } from '../applicationError';
@@ -63,6 +63,23 @@ export class GoneController extends GenericControler {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
+  @Post('utilisateurs/:utilisateurId/thematiques/:thematique/mission/terminer')
+  @ApiOperation({
+    summary: `DEPRECATED : NEW => utilisateurs/:utilisateurId/missions/:code_mission/terminer`,
+  })
+  async terminerMission(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId',
+  })
+  @Get('utilisateurs/:utilisateurId/enchainementQuestionsKYC/:enchainementId')
+  async getEnchainementQuestions(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
   /*
 OK - /utilisateurs/{utilisateurId}/aides
 OK - /utilisateur/{utilisateurId}/bilans/last
@@ -71,8 +88,8 @@ OK - /utilisateurs/{utilisateurId}/bilans/last_v2
 OK - /utilisateurs/{utilisateurId}/defis
 OK - /utilisateurs/{utilisateurId}/univers/{universId}/defis
 OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
-- /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
-- /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
+OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
+OK - /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
 - /utilisateurs/{utilisateurId}/questionsKYC
 - /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
 - /utilisateurs/{utilisateurId}/recommandations
