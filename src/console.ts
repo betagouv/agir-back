@@ -15,6 +15,7 @@ import { ProfileUsecase } from './usecase/profile.usecase';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
+import { AidesUsecase } from './usecase/aides.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -167,6 +168,15 @@ async function bootstrap() {
         .envoyerEmailsWelcome();
       console.log(`STOP send_welcomes after ${Date.now() - start_time} ms`);
       console.log(result_send_welcomes);
+      break;
+    case 'aide_expired_soon':
+      start_time = Date.now();
+      console.log(`START aide_expired_soon ${start_time}`);
+      const result_aide_expired_soon = await application
+        .get(AidesUsecase)
+        .reportAideSoonExpired();
+      console.log(`STOP aide_expired_soon after ${Date.now() - start_time} ms`);
+      console.log(result_aide_expired_soon);
       break;
     default:
       console.log('Command not found');

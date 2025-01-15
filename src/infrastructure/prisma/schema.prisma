@@ -265,6 +265,16 @@ model Partenaire {
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model AideExpirationWarning {
+  aide_cms_id     String   @id
+  last_month      Boolean
+  last_month_sent Boolean  @default(false)
+  last_week       Boolean
+  last_week_sent  Boolean  @default(false)
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model Quizz {
   content_id            String   @id
   article_id            String?

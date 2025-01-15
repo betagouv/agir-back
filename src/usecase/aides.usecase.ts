@@ -12,11 +12,13 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 
 @Injectable()
 export class AidesUsecase {
   constructor(
     private aidesVeloRepository: AidesVeloRepository,
+    private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private aidesRetrofitRepository: AidesRetrofitRepository,
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
@@ -175,5 +177,38 @@ export class AidesUsecase {
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
     });
+  }
+
+  public async reportAideSoonExpired(): Promise<string[]> {
+    const result = [];
+    const liste_aide_all = await this.aideRepository.listAll();
+
+    const day = 1000 * 60 * 60 * 24;
+    const week = day * 7;
+    const month = day * 30;
+
+    const NOW = Date.now();
+
+    for (const aide of liste_aide_all) {
+      if (aide.date_expiration) {
+        const month_warning = aide.date_expiration.getTime() - month < NOW;
+        const week_warning = aide.date_expiration.getTime() - week < NOW;
+
+        if (month_warning || week_warning) {
+          await this.aideExpirationWarningRepository.upsert({
+            aide_cms_id: aide.content_id,
+            last_month: month_warning,
+            last_week: week_warning,
+          });
+          result.push(
+            `SET : ${aide.content_id}:M[${month_warning}]W[${week_warning}]`,
+          );
+        } else {
+          await this.aideExpirationWarningRepository.delete(aide.content_id);
+          result.push(`REMOVED : ${aide.content_id}`);
+        }
+      }
+    }
+    return result;
   }
 }
