@@ -395,4 +395,12 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.aidesUsecase.reportAideSoonExpired();
   }
+  @Post('/admin/aide_expired_soon_emails')
+  @ApiOperation({
+    summary: `Envoie les emails pour les aides falguées comme bientôt expirées`,
+  })
+  async emailsAideExpiration(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.aidesUsecase.envoyerEmailsAideExpiration();
+  }
 }

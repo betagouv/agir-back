@@ -13,6 +13,8 @@ import { Personnalisator } from '../infrastructure/personnalisation/personnalisa
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
+import { EmailSender } from '../infrastructure/email/emailSender';
+import { App } from '../domain/app';
 
 @Injectable()
 export class AidesUsecase {
@@ -20,6 +22,7 @@ export class AidesUsecase {
     private aidesVeloRepository: AidesVeloRepository,
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private aidesRetrofitRepository: AidesRetrofitRepository,
+    private emailSender: EmailSender,
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
@@ -193,15 +196,17 @@ export class AidesUsecase {
       if (aide.date_expiration) {
         const month_warning = aide.date_expiration.getTime() - month < NOW;
         const week_warning = aide.date_expiration.getTime() - week < NOW;
+        const expired = aide.date_expiration.getTime() < NOW;
 
-        if (month_warning || week_warning) {
+        if (month_warning || week_warning || expired) {
           await this.aideExpirationWarningRepository.upsert({
             aide_cms_id: aide.content_id,
             last_month: month_warning,
             last_week: week_warning,
+            expired: expired,
           });
           result.push(
-            `SET : ${aide.content_id}:M[${month_warning}]W[${week_warning}]`,
+            `SET : ${aide.content_id}:Month[${month_warning}]Week[${week_warning}]Expired[${expired}]`,
           );
         } else {
           await this.aideExpirationWarningRepository.delete(aide.content_id);
@@ -210,5 +215,97 @@ export class AidesUsecase {
       }
     }
     return result;
+  }
+
+  public async envoyerEmailsAideExpiration(): Promise<string[]> {
+    const result: string[] = [];
+
+    const liste_expirations =
+      await this.aideExpirationWarningRepository.get_all();
+
+    for (const aide_exp of liste_expirations) {
+      if (aide_exp.last_month && !aide_exp.last_month_sent) {
+        await this.sent_aide_expiration_emails('month', aide_exp.aide_cms_id);
+        result.push(`month:${aide_exp.aide_cms_id}`);
+      }
+      if (aide_exp.last_week && !aide_exp.last_week_sent) {
+        await this.sent_aide_expiration_emails('week', aide_exp.aide_cms_id);
+        result.push(`week:${aide_exp.aide_cms_id}`);
+      }
+      if (aide_exp.expired && !aide_exp.expired_sent) {
+        await this.sent_aide_expiration_emails('expired', aide_exp.aide_cms_id);
+        result.push(`expired:${aide_exp.aide_cms_id}`);
+      }
+    }
+    return result;
+  }
+
+  private async sent_aide_expiration_emails(
+    type: 'month' | 'week' | 'expired',
+    id: string,
+  ) {
+    const liste_emails = App.listEmailsWarningAideExpiration();
+    for (const email of liste_emails) {
+      if (type === 'month') {
+        const sent_email = await this.emailSender.sendEmail(
+          email,
+          'Admin',
+          `Bonjour oh toi grande prêtresse des Z !
+<br>
+<br>Sache que j'ai trouvé l'aide <a href="${App.getCmsAidePreviewURL()}/${id}">numéro ${id}</a> qui va expirer dans moins de 1 mois 🧐
+<br>
+<br>je pense que cela peut t'intéresser
+<br>
+<br>Je te souhaite une bien bonne journée`,
+          `L'aide d'id ${id} va expirer dans 1 mois`,
+        );
+        if (sent_email) {
+          await this.aideExpirationWarningRepository.upsert({
+            aide_cms_id: id,
+            last_month_sent: true,
+          });
+        }
+      }
+      if (type === 'week') {
+        const sent_email = await this.emailSender.sendEmail(
+          email,
+          'Admin',
+          `Bonjour oh toi grande prêtresse des Z !
+<br>
+<br>Je veux pas te stresser plus que cela, mais l'aide <a href="${App.getCmsAidePreviewURL()}/${id}">numéro ${id}</a> va expirer dans moins de 1 semaine 😱
+<br>
+<br>je pense qu'il est VRAIMENT temps de faire quelque chose...
+<br>
+<br>Je te souhaite néanmoins une bien bonne journée`,
+          `L'aide d'id ${id} va expirer dans 1 semaine`,
+        );
+        if (sent_email) {
+          await this.aideExpirationWarningRepository.upsert({
+            aide_cms_id: id,
+            last_week_sent: true,
+          });
+        }
+      }
+      if (type === 'expired') {
+        const sent_email = await this.emailSender.sendEmail(
+          email,
+          'Admin',
+          `Bonjour oh toi grande prêtresse des Z !
+<br>
+<br>Je ne sais pas si c'est voulu, mais l'aide <a href="${App.getCmsAidePreviewURL()}/${id}">numéro ${id}</a> est belle et bien <strong>expirée</strong> 😭, par mesure de précaution j'ai décidé de ne plus la rendre visible sur le service jusqu'à nouvel ordre.
+<br>
+<br>Je ne veux pas juger, mais son altesse a quand même un peu échoué dans sa mission de maintenir l'ordre dans le royaume....
+<br>
+<br>Je te souhaite une bien bonne journée, bien qu'elle commence un peu mal à mon goût.`,
+          `L'aide d'id ${id} est expirée et supprimée du catalogue utilisateur`,
+        );
+        if (sent_email) {
+          await this.aideExpirationWarningRepository.upsert({
+            aide_cms_id: id,
+            expired_sent: true,
+          });
+        }
+      }
+    }
   }
 }

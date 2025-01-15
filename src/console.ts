@@ -178,6 +178,17 @@ async function bootstrap() {
       console.log(`STOP aide_expired_soon after ${Date.now() - start_time} ms`);
       console.log(result_aide_expired_soon);
       break;
+    case 'aide_expired_soon_emails':
+      start_time = Date.now();
+      console.log(`START aide_expired_soon_emails ${start_time}`);
+      const result_aide_expired_soon_emails = await application
+        .get(AidesUsecase)
+        .envoyerEmailsAideExpiration();
+      console.log(
+        `STOP aide_expired_soon_emails after ${Date.now() - start_time} ms`,
+      );
+      console.log(result_aide_expired_soon_emails);
+      break;
     default:
       console.log('Command not found');
       process.exit(1);

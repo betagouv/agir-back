@@ -29,6 +29,7 @@ import {
   Thematique as ThematiqueDB,
   Partenaire,
   Conformite,
+  AideExpirationWarning,
 } from '.prisma/client';
 import {
   Aide,
@@ -79,6 +80,7 @@ export enum DB {
   linky = 'linky',
   article = 'article',
   partenaire = 'partenaire',
+  aideExpirationWarning = 'aideExpirationWarning',
   quizz = 'quizz',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
@@ -99,6 +101,7 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
+    aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
@@ -199,6 +202,7 @@ export class TestUtil {
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
     await this.prisma.partenaire.deleteMany();
+    await this.prisma.aideExpirationWarning.deleteMany();
     await this.prisma.conformite.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
@@ -617,6 +621,20 @@ export class TestUtil {
       image_url: 'logo_url',
       nom: 'ADEME',
       url: 'https://ademe.fr',
+      ...override,
+    };
+  }
+  static aideExpirationWarningData(override?): AideExpirationWarning {
+    return {
+      aide_cms_id: '123',
+      expired: false,
+      expired_sent: false,
+      last_month: false,
+      last_month_sent: false,
+      last_week: false,
+      last_week_sent: false,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

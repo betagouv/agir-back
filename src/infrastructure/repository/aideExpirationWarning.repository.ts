@@ -28,9 +28,23 @@ export class AideExpirationWarningRepository {
         last_month_sent: result.last_month_sent,
         last_week: result.last_week,
         last_week_sent: result.last_week_sent,
+        expired: result.expired,
+        expired_sent: result.expired_sent,
       };
     }
     return null;
+  }
+  public async get_all(): Promise<AideWarningDefinition[]> {
+    const result = await this.prisma.aideExpirationWarning.findMany();
+    return result.map((r) => ({
+      aide_cms_id: r.aide_cms_id,
+      last_month: r.last_month,
+      last_month_sent: r.last_month_sent,
+      last_week: r.last_week,
+      last_week_sent: r.last_week_sent,
+      expired: r.expired,
+      expired_sent: r.expired_sent,
+    }));
   }
 
   public async upsert(warning: AideWarningDefinition) {
@@ -40,6 +54,8 @@ export class AideExpirationWarningRepository {
       last_month_sent: warning.last_month_sent,
       last_week: warning.last_week,
       last_week_sent: warning.last_week_sent,
+      expired: warning.expired,
+      expired_sent: warning.expired_sent,
       created_at: undefined,
       updated_at: undefined,
     };

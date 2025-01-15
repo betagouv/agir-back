@@ -22,6 +22,14 @@ export class App {
   public static isAdmin(userId: string): boolean {
     return !!process.env.ADMIN_IDS && process.env.ADMIN_IDS.includes(userId);
   }
+
+  public static listEmailsWarningAideExpiration(): string[] {
+    if (process.env.EMAILS_WARNING_AIDE_EXPIRATION) {
+      return process.env.EMAILS_WARNING_AIDE_EXPIRATION.split(',');
+    } else {
+      return [];
+    }
+  }
   public static isMailEnabled(): boolean {
     return process.env.EMAIL_ENABLED === 'true';
   }
@@ -57,6 +65,12 @@ export class App {
 
   public static getCmsURL(): string {
     return process.env.CMS_URL;
+  }
+  public static getCmsBaseURL(): string {
+    return process.env.CMS_BASE_URL;
+  }
+  public static getCmsAidePreviewURL(): string {
+    return process.env.CMS_AIDE_PREVIEW_URL;
   }
 
   public static getAideVeloMiniaturesURL(): string {
