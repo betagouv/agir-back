@@ -111,6 +111,17 @@ export class UtilisateurRepository {
     });
     return count !== 0;
   }
+
+  async isPrenomValide(prenom: string): Promise<boolean> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        prenom: prenom,
+        est_valide_pour_classement: true,
+      },
+    });
+    return count > 0;
+  }
+
   async findByEmail(email: string): Promise<Utilisateur | null> {
     const users = await this.prisma.utilisateur.findMany({
       where: {

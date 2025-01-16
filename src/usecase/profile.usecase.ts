@@ -80,7 +80,10 @@ export class ProfileUsecase {
           FIELD_MAX_LENGTH,
         );
       }
-      utilisateur.est_valide_pour_classement = false;
+      const prenom_valide = await this.utilisateurRepository.isPrenomValide(
+        profile.prenom,
+      );
+      utilisateur.est_valide_pour_classement = prenom_valide;
     }
 
     if (profile.revenu_fiscal) {

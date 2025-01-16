@@ -379,6 +379,35 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
   });
+  it('PATCH /utilisateurs/id/profile - le prenom est valide si un autre utilisateur avec même prenom valide existe', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      est_valide_pour_classement: true,
+      prenom: 'TOTO',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '2',
+      est_valide_pour_classement: false,
+      prenom: 'Insulte',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom: 'TOTO',
+    });
+    expect(response.status).toEqual(200);
+
+    // THEN
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser.prenom).toEqual('TOTO');
+    expect(dbUser.est_valide_pour_classement).toEqual(true);
+  });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYCs', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
