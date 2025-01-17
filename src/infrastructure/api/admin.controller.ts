@@ -43,21 +43,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-
-class VersionAPI {
-  @ApiProperty()
-  major: number;
-  @ApiProperty()
-  minor: number;
-  @ApiProperty()
-  patch: number;
-}
+import { PushNotificator } from '../push_notifications/pushNotificator';
 
 @Controller()
 @ApiTags('Z - Admin')
 @ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(
+    private pushNotificator: PushNotificator,
     private migrationUsecase: MigrationUsecase,
     private rechercheServicesUsecase: RechercheServicesUsecase,
     private profileUsecase: ProfileUsecase,
@@ -402,5 +395,27 @@ export class AdminController extends GenericControler {
   async emailsAideExpiration(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.aidesUsecase.envoyerEmailsAideExpiration();
+  }
+
+  @Post('/admin/test_push_mobile')
+  @ApiOperation({
+    summary: `Envoie les emails pour les aides falguées comme bientôt expirées`,
+  })
+  async testPushNotif(
+    @Request() req,
+    @Query('titre') titre: string,
+    @Query('token') token: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.pushNotificator.pushMessage(
+      titre,
+      'test de test',
+      'https://dummyimage.com/600x400/000/fff',
+      {
+        page_type: 'quiz',
+        page_id: '110',
+      },
+      token,
+    );
   }
 }
