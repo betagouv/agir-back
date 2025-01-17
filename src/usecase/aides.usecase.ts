@@ -15,6 +15,7 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { App } from '../domain/app';
+import { EchelleAide } from '../domain/aides/echelle';
 
 @Injectable()
 export class AidesUsecase {
@@ -138,8 +139,21 @@ export class AidesUsecase {
       }
     }
 
+    const aides_nationales = [];
+    const aides_locales = [];
+    for (const aide_def of result) {
+      if (aide_def.echelle === EchelleAide.National) {
+        aides_nationales.push(aide_def);
+      } else {
+        aides_locales.push(aide_def);
+      }
+    }
+
     return {
-      aides: this.personnalisator.personnaliser(result, utilisateur),
+      aides: this.personnalisator.personnaliser(
+        aides_nationales.concat(aides_locales),
+        utilisateur,
+      ),
       utilisateur: utilisateur,
     };
   }

@@ -6,6 +6,10 @@ export class PushNotificator {
   private messaging_service;
 
   constructor() {
+    if (!process.env.FIREBASE_PRIVATE_KEY_ID) {
+      return;
+    }
+
     this.admin_firebase = require('firebase-admin');
 
     const serviceAccount = {
@@ -40,6 +44,13 @@ export class PushNotificator {
     data: object,
     user_token: string,
   ) {
+    if (!this.messaging_service) {
+      console.error(
+        'Service de push notification non initialisé correctement !',
+      );
+      return;
+    }
+
     const message = {
       notification: {
         title: titre,
