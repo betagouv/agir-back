@@ -32,6 +32,7 @@ export enum SourceInscription {
   web = 'web',
   mobile = 'mobile',
   web_ngc = 'web_ngc',
+  france_connect = 'france_connect',
   inconnue = 'inconnue',
 }
 export enum Scope {

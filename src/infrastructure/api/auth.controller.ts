@@ -3,11 +3,19 @@ import { ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { App } from '../../../src/domain/app';
+import {
+  SourceInscription,
+  Utilisateur,
+  UtilisateurStatus,
+} from '../../domain/utilisateur/utilisateur';
+import { KycRepository } from '../repository/kyc.repository';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 
 @Controller()
 @ApiExcludeController()
 export class AuthController {
   constructor(
+    private utilisateurRepository: UtilisateurRepository,
     private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
   ) {}
@@ -38,29 +46,37 @@ export class AuthController {
     const user_data = await this.oidcService.getUserDataByAccessToken(
       access_token,
     );
+    console.log(user_data);
 
     // FINDING USER
     let utilisateur = await this.profileUsecase.findUtilisateurByEmail(
       user_data.email,
     );
     if (!utilisateur) {
-      // FIXME : revoir le moment venu, c'est plus en ligne avec la création de compte standalone
-      /*
-      await this.inscriptionUsecase.createUtilisateur({
-        DATA à mettre à jour  
-      });
-      */
-    }
-    const utilisateurId = utilisateur.id; // FIXME : broken for now
+      utilisateur = Utilisateur.createNewUtilisateur(
+        user_data.email,
+        false,
+        SourceInscription.france_connect,
+      );
 
-    await this.oidcService.injectUtilisateurIdToState(loginId, utilisateurId);
+      utilisateur.prenom = user_data.given_name;
+      utilisateur.nom = user_data.family_name;
+      utilisateur.status = UtilisateurStatus.default;
+      utilisateur.active_account = true;
+
+      utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+      await this.utilisateurRepository.createUtilisateur(utilisateur);
+    }
+
+    await this.oidcService.injectUtilisateurIdToState(loginId, utilisateur.id);
 
     // CREATING INNER APP TOKEN
-    const token = await this.oidcService.createNewInnerAppToken(utilisateurId);
+    const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
     return {
       url: App.getBaseURLFront().concat(
         process.env.FINAL_LOGIN_REDIRECT,
-        `?utilisateurId=${utilisateurId}&token=${token}`,
+        `?utilisateurId=${utilisateur.id}&token=${token}`,
       ),
     };
   }
