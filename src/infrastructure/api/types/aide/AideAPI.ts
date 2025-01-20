@@ -5,11 +5,13 @@ import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Besoin } from '../../../../../src/domain/aides/besoin';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { EchelleAide } from '../../../../domain/aides/echelle';
 
 export class AideAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
+  @ApiProperty({ enum: EchelleAide }) echelle: EchelleAide;
   @ApiProperty() url_simulateur: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;
@@ -54,6 +56,7 @@ export class AideAPI {
       partenaire_nom: partenaire ? partenaire.nom : null,
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
+      echelle: EchelleAide[aide.echelle],
     };
   }
 }

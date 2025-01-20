@@ -1,4 +1,5 @@
 import { Besoin } from '../../../src/domain/aides/besoin';
+import { EchelleAide } from '../../../src/domain/aides/echelle';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -263,6 +264,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     expect(aideBody.content_id).toEqual('1');
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
+    expect(aideBody.echelle).toEqual(EchelleAide.National);
     expect(aideBody.is_simulateur).toEqual(true);
     expect(aideBody.url_source).toEqual('https://hello');
     expect(aideBody.url_demande).toEqual('https://demande');

@@ -66,6 +66,7 @@ import { DefiRepository } from '../src/infrastructure/repository/defi.repository
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
+import { EchelleAide } from '../src/domain/aides/echelle';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -325,7 +326,7 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
-      echelle: 'National',
+      echelle: EchelleAide.National,
       url_source: 'https://hello',
       url_demande: 'https://demande',
       ...override,
