@@ -224,7 +224,7 @@ export class UtilisateurRepository {
       await this.prisma.utilisateur.update({
         where: { id: utilisateur.id, db_version: utilisateur.db_version },
         data: {
-          ...this.buildDBFromUtilisateur(utilisateur),
+          ...this.buildDBFromUtilisateurForUpdate(utilisateur),
           db_version: { increment: 1 },
         },
       });
@@ -235,11 +235,14 @@ export class UtilisateurRepository {
       throw error;
     }
   }
-  async updateUtilisateurNoConcurency(utilisateur: Utilisateur): Promise<void> {
+  async updateUtilisateurNoConcurency(
+    utilisateur: Utilisateur,
+    scopes?: Scope[],
+  ): Promise<void> {
     await this.prisma.utilisateur.update({
       where: { id: utilisateur.id },
       data: {
-        ...this.buildDBFromUtilisateur(utilisateur),
+        ...this.buildDBFromUtilisateurForUpdate(utilisateur, scopes),
       },
     });
   }
@@ -295,7 +298,7 @@ export class UtilisateurRepository {
   async createUtilisateur(utilisateur: Utilisateur) {
     try {
       await this.prisma.utilisateur.create({
-        data: this.buildDBFromUtilisateur(utilisateur),
+        data: this.buildNewDBUserFromUtilisateur(utilisateur),
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -487,8 +490,15 @@ export class UtilisateurRepository {
     return result;
   }
 
-  private buildDBFromUtilisateur(user: Utilisateur): UtilisateurDB {
-    const result = {
+  private buildNewDBUserFromUtilisateur(user: Utilisateur): UtilisateurDB {
+    return {
+      ...this.buildDBUserCoreDataFromUtilisateur(user),
+      ...this.buildDBVersionnedDataFromUtilisateur(user),
+    };
+  }
+
+  private buildDBUserCoreDataFromUtilisateur(user: Utilisateur): UtilisateurDB {
+    return {
       id: user.id ? user.id : uuidv4(),
       nom: user.nom,
       prenom: user.prenom,
@@ -505,6 +515,49 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
+      version: user.version,
+      failed_login_count: user.failed_login_count,
+      prevent_login_before: user.prevent_login_before,
+      migration_enabled: user.migration_enabled,
+      tag_ponderation_set: user.tag_ponderation_set,
+      force_connexion: user.force_connexion,
+      derniere_activite: user.derniere_activite,
+      annee_naissance: user.annee_naissance,
+      db_version: user.db_version,
+      is_magic_link_user: user.is_magic_link_user,
+      code_postal_classement: user.code_postal_classement,
+      commune_classement: user.commune_classement,
+      points_classement: user.points_classement,
+      rank: user.rank,
+      rank_commune: user.rank_commune,
+      status: user.status,
+      couverture_aides_ok: user.couverture_aides_ok,
+      source_inscription: user.source_inscription,
+      unsubscribe_mail_token: user.unsubscribe_mail_token,
+      est_valide_pour_classement: user.est_valide_pour_classement,
+      brevo_created_at: user.brevo_created_at,
+      brevo_updated_at: user.brevo_updated_at,
+      mobile_token: user.mobile_token,
+      mobile_token_updated_at: user.mobile_token_updated_at,
+      created_at: undefined,
+      updated_at: undefined,
+      todo: undefined,
+      gamification: undefined,
+      unlocked_features: undefined,
+      history: undefined,
+      logement: undefined,
+      kyc: undefined,
+      missions: undefined,
+      bilbiotheque_services: undefined,
+      notification_history: undefined,
+      defis: undefined,
+    };
+  }
+
+  private buildDBVersionnedDataFromUtilisateur(
+    user: Utilisateur,
+  ): Partial<UtilisateurDB> {
+    return {
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,
@@ -541,37 +594,60 @@ export class UtilisateurRepository {
         user.notification_history,
         SerialisableDomain.NotificationHistory,
       ),
-      version: user.version,
-      failed_login_count: user.failed_login_count,
-      prevent_login_before: user.prevent_login_before,
-      migration_enabled: user.migration_enabled,
-      tag_ponderation_set: user.tag_ponderation_set,
       defis: Upgrader.serialiseToLastVersion(
         user.defi_history,
         SerialisableDomain.DefiHistory,
       ),
-      force_connexion: user.force_connexion,
-      derniere_activite: user.derniere_activite,
-      annee_naissance: user.annee_naissance,
-      created_at: undefined,
-      updated_at: undefined,
-      db_version: user.db_version,
-      is_magic_link_user: user.is_magic_link_user,
-      code_postal_classement: user.code_postal_classement,
-      commune_classement: user.commune_classement,
-      points_classement: user.points_classement,
-      rank: user.rank,
-      rank_commune: user.rank_commune,
-      status: user.status,
-      couverture_aides_ok: user.couverture_aides_ok,
-      source_inscription: user.source_inscription,
-      unsubscribe_mail_token: user.unsubscribe_mail_token,
-      est_valide_pour_classement: user.est_valide_pour_classement,
-      brevo_created_at: user.brevo_created_at,
-      brevo_updated_at: user.brevo_updated_at,
-      mobile_token: user.mobile_token,
-      mobile_token_updated_at: user.mobile_token_updated_at,
     };
-    return result;
+  }
+
+  private buildDBFromUtilisateurForUpdate(
+    user: Utilisateur,
+    scopes?: Scope[],
+  ): Partial<UtilisateurDB> {
+    const versionned_data = this.buildDBVersionnedDataFromUtilisateur(user);
+
+    if (scopes && !scopes.includes(Scope.ALL)) {
+      if (!scopes.includes(Scope.bilbiotheque_services)) {
+        versionned_data.bilbiotheque_services = undefined;
+      }
+      if (!scopes.includes(Scope.defis)) {
+        versionned_data.defis = undefined;
+      }
+      if (!scopes.includes(Scope.gamification)) {
+        versionned_data.gamification = undefined;
+      }
+      if (!scopes.includes(Scope.history_article_quizz_aides)) {
+        versionned_data.history = undefined;
+      }
+      if (!scopes.includes(Scope.kyc)) {
+        versionned_data.kyc = undefined;
+      }
+      if (!scopes.includes(Scope.logement)) {
+        versionned_data.logement = undefined;
+      }
+      if (!scopes.includes(Scope.missions)) {
+        versionned_data.missions = undefined;
+      }
+      if (!scopes.includes(Scope.notification_history)) {
+        versionned_data.notification_history = undefined;
+      }
+      if (!scopes.includes(Scope.todo)) {
+        versionned_data.todo = undefined;
+      }
+      if (!scopes.includes(Scope.unlocked_features)) {
+        versionned_data.unlocked_features = undefined;
+      }
+      if (!scopes.includes(Scope.core)) {
+        return {
+          id: user.id,
+          ...versionned_data,
+        };
+      }
+    }
+    return {
+      ...this.buildDBUserCoreDataFromUtilisateur(user),
+      ...versionned_data,
+    };
   }
 }

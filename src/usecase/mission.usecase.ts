@@ -79,7 +79,10 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.missions],
+    );
 
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }
@@ -99,7 +102,10 @@ export class MissionUsecase {
       utilisateur,
     );
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.missions],
+    );
 
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }

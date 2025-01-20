@@ -5,6 +5,8 @@ import {
   SourceInscription,
   Utilisateur,
 } from '../../../src/domain/utilisateur/utilisateur';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Feature } from '../../../src/domain/gamification/feature';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -335,5 +337,84 @@ describe('UtilisateurRepository', () => {
       Scope.kyc,
     ]);
     expect(userDB_2.kyc_history).not.toBeUndefined();
+  });
+  it(`updateUtilisateurNoConcurency : pas d'erreur si maj concurentielle`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
+    userDB.prenom = 'YOYOYO';
+
+    await utilisateurRepository.updateUtilisateur(userDB);
+
+    // WHEN
+    userDB.prenom = 'HAHAHA';
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB);
+
+    // THEN
+    // no error
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB_2.prenom).toEqual('HAHAHA');
+  });
+  it(`updateUtilisateurNoConcurency : maj core data only`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
+    userDB.prenom = 'YOYOYO';
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [
+        Feature.aides,
+        Feature.defis,
+        Feature.bibliotheque,
+        Feature.bilan_carbone,
+      ],
+    };
+    userDB.unlocked_features = unlocked;
+
+    // WHEN
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
+      Scope.core,
+    ]);
+
+    // THEN
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB_2.prenom).toEqual('YOYOYO');
+    expect(userDB_2.unlocked_features).toEqual({
+      unlocked_features: ['aides', 'defis'],
+    });
+  });
+  it(`updateUtilisateurNoConcurency : maj sous donnée versionnée seulement`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', []);
+    userDB.prenom = 'YOYOYO';
+    const unlocked: UnlockedFeatures_v1 = {
+      version: 1,
+      unlocked_features: [
+        Feature.aides,
+        Feature.defis,
+        Feature.bibliotheque,
+        Feature.bilan_carbone,
+      ],
+    };
+    userDB.unlocked_features = unlocked;
+
+    // WHEN
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
+      Scope.unlocked_features,
+    ]);
+
+    // THEN
+    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB_2.prenom).toEqual('prenom');
+    expect(userDB_2.unlocked_features).toEqual({
+      unlocked_features: ['aides', 'defis', 'bibliotheque', 'bilan_carbone'],
+    });
   });
 });

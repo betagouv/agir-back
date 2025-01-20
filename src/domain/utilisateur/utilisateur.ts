@@ -36,6 +36,7 @@ export enum SourceInscription {
 }
 export enum Scope {
   ALL = 'ALL',
+  core = 'core',
   todo = 'todo',
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',

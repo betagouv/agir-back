@@ -250,6 +250,7 @@ export class BilanCarboneUsecase {
       utilisateur.unlocked_features.add(Feature.bilan_carbone_detail);
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
+        [Scope.unlocked_features],
       );
     }
 
