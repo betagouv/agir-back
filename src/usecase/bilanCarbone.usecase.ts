@@ -248,7 +248,9 @@ export class BilanCarboneUsecase {
       SEUIL_POURCENTAGE_BILAN_COMPLET
     ) {
       utilisateur.unlocked_features.add(Feature.bilan_carbone_detail);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        utilisateur,
+      );
     }
 
     bilan_synthese.bilan_complet_dispo =

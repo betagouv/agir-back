@@ -88,7 +88,7 @@ export class QuestionKYCUsecase {
     Utilisateur.checkState(utilisateur);
 
     const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur);
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,

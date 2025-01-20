@@ -235,6 +235,14 @@ export class UtilisateurRepository {
       throw error;
     }
   }
+  async updateUtilisateurNoConcurency(utilisateur: Utilisateur): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateur.id },
+      data: {
+        ...this.buildDBFromUtilisateur(utilisateur),
+      },
+    });
+  }
 
   async listUtilisateurIds(
     created_after?: Date,
