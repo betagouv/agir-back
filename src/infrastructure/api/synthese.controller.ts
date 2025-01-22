@@ -30,12 +30,12 @@ import { Thematique } from '../../domain/contenu/thematique';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 
-export class ArticleLocal {
+export class ArticleLocalAPI {
   @ApiProperty() id: string;
   @ApiProperty() thematique: string;
   @ApiProperty() titre: string;
 }
-export class AideLocal {
+export class AideLocalAPI {
   @ApiProperty() id: string;
   @ApiProperty({ type: [String] }) thematiques: string[];
   @ApiProperty() titre: string;
@@ -68,10 +68,10 @@ export class SyntheseAPI {
   @ApiProperty() nombre_articles_locaux: number;
   @ApiProperty() nombre_articles_total: number;
   @ApiProperty({ type: [String] }) liste_communes: string[];
-  @ApiProperty({ type: [ArticleLocal] })
-  liste_id_articles_locaux: ArticleLocal[];
-  @ApiProperty({ type: [AideLocal] })
-  liste_id_aides_locales: AideLocal[];
+  @ApiProperty({ type: [ArticleLocalAPI] })
+  liste_id_articles_locaux: ArticleLocalAPI[];
+  @ApiProperty({ type: [AideLocalAPI] })
+  liste_id_aides_locales: AideLocalAPI[];
 }
 
 @ApiTags('Previews')

@@ -40,4 +40,70 @@ describe('/communes (API test)', () => {
     expect(response.body).toHaveLength(2);
     expect(response.body).toStrictEqual(['DONZERE', 'LES GRANGES GONTARDES']);
   });
+  it('GET /communes_epci?nom=XXXX - renvoie la commune de palaiseau, case insensitive', async () => {
+    // GIVEN
+    await TestUtil.prisma.communesAndEPCI.create({
+      data: {
+        code_insee: '123',
+        is_commune: true,
+        is_epci: false,
+        nom: 'Palaiseau',
+        code_postaux: ['91120'],
+        type_epci: null,
+        codes_communes: [],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/communes_epci?nom=PALAISEAU');
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].nom).toEqual('Palaiseau');
+  });
+  it('GET /communes_epci?nom=XXXX - renvoie la commune de palaiseau, recherche partielle', async () => {
+    // GIVEN
+    await TestUtil.prisma.communesAndEPCI.create({
+      data: {
+        code_insee: '123',
+        is_commune: true,
+        is_epci: false,
+        nom: 'Palaiseau',
+        code_postaux: ['91120'],
+        type_epci: null,
+        codes_communes: [],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/communes_epci?nom=ALA');
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].nom).toEqual('Palaiseau');
+  });
+  it('GET /communes_epci?nom=XXXX - renvoie la commune de palaiseau, recherche partielle', async () => {
+    // GIVEN
+    await TestUtil.prisma.communesAndEPCI.create({
+      data: {
+        code_insee: '123',
+        is_commune: false,
+        is_epci: true,
+        nom: 'Dijon Metropole',
+        code_postaux: ['21000', '21800'],
+        type_epci: 'METRO',
+        codes_communes: ['1', '2'],
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/communes_epci?nom=Dijon');
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].nom).toEqual('Dijon Metropole');
+  });
 });

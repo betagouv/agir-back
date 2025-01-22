@@ -89,6 +89,26 @@ export class CommuneRepository {
     }
   }
 
+  public async findCommuneOrEpciByName(name: string): Promise<
+    {
+      code_insee: string;
+      nom: string;
+    }[]
+  > {
+    const query = `
+    SELECT
+      "nom",
+      "code_insee"
+    FROM
+      "CommunesAndEPCI"
+    WHERE
+      "nom" ILIKE '%${name}%'
+    ;
+    `;
+    const result: { nom: string; code_insee: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    return result;
+  }
   public async upsertCommuneAndEpciToDatabase() {
     for (const une_epci of epci) {
       const codes_postaux = new Set<string>();

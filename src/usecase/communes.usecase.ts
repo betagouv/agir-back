@@ -12,4 +12,10 @@ export class CommunesUsecase {
   async loadAllEpciAndCOmmunes() {
     await this.communeRepository.upsertCommuneAndEpciToDatabase();
   }
+
+  async getListeCommunesAndEPCIByName(
+    nom: string,
+  ): Promise<{ nom: string; code_insee: string }[]> {
+    return await this.communeRepository.findCommuneOrEpciByName(nom);
+  }
 }
