@@ -8,4 +8,8 @@ export class CommunesUsecase {
   async getListeCommunes(codePostal: string): Promise<string[]> {
     return this.communeRepository.getListCommunesParCodePostal(codePostal);
   }
+
+  async loadAllEpciAndCOmmunes() {
+    await this.communeRepository.upsertCommuneAndEpciToDatabase();
+  }
 }

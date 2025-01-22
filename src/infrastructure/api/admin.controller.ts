@@ -45,6 +45,7 @@ import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { CommunesUsecase } from '../../usecase/communes.usecase';
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -59,6 +60,7 @@ export class AdminController extends GenericControler {
     private linkyUsecase: LinkyUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
+    private communesUsecase: CommunesUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -406,6 +408,15 @@ export class AdminController extends GenericControler {
   async disconnectAll(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.connexion_v2_Usecase.disconnectAllUsers();
+  }
+
+  @Post('/admin/load_communes_epci')
+  @ApiOperation({
+    summary: `Charge en base le référentiel de communes et EPCI`,
+  })
+  async load_communes_epci(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.communesUsecase.loadAllEpciAndCOmmunes();
   }
 
   @Post('/admin/test_push_mobile')

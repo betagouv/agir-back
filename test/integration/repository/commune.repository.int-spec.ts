@@ -2,7 +2,7 @@ import { TestUtil } from '../../TestUtil';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 
 describe('CommuneRepository', () => {
-  let communeRepository = new CommuneRepository();
+  let communeRepository = new CommuneRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -198,5 +198,74 @@ describe('CommuneRepository', () => {
     // THEN
     expect(result).toHaveLength(23);
     expect(result).toContain('21605');
+  });
+  it.skip(`upsertCommuneAndEpciToDatabase : intègres les EPIC et commune en BDD - trop long`, async () => {
+    // WHEN
+    const time = Date.now();
+    await communeRepository.upsertCommuneAndEpciToDatabase();
+    console.log(Date.now() - time);
+
+    // THEN
+    const communeDB = await TestUtil.prisma.communesAndEPCI.findUnique({
+      where: { code_insee: '06088' },
+    });
+
+    expect(communeDB.code_postaux).toEqual([
+      '06000',
+      '06100',
+      '06200',
+      '06300',
+    ]);
+    expect(communeDB.nom).toEqual('Nice');
+    expect(communeDB.is_epci).toEqual(false);
+    expect(communeDB.is_commune).toEqual(true);
+    expect(communeDB.codes_communes).toEqual([]);
+    expect(communeDB.type_epci).toEqual(null);
+
+    const epicDB = await TestUtil.prisma.communesAndEPCI.findUnique({
+      where: { code_insee: '242100410' },
+    });
+    expect(epicDB.code_postaux).toEqual([
+      '21000',
+      '21300',
+      '21240',
+      '21800',
+      '21121',
+      '21600',
+      '21850',
+      '21160',
+      '21370',
+      '21560',
+      '21110',
+    ]);
+    expect(epicDB.codes_communes).toEqual([
+      '21231',
+      '21166',
+      '21617',
+      '21171',
+      '21515',
+      '21278',
+      '21355',
+      '21540',
+      '21390',
+      '21452',
+      '21485',
+      '21481',
+      '21605',
+      '21263',
+      '21473',
+      '21003',
+      '21223',
+      '21315',
+      '21105',
+      '21106',
+      '21370',
+      '21192',
+      '21270',
+    ]);
+    expect(epicDB.nom).toEqual('Dijon Métropole');
+    expect(epicDB.is_epci).toEqual(true);
+    expect(epicDB.is_commune).toEqual(false);
+    expect(epicDB.type_epci).toEqual('METRO');
   });
 });

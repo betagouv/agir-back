@@ -16,6 +16,7 @@ import { MailerUsecase } from './usecase/mailer.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
+import { CommunesUsecase } from './usecase/communes.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -189,6 +190,15 @@ async function bootstrap() {
       );
       console.log(result_aide_expired_soon_emails);
       break;
+    case 'load_communes_and_epci':
+      start_time = Date.now();
+      console.log(`START load_communes_and_epci ${start_time}`);
+      await application.get(CommunesUsecase).loadAllEpciAndCOmmunes();
+      console.log(
+        `STOP load_communes_and_epci after ${Date.now() - start_time} ms`,
+      );
+      break;
+
     default:
       console.log('Command not found');
       process.exit(1);

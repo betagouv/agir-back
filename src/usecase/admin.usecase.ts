@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope } from '../domain/utilisateur/utilisateur';
 import { KYCID } from '../domain/kyc/KYCID';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class AdminUsecase {

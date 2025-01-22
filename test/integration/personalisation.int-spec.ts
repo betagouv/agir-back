@@ -10,7 +10,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { TestUtil } from '../../test/TestUtil';
 
 describe('Personalisation', () => {
-  const communeRepository = new CommuneRepository();
+  const communeRepository = new CommuneRepository(TestUtil.prisma);
   const personnalisation = new Personnalisator(communeRepository);
 
   beforeAll(async () => {

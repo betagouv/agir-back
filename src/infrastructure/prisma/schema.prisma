@@ -115,6 +115,16 @@ model ServicesFavorisStatistique {
   @@unique([service_id, favoris_id])
 }
 
+model CommunesAndEPCI {
+  code_insee     String   @id
+  code_postaux   String[] @default([])
+  codes_communes String[] @default([])
+  is_epci        Boolean
+  is_commune     Boolean
+  type_epci      String? // 'CA' | 'CC' | 'CU' | 'MET69' | 'METRO'
+  nom            String
+}
+
 model ArticleStatistique {
   articleId                 String   @id
   titre                     String

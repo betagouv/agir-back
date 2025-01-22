@@ -31,3 +31,5 @@ npm run execute create_brevo_contacts
 npm run execute aide_expired_soon
 
 npm run execute aide_expired_soon_emails
+
+npm run execute load_communes_and_epci

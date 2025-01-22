@@ -69,7 +69,7 @@ describe('linkyServiceManager', () => {
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let serviceRepository = new ServiceRepository(TestUtil.prisma);
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  let communeRepository = new CommuneRepository();
+  let communeRepository = new CommuneRepository(TestUtil.prisma);
   let linkyEmailer = {
     sendConfigurationKOEmail: jest.fn(),
     sendAvailableDataEmail: jest.fn(),

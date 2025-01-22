@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import _communes from '@etalab/decoupage-administratif/data/communes.json';
 import _epci from '@etalab/decoupage-administratif/data/epci.json';
 import _codes_postaux from './codes_postaux.json';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CommunesAndEPCI } from '@prisma/client';
 
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];
@@ -70,7 +72,7 @@ export type EPCI = {
 
 @Injectable()
 export class CommuneRepository {
-  constructor() {
+  constructor(private prisma: PrismaService) {
     this.supprimernDoublonsCommunesEtLigne5(_codes_postaux);
   }
 
@@ -85,6 +87,80 @@ export class CommuneRepository {
       );
       referentiel[code_postal] = [...commune_map.values()];
     }
+  }
+
+  public async upsertCommuneAndEpciToDatabase() {
+    for (const une_epci of epci) {
+      const codes_postaux = new Set<string>();
+      for (const membre of une_epci.membres) {
+        const codes = this.getCodePostauxFromCodeCommune(membre.code);
+        for (const code_postal of codes) {
+          codes_postaux.add(code_postal);
+        }
+      }
+      await this.upsertEPCI(
+        une_epci.nom,
+        une_epci.code,
+        Array.from(codes_postaux.values()),
+        une_epci.membres.map((m) => m.code),
+        une_epci.type,
+      );
+    }
+
+    for (const une_commune of communes) {
+      await this.upsertCommune(
+        une_commune.nom,
+        une_commune.code,
+        une_commune.codesPostaux,
+      );
+    }
+  }
+
+  private async upsertCommune(
+    nom: string,
+    code_insee: string,
+    codes_postaux: string[],
+  ) {
+    const data: CommunesAndEPCI = {
+      code_insee: code_insee,
+      nom: nom,
+      code_postaux: codes_postaux,
+      codes_communes: [],
+      is_commune: true,
+      is_epci: false,
+      type_epci: undefined,
+    };
+    await this.prisma.communesAndEPCI.upsert({
+      where: {
+        code_insee: code_insee,
+      },
+      create: data,
+      update: data,
+    });
+  }
+  private async upsertEPCI(
+    nom: string,
+    code_insee: string,
+    codes_postaux: string[],
+    codes_communes: string[],
+    type_epci: string,
+  ) {
+    const data: CommunesAndEPCI = {
+      code_insee: code_insee,
+      nom: nom,
+      code_postaux: codes_postaux,
+      codes_communes: codes_communes,
+      is_commune: false,
+      is_epci: true,
+      type_epci: type_epci,
+    };
+    await this.prisma.communesAndEPCI.upsert({
+      where: {
+        code_insee: code_insee,
+      },
+      create: data,
+      update: data,
+    });
   }
 
   checkCodePostal(code_postal: string): boolean {

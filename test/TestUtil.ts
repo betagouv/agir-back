@@ -205,6 +205,7 @@ export class TestUtil {
     await this.prisma.partenaire.deleteMany();
     await this.prisma.aideExpirationWarning.deleteMany();
     await this.prisma.conformite.deleteMany();
+    await this.prisma.communesAndEPCI.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
