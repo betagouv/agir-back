@@ -44,6 +44,7 @@ import { MissionUsecase } from '../../usecase/mission.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { PushNotificator } from '../push_notifications/pushNotificator';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -71,6 +72,7 @@ export class AdminController extends GenericControler {
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
     private prisma: PrismaService,
+    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
     super();
   }
@@ -395,6 +397,15 @@ export class AdminController extends GenericControler {
   async emailsAideExpiration(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.aidesUsecase.envoyerEmailsAideExpiration();
+  }
+
+  @Post('utilisateurs/logout')
+  @ApiOperation({
+    summary: `Déconnecte TOUS LES UTILISATEURS`,
+  })
+  async disconnectAll(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.connexion_v2_Usecase.disconnectAllUsers();
   }
 
   @Post('/admin/test_push_mobile')
