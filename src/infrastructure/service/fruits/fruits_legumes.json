@@ -126,6 +126,17 @@
     "img": "champignonmorille.svg"
   },
   {
+    "label": { "fr": "Champignon (morille crue)" },
+    "months": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "emoji": "🍄",
+    "local": true,
+    "pef": 0.08,
+    "CO2": 6.17,
+    "suggestions": true,
+    "type": "legume",
+    "img": "champignonmorille.svg"
+  },
+  {
     "label": { "fr": "Chou" },
     "months": [0, 1, 2, 9, 10, 11],
     "emoji": "🥬",
@@ -216,7 +227,7 @@
     "img": "endive.svg"
   },
   {
-    "label": { "fr": "Epinard" },
+    "label": { "fr": "Épinard" },
     "months": [0, 1, 2, 3, 4, 8, 9, 10, 11],
     "emoji": "🥬",
     "local": true,
