@@ -50,6 +50,7 @@ describe('UtilisateurView', () => {
         superficie: Superficie.superficie_100,
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
+        code_commune: '12345',
       }),
       gamification: new Gamification({
         version: 0,

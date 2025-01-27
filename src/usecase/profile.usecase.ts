@@ -17,6 +17,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import validator from 'validator';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { Logement } from '../domain/logement/logement';
 
 const FIELD_MAX_LENGTH = 40;
 
@@ -130,6 +131,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
+    const update_data: Logement = { ...input, code_commune: undefined };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -154,19 +156,20 @@ export class ProfileUsecase {
     }
 
     if (input.commune) {
-      const ok = this.communeRepository.checkOKCodePostalAndCommune(
+      const code_commune = this.communeRepository.getCodeCommune(
         input.code_postal,
         input.commune,
       );
-      if (!ok) {
+      if (!code_commune) {
         ApplicationError.throwBadCodePostalAndCommuneAssociation(
           input.code_postal,
           input.commune,
         );
       }
+      update_data.code_commune = code_commune;
     }
 
-    utilisateur.logement.patch(input, utilisateur);
+    utilisateur.logement.patch(update_data, utilisateur);
 
     try {
       utilisateur.kyc_history.patchLogement(input);

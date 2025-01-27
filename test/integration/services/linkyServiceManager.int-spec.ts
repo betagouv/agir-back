@@ -3,40 +3,16 @@ import { ServiceRepository } from '../../../src/infrastructure/repository/servic
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { LinkyServiceManager } from '../../../src/infrastructure/service/linky/LinkyServiceManager';
-import {
-  Service,
-  ServiceData,
-  ServiceStatus,
-} from '../../../src/domain/service/service';
+import { Service, ServiceStatus } from '../../../src/domain/service/service';
 import {
   LiveService,
   ServiceDefinitionData,
 } from '../../../src/domain/service/serviceDefinition';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
-import {
-  Superficie,
-  TypeLogement,
-  Chauffage,
-  DPE,
-} from '../../../src/domain/logement/logement';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
-const logement: Logement_v0 = {
-  version: 0,
-  superficie: Superficie.superficie_150,
-  type: TypeLogement.maison,
-  code_postal: '91120',
-  chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
-  dpe: DPE.B,
-  nombre_adultes: 2,
-  nombre_enfants: 2,
-  plus_de_15_ans: true,
-  proprietaire: true,
-};
 const SERVICE_DEF_DATA: ServiceDefinitionData = {
   serviceDefinitionId: 'dummy_live',
   titre: 'titre',

@@ -187,6 +187,10 @@ export class CommuneRepository {
     return _codes_postaux[code_postal] !== undefined;
   }
 
+  isCodeInseeEPCI(code_insee: string): boolean {
+    return epci.find((e) => e.code === code_insee) != undefined;
+  }
+
   checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
     const liste_communes = this.getListCommunesParCodePostal(code_postal);
     return liste_communes.length !== 0 && liste_communes.includes(commune);

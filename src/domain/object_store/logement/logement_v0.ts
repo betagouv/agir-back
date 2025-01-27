@@ -12,6 +12,7 @@ export class Logement_v0 extends Versioned_v0 {
   nombre_enfants: number;
   code_postal: string;
   commune: string;
+  code_commune: string;
   type: TypeLogement;
   superficie: Superficie;
   proprietaire: boolean;
@@ -26,6 +27,7 @@ export class Logement_v0 extends Versioned_v0 {
       nombre_enfants: domain.nombre_enfants,
       code_postal: domain.code_postal,
       commune: domain.commune,
+      code_commune: domain.code_commune,
       type: domain.type,
       superficie: domain.superficie,
       proprietaire: domain.proprietaire,

@@ -34,6 +34,7 @@ describe('Logement vN ', () => {
       proprietaire: true,
       commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
+      code_commune: '12345',
     });
 
     // WHEN
@@ -57,6 +58,7 @@ describe('Logement vN ', () => {
       proprietaire: true,
       commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
+      code_commune: '12345',
     });
 
     // WHEN

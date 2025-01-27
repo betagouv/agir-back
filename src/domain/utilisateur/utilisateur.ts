@@ -164,6 +164,7 @@ export class Utilisateur {
         proprietaire: null,
         superficie: null,
         type: null,
+        code_commune: null,
       }),
       tag_ponderation_set: {},
       force_connexion: false,

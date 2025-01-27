@@ -36,6 +36,7 @@ export class Logement {
   nombre_enfants: number;
   code_postal: string;
   commune: string;
+  code_commune: string;
   commune_label?: string;
   type: TypeLogement;
   superficie: Superficie;
@@ -56,6 +57,7 @@ export class Logement {
     this.chauffage = this.undefinedToNull(log.chauffage);
     this.plus_de_15_ans = this.undefinedToNull(log.plus_de_15_ans);
     this.dpe = this.undefinedToNull(log.dpe);
+    this.code_commune = this.undefinedToNull(log.code_commune);
   }
 
   patch?(input: Logement, utilisateur: Utilisateur) {
@@ -66,6 +68,7 @@ export class Logement {
     utilisateur.code_postal_classement = this.code_postal;
 
     this.commune = this.AorB(input.commune, this.commune);
+    this.code_commune = this.AorB(input.code_commune, this.code_commune);
     utilisateur.commune_classement = this.commune;
 
     this.type = this.AorB(input.type, this.type);
