@@ -594,27 +594,27 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       content_id: '1',
       titre: 'titreA',
       contenu: "Contenu de l'aide",
-      codes_postaux: ['21000'],
+      codes_postaux: '21000',
       thematiques: ['climat', 'logement'],
       montant_max: 999,
-      codes_departement: [],
-      codes_region: [],
-      com_agglo: [],
-      com_urbaine: [],
-      com_com: [],
-      metropoles: ['Dijon Métropole'],
+      codes_departement: '',
+      codes_region: '',
+      com_agglo: '',
+      com_urbaine: '',
+      com_com: '',
+      metropoles: 'Dijon Métropole',
       echelle: 'National',
       url_source: 'https://hello',
       url_demande: 'https://demande',
     });
-    expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
-    expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);
-    expect(response.body[2].com_agglo).toEqual([
+    expect(response.body[0].metropoles).toEqual('Dijon Métropole');
+    expect(response.body[1].com_agglo).toEqual('CA du Pays de Gex');
+    expect(response.body[2].com_agglo).toEqual(
       'CA du Bassin de Bourg-en-Bresse',
-    ]);
-    expect(response.body[2].com_com).toEqual([
+    );
+    expect(response.body[2].com_com).toEqual(
       `CC Rives de l'Ain - Pays du Cerdon`,
-    ]);
-    expect(response.body[3].com_urbaine).toEqual(['CU Caen la Mer']);
+    );
+    expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
   });
 });
