@@ -103,6 +103,7 @@ export class ProfileUsecase {
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
+    utilisateur.situation_handicap = profile.situation_handicap;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
     utilisateur.annee_naissance = profile.annee_naissance;

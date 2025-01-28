@@ -86,7 +86,7 @@ export class ProfileController extends GenericControler {
   @Get('utilisateurs/:utilisateurId/profile')
   @ApiOperation({
     summary:
-      "Infromation de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
+      "Informations de profile d'un utilisateur d'id donné (nom, prenom, code postal, ...)",
   })
   @UseGuards(AuthGuard)
   async getUtilisateurProfile(

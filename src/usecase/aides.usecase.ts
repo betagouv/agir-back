@@ -193,6 +193,7 @@ export class AidesUsecase {
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
+      'demandeur . en situation de handicap': utilisateur.situation_handicap,
     });
   }
 

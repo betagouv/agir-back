@@ -59,6 +59,8 @@ export class Utilisateur {
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
+  /** NOTE: should probably be extracted in a KYC in the future */
+  situation_handicap: boolean;
   created_at: Date;
   updated_at?: Date;
   passwordHash: string;
@@ -132,6 +134,7 @@ export class Utilisateur {
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,
+      situation_handicap: false,
       passwordHash: null,
       passwordSalt: null,
       active_account: false,
