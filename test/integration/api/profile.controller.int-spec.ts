@@ -156,6 +156,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
+    expect(response.body.situation_handicap).toEqual(false);
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -203,6 +204,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
+      situation_handicap: true,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -357,6 +359,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
+      situation_handicap: true,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -372,6 +375,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);
+    expect(dbUser.situation_handicap).toEqual(true);
     expect(dbUser.est_valide_pour_classement).toEqual(false);
     expect(dbUser.passwordHash).toEqual(
       crypto

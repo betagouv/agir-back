@@ -64,6 +64,8 @@ export class UtilisateurUpdateProfileAPI {
   nombre_de_parts_fiscales: number;
   @ApiProperty({ required: false })
   abonnement_ter_loire: boolean;
+  @ApiProperty({ required: false })
+  situation_handicap: boolean;
 }
 
 export class UtilisateurProfileAPI {
@@ -87,6 +89,8 @@ export class UtilisateurProfileAPI {
   nombre_de_parts_fiscales: number;
   @ApiProperty({ required: false })
   abonnement_ter_loire: boolean;
+  @ApiProperty({ required: false })
+  situation_handicap: boolean;
 
   @ApiProperty({ type: LogementAPI })
   logement: LogementAPI;
@@ -101,6 +105,7 @@ export class UtilisateurProfileAPI {
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       abonnement_ter_loire: user.abonnement_ter_loire,
+      situation_handicap: user.situation_handicap,
       logement: LogementAPI.mapToAPI(user.logement),
       annee_naissance: user.annee_naissance,
     };

@@ -40,6 +40,7 @@ export type SummaryVelosParams = Required<
     | 'foyer . personnes'
     | 'revenu fiscal de référence par part . revenu de référence'
     | 'revenu fiscal de référence par part . nombre de parts'
+    | 'demandeur . en situation de handicap'
   >
 >;
 

@@ -37,6 +37,7 @@ describe('AideVeloRepository', () => {
     'vélo . prix': 500,
     'foyer . personnes': 1,
     'aides . pays de la loire . abonné TER': false,
+    'demandeur . en situation de handicap': false,
   };
 
   it('doit correctement calculer les aides pour une situation de base', async () => {
@@ -143,7 +144,7 @@ describe('AideVeloRepository', () => {
   });
 
   describe('Vélo adapté et personne en situation de handicap', () => {
-    it.skip('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
+    it('doit correctement cumuler les aides pour une personne habitant à Toulouse', async () => {
       // WHEN
       const result = await aidesVeloRepository.getSummaryVelos({
         ...baseParams,
@@ -152,6 +153,7 @@ describe('AideVeloRepository', () => {
         'localisation . département': '31',
         'localisation . région': '76',
         'aides . pays de la loire . abonné TER': false,
+        'demandeur . en situation de handicap': true,
       });
 
       // THEN
@@ -167,7 +169,7 @@ describe('AideVeloRepository', () => {
       );
     });
 
-    it.skip('doit correctement cumuler les aides pour une personne habitant à Montpellier', async () => {
+    it('doit correctement cumuler les aides pour une personne habitant à Montpellier', async () => {
       // WHEN
       const result = await aidesVeloRepository.getSummaryVelos({
         ...baseParams,
@@ -175,15 +177,17 @@ describe('AideVeloRepository', () => {
         'localisation . epci': 'Montpellier Méditerranée Métropole',
         'localisation . département': '34',
         'localisation . région': '76',
+        'vélo . prix': 4000,
         'aides . pays de la loire . abonné TER': false,
+        'demandeur . en situation de handicap': true,
       });
 
       // THEN
       expect(result['électrique'].length).toBe(3);
       expect(result['électrique'][0].libelle).toBe('Bonus vélo');
       expect(result['électrique'][1].libelle).toBe('Région Occitanie');
-      expect(result['électrique'][2].libelle).toBe('Toulouse Métropole');
-      expect(result['adapté'].length).toBe(3);
+      expect(result['électrique'][2].libelle).toBe('Département Hérault');
+      expect(result['adapté'].length).toBe(4);
       expect(result['adapté'][0].libelle).toBe('Bonus vélo');
       expect(result['adapté'][1].libelle).toContain('Région Occitanie');
       expect(result['adapté'][1].description).toContain(
@@ -192,6 +196,12 @@ describe('AideVeloRepository', () => {
       expect(result['adapté'][2].libelle).toContain('Département Hérault');
       expect(result['adapté'][2].description).toContain(
         'Chèque Hérault Handi-Vélo',
+      );
+      expect(result['adapté'][3].libelle).toContain(
+        'Montpellier Méditerranée Métropole',
+      );
+      expect(result['adapté'][3].description).toContain(
+        'vélo à assistance électrique adapté',
       );
     });
   });
@@ -205,6 +215,7 @@ describe('AideVeloRepository', () => {
       'localisation . département': '69',
       'localisation . région': '84',
       'aides . pays de la loire . abonné TER': false,
+      'demandeur . en situation de handicap': true,
     });
 
     // THEN
