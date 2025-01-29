@@ -231,7 +231,8 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       'Île-de-France Mobilités',
     );
   });
-  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo_v2 aide nationnale sur plafond OK, au dela tranche 2, pas d'aide`, async () => {
+
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo à Montpellier, aide à l'achat d'un vélo éléctrique uniquement pour vélo d'occasion`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       revenu_fiscal: 10000,
@@ -254,7 +255,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 
     // WHEN
     const response_neuf = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
       prix_du_velo: 1000,
       etat_du_velo: 'neuf',
@@ -270,7 +271,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 
     // WHEN
     const response_occasion = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
       prix_du_velo: 1000,
       etat_du_velo: 'occasion',
@@ -285,24 +286,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     ).toBeDefined();
   });
 
-  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo_v2 aide montpellier uniquement élligible pour les vélos d'occasion`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 20000, parts: 1 });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
-    ).send({
-      prix_du_velo: 100000,
-      etat_du_velo: 'neuf',
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['électrique'][0].libelle).toEqual(
-      'Île-de-France Mobilités',
-    );
-  });
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
 
