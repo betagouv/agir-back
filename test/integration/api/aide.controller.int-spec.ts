@@ -1,3 +1,9 @@
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
 import { Thematique } from '../../../src/domain/contenu/thematique';
@@ -217,6 +223,78 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       '/utilisateurs/utilisateur-id/simulerAideVelo',
     ).send({
       prix_du_velo: 100000,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body['électrique'][0].libelle).toEqual(
+      'Île-de-France Mobilités',
+    );
+  });
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo_v2 aide nationnale sur plafond OK, au dela tranche 2, pas d'aide`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 10000,
+      parts: 1,
+      logement: {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.maison,
+        code_postal: '34000',
+        chauffage: Chauffage.bois,
+        commune: 'MONTPELLIER',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: true,
+        proprietaire: true,
+        code_commune: '34172',
+      },
+    });
+
+    // WHEN
+    const response_neuf = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
+    });
+
+    // THEN
+    expect(response_neuf.status).toBe(201);
+    expect(
+      response_neuf.body['électrique'].find(
+        (a) => a.libelle === 'Montpellier Méditerranée Métropole',
+      ),
+    ).toBeUndefined();
+
+    // WHEN
+    const response_occasion = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'occasion',
+    });
+
+    // THEN
+    expect(response_occasion.status).toBe(201);
+    expect(
+      response_occasion.body['électrique'].find(
+        (a) => a.libelle === 'Montpellier Méditerranée Métropole',
+      ),
+    ).toBeDefined();
+  });
+
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo_v2 aide montpellier uniquement élligible pour les vélos d'occasion`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 20000, parts: 1 });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo_v2',
+    ).send({
+      prix_du_velo: 100000,
+      etat_du_velo: 'neuf',
     });
 
     // THEN

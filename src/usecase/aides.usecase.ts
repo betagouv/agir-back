@@ -111,13 +111,13 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = await this.communeRepository.getCodeCommune(
+    const code_commune = this.communeRepository.getCodeCommune(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
 
     const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
+      this.communeRepository.findDepartementRegionByCodePostal(
         utilisateur.logement.code_postal,
       );
 
@@ -161,6 +161,7 @@ export class AidesUsecase {
   async simulerAideVelo(
     utilisateurId: string,
     prix_velo: number,
+    etat_velo: 'neuf' | 'occasion' = 'neuf',
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -193,6 +194,7 @@ export class AidesUsecase {
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
+      'vélo . état': etat_velo,
     });
   }
 

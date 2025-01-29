@@ -10,7 +10,6 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -18,12 +17,11 @@ import {
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
-import { ApplicationError } from '../applicationError';
+import { InputAideVeloAPI_v2 } from './types/aide/inputAideVeloAPI_v2';
 
 @Controller()
 @ApiBearerAuth()
@@ -86,6 +84,11 @@ export class AidesController extends GenericControler {
 
   @ApiOkResponse({ type: AidesVeloParTypeAPI })
   @Post('utilisateurs/:utilisateurId/simulerAideVelo')
+  @ApiOperation({
+    deprecated: true,
+    summary:
+      "DEPRECATED : utiliser l'endpoint simulerAideVelo_v2 qui permet de simuler l'aide vélo pour un utilisateur en fonction de l'état du vélo (neuf ou occasion).",
+  })
   @ApiBody({
     type: InputAideVeloAPI,
   })
@@ -99,6 +102,26 @@ export class AidesController extends GenericControler {
     const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
+    );
+    return AidesVeloParTypeAPI.mapToAPI(result);
+  }
+
+  @ApiOkResponse({ type: AidesVeloParTypeAPI })
+  @Post('utilisateurs/:utilisateurId/simulerAideVelo_v2')
+  @ApiBody({
+    type: InputAideVeloAPI_v2,
+  })
+  @UseGuards(AuthGuard)
+  async getAllVelosByUtilisateur_v2(
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: InputAideVeloAPI_v2,
+    @Request() req,
+  ): Promise<AidesVeloParTypeAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.aidesUsecase.simulerAideVelo(
+      utilisateurId,
+      body.prix_du_velo,
+      body.etat_du_velo,
     );
     return AidesVeloParTypeAPI.mapToAPI(result);
   }
