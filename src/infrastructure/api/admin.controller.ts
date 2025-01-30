@@ -423,10 +423,16 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: `Envoie les emails pour les aides falguées comme bientôt expirées`,
   })
+  @ApiQuery({
+    name: 'token',
+    type: String,
+    required: false,
+    description: `Token pour cibler le destinataire du message`,
+  })
   async testPushNotif(
     @Request() req,
     @Query('titre') titre: string,
-    @Query('token') token: string,
+    @Query('token') token?: string,
   ) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.pushNotificator.pushMessage(
