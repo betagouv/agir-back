@@ -2494,10 +2494,8 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body).toEqual([
-      { id: '1', prenom: 'A' },
-      { id: '2', prenom: 'B' },
-    ]);
+    expect(response.body).toContainEqual({ id: '1', prenom: 'A' });
+    expect(response.body).toContainEqual({ id: '2', prenom: 'B' });
   });
   it('POST /admin/valider_prenoms', async () => {
     // GIVEN

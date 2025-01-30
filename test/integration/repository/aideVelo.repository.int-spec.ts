@@ -37,6 +37,7 @@ describe('AideVeloRepository', () => {
     'vélo . prix': 500,
     'foyer . personnes': 1,
     'aides . pays de la loire . abonné TER': false,
+    'vélo . état': 'neuf',
   };
 
   it('doit correctement calculer les aides pour une situation de base', async () => {
