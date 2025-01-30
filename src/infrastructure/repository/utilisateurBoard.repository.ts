@@ -143,8 +143,8 @@ export class UtilisateurBoardRepository {
     nombre: number,
     position: 'rank_avant_strict' | 'rank_apres_ou_egal',
     scope: 'national' | 'local',
-    code_postal: string,
-    commune: string,
+    code_postal?: string,
+    commune?: string,
     exclude_user_id?: string,
   ): Promise<Classement[]> {
     let rank_cond;
@@ -204,9 +204,20 @@ export class UtilisateurBoardRepository {
     });
 
     if (scope === 'national') {
-      result.sort((a, b) => a.rank - b.rank);
+      result.sort((a, b) => {
+        if (a.rank !== null && b.rank !== null) {
+          // NOTE: is it the wanted order?
+          return a.rank - b.rank;
+        }
+        return 0;
+      });
     } else {
-      result.sort((a, b) => a.rank_commune - b.rank_commune);
+      result.sort((a, b) => {
+        if (a.rank_commune !== null && b.rank_commune !== null) {
+          return a.rank_commune - b.rank_commune;
+        }
+        return 0;
+      });
     }
 
     return result.map((t) => this.mapUserDbToDomain(t));
@@ -217,8 +228,8 @@ export class UtilisateurBoardRepository {
     nombre: number,
     position: 'rank_avant_strict' | 'rank_apres_ou_egal',
     scope: 'national' | 'local',
-    code_postal: string,
-    commune: string,
+    code_postal?: string,
+    commune?: string,
     exclude_user_id?: string,
   ): Promise<Classement[]> {
     let rank_cond;
@@ -296,9 +307,10 @@ export class UtilisateurBoardRepository {
     points: number,
     code_postal?: string,
     commune?: string,
-  ): Promise<Pourcentile> {
+  ): Promise<Pourcentile | null> {
     let count_total;
     let count_better_than_user;
+
     if (code_postal) {
       count_total = await this.prisma.utilisateur.count({
         where: {

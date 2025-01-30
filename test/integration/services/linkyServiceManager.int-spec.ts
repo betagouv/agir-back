@@ -375,7 +375,7 @@ describe('linkyServiceManager', () => {
     );
 
     // pas d'erreur
-    expect(service.getErrorCode()).toEqual('123');
+    expect(service.getErrorCode?.()).toEqual('123');
   });
   it('activateService : pas PRM => error', async () => {
     // GIVEN
@@ -392,7 +392,8 @@ describe('linkyServiceManager', () => {
     ]);
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.activateService(service, user!);
 
     // THEN
     expect(result).toContain('ERROR');
@@ -421,7 +422,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.activateService(service, user!);
 
     // THEN
     expect(result).toContain('PREVIOUSLY LIVE');
@@ -456,7 +458,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.activateService(service, user!);
 
     // THEN
     expect(result).toContain('INITIALISED');
@@ -507,7 +510,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.activateService(service, user!);
 
     // THEN
     expect(result).toContain('SKIP');
@@ -551,7 +555,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.activateService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.activateService(service, user!);
 
     // THEN
     expect(result).toContain('INITIALISED');
@@ -591,7 +596,8 @@ describe('linkyServiceManager', () => {
 
     // WHEN
     try {
-      await linkyServiceManager.activateService(service, user);
+      expect(user).not.toBeNull();
+      await linkyServiceManager.activateService(service, user!);
     } catch (error) {
       expect(error.code).toEqual('11');
       expect(error.message).toEqual('aie');
@@ -639,7 +645,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.removeService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.removeService(service, user!);
 
     // THEN
     const serviceDB = await serviceRepository.getServiceOfUtilisateur(
@@ -688,7 +695,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.removeService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.removeService(service, user!);
 
     // THEN
     const serviceDB = await serviceRepository.getServiceOfUtilisateur(
@@ -735,7 +743,8 @@ describe('linkyServiceManager', () => {
     });
 
     // WHEN
-    const result = await linkyServiceManager.removeService(service, user);
+    expect(user).not.toBeNull();
+    const result = await linkyServiceManager.removeService(service, user!);
 
     // THEN
     const serviceDB = await serviceRepository.getServiceOfUtilisateur(
@@ -779,7 +788,8 @@ describe('linkyServiceManager', () => {
 
     // WHEN
     try {
-      await linkyServiceManager.removeService(service, user);
+      expect(user).not.toBeNull();
+      await linkyServiceManager.removeService(service, user!);
       fail();
     } catch (error) {
       expect(error.code).toEqual('11');

@@ -656,14 +656,14 @@ describe('KYC vN ', () => {
           image_url: null,
           conditions: [],
           thematique: Thematique.logement,
-          a_supprimer: undefined,
+          a_supprimer: null,
           reponse_simple: {
             value: '70',
-            unite: undefined,
+            unite: null,
           },
           short_question: null,
           reponse_complexe: null,
-          unite: undefined,
+          unite: null,
         },
       ],
     };
@@ -724,10 +724,10 @@ describe('KYC vN ', () => {
           image_url: null,
           conditions: [],
           thematique: Thematique.climat,
-          a_supprimer: undefined,
+          a_supprimer: null,
           reponse_simple: null,
           short_question: null,
-          unite: undefined,
+          unite: null,
           reponse_complexe: [
             {
               code: 'oui',
@@ -825,10 +825,10 @@ describe('KYC vN ', () => {
           image_url: null,
           conditions: [],
           thematique: Thematique.climat,
-          a_supprimer: undefined,
+          a_supprimer: null,
           reponse_simple: null,
           short_question: null,
-          unite: undefined,
+          unite: null,
           reponse_complexe: [
             {
               code: 'alimentation',

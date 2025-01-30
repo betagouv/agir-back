@@ -44,7 +44,7 @@ const QUESTION_TEST: QuestionKYC_v2 = {
   unite: Unite.kg,
   emoji: '🔥',
   thematique: Thematique.alimentation,
-  reponse_simple: undefined,
+  reponse_simple: null,
 };
 
 const KYC_DEF = {
@@ -91,8 +91,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_questions: [
         {
           ...QUESTION_TEST,
-          reponse_complexe: undefined,
-          reponse_simple: undefined,
+          reponse_complexe: null,
+          reponse_simple: null,
         },
       ],
     });
@@ -341,8 +341,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           ...QUESTION_TEST,
           code: KYCID.KYC001,
           id_cms: 1,
-          reponse_complexe: undefined,
-          reponse_simple: undefined,
+          reponse_complexe: null,
+          reponse_simple: null,
         },
       ],
     });
@@ -366,7 +366,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
           code: KYCID.KYC001,
           id_cms: 1,
           reponse_complexe: [],
-          reponse_simple: undefined,
+          reponse_simple: null,
         },
       ],
     });
@@ -1365,8 +1365,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         ],
       }),
       new KycDefinition({
-        id_cms: 2,
         ...KYC_DEF,
+        id_cms: 2,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,
@@ -1444,8 +1444,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         ],
       }),
       new KycDefinition({
-        id_cms: 2,
         ...KYC_DEF,
+        id_cms: 2,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,
@@ -1493,8 +1493,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         ],
       }),
       new KycDefinition({
-        id_cms: 2,
         ...KYC_DEF,
+        id_cms: 2,
         categorie: Categorie.recommandation,
         code: 'code_2',
         is_ngc: true,

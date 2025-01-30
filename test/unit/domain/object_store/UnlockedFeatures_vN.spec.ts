@@ -15,7 +15,7 @@ describe('UnlockedFeatures_vN ', () => {
     // WHEN
 
     const domain = new UnlockedFeatures(raw);
-    domain.add(Feature.aides);
+    domain.add?.(Feature.aides);
     // THEN
 
     expect(domain.unlocked_features.includes(Feature.aides)).toEqual(true);
@@ -23,7 +23,7 @@ describe('UnlockedFeatures_vN ', () => {
   it('serialise <=> deSerialise v1 OK', async () => {
     // GIVEN
     const domain_start = new UnlockedFeatures();
-    domain_start.add(Feature.bibliotheque);
+    domain_start.add?.(Feature.bibliotheque);
 
     // WHEN
     const raw = UnlockedFeatures_v1.serialise(domain_start);
@@ -36,7 +36,7 @@ describe('UnlockedFeatures_vN ', () => {
   it('serialise <=> upgrade <=> deSerialise v1 OK', async () => {
     // GIVEN
     const domain_start = new UnlockedFeatures();
-    domain_start.add(Feature.bibliotheque);
+    domain_start.add?.(Feature.bibliotheque);
 
     // WHEN
     const raw = UnlockedFeatures_v0.serialise(domain_start);

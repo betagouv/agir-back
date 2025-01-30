@@ -4,20 +4,20 @@ import {
 } from '../../../../src/domain/history/quizzHistory';
 import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
 import { History } from '../../../../src/domain/history/history';
-import { Versioned, Versioned_v0 } from '../versioned';
+import { Versioned_v0 } from '../versioned';
 import { AideHistory } from '../../history/aideHistory';
 
 export class ArticleHistory_v0 {
   content_id: string;
-  read_date?: Date;
+  read_date: Date | null;
   like_level?: number;
-  points_en_poche: boolean;
-  favoris: boolean;
+  points_en_poche: boolean | null;
+  favoris: boolean | null;
 
   static map(elem: ArticleHistory): ArticleHistory_v0 {
     return {
       content_id: elem.content_id,
-      read_date: elem.read_date,
+      read_date: elem.read_date ?? null,
       like_level: elem.like_level,
       points_en_poche: elem.points_en_poche,
       favoris: elem.favoris,
@@ -58,7 +58,7 @@ export class QuizzHistory_v0 {
   static map(elem: QuizzHistory): QuizzHistory_v0 {
     return {
       content_id: elem.content_id,
-      attempts: elem.attempts.map((e) => QuizzAttempt_v0.map(e)),
+      attempts: elem.attempts?.map((e) => QuizzAttempt_v0.map(e)) ?? [],
       like_level: elem.like_level,
       points_en_poche: elem.points_en_poche,
     };

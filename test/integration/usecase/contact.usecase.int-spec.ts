@@ -49,7 +49,7 @@ describe('ContactUsecase', () => {
     expect(brevoRepository.getContactCreationDate).toBeCalledWith('emailYO');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    expect(userDB.brevo_created_at).toEqual(new Date(123));
+    expect(userDB?.brevo_created_at).toEqual(new Date(123));
   });
   it('createMissingContacts : contact manquant => creation', async () => {
     // GIVEN
@@ -78,7 +78,9 @@ describe('ContactUsecase', () => {
     );
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
+    expect(userDB?.brevo_created_at?.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
   });
   it('createMissingContacts : contact manquant => echec de creation', async () => {
     // GIVEN
@@ -105,6 +107,6 @@ describe('ContactUsecase', () => {
     );
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    expect(userDB.brevo_created_at).toEqual(null);
+    expect(userDB?.brevo_created_at).toEqual(null);
   });
 });

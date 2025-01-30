@@ -16,28 +16,28 @@ import { KYCMosaicID } from '../../kyc/KYCMosaicID';
 import { ApplicationError } from '../../../infrastructure/applicationError';
 
 export class ReponseSimple_v1 {
-  unite?: Unite;
-  value: string;
+  unite: Unite | null;
+  value: string | null;
 
   static map(elem: KYCReponseSimple): ReponseSimple_v1 {
     return {
-      unite: elem.unite,
-      value: elem.value,
+      unite: elem.unite ?? null,
+      value: elem.value ?? null,
     };
   }
 }
 export class ReponseComplexe_v1 {
   label: string;
   code: string;
-  value: string;
-  ngc_code?: string;
+  value: string | null;
+  ngc_code: string | null;
 
   static map(elem: KYCReponseComplexe): ReponseComplexe_v1 {
     return {
       code: elem.code,
       label: elem.label,
-      ngc_code: elem.ngc_code,
-      value: elem.value,
+      ngc_code: elem.ngc_code ?? null,
+      value: elem.value ?? null,
     };
   }
 }
@@ -54,15 +54,15 @@ export class QuestionKYC_v1 {
   thematique: Thematique;
   conditions: ConditionKYC[][];
 
-  a_supprimer?: boolean;
-  short_question?: string;
-  ngc_key?: string;
-  image_url?: string;
-  unite?: Unite;
-  emoji?: string;
+  a_supprimer: boolean | null;
+  short_question: string | null;
+  ngc_key: string | null;
+  image_url: string | null;
+  unite: Unite | null;
+  emoji: string | null;
 
-  reponse_simple: ReponseSimple_v1;
-  reponse_complexe: ReponseComplexe_v1[];
+  reponse_simple: ReponseSimple_v1 | null;
+  reponse_complexe: ReponseComplexe_v1[] | null;
 
   static map(elem: QuestionKYC): QuestionKYC_v1 {
     return {
@@ -73,7 +73,7 @@ export class QuestionKYC_v1 {
       points: elem.points,
       is_NGC: elem.is_NGC,
       a_supprimer: elem.a_supprimer,
-      ngc_key: elem.ngc_key,
+      ngc_key: elem.ngc_key ?? null,
       reponse_simple: elem.getRAWReponseSimple()
         ? ReponseSimple_v1.map(elem.getRAWReponseSimple())
         : null,
@@ -83,11 +83,11 @@ export class QuestionKYC_v1 {
       thematique: elem.thematique,
       tags: elem.tags,
       id_cms: elem.id_cms,
-      short_question: elem.short_question,
-      image_url: elem.image_url,
+      short_question: elem.short_question ?? null,
+      image_url: elem.image_url ?? null,
       conditions: elem.getConditions(),
-      unite: elem.unite,
-      emoji: elem.emoji,
+      unite: elem.unite ?? null,
+      emoji: elem.emoji ?? null,
     };
   }
 }
@@ -158,11 +158,13 @@ export class KYCHistory_v1 extends Versioned_v1 {
             };
           } else if (question.type === TypeReponseQuestionKYC.choix_unique) {
             new_question.reponse_complexe = [];
-            let selected_code;
+            let selected_code: string | undefined = undefined;
+
             if (question.reponses && question.reponses.length === 1) {
               selected_code = question.reponses[0].code;
             }
-            for (const reponse_possible of question.reponses_possibles) {
+
+            for (const reponse_possible of question.reponses_possibles ?? []) {
               new_question.reponse_complexe.push({
                 code: reponse_possible.code,
                 label: reponse_possible.label,
@@ -172,13 +174,15 @@ export class KYCHistory_v1 extends Versioned_v1 {
             }
           } else if (question.type === TypeReponseQuestionKYC.choix_multiple) {
             new_question.reponse_complexe = [];
-            let selected_code = [];
+
+            const selected_code: string[] = [];
             if (question.reponses) {
               for (const rep of question.reponses) {
                 selected_code.push(rep.code);
               }
             }
-            for (const reponse_possible of question.reponses_possibles) {
+
+            for (const reponse_possible of question.reponses_possibles ?? []) {
               new_question.reponse_complexe.push({
                 code: reponse_possible.code,
                 label: reponse_possible.label,

@@ -148,7 +148,7 @@ describe('UtilisateurRepository', () => {
     // WHEN
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     // THEN
-    expect(userDB.parts).toEqual(null);
+    expect(userDB?.parts).toBeNull();
   });
   it('creation et lecture , versionning des donnes json ', async () => {
     // GIVEN
@@ -166,7 +166,7 @@ describe('UtilisateurRepository', () => {
       where: { id: 'utilisateur-id' },
     });
     // THEN
-    expect(userDB.unlocked_features['version']).toEqual(1);
+    expect(userDB?.unlocked_features?.['version']).toEqual(1);
   });
   it('checkState throws error', async () => {
     // GIVEN
@@ -283,10 +283,10 @@ describe('UtilisateurRepository', () => {
     const userDB = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(userDB.derniere_activite.getTime()).toBeGreaterThan(
+    expect(userDB?.derniere_activite?.getTime()).toBeGreaterThan(
       Date.now() - 100,
     );
-    expect(userDB.derniere_activite.getTime()).toBeLessThan(Date.now());
+    expect(userDB?.derniere_activite?.getTime()).toBeLessThan(Date.now());
   });
   it('getById  : lecture du scope argument', async () => {
     // GIVEN
@@ -296,7 +296,7 @@ describe('UtilisateurRepository', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
 
     // THEN
-    expect(userDB.kyc_history).toBeUndefined();
+    expect(userDB?.kyc_history).toBeNull();
   });
   it('getById  : scope ALL ', async () => {
     // GIVEN
@@ -308,7 +308,7 @@ describe('UtilisateurRepository', () => {
     ]);
 
     // THEN
-    expect(userDB.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(userDB?.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
   });
   it('getById  : scope kyc ', async () => {
     // GIVEN
@@ -320,48 +320,51 @@ describe('UtilisateurRepository', () => {
     ]);
 
     // THEN
-    expect(userDB.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(userDB?.kyc_history.getRawAnsweredKYCs()).toHaveLength(1);
   });
   it(`updateUtilisateur : pas d'erreur si champ json undefined`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    expect(userDB.kyc_history).toBeUndefined();
+    expect(userDB).not.toBeNull();
+    expect(userDB!.kyc_history).toBeNull();
 
     // WHEN
-    await utilisateurRepository.updateUtilisateur(userDB);
+    await utilisateurRepository.updateUtilisateur(userDB!);
 
     // THEN
     // no error
     const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
       Scope.kyc,
     ]);
-    expect(userDB_2.kyc_history).not.toBeUndefined();
+    expect(userDB_2?.kyc_history).not.toBeNull();
   });
   it(`updateUtilisateurNoConcurency : pas d'erreur si maj concurentielle`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    userDB.prenom = 'YOYOYO';
+    expect(userDB).not.toBeNull();
+    userDB!.prenom = 'YOYOYO';
 
-    await utilisateurRepository.updateUtilisateur(userDB);
+    await utilisateurRepository.updateUtilisateur(userDB!);
 
     // WHEN
-    userDB.prenom = 'HAHAHA';
-    await utilisateurRepository.updateUtilisateurNoConcurency(userDB);
+    userDB!.prenom = 'HAHAHA';
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB!);
 
     // THEN
     // no error
     const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB_2.prenom).toEqual('HAHAHA');
+    expect(userDB_2?.prenom).toEqual('HAHAHA');
   });
   it(`updateUtilisateurNoConcurency : maj core data only`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    userDB.prenom = 'YOYOYO';
+    expect(userDB).not.toBeNull();
+    userDB!.prenom = 'YOYOYO';
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [
@@ -371,10 +374,10 @@ describe('UtilisateurRepository', () => {
         Feature.bilan_carbone,
       ],
     };
-    userDB.unlocked_features = unlocked;
+    userDB!.unlocked_features = unlocked;
 
     // WHEN
-    await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB!, [
       Scope.core,
     ]);
 
@@ -382,8 +385,8 @@ describe('UtilisateurRepository', () => {
     const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB_2.prenom).toEqual('YOYOYO');
-    expect(userDB_2.unlocked_features).toEqual({
+    expect(userDB_2?.prenom).toEqual('YOYOYO');
+    expect(userDB_2?.unlocked_features).toEqual({
       unlocked_features: ['aides', 'defis'],
     });
   });
@@ -391,7 +394,8 @@ describe('UtilisateurRepository', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
-    userDB.prenom = 'YOYOYO';
+    expect(userDB).not.toBeNull();
+    userDB!.prenom = 'YOYOYO';
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [
@@ -401,10 +405,10 @@ describe('UtilisateurRepository', () => {
         Feature.bilan_carbone,
       ],
     };
-    userDB.unlocked_features = unlocked;
+    userDB!.unlocked_features = unlocked;
 
     // WHEN
-    await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
+    await utilisateurRepository.updateUtilisateurNoConcurency(userDB!, [
       Scope.unlocked_features,
     ]);
 
@@ -412,8 +416,8 @@ describe('UtilisateurRepository', () => {
     const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB_2.prenom).toEqual('prenom');
-    expect(userDB_2.unlocked_features).toEqual({
+    expect(userDB_2?.prenom).toEqual('prenom');
+    expect(userDB_2?.unlocked_features).toEqual({
       unlocked_features: ['aides', 'defis', 'bibliotheque', 'bilan_carbone'],
     });
   });

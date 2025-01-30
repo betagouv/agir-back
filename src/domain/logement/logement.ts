@@ -32,57 +32,58 @@ export enum DPE {
 }
 
 export class Logement {
-  nombre_adultes: number;
-  nombre_enfants: number;
-  code_postal: string;
-  commune: string;
+  nombre_adultes: number | null;
+  nombre_enfants: number | null;
+  code_postal: string | null;
+  commune: string | null;
   commune_label?: string;
-  type: TypeLogement;
-  superficie: Superficie;
-  proprietaire: boolean;
-  chauffage: Chauffage;
-  plus_de_15_ans: boolean;
-  dpe: DPE;
+  type: TypeLogement | null;
+  superficie: Superficie | null;
+  proprietaire: boolean | null;
+  chauffage: Chauffage | null;
+  plus_de_15_ans: boolean | null;
+  dpe: DPE | null;
 
   constructor(log?: Logement_v0) {
     if (!log) return;
-    this.nombre_adultes = this.undefinedToNull(log.nombre_adultes);
-    this.nombre_enfants = this.undefinedToNull(log.nombre_enfants);
-    this.code_postal = this.undefinedToNull(log.code_postal);
-    this.commune = this.undefinedToNull(log.commune);
-    this.type = this.undefinedToNull(log.type);
-    this.superficie = this.undefinedToNull(log.superficie);
-    this.proprietaire = this.undefinedToNull(log.proprietaire);
-    this.chauffage = this.undefinedToNull(log.chauffage);
-    this.plus_de_15_ans = this.undefinedToNull(log.plus_de_15_ans);
-    this.dpe = this.undefinedToNull(log.dpe);
+    // NOTE: How this values could be undefined?
+    this.nombre_adultes = undefinedToNull(log.nombre_adultes);
+    this.nombre_enfants = undefinedToNull(log.nombre_enfants);
+    this.code_postal = undefinedToNull(log.code_postal);
+    this.commune = undefinedToNull(log.commune);
+    this.type = undefinedToNull(log.type);
+    this.superficie = undefinedToNull(log.superficie);
+    this.proprietaire = undefinedToNull(log.proprietaire);
+    this.chauffage = undefinedToNull(log.chauffage);
+    this.plus_de_15_ans = undefinedToNull(log.plus_de_15_ans);
+    this.dpe = undefinedToNull(log.dpe);
   }
 
   patch?(input: Logement, utilisateur: Utilisateur) {
-    this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
-    this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
+    this.nombre_adultes = AorB(input.nombre_adultes, this.nombre_adultes);
+    this.nombre_enfants = AorB(input.nombre_enfants, this.nombre_enfants);
 
-    this.code_postal = this.AorB(input.code_postal, this.code_postal);
+    this.code_postal = AorB(input.code_postal, this.code_postal);
     utilisateur.code_postal_classement = this.code_postal;
 
-    this.commune = this.AorB(input.commune, this.commune);
+    this.commune = AorB(input.commune, this.commune);
     utilisateur.commune_classement = this.commune;
 
-    this.type = this.AorB(input.type, this.type);
-    this.superficie = this.AorB(input.superficie, this.superficie);
-    this.proprietaire = this.AorB(input.proprietaire, this.proprietaire);
-    this.chauffage = this.AorB(input.chauffage, this.chauffage);
-    this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
+    this.type = AorB(input.type, this.type);
+    this.superficie = AorB(input.superficie, this.superficie);
+    this.proprietaire = AorB(input.proprietaire, this.proprietaire);
+    this.chauffage = AorB(input.chauffage, this.chauffage);
+    this.plus_de_15_ans = AorB(input.plus_de_15_ans, this.plus_de_15_ans);
 
-    this.dpe = this.AorB(input.dpe, this.dpe);
+    this.dpe = AorB(input.dpe, this.dpe);
   }
+}
 
-  private undefinedToNull?<T>(val: T | undefined): T | null {
-    return val === undefined ? null : val;
-  }
+function undefinedToNull<T>(val: T | undefined): T | null {
+  return val === undefined ? null : val;
+}
 
-  private AorB?<T>(a: T, b: T): T {
-    if (a === undefined) return b;
-    return a;
-  }
+function AorB<T>(a: T, b: T): T {
+  if (a === undefined) return b;
+  return a;
 }

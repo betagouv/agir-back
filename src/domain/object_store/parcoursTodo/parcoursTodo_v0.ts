@@ -1,4 +1,4 @@
-import { Versioned, Versioned_v0 } from '../versioned';
+import { Versioned_v0 } from '../versioned';
 import { ParcoursTodo } from '../../todo/parcoursTodo';
 import { Thematique } from '../../contenu/thematique';
 import { ContentType } from '../../contenu/contentType';
@@ -41,13 +41,13 @@ export class TodoElement_v0 {
 export class Todo_v0 {
   numero_todo: number;
   points_todo: number;
-  done_at: Date;
+  done_at: Date | null;
   titre: string;
   imageUrl: string;
 
   done: TodoElement_v0[];
   todo: TodoElement_v0[];
-  celebration: Celebration_v0;
+  celebration: Celebration_v0 | null;
 
   static map(todo: Todo): Todo_v0 {
     return {
@@ -59,7 +59,7 @@ export class Todo_v0 {
       todo: todo.todo.map((elem) => TodoElement_v0.map(elem)),
       celebration: todo.celebration
         ? Celebration_v0.map(todo.celebration)
-        : undefined,
+        : null,
       imageUrl: todo.imageUrl,
     };
   }

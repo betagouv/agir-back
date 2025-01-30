@@ -16,9 +16,9 @@ export class Defi_v0 {
   thematique: Thematique;
   status: DefiStatus;
   tags: Tag[];
-  date_acceptation: Date;
-  accessible: boolean;
-  motif: string;
+  date_acceptation: Date | null;
+  accessible: boolean | null;
+  motif: string | null;
   categorie: Categorie;
   mois: number[];
   conditions: ConditionDefi[][];

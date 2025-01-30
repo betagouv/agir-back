@@ -6,13 +6,13 @@ describe.skip('Analyse de logs', () => {
 
     const LOGS: string[] = []; // = _logs;
 
-    const login_bad_password = [];
-    const login_bad_email = [];
-    const login_bad_code = [];
-    const login_compte_inactif = [];
-    const oubli_mdp_mailok = [];
-    const oubli_mdp_mail_inconnu = [];
-    const modifier_mdp_mail_inconnu = [];
+    const login_bad_password: string[] = [];
+    const login_bad_email: string[] = [];
+    const login_bad_code: string[] = [];
+    const login_compte_inactif: string[] = [];
+    const oubli_mdp_mailok: string[] = [];
+    const oubli_mdp_mail_inconnu: string[] = [];
+    const modifier_mdp_mail_inconnu: string[] = [];
 
     for (const log of LOGS) {
       if (log.endsWith('bad password')) {

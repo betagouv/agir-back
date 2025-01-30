@@ -89,6 +89,7 @@ describe('DefiHistory vN ', () => {
     // THEN
     expect(domain_end).toStrictEqual(domain_start);
   });
+
   it('sdesrialise ok missin accessibilite boolean', () => {
     // GIVEN
     const defi_sans_accessibilite: Defi_v0 = {
@@ -111,7 +112,7 @@ describe('DefiHistory vN ', () => {
       impact_kg_co2: 6,
     };
 
-    delete defi_sans_accessibilite.accessible;
+    defi_sans_accessibilite.accessible = null;
 
     const history: DefiHistory_v0 = {
       version: 0,

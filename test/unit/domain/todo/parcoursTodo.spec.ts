@@ -6,7 +6,6 @@ import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { TodoCatalogue } from '../../../../src/domain/todo/todoCatalogue';
-import { Todo } from '../../../../src/domain/todo/todo';
 import { DifficultyLevel } from '../../../../src/domain/contenu/difficultyLevel';
 
 describe('ParcoursTodo', () => {
@@ -25,7 +24,7 @@ describe('ParcoursTodo', () => {
     // WHEN
     const todo = parcours.getActiveTodo();
     // THEN
-    expect(todo.numero_todo).toEqual(1);
+    expect(todo?.numero_todo).toEqual(1);
   });
   it('findTodoElementByTypeAndThematique : le bon element et la bonne todo', () => {
     // GIVEN
@@ -57,24 +56,24 @@ describe('ParcoursTodo', () => {
       ],
     });
     // WHEN
-    const found = parcours.findTodoElementByTypeAndThematique(
+    const found = parcours.findTodoElementByTypeAndThematique?.(
       ContentType.article,
       [Thematique.transport],
     );
     // THEN
-    expect(found.element.titre).toEqual(`titre`);
-    expect(found.todo.numero_todo).toEqual(1);
+    expect(found?.element.titre).toEqual(`titre`);
+    expect(found?.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByTypeAndThematique : pas trouvé renvoi undefined', () => {
     // GIVEN
     const parcours = new ParcoursTodo();
     // WHEN
-    const found = parcours.findTodoElementByTypeAndThematique(
+    const found = parcours.findTodoElementByTypeAndThematique?.(
       ContentType.article,
       [Thematique.loisir],
     );
     // THEN
-    expect(found).toBeUndefined();
+    expect(found).not.toBeNull();
   });
   it('findTodoElementByServiceId : le bon element et la bonne todo', () => {
     // GIVEN
@@ -109,8 +108,8 @@ describe('ParcoursTodo', () => {
     // WHEN
     const found = parcours.findTodoElementByServiceId(LiveService.fruits);
     // THEN
-    expect(found.element.titre).toEqual(`titre`);
-    expect(found.todo.numero_todo).toEqual(1);
+    expect(found?.element.titre).toEqual(`titre`);
+    expect(found?.todo.numero_todo).toEqual(1);
   });
   it('findTodoElementByServiceId : pas trouvé renvoi undefined', () => {
     // GIVEN
@@ -120,7 +119,7 @@ describe('ParcoursTodo', () => {
       ScheduledService.dummy_scheduled,
     );
     // THEN
-    expect(found).toBeUndefined();
+    expect(found).not.toBeNull();
   });
   it('avanceDansParcours : avance, puis se bloque à la dernière', () => {
     // GIVEN

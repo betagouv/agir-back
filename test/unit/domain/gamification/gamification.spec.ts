@@ -2,7 +2,6 @@ import {
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
-import { TestUtil } from '../../../../test/TestUtil';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 import {
@@ -217,21 +216,21 @@ describe('Gamification', () => {
   it('terminerCelebration : supprime correctement la bonne occurence', () => {
     // GIVEN
     const celeb_1 = new Celebration({
-      id: undefined,
+      id: '1',
       titre: 'yo',
       type: CelebrationType.niveau,
       new_niveau: 2,
       reveal: Gamification.getRevealByNiveau(2),
     });
     const celeb_2 = new Celebration({
-      id: undefined,
+      id: '2',
       titre: 'yo',
       type: CelebrationType.niveau,
       new_niveau: 2,
       reveal: Gamification.getRevealByNiveau(2),
     });
     const celeb_3 = new Celebration({
-      id: undefined,
+      id: '3',
       titre: 'yo',
       type: CelebrationType.niveau,
       new_niveau: 2,
@@ -259,7 +258,7 @@ describe('Gamification', () => {
   it('terminerCelebration : debloque un fonctionnalité si la celebration contient un Reveal', () => {
     // GIVEN
     const celeb = new Celebration({
-      id: undefined,
+      id: '1',
       titre: 'yo',
       type: CelebrationType.niveau,
       new_niveau: 2,
@@ -281,10 +280,12 @@ describe('Gamification', () => {
 
     // THEN
     expect(gamification.celebrations).toHaveLength(0);
-    expect(utilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(1);
+    expect(utilisateur.unlocked_features.getUnlockedFeatures?.()).toHaveLength(
+      1,
+    );
     expect(
       utilisateur.unlocked_features
-        .getUnlockedFeatures()
+        .getUnlockedFeatures?.()
         .includes(Feature.aides),
     ).toEqual(true);
   });

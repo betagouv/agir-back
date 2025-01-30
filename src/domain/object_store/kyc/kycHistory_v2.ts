@@ -31,7 +31,7 @@ export class ReponseComplexe_v2 {
   code: string;
   value?: string;
   selected: boolean;
-  ngc_code?: string;
+  ngc_code?: string | null;
 
   static map(elem: KYCReponseComplexe): ReponseComplexe_v2 {
     return {
@@ -45,7 +45,7 @@ export class ReponseComplexe_v2 {
 }
 
 export class QuestionKYC_v2 {
-  last_update: Date;
+  last_update?: Date;
   code: string;
   id_cms: number;
   question: string;
@@ -64,8 +64,8 @@ export class QuestionKYC_v2 {
   unite?: Unite;
   emoji?: string;
 
-  reponse_simple: ReponseSimple_v2;
-  reponse_complexe: ReponseComplexe_v2[];
+  reponse_simple: ReponseSimple_v2 | null;
+  reponse_complexe: ReponseComplexe_v2[] | null;
 
   static map(elem: QuestionKYC): QuestionKYC_v2 {
     return {

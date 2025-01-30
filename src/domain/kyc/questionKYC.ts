@@ -74,10 +74,10 @@ export class QuestionKYC implements TaggedContent {
   id_cms: number;
   last_update: Date;
   question: string;
-  short_question: string;
-  emoji: string;
-  image_url: string;
-  unite: Unite;
+  short_question: string | undefined;
+  emoji: string | undefined;
+  image_url: string | undefined;
+  unite: Unite | undefined;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
   thematique: Thematique;
@@ -91,7 +91,7 @@ export class QuestionKYC implements TaggedContent {
   score: number;
   ngc_key?: string;
   private reponse_simple: KYCReponseSimple;
-  private reponse_complexe: KYCReponseComplexe[];
+  private reponse_complexe: KYCReponseComplexe[] | undefined;
   private conditions: AndConditionSet[];
 
   constructor(data?: QuestionKYC_v2) {

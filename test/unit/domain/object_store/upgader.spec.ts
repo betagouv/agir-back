@@ -59,7 +59,7 @@ describe('Upgrader ', () => {
   it('serialise to last version', () => {
     // GIVEN
     const input = new UnlockedFeatures();
-    input.add(Feature.bibliotheque);
+    input.add?.(Feature.bibliotheque);
 
     // WHEN
     const result = Upgrader.serialiseToLastVersion(

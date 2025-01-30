@@ -33,7 +33,7 @@ export class ParcoursTodo {
     this.todo_active = 0;
   }
 
-  public getActiveTodo?(): Todo {
+  public getActiveTodo(): Todo {
     if (this.todo_active < this.liste_todo.length) {
       return this.liste_todo[this.todo_active];
     }
@@ -42,11 +42,11 @@ export class ParcoursTodo {
     return result;
   }
 
-  public isEndedTodo?(): boolean {
+  public isEndedTodo(): boolean {
     return this.todo_active === this.liste_todo.length;
   }
 
-  public appendNewFromCatalogue?(): boolean {
+  public appendNewFromCatalogue(): boolean {
     const current_todo_length = this.liste_todo.length;
     const catalogue_length = TodoCatalogue.getNombreTodo();
 
@@ -63,10 +63,10 @@ export class ParcoursTodo {
     return false;
   }
 
-  public avanceDansParcours?() {
+  public avanceDansParcours() {
     this.todo_active = Math.min(this.todo_active + 1, this.liste_todo.length);
   }
-  public getCurrentTodoNumero?(): number {
+  public getCurrentTodoNumero(): number {
     return this.todo_active + 1;
   }
   public getTodoByNumero?(numero: number): Todo {
@@ -79,7 +79,7 @@ export class ParcoursTodo {
   public findTodoElementByTypeAndThematique?(
     type: ContentType,
     thematiques?: Thematique[],
-  ): { element: TodoElement; todo: Todo } {
+  ): { element: TodoElement; todo: Todo } | null {
     for (let index = 0; index < this.liste_todo.length; index++) {
       const current_todo = this.liste_todo[index];
       const found = current_todo.findTodoElementByTypeAndThematique(
@@ -90,11 +90,12 @@ export class ParcoursTodo {
         return { element: found, todo: current_todo };
       }
     }
+    return null;
   }
-  public findTodoKYCOrMosaicElementByQuestionID?(content_id: string): {
-    element: TodoElement;
-    todo: Todo;
-  } {
+
+  public findTodoKYCOrMosaicElementByQuestionID?(
+    content_id: string,
+  ): { element: TodoElement; todo: Todo } | null {
     for (let index = 0; index < this.liste_todo.length; index++) {
       const current_todo = this.liste_todo[index];
       const found =
@@ -103,11 +104,13 @@ export class ParcoursTodo {
         return { element: found, todo: current_todo };
       }
     }
+    return null;
   }
-  public findTodoElementByServiceId?(service_id: string): {
+
+  public findTodoElementByServiceId(service_id: string): {
     element: TodoElement;
     todo: Todo;
-  } {
+  } | null {
     for (let index = 0; index < this.liste_todo.length; index++) {
       const current_todo = this.liste_todo[index];
       const found = current_todo.findTodoElementByServiceId(service_id);
@@ -115,11 +118,14 @@ export class ParcoursTodo {
         return { element: found, todo: current_todo };
       }
     }
+
+    return null;
   }
+
   public findTodoElementByID?(id: string): {
     element: TodoElement;
     todo: Todo;
-  } {
+  } | null {
     for (let index = 0; index < this.liste_todo.length; index++) {
       const current_todo = this.liste_todo[index];
       const found = current_todo.findTodoElementByID(id);

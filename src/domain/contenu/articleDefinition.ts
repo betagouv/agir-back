@@ -12,17 +12,17 @@ export class SourceArticle {
 export class ArticleDefinition implements ContenuLocal {
   content_id: string;
   titre: string;
-  soustitre: string;
+  soustitre: string | null;
   source: string;
   sources: SourceArticle[];
-  contenu: string;
-  image_url: string;
-  partenaire_id: string;
+  contenu: string | null;
+  image_url: string | null;
+  partenaire_id: string | null;
   rubrique_ids: string[];
   rubrique_labels: string[];
   codes_postaux: string[];
-  duree: string;
-  frequence: string;
+  duree: string | null;
+  frequence: string | null;
   difficulty: DifficultyLevel;
   points: number;
   thematique_principale: Thematique;
@@ -34,6 +34,6 @@ export class ArticleDefinition implements ContenuLocal {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
-  tag_article: string;
-  derniere_maj: Date;
+  tag_article: string | null;
+  derniere_maj: Date | null;
 }

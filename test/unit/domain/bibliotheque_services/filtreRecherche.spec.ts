@@ -8,13 +8,13 @@ describe('FiltreRecherche', () => {
     });
 
     // WHEN
-    filtre.computeBox(1000);
+    filtre.computeBox?.(1000);
 
     // THEN
-    expect(filtre.rect_A.latitude).toEqual(48.70741030189076);
-    expect(filtre.rect_A.longitude).toEqual(2.2187918067397363);
-    expect(filtre.rect_B.latitude).toEqual(48.72549769810924);
-    expect(filtre.rect_B.longitude).toEqual(2.2462061932602633);
+    expect(filtre.rect_A?.latitude).toEqual(48.70741030189076);
+    expect(filtre.rect_A?.longitude).toEqual(2.2187918067397363);
+    expect(filtre.rect_B?.latitude).toEqual(48.72549769810924);
+    expect(filtre.rect_B?.longitude).toEqual(2.2462061932602633);
   });
   it(`getDistanceMetresFromSearchPoint : calcul la distance par rapport au point argument `, () => {
     // GIVEN
@@ -23,7 +23,10 @@ describe('FiltreRecherche', () => {
     });
 
     // WHEN
-    const result = filtre.getDistanceMetresFromSearchPoint(48.716454, 2.232499);
+    const result = filtre.getDistanceMetresFromSearchPoint?.(
+      48.716454,
+      2.232499,
+    );
 
     // THEN
     expect(result).toEqual(0);
@@ -35,7 +38,7 @@ describe('FiltreRecherche', () => {
     });
 
     // WHEN
-    const result = filtre.getDistanceMetresFromSearchPoint(45, 2);
+    const result = filtre.getDistanceMetresFromSearchPoint?.(45, 2);
 
     // THEN
     expect(result).toEqual(413628);

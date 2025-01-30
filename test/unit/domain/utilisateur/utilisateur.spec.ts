@@ -58,7 +58,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement.nombre_enfants = 3;
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(3);
@@ -72,7 +72,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement.nombre_enfants = 3;
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(6);
@@ -86,7 +86,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement.nombre_enfants = 2;
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(4);
@@ -98,7 +98,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement = new Logement();
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(1);
@@ -112,7 +112,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement.nombre_enfants = null;
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(5);
@@ -126,7 +126,7 @@ describe('Objet Utilisateur', () => {
     utilisateur.logement.nombre_enfants = 4;
 
     // WHEN
-    const parts = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const parts = utilisateur.getNombrePartsFiscalesOuEstimee?.();
 
     // THEN
     expect(parts).toEqual(4);
@@ -172,12 +172,12 @@ describe('Objet Utilisateur', () => {
       conditions: [],
       unite: Unite.euro,
       emoji: '🔥',
-      reponse_simple: undefined,
+      reponse_simple: null,
       thematique: Thematique.alimentation,
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers?.(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,
@@ -198,6 +198,7 @@ describe('Objet Utilisateur', () => {
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
       a_supprimer: false,
+      reponse_simple: null,
       reponse_complexe: [
         {
           label: 'autre',
@@ -227,7 +228,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers?.(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,
@@ -253,6 +254,7 @@ describe('Objet Utilisateur', () => {
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
+      reponse_simple: null,
       reponse_complexe: [
         {
           label: 'Thé ou tisane',
@@ -282,7 +284,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers?.(Tag.climat, kyc, {
       cafe: 100,
       the: 50,
       chicore: 10,

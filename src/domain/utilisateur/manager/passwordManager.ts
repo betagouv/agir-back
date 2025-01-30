@@ -96,12 +96,20 @@ export class PasswordManager {
   }
 
   private static isLoginLocked(utilisateur: PasswordAwareUtilisateur): boolean {
+    if (utilisateur.prevent_login_before === null) {
+      // NOTE: Is it the wanted behavior?
+      return false;
+    }
     return Date.now() < utilisateur.prevent_login_before.getTime();
   }
 
   private static lockedUntilString(
     utilisateur: PasswordAwareUtilisateur,
-  ): string {
+  ): string | null {
+    if (utilisateur.prevent_login_before === null) {
+      return null;
+    }
+
     return utilisateur.prevent_login_before.toLocaleTimeString('fr-FR', {
       timeZone: 'Europe/Paris',
       timeStyle: 'short',
@@ -110,6 +118,10 @@ export class PasswordManager {
   }
 
   private async failLogin(utilisateur: PasswordAwareUtilisateur) {
+    if (utilisateur.failed_login_count === null) {
+      utilisateur.failed_login_count = 0;
+    }
+
     utilisateur.failed_login_count++;
     if (utilisateur.failed_login_count > PasswordManager.MAX_LOGIN_ATTEMPT) {
       PasswordManager.incrementNextAllowedLoginTime(utilisateur);
@@ -120,6 +132,11 @@ export class PasswordManager {
   private static incrementNextAllowedLoginTime(
     utilisateur: PasswordAwareUtilisateur,
   ) {
+    if (utilisateur.prevent_login_before === null) {
+      // NOTE: is it the wanted behavior?
+      utilisateur.prevent_login_before = new Date();
+    }
+
     if (utilisateur.prevent_login_before.getTime() <= Date.now()) {
       utilisateur.prevent_login_before = new Date();
     }

@@ -55,7 +55,7 @@ describe('History', () => {
     expect(article.content_id).toEqual('1');
     expect(article.like_level).toEqual(2);
     expect(article.points_en_poche).toEqual(true);
-    expect(article.read_date.getTime()).toEqual(123);
+    expect(article.read_date?.getTime()).toEqual(123);
   });
   it('cree un historique ok avec favoris et point en poche undefined', () => {
     // WHEN
@@ -73,9 +73,9 @@ describe('History', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: undefined,
+          points_en_poche: null,
           read_date: new Date(123),
-          favoris: undefined,
+          favoris: null,
         },
       ],
       aide_interactions: [
@@ -107,9 +107,9 @@ describe('History', () => {
     // THEN
     expect(history.nombreQuizz()).toEqual(1);
     expect(history.getQuizzHistoryById('1').attempts).toHaveLength(1);
-    expect(history.getQuizzHistoryById('1').attempts[0].score).toEqual(12);
+    expect(history.getQuizzHistoryById?.('1').attempts?.[0].score).toEqual(12);
     expect(
-      history.getQuizzHistoryById('1').attempts[0].date.getTime(),
+      history.getQuizzHistoryById('1').attempts?.[0].date.getTime(),
     ).toBeGreaterThan(Date.now() - 100);
   });
   it('on peut lire 2 fois le meme article', () => {
@@ -144,7 +144,7 @@ describe('History', () => {
 
     // THEN
     const article = history.getArticleHistoryById('1');
-    expect(article.read_date.getTime()).toBeGreaterThan(Date.now() - 100);
+    expect(article.read_date?.getTime()).toBeGreaterThan(Date.now() - 100);
   });
   it('dire qu on a empoché les points d un article', () => {
     // GIVEN
@@ -206,7 +206,12 @@ describe('History', () => {
           points_en_poche: true,
           favoris: false,
         },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        {
+          content_id: '4',
+          points_en_poche: true,
+          favoris: false,
+          read_date: null,
+        },
       ],
       aide_interactions: [],
     });
@@ -226,10 +231,30 @@ describe('History', () => {
       quizz_interactions: [],
       aide_interactions: [],
       article_interactions: [
-        { content_id: '1', favoris: true, points_en_poche: true },
-        { content_id: '2', favoris: null, points_en_poche: true },
-        { content_id: '3', favoris: false, points_en_poche: true },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        {
+          content_id: '1',
+          favoris: true,
+          points_en_poche: true,
+          read_date: null,
+        },
+        {
+          content_id: '2',
+          favoris: null,
+          points_en_poche: true,
+          read_date: null,
+        },
+        {
+          content_id: '3',
+          favoris: false,
+          points_en_poche: true,
+          read_date: null,
+        },
+        {
+          content_id: '4',
+          points_en_poche: true,
+          favoris: false,
+          read_date: null,
+        },
       ],
     });
 
@@ -330,7 +355,12 @@ describe('History', () => {
           points_en_poche: true,
           favoris: false,
         },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        {
+          content_id: '4',
+          points_en_poche: true,
+          favoris: false,
+          read_date: null,
+        },
         {
           content_id: '5',
           read_date: new Date(0),
@@ -437,13 +467,15 @@ describe('History', () => {
 
     // THEN
     expect(result).toHaveLength(2);
-    expect(result[0].content_id).toEqual('2');
-    expect(result[0].like_level).toEqual(2);
-    expect(result[0].read_date.getTime()).toEqual(2);
-    expect(result[0].favoris).toEqual(true);
-    expect(result[1].content_id).toEqual('1');
-    expect(result[1].like_level).toEqual(1);
-    expect(result[1].read_date.getTime()).toEqual(1);
-    expect(result[1].favoris).toEqual(false);
+    if (result) {
+      expect(result[0].content_id).toEqual('2');
+      expect(result[0].like_level).toEqual(2);
+      expect(result[0].read_date?.getTime()).toEqual(2);
+      expect(result[0].favoris).toEqual(true);
+      expect(result[1].content_id).toEqual('1');
+      expect(result[1].like_level).toEqual(1);
+      expect(result[1].read_date?.getTime()).toEqual(1);
+      expect(result[1].favoris).toEqual(false);
+    }
   });
 });
