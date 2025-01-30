@@ -298,7 +298,9 @@ export class RechercheServicesUsecase {
   }
 
   public async computeStatsFavoris(): Promise<string[]> {
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      {},
+    );
 
     const service_favoris_map: Map<
       string,

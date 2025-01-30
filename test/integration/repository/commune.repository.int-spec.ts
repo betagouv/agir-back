@@ -32,14 +32,14 @@ describe('CommuneRepository', () => {
   });
   it('getListCommunesParCodePostal : revoie liste vide si le code postal non existant', async () => {
     // WHEN
-    const result = communeRepository.getListCommunesParCodePostal('99999');
+    const result = communeRepository.getListCommunesNamesParCodePostal('99999');
 
     // THEN
     expect(result).toHaveLength(0);
   });
   it('getListCommunesParCodePostal : revoie bonne liste si le code postal ok', async () => {
     // WHEN
-    const result = communeRepository.getListCommunesParCodePostal('26290');
+    const result = communeRepository.getListCommunesNamesParCodePostal('26290');
 
     // THEN
     expect(result).toHaveLength(2);
@@ -73,7 +73,7 @@ describe('CommuneRepository', () => {
   });
   it('getListCommunesParCodePostal : supprime les doublons du fichier chargé', async () => {
     // WHEN
-    const result = communeRepository.getListCommunesParCodePostal('10120');
+    const result = communeRepository.getListCommunesNamesParCodePostal('10120');
 
     // THEN
     expect(result).toHaveLength(4); // au lieu de 6 à cause de lieux dits

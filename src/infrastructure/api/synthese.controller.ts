@@ -136,12 +136,9 @@ export class SyntheseController extends GenericControler {
       rayon = parseInt('' + rayon);
     }
 
-    const user_ids_code_postal = await this.userRepository.listUtilisateurIds(
-      undefined,
-      undefined,
-      undefined,
-      code_postal,
-    );
+    const user_ids_code_postal = await this.userRepository.listUtilisateurIds({
+      code_postal: code_postal,
+    });
 
     /*
     let epci_users = [];
@@ -181,7 +178,7 @@ export class SyntheseController extends GenericControler {
 
     filtre.code_postal = code_postal;
     const liste_commune =
-      this.communeRepository.getListCommunesParCodePostal(code_postal);
+      this.communeRepository.getListCommunesNamesParCodePostal(code_postal);
 
     filtre.commune = liste_commune[0];
 

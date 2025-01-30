@@ -19,7 +19,7 @@ export class DefiStatistiqueUsecase {
     const result = [];
 
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds({});
 
     for (const userId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(userId, [

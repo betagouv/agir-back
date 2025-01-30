@@ -136,6 +136,31 @@ export class UtilisateurRepository {
     }
     return this.buildUtilisateurFromDB(users[0]);
   }
+  async countByCodesCommune(liste_codes_commune: string[]): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        code_commune: {
+          in: liste_codes_commune,
+        },
+      },
+    });
+    return count;
+  }
+  async findUserIdsByCodesCommune(
+    liste_codes_commune: string[],
+  ): Promise<string[]> {
+    const users = await this.prisma.utilisateur.findMany({
+      where: {
+        code_commune: {
+          in: liste_codes_commune,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    return users.map((u) => u.id);
+  }
 
   async disconnectAll(): Promise<void> {
     await this.prisma.utilisateur.updateMany({
@@ -247,33 +272,41 @@ export class UtilisateurRepository {
     });
   }
 
-  async listUtilisateurIds(
-    created_after?: Date,
-    is_active?: boolean,
-    max_number?: number,
-    code_postal?: string,
-  ): Promise<string[]> {
+  async listUtilisateurIds(filter: {
+    created_after?: Date;
+    is_active?: boolean;
+    max_number?: number;
+    code_postal?: string;
+    migration_enabled?: boolean;
+    max_version_excluded?: number;
+  }): Promise<string[]> {
     let query = {
       select: {
         id: true,
       },
       where: {} as any,
     };
-    if (created_after) {
+    if (filter.created_after) {
       query['where'].created_at = {
-        gte: created_after,
+        gte: filter.created_after,
       };
     }
-    if (is_active) {
+    if (filter.is_active) {
       query['where'].active_account = true;
     }
-    if (max_number) {
-      query['take'] = max_number;
+    if (filter.migration_enabled) {
+      query['where'].migration_enabled = true;
     }
-    if (code_postal) {
+    if (filter.max_version_excluded) {
+      query['where'].version = { lt: filter.max_version_excluded };
+    }
+    if (filter.max_number) {
+      query['take'] = filter.max_number;
+    }
+    if (filter.code_postal) {
       query['where'].logement = {
         path: ['code_postal'],
-        equals: code_postal,
+        equals: filter.code_postal,
       };
     }
     const result = await this.prisma.utilisateur.findMany(query);
@@ -476,6 +509,7 @@ export class UtilisateurRepository {
       brevo_updated_at: user.brevo_updated_at,
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
+      code_commune: user.code_commune,
     });
 
     if (result.kyc_history) {
@@ -551,6 +585,7 @@ export class UtilisateurRepository {
       bilbiotheque_services: undefined,
       notification_history: undefined,
       defis: undefined,
+      code_commune: user.code_commune,
     };
   }
 

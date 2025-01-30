@@ -71,7 +71,7 @@ describe('UtilisateurRepository', () => {
     });
 
     // WHEN
-    const result = await utilisateurRepository.listUtilisateurIds();
+    const result = await utilisateurRepository.listUtilisateurIds({});
 
     result.sort((a, b) => parseInt(a) - parseInt(b));
     // THEN
@@ -91,9 +91,9 @@ describe('UtilisateurRepository', () => {
     });
 
     // WHEN
-    const result = await utilisateurRepository.listUtilisateurIds(
-      new Date(150),
-    );
+    const result = await utilisateurRepository.listUtilisateurIds({
+      created_after: new Date(150),
+    });
 
     // THEN
     expect(result).toStrictEqual(['2']);
@@ -119,10 +119,10 @@ describe('UtilisateurRepository', () => {
     });
 
     // WHEN
-    const result = await utilisateurRepository.listUtilisateurIds(
-      new Date(150),
-      true,
-    );
+    const result = await utilisateurRepository.listUtilisateurIds({
+      created_after: new Date(150),
+      is_active: true,
+    });
 
     // THEN
     expect(result).toStrictEqual(['3']);
@@ -416,5 +416,15 @@ describe('UtilisateurRepository', () => {
     expect(userDB_2.unlocked_features).toEqual({
       unlocked_features: ['aides', 'defis', 'bibliotheque', 'bilan_carbone'],
     });
+  });
+  it(`countByCodeCommune : count correct`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, { code_commune: '123' });
+    const count = await utilisateurRepository.countByCodesCommune([
+      '123',
+      '456',
+    ]);
+    expect(count).toEqual(1);
   });
 });

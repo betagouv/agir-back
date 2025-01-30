@@ -25,7 +25,7 @@ export class ThematiqueStatistiqueUsecase {
     const thematiqueRecord: Record<string, ThematiqueRecord> = {};
 
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds({});
 
     for (const userId of listeUtilisateursIds) {
       const missionRecord: Record<string, number[]> = {};

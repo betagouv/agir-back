@@ -25,7 +25,7 @@ export class MissionStatistiqueUsecase {
     const missionRecord: Record<string, MissionRecord> = {};
 
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds({});
 
     for (const userId of listeUtilisateursIds) {
       const user = await this.utilisateurRepository.getById(userId, [

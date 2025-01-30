@@ -10,7 +10,9 @@ export class AdminUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async selectUserAvecVoiture(): Promise<any> {
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      {},
+    );
 
     const result = [];
 

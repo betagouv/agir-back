@@ -103,6 +103,7 @@ export class Utilisateur {
   brevo_updated_at: Date;
   mobile_token: string;
   mobile_token_updated_at: Date;
+  code_commune: string;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -164,7 +165,6 @@ export class Utilisateur {
         proprietaire: null,
         superficie: null,
         type: null,
-        code_commune: null,
       }),
       tag_ponderation_set: {},
       force_connexion: false,
@@ -189,6 +189,7 @@ export class Utilisateur {
       brevo_updated_at: null,
       mobile_token_updated_at: null,
       mobile_token: null,
+      code_commune: null,
     });
   }
 

@@ -818,7 +818,6 @@ describe('TODO list (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '49007',
     };
 
     await TestUtil.create(DB.utilisateur, {

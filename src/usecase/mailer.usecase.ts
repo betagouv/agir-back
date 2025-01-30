@@ -40,10 +40,10 @@ export class MailerUsecase {
   async envoyerEmailsWelcome(): Promise<string[]> {
     const result: string[] = [];
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds(
-        new Date(Date.now() - day_10),
-        true,
-      );
+      await this.utilisateurRepository.listUtilisateurIds({
+        created_after: new Date(Date.now() - day_10),
+        is_active: true,
+      });
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
@@ -71,7 +71,9 @@ export class MailerUsecase {
   async envoyerEmailsAutomatiques(): Promise<string[]> {
     const result: string[] = [];
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds(undefined, true);
+      await this.utilisateurRepository.listUtilisateurIds({
+        is_active: true,
+      });
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(

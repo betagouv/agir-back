@@ -548,7 +548,6 @@ export class TestUtil {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '91477',
     };
 
     return {
@@ -604,6 +603,7 @@ export class TestUtil {
       brevo_updated_at: null,
       mobile_token: null,
       mobile_token_updated_at: null,
+      code_commune: null,
       ...override,
     };
   }

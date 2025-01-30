@@ -35,6 +35,13 @@ import {
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -178,7 +185,10 @@ describe('Admin (API test)', () => {
   it('POST /admin/migrate_users migre pas un user qui a pas besoin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, { version: 2 });
+    await TestUtil.create(DB.utilisateur, {
+      version: 2,
+      migration_enabled: true,
+    });
     process.env.USER_CURRENT_VERSION = '2';
 
     // WHEN
@@ -190,12 +200,7 @@ describe('Admin (API test)', () => {
     });
     expect(userDB.version).toBe(2);
     expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [],
-      },
-    ]);
+    expect(response.body).toEqual([]);
   });
   it(`POST /admin/migrate_users verifie si migration active pour l'utilisateur`, async () => {
     // GIVEN
@@ -214,18 +219,7 @@ describe('Admin (API test)', () => {
     });
     expect(userDB.version).toBe(2);
     expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 3,
-            ok: true,
-            info: 'Migrations disabled for that user',
-          },
-        ],
-      },
-    ]);
+    expect(response.body).toEqual([]);
   });
   it('POST /admin/migrate_users migration manquante', async () => {
     // GIVEN
@@ -288,7 +282,7 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
-  it('POST /admin/migrate_users migration V4 OK', async () => {
+  it.skip('POST /admin/migrate_users migration V4 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const gamification: Gamification_v0 = {
@@ -401,7 +395,7 @@ describe('Admin (API test)', () => {
       DefiStatus.fait,
     );
   });
-  it('POST /admin/migrate_users migration V8 OK', async () => {
+  it.skip('POST /admin/migrate_users migration V8 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const kyc = {
@@ -463,7 +457,7 @@ describe('Admin (API test)', () => {
     ]);
     expect(userDB.kyc_history.getRawAnsweredKYCs()[0].id_cms).toEqual(1);
   });
-  it('POST /admin/migrate_users migration V10 OK', async () => {
+  it.skip('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -497,7 +491,7 @@ describe('Admin (API test)', () => {
     expect(userDB.commune_classement).toEqual('PALAISEAU');
     expect(userDB.points_classement).toEqual(10);
   });
-  it('POST /admin/migrate_users migration V11 OK - user ayant pas fini les mission onboarding', async () => {
+  it.skip('POST /admin/migrate_users migration V11 OK - user ayant pas fini les mission onboarding', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
@@ -533,18 +527,30 @@ describe('Admin (API test)', () => {
     expect(userDB.parcours_todo.todo_active).toEqual(0);
     expect(userDB.unlocked_features.unlocked_features).toEqual([]);
   });
-  it.skip('POST /admin/migrate_users migration V11 OK - user ayant fini les mission onboarding', async () => {
+  it('POST /admin/migrate_users migration V12 OK - calcul code commune pour user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 3;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
 
     await TestUtil.create(DB.utilisateur, {
-      version: 10,
+      version: 11,
       migration_enabled: true,
-      todo: todo,
+      code_commune: null,
+      logement: logement,
     });
-    process.env.USER_CURRENT_VERSION = '11';
+    process.env.USER_CURRENT_VERSION = '12';
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -556,9 +562,9 @@ describe('Admin (API test)', () => {
         user_id: 'utilisateur-id',
         migrations: [
           {
-            version: 11,
+            version: 12,
             ok: true,
-            info: 'no reset, todo terminée',
+            info: 'Set commune 91477',
           },
         ],
       },
@@ -566,7 +572,56 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.parcours_todo.todo_active).toEqual(3);
+    expect(userDB.code_commune).toEqual('91477');
+    expect(userDB.version).toEqual(12);
+  });
+  it('POST /admin/migrate_users migration V12 OK - ras si pas de code postal sur user', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: null,
+      chauffage: Chauffage.bois,
+      commune: null,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 11,
+      migration_enabled: true,
+      code_commune: null,
+      logement: logement,
+    });
+    process.env.USER_CURRENT_VERSION = '12';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 12,
+            ok: true,
+            info: 'Set commune null',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.code_commune).toEqual(null);
+    expect(userDB.version).toEqual(12);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN

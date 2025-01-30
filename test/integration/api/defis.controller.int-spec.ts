@@ -861,7 +861,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '12345',
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -937,7 +936,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '12345',
     };
 
     await TestUtil.create(DB.utilisateur, { defis: defis, logement });

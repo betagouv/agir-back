@@ -744,7 +744,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.logement.code_commune).toEqual('21231');
+    expect(dbUser.code_commune).toEqual('21231');
   });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
     // GIVEN
@@ -1033,7 +1033,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '91477',
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1047,7 +1046,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '21231',
     };
 
     await TestUtil.create(DB.utilisateur, {

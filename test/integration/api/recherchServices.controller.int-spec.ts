@@ -29,7 +29,6 @@ const logement_palaiseau: Logement_v0 = {
   nombre_enfants: 2,
   plus_de_15_ans: true,
   proprietaire: true,
-  code_commune: '91477',
 };
 
 describe('RechercheServices (API test)', () => {

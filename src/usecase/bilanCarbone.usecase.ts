@@ -73,7 +73,9 @@ export class BilanCarboneUsecase {
   async computeBilanTousUtilisateurs(): Promise<string[]> {
     const MAX_USER_TO_COMPUTE = 2000;
 
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      {},
+    );
 
     const error_liste = [];
     let computed_ok = 0;

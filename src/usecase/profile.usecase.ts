@@ -131,7 +131,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Logement = { ...input, code_commune: undefined };
+    const update_data: Logement = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -166,7 +166,10 @@ export class ProfileUsecase {
           input.commune,
         );
       }
-      update_data.code_commune = code_commune;
+      utilisateur.code_commune = this.AorB(
+        code_commune,
+        utilisateur.code_commune,
+      );
     }
 
     utilisateur.logement.patch(update_data, utilisateur);
@@ -250,7 +253,7 @@ export class ProfileUsecase {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
     }
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
@@ -264,7 +267,7 @@ export class ProfileUsecase {
     let count_onboarding_7_done = 0;
     let count_onboarding_non_done = 0;
 
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
@@ -298,7 +301,7 @@ export class ProfileUsecase {
     couvert: number;
     pas_couvert: number;
   }> {
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     let couvert = 0;
     let pas_couvert = 0;
     for (const id of userIdList) {

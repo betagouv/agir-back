@@ -967,7 +967,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: '91477',
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1016,7 +1015,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: false,
-      code_commune: '91477',
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1069,7 +1067,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: false,
-      code_commune: '91477',
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1132,7 +1129,6 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: false,
-      code_commune: '91477',
     };
 
     await TestUtil.create(DB.utilisateur, {
