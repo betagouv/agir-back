@@ -225,6 +225,7 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
       },
       date_expiration: new Date(123),
+      derniere_maj: new Date(123),
       codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       besoin: {
@@ -245,6 +246,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
+      derniere_maj: new Date(123),
       contenu: 'Un long article très intéressant',
       thematique_gamification: {
         id: 1,
@@ -485,6 +487,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
+    expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].tag_article).toEqual('composter');
@@ -547,6 +550,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.url_source).toEqual('haha');
     expect(aide.url_demande).toEqual('hihi');
     expect(aide.date_expiration).toEqual(new Date(123));
+    expect(aide.derniere_maj).toEqual(new Date(123));
     expect(aide.partenaire_id).toEqual('1');
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.montant_max).toEqual(123);
@@ -828,6 +832,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.url_demande).toEqual('hihi');
     expect(aide.partenaire_id).toEqual('1');
     expect(aide.date_expiration).toEqual(new Date(123));
+    expect(aide.derniere_maj).toEqual(new Date(123));
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
@@ -952,6 +957,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
+    expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);

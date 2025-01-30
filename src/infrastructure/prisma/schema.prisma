@@ -216,6 +216,7 @@ model Aide {
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
   date_expiration       DateTime? @db.Timestamptz(3)
+  derniere_maj          DateTime? @db.Timestamptz(3)
   created_at            DateTime  @default(now()) @db.Timestamptz(3)
   updated_at            DateTime  @updatedAt @db.Timestamptz(3)
 }
@@ -238,33 +239,34 @@ model Defi {
 }
 
 model Article {
-  content_id            String   @id
+  content_id            String    @id
   titre                 String
   soustitre             String?
   source                String?
-  sources               Json?    @default("[]")
+  sources               Json?     @default("[]")
   image_url             String?
   partenaire_id         String?
   contenu               String?
-  tags_utilisateur      String[] @default([])
-  rubrique_ids          String[] @default([])
-  rubrique_labels       String[] @default([])
-  codes_postaux         String[] @default([])
+  tags_utilisateur      String[]  @default([])
+  rubrique_ids          String[]  @default([])
+  rubrique_labels       String[]  @default([])
+  codes_postaux         String[]  @default([])
   duree                 String?
   frequence             String?
-  difficulty            Int      @default(1)
-  points                Int      @default(0)
+  difficulty            Int       @default(1)
+  points                Int       @default(0)
   thematique_principale String?
-  thematiques           String[] @default([])
-  categorie             String   @default("recommandation")
-  mois                  Int[]    @default([])
-  include_codes_commune String[] @default([])
-  exclude_codes_commune String[] @default([])
-  codes_departement     String[] @default([])
-  codes_region          String[] @default([])
+  thematiques           String[]  @default([])
+  categorie             String    @default("recommandation")
+  mois                  Int[]     @default([])
+  include_codes_commune String[]  @default([])
+  exclude_codes_commune String[]  @default([])
+  codes_departement     String[]  @default([])
+  codes_region          String[]  @default([])
   tag_article           String?
-  created_at            DateTime @default(now()) @db.Timestamptz(3)
-  updated_at            DateTime @updatedAt @db.Timestamptz(3)
+  derniere_maj          DateTime? @db.Timestamptz(3)
+  created_at            DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
 }
 
 model Partenaire {

@@ -398,6 +398,9 @@ export class CMSImportUsecase {
       content_id: entry.id.toString(),
       tags_utilisateur: [],
       titre: entry.attributes.titre,
+      derniere_maj: entry.attributes.derniere_maj
+        ? new Date(entry.attributes.derniere_maj)
+        : null,
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
@@ -518,6 +521,9 @@ export class CMSImportUsecase {
       titre: entry.attributes.titre,
       codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
       contenu: entry.attributes.description,
+      derniere_maj: entry.attributes.derniere_maj
+        ? new Date(entry.attributes.derniere_maj)
+        : null,
       date_expiration: entry.attributes.date_expiration
         ? new Date(entry.attributes.date_expiration)
         : null,

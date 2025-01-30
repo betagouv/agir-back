@@ -166,6 +166,7 @@ export class AideRepository {
       url_demande: aideDB.url_demande,
       partenaire_id: aideDB.partenaire_id,
       date_expiration: aideDB.date_expiration,
+      derniere_maj: aideDB.derniere_maj,
     };
   }
 }

@@ -156,6 +156,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;
   @ApiProperty() date_expiration: Date;
+  @ApiProperty() derniere_maj: Date;
   @ApiProperty() frequence: string;
   @ApiProperty({ type: CMSWebhookImageURLAPI }) imageUrl: CMSWebhookImageURLAPI;
   @ApiProperty({ type: CMSWebhookImageURLAPI }) logo: CMSWebhookImageURLAPI[];

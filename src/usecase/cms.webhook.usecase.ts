@@ -267,6 +267,9 @@ export class CMSWebhookUsecase {
       content_id: hook.entry.id.toString(),
       tags_utilisateur: [],
       titre: hook.entry.titre,
+      derniere_maj: hook.entry.derniere_maj
+        ? new Date(hook.entry.derniere_maj)
+        : null,
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
       image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
@@ -350,6 +353,7 @@ export class CMSWebhookUsecase {
       date_expiration: entry.date_expiration
         ? new Date(entry.date_expiration)
         : null,
+      derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       codes_postaux: this.split(entry.codes_postaux),
       thematiques: entry.thematiques

@@ -31,4 +31,5 @@ export class AideDefinition implements ContenuLocal {
   clicked_demande?: boolean;
   clicked_infos?: boolean;
   date_expiration: Date;
+  derniere_maj: Date;
 }
