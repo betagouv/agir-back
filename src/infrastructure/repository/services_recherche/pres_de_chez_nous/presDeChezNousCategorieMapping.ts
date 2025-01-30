@@ -40,7 +40,9 @@ export class PresDeChezNousCategorieMapping {
     },
   ];
 
-  public static getFiltreFromCategorie(categorie: CategorieRecherche): string {
+  public static getFiltreFromCategorie(
+    categorie: CategorieRecherche | undefined,
+  ): string {
     if (!categorie) {
       return '';
     }

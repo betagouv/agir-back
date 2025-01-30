@@ -8,8 +8,8 @@ export class Article extends ArticleDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
   favoris: boolean;
-  read_date?: Date;
-  like_level?: number;
+  read_date?: Date | null;
+  like_level?: number | null;
 
   constructor(data: ArticleDefinition) {
     super();
@@ -31,7 +31,9 @@ export class Article extends ArticleDefinition implements TaggedContent {
   }
 
   public getTags(): Tag[] {
-    return [].concat(
+    const tags: Tag[] = [];
+
+    return tags.concat(
       this.thematiques,
       this.tags_utilisateur,
       this.tags_rubriques,

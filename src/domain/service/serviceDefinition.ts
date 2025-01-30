@@ -31,9 +31,9 @@ export class ServiceDefinitionData {
   nombre_installation: number = 0;
   is_installed: boolean;
   minute_period: number;
-  scheduled_refresh: Date;
-  last_refresh: Date;
-  dynamic_data: ServiceDynamicData;
+  scheduled_refresh: Date | null;
+  last_refresh: Date | null;
+  dynamic_data: ServiceDynamicData | null;
   description: string;
   sous_description: string;
   parametrage_requis: boolean;
@@ -48,12 +48,15 @@ export class ServiceDefinition extends ServiceDefinitionData {
   public isScheduledServiceType?(): boolean {
     return ScheduledService[this.serviceDefinitionId] != undefined;
   }
+
   public isLiveServiceType?(): boolean {
     return LiveService[this.serviceDefinitionId] != undefined;
   }
+
   public isAsyncServiceType?(): boolean {
     return AsyncService[this.serviceDefinitionId] != undefined;
   }
+
   public setNextRefreshDate?() {
     if (this.minute_period) {
       this.scheduled_refresh = new Date(
@@ -61,6 +64,7 @@ export class ServiceDefinition extends ServiceDefinitionData {
       );
     }
   }
+
   public isEnConstruction?(): boolean {
     return !App.getServiceActifsStringList().includes(this.serviceDefinitionId);
   }

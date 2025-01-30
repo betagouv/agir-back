@@ -10,7 +10,7 @@ export class Objectif_v1 {
   titre: string;
   content_id: string;
   is_locked: boolean;
-  done_at: Date;
+  done_at: Date | null;
   type: ContentType;
   points: number;
   sont_points_en_poche: boolean;
@@ -33,7 +33,7 @@ export class Objectif_v1 {
 
 export class Mission_v1 {
   id: string;
-  done_at: Date;
+  done_at: Date | null;
   objectifs: Objectif_v1[];
   est_visible: boolean;
   est_examen: boolean;

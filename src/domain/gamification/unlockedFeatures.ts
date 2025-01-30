@@ -8,7 +8,9 @@ export class UnlockedFeatures {
     if (data && data.unlocked_features) {
       this.unlocked_features = data.unlocked_features;
     } else {
-      this.reset();
+      if (this.reset) {
+        this.reset();
+      }
     }
   }
 

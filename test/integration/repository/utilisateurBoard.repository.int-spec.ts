@@ -1,7 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { Pourcentile } from '../../../src/domain/gamification/board';
-import { equal } from 'assert';
 
 describe('UtilisateurBoardRepository', () => {
   let repo = new UtilisateurBoardRepository(TestUtil.prisma);

@@ -53,20 +53,20 @@ export enum Scope {
 export class Utilisateur {
   id: string;
   email: string;
-  nom: string;
-  prenom: string;
-  annee_naissance: number;
-  revenu_fiscal: number;
-  parts: number;
+  nom: string | null;
+  prenom: string | null;
+  annee_naissance: number | null;
+  revenu_fiscal: number | null;
+  parts: number | null;
   abonnement_ter_loire: boolean;
-  created_at: Date;
+  created_at?: Date;
   updated_at?: Date;
-  passwordHash: string;
-  passwordSalt: string;
+  passwordHash: string | null;
+  passwordSalt: string | null;
   failed_login_count: number;
   prevent_login_before: Date;
-  code: string;
-  code_generation_time: Date;
+  code: string | null;
+  code_generation_time: Date | null;
   active_account: boolean;
   failed_checkcode_count: number;
   prevent_checkcode_before: Date;
@@ -89,21 +89,21 @@ export class Utilisateur {
   bilbiotheque_services: BibliothequeServices;
   is_magic_link_user: boolean;
   points_classement: number;
-  code_postal_classement: string;
-  commune_classement: string;
-  rank: number;
-  rank_commune: number;
+  code_postal_classement: string | null;
+  commune_classement: string | null;
+  rank: number | null;
+  rank_commune: number | null;
   status: UtilisateurStatus;
   couverture_aides_ok: boolean;
-  source_inscription: SourceInscription;
+  source_inscription: SourceInscription | null;
   notification_history: NotificationHistory;
-  unsubscribe_mail_token: string;
+  unsubscribe_mail_token: string | null;
   est_valide_pour_classement: boolean;
-  brevo_created_at: Date;
-  brevo_updated_at: Date;
-  mobile_token: string;
-  mobile_token_updated_at: Date;
-  code_commune: string;
+  brevo_created_at: Date | null;
+  brevo_updated_at: Date | null;
+  mobile_token: string | null;
+  mobile_token_updated_at: Date | null;
+  code_commune: string | null;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -123,7 +123,7 @@ export class Utilisateur {
   public static createNewUtilisateur(
     email: string,
     is_magic_link: boolean,
-    source_inscription: SourceInscription,
+    source_inscription: SourceInscription | null,
   ): Utilisateur {
     return new Utilisateur({
       nom: null,
@@ -183,7 +183,7 @@ export class Utilisateur {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
-      unsubscribe_mail_token: Utilisateur.generateEmailToken(),
+      unsubscribe_mail_token: Utilisateur.generateEmailToken?.() ?? null,
       est_valide_pour_classement: false,
       brevo_created_at: null,
       brevo_updated_at: null,
@@ -200,7 +200,9 @@ export class Utilisateur {
     this.tag_ponderation_set = {};
     this.parcours_todo.reset();
     this.gamification.reset();
-    this.unlocked_features.reset();
+    if (this.unlocked_features.reset) {
+      this.unlocked_features.reset();
+    }
     this.history.reset();
     this.defi_history.reset();
     this.kyc_history.reset();
@@ -208,7 +210,7 @@ export class Utilisateur {
 
   public setUnsubscribeEmailTokenIfMissing?() {
     if (!this.unsubscribe_mail_token) {
-      this.unsubscribe_mail_token = Utilisateur.generateEmailToken();
+      this.unsubscribe_mail_token = Utilisateur.generateEmailToken?.() ?? null;
     }
   }
 
@@ -236,9 +238,11 @@ export class Utilisateur {
   public isMagicLinkCodeExpired?(): boolean {
     return (
       this.code === null ||
+      this.code_generation_time === null ||
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }
+
   static checkState?(utilisateur: Utilisateur) {
     if (!utilisateur) {
       ApplicationError.throwMissingUser();
@@ -248,7 +252,7 @@ export class Utilisateur {
     }
   }
 
-  public getNombrePartsFiscalesOuEstimee?() {
+  public getNombrePartsFiscalesOuEstimee?(): number {
     if (this.parts !== null) {
       return this.parts;
     }
@@ -268,15 +272,21 @@ export class Utilisateur {
 
   /**
    * Returns the total number of people in the household, including adults and
-   * children (see {@link UtilisateurData.logement}).
+   * children (see {@link Utilisateur.logement}).
    *
    * @ensures The result to be in the range [1, +∞[.
+   *
+   * @note If the number of adults or children is not set, it is assumed to be zero. If both are null, returns null.
    */
-  public getNombrePersonnesDansLogement?(): number {
-    return Math.max(
-      this.logement.nombre_adultes + this.logement.nombre_enfants,
-      1,
-    );
+  public getNombrePersonnesDansLogement?(): number | null {
+    const nombre_adultes = this.logement.nombre_adultes;
+    const nombre_enfants = this.logement.nombre_enfants;
+
+    if (nombre_adultes === null && nombre_enfants === null) {
+      return null;
+    }
+
+    return Math.max((nombre_adultes ?? 0) + (nombre_enfants ?? 0), 1);
   }
 
   public setPassword?(password: string) {
@@ -303,8 +313,11 @@ export class Utilisateur {
   }
 
   public increaseTagValue?(tag: Tag, value: number) {
-    this.setTagValue(tag, this.getTagValue(tag) + value);
+    if (this.setTagValue && this.getTagValue) {
+      this.setTagValue(tag, this.getTagValue(tag) + value);
+    }
   }
+
   public increaseTagForAnswers?(
     tag: Tag,
     kyc: QuestionKYC,
@@ -313,7 +326,7 @@ export class Utilisateur {
     if (kyc && kyc.hasAnyResponses()) {
       for (const key in map) {
         if (kyc.isSelectedReponseCode(key)) {
-          this.increaseTagValue(tag, map[key]);
+          this.increaseTagValue?.(tag, map[key]);
         }
       }
     }
@@ -324,10 +337,12 @@ export class Utilisateur {
     value_yes: number,
     value_no: number,
   ) {
-    this.setTagValue(
-      tag,
-      this.getTagValue(tag) + (when ? value_yes : value_no),
-    );
+    if (this.setTagValue && this.getTagValue) {
+      this.setTagValue(
+        tag,
+        this.getTagValue(tag) + (when ? value_yes : value_no),
+      );
+    }
   }
 
   public recomputeRecoTags?() {
