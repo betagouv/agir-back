@@ -58,8 +58,11 @@ export class PushNotificator {
         image: image_url,
       },
       data: data,
-      token: user_token,
     };
+
+    if (user_token) {
+      message['token'] = user_token;
+    }
 
     try {
       const response = await this.messaging_service.send(message);
