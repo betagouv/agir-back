@@ -77,8 +77,8 @@ describe('Objet PasswordManager', () => {
     PasswordManager.setUserPassword(utilisateur, 'toto');
 
     // THEN
-    expect(utilisateur.passwordHash.length).toBeGreaterThan(10);
-    expect(utilisateur.passwordSalt.length).toBeGreaterThan(10);
+    expect(utilisateur.passwordHash?.length).toBeGreaterThan(10);
+    expect(utilisateur.passwordSalt?.length).toBeGreaterThan(10);
   });
   it('checkPassword : OK and returns function result', async () => {
     // GIVEN
@@ -156,7 +156,7 @@ describe('Objet PasswordManager', () => {
   it('failLogin : increase counter', async () => {
     // GIVEN
     let utilisateur = new Utilisateur();
-    utilisateur.setPassword('#1234567890HAHA');
+    utilisateur.setPassword?.('#1234567890HAHA');
     utilisateur.failed_login_count = 0;
 
     try {
@@ -170,7 +170,7 @@ describe('Objet PasswordManager', () => {
   it('failedLogin : sets block date + 5 mins', async () => {
     // GIVEN
     let utilisateur = new Utilisateur();
-    utilisateur.setPassword('#1234567890HAHA');
+    utilisateur.setPassword?.('#1234567890HAHA');
     utilisateur.failed_login_count = 3;
 
     try {

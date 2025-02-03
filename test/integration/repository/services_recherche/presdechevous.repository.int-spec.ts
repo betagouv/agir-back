@@ -1,7 +1,6 @@
-import { FiltreRecherche } from '../../../../src/domain/bibliotheque_services/recherche/filtreRecherche';
 import { AddressesRepository } from '../../../../src/infrastructure/repository/services_recherche/addresses.repository';
 import { PresDeChezNousRepository } from '../../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
-import { TestUtil, DB } from '../../../TestUtil';
+import { TestUtil } from '../../../TestUtil';
 
 describe('PresDeChezVousRepository', () => {
   const OLD_ENV = process.env;
@@ -27,7 +26,7 @@ describe('PresDeChezVousRepository', () => {
     // GIVEN
 
     // WHEN
-    const openHours = await presDeChezNousRepository.mapOpenHours({
+    const openHours = presDeChezNousRepository.mapOpenHours({
       Tu: '10:00-19:00',
       We: '10:00-19:00',
       Th: '10:00-19:00',
