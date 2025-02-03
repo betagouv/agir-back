@@ -128,6 +128,7 @@ import { AdminUsecase } from './usecase/admin.usecase';
 import { AideExpirationWarningRepository } from './infrastructure/repository/aideExpirationWarning.repository';
 import { PushNotificator } from './infrastructure/push_notifications/pushNotificator';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
+import { ActionRepository } from './infrastructure/repository/action.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -277,6 +278,7 @@ function getControllers(): any[] {
     AdminUsecase,
     AideExpirationWarningRepository,
     PushNotificator,
+    ActionRepository,
   ],
 })
 export class AppModule {}

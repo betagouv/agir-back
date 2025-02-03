@@ -13,6 +13,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -64,6 +65,23 @@ describe('/api/incoming/cms (API test)', () => {
       ],
     },
   };
+
+  const CMS_DATA_ACTION = {
+    model: CMSModel.action,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      titre: 'titre',
+      code: 'code',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
+
   const CMS_DATA_DEFI_bad_tag = {
     model: CMSModel.defi,
     event: CMSEvent['entry.publish'],
@@ -411,6 +429,7 @@ describe('/api/incoming/cms (API test)', () => {
   };
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -761,6 +780,26 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
   });
 
+  it('POST /api/incoming/cms - create a new action', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.thematique).toEqual('alimentation');
+  });
+
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
     // GIVEN
 
@@ -807,6 +846,27 @@ describe('/api/incoming/cms (API test)', () => {
     expect(defi.conditions).toStrictEqual([
       [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
     ]);
+  });
+
+  it('POST /api/incoming/cms - updates an action', async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { cms_id: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.cms_id).toEqual('123');
+    expect(action.code).toEqual('code');
+    expect(action.thematique).toEqual('alimentation');
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

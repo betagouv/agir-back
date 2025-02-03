@@ -33,10 +33,13 @@ import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
 
 @Injectable()
 export class CMSWebhookUsecase {
   constructor(
+    private actionRepository: ActionRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
@@ -79,6 +82,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateMission(cmsWebhookAPI);
+      }
+    }
+    if (cmsWebhookAPI.model === CMSModel.action) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteAction(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteAction(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateAction(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateAction(cmsWebhookAPI);
       }
     }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
@@ -214,12 +229,22 @@ export class CMSWebhookUsecase {
       this.buildMissionFromCMSData(cmsWebhookAPI.entry),
     );
   }
+  async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.actionRepository.upsert(
+      this.buildActionFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
 
   async deleteKyc(cmsWebhookAPI: CMSWebhookAPI) {
     await this.kycRepository.delete(cmsWebhookAPI.entry.id);
   }
   async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
+  }
+  async deleteAction(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.actionRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
 
   private getImageUrlFromImageField(image_field: CMSWebhookImageURLAPI) {
@@ -384,6 +409,17 @@ export class CMSWebhookUsecase {
       content_id: entry.id.toString(),
       titre: entry.Titre,
       contenu: entry.contenu,
+      code: entry.code,
+    };
+  }
+
+  private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      titre: entry.titre,
+      thematique: entry.thematique
+        ? Thematique[entry.thematique.code]
+        : Thematique.climat,
       code: entry.code,
     };
   }

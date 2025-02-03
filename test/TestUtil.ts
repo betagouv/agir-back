@@ -30,6 +30,7 @@ import {
   Partenaire,
   Conformite,
   AideExpirationWarning,
+  Action,
 } from '.prisma/client';
 import {
   Aide,
@@ -87,6 +88,7 @@ export enum DB {
   mission = 'mission',
   kYC = 'kYC',
   universStatistique = 'universStatistique',
+  action = 'action',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -96,6 +98,7 @@ export class TestUtil {
     aide: TestUtil.aideData,
     conformite: TestUtil.conformiteData,
     defi: TestUtil.defiData,
+    action: TestUtil.actionData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
@@ -190,6 +193,7 @@ export class TestUtil {
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
     await this.prisma.defi.deleteMany();
+    await this.prisma.action.deleteMany();
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
@@ -361,6 +365,17 @@ export class TestUtil {
       mois: [],
       conditions: [],
       impact_kg_co2: 5,
+      ...override,
+    };
+  }
+  static actionData(override?: Partial<Defi>): Action {
+    return {
+      cms_id: '111',
+      titre: 'The titre',
+      code: 'The code',
+      thematique: Thematique.consommation,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
