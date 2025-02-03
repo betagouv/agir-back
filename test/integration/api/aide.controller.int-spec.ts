@@ -620,6 +620,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 
   it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {
     // GIVEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
 
     // WHEN
     const response = await TestUtil.POST('/aides/simulerAideVelo').send({
@@ -640,7 +641,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 Dispositif valable jusqu'au 31 décembre 2024.`,
         libelle: "Département Côte-d'Or",
         lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'undefined/logo_cd21.webp',
+        logo: 'http://localhost:3000/logo_cd21.webp',
         montant: 250,
         plafond: 250,
       },
@@ -649,6 +650,7 @@ Dispositif valable jusqu'au 31 décembre 2024.`,
 
   it(`POST /aides/simulerAideVelo OK avec un code métropole`, async () => {
     // GIVEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
 
     // WHEN
     const response = await TestUtil.POST('/aides/simulerAideVelo').send({
@@ -669,7 +671,7 @@ Dispositif valable jusqu'au 31 décembre 2024.`,
 Dispositif valable jusqu'au 31 décembre 2024.`,
         libelle: "Département Côte-d'Or",
         lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'undefined/logo_cd21.webp',
+        logo: 'http://localhost:3000/logo_cd21.webp',
         montant: 250,
         plafond: 250,
       },
