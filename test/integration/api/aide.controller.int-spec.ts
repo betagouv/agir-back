@@ -617,4 +617,62 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     );
     expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
   });
+
+  it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
+      code_insee: '21231',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    console.log(response.body);
+    expect(response.body['cargo électrique']).toEqual([
+      {
+        collectivite: {
+          kind: 'département',
+          value: '21',
+        },
+        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
+
+Dispositif valable jusqu'au 31 décembre 2024.`,
+        libelle: "Département Côte-d'Or",
+        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
+        logo: 'undefined/logo_cd21.webp',
+        montant: 250,
+        plafond: 250,
+      },
+    ]);
+  });
+
+  it(`POST /aides/simulerAideVelo OK avec un code métropole`, async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
+      code_insee: '242100410',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    console.log(response.body);
+    expect(response.body['cargo électrique']).toEqual([
+      {
+        collectivite: {
+          kind: 'département',
+          value: '21',
+        },
+        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
+
+Dispositif valable jusqu'au 31 décembre 2024.`,
+        libelle: "Département Côte-d'Or",
+        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
+        logo: 'undefined/logo_cd21.webp',
+        montant: 250,
+        plafond: 250,
+      },
+    ]);
+  });
 });

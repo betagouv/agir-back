@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, Response } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
 import { Response as Res } from 'express';
 import {
   ApiBearerAuth,
@@ -15,6 +22,7 @@ import { AideRepository } from '../repository/aide.repository';
 import { RechercheServiceManager } from '../../domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { CommuneRepository } from '../repository/commune/commune.repository';
 import { ContenuLocal } from '../../domain/contenu/contenuLocal';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 export class ArticleLocalAPI {
   @ApiProperty() id: string;
@@ -83,6 +91,8 @@ export class Synthese_v2Controller extends GenericControler {
     super();
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 2, ttl: 1000 } })
   @Get('code_postal_synthese_v2/:code_insee')
   @ApiQuery({
     name: 'rayon',
