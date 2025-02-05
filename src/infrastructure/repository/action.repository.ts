@@ -4,6 +4,7 @@ import { Action } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { Cron } from '@nestjs/schedule';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
+import { TypeAction } from '../../domain/actions/typeAction';
 
 export type ActionFilter = {
   thematique?: Thematique;
@@ -49,6 +50,16 @@ export class ActionRepository {
       code: action.code,
       titre: action.titre,
       thematique: action.thematique,
+      besoins: action.besoins,
+      comment: action.comment,
+      kyc_ids: action.kyc_ids,
+      lvo_action: action.lvo_action,
+      lvo_objet: action.lvo_objet,
+      pourquoi: action.pourquoi,
+      quizz_ids: action.quizz_ids,
+      recette_categorie: action.recette_categorie,
+      sous_titre: action.sous_titre,
+      type: action.type,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -90,6 +101,16 @@ export class ActionRepository {
       titre: action.titre,
       code: action.code,
       thematique: Thematique[action.thematique],
+      comment: action.comment,
+      pourquoi: action.pourquoi,
+      besoins: action.besoins,
+      kyc_ids: action.kyc_ids,
+      lvo_action: action.lvo_action,
+      lvo_objet: action.lvo_objet,
+      quizz_ids: action.quizz_ids,
+      recette_categorie: action.recette_categorie,
+      sous_titre: action.sous_titre,
+      type: TypeAction[action.type],
     });
   }
 }

@@ -89,9 +89,11 @@ export class CMSWebhookArticleAPI {
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
+  @ApiProperty() sous_titre: string;
   @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
+  @ApiProperty() categorie_recettes: string;
   @ApiProperty() est_visible: boolean;
   @ApiProperty() is_examen: boolean;
   @ApiProperty() is_first: boolean;
@@ -101,6 +103,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() codes_region: string;
   @ApiProperty() categorie: string;
   @ApiProperty() type: string;
+  @ApiProperty() type_action: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
   @ApiProperty({ type: [CMSWebhookArticleAPI] })
@@ -127,6 +130,16 @@ export class CMSWebhookEntryAPI {
 
   @ApiProperty({ type: [CMSThematiqueAPI] })
   thematiques: CMSThematiqueAPI[];
+
+  @ApiProperty({ type: [CMSWebhookBesoinAPI] })
+  besoins: CMSWebhookBesoinAPI[];
+
+  @ApiProperty({ type: [IDAPI] })
+  quizzes: IDAPI[];
+
+  @ApiProperty({ type: [IDAPI] })
+  kycs: IDAPI[];
+
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
   univers: CMSWebhookUniversAPI[];
   @ApiProperty({ type: [CMSWebhookThematiqueUniversAPI] })
@@ -150,6 +163,9 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() duree: string;
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
+  @ApiProperty() comment: string;
+  @ApiProperty() objet_lvo: string;
+  @ApiProperty() action_lvo: string;
   @ApiProperty() source: string;
   @ApiProperty({ type: [CMSWebhookSourceAPI] }) sources: CMSWebhookSourceAPI[];
   @ApiProperty() echelle: string;

@@ -73,6 +73,37 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       titre: 'titre',
+      sous_titre: 'sous-titre',
+      pourquoi: 'pourquoi',
+      comment: 'comment',
+      objet_lvo: 'phone',
+      action_lvo: 'donner',
+      type_action: 'quizz',
+      categorie_recettes: 'vegan',
+      quizzes: [
+        {
+          id: 1,
+        },
+        {
+          id: 2,
+        },
+      ],
+      kycs: [
+        {
+          id: 3,
+        },
+        {
+          id: 4,
+        },
+      ],
+      besoins: [
+        {
+          code: 'composter',
+        },
+        {
+          code: 'mieux_manger',
+        },
+      ],
       code: 'code',
       thematique: {
         id: 1,
@@ -795,6 +826,16 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.comment).toEqual('comment');
+    expect(action.pourquoi).toEqual('pourquoi');
+    expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.lvo_action).toEqual('donner');
+    expect(action.lvo_objet).toEqual('phone');
+    expect(action.recette_categorie).toEqual('vegan');
+    expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
@@ -864,8 +905,18 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
-    expect(action.cms_id).toEqual('123');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.comment).toEqual('comment');
+    expect(action.pourquoi).toEqual('pourquoi');
+    expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.lvo_action).toEqual('donner');
+    expect(action.lvo_objet).toEqual('phone');
+    expect(action.recette_categorie).toEqual('vegan');
+    expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
   });
 

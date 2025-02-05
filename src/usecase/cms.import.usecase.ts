@@ -35,6 +35,7 @@ import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { TypeAction } from '../domain/actions/typeAction';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -363,7 +364,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins',
     );
     return URL.concat(page);
   }
@@ -654,6 +655,25 @@ export class CMSImportUsecase {
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       titre: entry.attributes.titre,
+      sous_titre: entry.attributes.sous_titre,
+      pourquoi: entry.attributes.pourquoi,
+      comment: entry.attributes.comment,
+      lvo_objet: entry.attributes.objet_lvo,
+      lvo_action: entry.attributes.action_lvo,
+      recette_categorie: entry.attributes.categorie_recettes,
+      type: TypeAction[entry.attributes.type_action],
+      besoins:
+        entry.attributes.besoins.data.length > 0
+          ? entry.attributes.besoins.data.map((elem) => elem.attributes.code)
+          : [],
+      quizz_ids:
+        entry.attributes.quizzes.data.length > 0
+          ? entry.attributes.quizzes.data.map((elem) => elem.id.toString())
+          : [],
+      kyc_ids:
+        entry.attributes.kycs.data.length > 0
+          ? entry.attributes.kycs.data.map((elem) => elem.id.toString())
+          : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,

@@ -68,6 +68,8 @@ import { MissionRepository } from '../src/infrastructure/repository/mission.repo
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { EchelleAide } from '../src/domain/aides/echelle';
+import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import { TypeAction } from '../src/domain/actions/typeAction';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -372,7 +374,17 @@ export class TestUtil {
     return {
       cms_id: '111',
       titre: 'The titre',
+      sous_titre: 'Sous titre',
       code: 'The code',
+      besoins: [],
+      comment: 'Astuces',
+      pourquoi: 'En quelques mots',
+      kyc_ids: [],
+      lvo_action: CategorieRecherche.emprunter,
+      lvo_objet: 'chaussure',
+      quizz_ids: [],
+      recette_categorie: CategorieRecherche.dinde_volaille,
+      type: TypeAction.classique,
       thematique: Thematique.consommation,
       created_at: undefined,
       updated_at: undefined,

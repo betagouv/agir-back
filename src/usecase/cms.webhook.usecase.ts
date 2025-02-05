@@ -35,6 +35,7 @@ import { ConformiteRepository } from '../infrastructure/repository/conformite.re
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -417,6 +418,18 @@ export class CMSWebhookUsecase {
     return {
       cms_id: entry.id.toString(),
       titre: entry.titre,
+      sous_titre: entry.sous_titre,
+      pourquoi: entry.pourquoi,
+      comment: entry.comment,
+      lvo_action: entry.action_lvo,
+      lvo_objet: entry.objet_lvo,
+      type: TypeAction[entry.type_action],
+      besoins: entry.besoins ? entry.besoins.map((elem) => elem.code) : [],
+      quizz_ids: entry.quizzes
+        ? entry.quizzes.map((elem) => elem.id.toString())
+        : [],
+      kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
+      recette_categorie: entry.categorie_recettes,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
