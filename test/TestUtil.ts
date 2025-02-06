@@ -375,7 +375,7 @@ export class TestUtil {
       cms_id: '111',
       titre: 'The titre',
       sous_titre: 'Sous titre',
-      code: 'The code',
+      code: 'code_fonct',
       besoins: [],
       comment: 'Astuces',
       pourquoi: 'En quelques mots',

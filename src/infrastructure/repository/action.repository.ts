@@ -94,6 +94,14 @@ export class ActionRepository {
     });
     return result.map((elem) => this.buildActionDefinitionFromDB(elem));
   }
+  async getByCode(code: string): Promise<ActionDefinition> {
+    const result = await this.prisma.action.findUnique({
+      where: {
+        code: code,
+      },
+    });
+    return this.buildActionDefinitionFromDB(result);
+  }
 
   private buildActionDefinitionFromDB(action: Action): ActionDefinition {
     if (action === null) return null;

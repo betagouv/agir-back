@@ -18,10 +18,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { ActionAPI } from './types/defis/ActionAPI';
+import { ActionAPI } from './types/actions/ActionAPI';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Thematique } from '../../domain/contenu/thematique';
+import { ActionLightAPI } from './types/actions/ActionLightAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -33,9 +34,9 @@ export class ActionsController extends GenericControler {
 
   @Get('actions')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
   @ApiOkResponse({
-    type: [ActionAPI],
+    type: [ActionLightAPI],
   })
   @ApiOperation({
     summary: `Retourne le catalogue d'actions`,
@@ -49,12 +50,25 @@ export class ActionsController extends GenericControler {
   })
   async getCatalogue(
     @Query('thematique') thematique: string,
-  ): Promise<ActionAPI[]> {
+  ): Promise<ActionLightAPI[]> {
     let them;
     if (thematique) {
       them = this.castThematiqueOrException(thematique);
     }
     const result = await this.actionUsecase.getOpenCatalogue(them);
-    return result.map((r) => ActionAPI.mapToAPI(r));
+    return result.map((r) => ActionLightAPI.mapToAPI(r));
+  }
+  @Get('actions/:code')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @ApiOkResponse({
+    type: ActionAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne une action précise`,
+  })
+  async getAction(@Param('code') code: string): Promise<ActionAPI> {
+    const result = await this.actionUsecase.getAction(code);
+    return ActionAPI.mapToAPI(result);
   }
 }

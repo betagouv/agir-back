@@ -556,6 +556,9 @@ export class ApplicationError {
   static throwMissingPourcent() {
     this.throwAppError('104', `Attribut 'pourcent' manquant`, 400);
   }
+  static throwActionNotFound(code: string) {
+    this.throwAppError('105', `l'action de code [${code}] n'existe pas`, 404);
+  }
 
   private static throwAppError(
     code: string,
