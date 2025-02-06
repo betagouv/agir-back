@@ -136,6 +136,31 @@ export class UtilisateurRepository {
     }
     return this.buildUtilisateurFromDB(users[0]);
   }
+  async countByCodesCommune(liste_codes_commune: string[]): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        code_commune: {
+          in: liste_codes_commune,
+        },
+      },
+    });
+    return count;
+  }
+  async findUserIdsByCodesCommune(
+    liste_codes_commune: string[],
+  ): Promise<string[]> {
+    const users = await this.prisma.utilisateur.findMany({
+      where: {
+        code_commune: {
+          in: liste_codes_commune,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    return users.map((u) => u.id);
+  }
 
   async disconnectAll(): Promise<void> {
     await this.prisma.utilisateur.updateMany({
@@ -224,7 +249,7 @@ export class UtilisateurRepository {
       await this.prisma.utilisateur.update({
         where: { id: utilisateur.id, db_version: utilisateur.db_version },
         data: {
-          ...this.buildDBFromUtilisateur(utilisateur),
+          ...this.buildDBFromUtilisateurForUpdate(utilisateur),
           db_version: { increment: 1 },
         },
       });
@@ -235,34 +260,53 @@ export class UtilisateurRepository {
       throw error;
     }
   }
+  async updateUtilisateurNoConcurency(
+    utilisateur: Utilisateur,
+    scopes?: Scope[],
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateur.id },
+      data: {
+        ...this.buildDBFromUtilisateurForUpdate(utilisateur, scopes),
+      },
+    });
+  }
 
-  async listUtilisateurIds(
-    created_after?: Date,
-    is_active?: boolean,
-    max_number?: number,
-    code_postal?: string,
-  ): Promise<string[]> {
+  async listUtilisateurIds(filter: {
+    created_after?: Date;
+    is_active?: boolean;
+    max_number?: number;
+    code_postal?: string;
+    migration_enabled?: boolean;
+    max_version_excluded?: number;
+  }): Promise<string[]> {
     let query = {
       select: {
         id: true,
       },
       where: {} as any,
     };
-    if (created_after) {
+    if (filter.created_after) {
       query['where'].created_at = {
-        gte: created_after,
+        gte: filter.created_after,
       };
     }
-    if (is_active) {
+    if (filter.is_active) {
       query['where'].active_account = true;
     }
-    if (max_number) {
-      query['take'] = max_number;
+    if (filter.migration_enabled) {
+      query['where'].migration_enabled = true;
     }
-    if (code_postal) {
+    if (filter.max_version_excluded) {
+      query['where'].version = { lt: filter.max_version_excluded };
+    }
+    if (filter.max_number) {
+      query['take'] = filter.max_number;
+    }
+    if (filter.code_postal) {
       query['where'].logement = {
         path: ['code_postal'],
-        equals: code_postal,
+        equals: filter.code_postal,
       };
     }
     const result = await this.prisma.utilisateur.findMany(query);
@@ -287,7 +331,7 @@ export class UtilisateurRepository {
   async createUtilisateur(utilisateur: Utilisateur) {
     try {
       await this.prisma.utilisateur.create({
-        data: this.buildDBFromUtilisateur(utilisateur),
+        data: this.buildNewDBUserFromUtilisateur(utilisateur),
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -465,6 +509,7 @@ export class UtilisateurRepository {
       brevo_updated_at: user.brevo_updated_at,
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
+      code_commune: user.code_commune,
     });
 
     if (result.kyc_history) {
@@ -479,8 +524,15 @@ export class UtilisateurRepository {
     return result;
   }
 
-  private buildDBFromUtilisateur(user: Utilisateur): UtilisateurDB {
-    const result = {
+  private buildNewDBUserFromUtilisateur(user: Utilisateur): UtilisateurDB {
+    return {
+      ...this.buildDBUserCoreDataFromUtilisateur(user),
+      ...this.buildDBVersionnedDataFromUtilisateur(user),
+    };
+  }
+
+  private buildDBUserCoreDataFromUtilisateur(user: Utilisateur): UtilisateurDB {
+    return {
       id: user.id ? user.id : uuidv4(),
       nom: user.nom,
       prenom: user.prenom,
@@ -497,6 +549,50 @@ export class UtilisateurRepository {
       prevent_checkcode_before: user.prevent_checkcode_before,
       sent_email_count: user.sent_email_count,
       prevent_sendemail_before: user.prevent_sendemail_before,
+      version: user.version,
+      failed_login_count: user.failed_login_count,
+      prevent_login_before: user.prevent_login_before,
+      migration_enabled: user.migration_enabled,
+      tag_ponderation_set: user.tag_ponderation_set,
+      force_connexion: user.force_connexion,
+      derniere_activite: user.derniere_activite,
+      annee_naissance: user.annee_naissance,
+      db_version: user.db_version,
+      is_magic_link_user: user.is_magic_link_user,
+      code_postal_classement: user.code_postal_classement,
+      commune_classement: user.commune_classement,
+      points_classement: user.points_classement,
+      rank: user.rank,
+      rank_commune: user.rank_commune,
+      status: user.status,
+      couverture_aides_ok: user.couverture_aides_ok,
+      source_inscription: user.source_inscription,
+      unsubscribe_mail_token: user.unsubscribe_mail_token,
+      est_valide_pour_classement: user.est_valide_pour_classement,
+      brevo_created_at: user.brevo_created_at,
+      brevo_updated_at: user.brevo_updated_at,
+      mobile_token: user.mobile_token,
+      mobile_token_updated_at: user.mobile_token_updated_at,
+      created_at: undefined,
+      updated_at: undefined,
+      todo: undefined,
+      gamification: undefined,
+      unlocked_features: undefined,
+      history: undefined,
+      logement: undefined,
+      kyc: undefined,
+      missions: undefined,
+      bilbiotheque_services: undefined,
+      notification_history: undefined,
+      defis: undefined,
+      code_commune: user.code_commune,
+    };
+  }
+
+  private buildDBVersionnedDataFromUtilisateur(
+    user: Utilisateur,
+  ): Partial<UtilisateurDB> {
+    return {
       todo: Upgrader.serialiseToLastVersion(
         user.parcours_todo,
         SerialisableDomain.ParcoursTodo,
@@ -533,37 +629,60 @@ export class UtilisateurRepository {
         user.notification_history,
         SerialisableDomain.NotificationHistory,
       ),
-      version: user.version,
-      failed_login_count: user.failed_login_count,
-      prevent_login_before: user.prevent_login_before,
-      migration_enabled: user.migration_enabled,
-      tag_ponderation_set: user.tag_ponderation_set,
       defis: Upgrader.serialiseToLastVersion(
         user.defi_history,
         SerialisableDomain.DefiHistory,
       ),
-      force_connexion: user.force_connexion,
-      derniere_activite: user.derniere_activite,
-      annee_naissance: user.annee_naissance,
-      created_at: undefined,
-      updated_at: undefined,
-      db_version: user.db_version,
-      is_magic_link_user: user.is_magic_link_user,
-      code_postal_classement: user.code_postal_classement,
-      commune_classement: user.commune_classement,
-      points_classement: user.points_classement,
-      rank: user.rank,
-      rank_commune: user.rank_commune,
-      status: user.status,
-      couverture_aides_ok: user.couverture_aides_ok,
-      source_inscription: user.source_inscription,
-      unsubscribe_mail_token: user.unsubscribe_mail_token,
-      est_valide_pour_classement: user.est_valide_pour_classement,
-      brevo_created_at: user.brevo_created_at,
-      brevo_updated_at: user.brevo_updated_at,
-      mobile_token: user.mobile_token,
-      mobile_token_updated_at: user.mobile_token_updated_at,
     };
-    return result;
+  }
+
+  private buildDBFromUtilisateurForUpdate(
+    user: Utilisateur,
+    scopes?: Scope[],
+  ): Partial<UtilisateurDB> {
+    const versionned_data = this.buildDBVersionnedDataFromUtilisateur(user);
+
+    if (scopes && !scopes.includes(Scope.ALL)) {
+      if (!scopes.includes(Scope.bilbiotheque_services)) {
+        versionned_data.bilbiotheque_services = undefined;
+      }
+      if (!scopes.includes(Scope.defis)) {
+        versionned_data.defis = undefined;
+      }
+      if (!scopes.includes(Scope.gamification)) {
+        versionned_data.gamification = undefined;
+      }
+      if (!scopes.includes(Scope.history_article_quizz_aides)) {
+        versionned_data.history = undefined;
+      }
+      if (!scopes.includes(Scope.kyc)) {
+        versionned_data.kyc = undefined;
+      }
+      if (!scopes.includes(Scope.logement)) {
+        versionned_data.logement = undefined;
+      }
+      if (!scopes.includes(Scope.missions)) {
+        versionned_data.missions = undefined;
+      }
+      if (!scopes.includes(Scope.notification_history)) {
+        versionned_data.notification_history = undefined;
+      }
+      if (!scopes.includes(Scope.todo)) {
+        versionned_data.todo = undefined;
+      }
+      if (!scopes.includes(Scope.unlocked_features)) {
+        versionned_data.unlocked_features = undefined;
+      }
+      if (!scopes.includes(Scope.core)) {
+        return {
+          id: user.id,
+          ...versionned_data,
+        };
+      }
+    }
+    return {
+      ...this.buildDBUserCoreDataFromUtilisateur(user),
+      ...versionned_data,
+    };
   }
 }

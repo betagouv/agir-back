@@ -10,5 +10,6 @@ export enum CMSModel {
   partenaire = 'partenaire',
   kyc = 'kyc',
   mission = 'mission',
+  action = 'action',
   unkown = 'unkown',
 }

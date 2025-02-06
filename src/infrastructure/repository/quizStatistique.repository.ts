@@ -20,6 +20,7 @@ export class QuizStatistiqueRepository {
         nombre_de_mauvaise_reponse: nombreDeMauvaiseReponse,
       },
       update: {
+        titre,
         nombre_de_bonne_reponse: nombreDeBonneReponse,
         nombre_de_mauvaise_reponse: nombreDeMauvaiseReponse,
       },

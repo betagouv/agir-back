@@ -673,6 +673,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       titre: 'titreA',
       partenaire_id: '123',
+      derniere_maj: new Date(123),
     });
     await partenaireRepository.loadPartenaires();
 
@@ -682,6 +683,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.content_id).toEqual('1');
     expect(response.body.titre).toEqual('titreA');
+    expect(response.body.derniere_maj).toEqual('1970-01-01T00:00:00.123Z');
     expect(response.body.contenu).toEqual('un long article');
     expect(response.body.favoris).toEqual(false);
     expect(response.body.like_level).toEqual(null);

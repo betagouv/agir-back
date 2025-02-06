@@ -56,6 +56,7 @@ export class ArticleRepository {
       rubrique_ids: article_def.rubrique_ids,
       rubrique_labels: article_def.rubrique_labels,
       sources: article_def.sources as any,
+      derniere_maj: article_def.derniere_maj,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -229,6 +230,7 @@ export class ArticleRepository {
       tag_article: articleDB.tag_article,
       contenu: articleDB.contenu,
       sources: articleDB.sources as any,
+      derniere_maj: articleDB.derniere_maj,
     });
   }
 }

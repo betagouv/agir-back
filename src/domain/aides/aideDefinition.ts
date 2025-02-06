@@ -1,7 +1,8 @@
+import { ContenuLocal } from '../contenu/contenuLocal';
 import { Thematique } from '../contenu/thematique';
 import { Besoin } from './besoin';
 
-export class AideDefinition {
+export class AideDefinition implements ContenuLocal {
   constructor(data: AideDefinition) {
     Object.assign(this, data);
   }
@@ -30,4 +31,5 @@ export class AideDefinition {
   clicked_demande?: boolean;
   clicked_infos?: boolean;
   date_expiration: Date;
+  derniere_maj: Date;
 }

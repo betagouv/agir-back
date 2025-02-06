@@ -12,7 +12,7 @@ export class KycStatistiqueUsecase {
 
   async calculStatistique(): Promise<string[]> {
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds({});
 
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(

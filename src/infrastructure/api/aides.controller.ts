@@ -10,7 +10,6 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -18,12 +17,12 @@ import {
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
-import { ApplicationError } from '../applicationError';
+import { InputAideVeloOpenAPI } from './types/aide/inputAideVeloOpenAPI';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller()
 @ApiBearerAuth()
@@ -99,6 +98,28 @@ export class AidesController extends GenericControler {
     const result = await this.aidesUsecase.simulerAideVelo(
       utilisateurId,
       body.prix_du_velo,
+      body.etat_du_velo,
+    );
+    return AidesVeloParTypeAPI.mapToAPI(result);
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 2, ttl: 1000 } })
+  @ApiOkResponse({ type: AidesVeloParTypeAPI })
+  @Post('aides/simulerAideVelo')
+  @ApiBody({
+    type: InputAideVeloOpenAPI,
+  })
+  @UseGuards(AuthGuard)
+  async simulerAideVelo(
+    @Body() body: InputAideVeloOpenAPI,
+  ): Promise<AidesVeloParTypeAPI> {
+    const result = await this.aidesUsecase.simulerAideVeloParCodeCommmuneOuEPCI(
+      body.code_insee,
+      body.prix_du_velo,
+      body.rfr,
+      body.parts,
+      body.etat_du_velo,
     );
     return AidesVeloParTypeAPI.mapToAPI(result);
   }

@@ -32,10 +32,12 @@ export enum SourceInscription {
   web = 'web',
   mobile = 'mobile',
   web_ngc = 'web_ngc',
+  france_connect = 'france_connect',
   inconnue = 'inconnue',
 }
 export enum Scope {
   ALL = 'ALL',
+  core = 'core',
   todo = 'todo',
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',
@@ -101,6 +103,7 @@ export class Utilisateur {
   brevo_updated_at: Date;
   mobile_token: string;
   mobile_token_updated_at: Date;
+  code_commune: string;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -186,6 +189,7 @@ export class Utilisateur {
       brevo_updated_at: null,
       mobile_token_updated_at: null,
       mobile_token: null,
+      code_commune: null,
     });
   }
 

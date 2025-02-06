@@ -30,6 +30,7 @@ import {
   Partenaire,
   Conformite,
   AideExpirationWarning,
+  Action,
 } from '.prisma/client';
 import {
   Aide,
@@ -66,6 +67,9 @@ import { DefiRepository } from '../src/infrastructure/repository/defi.repository
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
+import { EchelleAide } from '../src/domain/aides/echelle';
+import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import { TypeAction } from '../src/domain/actions/typeAction';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -86,6 +90,7 @@ export enum DB {
   mission = 'mission',
   kYC = 'kYC',
   universStatistique = 'universStatistique',
+  action = 'action',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -95,6 +100,7 @@ export class TestUtil {
     aide: TestUtil.aideData,
     conformite: TestUtil.conformiteData,
     defi: TestUtil.defiData,
+    action: TestUtil.actionData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
@@ -189,6 +195,7 @@ export class TestUtil {
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
     await this.prisma.defi.deleteMany();
+    await this.prisma.action.deleteMany();
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
@@ -204,6 +211,7 @@ export class TestUtil {
     await this.prisma.partenaire.deleteMany();
     await this.prisma.aideExpirationWarning.deleteMany();
     await this.prisma.conformite.deleteMany();
+    await this.prisma.communesAndEPCI.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -310,6 +318,7 @@ export class TestUtil {
       content_id: '1',
       titre: 'titreA',
       date_expiration: null,
+      derniere_maj: null,
       partenaire_id: undefined,
       codes_postaux: ['91120'],
       thematiques: [Thematique.climat, Thematique.logement],
@@ -325,7 +334,7 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
-      echelle: 'National',
+      echelle: EchelleAide.National,
       url_source: 'https://hello',
       url_demande: 'https://demande',
       ...override,
@@ -358,6 +367,27 @@ export class TestUtil {
       mois: [],
       conditions: [],
       impact_kg_co2: 5,
+      ...override,
+    };
+  }
+  static actionData(override?: Partial<Defi>): Action {
+    return {
+      cms_id: '111',
+      titre: 'The titre',
+      sous_titre: 'Sous titre',
+      code: 'The code',
+      besoins: [],
+      comment: 'Astuces',
+      pourquoi: 'En quelques mots',
+      kyc_ids: [],
+      lvo_action: CategorieRecherche.emprunter,
+      lvo_objet: 'chaussure',
+      quizz_ids: [],
+      recette_categorie: CategorieRecherche.dinde_volaille,
+      type: TypeAction.classique,
+      thematique: Thematique.consommation,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
@@ -601,6 +631,7 @@ export class TestUtil {
       brevo_updated_at: null,
       mobile_token: null,
       mobile_token_updated_at: null,
+      code_commune: null,
       ...override,
     };
   }
@@ -693,6 +724,7 @@ export class TestUtil {
       content_id: 'contentId',
       titre: 'Titre de mon article',
       soustitre: 'Sous titre de mon article',
+      derniere_maj: null,
       source: undefined,
       image_url: undefined,
       partenaire_id: undefined,

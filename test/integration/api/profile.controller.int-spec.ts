@@ -727,6 +727,25 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
+  it('PATCH /utilisateurs/id/logement - maj code postal positionne le code insee de la commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.code_commune).toEqual('21231');
+  });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -962,7 +981,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
 
     const userDB1 = await utilisateurRepository.getById('1', [Scope.ALL]);
-    const userDB2 = await utilisateurRepository.getById('2', [Scope.ALL]);
 
     // THEN
     expect(response.status).toBe(201);

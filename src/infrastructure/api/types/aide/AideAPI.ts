@@ -5,14 +5,17 @@ import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Besoin } from '../../../../../src/domain/aides/besoin';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { EchelleAide } from '../../../../domain/aides/echelle';
 
 export class AideAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
+  @ApiProperty({ enum: EchelleAide }) echelle: EchelleAide;
   @ApiProperty() url_simulateur: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;
+  @ApiProperty() derniere_maj: Date;
   @ApiProperty() is_simulateur: boolean;
   @ApiProperty() codes_postaux: string[];
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
@@ -37,6 +40,7 @@ export class AideAPI {
       content_id: aide.content_id,
       titre: aide.titre,
       contenu: aide.contenu,
+      derniere_maj: aide.derniere_maj,
       url_simulateur: aide.url_simulateur,
       url_source: aide.url_source,
       url_demande: aide.url_demande,
@@ -54,6 +58,7 @@ export class AideAPI {
       partenaire_nom: partenaire ? partenaire.nom : null,
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
+      echelle: EchelleAide[aide.echelle],
     };
   }
 }

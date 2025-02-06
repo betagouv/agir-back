@@ -2,13 +2,14 @@ import { DifficultyLevel } from './difficultyLevel';
 import { Thematique } from './thematique';
 import { TagUtilisateur } from '../scoring/tagUtilisateur';
 import { Categorie } from './categorie';
+import { ContenuLocal } from './contenuLocal';
 
 export class SourceArticle {
   label: string;
   url: string;
 }
 
-export class ArticleDefinition {
+export class ArticleDefinition implements ContenuLocal {
   content_id: string;
   titre: string;
   soustitre: string;
@@ -34,4 +35,5 @@ export class ArticleDefinition {
   codes_departement: string[];
   codes_region: string[];
   tag_article: string;
+  derniere_maj: Date;
 }

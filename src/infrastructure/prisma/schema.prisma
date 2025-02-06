@@ -75,6 +75,7 @@ model Utilisateur {
   brevo_updated_at           DateTime? @db.Timestamptz(3)
   mobile_token               String?   @unique
   mobile_token_updated_at    DateTime? @db.Timestamptz(3)
+  code_commune               String?
 }
 
 model Statistique {
@@ -113,6 +114,16 @@ model ServicesFavorisStatistique {
   updated_at    DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([service_id, favoris_id])
+}
+
+model CommunesAndEPCI {
+  code_insee     String   @id
+  code_postaux   String[] @default([])
+  codes_communes String[] @default([])
+  is_epci        Boolean
+  is_commune     Boolean
+  type_epci      String? // 'CA' | 'CC' | 'CU' | 'MET69' | 'METRO'
+  nom            String
 }
 
 model ArticleStatistique {
@@ -205,8 +216,28 @@ model Aide {
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
   date_expiration       DateTime? @db.Timestamptz(3)
+  derniere_maj          DateTime? @db.Timestamptz(3)
   created_at            DateTime  @default(now()) @db.Timestamptz(3)
   updated_at            DateTime  @updatedAt @db.Timestamptz(3)
+}
+
+model Action {
+  code              String   @id
+  cms_id            String?  @unique
+  type              String   @default("classique")
+  titre             String
+  sous_titre        String?
+  pourquoi          String?
+  comment           String?
+  thematique        String
+  besoins           String[] @default([])
+  quizz_ids         String[] @default([])
+  kyc_ids           String[] @default([])
+  recette_categorie String?
+  lvo_action        String?
+  lvo_objet         String?
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Defi {
@@ -227,33 +258,34 @@ model Defi {
 }
 
 model Article {
-  content_id            String   @id
+  content_id            String    @id
   titre                 String
   soustitre             String?
   source                String?
-  sources               Json?    @default("[]")
+  sources               Json?     @default("[]")
   image_url             String?
   partenaire_id         String?
   contenu               String?
-  tags_utilisateur      String[] @default([])
-  rubrique_ids          String[] @default([])
-  rubrique_labels       String[] @default([])
-  codes_postaux         String[] @default([])
+  tags_utilisateur      String[]  @default([])
+  rubrique_ids          String[]  @default([])
+  rubrique_labels       String[]  @default([])
+  codes_postaux         String[]  @default([])
   duree                 String?
   frequence             String?
-  difficulty            Int      @default(1)
-  points                Int      @default(0)
+  difficulty            Int       @default(1)
+  points                Int       @default(0)
   thematique_principale String?
-  thematiques           String[] @default([])
-  categorie             String   @default("recommandation")
-  mois                  Int[]    @default([])
-  include_codes_commune String[] @default([])
-  exclude_codes_commune String[] @default([])
-  codes_departement     String[] @default([])
-  codes_region          String[] @default([])
+  thematiques           String[]  @default([])
+  categorie             String    @default("recommandation")
+  mois                  Int[]     @default([])
+  include_codes_commune String[]  @default([])
+  exclude_codes_commune String[]  @default([])
+  codes_departement     String[]  @default([])
+  codes_region          String[]  @default([])
   tag_article           String?
-  created_at            DateTime @default(now()) @db.Timestamptz(3)
-  updated_at            DateTime @updatedAt @db.Timestamptz(3)
+  derniere_maj          DateTime? @db.Timestamptz(3)
+  created_at            DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
 }
 
 model Partenaire {

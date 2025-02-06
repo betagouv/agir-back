@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { App } from '../domain/app';
-import { Feature } from '../../src/domain/gamification/feature';
-import { DefiStatus } from '../../src/domain/defis/defi';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -16,6 +15,7 @@ export class MigrationUsecase {
   constructor(
     public utilisateurRepository: UtilisateurRepository,
     public kycRepository: KycRepository,
+    public communeRepository: CommuneRepository,
   ) {}
 
   async lockUserMigration(): Promise<any> {
@@ -28,31 +28,27 @@ export class MigrationUsecase {
   async migrateUsers(): Promise<UserMigrationReport[]> {
     const version_target = App.currentUserSystemVersion();
     const result = [];
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({
+      migration_enabled: true,
+      max_version_excluded: version_target,
+    });
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const log = { user_id: user_id, migrations: [] };
-      let utilisateur = await this.utilisateurRepository.getById(user_id, []);
+      let user = await this.utilisateurRepository.getById(user_id, []);
       for (
-        let current_version = utilisateur.version + 1;
+        let current_version = user.version + 1;
         current_version <= version_target;
         current_version++
       ) {
-        let utilisateur = await this.utilisateurRepository.getById(user_id, [
-          Scope.ALL,
-        ]);
-        if (!utilisateur.migration_enabled) {
-          log.migrations.push({
-            version: current_version,
-            ok: true,
-            info: 'Migrations disabled for that user',
-          });
-          break;
-        }
         const migration_function =
           this['migrate_'.concat(current_version.toString())];
         if (migration_function) {
-          const migration_result = await migration_function(utilisateur, this);
+          const migration_result = await migration_function(
+            user_id,
+            current_version,
+            this,
+          );
           log.migrations.push({
             version: current_version,
             ok: migration_result.ok,
@@ -61,8 +57,6 @@ export class MigrationUsecase {
           if (!migration_result.ok) {
             break;
           }
-          utilisateur.version = current_version;
-          await this.utilisateurRepository.updateUtilisateur(utilisateur);
         } else {
           log.migrations.push({
             version: current_version,
@@ -78,25 +72,34 @@ export class MigrationUsecase {
   }
 
   private async migrate_1(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
+    const user = await _this.utilisateurRepository.getById(user_id, []);
+    user.version = version;
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+      Scope.core,
+    ]);
     return { ok: true, info: 'dummy migration' };
   }
   private async migrate_2(
-    utilisateur: Utilisateur,
-    _this: MigrationUsecase,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: true, info: 'Migration already done' };
   }
   private async migrate_3(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: true, info: 'Migration already done' };
   }
   private async migrate_4(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     const plus_600 = utilisateur.gamification.points > 600;
     if (plus_600) {
       utilisateur.unlocked_features.add(Feature.bibliotheque);
@@ -105,9 +108,12 @@ export class MigrationUsecase {
       ok: true,
       info: `revealed bilbio for user ${utilisateur.id} of ${utilisateur.gamification.points} points : ${plus_600}`,
     };
+    */
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_5(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
     /*
     utilisateur.logement.chauffage = utilisateur.onboardingData.chauffage;
@@ -118,23 +124,18 @@ export class MigrationUsecase {
     utilisateur.logement.proprietaire = utilisateur.onboardingData.proprietaire;
     utilisateur.logement.superficie = utilisateur.onboardingData.superficie;
     utilisateur.logement.type = utilisateur.onboardingData.residence;*/
-    return {
-      ok: true,
-      info: `migrated logement data`,
-    };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_6(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
     /*
     utilisateur.transport.avions_par_an = utilisateur.onboardingData.avion;
     utilisateur.transport.transports_quotidiens =
       utilisateur.onboardingData.transports;
       */
-    return {
-      ok: true,
-      info: `migrated transport data`,
-    };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_7(utilisateur: Utilisateur) {
     /*
@@ -150,11 +151,13 @@ export class MigrationUsecase {
       info: `user : ${utilisateur.id} switched ${count} status deja_fait => fait`,
     };
     */
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_8(
-    utilisateur: Utilisateur,
-    _this: MigrationUsecase,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     const kyc_def_liste = KycRepository.getCatalogue();
     const result = [];
     for (const question of utilisateur.kyc_history.getRawAnsweredKYCs()) {
@@ -168,16 +171,22 @@ export class MigrationUsecase {
       ok: true,
       info: `CMS IDS injected ${JSON.stringify(result)}`,
     };
+    */
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_9(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
-    utilisateur.revenu_fiscal = null;
-    return { ok: true, info: 'set revenu_fiscal = null' };
+    //utilisateur.revenu_fiscal = null;
+    //return { ok: true, info: 'set revenu_fiscal = null' };
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_10(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     utilisateur.points_classement = utilisateur.gamification.points;
     utilisateur.commune_classement = utilisateur.logement
       ? utilisateur.logement.commune
@@ -190,23 +199,50 @@ export class MigrationUsecase {
       ok: true,
       info: 'migrated points/code_postal/commune pour classement',
     };
+    */
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_11(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
+    /*
     if (utilisateur.parcours_todo.isEndedTodo()) {
       return { ok: true, info: 'no reset, todo terminée' };
     }
     utilisateur.resetAllHistory();
     return { ok: true, info: 'reset user car todo pas terminée' };
+    */
+    return { ok: true, info: 'Migration already done' };
   }
   private async migrate_12(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: false, info: 'to implement' };
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.logement,
+    ]);
+    if (utilisateur.logement.code_postal && utilisateur.logement.commune) {
+      const code_commune = _this.communeRepository.getCodeCommune(
+        utilisateur.logement.code_postal,
+        utilisateur.logement.commune,
+      );
+      utilisateur.code_commune = code_commune;
+    }
+    utilisateur.version = version;
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+    return {
+      ok: true,
+      info: `Set commune ${utilisateur.code_commune}`,
+    };
   }
   private async migrate_13(
-    utilisateur: Utilisateur,
+    user_id: string,
+    version: number,
   ): Promise<{ ok: boolean; info: string }> {
     return { ok: false, info: 'to implement' };
   }

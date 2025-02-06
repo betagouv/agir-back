@@ -1,4 +1,11 @@
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { Besoin } from '../../../src/domain/aides/besoin';
+import { EchelleAide } from '../../../src/domain/aides/echelle';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -224,6 +231,61 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       'Île-de-France Mobilités',
     );
   });
+
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo à Montpellier, aide à l'achat d'un vélo éléctrique uniquement pour vélo d'occasion`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 10000,
+      parts: 1,
+      logement: {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.maison,
+        code_postal: '34000',
+        chauffage: Chauffage.bois,
+        commune: 'MONTPELLIER',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: true,
+        proprietaire: true,
+        code_commune: '34172',
+      },
+    });
+
+    // WHEN
+    const response_neuf = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
+    });
+
+    // THEN
+    expect(response_neuf.status).toBe(201);
+    expect(
+      response_neuf.body['électrique'].find(
+        (a) => a.libelle === 'Montpellier Méditerranée Métropole',
+      ),
+    ).toBeUndefined();
+
+    // WHEN
+    const response_occasion = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'occasion',
+    });
+
+    // THEN
+    expect(response_occasion.status).toBe(201);
+    expect(
+      response_occasion.body['électrique'].find(
+        (a) => a.libelle === 'Montpellier Méditerranée Métropole',
+      ),
+    ).toBeDefined();
+  });
+
   it('GET /utilisateurs/:utilisateurId/aides', async () => {
     // GIVEN
 
@@ -263,6 +325,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     expect(aideBody.content_id).toEqual('1');
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
+    expect(aideBody.echelle).toEqual(EchelleAide.National);
     expect(aideBody.is_simulateur).toEqual(true);
     expect(aideBody.url_source).toEqual('https://hello');
     expect(aideBody.url_demande).toEqual('https://demande');
@@ -531,27 +594,87 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       content_id: '1',
       titre: 'titreA',
       contenu: "Contenu de l'aide",
-      codes_postaux: ['21000'],
+      codes_postaux: '21000',
       thematiques: ['climat', 'logement'],
       montant_max: 999,
-      codes_departement: [],
-      codes_region: [],
-      com_agglo: [],
-      com_urbaine: [],
-      com_com: [],
-      metropoles: ['Dijon Métropole'],
+      codes_departement: '',
+      codes_region: '',
+      com_agglo: '',
+      com_urbaine: '',
+      com_com: '',
+      metropoles: 'Dijon Métropole',
       echelle: 'National',
       url_source: 'https://hello',
       url_demande: 'https://demande',
     });
-    expect(response.body[0].metropoles).toEqual(['Dijon Métropole']);
-    expect(response.body[1].com_agglo).toEqual(['CA du Pays de Gex']);
-    expect(response.body[2].com_agglo).toEqual([
+    expect(response.body[0].metropoles).toEqual('Dijon Métropole');
+    expect(response.body[1].com_agglo).toEqual('CA du Pays de Gex');
+    expect(response.body[2].com_agglo).toEqual(
       'CA du Bassin de Bourg-en-Bresse',
-    ]);
-    expect(response.body[2].com_com).toEqual([
+    );
+    expect(response.body[2].com_com).toEqual(
       `CC Rives de l'Ain - Pays du Cerdon`,
+    );
+    expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
+  });
+
+  it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {
+    // GIVEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
+
+    // WHEN
+    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
+      code_insee: '21231',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    console.log(response.body);
+    expect(response.body['cargo électrique']).toEqual([
+      {
+        collectivite: {
+          kind: 'département',
+          value: '21',
+        },
+        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
+
+Dispositif valable jusqu'au 31 décembre 2024.`,
+        libelle: "Département Côte-d'Or",
+        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
+        logo: 'http://localhost:3000/logo_cd21.webp',
+        montant: 250,
+        plafond: 250,
+      },
     ]);
-    expect(response.body[3].com_urbaine).toEqual(['CU Caen la Mer']);
+  });
+
+  it(`POST /aides/simulerAideVelo OK avec un code métropole`, async () => {
+    // GIVEN
+    process.env.MINIATURES_URL = 'http://localhost:3000';
+
+    // WHEN
+    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
+      code_insee: '242100410',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    console.log(response.body);
+    expect(response.body['cargo électrique']).toEqual([
+      {
+        collectivite: {
+          kind: 'département',
+          value: '21',
+        },
+        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
+
+Dispositif valable jusqu'au 31 décembre 2024.`,
+        libelle: "Département Côte-d'Or",
+        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
+        logo: 'http://localhost:3000/logo_cd21.webp',
+        montant: 250,
+        plafond: 250,
+      },
+    ]);
   });
 });

@@ -33,10 +33,14 @@ import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 
 @Injectable()
 export class CMSWebhookUsecase {
   constructor(
+    private actionRepository: ActionRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private thematiqueRepository: ThematiqueRepository,
@@ -79,6 +83,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateMission(cmsWebhookAPI);
+      }
+    }
+    if (cmsWebhookAPI.model === CMSModel.action) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteAction(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteAction(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateAction(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateAction(cmsWebhookAPI);
       }
     }
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
@@ -214,12 +230,22 @@ export class CMSWebhookUsecase {
       this.buildMissionFromCMSData(cmsWebhookAPI.entry),
     );
   }
+  async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.actionRepository.upsert(
+      this.buildActionFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
 
   async deleteKyc(cmsWebhookAPI: CMSWebhookAPI) {
     await this.kycRepository.delete(cmsWebhookAPI.entry.id);
   }
   async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
+  }
+  async deleteAction(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.actionRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
 
   private getImageUrlFromImageField(image_field: CMSWebhookImageURLAPI) {
@@ -267,6 +293,9 @@ export class CMSWebhookUsecase {
       content_id: hook.entry.id.toString(),
       tags_utilisateur: [],
       titre: hook.entry.titre,
+      derniere_maj: hook.entry.derniere_maj
+        ? new Date(hook.entry.derniere_maj)
+        : null,
       soustitre: hook.entry.sousTitre,
       source: hook.entry.source,
       image_url: this.getImageUrlFromImageField(hook.entry.imageUrl),
@@ -350,6 +379,7 @@ export class CMSWebhookUsecase {
       date_expiration: entry.date_expiration
         ? new Date(entry.date_expiration)
         : null,
+      derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       codes_postaux: this.split(entry.codes_postaux),
       thematiques: entry.thematiques
@@ -380,6 +410,29 @@ export class CMSWebhookUsecase {
       content_id: entry.id.toString(),
       titre: entry.Titre,
       contenu: entry.contenu,
+      code: entry.code,
+    };
+  }
+
+  private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      titre: entry.titre,
+      sous_titre: entry.sous_titre,
+      pourquoi: entry.pourquoi,
+      comment: entry.comment,
+      lvo_action: entry.action_lvo,
+      lvo_objet: entry.objet_lvo,
+      type: TypeAction[entry.type_action],
+      besoins: entry.besoins ? entry.besoins.map((elem) => elem.code) : [],
+      quizz_ids: entry.quizzes
+        ? entry.quizzes.map((elem) => elem.id.toString())
+        : [],
+      kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
+      recette_categorie: entry.categorie_recettes,
+      thematique: entry.thematique
+        ? Thematique[entry.thematique.code]
+        : Thematique.climat,
       code: entry.code,
     };
   }

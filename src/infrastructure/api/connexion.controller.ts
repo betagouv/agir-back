@@ -91,15 +91,6 @@ export class ConnexionController extends GenericControler {
     await this.connexion_v2_Usecase.disconnectUser(utilisateurId);
   }
 
-  @Post('utilisateurs/logout')
-  @ApiOperation({
-    summary: `Déconnecte TOUS LES UTILISATEURS`,
-  })
-  async disconnectAll(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.connexion_v2_Usecase.disconnectAllUsers();
-  }
-
   @Post('utilisateurs/oubli_mot_de_passe')
   @ApiOperation({
     summary:

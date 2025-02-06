@@ -38,10 +38,9 @@ export class MissionUsecase {
   ): Promise<{ id: string; email: string }[]> {
     const result: { id: string; email: string }[] = [];
 
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
-      undefined,
-      true,
-    );
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds({
+      is_active: true,
+    });
 
     for (const user_id of user_id_liste) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
@@ -79,7 +78,10 @@ export class MissionUsecase {
       }
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.missions],
+    );
 
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }
@@ -99,7 +101,10 @@ export class MissionUsecase {
       utilisateur,
     );
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.missions],
+    );
 
     return this.personnalisator.personnaliser(final_result, utilisateur);
   }

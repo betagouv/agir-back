@@ -17,6 +17,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import validator from 'validator';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { Logement } from '../domain/logement/logement';
 
 const FIELD_MAX_LENGTH = 40;
 
@@ -130,6 +131,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
+    const update_data: Logement = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -154,19 +156,23 @@ export class ProfileUsecase {
     }
 
     if (input.commune) {
-      const ok = this.communeRepository.checkOKCodePostalAndCommune(
+      const code_commune = this.communeRepository.getCodeCommune(
         input.code_postal,
         input.commune,
       );
-      if (!ok) {
+      if (!code_commune) {
         ApplicationError.throwBadCodePostalAndCommuneAssociation(
           input.code_postal,
           input.commune,
         );
       }
+      utilisateur.code_commune = this.AorB(
+        code_commune,
+        utilisateur.code_commune,
+      );
     }
 
-    utilisateur.logement.patch(input, utilisateur);
+    utilisateur.logement.patch(update_data, utilisateur);
 
     try {
       utilisateur.kyc_history.patchLogement(input);
@@ -247,7 +253,7 @@ export class ProfileUsecase {
     if (confirmation !== 'CONFIRMATION RESET') {
       ApplicationError.throwMissingResetConfirmation();
     }
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
 
@@ -261,7 +267,7 @@ export class ProfileUsecase {
     let count_onboarding_7_done = 0;
     let count_onboarding_non_done = 0;
 
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];
       const utilisateur = await this.utilisateurRepository.getById(user_id, [
@@ -295,7 +301,7 @@ export class ProfileUsecase {
     couvert: number;
     pas_couvert: number;
   }> {
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     let couvert = 0;
     let pas_couvert = 0;
     for (const id of userIdList) {

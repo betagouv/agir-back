@@ -43,21 +43,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { MissionUsecase } from '../../usecase/mission.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-
-class VersionAPI {
-  @ApiProperty()
-  major: number;
-  @ApiProperty()
-  minor: number;
-  @ApiProperty()
-  patch: number;
-}
+import { PushNotificator } from '../push_notifications/pushNotificator';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { CommunesUsecase } from '../../usecase/communes.usecase';
 
 @Controller()
 @ApiTags('Z - Admin')
 @ApiBearerAuth()
 export class AdminController extends GenericControler {
   constructor(
+    private pushNotificator: PushNotificator,
     private migrationUsecase: MigrationUsecase,
     private rechercheServicesUsecase: RechercheServicesUsecase,
     private profileUsecase: ProfileUsecase,
@@ -65,6 +60,7 @@ export class AdminController extends GenericControler {
     private linkyUsecase: LinkyUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
+    private communesUsecase: CommunesUsecase,
     private referentielUsecase: ReferentielUsecase,
     private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
@@ -78,6 +74,7 @@ export class AdminController extends GenericControler {
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private mailerUsecase: MailerUsecase,
     private prisma: PrismaService,
+    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
     super();
   }
@@ -402,5 +399,51 @@ export class AdminController extends GenericControler {
   async emailsAideExpiration(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.aidesUsecase.envoyerEmailsAideExpiration();
+  }
+
+  @Post('utilisateurs/logout')
+  @ApiOperation({
+    summary: `Déconnecte TOUS LES UTILISATEURS`,
+  })
+  async disconnectAll(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.connexion_v2_Usecase.disconnectAllUsers();
+  }
+
+  @Post('/admin/load_communes_epci')
+  @ApiOperation({
+    summary: `Charge en base le référentiel de communes et EPCI`,
+  })
+  async load_communes_epci(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.communesUsecase.loadAllEpciAndCOmmunes();
+  }
+
+  @Post('/admin/test_push_mobile')
+  @ApiOperation({
+    summary: `Envoie les emails pour les aides falguées comme bientôt expirées`,
+  })
+  @ApiQuery({
+    name: 'token',
+    type: String,
+    required: false,
+    description: `Token pour cibler le destinataire du message`,
+  })
+  async testPushNotif(
+    @Request() req,
+    @Query('titre') titre: string,
+    @Query('token') token?: string,
+  ) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.pushNotificator.pushMessage(
+      titre,
+      'test de test',
+      'https://dummyimage.com/600x400/000/fff',
+      {
+        page_type: 'quiz',
+        page_id: '110',
+      },
+      token,
+    );
   }
 }

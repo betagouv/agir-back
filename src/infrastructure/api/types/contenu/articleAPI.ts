@@ -23,6 +23,7 @@ export class ArticleBibliothequeAPI {
   @ApiProperty() favoris: boolean;
   @ApiProperty() like_level: number;
   @ApiProperty() read_date: Date;
+  @ApiProperty() derniere_maj: Date;
   @ApiProperty() contenu: string;
   @ApiProperty() partenaire_nom: string;
   @ApiProperty() partenaire_url: string;
@@ -38,6 +39,7 @@ export class ArticleBibliothequeAPI {
       content_id: content.content_id,
       titre: content.titre,
       soustitre: content.soustitre,
+      derniere_maj: content.derniere_maj,
       thematique_principale: content.thematique_principale,
       thematique_principale_label: ThematiqueRepository.getLibelleThematique(
         content.thematique_principale,

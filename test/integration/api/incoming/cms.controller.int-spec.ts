@@ -13,6 +13,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -64,6 +65,54 @@ describe('/api/incoming/cms (API test)', () => {
       ],
     },
   };
+
+  const CMS_DATA_ACTION = {
+    model: CMSModel.action,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      titre: 'titre',
+      sous_titre: 'sous-titre',
+      pourquoi: 'pourquoi',
+      comment: 'comment',
+      objet_lvo: 'phone',
+      action_lvo: 'donner',
+      type_action: 'quizz',
+      categorie_recettes: 'vegan',
+      quizzes: [
+        {
+          id: 1,
+        },
+        {
+          id: 2,
+        },
+      ],
+      kycs: [
+        {
+          id: 3,
+        },
+        {
+          id: 4,
+        },
+      ],
+      besoins: [
+        {
+          code: 'composter',
+        },
+        {
+          code: 'mieux_manger',
+        },
+      ],
+      code: 'code',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
+
   const CMS_DATA_DEFI_bad_tag = {
     model: CMSModel.defi,
     event: CMSEvent['entry.publish'],
@@ -225,6 +274,7 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
       },
       date_expiration: new Date(123),
+      derniere_maj: new Date(123),
       codes_postaux: '91120 , 75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       besoin: {
@@ -245,6 +295,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       titre: 'titre',
       sousTitre: 'soustitre 222',
+      derniere_maj: new Date(123),
       contenu: 'Un long article très intéressant',
       thematique_gamification: {
         id: 1,
@@ -409,6 +460,7 @@ describe('/api/incoming/cms (API test)', () => {
   };
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -485,6 +537,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
+    expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].tag_article).toEqual('composter');
@@ -547,6 +600,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.url_source).toEqual('haha');
     expect(aide.url_demande).toEqual('hihi');
     expect(aide.date_expiration).toEqual(new Date(123));
+    expect(aide.derniere_maj).toEqual(new Date(123));
     expect(aide.partenaire_id).toEqual('1');
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.montant_max).toEqual(123);
@@ -757,6 +811,36 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
   });
 
+  it('POST /api/incoming/cms - create a new action', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.comment).toEqual('comment');
+    expect(action.pourquoi).toEqual('pourquoi');
+    expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.lvo_action).toEqual('donner');
+    expect(action.lvo_objet).toEqual('phone');
+    expect(action.recette_categorie).toEqual('vegan');
+    expect(action.type).toEqual('quizz');
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.thematique).toEqual('alimentation');
+  });
+
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
     // GIVEN
 
@@ -805,6 +889,37 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
   });
 
+  it('POST /api/incoming/cms - updates an action', async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { cms_id: '123' });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.comment).toEqual('comment');
+    expect(action.pourquoi).toEqual('pourquoi');
+    expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.lvo_action).toEqual('donner');
+    expect(action.lvo_objet).toEqual('phone');
+    expect(action.recette_categorie).toEqual('vegan');
+    expect(action.type).toEqual('quizz');
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.thematique).toEqual('alimentation');
+  });
+
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
     // GIVEN
     await TestUtil.create(DB.aide, { content_id: '123' });
@@ -828,6 +943,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.url_demande).toEqual('hihi');
     expect(aide.partenaire_id).toEqual('1');
     expect(aide.date_expiration).toEqual(new Date(123));
+    expect(aide.derniere_maj).toEqual(new Date(123));
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
@@ -952,6 +1068,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(articles).toHaveLength(1);
     expect(articles[0].titre).toEqual('titre');
+    expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);

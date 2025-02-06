@@ -8,13 +8,18 @@ import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import {
+  Commune,
+  CommuneRepository,
+  EPCI,
+} from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { App } from '../domain/app';
+import { EchelleAide } from '../domain/aides/echelle';
 
 @Injectable()
 export class AidesUsecase {
@@ -110,13 +115,13 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = await this.communeRepository.getCodeCommune(
+    const code_commune = this.communeRepository.getCodeCommune(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
 
     const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
+      this.communeRepository.findDepartementRegionByCodePostal(
         utilisateur.logement.code_postal,
       );
 
@@ -138,8 +143,21 @@ export class AidesUsecase {
       }
     }
 
+    const aides_nationales = [];
+    const aides_locales = [];
+    for (const aide_def of result) {
+      if (aide_def.echelle === EchelleAide.National) {
+        aides_nationales.push(aide_def);
+      } else {
+        aides_locales.push(aide_def);
+      }
+    }
+
     return {
-      aides: this.personnalisator.personnaliser(result, utilisateur),
+      aides: this.personnalisator.personnaliser(
+        aides_nationales.concat(aides_locales),
+        utilisateur,
+      ),
       utilisateur: utilisateur,
     };
   }
@@ -147,6 +165,7 @@ export class AidesUsecase {
   async simulerAideVelo(
     utilisateurId: string,
     prix_velo: number,
+    etat_velo: 'neuf' | 'occasion' = 'neuf',
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -179,6 +198,51 @@ export class AidesUsecase {
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
+      'vélo . état': etat_velo,
+    });
+  }
+
+  async simulerAideVeloParCodeCommmuneOuEPCI(
+    code_insee_commune_ou_EPCI: string,
+    prix_velo: number,
+    rfr: number,
+    parts: number,
+    etat_velo: 'neuf' | 'occasion' = 'neuf',
+  ): Promise<AidesVeloParType> {
+    let commune: Commune;
+    let code_EPCI = undefined;
+    let epci: EPCI = undefined;
+    const IS_EPCI = this.communeRepository.isCodeInseeEPCI(
+      code_insee_commune_ou_EPCI,
+    );
+    if (IS_EPCI) {
+      code_EPCI = code_insee_commune_ou_EPCI;
+      epci = this.communeRepository.getEPCIByCode(code_EPCI);
+    } else {
+      commune = this.communeRepository.getCommuneByCodeINSEE(
+        code_insee_commune_ou_EPCI,
+      );
+    }
+    const code_commune_de_EPCI = epci?.membres[0].code;
+    const une_commune_EPCI =
+      this.communeRepository.getCommuneByCodeINSEE(code_commune_de_EPCI);
+
+    const region = commune?.region || une_commune_EPCI?.region;
+    const departement = commune?.departement || une_commune_EPCI?.departement;
+
+    return this.aidesVeloRepository.getSummaryVelos({
+      'localisation . code insee': IS_EPCI ? undefined : commune.code,
+      'localisation . epci': epci?.nom,
+      'localisation . région': region,
+      'localisation . département': departement,
+      'vélo . prix': prix_velo ? prix_velo : 1000,
+      'aides . pays de la loire . abonné TER': false,
+      'foyer . personnes': parts ? parts : 2,
+      'revenu fiscal de référence par part . revenu de référence': rfr
+        ? rfr
+        : 40000,
+      'revenu fiscal de référence par part . nombre de parts': parts,
+      'vélo . état': etat_velo,
     });
   }
 

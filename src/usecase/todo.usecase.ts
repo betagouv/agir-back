@@ -195,7 +195,7 @@ export class TodoUsecase {
   }
 
   public async updateAllUsersTodo(): Promise<string[]> {
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds();
+    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
     const log: string[] = [];
     for (let index = 0; index < userIdList.length; index++) {
       const user_id = userIdList[index];

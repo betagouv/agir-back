@@ -14,7 +14,7 @@ export class ArticleStatistiqueUsecase {
 
   async calculStatistique(): Promise<string[]> {
     const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds();
+      await this.utilisateurRepository.listUtilisateurIds({});
 
     const statistiqueArticles = await this.calculStatistiqueArticles(
       listeUtilisateursIds,

@@ -73,7 +73,9 @@ export class BilanCarboneUsecase {
   async computeBilanTousUtilisateurs(): Promise<string[]> {
     const MAX_USER_TO_COMPUTE = 2000;
 
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      {},
+    );
 
     const error_liste = [];
     let computed_ok = 0;
@@ -248,7 +250,10 @@ export class BilanCarboneUsecase {
       SEUIL_POURCENTAGE_BILAN_COMPLET
     ) {
       utilisateur.unlocked_features.add(Feature.bilan_carbone_detail);
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        utilisateur,
+        [Scope.unlocked_features],
+      );
     }
 
     bilan_synthese.bilan_complet_dispo =

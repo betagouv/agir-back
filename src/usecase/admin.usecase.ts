@@ -3,13 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope } from '../domain/utilisateur/utilisateur';
 import { KYCID } from '../domain/kyc/KYCID';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class AdminUsecase {
   constructor(private utilisateurRepository: UtilisateurRepository) {}
 
   async selectUserAvecVoiture(): Promise<any> {
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds();
+    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
+      {},
+    );
 
     const result = [];
 

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import _communes from '@etalab/decoupage-administratif/data/communes.json';
 import _epci from '@etalab/decoupage-administratif/data/epci.json';
+import _regions from '@etalab/decoupage-administratif/data/regions.json';
+import _departements from '@etalab/decoupage-administratif/data/departements.json';
 import _codes_postaux from './codes_postaux.json';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CommunesAndEPCI } from '@prisma/client';
 
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];
@@ -16,6 +20,16 @@ export type CommuneParCodePostal = {
   commune: string;
   acheminement: string;
   Ligne_5: string;
+};
+
+export type Region = {
+  code: string;
+  nom: string;
+};
+
+export type Departement = {
+  code: string;
+  nom: string;
 };
 
 /**
@@ -70,7 +84,7 @@ export type EPCI = {
 
 @Injectable()
 export class CommuneRepository {
-  constructor() {
+  constructor(private prisma: PrismaService) {
     this.supprimernDoublonsCommunesEtLigne5(_codes_postaux);
   }
 
@@ -87,16 +101,130 @@ export class CommuneRepository {
     }
   }
 
+  public getEPCIByCode(code: string): EPCI {
+    return epci.find((e) => e.code === code);
+  }
+
+  public async findCommuneOrEpciByName(name: string): Promise<
+    {
+      code_insee: string;
+      nom: string;
+    }[]
+  > {
+    const query = `
+    SELECT
+      "nom",
+      "code_insee"
+    FROM
+      "CommunesAndEPCI"
+    WHERE
+      "nom" ILIKE '%${name}%'
+    ;
+    `;
+    const result: { nom: string; code_insee: string }[] =
+      await this.prisma.$queryRawUnsafe(query);
+    return result;
+  }
+  public async upsertCommuneAndEpciToDatabase() {
+    for (const une_epci of epci) {
+      const codes_postaux = new Set<string>();
+      for (const membre of une_epci.membres) {
+        const codes = this.getCodePostauxFromCodeCommune(membre.code);
+        for (const code_postal of codes) {
+          codes_postaux.add(code_postal);
+        }
+      }
+      await this.upsertEPCI(
+        une_epci.nom,
+        une_epci.code,
+        Array.from(codes_postaux.values()),
+        une_epci.membres.map((m) => m.code),
+        une_epci.type,
+      );
+    }
+
+    for (const une_commune of communes) {
+      await this.upsertCommune(
+        une_commune.nom,
+        une_commune.code,
+        une_commune.codesPostaux,
+      );
+    }
+  }
+
+  private async upsertCommune(
+    nom: string,
+    code_insee: string,
+    codes_postaux: string[],
+  ) {
+    const data: CommunesAndEPCI = {
+      code_insee: code_insee,
+      nom: nom,
+      code_postaux: codes_postaux,
+      codes_communes: [],
+      is_commune: true,
+      is_epci: false,
+      type_epci: undefined,
+    };
+    await this.prisma.communesAndEPCI.upsert({
+      where: {
+        code_insee: code_insee,
+      },
+      create: data,
+      update: data,
+    });
+  }
+  private async upsertEPCI(
+    nom: string,
+    code_insee: string,
+    codes_postaux: string[],
+    codes_communes: string[],
+    type_epci: string,
+  ) {
+    const data: CommunesAndEPCI = {
+      code_insee: code_insee,
+      nom: nom,
+      code_postaux: codes_postaux,
+      codes_communes: codes_communes,
+      is_commune: false,
+      is_epci: true,
+      type_epci: type_epci,
+    };
+    await this.prisma.communesAndEPCI.upsert({
+      where: {
+        code_insee: code_insee,
+      },
+      create: data,
+      update: data,
+    });
+  }
+
+  public getNomDepartementByCode(code: string): string {
+    const result = (_departements as Departement[]).find(
+      (d) => d.code === code,
+    );
+    return result ? result.nom : 'INCONNU';
+  }
+
+  public getNomRegionByCode(code: string): string {
+    const result = (_regions as Region[]).find((d) => d.code === code);
+    return result ? result.nom : 'INCONNU';
+  }
+
   checkCodePostal(code_postal: string): boolean {
     return _codes_postaux[code_postal] !== undefined;
   }
 
+  isCodeInseeEPCI(code_insee: string): boolean {
+    return epci.find((e) => e.code === code_insee) != undefined;
+  }
+
   checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
-    const liste_communes = this.getListCommunesParCodePostal(code_postal);
+    const liste_communes = this.getListCommunesNamesParCodePostal(code_postal);
     return liste_communes.length !== 0 && liste_communes.includes(commune);
   }
 
-  getListCommunesParCodePostal(code_postal: string): string[] {
+  getListCommunesNamesParCodePostal(code_postal: string): string[] {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
@@ -134,6 +262,17 @@ export class CommuneRepository {
     const code_insee = this.getCodeCommune(code_postal, commune);
     const libelle = this.getLibelleCommuneLowerCase(code_insee);
     return libelle || commune;
+  }
+
+  listeCodesCommunesByEPCICode(code_epci: string): string[] {
+    const the_epci = this.getEPCIByCode(code_epci);
+    const result = [];
+
+    for (const membre of the_epci.membres) {
+      result.push(membre.code);
+    }
+
+    return result;
   }
 
   findRaisonSocialeDeNatureJuridiqueByCodePostal(
@@ -179,6 +318,25 @@ export class CommuneRepository {
         }
       }
     }
+
+    if (commune) {
+      return {
+        code_departement: commune.departement,
+        code_region: commune.region,
+      };
+    } else {
+      return {
+        code_departement: undefined,
+        code_region: undefined,
+      };
+    }
+  }
+
+  findDepartementRegionByCodeCommune(code_commune: string): {
+    code_departement: string;
+    code_region: string;
+  } {
+    let commune = this.getCommuneByCodeINSEE(code_commune);
 
     if (commune) {
       return {

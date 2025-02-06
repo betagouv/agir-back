@@ -32,6 +32,12 @@ export type CMSWebhookPopulateAPI = {
     introduction: string;
     label: string;
     sousTitre: string;
+    sous_titre: string;
+    comment: string;
+    categorie_recettes: string;
+    objet_lvo: string;
+    action_lvo: string;
+    type_action: string;
     astuces: string;
     type: string;
     categorie: string;
@@ -39,6 +45,7 @@ export type CMSWebhookPopulateAPI = {
     url_source: string;
     url_demande: string;
     date_expiration: Date;
+    derniere_maj: Date;
     A_SUPPRIMER: boolean;
     is_ngc: boolean;
     is_first: boolean;
@@ -106,6 +113,29 @@ export type CMSWebhookPopulateAPI = {
       data: [
         {
           id: number;
+          attributes: {
+            code: string;
+          };
+        },
+      ];
+    };
+    quizzes: {
+      data: [
+        {
+          id: number;
+        },
+      ];
+    };
+    kycs: {
+      data: [
+        {
+          id: number;
+        },
+      ];
+    };
+    besoins: {
+      data: [
+        {
           attributes: {
             code: string;
           };
