@@ -5,6 +5,7 @@ import { Thematique } from '../../domain/contenu/thematique';
 import { Cron } from '@nestjs/schedule';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export type ActionFilter = {
   thematique?: Thematique;
@@ -105,10 +106,10 @@ export class ActionRepository {
       pourquoi: action.pourquoi,
       besoins: action.besoins,
       kyc_ids: action.kyc_ids,
-      lvo_action: action.lvo_action,
+      lvo_action: CategorieRecherche[action.lvo_action],
       lvo_objet: action.lvo_objet,
       quizz_ids: action.quizz_ids,
-      recette_categorie: action.recette_categorie,
+      recette_categorie: CategorieRecherche[action.recette_categorie],
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
     });
