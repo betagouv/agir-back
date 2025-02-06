@@ -110,7 +110,6 @@ export class AidesController extends GenericControler {
   @ApiBody({
     type: InputAideVeloOpenAPI,
   })
-  @UseGuards(AuthGuard)
   async simulerAideVelo(
     @Body() body: InputAideVeloOpenAPI,
   ): Promise<AidesVeloParTypeAPI> {
