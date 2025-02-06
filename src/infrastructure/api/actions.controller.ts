@@ -21,6 +21,7 @@ import { GenericControler } from './genericControler';
 import { ActionAPI } from './types/defis/ActionAPI';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Thematique } from '../../domain/contenu/thematique';
 
 @Controller()
 @ApiBearerAuth()
@@ -39,8 +40,21 @@ export class ActionsController extends GenericControler {
   @ApiOperation({
     summary: `Retourne le catalogue d'actions`,
   })
-  async getCatalogue(@Request() req): Promise<ActionAPI[]> {
-    const result = await this.actionUsecase.getOpenCatalogue();
+  @ApiQuery({
+    name: 'thematique',
+    enum: Thematique,
+    enumName: 'thematique',
+    required: false,
+    description: `filtrage par une thematique`,
+  })
+  async getCatalogue(
+    @Query('thematique') thematique: string,
+  ): Promise<ActionAPI[]> {
+    let them;
+    if (thematique) {
+      them = this.castThematiqueOrException(thematique);
+    }
+    const result = await this.actionUsecase.getOpenCatalogue(them);
     return result.map((r) => ActionAPI.mapToAPI(r));
   }
 }

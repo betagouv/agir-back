@@ -55,4 +55,51 @@ describe('Actions (API test)', () => {
     expect(action.nombre_actions_en_cours).toBeGreaterThan(0);
     expect(action.nombre_aides_disponibles).toBeGreaterThan(0);
   });
+  it(`GET /actions - liste le catalogue d'action : 2 actions`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      cms_id: '1',
+      code: 'code1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      cms_id: '2',
+      code: 'code2',
+      thematique: Thematique.consommation,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(2);
+  });
+  it(`GET /actions - liste le catalogue d'action : filtre thematiques`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      cms_id: '1',
+      code: 'code1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      cms_id: '2',
+      code: 'code2',
+      thematique: Thematique.consommation,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?thematique=alimentation');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+    const action: ActionAPI = response.body[0];
+
+    expect(action.code).toEqual('code1');
+  });
 });

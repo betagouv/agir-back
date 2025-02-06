@@ -3,6 +3,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { Thematique } from '../domain/contenu/thematique';
 
 @Injectable()
 export class ActionUsecase {
@@ -12,7 +13,7 @@ export class ActionUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  async getOpenCatalogue(): Promise<ActionDefinition[]> {
-    return ActionRepository.getCatalogue();
+  async getOpenCatalogue(thematique: Thematique): Promise<ActionDefinition[]> {
+    return this.actionRepository.list({ thematique: thematique });
   }
 }
