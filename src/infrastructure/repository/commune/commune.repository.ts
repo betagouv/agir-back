@@ -105,22 +105,31 @@ export class CommuneRepository {
     return epci.find((e) => e.code === code);
   }
 
-  public async findCommuneOrEpciByName(name: string): Promise<
+  public async findCommuneOrEpciByName(names: string[]): Promise<
     {
       code_insee: string;
       nom: string;
     }[]
   > {
-    const query = `
+    let query = `
     SELECT
       "nom",
       "code_insee"
     FROM
       "CommunesAndEPCI"
     WHERE
-      "nom" ILIKE '%${name}%'
-    ;
     `;
+
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index];
+      if (index > 0) {
+        query += ' AND ';
+      }
+      query += `"nom" ILIKE '%${name}%'`;
+    }
+    query += ' ; ';
+
+    console.log(query);
     const result: { nom: string; code_insee: string }[] =
       await this.prisma.$queryRawUnsafe(query);
     return result;

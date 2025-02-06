@@ -16,6 +16,10 @@ export class CommunesUsecase {
   async getListeCommunesAndEPCIByName(
     nom: string,
   ): Promise<{ nom: string; code_insee: string }[]> {
-    return await this.communeRepository.findCommuneOrEpciByName(nom);
+    if (!nom || nom.length < 4) {
+      return [];
+    }
+    const liste_mots = nom.split(' ');
+    return await this.communeRepository.findCommuneOrEpciByName(liste_mots);
   }
 }
