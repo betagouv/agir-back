@@ -12,8 +12,10 @@ export type AideVelo = {
   logo?: string;
 };
 
-export type AidesVeloParType = {
-  [category in Questions['vélo . type']]: AideVelo[];
+export type AideVeloNonCalculee = Omit<AideVelo, 'plafond' | 'montant'>;
+
+export type AidesVeloParType<A = AideVelo> = {
+  [category in Questions['vélo . type']]: A[];
 };
 
 export const NB_VELO_TYPES = 8;
