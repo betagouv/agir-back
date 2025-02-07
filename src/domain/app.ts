@@ -126,6 +126,9 @@ export class App {
   public static getLVO_API_URL(): string {
     return process.env.LVO_API_URL || '';
   }
+  public static getThrottleLimit(): number {
+    return parseInt(process.env.THROTTLE_LIMIT) ?? 2;
+  }
 
   public static getBasicLoginPwdBase64(): string {
     const login = this.getBasicLogin();
