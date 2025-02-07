@@ -92,7 +92,11 @@ export class AidesVeloRepository {
 
     return this.engine
       .getAllAidesIn()
-      .filter(({ collectivity }) => {
+      .filter(({ id, collectivity }) => {
+        if (AIDES_TO_EXCLUDE.includes(id)) {
+          return false;
+        }
+
         switch (collectivity.kind) {
           case 'pays': {
             return isLocalisationEqual('localisation . pays', collectivity);
@@ -117,7 +121,6 @@ export class AidesVeloRepository {
           }
         }
       })
-      .filter(({ id }) => !AIDES_TO_EXCLUDE.includes(id))
       .map((aide) => ({
         libelle: aide.title,
         lien: aide.url,

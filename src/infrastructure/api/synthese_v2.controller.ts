@@ -116,7 +116,7 @@ export class Synthese_v2Controller extends GenericControler {
     const liste_articles = await this.articleRepository.searchArticles({});
 
     const IS_CODE_EPCI =
-      this.communeRepository.isCodeInseeEPCI(code_insee_input);
+      this.communeRepository.isCodeSirenEPCI(code_insee_input);
 
     let code_region_cible;
     let code_departement_cible;
@@ -126,7 +126,7 @@ export class Synthese_v2Controller extends GenericControler {
     let liste_noms_communes_of_input: string[];
 
     if (IS_CODE_EPCI) {
-      const EPCI = this.communeRepository.getEPCIByCode(code_insee_input);
+      const EPCI = this.communeRepository.getEPCIBySIRENCode(code_insee_input);
       liste_noms_communes_of_input = EPCI.membres.map((m) => m.nom);
 
       liste_codes_communes_of_input =

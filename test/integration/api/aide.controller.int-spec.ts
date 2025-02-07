@@ -629,7 +629,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 
     // THEN
     expect(response.status).toBe(201);
-    console.log(response.body);
     expect(response.body['cargo électrique']).toEqual([
       {
         collectivite: {
@@ -659,7 +658,6 @@ Dispositif valable jusqu'au 31 décembre 2024.`,
 
     // THEN
     expect(response.status).toBe(201);
-    console.log(response.body);
     expect(response.body['cargo électrique']).toEqual([
       {
         collectivite: {
@@ -676,5 +674,92 @@ Dispositif valable jusqu'au 31 décembre 2024.`,
         plafond: 250,
       },
     ]);
+  });
+
+  describe('POST /aides/recupererAideVeloParCodeCommuneOuEPCI', () => {
+    test('OK avec un code INSEE (Ville de Merignac)', async () => {
+      // WHEN
+      const response = await TestUtil.POST(
+        '/aides/recupererAideVeloParCodeCommuneOuEPCI',
+      ).send({
+        code_insee_ou_siren: '33281',
+      });
+
+      // EXPECT
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveLength(3);
+      expect(response.body[0].collectivite).toEqual({
+        kind: 'pays',
+        value: 'France',
+      });
+      expect(response.body[1].collectivite).toEqual({
+        kind: 'epci',
+        code: '243300316',
+        value: 'Bordeaux Métropole',
+      });
+      expect(response.body[2].collectivite).toEqual({
+        kind: 'code insee',
+        value: '33281',
+      });
+    });
+
+    test('OK avec un code SIREN (Bordeaux Métropole)', async () => {
+      // WHEN
+      const response = await TestUtil.POST(
+        '/aides/recupererAideVeloParCodeCommuneOuEPCI',
+      ).send({
+        code_insee_ou_siren: '243300316',
+      });
+
+      // EXPECT
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveLength(2);
+      expect(response.body[0].collectivite).toEqual({
+        kind: 'pays',
+        value: 'France',
+      });
+      expect(response.body[1].collectivite).toEqual({
+        kind: 'epci',
+        code: '243300316',
+        value: 'Bordeaux Métropole',
+      });
+    });
+
+    test('OK avec récupération des aides régionales et départementales (Montpellier)', async () => {
+      // WHEN
+      const response = await TestUtil.POST(
+        '/aides/recupererAideVeloParCodeCommuneOuEPCI',
+      ).send({
+        code_insee_ou_siren: '34172',
+      });
+
+      // EXPECT
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveLength(7);
+      expect(response.body[0].libelle).toBe('Bonus vélo');
+      expect(response.body[1].libelle).toContain('Région Occitanie');
+      expect(response.body[1].description).toContain(
+        "Achat d'un vélo à assistance électrique",
+      );
+      expect(response.body[2].libelle).toContain('Région Occitanie');
+      expect(response.body[2].description).toContain('Bonus vélo adapté PMR');
+      expect(response.body[3].libelle).toContain('Département Hérault');
+      expect(response.body[4].libelle).toContain('Département Hérault');
+      expect(response.body[4].description).toContain(
+        'Chèque Hérault Handi-Vélo',
+      );
+      expect(response.body[5].libelle).toContain(
+        'Montpellier Méditerranée Métropole',
+      );
+      expect(response.body[5].description).toContain(
+        "vélo électrique ou d'occasion",
+      );
+      expect(response.body[6].libelle).toContain(
+        'Montpellier Méditerranée Métropole',
+      );
+      expect(response.body[6].description).toContain(
+        'personnes en situation de handicap',
+      );
+    });
   });
 });

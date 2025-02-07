@@ -218,7 +218,7 @@ describe('AideVeloRepository', () => {
     });
   });
 
-  describe.only('getAllAidesIn', () => {
+  describe('getAllAidesIn', () => {
     test("doit uniquement l'aide de la région Île-de-France", () => {
       // WHEN
       const result = aidesVeloRepository.getAllAidesIn({
