@@ -393,4 +393,31 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
+
+  it('search : filtre liste de besoins ', async () => {
+    // GIVEN
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'AAA',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      besoin: 'BBB',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      besoin: 'CCC',
+    });
+
+    // WHEN
+    const liste = await aideRepository.search({
+      besoins: ['AAA', 'BBB'],
+    });
+
+    // THEN
+    liste.sort((a, b) => (a.content_id > b.content_id ? 1 : -1));
+    expect(liste).toHaveLength(2);
+    expect(liste[0].content_id).toEqual('1');
+    expect(liste[1].content_id).toEqual('2');
+  });
 });

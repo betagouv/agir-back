@@ -6,10 +6,12 @@ import { CategorieRecherche } from '../../../src/domain/bibliotheque_services/re
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 
 describe('Actions (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -77,6 +79,45 @@ describe('Actions (API test)', () => {
     expect(action.quizzes).toEqual([]);
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
     expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
+  });
+
+  it(`GET /actions/id - accorche les aides par le besoin`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      besoin: 'composter',
+      partenaire_id: '123',
+    });
+
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.besoins).toEqual(['composter']);
+    expect(action.aides).toEqual([
+      {
+        content_id: '2',
+        echelle: 'National',
+        montant_max: 999,
+        partenaire_logo_url: 'logo_url',
+        partenaire_nom: 'ADEME',
+        partenaire_url: 'https://ademe.fr',
+        titre: 'titreA',
+      },
+    ]);
   });
 
   it(`GET /actions/id - 404 si action non trouvée`, async () => {

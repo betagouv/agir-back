@@ -1,3 +1,4 @@
+import { AideDefinition } from '../aides/aideDefinition';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../contenu/thematique';
 import { TypeAction } from './typeAction';
@@ -16,7 +17,6 @@ export class ActionDefinition {
   quizz_ids: string[];
   recette_categorie: CategorieRecherche;
   type: TypeAction;
-
   thematique: Thematique;
 
   constructor(data: ActionDefinition) {

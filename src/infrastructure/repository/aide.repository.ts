@@ -8,6 +8,7 @@ import { Besoin } from '../../../src/domain/aides/besoin';
 export type AideFilter = {
   maxNumber?: number;
   thematiques?: Thematique[];
+  besoins?: string[];
   code_postal?: string;
   code_region?: string;
   code_departement?: string;
@@ -94,6 +95,12 @@ export class AideRepository {
           { codes_departement: { has: filter.code_departement } },
           { codes_departement: { isEmpty: true } },
         ],
+      });
+    }
+
+    if (filter.besoins) {
+      main_filter.push({
+        besoin: { in: filter.besoins },
       });
     }
 

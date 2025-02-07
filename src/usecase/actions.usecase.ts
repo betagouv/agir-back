@@ -5,11 +5,14 @@ import { ActionRepository } from '../infrastructure/repository/action.repository
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { Action } from '../domain/actions/action';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 
 @Injectable()
 export class ActionUsecase {
   constructor(
     private actionRepository: ActionRepository,
+    private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
     private personnalisator: Personnalisator,
   ) {}
@@ -17,12 +20,21 @@ export class ActionUsecase {
   async getOpenCatalogue(thematique: Thematique): Promise<ActionDefinition[]> {
     return this.actionRepository.list({ thematique: thematique });
   }
-  async getAction(code: string): Promise<ActionDefinition> {
-    const result = await this.actionRepository.getByCode(code);
+  async getAction(code: string): Promise<Action> {
+    const action_def = await this.actionRepository.getByCode(code);
 
-    if (!result) {
+    if (!action_def) {
       ApplicationError.throwActionNotFound(code);
     }
-    return result;
+
+    const action = new Action(action_def);
+
+    const linked_aides = await this.aideRepository.search({
+      besoins: action_def.besoins,
+    });
+
+    action.aides = linked_aides;
+
+    return action;
   }
 }
