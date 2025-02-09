@@ -7,6 +7,7 @@ import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { Action } from '../domain/actions/action';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { EchelleAide } from '../domain/aides/echelle';
 
 @Injectable()
 export class ActionUsecase {
@@ -31,6 +32,7 @@ export class ActionUsecase {
 
     const linked_aides = await this.aideRepository.search({
       besoins: action_def.besoins,
+      echelle: EchelleAide.National,
     });
 
     action.aides = linked_aides;

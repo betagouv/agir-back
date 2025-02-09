@@ -7,6 +7,7 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { EchelleAide } from '../../../src/domain/aides/echelle';
 
 describe('Actions (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -81,18 +82,20 @@ describe('Actions (API test)', () => {
     expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
   });
 
-  it(`GET /actions/id - accorche les aides par le besoin`, async () => {
+  it(`GET /actions/id - accorche les aides par le besoin - seulement nationales si pas de code insee de commune en argument`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
+      echelle: EchelleAide.National,
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
+      echelle: EchelleAide.National,
     });
 
     await TestUtil.create(DB.partenaire);
@@ -118,6 +121,28 @@ describe('Actions (API test)', () => {
         titre: 'titreA',
       },
     ]);
+  });
+
+  it(`GET /actions/id - accorche les aides par le besoin - pas d'aide non nationales si pas de code insee de commune en argument`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+      echelle: EchelleAide.Département,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.besoins).toEqual(['composter']);
+    expect(action.aides).toHaveLength(0);
   });
 
   it(`GET /actions/id - 404 si action non trouvée`, async () => {

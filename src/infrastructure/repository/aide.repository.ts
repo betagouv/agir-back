@@ -4,6 +4,7 @@ import { Aide as AideDB } from '@prisma/client';
 import { Thematique } from '../../domain/contenu/thematique';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Besoin } from '../../../src/domain/aides/besoin';
+import { EchelleAide } from '../../domain/aides/echelle';
 
 export type AideFilter = {
   maxNumber?: number;
@@ -13,6 +14,7 @@ export type AideFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
+  echelle?: EchelleAide;
   date_expiration?: Date;
 };
 
@@ -101,6 +103,12 @@ export class AideRepository {
     if (filter.besoins) {
       main_filter.push({
         besoin: { in: filter.besoins },
+      });
+    }
+
+    if (filter.echelle) {
+      main_filter.push({
+        echelle: filter.echelle,
       });
     }
 
