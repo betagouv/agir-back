@@ -559,6 +559,13 @@ export class ApplicationError {
   static throwActionNotFound(code: string) {
     this.throwAppError('105', `l'action de code [${code}] n'existe pas`, 404);
   }
+  static throwCodeCommuneNotFound(code: string) {
+    this.throwAppError(
+      '106',
+      `le code INSEE de commune [${code}] n'existe pas`,
+      404,
+    );
+  }
 
   private static throwAppError(
     code: string,

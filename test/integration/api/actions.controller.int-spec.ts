@@ -122,6 +122,27 @@ describe('Actions (API test)', () => {
       },
     ]);
   });
+  it(`GET /actions/id - pas d'aide nationnale expirée`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+      echelle: EchelleAide.National,
+      date_expiration: new Date(1),
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.aides).toHaveLength(0);
+  });
 
   it(`GET /actions/id - accorche les aides par le besoin - pas d'aide non nationales si pas de code insee de commune en argument`, async () => {
     // GIVEN
@@ -141,7 +162,58 @@ describe('Actions (API test)', () => {
 
     const action: ActionAPI = response.body;
 
-    expect(action.besoins).toEqual(['composter']);
+    expect(action.aides).toHaveLength(0);
+  });
+
+  it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      besoin: 'manger',
+      partenaire_id: '123',
+      echelle: EchelleAide.Département,
+      codes_departement: ['21'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/123?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.aides).toHaveLength(2);
+  });
+  it(`GET /actions/id - pas d'aide expirée locale`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+      date_expiration: new Date(1),
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/123?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
     expect(action.aides).toHaveLength(0);
   });
 

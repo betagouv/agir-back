@@ -60,15 +60,24 @@ export class ActionsController extends GenericControler {
   }
   @Get('actions/:code')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 2000 } })
   @ApiOkResponse({
     type: ActionAPI,
   })
   @ApiOperation({
     summary: `Retourne une action précise`,
   })
-  async getAction(@Param('code') code: string): Promise<ActionAPI> {
-    const result = await this.actionUsecase.getAction(code);
+  @ApiQuery({
+    name: 'code_commune',
+    type: String,
+    required: false,
+    description: `code commune INSEE pour personnalisation de l'action (aides / lieux utiles / etc)`,
+  })
+  async getAction(
+    @Param('code') code: string,
+    @Query('code_commune') code_commune: string,
+  ): Promise<ActionAPI> {
+    const result = await this.actionUsecase.getAction(code, code_commune);
     return ActionAPI.mapToAPI(result);
   }
 }
