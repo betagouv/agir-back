@@ -136,6 +136,7 @@ describe('Actions (API test)', () => {
     expect(action.quizzes).toEqual([]);
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
     expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
+    expect(action.nom_commune).toBeUndefined();
   });
 
   it(`GET /actions/id - accorche les aides par le besoin - seulement nationales si pas de code insee de commune en argument`, async () => {
@@ -249,6 +250,7 @@ describe('Actions (API test)', () => {
     const action: ActionAPI = response.body;
 
     expect(action.aides).toHaveLength(2);
+    expect(action.nom_commune).toEqual('Dijon');
   });
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {
@@ -282,6 +284,7 @@ describe('Actions (API test)', () => {
     const action: ActionAPI = response.body;
 
     expect(action.aides).toHaveLength(2);
+    expect(action.nom_commune).toEqual('Dijon');
   });
 
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {

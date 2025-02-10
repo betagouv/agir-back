@@ -122,6 +122,7 @@ export class ActionUsecase {
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }
+      action.nom_commune = commune.nom;
     }
 
     let linked_aides: AideDefinition[];
@@ -183,6 +184,7 @@ export class ActionUsecase {
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.code_commune,
     );
+    action.nom_commune = commune.nom;
 
     const linked_aides = await this.aideRepository.search({
       besoins: action_def.besoins,

@@ -12,6 +12,7 @@ export class Action extends ActionDefinition {
   private aides: AideDefinition[];
   nombre_aides: number;
   services: ActionService[];
+  nom_commune?: string;
 
   constructor(data: ActionDefinition) {
     super(data);

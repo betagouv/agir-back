@@ -56,6 +56,7 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ type: [String] }) besoins: string[];
@@ -89,6 +90,7 @@ export class ActionAPI {
       quizzes: [],
       aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
+      nom_commune: action.nom_commune,
     };
   }
 }
