@@ -9,7 +9,11 @@ import {
 
 import { App } from '../../../src/domain/app';
 import miniatures from '../../../src/infrastructure/data/miniatures.json';
-import { AideVelo, AidesVeloParType } from '../../domain/aides/aideVelo';
+import {
+  AideVeloNonCalculee,
+  AidesVeloParType,
+  Collectivite,
+} from '../../domain/aides/aideVelo';
 
 /**
  * Aids to exclude from the results.
@@ -44,6 +48,15 @@ export type SummaryVelosParams = Required<
   >
 >;
 
+type Localisation = Pick<
+  Questions,
+  | 'localisation . pays'
+  | 'localisation . département'
+  | 'localisation . région'
+  | 'localisation . epci'
+  | 'localisation . code insee'
+>;
+
 @Injectable()
 export class AidesVeloRepository {
   private engine: AidesVeloEngine;
@@ -52,13 +65,69 @@ export class AidesVeloRepository {
     this.engine = new AidesVeloEngine();
   }
 
-  async getSummaryVelos(params: SummaryVelosParams): Promise<AidesVeloParType> {
+  getSummaryVelos(params: SummaryVelosParams): AidesVeloParType {
     const situationBase: Questions = {
       ...params,
       'localisation . pays': 'France',
     };
 
     return this.getAidesVeloTousTypes(situationBase);
+  }
+
+  /**
+   * Get all the aids available for the given location.
+   *
+   * @param localisation - The location to get the aids for. If a field is omitted, all the aids for this scope will be ignored.
+   * @return The list of all the aids available for the given location. Note that they aren't computed, therefore, there is no `montant` or `plafond` field.
+   *
+   * NOTE: should we add a way to collect the `plafond` field?
+   */
+  getAllAidesIn(localisation: Localisation): AideVeloNonCalculee[] {
+    const isLocalisationEqual = (
+      key: keyof Localisation,
+      collectivity: Collectivite,
+    ): boolean => {
+      return localisation[key] && localisation[key] === collectivity.value;
+    };
+
+    return this.engine
+      .getAllAidesIn()
+      .filter(({ id, collectivity }) => {
+        if (AIDES_TO_EXCLUDE.includes(id)) {
+          return false;
+        }
+
+        switch (collectivity.kind) {
+          case 'pays': {
+            return isLocalisationEqual('localisation . pays', collectivity);
+          }
+          case 'département': {
+            return isLocalisationEqual(
+              'localisation . département',
+              collectivity,
+            );
+          }
+          case 'région': {
+            return isLocalisationEqual('localisation . région', collectivity);
+          }
+          case 'epci': {
+            return isLocalisationEqual('localisation . epci', collectivity);
+          }
+          case 'code insee': {
+            return isLocalisationEqual(
+              'localisation . code insee',
+              collectivity,
+            );
+          }
+        }
+      })
+      .map((aide) => ({
+        libelle: aide.title,
+        lien: aide.url,
+        collectivite: aide.collectivity,
+        description: getDescription(aide.description),
+        logo: getLogo(aide.id),
+      }));
   }
 
   private getAidesVeloTousTypes(situationBase: Questions): AidesVeloParType {
@@ -80,27 +149,31 @@ export class AidesVeloRepository {
         .setInputs(situationBase)
         .computeAides()
         .filter(({ id }) => !AIDES_TO_EXCLUDE.includes(id))
-        .map(
-          (aide: Aide) => ({
-            libelle: aide.title,
-            montant: aide.amount,
-            description: aide.description.trim(),
-            lien: aide.url,
-            collectivite: aide.collectivity,
-            logo: `${App.getAideVeloMiniaturesURL()}/${miniatures[aide.id]}`,
-            // NOTE: this is legacy behavior, the plafond is the same as the
-            // amount we should consider removing this field or implementing it
-            // correctly.
-            // NOTE: after checking, it seems that the plafond is only used for
-            // the aides retrofits repository, they shouldn't share the same type
-            // or it should be refactored to have a generic type.
-            plafond: aide.amount,
-          }),
-          // HACK: limits of TS inference, without this, there is no error when
-          // returning an array of `Aide` instead of `AideVelo`.
-        ) as AideVelo[];
+        .map((aide: Aide) => ({
+          libelle: aide.title,
+          montant: aide.amount,
+          description: getDescription(aide.description),
+          lien: aide.url,
+          collectivite: aide.collectivity,
+          logo: getLogo(aide.id),
+          // NOTE: this is legacy behavior, the plafond is the same as the
+          // amount we should consider removing this field or implementing it
+          // correctly.
+          // NOTE: after checking, it seems that the plafond is only used for
+          // the aides retrofits repository, they shouldn't share the same type
+          // or it should be refactored to have a generic type.
+          plafond: aide.amount,
+        }));
     }
 
     return veloTypes;
   }
+}
+
+function getLogo(id: string): string {
+  return `${App.getAideVeloMiniaturesURL()}/${miniatures[id]}`;
+}
+
+function getDescription(description: string): string {
+  return description.trim();
 }
