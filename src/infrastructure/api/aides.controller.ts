@@ -129,7 +129,7 @@ export class AidesController extends GenericControler {
   // NOTE: this could manage region and departement code as well in the future
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
-  @ApiOkResponse({ type: AidesVeloParTypeAPI })
+  @ApiOkResponse({ type: Array<AideVeloNonCalculeeAPI> })
   @Post('aides/recupererAideVeloParCodeCommuneOuEPCI')
   @ApiBody({
     type: InputRecupererAideVeloAPI,
