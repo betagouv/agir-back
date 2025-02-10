@@ -43,6 +43,7 @@ export class ActionUsecase {
 
       for (const action_def of liste_actions) {
         const count_aides = await this.aideRepository.count({
+          besoins: action_def.besoins,
           code_postal: commune.codesPostaux[0],
           code_commune: commune.code,
           code_departement: commune.departement,
@@ -54,7 +55,16 @@ export class ActionUsecase {
         result.push(action);
       }
     } else {
-      result = liste_actions.map((a) => new Action(a));
+      for (const action_def of liste_actions) {
+        const count_aides = await this.aideRepository.count({
+          besoins: action_def.besoins,
+          echelle: EchelleAide.National,
+          date_expiration: new Date(),
+        });
+        const action = new Action(action_def);
+        action.nombre_aides = count_aides;
+        result.push(action);
+      }
     }
 
     return result;
@@ -79,6 +89,7 @@ export class ActionUsecase {
     let linked_aides: AideDefinition[];
     if (commune) {
       linked_aides = await this.aideRepository.search({
+        besoins: action_def.besoins,
         code_postal: commune.codesPostaux[0],
         code_commune: commune.code,
         code_departement: commune.departement,

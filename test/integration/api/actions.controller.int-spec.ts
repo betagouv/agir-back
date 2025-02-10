@@ -56,7 +56,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      besoin: 'chauffer',
+      besoin: 'composter',
       partenaire_id: '123',
       echelle: EchelleAide.Commune,
       codes_postaux: ['21000'],
@@ -200,14 +200,14 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      besoin: 'chauffer',
+      besoin: 'composter',
       partenaire_id: '123',
       echelle: EchelleAide.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
-      besoin: 'manger',
+      besoin: 'composter',
       partenaire_id: '123',
       echelle: EchelleAide.Département,
       codes_departement: ['21'],
