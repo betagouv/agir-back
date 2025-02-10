@@ -5,7 +5,7 @@ import { ActionRepository } from '../infrastructure/repository/action.repository
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { Action } from '../domain/actions/action';
+import { Action, ActionService } from '../domain/actions/action';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { EchelleAide } from '../domain/aides/echelle';
 import {
@@ -13,6 +13,7 @@ import {
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
 import { AideDefinition } from '../domain/aides/aideDefinition';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 
 @Injectable()
 export class ActionUsecase {
@@ -46,13 +47,6 @@ export class ActionUsecase {
 
     let linked_aides: AideDefinition[];
     if (commune) {
-      console.log({
-        code_postal: commune.codesPostaux[0],
-        code_commune: commune.code,
-        code_departement: commune.departement,
-        code_region: commune.region,
-        date_expiration: new Date(),
-      });
       linked_aides = await this.aideRepository.search({
         code_postal: commune.codesPostaux[0],
         code_commune: commune.code,
@@ -68,7 +62,22 @@ export class ActionUsecase {
       });
     }
 
+    const liste_services: ActionService[] = [];
+    if (action_def.recette_categorie) {
+      liste_services.push({
+        categorie: action_def.recette_categorie,
+        recherche_service_id: ServiceRechercheID.recettes,
+      });
+    }
+    if (action_def.lvo_action) {
+      liste_services.push({
+        categorie: action_def.lvo_action,
+        recherche_service_id: ServiceRechercheID.longue_vie_objets,
+      });
+    }
+
     action.aides = linked_aides;
+    action.services = liste_services;
 
     return action;
   }

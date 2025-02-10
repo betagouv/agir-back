@@ -9,7 +9,23 @@ import { EchelleAide } from '../../../../domain/aides/echelle';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
-import { Action } from '../../../../domain/actions/action';
+import { Action, ActionService } from '../../../../domain/actions/action';
+import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
+
+export class ServiceActionAPI {
+  @ApiProperty({ enum: ServiceRechercheID })
+  recherche_service_id: ServiceRechercheID;
+
+  @ApiProperty({ enum: CategorieRecherche })
+  categorie: CategorieRecherche;
+
+  public static map(service: ActionService): ServiceActionAPI {
+    return {
+      categorie: service.categorie,
+      recherche_service_id: service.recherche_service_id,
+    };
+  }
+}
 
 export class AideActionAPI {
   @ApiProperty() content_id: string;
@@ -46,17 +62,17 @@ export class ActionAPI {
   @ApiProperty({ type: [String] }) besoins: string[];
   @ApiProperty() comment: string;
   @ApiProperty() pourquoi: string;
-  @ApiProperty({ enum: CategorieRecherche }) lvo_action: CategorieRecherche;
-  @ApiProperty() lvo_objet: string;
-  @ApiProperty({ enum: CategorieRecherche })
-  recette_categorie: CategorieRecherche;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty({ type: [QuizzBibliothequeAPI] })
   quizzes: QuizzBibliothequeAPI[];
   @ApiProperty({ type: [QuestionKYCAPI_v2] }) kycs: QuestionKYCAPI_v2[];
+
   @ApiProperty({ type: [AideActionAPI] })
   aides: AideActionAPI[];
+
+  @ApiProperty({ type: [ServiceActionAPI] })
+  services: ServiceActionAPI[];
 
   public static mapToAPI(action: Action): ActionAPI {
     return {
@@ -69,13 +85,11 @@ export class ActionAPI {
       comment: action.comment,
       pourquoi: action.pourquoi,
       type: action.type,
-      lvo_action: action.lvo_action,
-      lvo_objet: action.lvo_objet,
-      recette_categorie: action.recette_categorie,
       thematique: action.thematique,
       kycs: [],
       quizzes: [],
       aides: action.aides.map((a) => AideActionAPI.mapToAPI(a)),
+      services: action.services.map((s) => ServiceActionAPI.map(s)),
     };
   }
 }

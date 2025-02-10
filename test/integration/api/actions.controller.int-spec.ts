@@ -73,9 +73,15 @@ describe('Actions (API test)', () => {
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
-    expect(action.lvo_action).toEqual(CategorieRecherche.emprunter);
-    expect(action.lvo_objet).toEqual('chaussure');
-    expect(action.recette_categorie).toEqual(CategorieRecherche.dinde_volaille);
+    expect(action.services).toHaveLength(2);
+    expect(action.services).toContainEqual({
+      categorie: 'dinde_volaille',
+      recherche_service_id: 'recettes',
+    });
+    expect(action.services).toContainEqual({
+      categorie: 'emprunter',
+      recherche_service_id: 'longue_vie_objets',
+    });
     expect(action.kycs).toEqual([]);
     expect(action.quizzes).toEqual([]);
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
@@ -144,7 +150,7 @@ describe('Actions (API test)', () => {
     expect(action.aides).toHaveLength(0);
   });
 
-  it(`GET /actions/id - accorche les aides par le besoin - pas d'aide non nationales si pas de code insee de commune en argument`, async () => {
+  it(`GET /actions/id - accroche les aides par le besoin - pas d'aide non nationales si pas de code insee de commune en argument`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
     await TestUtil.create(DB.aide, {
