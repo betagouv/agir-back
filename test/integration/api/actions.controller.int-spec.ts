@@ -2,7 +2,6 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import { DB, TestUtil } from '../../TestUtil';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
-import { CategorieRecherche } from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
@@ -75,6 +74,33 @@ describe('Actions (API test)', () => {
 
     expect(action.nombre_aides_disponibles).toEqual(1);
   });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const action: ActionLightAPI = response.body[0];
+
+    expect(action.nombre_aides_disponibles).toEqual(1);
+  });
+
   it(`GET /actions/id - consulte le détail d'une action`, async () => {
     // GIVEN
     await TestUtil.create(DB.action);
@@ -224,6 +250,40 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(2);
   });
+
+  it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      besoin: 'composter',
+      partenaire_id: '123',
+      echelle: EchelleAide.Département,
+      codes_departement: ['21'],
+      codes_postaux: [],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.aides).toHaveLength(2);
+  });
+
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
