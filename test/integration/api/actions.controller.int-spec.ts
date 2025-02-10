@@ -49,7 +49,31 @@ describe('Actions (API test)', () => {
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
-    expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
+    expect(action.nombre_aides_disponibles).toEqual(0);
+  });
+  it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'chauffer',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const action: ActionLightAPI = response.body[0];
+
+    expect(action.nombre_aides_disponibles).toEqual(1);
   });
   it(`GET /actions/id - consulte le détail d'une action`, async () => {
     // GIVEN

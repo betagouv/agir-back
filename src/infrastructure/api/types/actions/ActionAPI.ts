@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ActionDefinition } from '../../../../domain/actions/actionDefinition';
 import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
@@ -88,7 +87,7 @@ export class ActionAPI {
       thematique: action.thematique,
       kycs: [],
       quizzes: [],
-      aides: action.aides.map((a) => AideActionAPI.mapToAPI(a)),
+      aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
     };
   }

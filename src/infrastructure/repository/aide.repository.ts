@@ -70,7 +70,18 @@ export class AideRepository {
     return count > 0;
   }
 
+  async count(filter: AideFilter): Promise<number> {
+    const query = this.buildSearchQuery(filter);
+    return await this.prisma.aide.count(query);
+  }
+
   async search(filter: AideFilter): Promise<AideDefinition[]> {
+    const query = this.buildSearchQuery(filter);
+    const result = await this.prisma.aide.findMany(query);
+    return result.map((elem) => this.buildAideFromDB(elem));
+  }
+
+  public buildSearchQuery(filter: AideFilter): any {
     const main_filter = [];
 
     if (filter.code_postal) {
@@ -148,15 +159,12 @@ export class AideRepository {
       });
     }
 
-    const finalQuery = {
+    return {
       take: filter.maxNumber,
       where: {
         AND: main_filter,
       },
     };
-
-    const result = await this.prisma.aide.findMany(finalQuery);
-    return result.map((elem) => this.buildAideFromDB(elem));
   }
 
   private buildAideFromDB(aideDB: AideDB): AideDefinition {

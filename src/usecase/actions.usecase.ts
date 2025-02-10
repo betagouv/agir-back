@@ -25,8 +25,39 @@ export class ActionUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  async getOpenCatalogue(thematique: Thematique): Promise<ActionDefinition[]> {
-    return this.actionRepository.list({ thematique: thematique });
+  async getOpenCatalogue(
+    thematique: Thematique,
+    code_commune: string,
+  ): Promise<Action[]> {
+    const liste_actions = await this.actionRepository.list({
+      thematique: thematique,
+    });
+
+    let result: Action[] = [];
+    let commune: Commune;
+    if (code_commune) {
+      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      if (!commune) {
+        ApplicationError.throwCodeCommuneNotFound(code_commune);
+      }
+
+      for (const action_def of liste_actions) {
+        const count_aides = await this.aideRepository.count({
+          code_postal: commune.codesPostaux[0],
+          code_commune: commune.code,
+          code_departement: commune.departement,
+          code_region: commune.region,
+          date_expiration: new Date(),
+        });
+        const action = new Action(action_def);
+        action.nombre_aides = count_aides;
+        result.push(action);
+      }
+    } else {
+      result = liste_actions.map((a) => new Action(a));
+    }
+
+    return result;
   }
   async getAction(code: string, code_commune: string): Promise<Action> {
     const action_def = await this.actionRepository.getByCode(code);
@@ -76,7 +107,7 @@ export class ActionUsecase {
       });
     }
 
-    action.aides = linked_aides;
+    action.setListeAides(linked_aides);
     action.services = liste_services;
 
     return action;

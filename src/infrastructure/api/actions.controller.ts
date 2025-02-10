@@ -48,17 +48,28 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `filtrage par une thematique`,
   })
+  @ApiQuery({
+    name: 'code_commune',
+    type: String,
+    required: false,
+    description: `code commune INSEE pour calculer le nombre d'aides disponible pour cette localisation`,
+  })
   async getCatalogue(
     @Query('thematique') thematique: string,
+    @Query('code_commune') code_commune: string,
   ): Promise<ActionLightAPI[]> {
     let them;
     if (thematique) {
       them = this.castThematiqueOrException(thematique);
     }
-    const result = await this.actionUsecase.getOpenCatalogue(them);
+    const result = await this.actionUsecase.getOpenCatalogue(
+      them,
+      code_commune,
+    );
     return result.map((r) => ActionLightAPI.mapToAPI(r));
   }
-  @Get('actions/:code')
+
+  @Get('actions/:code_action')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 2000 } })
   @ApiOkResponse({
@@ -74,10 +85,13 @@ export class ActionsController extends GenericControler {
     description: `code commune INSEE pour personnalisation de l'action (aides / lieux utiles / etc)`,
   })
   async getAction(
-    @Param('code') code: string,
+    @Param('code_action') code_action: string,
     @Query('code_commune') code_commune: string,
   ): Promise<ActionAPI> {
-    const result = await this.actionUsecase.getAction(code, code_commune);
+    const result = await this.actionUsecase.getAction(
+      code_action,
+      code_commune,
+    );
     return ActionAPI.mapToAPI(result);
   }
 }

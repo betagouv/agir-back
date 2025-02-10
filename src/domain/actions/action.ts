@@ -9,12 +9,22 @@ export class ActionService {
 }
 
 export class Action extends ActionDefinition {
-  aides: AideDefinition[];
+  private aides: AideDefinition[];
+  nombre_aides: number;
   services: ActionService[];
 
   constructor(data: ActionDefinition) {
     super(data);
     this.aides = [];
     this.services = [];
+    this.nombre_aides = 0;
+  }
+
+  public setListeAides(liste: AideDefinition[]) {
+    this.aides = liste;
+    this.nombre_aides = liste.length;
+  }
+  public getListeAides(): AideDefinition[] {
+    return this.aides;
   }
 }
