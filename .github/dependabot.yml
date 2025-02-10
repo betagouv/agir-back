@@ -3,7 +3,6 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     versioning-strategy: increase
-    open-pull-requests-limit: 1
     schedule:
       interval: 'daily'
     labels:
@@ -11,3 +10,4 @@ updates:
     allow:
       - dependency-name: '@betagouv/aides-velo'
       - dependency-name: '@incubateur-ademe/nosgestesclimat'
+      - dependency-name: 'publicodes'
