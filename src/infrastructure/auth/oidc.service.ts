@@ -34,6 +34,7 @@ export class OidcService {
       ),
     );
     params.append('scope', 'email profile');
+    params.append('acr_values', 'eidas1');
     params.append('state', OIDC_STATE.state);
     params.append('nonce', OIDC_STATE.nonce);
 
