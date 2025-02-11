@@ -23,13 +23,13 @@ export class OidcService {
     params.append('response_type', 'code');
     params.append('client_id', process.env.OIDC_CLIENT_ID);
     console.log(
-      process.env.BASE_URL.concat(
+      process.env.BASE_URL_FRONT.concat(
         `${process.env.OIDC_URL_LOGIN_CALLBACK}?loginid=${OIDC_STATE.loginId}`,
       ),
     );
     params.append(
       'redirect_uri',
-      process.env.BASE_URL.concat(
+      process.env.BASE_URL_FRONT.concat(
         `${process.env.OIDC_URL_LOGIN_CALLBACK}?loginid=${OIDC_STATE.loginId}`,
       ),
     );
