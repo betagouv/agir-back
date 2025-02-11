@@ -20,7 +20,7 @@ export class AuthController {
     private oidcService: OidcService,
   ) {}
 
-  @Get('login')
+  @Get('login_france_connect')
   @Redirect()
   @ApiExcludeEndpoint()
   async login() {

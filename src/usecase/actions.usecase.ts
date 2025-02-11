@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { Action, ActionService } from '../domain/actions/action';
@@ -23,7 +22,6 @@ export class ActionUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
-    private personnalisator: Personnalisator,
   ) {}
 
   async getOpenCatalogue(
