@@ -41,11 +41,45 @@ export class OidcService {
   }
 
   async generatedLogoutUrlAndDeleteState(utilisateurId: string): Promise<URL> {
+    const logout_url = await this.generateLogoutUrl(utilisateurId);
+    if (logout_url) {
+      await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
+    }
+    return logout_url;
+  }
+
+  async self_logout(utilisateurId: string): Promise<void> {
+    let logout_url = await this.generateLogoutUrl(utilisateurId);
+    if (!logout_url) {
+      // RIEN A FAIRE
+      return;
+    }
+
+    let response;
+    try {
+      response = await axios.get(logout_url.toString());
+    } catch (error) {
+      console.log(error.message);
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      return;
+    }
+    console.log(response);
+
+    // REMOVE STATE
+    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
+  }
+
+  private async generateLogoutUrl(utilisateurId: string): Promise<URL> {
     let OIDC_STATE = await this.oIDCStateRepository.getByUtilisateurId(
       utilisateurId,
     );
-    let redirect_url = new URL(process.env.OIDC_URL_LOGOUT);
-    let params = redirect_url.searchParams;
+    if (!OIDC_STATE) {
+      return null;
+    }
+    let logout_url = new URL(process.env.OIDC_URL_LOGOUT);
+    let params = logout_url.searchParams;
     params.append('id_token_hint', OIDC_STATE.idtoken);
     params.append('state', uuidv4());
     params.append(
@@ -54,8 +88,7 @@ export class OidcService {
     );
 
     // REMOVE STATE
-    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
-    return redirect_url;
+    return logout_url;
   }
 
   async getAccessToken(
