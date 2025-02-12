@@ -3,9 +3,10 @@
 Ce dossier contient l'ensemble des documents détaillant certains choix
 techniques et processus de développement.
 
-## Services externes
+## Services
 
 - [Aides vélo](./aides-velo.md)
+- [Bilan carbone](./bilan-carbone-ngc.md)
 
 ## Architecture
 
