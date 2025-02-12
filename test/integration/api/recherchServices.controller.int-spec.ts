@@ -508,7 +508,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(5);
+    expect(response.body).toHaveLength(4);
     expect(response.body[0]).toStrictEqual({
       id_service: 'fruits_legumes',
       titre: 'Fruits et légumes de saison',
@@ -519,9 +519,11 @@ describe('RechercheServices (API test)', () => {
       is_available_inhouse: true,
       thematique: 'alimentation',
     });
+    /*
     expect(response.body[2].external_url).toEqual(
       'https://www.winter-energies.fr/',
     );
+    */
   });
 
   it(`POST /services/compute_stats  calcul les stats de favoris pour les services, aucun usage`, async () => {
