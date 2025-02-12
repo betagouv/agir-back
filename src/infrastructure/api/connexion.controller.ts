@@ -66,8 +66,11 @@ export class ConnexionController extends GenericControler {
   @ApiBody({
     type: Valider2FAAPI,
   })
+  @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiBadRequestResponse({ type: ApplicationError })
-  async validateCodePourLogin(@Body() body: Valider2FAAPI) {
+  async validateCodePourLogin(
+    @Body() body: Valider2FAAPI,
+  ): Promise<LoggedUtilisateurAPI> {
     const loggedUser = await this.connexion_v2_Usecase.validateCodePourLogin(
       body.email,
       body.code,

@@ -1,114 +1,138 @@
-import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
-import { ApiExcludeController, ApiExcludeEndpoint } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Redirect,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
-import { App } from '../../../src/domain/app';
 import {
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../../domain/utilisateur/utilisateur';
-import { KycRepository } from '../repository/kyc.repository';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { OIDCStateRepository } from '../repository/oidcState.repository';
+import { ApplicationError } from '../applicationError';
+
+export type FCUserInfo = {
+  sub: string;
+  email: string;
+  given_name: string;
+  given_name_array: string[];
+  aud: string;
+  exp: number;
+  iat: number;
+  iss: string;
+};
 
 @Controller()
-@ApiExcludeController()
-export class AuthController {
+@ApiTags('France Connect')
+export class AuthController extends GenericControler {
   constructor(
-    private utilisateurRepository: UtilisateurRepository,
+    private userRepository: UtilisateurRepository,
+    private oIDCStateRepository: OIDCStateRepository,
     private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Get('login_france_connect')
   @Redirect()
-  @ApiExcludeEndpoint()
+  @ApiOperation({
+    summary:
+      'Initie une redirection vers France Connect pour processus de connexion',
+  })
   async login() {
     const redirect_url =
       await this.oidcService.generatedAuthRedirectUrlAndSaveState();
     return { url: redirect_url };
   }
 
-  @Get('login-callback')
-  @Redirect()
-  @ApiExcludeEndpoint()
+  @ApiOperation({
+    summary:
+      'finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
+  })
+  @Get('login_france_connect_step_2')
+  @ApiOkResponse({ type: LoggedUtilisateurAPI })
   async login_callback(
-    @Query('code') oidc_code: string,
-    @Query('loginid') loginId: string,
-  ) {
+    @Query('oidc_code') oidc_code: string,
+    @Query('oidc_state') oidc_state: string,
+  ): Promise<LoggedUtilisateurAPI> {
+    const state = await this.oIDCStateRepository.getByState(oidc_state);
+    if (!state) {
+      ApplicationError.throwBadOIDCCodeState();
+    }
+
     // TOKEN ENDPOINT
     const access_token = await this.oidcService.getAccessToken(
-      loginId,
+      oidc_state,
       oidc_code,
     );
 
     // INFO ENDPOINT
-    const user_data = await this.oidcService.getUserDataByAccessToken(
-      access_token,
+    const user_data_base64: string =
+      await this.oidcService.getUserDataByAccessToken(access_token);
+    console.log('THIS IS USER DATA');
+    console.log(user_data_base64);
+    const blocks = user_data_base64.split('.');
+    const charge_utile = blocks[1];
+    const json_user_data = Buffer.from(charge_utile, 'base64').toString(
+      'ascii',
     );
-    console.log(user_data);
+    console.log(json_user_data);
+    const user_info: FCUserInfo = JSON.parse(json_user_data);
+    console.log(user_info);
 
     // FINDING USER
     let utilisateur = await this.profileUsecase.findUtilisateurByEmail(
-      user_data.email,
+      user_info.email,
     );
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
-        user_data.email,
+        user_info.email,
         false,
         SourceInscription.france_connect,
       );
 
-      utilisateur.prenom = user_data.given_name;
-      utilisateur.nom = user_data.family_name;
+      utilisateur.prenom = user_info.given_name;
       utilisateur.status = UtilisateurStatus.default;
       utilisateur.active_account = true;
+      utilisateur.est_valide_pour_classement = true;
 
-      utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
-      await this.utilisateurRepository.createUtilisateur(utilisateur);
+      await this.userRepository.createUtilisateur(utilisateur);
     }
 
-    await this.oidcService.injectUtilisateurIdToState(loginId, utilisateur.id);
+    await this.oidcService.injectUtilisateurIdToState(
+      oidc_state,
+      utilisateur.id,
+    );
 
     // CREATING INNER APP TOKEN
     const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
-    return {
-      url: App.getBaseURLFront().concat(
-        process.env.FINAL_LOGIN_REDIRECT,
-        `?utilisateurId=${utilisateur.id}&token=${token}`,
-      ),
-    };
+
+    return LoggedUtilisateurAPI.mapToAPI(token, utilisateur);
   }
 
-  @Get('welcome')
-  @ApiExcludeEndpoint()
-  async welcome(
-    @Query('token') token: string,
-    @Query('utilisateurId') utilisateurId: string,
-  ) {
-    let utilisateur = await this.profileUsecase.findUtilisateurById(
-      utilisateurId,
-    );
-    return `<br>Bonjour ${utilisateur.nom}
-    <br>utilisateurId = ${utilisateurId}
-    <br>token = ${token}
-    <br><a href='/logout/${utilisateurId}'>Se dé-connecter de France Connect</a>`;
-  }
-
-  @Get('logout/:id')
+  @Get('logout_france_connect/:utilisateurId')
+  @ApiOperation({
+    summary:
+      'Initie une redirection vers France Connect pour processus de dé-connexion',
+  })
+  @UseGuards(AuthGuard)
   @Redirect()
-  @ApiExcludeEndpoint()
-  async logout(@Param('id') utilisateurId: string) {
+  async logout(@Param('utilisateurId') utilisateurId: string, @Request() req) {
+    this.checkCallerId(req, utilisateurId);
     const redirect_url =
       await this.oidcService.generatedLogoutUrlAndDeleteState(utilisateurId);
     return { url: redirect_url };
-  }
-
-  @Get('logout-callback')
-  @ApiExcludeEndpoint()
-  async logout_callback() {
-    return `<br>Vous êtes bien déconnecté !!
-    <br><a href='/login'>Se connecter avec France Connect</a>`;
   }
 }

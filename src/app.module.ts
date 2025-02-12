@@ -166,10 +166,10 @@ function getControllers(): any[] {
     ConformiteController,
     Synthese_v2Controller,
     ActionsController,
+    AuthController,
   );
   if (!App.isProd()) {
     controllers.push(TestDataController);
-    controllers.push(AuthController);
     controllers.push(MagicLinkController);
   }
   return controllers;

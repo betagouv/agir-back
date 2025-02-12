@@ -37,12 +37,6 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : loginUtilisateur : [${email}] mauvais email`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
-    /*
-    if (!utilisateur.active_account) {
-      console.log(`CONNEXION : loginUtilisateur : [${email}] compte inactif`);
-      ApplicationError.throwBadPasswordOrEmailError();
-    }
-    */
 
     const _this = this;
     const okAction = async function () {
@@ -77,14 +71,7 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : validateCodePourLogin : [${email}] inconnu`);
       ApplicationError.throwBadCodeOrEmailError();
     }
-    /*
-    if (!utilisateur.active_account) {
-      console.log(
-        `CONNEXION : validateCodePourLogin : [${email}] compte inactif`,
-      );
-      ApplicationError.throwBadCodeOrEmailError();
-    }
-    */
+
     if (utilisateur.status !== UtilisateurStatus.connexion_etape_1) {
       console.log(
         `CONNEXION : validateCodePourLogin : [${email}] mauvaise étape`,

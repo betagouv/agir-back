@@ -566,6 +566,12 @@ export class ApplicationError {
       404,
     );
   }
+  static throwBadOIDCCodeState() {
+    this.throwAppError(
+      '107',
+      `Problème détecté dans les paramètres d'authentification (code ou state)`,
+    );
+  }
 
   private static throwAppError(
     code: string,

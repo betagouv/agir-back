@@ -1,7 +1,5 @@
 export type OIDCState = {
-  loginId: string;
+  state: string;
   utilisateurId?: string;
-  state?: string;
-  nonce?: string;
   idtoken?: string;
 };
