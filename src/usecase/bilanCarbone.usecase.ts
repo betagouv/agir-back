@@ -6,6 +6,7 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
+  NGCSituation,
   NiveauImpact,
 } from '../domain/bilan/bilanCarbone';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -14,6 +15,8 @@ import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { Feature } from '../domain/gamification/feature';
 import { Thematique } from '../domain/contenu/thematique';
+import { Situation } from 'publicodes';
+import { DottedName } from '@incubateur-ademe/nosgestesclimat';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
@@ -270,7 +273,7 @@ export class BilanCarboneUsecase {
     };
   }
 
-  public computeSituation(utilisateur: Utilisateur): Object {
+  public computeSituation(utilisateur: Utilisateur): NGCSituation {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
