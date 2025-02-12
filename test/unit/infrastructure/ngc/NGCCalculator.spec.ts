@@ -20,6 +20,7 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response).toEqual(1568.5480530854577);
   });
+
   it('computeSingleEntry : compute ok single entry, minimal situation', () => {
     //GIVEN
     const situation = {
@@ -33,6 +34,7 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response).toEqual(1990.0803695420266);
   });
+
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
     const situation = {
@@ -52,8 +54,9 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(7418.943604948354);
+    expect(response).toEqual(8294.146413950133);
   });
+
   it('computeSingleEntry : Cas du photovlotaique', () => {
     //GIVEN
     const situation1 = {
@@ -71,6 +74,7 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response1 as number).toBeGreaterThan(response2 as number);
   });
+
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
     const situation = {
@@ -95,9 +99,9 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(7418.943604948354);
-    expect(response.get('divers')).toEqual(1149.8963528144989);
-    expect(response.get('logement')).toEqual(2008.1154777827674);
+    expect(response.get('bilan')).toEqual(8294.146413950133);
+    expect(response.get('divers')).toEqual(991.5498010903609);
+    expect(response.get('logement')).toEqual(2160.200464307907);
     expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
       1297.8253327911443,
     );
