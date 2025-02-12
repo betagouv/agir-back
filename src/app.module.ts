@@ -166,9 +166,9 @@ function getControllers(): any[] {
     ConformiteController,
     Synthese_v2Controller,
     ActionsController,
-    AuthController,
   );
   if (!App.isProd()) {
+    controllers.push(AuthController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
   }
