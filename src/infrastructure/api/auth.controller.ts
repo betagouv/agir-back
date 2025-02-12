@@ -67,10 +67,15 @@ export class AuthController extends GenericControler {
     @Query('oidc_code') oidc_code: string,
     @Query('oidc_state') oidc_state: string,
   ): Promise<LoggedUtilisateurAPI> {
+    console.log(`oidc_code : [${oidc_code}]`);
+    console.log(`oidc_state : [${oidc_state}]`);
+
     const state = await this.oIDCStateRepository.getByState(oidc_state);
     if (!state) {
       ApplicationError.throwBadOIDCCodeState();
     }
+
+    console.log(state);
 
     // TOKEN ENDPOINT
     const access_token = await this.oidcService.getAccessToken(

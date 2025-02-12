@@ -36,6 +36,7 @@ export class OidcService {
 
     await this.oIDCStateRepository.createNewState(OIDC_STATE);
 
+    console.log(redirect_url);
     return redirect_url;
   }
 
