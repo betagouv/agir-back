@@ -83,6 +83,8 @@ export class AuthController extends GenericControler {
       oidc_code,
     );
 
+    console.log(`access token : [${access_token}]`);
+
     // INFO ENDPOINT
     const user_data_base64: string =
       await this.oidcService.getUserDataByAccessToken(access_token);
