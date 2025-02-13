@@ -6,6 +6,7 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
+  SituationNGC,
   NiveauImpact,
 } from '../domain/bilan/bilanCarbone';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -270,7 +271,7 @@ export class BilanCarboneUsecase {
     };
   }
 
-  public computeSituation(utilisateur: Utilisateur): Object {
+  public computeSituation(utilisateur: Utilisateur): SituationNGC {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
@@ -364,6 +365,7 @@ export class BilanCarboneUsecase {
     }
     return null;
   }
+
   private computeImpactConsommation(utilisateur: Utilisateur): NiveauImpact {
     const kyc_type_conso =
       utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
@@ -385,6 +387,7 @@ export class BilanCarboneUsecase {
     }
     return null;
   }
+
   private computeImpactLogement(utilisateur: Utilisateur): NiveauImpact {
     const kyc_menage = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
       KYCID.KYC_menage,

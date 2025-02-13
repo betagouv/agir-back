@@ -144,18 +144,18 @@ describe('/bilan (API test)', () => {
           emoji: '🚘️',
         },
         {
+          label: 'Services publics',
+          pourcentage: 14,
+          pourcentage_categorie: 87,
+          impact_kg_annee: 1259.4428717769142,
+          emoji: '🏛',
+        },
+        {
           label: 'Viandes',
           pourcentage: 14,
           pourcentage_categorie: 52,
           impact_kg_annee: 1207.648,
           emoji: '🥩',
-        },
-        {
-          label: 'Construction',
-          pourcentage: 11,
-          pourcentage_categorie: 45,
-          impact_kg_annee: 968.7934897866139,
-          emoji: '🧱',
         },
       ],
       impact_thematique: [
@@ -659,18 +659,18 @@ describe('/bilan (API test)', () => {
           emoji: '🚘️',
         },
         {
+          label: 'Services publics',
+          pourcentage: 14,
+          pourcentage_categorie: 87,
+          impact_kg_annee: 1259.4428717769142,
+          emoji: '🏛',
+        },
+        {
           label: 'Viandes',
           pourcentage: 14,
           pourcentage_categorie: 52,
           impact_kg_annee: 1207.648,
           emoji: '🥩',
-        },
-        {
-          label: 'Construction',
-          pourcentage: 11,
-          pourcentage_categorie: 45,
-          impact_kg_annee: 968.7934897866139,
-          emoji: '🧱',
         },
       ],
       impact_thematique: [
@@ -828,7 +828,6 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🚲',
             },
-            // FIXME: doublon avec transport
             {
               label: 'Vacances',
               pourcentage: 0,

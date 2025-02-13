@@ -1,4 +1,10 @@
+import { Situation } from 'publicodes';
+import { DottedName } from '@incubateur-ademe/nosgestesclimat';
+
 import { Thematique } from '../contenu/thematique';
+
+export type RegleNGC = DottedName;
+export type SituationNGC = Situation<DottedName>;
 
 export class DetailImpact {
   label: string;
@@ -59,3 +65,6 @@ export class BilanCarboneSynthese {
   pourcentage_completion_totale: number;
   liens_bilans_thematiques: LienBilanThematique[];
 }
+
+// NOTE: we may want to approximate with 52.1429 to account for leap years
+export const NB_SEMAINES_PAR_ANNEE = 52;
