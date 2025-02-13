@@ -174,17 +174,20 @@ export class Connexion_v2_Usecase {
     );
   }
 
-  async disconnectUser(utilisateurId: string) {
+  async logout_single_user(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
     );
     utilisateur.force_connexion = true;
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-    await this.oidcService.self_logout(utilisateurId);
+
+    if (!App.isProd()) {
+      await this.oidcService.self_logout(utilisateurId);
+    }
   }
 
-  async disconnectAllUsers() {
+  async logout_all_users() {
     await this.utilisateurRepository.disconnectAll();
   }
 

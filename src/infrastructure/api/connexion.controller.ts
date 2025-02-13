@@ -91,7 +91,7 @@ export class ConnexionController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.connexion_v2_Usecase.disconnectUser(utilisateurId);
+    await this.connexion_v2_Usecase.logout_single_user(utilisateurId);
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')
