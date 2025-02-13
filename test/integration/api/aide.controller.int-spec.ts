@@ -72,7 +72,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       montant: 50,
       plafond: 50,
       description:
-        "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
+        "Aide financière pour l'achat de vélos à assistance électrique, de vélos mécanique (pour les moins de 25 ans) et de vélos adaptés. Neuf ou d'occasion.",
       lien: 'https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo',
       collectivite: {
         kind: 'région',
@@ -93,8 +93,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
         },
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
           montant: 400,
           plafond: 400,
         },
@@ -107,8 +105,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
         },
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo cargo à hauteur de 50% et jusqu'à un plafond de 400 €.",
           montant: 400,
           plafond: 400,
         },
@@ -121,8 +117,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
         },
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo cargo électrique à hauteur de 50% et jusqu'à un plafond de 600 €.",
           montant: 600,
           plafond: 600,
         },
@@ -136,8 +130,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
 
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo pliant à hauteur de 50% et jusqu'à un plafond de 400 €.",
           montant: 400,
           plafond: 400,
         },
@@ -150,8 +142,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
         },
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo pliant électrique à hauteur de 50% et jusqu'à un plafond de 400 €.",
           montant: 400,
           plafond: 400,
         },
@@ -159,8 +149,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
       motorisation: [
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un kit de motorisation à hauteur de 50% et jusqu'à un plafond de 200 €.",
           montant: 200,
           plafond: 200,
         },
@@ -173,8 +161,6 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
         },
         {
           ...idfMobilites,
-          description:
-            "La région Île-de-France subventionne l'achat d'un vélo adapté à hauteur de 50% et jusqu'à un plafond de 1 200 €.",
           montant: 1200,
           plafond: 1200,
         },
