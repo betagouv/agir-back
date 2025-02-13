@@ -51,7 +51,7 @@ describe('AideVeloRepository', () => {
         {
           collectivite: { kind: 'région', value: '11' },
           description:
-            "La région Île-de-France subventionne l'achat d'un kit de motorisation à hauteur de 50% et jusqu'à un plafond de 200 €.",
+            "Aide financière pour l'achat de vélos à assistance électrique, de vélos mécanique (pour les moins de 25 ans) et de vélos adaptés. Neuf ou d'occasion.",
           libelle: 'Île-de-France Mobilités',
           lien: 'https://www.iledefrance-mobilites.fr/le-reseau/services-de-mobilite/velo/prime-achat-velo',
           logo: 'http://localhost:3000/logo_ile_de_france.webp',

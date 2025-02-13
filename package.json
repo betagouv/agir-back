@@ -42,7 +42,7 @@
     "execute": "node dist/src/console.js"
   },
   "dependencies": {
-    "@betagouv/aides-velo": "^0.3.3",
+    "@betagouv/aides-velo": "^0.3.4",
     "@etalab/decoupage-administratif": "^4.0.0",
     "@getbrevo/brevo": "^1.0.1",
     "@incubateur-ademe/nosgestesclimat": "^3.3.2",
@@ -58,7 +58,7 @@
     "axios": ">=1.7.9",
     "firebase-admin": "^13.0.2",
     "handlebars": "^4.7.8",
-    "publicodes": "^1.6.1",
+    "publicodes": "1.6.1",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1",
     "typescript-retry-decorator": "^2.4.2",
