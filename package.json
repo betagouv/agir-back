@@ -54,6 +54,7 @@
     "@nestjs/swagger": "^8.1.1",
     "@nestjs/throttler": "^6.3.0",
     "@prisma/client": "^6.2.1",
+    "@publicodes/tools": "^1.5.3",
     "@sentry/node": "^8.48.0",
     "axios": ">=1.7.9",
     "firebase-admin": "^13.0.2",
