@@ -129,6 +129,8 @@ import { AideExpirationWarningRepository } from './infrastructure/repository/aid
 import { PushNotificator } from './infrastructure/push_notifications/pushNotificator';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
 import { ActionRepository } from './infrastructure/repository/action.repository';
+import { ActionUsecase } from './usecase/actions.usecase';
+import { ActionsController } from './infrastructure/api/actions.controller';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -163,10 +165,11 @@ function getControllers(): any[] {
     GoneController,
     ConformiteController,
     Synthese_v2Controller,
+    ActionsController,
   );
   if (!App.isProd()) {
-    controllers.push(TestDataController);
     controllers.push(AuthController);
+    controllers.push(TestDataController);
     controllers.push(MagicLinkController);
   }
   return controllers;
@@ -279,6 +282,7 @@ function getControllers(): any[] {
     AideExpirationWarningRepository,
     PushNotificator,
     ActionRepository,
+    ActionUsecase,
   ],
 })
 export class AppModule {}

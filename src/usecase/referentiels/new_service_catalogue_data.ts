@@ -23,6 +23,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     thematique: Thematique.consommation,
     is_available_inhouse: true,
   },
+  /*
   {
     id: ServiceAsyncID.linky,
     external_url: 'https://www.winter-energies.fr/',
@@ -33,6 +34,7 @@ const new_service_catalogue: NewServiceDefinition[] = [
     thematique: Thematique.logement,
     is_available_inhouse: true,
   },
+  */
   {
     id: ServiceRechercheID.proximite,
     external_url: 'https://presdecheznous.fr/map#/carte/{CODE_POSTAL}',

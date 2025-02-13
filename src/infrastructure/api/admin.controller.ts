@@ -407,7 +407,7 @@ export class AdminController extends GenericControler {
   })
   async disconnectAll(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.connexion_v2_Usecase.disconnectAllUsers();
+    await this.connexion_v2_Usecase.logout_all_users();
   }
 
   @Post('/admin/load_communes_epci')

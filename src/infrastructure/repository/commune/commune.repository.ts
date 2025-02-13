@@ -101,26 +101,43 @@ export class CommuneRepository {
     }
   }
 
-  public getEPCIByCode(code: string): EPCI {
+  /**
+   * Get the EPCI by its SIREN code.
+   *
+   * @param code The SIREN code of the EPCI (e.g. "200000172").
+   * @returns The EPCI if found, `undefined` otherwise.
+   *
+   * PERF: could we use a more clever data structure to have a O(1) lookup?
+   */
+  public getEPCIBySIRENCode(code: string): EPCI | undefined {
     return epci.find((e) => e.code === code);
   }
 
-  public async findCommuneOrEpciByName(name: string): Promise<
+  public async findCommuneOrEpciByName(names: string[]): Promise<
     {
       code_insee: string;
       nom: string;
     }[]
   > {
-    const query = `
+    let query = `
     SELECT
       "nom",
       "code_insee"
     FROM
       "CommunesAndEPCI"
     WHERE
-      "nom" ILIKE '%${name}%'
-    ;
     `;
+
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index];
+      if (index > 0) {
+        query += ' AND ';
+      }
+      query += `"nom" ILIKE '%${name}%'`;
+    }
+    query += ' ; ';
+
+    console.log(query);
     const result: { nom: string; code_insee: string }[] =
       await this.prisma.$queryRawUnsafe(query);
     return result;
@@ -206,6 +223,7 @@ export class CommuneRepository {
     return result ? result.nom : 'INCONNU';
   }
 
+  // NOTE: why some methods are public and some are protected?
   public getNomRegionByCode(code: string): string {
     const result = (_regions as Region[]).find((d) => d.code === code);
     return result ? result.nom : 'INCONNU';
@@ -215,8 +233,9 @@ export class CommuneRepository {
     return _codes_postaux[code_postal] !== undefined;
   }
 
-  isCodeInseeEPCI(code_insee: string): boolean {
-    return epci.find((e) => e.code === code_insee) != undefined;
+  // PERF: could we use a more clever data structure to have a O(1) lookup?
+  isCodeSirenEPCI(code_siren: string): boolean {
+    return epci.find((e) => e.code === code_siren) != undefined;
   }
 
   checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
@@ -229,6 +248,7 @@ export class CommuneRepository {
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
   }
+
   getListCodesCommunesParCodePostal(code_postal: string): string[] {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (liste === undefined) return [];
@@ -265,7 +285,7 @@ export class CommuneRepository {
   }
 
   listeCodesCommunesByEPCICode(code_epci: string): string[] {
-    const the_epci = this.getEPCIByCode(code_epci);
+    const the_epci = this.getEPCIBySIRENCode(code_epci);
     const result = [];
 
     for (const membre of the_epci.membres) {
@@ -288,7 +308,7 @@ export class CommuneRepository {
         continue;
       }
 
-      const epci = this.getEPCI(epciCode);
+      const epci = this.getEPCIBySIRENCode(epciCode);
       if (epci?.type === echelon) {
         result.add(epci.nom);
       }
@@ -364,6 +384,7 @@ export class CommuneRepository {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     return liste ? liste : [];
   }
+
   public getCodePostauxFromCodeCommune(code_commune: string) {
     for (const une_commune of communes) {
       if (une_commune.code === code_commune) {
@@ -395,18 +416,6 @@ export class CommuneRepository {
    */
   getEPCIByCommuneCodeINSEE(code_insee: string): EPCI | undefined {
     const epciCode = communesEPCI[code_insee];
-    return this.getEPCI(epciCode);
-  }
-
-  /**
-   * Returns the EPCI identified by its SIREN code.
-   *
-   * @param code The SIREN code of the EPCI (e.g. "200000172").
-   * @returns The EPCI if found, `undefined` otherwise.
-   */
-  private getEPCI(code?: string): EPCI | undefined {
-    if (code) {
-      return epci.find((epci) => epci.code === code);
-    }
+    return this.getEPCIBySIRENCode(epciCode);
   }
 }

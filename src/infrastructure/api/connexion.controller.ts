@@ -66,8 +66,11 @@ export class ConnexionController extends GenericControler {
   @ApiBody({
     type: Valider2FAAPI,
   })
+  @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiBadRequestResponse({ type: ApplicationError })
-  async validateCodePourLogin(@Body() body: Valider2FAAPI) {
+  async validateCodePourLogin(
+    @Body() body: Valider2FAAPI,
+  ): Promise<LoggedUtilisateurAPI> {
     const loggedUser = await this.connexion_v2_Usecase.validateCodePourLogin(
       body.email,
       body.code,
@@ -88,7 +91,7 @@ export class ConnexionController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.connexion_v2_Usecase.disconnectUser(utilisateurId);
+    await this.connexion_v2_Usecase.logout_single_user(utilisateurId);
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

@@ -4,14 +4,20 @@ import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repo
 
 import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
 
-import { AidesVeloParType, AideVelo } from '../domain/aides/aideVelo';
+import {
+  AidesVeloParType,
+  AideVelo,
+  AideVeloNonCalculee,
+} from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import {
   Commune,
   CommuneRepository,
+  Departement,
   EPCI,
+  Region,
 } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -212,12 +218,12 @@ export class AidesUsecase {
     let commune: Commune;
     let code_EPCI = undefined;
     let epci: EPCI = undefined;
-    const IS_EPCI = this.communeRepository.isCodeInseeEPCI(
+    const IS_EPCI = this.communeRepository.isCodeSirenEPCI(
       code_insee_commune_ou_EPCI,
     );
     if (IS_EPCI) {
       code_EPCI = code_insee_commune_ou_EPCI;
-      epci = this.communeRepository.getEPCIByCode(code_EPCI);
+      epci = this.communeRepository.getEPCIBySIRENCode(code_EPCI);
     } else {
       commune = this.communeRepository.getCommuneByCodeINSEE(
         code_insee_commune_ou_EPCI,
@@ -230,6 +236,10 @@ export class AidesUsecase {
     const region = commune?.region || une_commune_EPCI?.region;
     const departement = commune?.departement || une_commune_EPCI?.departement;
 
+    // FIXME: Si on accepte le fait que les paramètres peuvent être null, alors
+    // il faut le préciser dans l'API et il sera également préférable
+    // d'utiliser les valeurs par défaut du modèle pour maximiser le montant
+    // des aides.
     return this.aidesVeloRepository.getSummaryVelos({
       'localisation . code insee': IS_EPCI ? undefined : commune.code,
       'localisation . epci': epci?.nom,
@@ -243,6 +253,42 @@ export class AidesUsecase {
         : 40000,
       'revenu fiscal de référence par part . nombre de parts': parts,
       'vélo . état': etat_velo,
+    });
+  }
+
+  /**
+   * Récupère toutes les aides disponible pour une commune ou un EPCI donné.
+   *
+   * @param code - Le code INSEE de la commune ou le code SIREN de l'EPCI.
+   * @returns La liste de toutes aides disponible pour la commune ou l'EPCI donné.
+   *
+   * @note Les aides ne sont pas calculées et peuvent donc ne pas être éligibles pour certaines personnes.
+   */
+  async recupererToutesLesAidesDisponiblesParCommuneOuEPCI(
+    code: string,
+  ): Promise<AideVeloNonCalculee[]> {
+    const isEPCI = this.communeRepository.isCodeSirenEPCI(code);
+    const commune: Commune | undefined = isEPCI
+      ? undefined
+      : this.communeRepository.getCommuneByCodeINSEE(code);
+    const epci: EPCI | undefined = isEPCI
+      ? this.communeRepository.getEPCIBySIRENCode(code)
+      : this.communeRepository.getEPCIByCommuneCodeINSEE(code);
+
+    const codeCommuneDeEPCI = epci?.membres[0].code;
+    const communeDeEPCI =
+      this.communeRepository.getCommuneByCodeINSEE(codeCommuneDeEPCI);
+    const region = isEPCI ? communeDeEPCI?.region : commune?.region;
+    const departement = isEPCI
+      ? communeDeEPCI?.departement
+      : commune?.departement;
+
+    return this.aidesVeloRepository.getAllAidesIn({
+      'localisation . pays': 'France',
+      'localisation . code insee': isEPCI ? undefined : commune?.code,
+      'localisation . epci': epci?.nom,
+      'localisation . région': region,
+      'localisation . département': departement,
     });
   }
 

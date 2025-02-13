@@ -36,6 +36,7 @@ import { ConformiteRepository } from '../infrastructure/repository/conformite.re
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { TypeAction } from '../domain/actions/typeAction';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -659,8 +660,12 @@ export class CMSImportUsecase {
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       lvo_objet: entry.attributes.objet_lvo,
-      lvo_action: entry.attributes.action_lvo,
-      recette_categorie: entry.attributes.categorie_recettes,
+      lvo_action: entry.attributes.action_lvo
+        ? CategorieRecherche[entry.attributes.action_lvo]
+        : null,
+      recette_categorie: entry.attributes.categorie_recettes
+        ? CategorieRecherche[entry.attributes.categorie_recettes]
+        : null,
       type: TypeAction[entry.attributes.type_action],
       besoins:
         entry.attributes.besoins.data.length > 0

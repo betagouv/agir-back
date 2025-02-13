@@ -1,11 +1,15 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import _situationNGCTest from './situationNGCtest.json';
+//import _situationNGCTest from './situationNGCtest.json';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import _situationNGCTest from './situationNGC_3.3.2.json';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -50,6 +54,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const reponse_injectKYCs = await TestUtil.POST('/admin/load_kycs_from_cms');
     expect(reponse_injectKYCs.status).toEqual(201);
 
+    await kycRepository.loadDefinitions();
+
     const situationId = await importSitutationAndGetId(_situationNGCTest);
 
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -62,22 +68,22 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com');
-
+    const user_full = await utilisateurRepository.getById(user.id, [Scope.ALL]);
     expect(
-      user.kyc_history
+      user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_local_frequence)
-        .getReponseSimpleValue(),
-    ).toEqual('Parfois');
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('souvent');
     expect(
       user.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_voiture_km)
         .getReponseSimpleValue(),
-    ).toEqual('12345');
+    ).toEqual('11960');
     expect(
       user.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_avion_3_annees)
-        .getReponseSimpleValue(),
-    ).toEqual('Oui');
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('oui');
     expect(
       user.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_superficie)

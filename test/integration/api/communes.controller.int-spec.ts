@@ -62,7 +62,7 @@ describe('/communes (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].nom).toEqual('Palaiseau');
   });
-  it('GET /communes_epci?nom=XXXX - renvoie la commune de palaiseau, recherche partielle', async () => {
+  it('GET /communes_epci?nom=XXXX - renvoie la commune recherche partielle cas insensitive', async () => {
     // GIVEN
     await TestUtil.prisma.communesAndEPCI.create({
       data: {
@@ -77,14 +77,14 @@ describe('/communes (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/communes_epci?nom=ALA');
+    const response = await TestUtil.GET('/communes_epci?nom=ALAI');
 
     //THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].nom).toEqual('Palaiseau');
   });
-  it('GET /communes_epci?nom=XXXX - renvoie la commune de palaiseau, recherche partielle', async () => {
+  it('GET /communes_epci?nom=XXXX - renvoie la commune recherche par découpage de mots', async () => {
     // GIVEN
     await TestUtil.prisma.communesAndEPCI.create({
       data: {
@@ -99,7 +99,7 @@ describe('/communes (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/communes_epci?nom=Dijon');
+    const response = await TestUtil.GET('/communes_epci?nom=dij metro');
 
     //THEN
     expect(response.status).toBe(200);

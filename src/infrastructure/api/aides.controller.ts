@@ -23,6 +23,9 @@ import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
 import { InputAideVeloOpenAPI } from './types/aide/inputAideVeloOpenAPI';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { InputRecupererAideVeloAPI } from './types/aide/InputRecupererAideVeloAPI';
+import { AideVeloNonCalculeeAPI } from './types/aide/AideVeloNonCalculeesAPI';
+import { App } from '../../domain/app';
 
 @Controller()
 @ApiBearerAuth()
@@ -104,13 +107,12 @@ export class AidesController extends GenericControler {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 2, ttl: 1000 } })
+  @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
   @ApiOkResponse({ type: AidesVeloParTypeAPI })
   @Post('aides/simulerAideVelo')
   @ApiBody({
     type: InputAideVeloOpenAPI,
   })
-  @UseGuards(AuthGuard)
   async simulerAideVelo(
     @Body() body: InputAideVeloOpenAPI,
   ): Promise<AidesVeloParTypeAPI> {
@@ -122,5 +124,29 @@ export class AidesController extends GenericControler {
       body.etat_du_velo,
     );
     return AidesVeloParTypeAPI.mapToAPI(result);
+  }
+
+  // NOTE: this could manage region and departement code as well in the future
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
+  @ApiOkResponse({ type: Array<AideVeloNonCalculeeAPI> })
+  @Post('aides/recupererAideVeloParCodeCommuneOuEPCI')
+  @ApiBody({
+    type: InputRecupererAideVeloAPI,
+  })
+  @ApiOperation({
+    summary:
+      "Récupère l'ensemble des aides vélo disponibile pour une commune ou un EPCI",
+    description:
+      "Par disponible, on entend que l'aide est disponible pour la commune ou l'EPCI, mais pas nécessairement proposée par cette dernière. Par exemple, une aide proposée par la région est disponible aux habitant:es d'une commune de la région.",
+  })
+  async recupererAidesVeloParCodeCommuneOuEPCI(
+    @Body() body: InputRecupererAideVeloAPI,
+  ): Promise<AideVeloNonCalculeeAPI[]> {
+    const result =
+      await this.aidesUsecase.recupererToutesLesAidesDisponiblesParCommuneOuEPCI(
+        body.code_insee_ou_siren,
+      );
+    return result.map(AideVeloNonCalculeeAPI.mapToAPI);
   }
 }

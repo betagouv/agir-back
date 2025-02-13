@@ -36,6 +36,7 @@ import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -421,7 +422,9 @@ export class CMSWebhookUsecase {
       sous_titre: entry.sous_titre,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
-      lvo_action: entry.action_lvo,
+      lvo_action: entry.action_lvo
+        ? CategorieRecherche[entry.action_lvo]
+        : null,
       lvo_objet: entry.objet_lvo,
       type: TypeAction[entry.type_action],
       besoins: entry.besoins ? entry.besoins.map((elem) => elem.code) : [],
@@ -429,7 +432,9 @@ export class CMSWebhookUsecase {
         ? entry.quizzes.map((elem) => elem.id.toString())
         : [],
       kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
-      recette_categorie: entry.categorie_recettes,
+      recette_categorie: entry.categorie_recettes
+        ? CategorieRecherche[entry.categorie_recettes]
+        : null,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,

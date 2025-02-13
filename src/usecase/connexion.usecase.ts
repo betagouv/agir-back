@@ -37,12 +37,6 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : loginUtilisateur : [${email}] mauvais email`);
       ApplicationError.throwBadPasswordOrEmailError();
     }
-    /*
-    if (!utilisateur.active_account) {
-      console.log(`CONNEXION : loginUtilisateur : [${email}] compte inactif`);
-      ApplicationError.throwBadPasswordOrEmailError();
-    }
-    */
 
     const _this = this;
     const okAction = async function () {
@@ -77,14 +71,7 @@ export class Connexion_v2_Usecase {
       console.log(`CONNEXION : validateCodePourLogin : [${email}] inconnu`);
       ApplicationError.throwBadCodeOrEmailError();
     }
-    /*
-    if (!utilisateur.active_account) {
-      console.log(
-        `CONNEXION : validateCodePourLogin : [${email}] compte inactif`,
-      );
-      ApplicationError.throwBadCodeOrEmailError();
-    }
-    */
+
     if (utilisateur.status !== UtilisateurStatus.connexion_etape_1) {
       console.log(
         `CONNEXION : validateCodePourLogin : [${email}] mauvaise étape`,
@@ -122,12 +109,6 @@ export class Connexion_v2_Usecase {
       return; // pas d'erreur, silence ^^
     }
 
-    /*
-    if (!utilisateur.active_account) {
-      console.log(`CONNEXION : oubli_mot_de_pass : [${email}] compte inactif`);
-      return; // pas d'erreur, silence ^^
-    }
-    */
     const _this = this;
     const okAction = async function () {
       const user = await _this.utilisateurRepository.findByEmail(email);
@@ -169,15 +150,6 @@ export class Connexion_v2_Usecase {
       ApplicationError.throwBadCodeOrEmailError();
     }
 
-    /*
-    if (!utilisateur.active_account) {
-      console.log(
-        `CONNEXION : modifier_mot_de_passe : [${email}] compte inactif`,
-      );
-      ApplicationError.throwBadCodeOrEmailError();
-    }
-    */
-
     PasswordManager.checkPasswordFormat(mot_de_passe);
 
     const _this = this;
@@ -202,16 +174,20 @@ export class Connexion_v2_Usecase {
     );
   }
 
-  async disconnectUser(utilisateurId: string) {
+  async logout_single_user(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
     );
     utilisateur.force_connexion = true;
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    if (!App.isProd()) {
+      await this.oidcService.self_logout(utilisateurId);
+    }
   }
 
-  async disconnectAllUsers() {
+  async logout_all_users() {
     await this.utilisateurRepository.disconnectAll();
   }
 

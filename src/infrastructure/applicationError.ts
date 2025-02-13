@@ -556,6 +556,22 @@ export class ApplicationError {
   static throwMissingPourcent() {
     this.throwAppError('104', `Attribut 'pourcent' manquant`, 400);
   }
+  static throwActionNotFound(code: string) {
+    this.throwAppError('105', `l'action de code [${code}] n'existe pas`, 404);
+  }
+  static throwCodeCommuneNotFound(code: string) {
+    this.throwAppError(
+      '106',
+      `le code INSEE de commune [${code}] n'existe pas`,
+      404,
+    );
+  }
+  static throwBadOIDCCodeState() {
+    this.throwAppError(
+      '107',
+      `Problème détecté dans les paramètres d'authentification (code ou state)`,
+    );
+  }
 
   private static throwAppError(
     code: string,
