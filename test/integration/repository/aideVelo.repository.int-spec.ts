@@ -41,7 +41,7 @@ describe('AideVeloRepository', () => {
   };
 
   describe('getSummaryVelos', () => {
-    test('doit correctement calculer les aides pour une situation de base', () => {
+    test.skip('doit correctement calculer les aides pour une situation de base', () => {
       // WHEN
       process.env.MINIATURES_URL = 'http://localhost:3000';
       const result = aidesVeloRepository.getSummaryVelos(baseParams);

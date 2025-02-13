@@ -190,6 +190,7 @@ export class AideRepository {
       partenaire_id: aideDB.partenaire_id,
       date_expiration: aideDB.date_expiration,
       derniere_maj: aideDB.derniere_maj,
+      est_gratuit: aideDB.est_gratuit,
     };
   }
 }

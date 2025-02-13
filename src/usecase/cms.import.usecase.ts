@@ -592,6 +592,7 @@ export class CMSImportUsecase {
       echelle: entry.attributes.echelle,
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
+      est_gratuit: !!entry.attributes.est_gratuit,
     };
   }
 

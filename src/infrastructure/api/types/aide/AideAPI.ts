@@ -30,6 +30,7 @@ export class AideAPI {
   @ApiProperty() partenaire_nom: string;
   @ApiProperty() partenaire_url: string;
   @ApiProperty() partenaire_logo_url: string;
+  @ApiProperty() est_gratuit: boolean;
 
   public static mapToAPI(aide: AideDefinition): AideAPI {
     let partenaire: PartenaireDefinition;
@@ -59,6 +60,7 @@ export class AideAPI {
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
       echelle: EchelleAide[aide.echelle],
+      est_gratuit: aide.est_gratuit,
     };
   }
 }

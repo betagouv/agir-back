@@ -286,6 +286,7 @@ describe('/api/incoming/cms (API test)', () => {
       exclude_codes_commune: '03,04',
       codes_departement: '78',
       codes_region: '25',
+      est_gratuit: true,
     },
   };
   const CMS_DATA_ARTICLE = {
@@ -614,6 +615,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.exclude_codes_commune).toEqual(['03', '04']);
     expect(aide.codes_departement).toEqual(['78']);
     expect(aide.codes_region).toEqual(['25']);
+    expect(aide.est_gratuit).toEqual(true);
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
     // GIVEN
@@ -954,6 +956,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.exclude_codes_commune).toEqual(['03', '04']);
     expect(aide.codes_departement).toEqual(['78']);
     expect(aide.codes_region).toEqual(['25']);
+    expect(aide.est_gratuit).toEqual(true);
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {

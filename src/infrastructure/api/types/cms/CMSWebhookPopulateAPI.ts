@@ -99,6 +99,7 @@ export type CMSWebhookPopulateAPI = {
     is_simulation: boolean;
     montantMaximum: string;
     est_visible: boolean;
+    est_gratuit: boolean;
     url_detail_front: string;
     thematique_univers_unique: {
       data: {

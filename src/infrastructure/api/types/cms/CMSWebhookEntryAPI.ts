@@ -95,6 +95,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() code: string;
   @ApiProperty() categorie_recettes: string;
   @ApiProperty() est_visible: boolean;
+  @ApiProperty() est_gratuit: boolean;
   @ApiProperty() is_examen: boolean;
   @ApiProperty() is_first: boolean;
   @ApiProperty() include_codes_commune: string;

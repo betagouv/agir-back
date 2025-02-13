@@ -32,4 +32,5 @@ export class AideDefinition implements ContenuLocal {
   clicked_infos?: boolean;
   date_expiration: Date;
   derniere_maj: Date;
+  est_gratuit: boolean;
 }

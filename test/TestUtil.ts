@@ -337,6 +337,7 @@ export class TestUtil {
       echelle: EchelleAide.National,
       url_source: 'https://hello',
       url_demande: 'https://demande',
+      est_gratuit: false,
       ...override,
     };
   }
