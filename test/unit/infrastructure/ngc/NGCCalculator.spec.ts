@@ -1,3 +1,4 @@
+import { RegleNGC } from 'src/domain/bilan/bilanCarbone';
 import { NGCCalculator } from '../../../../src/infrastructure/ngc/NGCCalculator';
 
 describe('NGCCalculator', () => {
@@ -85,7 +86,7 @@ describe('NGCCalculator', () => {
       'transport . deux roues . usager': 'non',
       'transport . avion . usager': 'non',
     };
-    const entries = [
+    const entries: RegleNGC[] = [
       'bilan',
       'divers',
       'logement',
@@ -107,35 +108,6 @@ describe('NGCCalculator', () => {
     );
     expect(response.get('alimentation')).toEqual(2339.1671821);
     expect(response.get('services sociétaux')).toEqual(1450.9052263863641);
-  });
-
-  it(`est applicable : indique que la question n'est pas applicable`, () => {
-    //GIVEN
-    const situation = { 'transport . voiture . km': 0 };
-    const entry = 'transport . voiture . motorisation';
-
-    //WHEN
-    const reponse = calculator.estQuestionApplicable(
-      {
-        //'transport . voiture . km': 100,
-      },
-      'transport . voiture . motorisation',
-    );
-  });
-
-  it('listerToutesLesClésDeQuestions : liste toutes les clés', () => {
-    //GIVEN
-    //WHEN
-    const result = calculator.listerToutesLesClésDeQuestions();
-    //THEN
-  });
-
-  it('listeQuestionsAvecConditionApplicabilité : liste toutes les clés de questions avec conditions', () => {
-    //GIVEN
-    //WHEN
-    const result = calculator.listeQuestionsAvecConditionApplicabilité();
-
-    //THEN
   });
 
   it('computeEntryListValues : situation a probleme', () => {
@@ -162,7 +134,7 @@ describe('NGCCalculator', () => {
       'alimentation . plats': '"je mange beaucoup de viande"',
         */
     };
-    const entries = ['alimentation'];
+    const entries: RegleNGC[] = ['alimentation'];
 
     //WHEN
     const response = calculator.computeEntryListValues(situation, entries);
@@ -170,5 +142,51 @@ describe('NGCCalculator', () => {
     //THEN
     expect(response.size).toEqual(1);
     expect(response.get('alimentation')).not.toEqual(NaN);
+  });
+
+  describe('setSituationMiseAJour', () => {
+    const engine = NGCCalculator.createNewNGCPublicodesEngine();
+
+    test('situation vide', () => {
+      const updatedEngine = NGCCalculator.setSituationAvecMigration(
+        engine.shallowCopy(),
+        {},
+      );
+
+      expect(updatedEngine.getSituation()).toEqual({});
+    });
+
+    test('situation non à jour', () => {
+      const updatedEngine = NGCCalculator.setSituationAvecMigration(
+        engine.shallowCopy(),
+        {
+          'transport . deux roues . type': "'thermique'",
+          // @ts-ignore : les clés sont volontairement incorrectes pour tester le comportement
+          'transport . vélo . km': 100,
+          'alimentation . plats . viande 1 . nombre': 10,
+        },
+      );
+
+      expect(updatedEngine.getSituation()).toEqual({
+        'transport . deux roues . type': "'scooter thermique'",
+        'alimentation . plats . viande blanche . nombre': 10,
+      });
+    });
+
+    test('situation avec clé inconnue', () => {
+      try {
+        NGCCalculator.setSituationAvecMigration(engine.shallowCopy(), {
+          // @ts-ignore : les clés sont volontairement incorrectes pour tester le comportement
+          unknown: 10,
+        });
+
+        expect(false).toBeTruthy();
+      } catch (e) {
+        expect(e.message).toContain(`
+[ Erreur lors de la mise à jour de la situation ]
+➡️  Dans la règle "unknown"
+✖️  'unknown' n'existe pas dans la base de règle.`);
+      }
+    });
   });
 });

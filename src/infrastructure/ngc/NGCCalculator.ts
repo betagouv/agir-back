@@ -1,4 +1,5 @@
 import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
+import instructionsDeMigration from '@incubateur-ademe/nosgestesclimat/public/migration.json';
 import { Injectable } from '@nestjs/common';
 import Engine, { Evaluation } from 'publicodes';
 
@@ -13,65 +14,57 @@ import {
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Thematique } from '../../domain/contenu/thematique';
 
+const { migrateSituation } = require('@publicodes/tools/migration');
+
 @Injectable()
 export class NGCCalculator {
   private engine: Engine;
 
   constructor() {
-    this.engine = new Engine(rules, {
+    this.engine = NGCCalculator.createNewNGCPublicodesEngine();
+  }
+
+  static createNewNGCPublicodesEngine(): Engine {
+    const nbRules = Object.keys(rules).length;
+    console.time(`Parsing ${nbRules} rules`);
+    const engine = new Engine(rules, {
+      strict: { noOrphanRule: false },
       logger: {
-        log(message: string) {},
-        warn(message: string) {},
+        log(_message: string) {},
+        warn(_message: string) {},
         error(message: string) {
           console.error(message);
         },
       },
     });
+    console.timeEnd(`Parsing ${nbRules} rules`);
+
+    return engine;
   }
 
-  public listerToutesLesClésDeQuestions(prefix?: string): string[] {
-    const result = [];
-
-    const local_engine = this.engine.shallowCopy();
-
-    const parsedRules = local_engine.getParsedRules();
-
-    for (const key of Object.keys(parsedRules)) {
-      if (
-        parsedRules[key].rawNode.question !== undefined &&
-        key.startsWith(prefix ? prefix : '')
-      ) {
-        result.push(key);
-      }
-    }
-    return result;
+  /**
+   * Plus d'explications sur la nécessité d'appeler cette fonction au lieu de
+   * `engine.setSituation(situation)` directement dans la page de documentation
+   * dédiée : ../../../docs/bilan-carbone-ngc.md.
+   */
+  static setSituationAvecMigration(
+    engine: Engine,
+    situation: SituationNGC,
+  ): Engine {
+    return engine.setSituation(
+      migrateSituation(situation, instructionsDeMigration),
+    );
   }
 
-  public listeQuestionsAvecConditionApplicabilité() {
-    const ressult = [];
-    for (const key of Object.keys(rules)) {
-      if (rules[key] && rules[key].question !== undefined) {
-        if (rules[key]['non applicable si'] !== undefined) {
-          ressult.push(key);
-        }
-      }
-    }
-    return ressult;
-  }
+  computeSingleEntryValue(
+    situation: SituationNGC,
+    entry: RegleNGC,
+  ): Evaluation {
+    const local_engine = NGCCalculator.setSituationAvecMigration(
+      this.engine.shallowCopy(),
+      situation,
+    );
 
-  public estQuestionApplicable(situation: object, entry: string) {
-    const local_engine = this.engine.shallowCopy();
-    local_engine.setSituation(situation);
-
-    const result = local_engine.evaluate({
-      'est applicable': entry,
-    });
-    return result.nodeValue === true;
-  }
-
-  computeSingleEntryValue(situation: object, entry: string) {
-    const local_engine = this.engine.shallowCopy();
-    local_engine.setSituation(situation);
     return local_engine.evaluate(entry).nodeValue;
   }
 
@@ -79,9 +72,14 @@ export class NGCCalculator {
     situation: SituationNGC,
     regles: RegleNGC[],
   ): Map<RegleNGC, Evaluation> {
-    const local_engine = this.engine.shallowCopy();
-    local_engine.setSituation(situation);
+    const local_engine = NGCCalculator.setSituationAvecMigration(
+      this.engine.shallowCopy(),
+      situation,
+    );
 
+    // NOTE: pourquoi utiliser une Map plutôt qu'un objet ? Les maps sont
+    // particulièrement efficace pour les opérations de lectures/écritures, ce
+    // qui ne semble pas être le cas ici.
     let result_map = new Map();
 
     for (const entry of regles) {
@@ -137,7 +135,7 @@ export class NGCCalculator {
     const resultMap = this.computeEntryListValues(situation, entryList);
 
     const getValueOf = (key: RegleNGC) =>
-      this.getValueFromMap<RegleNGC>(resultMap, key);
+      getValueFromMap<RegleNGC>(resultMap, key);
 
     const total = getValueOf('bilan');
 
@@ -488,38 +486,15 @@ export class NGCCalculator {
       ],
     });
 
-    this.sortResult(impacts);
+    sortResultInPlace(impacts);
 
-    const top_3 = this.computeTop3Details(impacts);
+    const top_3 = computeTop3Details(impacts);
 
     return new BilanCarbone({
       impact_kg_annee: total,
       impact_thematique: impacts,
       top_3: top_3,
     });
-  }
-
-  private getValueFromMap<K>(map: Map<K, any>, key: K): number {
-    const result = map.get(key) as number;
-    return result ? result : 0;
-  }
-
-  private sortResult(liste: ImpactThematique[]) {
-    liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    for (const thematique of liste) {
-      thematique.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
-    }
-  }
-
-  private computeTop3Details(
-    liste_impacts: ImpactThematique[],
-  ): DetailImpact[] {
-    let liste_details: DetailImpact[] = [];
-    for (const cat of liste_impacts) {
-      liste_details = liste_details.concat(cat.details);
-    }
-    liste_details.sort((a, b) => b.pourcentage - a.pourcentage);
-    return liste_details.slice(0, 3);
   }
 
   computeBilanFromSituation(situation: SituationNGC): Bilan_OLD {
@@ -535,16 +510,13 @@ export class NGCCalculator {
     const resultMap = this.computeEntryListValues(situation, entryList);
 
     return {
-      bilan_carbone_annuel: this.getValueFromMap(resultMap, 'bilan'),
+      bilan_carbone_annuel: getValueFromMap(resultMap, 'bilan'),
       details: {
-        transport: this.getValueFromMap(resultMap, 'transport'),
-        logement: this.getValueFromMap(resultMap, 'logement'),
-        divers: this.getValueFromMap(resultMap, 'divers'),
-        alimentation: this.getValueFromMap(resultMap, 'alimentation'),
-        services_societaux: this.getValueFromMap(
-          resultMap,
-          'services sociétaux',
-        ),
+        transport: getValueFromMap(resultMap, 'transport'),
+        logement: getValueFromMap(resultMap, 'logement'),
+        divers: getValueFromMap(resultMap, 'divers'),
+        alimentation: getValueFromMap(resultMap, 'alimentation'),
+        services_societaux: getValueFromMap(resultMap, 'services sociétaux'),
       },
     };
   }
@@ -552,4 +524,25 @@ export class NGCCalculator {
 
 function roundedPercentOf(value: number, total: number): number {
   return Math.round((value / total) * 100);
+}
+
+function getValueFromMap<K>(map: Map<K, any>, key: K): number {
+  const result = map.get(key) as number;
+  return result ? result : 0;
+}
+
+function sortResultInPlace(liste: ImpactThematique[]) {
+  liste.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+  for (const thematique of liste) {
+    thematique.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+  }
+}
+
+function computeTop3Details(liste_impacts: ImpactThematique[]): DetailImpact[] {
+  let liste_details: DetailImpact[] = [];
+  for (const cat of liste_impacts) {
+    liste_details = liste_details.concat(cat.details);
+  }
+  liste_details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
+  return liste_details.slice(0, 3);
 }
