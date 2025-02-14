@@ -21,6 +21,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { OIDCStateRepository } from '../repository/oidcState.repository';
 import { ApplicationError } from '../applicationError';
+import { PasswordManager } from '../../domain/utilisateur/manager/passwordManager';
 
 export type FCUserInfo = {
   sub: string;
@@ -41,6 +42,7 @@ export class AuthController extends GenericControler {
     private oIDCStateRepository: OIDCStateRepository,
     private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
+    private passwordManager: PasswordManager,
   ) {
     super();
   }
@@ -122,6 +124,8 @@ export class AuthController extends GenericControler {
       oidc_state,
       utilisateur.id,
     );
+
+    this.passwordManager.initLoginState(utilisateur);
 
     // CREATING INNER APP TOKEN
     const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
