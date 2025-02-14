@@ -36,6 +36,46 @@ export class LoadCMSController extends GenericControler {
     return await this.cmsUsecase.loadActionsFromCMS();
   }
 
+  @Post('/admin/load_actions_bilan_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les actions de type bilan publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSActionsBilan(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadActionsBilanFromCMS();
+  }
+
+  @Post('/admin/load_actions_quizzes_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les actions de type quizz publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSActionsQuizzes(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadActionsQuizzesFromCMS();
+  }
+
+  @Post('/admin/load_actions_classique_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les actions de type classique publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSActionsClassique(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadActionsClassiquesFromCMS();
+  }
+
+  @Post('/admin/load_actions_simulateur_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les actions de type simulateur publiées du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMSActionsSimulateur(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadActionsSimulateursFromCMS();
+  }
+
   @Post('/admin/load_thematiques_from_cms')
   @ApiOperation({
     summary: 'Upsert toutes les thematiques publiés du CMS',

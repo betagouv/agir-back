@@ -14,6 +14,7 @@ import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
+import { TypeAction } from '../../../../src/domain/actions/typeAction';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -893,7 +894,11 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - updates an action', async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { cms_id: '123' });
+    await TestUtil.create(DB.action, {
+      cms_id: '123',
+      code: 'code',
+      type: TypeAction.quizz,
+    });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

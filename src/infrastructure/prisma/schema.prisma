@@ -221,8 +221,8 @@ model Aide {
 }
 
 model Action {
-  code              String   @id
-  cms_id            String?  @unique
+  code              String
+  cms_id            String
   type              String   @default("classique")
   titre             String
   sous_titre        String?
@@ -237,6 +237,9 @@ model Action {
   lvo_objet         String?
   created_at        DateTime @default(now()) @db.Timestamptz(3)
   updated_at        DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([code, type])
+  @@unique([cms_id, type])
 }
 
 model Defi {

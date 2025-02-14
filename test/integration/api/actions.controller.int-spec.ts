@@ -101,14 +101,14 @@ describe('Actions (API test)', () => {
     expect(action.nombre_aides_disponibles).toEqual(1);
   });
 
-  it(`GET /actions/id - consulte le détail d'une action`, async () => {
+  it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
     // GIVEN
     await TestUtil.create(DB.action);
 
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
-    const response = await TestUtil.GET('/actions/code_fonct');
+    const response = await TestUtil.GET('/actions/classique/code_fonct');
 
     // THEN
     expect(response.status).toBe(200);
@@ -159,7 +159,7 @@ describe('Actions (API test)', () => {
     await partenaireRepository.loadPartenaires();
 
     // WHEN
-    const response = await TestUtil.GET('/actions/123');
+    const response = await TestUtil.GET('/actions/classique/123');
 
     // THEN
     expect(response.status).toBe(200);
@@ -191,7 +191,7 @@ describe('Actions (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/actions/123');
+    const response = await TestUtil.GET('/actions/classique/123');
 
     // THEN
     expect(response.status).toBe(200);
@@ -212,7 +212,7 @@ describe('Actions (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/actions/123');
+    const response = await TestUtil.GET('/actions/classique/123');
 
     // THEN
     expect(response.status).toBe(200);
@@ -242,7 +242,9 @@ describe('Actions (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/actions/123?code_commune=21231');
+    const response = await TestUtil.GET(
+      '/actions/classique/123?code_commune=21231',
+    );
 
     // THEN
     expect(response.status).toBe(200);
@@ -275,7 +277,7 @@ describe('Actions (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions/123',
+      '/utilisateurs/utilisateur-id/actions/classique/123',
     );
 
     // THEN
@@ -300,7 +302,9 @@ describe('Actions (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/actions/123?code_commune=21231');
+    const response = await TestUtil.GET(
+      '/actions/classique/123?code_commune=21231',
+    );
 
     // THEN
     expect(response.status).toBe(200);
@@ -317,10 +321,23 @@ describe('Actions (API test)', () => {
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
-    const response = await TestUtil.GET('/actions/bad_code');
+    const response = await TestUtil.GET('/actions/classique/bad_code');
 
     // THEN
     expect(response.status).toBe(404);
+  });
+  it(`GET /actions/id - 400 si type d'actions inconnu`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action);
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/truc/code_fonct');
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(`Type d'action [truc] inconnu`);
   });
 
   it(`GET /actions - liste le catalogue d'action : 2 actions`, async () => {

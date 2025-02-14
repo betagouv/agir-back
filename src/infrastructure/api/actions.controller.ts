@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -101,7 +102,7 @@ export class ActionsController extends GenericControler {
     return result.map((r) => ActionLightAPI.mapToAPI(r));
   }
 
-  @Get('actions/:code_action')
+  @Get('actions/:type_action/:code_action')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 2000 } })
   @ApiOkResponse({
@@ -116,18 +117,31 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `code commune INSEE pour personnalisation de l'action (aides / lieux utiles / etc)`,
   })
+  @ApiParam({
+    name: 'type_action',
+    type: String,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
   async getAction(
     @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
     @Query('code_commune') code_commune: string,
   ): Promise<ActionAPI> {
+    let type = this.castTypeActionOrException(type_action);
     const result = await this.actionUsecase.getAction(
       code_action,
+      type,
       code_commune,
     );
     return ActionAPI.mapToAPI(result);
   }
 
-  @Get('utilisateurs/:utilisateurId/actions/:code_action')
+  @Get('utilisateurs/:utilisateurId/actions/:type_action/:code_action')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: ActionAPI,
@@ -141,14 +155,27 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `code commune INSEE pour personnalisation de l'action (aides / lieux utiles / etc)`,
   })
+  @ApiParam({
+    name: 'type_action',
+    type: String,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
   async getUtilisateurAction(
     @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ): Promise<ActionAPI> {
     this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
     const result = await this.actionUsecase.getUtilisateurAction(
       code_action,
+      type,
       utilisateurId,
     );
     return ActionAPI.mapToAPI(result);

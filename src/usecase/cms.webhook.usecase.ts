@@ -86,7 +86,13 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
       }
     }
-    if (cmsWebhookAPI.model === CMSModel.action) {
+    if (
+      cmsWebhookAPI.model === CMSModel.action ||
+      cmsWebhookAPI.model === CMSModel['action-classique'] ||
+      cmsWebhookAPI.model === CMSModel['action-quizz'] ||
+      cmsWebhookAPI.model === CMSModel['action-bilan'] ||
+      cmsWebhookAPI.model === CMSModel['action-simulateur']
+    ) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
           return this.deleteAction(cmsWebhookAPI);
@@ -246,7 +252,10 @@ export class CMSWebhookUsecase {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
   }
   async deleteAction(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.actionRepository.delete(cmsWebhookAPI.entry.id.toString());
+    await this.actionRepository.delete(
+      cmsWebhookAPI.entry.id.toString(),
+      TypeAction[cmsWebhookAPI.entry.type_action],
+    );
   }
 
   private getImageUrlFromImageField(image_field: CMSWebhookImageURLAPI) {
