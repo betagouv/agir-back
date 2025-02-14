@@ -38,12 +38,13 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
-      Thematique.logement,
-    ]);
+    const result = todo.findTodoElementByTypeAndThematique?.(
+      ContentType.quizz,
+      [Thematique.logement],
+    );
 
     // THEN
-    expect(result.id).toEqual('2');
+    expect(result?.id).toEqual('2');
   });
   it('findTodoElementLike : retourne element de todo qui mach sans thematique ', () => {
     // GIVEN
@@ -68,10 +69,10 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(ContentType.aides);
+    const result = todo.findTodoElementByTypeAndThematique?.(ContentType.aides);
 
     // THEN
-    expect(result.id).toEqual('1');
+    expect(result?.id).toEqual('1');
   });
   it('findTodoElementLike : retourne element de todo qui mach avec thematique mais recherche optionnelle', () => {
     // GIVEN
@@ -97,10 +98,10 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const result = todo.findTodoElementByTypeAndThematique(ContentType.aides);
+    const result = todo.findTodoElementByTypeAndThematique?.(ContentType.aides);
 
     // THEN
-    expect(result.id).toEqual('1');
+    expect(result?.id).toEqual('1');
   });
   it('moveElementToDone : bouge un element de todo à done ', () => {
     // GIVEN
@@ -135,11 +136,13 @@ describe('Todo', () => {
         },
       ],
     });
-    const element = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
-      Thematique.logement,
-    ]);
+    const element = todo.findTodoElementByTypeAndThematique?.(
+      ContentType.quizz,
+      [Thematique.logement],
+    );
     // WHEN
-    todo.moveElementToDone(element);
+    expect(element).toBeDefined();
+    todo.moveElementToDone?.(element!);
 
     // THEN
     expect(todo.done).toHaveLength(1);
@@ -178,17 +181,19 @@ describe('Todo', () => {
         },
       ],
     });
-    const element = todo.findTodoElementByTypeAndThematique(ContentType.quizz, [
-      Thematique.logement,
-    ]);
+    const element = todo.findTodoElementByTypeAndThematique?.(
+      ContentType.quizz,
+      [Thematique.logement],
+    );
     // WHEN
-    todo.makeProgress(element);
+    expect(element).toBeDefined();
+    todo.makeProgress?.(element!);
 
     // THEN
     expect(todo.done).toHaveLength(0);
 
     // WHEN
-    todo.makeProgress(element);
+    todo.makeProgress?.(element!);
 
     // THEN
     expect(todo.done).toHaveLength(1);
@@ -227,7 +232,7 @@ describe('Todo', () => {
       ],
     });
     // WHEN
-    const done = todo.isDone();
+    const done = todo.isDone?.();
 
     // THEN
     expect(done).toEqual(true);

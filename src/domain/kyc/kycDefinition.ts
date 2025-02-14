@@ -7,7 +7,7 @@ import { TypeReponseQuestionKYC, Unite } from './questionKYC';
 export type ReponseDefinition = {
   label: string;
   code: string;
-  ngc_code?: string;
+  ngc_code?: string | null;
 };
 
 export class KycDefinition {
@@ -40,7 +40,7 @@ export class KycDefinition {
     label: string;
     code: string;
     ngc_code?: string;
-  } {
+  } | null {
     if (!this.reponses) {
       return null;
     }
@@ -53,10 +53,12 @@ export class KycDefinition {
         }
       : null;
   }
-  public getReponseByCode_v2?(code: string): ReponseDefinition {
+
+  public getReponseByCode_v2?(code: string): ReponseDefinition | null {
     if (!this.reponses) {
       return null;
     }
-    return this.reponses.find((r) => r.code === code);
+
+    return this.reponses.find((r) => r.code === code) ?? null;
   }
 }

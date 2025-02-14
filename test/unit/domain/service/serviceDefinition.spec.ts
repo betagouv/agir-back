@@ -33,11 +33,12 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    serviceDefinition.setNextRefreshDate();
+    serviceDefinition.setNextRefreshDate?.();
 
+    expect(serviceDefinition.scheduled_refresh).not.toBeNull();
     // THEN
     expect(
-      Math.round(serviceDefinition.scheduled_refresh.getTime() / 10000),
+      Math.round(serviceDefinition.scheduled_refresh!.getTime() / 10000),
     ).toEqual(Math.round(Date.now() / 10000) + 60);
   });
   it('isReadyForRefresh : true if period and null date', () => {
@@ -49,7 +50,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isReadyForRefresh();
+    const result = serviceDefinition.isReadyForRefresh?.();
 
     // THEN
     expect(result).toEqual(true);
@@ -63,7 +64,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isReadyForRefresh();
+    const result = serviceDefinition.isReadyForRefresh?.();
 
     // THEN
     expect(result).toEqual(true);
@@ -77,7 +78,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isReadyForRefresh();
+    const result = serviceDefinition.isReadyForRefresh?.();
 
     // THEN
     expect(result).toEqual(false);
@@ -90,7 +91,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isLiveServiceType();
+    const result = serviceDefinition.isLiveServiceType?.();
 
     // THEN
     expect(result).toEqual(true);
@@ -103,7 +104,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isLiveServiceType();
+    const result = serviceDefinition.isLiveServiceType?.();
 
     // THEN
     expect(result).toEqual(false);
@@ -116,7 +117,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isScheduledServiceType();
+    const result = serviceDefinition.isScheduledServiceType?.();
 
     // THEN
     expect(result).toEqual(true);
@@ -129,7 +130,7 @@ describe('ServiceDefinition', () => {
     });
 
     // WHEN
-    const result = serviceDefinition.isScheduledServiceType();
+    const result = serviceDefinition.isScheduledServiceType?.();
 
     // THEN
     expect(result).toEqual(false);

@@ -19,7 +19,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 const dummy_live_manager = {
-  computeLiveDynamicData: async (service: Service) => {
+  computeLiveDynamicData: async (_service: Service) => {
     return { label: `En construction 🚧`, isInError: false };
   },
 };
@@ -27,21 +27,23 @@ const dummy_async_manager = {
   runAsyncProcessing: async (service: Service) => {
     return service.serviceId;
   },
-  checkConfiguration(conf: Object) {},
-  async isActivated(service: Service) {
+  checkConfiguration(_conf: Object) {},
+  async isActivated(_service: Service) {
     return true;
   },
-  async isConfigured(service: Service) {
+  async isConfigured(_service: Service) {
     return true;
   },
-  async isFullyRunning(service: Service) {
+  async isFullyRunning(_service: Service) {
     return true;
   },
-  async processAndUpdateConfiguration(service: Service) {},
-  async emptyConfiguration(service: Service) {},
+  async processAndUpdateConfiguration(_service: Service) {},
+  async emptyConfiguration(_service: Service) {},
 };
 const dummy_scheduled_manager = {
-  computeScheduledDynamicData: async (serviceDefinition: ServiceDefinition) => {
+  computeScheduledDynamicData: async (
+    _serviceDefinition: ServiceDefinition,
+  ) => {
     return { label: `En construction 🚧`, isInError: false };
   },
 };
@@ -102,7 +104,7 @@ export class ServiceUsecase {
   }
 
   async refreshScheduledServices(): Promise<string[]> {
-    let serviceDefinitionList =
+    const serviceDefinitionList =
       await this.serviceRepository.listeServiceDefinitionsToRefresh();
 
     const serviceToRefreshList = serviceDefinitionList.filter(
@@ -111,7 +113,7 @@ export class ServiceUsecase {
         serviceDefinition.isReadyForRefresh(),
     );
 
-    let resultStatusList = [];
+    let resultStatusList: string[] = [];
     for (let index = 0; index < serviceToRefreshList.length; index++) {
       const serviceDefinition = serviceToRefreshList[index];
       const refreshStatus = await this.refreshScheduledService(
@@ -123,8 +125,8 @@ export class ServiceUsecase {
   }
 
   async processAsyncServices(): Promise<string[]> {
-    let resultStatusList = [];
-    let serviceDefinitionList =
+    const resultStatusList: string[] = [];
+    const serviceDefinitionList =
       await this.serviceRepository.listeServiceDefinitions();
 
     const serviceDefsToProcess = serviceDefinitionList.filter(
@@ -216,7 +218,7 @@ export class ServiceUsecase {
   async getServiceOfUtilisateur(
     utilisateurId: string,
     serviceDefinitionId: string,
-  ): Promise<Service> {
+  ): Promise<Service | null> {
     await this.utilisateurRepository.checkState(utilisateurId);
 
     let service = await this.serviceRepository.getServiceOfUtilisateur(

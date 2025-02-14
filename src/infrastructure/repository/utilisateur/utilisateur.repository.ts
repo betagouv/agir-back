@@ -174,7 +174,7 @@ export class UtilisateurRepository {
       where: { id: utilisateurId },
       select: { force_connexion: true },
     });
-    if (result['force_connexion']) {
+    if (result?.['force_connexion']) {
       ApplicationError.throwPleaseReconnect();
     }
   }

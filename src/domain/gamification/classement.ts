@@ -5,10 +5,10 @@ export class Classement {
 
   utilisateurId: string;
   points: number;
-  prenom: string;
+  prenom: string | null;
   code_postal: string;
   commune: string;
 
-  rank?: number;
-  rank_commune?: number;
+  rank: number | null;
+  rank_commune: number | null;
 }

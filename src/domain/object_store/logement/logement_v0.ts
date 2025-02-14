@@ -8,16 +8,16 @@ import {
 } from '../../logement/logement';
 
 export class Logement_v0 extends Versioned_v0 {
-  nombre_adultes: number;
-  nombre_enfants: number;
-  code_postal: string;
-  commune: string;
-  type: TypeLogement;
-  superficie: Superficie;
-  proprietaire: boolean;
-  chauffage: Chauffage;
-  plus_de_15_ans: boolean;
-  dpe: DPE;
+  nombre_adultes: number | null;
+  nombre_enfants: number | null;
+  code_postal: string | null;
+  commune: string | null;
+  type: TypeLogement | null;
+  superficie: Superficie | null;
+  proprietaire: boolean | null;
+  chauffage: Chauffage | null;
+  plus_de_15_ans: boolean | null;
+  dpe: DPE | null;
 
   static serialise(domain: Logement): Logement_v0 {
     return {

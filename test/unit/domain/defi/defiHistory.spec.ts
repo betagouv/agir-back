@@ -6,7 +6,6 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
-import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -236,7 +235,7 @@ describe('DefiHistory', () => {
 
     // THEN
     expect(en_cours).toHaveLength(1);
-    expect(en_cours[0].id).toEqual('2');
+    expect(en_cours[0]?.id).toEqual('2');
   });
   it('getDefisOfStatus : liste les défis avec status, seul les accessibles, filtre satut vide', () => {
     // GIVEN
@@ -269,7 +268,7 @@ describe('DefiHistory', () => {
 
     // THEN
     expect(en_cours).toHaveLength(1);
-    expect(en_cours[0].id).toEqual('1');
+    expect(en_cours[0]?.id).toEqual('1');
   });
   it('getDefisOfStatus : liste les défis avec status, seul les accessibles, filtre satut non vide', () => {
     // GIVEN
@@ -302,7 +301,7 @@ describe('DefiHistory', () => {
 
     // THEN
     expect(en_cours).toHaveLength(1);
-    expect(en_cours[0].id).toEqual('1');
+    expect(en_cours[0]?.id).toEqual('1');
   });
   it('getDefisOfStatus : liste non todo et non accessible', () => {
     // GIVEN
@@ -323,7 +322,7 @@ describe('DefiHistory', () => {
 
     // THEN
     expect(en_cours).toHaveLength(1);
-    expect(en_cours[0].id).toEqual('1');
+    expect(en_cours[0]?.id).toEqual('1');
   });
   it('getDefisOfStatus : liste non todo et non accessible, sans statut en filtre', () => {
     // GIVEN
@@ -344,7 +343,7 @@ describe('DefiHistory', () => {
 
     // THEN
     expect(en_cours).toHaveLength(1);
-    expect(en_cours[0].id).toEqual('1');
+    expect(en_cours[0]?.id).toEqual('1');
   });
 
   it('getNombreDefisRealises : donne le nombre de défis réalisés', () => {
@@ -502,6 +501,6 @@ describe('DefiHistory', () => {
     // WHEN
     const defi = defiHistory.getPlusVieuxDefiEnCours();
     // THEN
-    expect(defi.id).toEqual('2');
+    expect(defi?.id).toEqual('2');
   });
 });
