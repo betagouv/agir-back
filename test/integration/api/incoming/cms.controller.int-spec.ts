@@ -114,6 +114,31 @@ describe('/api/incoming/cms (API test)', () => {
     },
   };
 
+  const CMS_DATA_ACTION_BILAN = {
+    model: CMSModel['action-bilan'],
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      titre: 'titre',
+      sous_titre: 'sous-titre',
+      kycs: [
+        {
+          id: 3,
+        },
+        {
+          id: 4,
+        },
+      ],
+      code: 'code',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
+
   const CMS_DATA_DEFI_bad_tag = {
     model: CMSModel.defi,
     event: CMSEvent['entry.publish'],
@@ -839,6 +864,29 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
     expect(action.type).toEqual('quizz');
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.thematique).toEqual('alimentation');
+  });
+
+  it('POST /api/incoming/cms - create a new action bilan', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION_BILAN,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.type).toEqual(TypeAction.bilan);
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');

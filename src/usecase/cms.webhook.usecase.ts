@@ -86,13 +86,19 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
       }
     }
-    if (
-      cmsWebhookAPI.model === CMSModel.action ||
-      cmsWebhookAPI.model === CMSModel['action-classique'] ||
-      cmsWebhookAPI.model === CMSModel['action-quizz'] ||
-      cmsWebhookAPI.model === CMSModel['action-bilan'] ||
-      cmsWebhookAPI.model === CMSModel['action-simulateur']
-    ) {
+
+    if (cmsWebhookAPI.model.startsWith('action')) {
+      const mapping_type_action: { [K in CMSModel]?: TypeAction } = {
+        'action-classique': TypeAction.classique,
+        'action-quizz': TypeAction.quizz,
+        'action-bilan': TypeAction.bilan,
+        'action-simulateur': TypeAction.simulateur,
+        action: TypeAction[cmsWebhookAPI.entry.type_action],
+      };
+
+      cmsWebhookAPI.entry.type_action =
+        mapping_type_action[cmsWebhookAPI.model];
+
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
           return this.deleteAction(cmsWebhookAPI);
@@ -104,6 +110,7 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateAction(cmsWebhookAPI);
       }
     }
+
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
