@@ -5,14 +5,14 @@ J'agis utilise actuellement le modèle de calcul
 pour effectuer le bilan carbone des utilisateurices et à terme, par
 thématiques.
 
-## Gestion des situations publicodes
+## Gestion des situations Publicodes
 
 Le moteur [Publicodes](https://publi.codes) a besoin d'une
 [_situation_](https://publi.codes/docs/api/publicodes/type-aliases/situation#example)
 (c'est-à-dire un ensemble de clés/valeurs qui décrivent les paramètres du
 calcul) pour effectuer un calcul.
 
-Il y a deux façons de récupérer une situation :
+Actuellement, il y a deux façons de récupérer une situation dans le serveur :
 
 1. la reconstruire à partir des réponses aux KYCs renseignées par
    l'utilisateurice dans J'agis,
@@ -31,13 +31,13 @@ migrations](https://github.com/incubateur-ademe/nosgestesclimat/blob/preprod/mig
 version du modèle.
 
 > [!NOTE]
-> Actuellement, le fichier de migration s'enrichie au fur et à mesure des
+> Actuellement, le fichier de migration s'enrichit au fur et à mesure des
 > nouvelles version. Cela pose le risque d'avoir des erreurs pour des versions
 > trop anciennes. Par exemple, si une règle `foo` est renommée en `bar` dans la
 > version 1, et que dans la version 2, une nouvelle règle `foo` est ajoutée
-> (n'ayant pas à celle de la version 0), alors la migration d'une situation de
-> la version 0 à la version 2 causera une erreur car la règle `foo` d'une
-> nouvelle situation 2, saura renommée en `bar`.
+> (n'ayant rien à voir à celle de la version 0), alors la migration d'une
+> situation de la version 0 à la version 2 causera une erreur car la règle
+> `foo` d'une nouvelle situation 2, saura renommée en `bar`.
 >
 > Pour résoudre ce problème, il y a des discussions en cours dans l'équipe NGC
 > pour avoir un fichier de migration par version. Il faudra donc également
