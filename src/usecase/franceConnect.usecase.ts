@@ -93,19 +93,22 @@ export class FranceConnectUsecase {
     return { token: token, utilisateur: utilisateur };
   }
 
-  async logout_france_connect(utilisateurId: string): Promise<void> {
+  async logout_france_connect(
+    utilisateurId: string,
+  ): Promise<{ fc_logout_url?: URL }> {
     const state = await this.oIDCStateRepository.getByUtilisateurId(
       utilisateurId,
     );
 
     if (!state) {
       // RIEN A FAIRE
-      return;
+      return {};
     }
-
-    await this.oidcService.logout(state.idtoken);
+    const logout_url = await this.oidcService.generateLogoutUrl(state.idtoken);
 
     // REMOVE STATE
     await this.oIDCStateRepository.delete(utilisateurId);
+
+    return { fc_logout_url: logout_url };
   }
 }

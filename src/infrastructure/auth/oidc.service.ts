@@ -41,23 +41,6 @@ export class OidcService {
     return { url: redirect_url, state: state };
   }
 
-  async logout(id_token: string): Promise<void> {
-    let logout_url = await this.generateLogoutUrl(id_token);
-
-    let response;
-    try {
-      response = await axios.get(logout_url.toString());
-    } catch (error) {
-      console.log(error.message);
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-      return;
-    }
-    console.log('FC LOGOUT RESPONSE');
-    console.log(response);
-  }
-
   public generateLogoutUrl(id_token: string): URL {
     let logout_url = new URL(process.env.OIDC_URL_LOGOUT);
 

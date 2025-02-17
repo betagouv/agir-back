@@ -28,6 +28,7 @@ import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
+import { logoutAPI } from './types/utilisateur/logoutAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -83,15 +84,23 @@ export class ConnexionController extends GenericControler {
 
   @Post('utilisateurs/:utilisateurId/logout')
   @ApiOperation({
-    summary: `déconnecte un utilisateur donné`,
+    summary: `Déconnecte un utilisateur donné, si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
   })
   @UseGuards(AuthGuard)
-  async disconnec(
+  @ApiOkResponse({ type: logoutAPI })
+  async disconnect(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ) {
+  ): Promise<logoutAPI> {
     this.checkCallerId(req, utilisateurId);
-    await this.connexion_v2_Usecase.logout_single_user(utilisateurId);
+    const result = await this.connexion_v2_Usecase.logout_single_user(
+      utilisateurId,
+    );
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
   }
 
   @Post('utilisateurs/oubli_mot_de_passe')

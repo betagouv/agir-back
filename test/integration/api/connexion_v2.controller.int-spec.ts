@@ -561,6 +561,33 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
+    expect(response.body).toEqual({});
+    expect(userDB.force_connexion).toEqual(true);
+  });
+  it(`POST /utilisateurs/id/logout deconnect un utilisateur france connecté`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_LOGOUT_CALLBACK = '/logout-callback';
+    process.env.BASE_URL_FRONT = 'http://localhost:3000';
+    process.env.OIDC_URL_LOGOUT =
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout';
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.OIDC_STATE);
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/logout');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.france_connect_logout_url).toContain(
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=456&state=',
+    );
+    expect(response.body.france_connect_logout_url).toContain(
+      '&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogout-callback',
+    );
     expect(userDB.force_connexion).toEqual(true);
   });
   it(`POST /utilisateurs/logout deconnect tous les utilisateurs`, async () => {

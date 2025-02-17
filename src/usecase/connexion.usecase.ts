@@ -177,7 +177,9 @@ export class Connexion_v2_Usecase {
     );
   }
 
-  async logout_single_user(utilisateurId: string) {
+  async logout_single_user(
+    utilisateurId: string,
+  ): Promise<{ fc_logout_url?: URL }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
@@ -185,8 +187,12 @@ export class Connexion_v2_Usecase {
     utilisateur.force_connexion = true;
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    if (!App.isProd()) {
-      await this.franceConnectUsecase.logout_france_connect(utilisateurId);
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      return await this.franceConnectUsecase.logout_france_connect(
+        utilisateurId,
+      );
     }
   }
 

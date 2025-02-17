@@ -31,6 +31,7 @@ import {
   Conformite,
   AideExpirationWarning,
   Action,
+  OIDC_STATE,
 } from '.prisma/client';
 import {
   Aide,
@@ -91,6 +92,7 @@ export enum DB {
   kYC = 'kYC',
   universStatistique = 'universStatistique',
   action = 'action',
+  OIDC_STATE = 'OIDC_STATE',
 }
 export class TestUtil {
   private static TYPE_DATA_MAP: Record<DB, Function> = {
@@ -113,6 +115,7 @@ export class TestUtil {
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
     universStatistique: TestUtil.universStatistiqueData,
+    OIDC_STATE: TestUtil.OIDC_STATEData,
   };
 
   constructor() {}
@@ -212,6 +215,7 @@ export class TestUtil {
     await this.prisma.aideExpirationWarning.deleteMany();
     await this.prisma.conformite.deleteMany();
     await this.prisma.communesAndEPCI.deleteMany();
+    await this.prisma.oIDC_STATE.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -387,6 +391,17 @@ export class TestUtil {
       recette_categorie: CategorieRecherche.dinde_volaille,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+
+  static OIDC_STATEData(override?: Partial<OIDC_STATE>): OIDC_STATE {
+    return {
+      state: '123',
+      idtoken: '456',
+      utilisateurId: 'utilisateur-id',
       created_at: undefined,
       updated_at: undefined,
       ...override,
