@@ -7,14 +7,11 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { OIDCState } from '../infrastructure/auth/oidcState';
 import { v4 as uuidv4 } from 'uuid';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ProfileUsecase } from './profile.usecase';
-
-const APP_SCOPES = 'openid email given_name';
-const EIDAS_LEVEL = 'eidas1';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -24,6 +21,7 @@ export class FranceConnectUsecase {
     private passwordManager: PasswordManager,
     private oIDCStateRepository: OIDCStateRepository,
     private profileUsecase: ProfileUsecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
   async genererConnexionFranceConnect(): Promise<URL> {
@@ -89,7 +87,7 @@ export class FranceConnectUsecase {
     this.passwordManager.initLoginState(utilisateur);
 
     // CREATING INNER APP TOKEN
-    const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
+    const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
     return { token: token, utilisateur: utilisateur };
   }

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { OIDCStateRepository } from '../../../src/infrastructure/repository/oidcState.repository';
 import { OIDCState } from '../../../src/infrastructure/auth/oidcState';
 import axios from 'axios';
-import { JwtService } from '@nestjs/jwt';
 const url = require('url');
 
 const APP_SCOPES = 'openid email given_name';
@@ -22,8 +20,6 @@ export type FCUserInfo = {
 
 @Injectable()
 export class OidcService {
-  constructor(private jwtService: JwtService) {}
-
   generatedAuthRedirectUrl(): URL {
     let OIDC_STATE: OIDCState = {
       state: uuidv4(),
@@ -144,9 +140,5 @@ export class OidcService {
     const user_info: FCUserInfo = JSON.parse(json_user_data);
 
     return user_info;
-  }
-
-  async createNewInnerAppToken(utilisateurId: string): Promise<string> {
-    return this.jwtService.signAsync({ utilisateurId });
   }
 }

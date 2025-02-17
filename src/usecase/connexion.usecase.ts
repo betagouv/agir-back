@@ -3,7 +3,6 @@ import {
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { OidcService } from '../infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -13,17 +12,18 @@ import { App } from '../domain/app';
 import { MailerUsecase } from './mailer.usecase';
 import { TypeNotification } from '../domain/notification/notificationHistory';
 import { FranceConnectUsecase } from './franceConnect.usecase';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 @Injectable()
 export class Connexion_v2_Usecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private oidcService: OidcService,
     private codeManager: CodeManager,
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
     private mailerUsecase: MailerUsecase,
     private franceConnectUsecase: FranceConnectUsecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
   async loginUtilisateur(email: string, password: string) {
@@ -93,7 +93,7 @@ export class Connexion_v2_Usecase {
       await _this.utilisateurRepository.activateAccount(utilisateur.id);
       await _this.utilisateurRepository.updateUtilisateur(user);
 
-      const token = await _this.oidcService.createNewInnerAppToken(user.id);
+      const token = await _this.tokenRepository.createNewAppToken(user.id);
       return { token: token, utilisateur: user };
     };
 

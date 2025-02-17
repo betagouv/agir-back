@@ -18,6 +18,7 @@ import { TypeNotification } from '../domain/notification/notificationHistory';
 import { KYCID } from '../domain/kyc/KYCID';
 import { BooleanKYC } from '../domain/kyc/questionKYC';
 import { Feature } from '../domain/gamification/feature';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 export type Phrase = {
   phrase: string;
@@ -29,10 +30,10 @@ export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private securityEmailManager: SecurityEmailManager,
-    private oidcService: OidcService,
     private codeManager: CodeManager,
     private situationNGCRepository: SituationNGCRepository,
     private mailerUsecase: MailerUsecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
   async inscrire_utilisateur(utilisateurInput: CreateUtilisateurAPI) {
@@ -119,7 +120,7 @@ export class InscriptionUsecase {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
 
-      const token = await _this.oidcService.createNewInnerAppToken(
+      const token = await this.tokenRepository.createNewAppToken(
         utilisateur.id,
       );
       return { token };

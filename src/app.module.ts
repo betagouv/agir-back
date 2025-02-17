@@ -132,6 +132,7 @@ import { ActionRepository } from './infrastructure/repository/action.repository'
 import { ActionUsecase } from './usecase/actions.usecase';
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
+import { TokenRepository } from './infrastructure/repository/token.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -285,6 +286,7 @@ function getControllers(): any[] {
     ActionRepository,
     ActionUsecase,
     FranceConnectUsecase,
+    TokenRepository,
   ],
 })
 export class AppModule {}
