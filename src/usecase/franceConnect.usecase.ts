@@ -7,7 +7,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { OidcService } from '../infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { v4 as uuidv4 } from 'uuid';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ProfileUsecase } from './profile.usecase';
@@ -25,11 +24,11 @@ export class FranceConnectUsecase {
   ) {}
 
   async genererConnexionFranceConnect(): Promise<URL> {
-    const redirect_url = this.oidcService.generatedAuthRedirectUrl();
+    const redirect_infos = this.oidcService.generatedAuthRedirectUrl();
 
-    await this.oIDCStateRepository.createNewState(uuidv4());
+    await this.oIDCStateRepository.createNewState(redirect_infos.state);
 
-    return redirect_url;
+    return redirect_infos.url;
   }
 
   async connecterOuInscrire(

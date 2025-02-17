@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { OIDCState } from '../../../src/infrastructure/auth/oidcState';
 import axios from 'axios';
 const url = require('url');
 
@@ -20,10 +19,9 @@ export type FCUserInfo = {
 
 @Injectable()
 export class OidcService {
-  generatedAuthRedirectUrl(): URL {
-    let OIDC_STATE: OIDCState = {
-      state: uuidv4(),
-    };
+  generatedAuthRedirectUrl(): { url: URL; state: string } {
+    const state = uuidv4();
+
     let redirect_url = new URL(process.env.OIDC_URL_AUTH);
     let params = redirect_url.searchParams;
     params.append('response_type', 'code');
@@ -36,11 +34,12 @@ export class OidcService {
     );
     params.append('scope', APP_SCOPES);
     params.append('acr_values', EIDAS_LEVEL);
-    params.append('state', OIDC_STATE.state);
+    params.append('state', state);
     params.append('nonce', uuidv4());
 
     console.log(redirect_url);
-    return redirect_url;
+
+    return { url: redirect_url, state: state };
   }
 
   async logout(id_token: string): Promise<void> {
