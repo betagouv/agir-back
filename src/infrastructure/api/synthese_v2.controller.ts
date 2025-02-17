@@ -23,6 +23,7 @@ import { RechercheServiceManager } from '../../domain/bibliotheque_services/rech
 import { CommuneRepository } from '../repository/commune/commune.repository';
 import { ContenuLocal } from '../../domain/contenu/contenuLocal';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ApplicationError } from '../applicationError';
 
 export class ArticleLocalAPI {
   @ApiProperty() id: string;
@@ -93,7 +94,7 @@ export class Synthese_v2Controller extends GenericControler {
 
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 2, ttl: 1000 } })
-  @Get('code_postal_synthese_v2/:code_insee')
+  @Get('code_postal_synthese_v2/:code_siren')
   @ApiQuery({
     name: 'rayon',
     type: Number,
@@ -102,7 +103,7 @@ export class Synthese_v2Controller extends GenericControler {
   })
   @ApiOkResponse({ type: SyntheseAPI })
   async code_postal_synthese(
-    @Param('code_insee') code_insee_input: string,
+    @Param('code_siren') code_siren_input: string,
     @Query('rayon') rayon: number,
     @Response() res: Res,
   ): Promise<any> {
@@ -116,7 +117,7 @@ export class Synthese_v2Controller extends GenericControler {
     const liste_articles = await this.articleRepository.searchArticles({});
 
     const IS_CODE_EPCI =
-      this.communeRepository.isCodeSirenEPCI(code_insee_input);
+      this.communeRepository.isCodeSirenEPCI(code_siren_input);
 
     let code_region_cible;
     let code_departement_cible;
@@ -127,7 +128,7 @@ export class Synthese_v2Controller extends GenericControler {
     let liste_codes_postaux_communes_of_input: Set<string> = new Set();
 
     if (IS_CODE_EPCI) {
-      const EPCI = this.communeRepository.getEPCIBySIRENCode(code_insee_input);
+      const EPCI = this.communeRepository.getEPCIBySIRENCode(code_siren_input);
       liste_noms_communes_of_input = EPCI.membres.map((m) => m.nom);
       for (const membre of EPCI.membres) {
         this.communeRepository
@@ -137,16 +138,20 @@ export class Synthese_v2Controller extends GenericControler {
 
       liste_codes_communes_of_input =
         this.communeRepository.getListeCodesCommuneParCodeEPCI(
-          code_insee_input,
+          code_siren_input,
         );
 
       code_commune_cible_ou_exemple = liste_codes_communes_of_input[0];
       nom_commune_ou_EPCI = EPCI.nom;
     } else {
-      liste_codes_communes_of_input = [code_insee_input];
-      code_commune_cible_ou_exemple = code_insee_input;
-      nom_commune_ou_EPCI =
-        this.communeRepository.getCommuneByCodeINSEE(code_insee_input).nom;
+      liste_codes_communes_of_input = [code_siren_input];
+      code_commune_cible_ou_exemple = code_siren_input;
+      const commune_cible =
+        this.communeRepository.getCommuneByCodeINSEE(code_siren_input);
+      if (!commune_cible) {
+        ApplicationError.throwSirenOuCodeInseeNotFound(code_siren_input);
+      }
+      nom_commune_ou_EPCI = commune_cible.nom;
       liste_noms_communes_of_input = [];
     }
 
@@ -167,7 +172,7 @@ export class Synthese_v2Controller extends GenericControler {
       code_region_cible,
       code_departement_cible,
       IS_CODE_EPCI,
-      code_insee_input,
+      code_siren_input,
       liste_codes_communes_of_input,
     );
 
@@ -176,7 +181,7 @@ export class Synthese_v2Controller extends GenericControler {
       code_region_cible,
       code_departement_cible,
       IS_CODE_EPCI,
-      code_insee_input,
+      code_siren_input,
       liste_codes_communes_of_input,
     );
 

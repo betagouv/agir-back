@@ -584,6 +584,14 @@ export class ApplicationError {
     this.throwAppError('109', `Type d'action [${type}] inconnu`);
   }
 
+  static throwSirenOuCodeInseeNotFound(code: string) {
+    this.throwAppError(
+      '110',
+      `le code [${code}] ne correspond à aucun code commune INSEE ou SIREN d'EPCI`,
+      404,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
