@@ -131,6 +131,7 @@ import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controll
 import { ActionRepository } from './infrastructure/repository/action.repository';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { ActionsController } from './infrastructure/api/actions.controller';
+import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -283,6 +284,7 @@ function getControllers(): any[] {
     PushNotificator,
     ActionRepository,
     ActionUsecase,
+    FranceConnectUsecase,
   ],
 })
 export class AppModule {}

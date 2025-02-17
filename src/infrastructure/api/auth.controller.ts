@@ -22,17 +22,7 @@ import { GenericControler } from './genericControler';
 import { OIDCStateRepository } from '../repository/oidcState.repository';
 import { ApplicationError } from '../applicationError';
 import { PasswordManager } from '../../domain/utilisateur/manager/passwordManager';
-
-export type FCUserInfo = {
-  sub: string;
-  email: string;
-  given_name: string;
-  given_name_array: string[];
-  aud: string;
-  exp: number;
-  iat: number;
-  iss: string;
-};
+import { FranceConnectUsecase } from '../../usecase/franceConnect.usecase';
 
 @Controller()
 @ApiTags('France Connect')
@@ -43,6 +33,7 @@ export class AuthController extends GenericControler {
     private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
     private passwordManager: PasswordManager,
+    private franceConnectUsecase: FranceConnectUsecase,
   ) {
     super();
   }
@@ -55,7 +46,7 @@ export class AuthController extends GenericControler {
   })
   async login() {
     const redirect_url =
-      await this.oidcService.generatedAuthRedirectUrlAndSaveState();
+      await this.franceConnectUsecase.genererConnexionFranceConnect();
     return { url: redirect_url };
   }
 
@@ -72,78 +63,33 @@ export class AuthController extends GenericControler {
     console.log(`oidc_code : [${oidc_code}]`);
     console.log(`oidc_state : [${oidc_state}]`);
 
-    const state = await this.oIDCStateRepository.getByState(oidc_state);
-    if (!state) {
-      ApplicationError.throwBadOIDCCodeState();
-    }
-
-    console.log(state);
-
-    // TOKEN ENDPOINT
-    const access_token = await this.oidcService.getAccessToken(
+    const user_data = await this.franceConnectUsecase.connecterOuInscrire(
       oidc_state,
       oidc_code,
     );
 
-    console.log(`access token : [${access_token}]`);
-
-    // INFO ENDPOINT
-    const user_data_base64: string =
-      await this.oidcService.getUserDataByAccessToken(access_token);
-    console.log('THIS IS USER DATA');
-    console.log(user_data_base64);
-    const blocks = user_data_base64.split('.');
-    const charge_utile = blocks[1];
-    const json_user_data = Buffer.from(charge_utile, 'base64').toString(
-      'ascii',
+    return LoggedUtilisateurAPI.mapToAPI(
+      user_data.token,
+      user_data.utilisateur,
     );
-    console.log(json_user_data);
-    const user_info: FCUserInfo = JSON.parse(json_user_data);
-    console.log(user_info);
-
-    // FINDING USER
-    let utilisateur = await this.profileUsecase.findUtilisateurByEmail(
-      user_info.email,
-    );
-    if (!utilisateur) {
-      utilisateur = Utilisateur.createNewUtilisateur(
-        user_info.email,
-        false,
-        SourceInscription.france_connect,
-      );
-
-      utilisateur.prenom = user_info.given_name;
-      utilisateur.status = UtilisateurStatus.default;
-      utilisateur.active_account = true;
-      utilisateur.est_valide_pour_classement = true;
-
-      await this.userRepository.createUtilisateur(utilisateur);
-    }
-
-    await this.oidcService.injectUtilisateurIdToState(
-      oidc_state,
-      utilisateur.id,
-    );
-
-    this.passwordManager.initLoginState(utilisateur);
-
-    // CREATING INNER APP TOKEN
-    const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
-
-    return LoggedUtilisateurAPI.mapToAPI(token, utilisateur);
   }
 
   @Get('logout_france_connect/:utilisateurId')
   @ApiOperation({
     summary:
-      'Initie une redirection vers France Connect pour processus de dé-connexion',
+      'Initie une redirection vers France Connect pour processus de dé-connexion (route temporaire de test)',
   })
   @UseGuards(AuthGuard)
   @Redirect()
   async logout(@Param('utilisateurId') utilisateurId: string, @Request() req) {
     this.checkCallerId(req, utilisateurId);
-    const redirect_url =
-      await this.oidcService.generatedLogoutUrlAndDeleteState(utilisateurId);
+
+    const state = await this.oIDCStateRepository.getByUtilisateurId(
+      utilisateurId,
+    );
+    const redirect_url = await this.oidcService.generateLogoutUrl(
+      state.idtoken,
+    );
     return { url: redirect_url };
   }
 }

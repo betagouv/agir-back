@@ -12,6 +12,7 @@ import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmai
 import { App } from '../domain/app';
 import { MailerUsecase } from './mailer.usecase';
 import { TypeNotification } from '../domain/notification/notificationHistory';
+import { FranceConnectUsecase } from './franceConnect.usecase';
 
 @Injectable()
 export class Connexion_v2_Usecase {
@@ -22,6 +23,7 @@ export class Connexion_v2_Usecase {
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
     private mailerUsecase: MailerUsecase,
+    private franceConnectUsecase: FranceConnectUsecase,
   ) {}
 
   async loginUtilisateur(email: string, password: string) {
@@ -184,7 +186,7 @@ export class Connexion_v2_Usecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     if (!App.isProd()) {
-      await this.oidcService.self_logout(utilisateurId);
+      await this.franceConnectUsecase.logout_france_connect(utilisateurId);
     }
   }
 
