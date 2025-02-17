@@ -82,11 +82,14 @@ export class PasswordManager {
     utilisateur: PasswordAwareUtilisateur,
     password: string,
   ): Promise<boolean> {
-    const ok =
-      utilisateur.passwordHash ===
-      crypto
-        .pbkdf2Sync(password, utilisateur.passwordSalt, 1000, 64, `sha512`)
-        .toString(`hex`);
+    let ok = false;
+    if (utilisateur.passwordHash && utilisateur.passwordSalt) {
+      ok =
+        utilisateur.passwordHash ===
+        crypto
+          .pbkdf2Sync(password, utilisateur.passwordSalt, 1000, 64, `sha512`)
+          .toString(`hex`);
+    }
     if (ok) {
       await this.initLoginState(utilisateur);
     } else {

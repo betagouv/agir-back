@@ -297,6 +297,33 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     );
     expect(dbUser.failed_login_count).toEqual(1);
   });
+
+  it('POST /utilisateurs/login_v2 - erreur 400 quand sel ou mdp manquant en base (user FranceConnect)', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: null,
+      passwordSalt: null,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login_v2')
+      .send({
+        mot_de_passe: '#bad password',
+        email: 'yo@truc.com',
+      });
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    }); // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Mauvaise adresse électronique ou mauvais mot de passe',
+    );
+    expect(dbUser.failed_login_count).toEqual(1);
+  });
   it('POST /utilisateurs/login_v2 - bad password twice, failed count = 2', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
