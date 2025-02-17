@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { App } from '../../domain/app';
 const url = require('url');
 
 const APP_SCOPES = 'openid email given_name';
@@ -28,9 +29,7 @@ export class OidcService {
     params.append('client_id', process.env.OIDC_CLIENT_ID);
     params.append(
       'redirect_uri',
-      process.env.BASE_URL_FRONT.concat(
-        `${process.env.OIDC_URL_LOGIN_CALLBACK}`,
-      ),
+      App.getBaseURLFront().concat(`${process.env.OIDC_URL_LOGIN_CALLBACK}`),
     );
     params.append('scope', APP_SCOPES);
     params.append('acr_values', EIDAS_LEVEL);
@@ -68,7 +67,7 @@ export class OidcService {
     params.append('state', uuidv4());
     params.append(
       'post_logout_redirect_uri',
-      process.env.BASE_URL.concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
+      App.getBaseURLFront().concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
     );
 
     console.log(logout_url);
@@ -82,7 +81,7 @@ export class OidcService {
     try {
       const params = new url.URLSearchParams({
         grant_type: 'authorization_code',
-        redirect_uri: process.env.BASE_URL_FRONT.concat(
+        redirect_uri: App.getBaseURLFront().concat(
           `${process.env.OIDC_URL_LOGIN_CALLBACK}`,
         ),
         code: oidc_code,
