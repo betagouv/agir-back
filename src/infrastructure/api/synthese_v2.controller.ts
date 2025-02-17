@@ -149,6 +149,10 @@ export class Synthese_v2Controller extends GenericControler {
       if (!commune_cible) {
         ApplicationError.throwSirenOuCodeInseeNotFound(code_input);
       }
+      commune_cible.codesPostaux.forEach((c) =>
+        liste_codes_postaux_communes_of_input.add(c),
+      );
+
       nom_commune_ou_EPCI = commune_cible.nom;
       liste_noms_communes_of_input = [];
     }
