@@ -122,8 +122,26 @@ export class UtilisateurRepository {
     return count > 0;
   }
 
-  async findByEmail(email: string): Promise<Utilisateur | null> {
+  async findByEmail(
+    email: string,
+    version: 'full' | 'light' = 'light',
+  ): Promise<Utilisateur | null> {
+    let omit = {};
+    if (version === 'light') {
+      omit = {
+        todo: true,
+        gamification: true,
+        history: true,
+        kyc: true,
+        unlocked_features: true,
+        logement: true,
+        defis: true,
+        missions: true,
+        bilbiotheque_services: true,
+      };
+    }
     const users = await this.prisma.utilisateur.findMany({
+      omit: omit,
       where: {
         email: {
           equals: email,
@@ -136,6 +154,19 @@ export class UtilisateurRepository {
     }
     return this.buildUtilisateurFromDB(users[0]);
   }
+
+  async does_email_exist(email: string): Promise<boolean> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
+    });
+    return count > 0;
+  }
+
   async countByCodesCommune(liste_codes_commune: string[]): Promise<number> {
     const count = await this.prisma.utilisateur.count({
       where: {

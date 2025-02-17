@@ -363,7 +363,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     expect(dbUser.failed_login_count).toEqual(0);
   });
 
-  it(`POST /utilisateurs/login_v2_code -s onboarding ok si KYC_preference renseignée`, async () => {
+  it(`POST /utilisateurs/login_v2_code - onboarding ok si KYC_preference renseignée`, async () => {
     // GIVEN
     process.env.OTP_DEV = '123456';
 

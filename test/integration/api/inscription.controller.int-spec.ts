@@ -45,7 +45,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       source_inscription: 'mobile',
     });
     // THEN
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(response.status).toBe(201);
     expect(user.nom).toEqual(null);
@@ -103,7 +103,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     );
   });
 
-  it('POST /utilisateurs_v2 - erreur 400 quand email existant', async () => {
+  it('POST /utilisateurs_v2 - silence quand email existant', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { email: 'w@w.com' });
 
@@ -113,11 +113,9 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       email: 'w@w.com',
     });
     // THEN
-    expect(response.status).toBe(400);
-    expect(response.body.message).toEqual(
-      'Adresse électronique w@w.com déjà existante',
-    );
+    expect(response.status).toBe(201);
   });
+
   it('POST /utilisateurs_v2 - email au mauvais format', async () => {
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -460,7 +458,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     const kyc_voiture = user.kyc_history.getUpToDateAnsweredQuestionByCode(
       KYCID.KYC_transport_voiture_km,
@@ -505,7 +503,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     const situtation = await TestUtil.prisma.situationNGC.findUnique({
       where: {
@@ -543,7 +541,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(user.parcours_todo.liste_todo).toHaveLength(
       new ParcoursTodo().liste_todo.length - 1,
@@ -576,7 +574,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(user.unlocked_features.isUnlocked(Feature.bilan_carbone)).toEqual(
       true,
@@ -623,7 +621,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(user.logement.superficie).toEqual(Superficie.superficie_150);
   });
@@ -691,7 +689,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(
       user.kyc_history.getUpToDateAnsweredQuestionByCode(
@@ -725,7 +723,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     // THEN
 
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
   });
@@ -755,7 +753,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     // THEN
 
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
   });
@@ -806,7 +804,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com');
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(
       user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),

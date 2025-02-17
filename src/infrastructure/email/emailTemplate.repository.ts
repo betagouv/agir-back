@@ -9,49 +9,94 @@ const path = require('path');
 @Injectable()
 export class EmailTemplateRepository {
   private email_inscription_code: HandlebarsTemplateDelegate;
+  private email_change_mot_de_passe_code: HandlebarsTemplateDelegate;
+  private email_connexion_code: HandlebarsTemplateDelegate;
   private email_welcome: HandlebarsTemplateDelegate;
   private email_relance_onboarding: HandlebarsTemplateDelegate;
   private email_relance_action: HandlebarsTemplateDelegate;
+  private email_existing_account: HandlebarsTemplateDelegate;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      const email_inscription_code = await await this.readTemplate(
-        'email_inscription_code.hbs',
+      this.email_inscription_code = Handlebars.compile(
+        await this.readTemplate('email_inscription_code.hbs'),
       );
-      const email_welcome = await await this.readTemplate('email_welcome.hbs');
-      const email_relance_onboarding = await this.readTemplate(
-        'email_relance_onboarding.hbs',
+      this.email_connexion_code = Handlebars.compile(
+        await this.readTemplate('email_connexion_code.hbs'),
       );
-      const email_relance_action = await this.readTemplate(
-        'email_relance_action.hbs',
+      this.email_change_mot_de_passe_code = Handlebars.compile(
+        await this.readTemplate('email_change_mot_de_passe_code.hbs'),
       );
-
-      this.email_inscription_code = Handlebars.compile(email_inscription_code);
-      this.email_welcome = Handlebars.compile(email_welcome);
+      this.email_welcome = Handlebars.compile(
+        await this.readTemplate('email_welcome.hbs'),
+      );
       this.email_relance_onboarding = Handlebars.compile(
-        email_relance_onboarding,
+        await this.readTemplate('email_relance_onboarding.hbs'),
       );
-      this.email_relance_action = Handlebars.compile(email_relance_action);
+      this.email_relance_action = Handlebars.compile(
+        await this.readTemplate('email_relance_action.hbs'),
+      );
+      this.email_existing_account = Handlebars.compile(
+        await this.readTemplate('email_existing_account.hbs'),
+      );
     } catch (err) {
       console.error(err);
     }
   }
 
-  public generateEmailByType(
+  public generateAnonymousEmailByType(
+    emailType: TypeNotification,
+  ): { subject: string; body: string } | null {
+    switch (emailType) {
+      case TypeNotification.email_existing_account:
+        return {
+          subject: `Connectez vous à J'agis !`,
+          body: this.email_existing_account({
+            URL_CONNEXION: `${App.getBaseURLFront()}/authentification`,
+          }),
+        };
+
+      default:
+        return null;
+    }
+  }
+  public generateUserEmailByType(
     emailType: TypeNotification,
     utilisateur: Utilisateur,
-    unsubscribe_token: string,
+    unsubscribe_token?: string,
   ): { subject: string; body: string } | null {
-    const unsubscribe_URL =
-      App.getBaseURLFront() + `/se-desabonner?token=${unsubscribe_token}`;
+    let unsubscribe_URL: string;
+    if (unsubscribe_token) {
+      unsubscribe_URL = `${App.getBaseURLFront()}/se-desabonner?token=${unsubscribe_token}`;
+    }
 
     switch (emailType) {
+      case TypeNotification.connexion_code:
+        return {
+          subject: `${utilisateur.code} - Votre code connexion à J'agis`,
+          body: this.email_connexion_code({
+            CODE: utilisateur.code,
+            URL_CODE: `${App.getBaseURLFront()}/validation-authentification?email=${
+              utilisateur.email
+            }`,
+          }),
+        };
       case TypeNotification.inscription_code:
         return {
           subject: `Votre code d'inscription J'agis`,
           body: this.email_inscription_code({
             CODE: utilisateur.code,
             URL_CODE: `${App.getBaseURLFront()}/validation-compte?email=${
+              utilisateur.email
+            }`,
+          }),
+        };
+      case TypeNotification.change_mot_de_passe_code:
+        return {
+          subject: `Modification de mot de passe J'agis`,
+          body: this.email_change_mot_de_passe_code({
+            CODE: utilisateur.code,
+            URL_CODE: `${App.getBaseURLFront()}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${
               utilisateur.email
             }`,
           }),

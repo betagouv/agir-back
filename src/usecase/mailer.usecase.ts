@@ -8,8 +8,6 @@ import {
 import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
-import { App } from '../domain/app';
 
 const day_10 = 1000 * 60 * 60 * 24 * 10;
 
@@ -17,7 +15,6 @@ const day_10 = 1000 * 60 * 60 * 24 * 10;
 export class MailerUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private emailTemplateRepository: EmailTemplateRepository,
     private emailSender: EmailSender,
   ) {}
@@ -54,7 +51,7 @@ export class MailerUsecase {
       if (utilisateur.notification_history.isWelcomeEmailToSend(utilisateur)) {
         utilisateur.setUnsubscribeEmailTokenIfMissing();
 
-        const is_sent_email = await this.sendEmailOfType(
+        const is_sent_email = await this.sendUserEmailOfType(
           TypeNotification.welcome,
           utilisateur,
         );
@@ -100,7 +97,7 @@ export class MailerUsecase {
       for (const notif_type of notif_type_liste) {
         utilisateur.setUnsubscribeEmailTokenIfMissing();
 
-        const is_sent_email = await this.sendEmailOfType(
+        const is_sent_email = await this.sendUserEmailOfType(
           notif_type,
           utilisateur,
         );
@@ -143,17 +140,17 @@ export class MailerUsecase {
     utilisateur: Utilisateur,
     log: string[],
   ) {
-    if (await this.sendEmailOfType(type, utilisateur, false)) {
+    if (await this.sendUserEmailOfType(type, utilisateur, false)) {
       log.push(type);
     }
   }
 
-  public async sendEmailOfType(
+  public async sendUserEmailOfType(
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
     update_history: boolean = true,
   ): Promise<boolean> {
-    const email = this.emailTemplateRepository.generateEmailByType(
+    const email = this.emailTemplateRepository.generateUserEmailByType(
       type_notif,
       utilisateur,
       utilisateur.unsubscribe_mail_token,
@@ -173,6 +170,25 @@ export class MailerUsecase {
         );
         return true;
       }
+    }
+    return false;
+  }
+
+  public async sendAnonymousEmailOfType(
+    type_notif: TypeNotification,
+    target_email: string,
+  ): Promise<boolean> {
+    const email =
+      this.emailTemplateRepository.generateAnonymousEmailByType(type_notif);
+
+    if (email) {
+      const sent_email = await this.emailSender.sendEmail(
+        target_email,
+        '',
+        email.body,
+        email.subject,
+      );
+      return sent_email;
     }
     return false;
   }

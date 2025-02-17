@@ -35,7 +35,7 @@ export class InscriptionUsecase {
     private mailerUsecase: MailerUsecase,
   ) {}
 
-  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
+  async inscrire_utilisateur(utilisateurInput: CreateUtilisateurAPI) {
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
     }
@@ -43,6 +43,15 @@ export class InscriptionUsecase {
     PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
 
     Utilisateur.checkEmailFormat(utilisateurInput.email);
+
+    const user_existe = await this.utilisateurRespository.does_email_exist(
+      utilisateurInput.email,
+    );
+
+    if (user_existe) {
+      this.sendExistingAccountEmail(utilisateurInput.email);
+      return;
+    }
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       utilisateurInput.email,
@@ -148,9 +157,15 @@ export class InscriptionUsecase {
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.sendEmailOfType(
+    await this.mailerUsecase.sendUserEmailOfType(
       TypeNotification.inscription_code,
       utilisateur,
+    );
+  }
+  private async sendExistingAccountEmail(email: string) {
+    await this.mailerUsecase.sendAnonymousEmailOfType(
+      TypeNotification.email_existing_account,
+      email,
     );
   }
 }
