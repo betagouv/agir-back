@@ -68,6 +68,7 @@ export class SyntheseAPI {
   @ApiProperty() nom_departement: string;
   @ApiProperty() nom_commune_ou_collectivite: string;
   @ApiProperty() liste_communes_dans_EPCI: string[];
+  @ApiProperty() liste_codes_postaux_dans_EPCI: string[];
   @ApiProperty() est_EPCI: boolean;
 
   @ApiProperty() nombre_inscrits_total: number;
@@ -86,7 +87,6 @@ export class Synthese_v2Controller extends GenericControler {
     private articleRepository: ArticleRepository,
     private communeRepository: CommuneRepository,
     private aideRepository: AideRepository,
-    private rechercheServiceManager: RechercheServiceManager,
   ) {
     super();
   }
@@ -124,10 +124,16 @@ export class Synthese_v2Controller extends GenericControler {
     let nom_commune_ou_EPCI;
     let liste_codes_communes_of_input: string[];
     let liste_noms_communes_of_input: string[];
+    let liste_codes_postaux_communes_of_input: Set<string> = new Set();
 
     if (IS_CODE_EPCI) {
       const EPCI = this.communeRepository.getEPCIBySIRENCode(code_insee_input);
       liste_noms_communes_of_input = EPCI.membres.map((m) => m.nom);
+      for (const membre of EPCI.membres) {
+        this.communeRepository
+          .getCodePostauxFromCodeCommune(membre.code)
+          .forEach((c) => liste_codes_postaux_communes_of_input.add(c));
+      }
 
       liste_codes_communes_of_input =
         this.communeRepository.getListeCodesCommuneParCodeEPCI(
@@ -201,6 +207,9 @@ export class Synthese_v2Controller extends GenericControler {
     result.nom_commune_ou_collectivite = nom_commune_ou_EPCI;
     result.est_EPCI = IS_CODE_EPCI;
     result.liste_communes_dans_EPCI = liste_noms_communes_of_input;
+    result.liste_codes_postaux_dans_EPCI = Array.from(
+      liste_codes_postaux_communes_of_input.values(),
+    );
     result.nombre_inscrits_total = total_users;
     result.nombre_inscrits_local = local_users.length;
     result.nombre_points_moyen = nombre_points_moyen;
