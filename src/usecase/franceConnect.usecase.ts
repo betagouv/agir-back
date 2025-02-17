@@ -60,9 +60,11 @@ export class FranceConnectUsecase {
     console.log(user_info);
 
     // FINDING USER
-    let utilisateur = await this.profileUsecase.findUtilisateurByEmail(
+    let utilisateur = await this.utilisateurRepository.findByEmail(
       user_info.email,
+      'full',
     );
+
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
         user_info.email,

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { AuthController } from './infrastructure/api/auth.controller';
+import { FranceConnectController } from './infrastructure/api/france_connect.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
@@ -170,7 +170,7 @@ function getControllers(): any[] {
     ActionsController,
   );
   if (!App.isProd()) {
-    controllers.push(AuthController);
+    controllers.push(FranceConnectController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
   }

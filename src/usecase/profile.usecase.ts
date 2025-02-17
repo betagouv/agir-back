@@ -205,10 +205,6 @@ export class ProfileUsecase {
     return utilisateur;
   }
 
-  async findUtilisateurByEmail(email: string): Promise<Utilisateur> {
-    return this.utilisateurRepository.findByEmail(email);
-  }
-
   async setMobileToken(token: string, utilisateurId: string) {
     const utilisateur_existant =
       await this.utilisateurRepository.getUserByMobileToken(token, []);

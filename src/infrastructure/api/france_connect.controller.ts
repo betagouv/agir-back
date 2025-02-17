@@ -9,30 +9,18 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OidcService } from '../auth/oidc.service';
-import { ProfileUsecase } from '../../usecase/profile.usecase';
-import {
-  SourceInscription,
-  Utilisateur,
-  UtilisateurStatus,
-} from '../../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { OIDCStateRepository } from '../repository/oidcState.repository';
-import { ApplicationError } from '../applicationError';
-import { PasswordManager } from '../../domain/utilisateur/manager/passwordManager';
 import { FranceConnectUsecase } from '../../usecase/franceConnect.usecase';
 
 @Controller()
 @ApiTags('France Connect')
-export class AuthController extends GenericControler {
+export class FranceConnectController extends GenericControler {
   constructor(
-    private userRepository: UtilisateurRepository,
     private oIDCStateRepository: OIDCStateRepository,
-    private profileUsecase: ProfileUsecase,
     private oidcService: OidcService,
-    private passwordManager: PasswordManager,
     private franceConnectUsecase: FranceConnectUsecase,
   ) {
     super();
