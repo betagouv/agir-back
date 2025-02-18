@@ -103,17 +103,6 @@ export class ConnexionController extends GenericControler {
     };
   }
 
-  @Post('utilisateurs/:utilisateurId/logout_bidon')
-  @ApiOkResponse({ type: logoutAPI })
-  async disconnect_bidon(
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<logoutAPI> {
-    return {
-      france_connect_logout_url:
-        'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=456&state=0b15916e-e0e1-4711-9481-936c36b269c5&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogout-callback',
-    };
-  }
-
   @Post('utilisateurs/oubli_mot_de_passe')
   @ApiOperation({
     summary:
