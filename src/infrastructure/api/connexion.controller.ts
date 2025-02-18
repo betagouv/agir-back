@@ -97,7 +97,7 @@ export class ConnexionController extends GenericControler {
       utilisateurId,
     );
     const final = {
-      france_connect_logout_url: result.fc_logout_url
+      logout: result.fc_logout_url
         ? result.fc_logout_url.toString()
         : undefined,
     };

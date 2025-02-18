@@ -53,7 +53,6 @@ export class OidcService {
       App.getBaseURLFront().concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
     );
 
-    console.log(logout_url);
     return logout_url;
   }
 
