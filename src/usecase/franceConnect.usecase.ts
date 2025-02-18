@@ -104,7 +104,7 @@ export class FranceConnectUsecase {
       // RIEN A FAIRE
       return {};
     }
-    const logout_url = await this.oidcService.generateLogoutUrl(state.idtoken);
+    const logout_url = this.oidcService.generateLogoutUrl(state.idtoken);
 
     // REMOVE STATE
     await this.oIDCStateRepository.delete(utilisateurId);

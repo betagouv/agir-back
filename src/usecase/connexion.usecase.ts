@@ -190,9 +190,10 @@ export class Connexion_v2_Usecase {
     if (App.isProd()) {
       return {}; // PAS de FC encore en PROD
     } else {
-      return await this.franceConnectUsecase.logout_france_connect(
+      const result = await this.franceConnectUsecase.logout_france_connect(
         utilisateurId,
       );
+      return { fc_logout_url: result.fc_logout_url };
     }
   }
 
