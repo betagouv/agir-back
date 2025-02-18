@@ -125,7 +125,10 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.ALL],
+    );
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 
