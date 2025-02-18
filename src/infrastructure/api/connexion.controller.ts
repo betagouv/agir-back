@@ -101,7 +101,7 @@ export class ConnexionController extends GenericControler {
         ? result.fc_logout_url.toString()
         : undefined,
     };
-    console.log(final);
+    console.log(`YOOOO : ${JSON.stringify(final)}`);
     return final;
   }
 
