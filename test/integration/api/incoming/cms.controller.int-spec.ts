@@ -14,6 +14,7 @@ import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
+import { TypeAction } from '../../../../src/domain/actions/typeAction';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -102,6 +103,31 @@ describe('/api/incoming/cms (API test)', () => {
         },
         {
           code: 'mieux_manger',
+        },
+      ],
+      code: 'code',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
+
+  const CMS_DATA_ACTION_BILAN = {
+    model: CMSModel['action-bilan'],
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
+      titre: 'titre',
+      sous_titre: 'sous-titre',
+      kycs: [
+        {
+          id: 3,
+        },
+        {
+          id: 4,
         },
       ],
       code: 'code',
@@ -286,6 +312,7 @@ describe('/api/incoming/cms (API test)', () => {
       exclude_codes_commune: '03,04',
       codes_departement: '78',
       codes_region: '25',
+      est_gratuit: true,
     },
   };
   const CMS_DATA_ARTICLE = {
@@ -614,6 +641,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.exclude_codes_commune).toEqual(['03', '04']);
     expect(aide.codes_departement).toEqual(['78']);
     expect(aide.codes_region).toEqual(['25']);
+    expect(aide.est_gratuit).toEqual(true);
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
     // GIVEN
@@ -841,6 +869,29 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.thematique).toEqual('alimentation');
   });
 
+  it('POST /api/incoming/cms - create a new action bilan', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_ACTION_BILAN,
+    );
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.titre).toEqual('titre');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.type).toEqual(TypeAction.bilan);
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.thematique).toEqual('alimentation');
+  });
+
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
     // GIVEN
 
@@ -891,7 +942,11 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - updates an action', async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { cms_id: '123' });
+    await TestUtil.create(DB.action, {
+      cms_id: '123',
+      code: 'code',
+      type: TypeAction.quizz,
+    });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -954,6 +1009,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.exclude_codes_commune).toEqual(['03', '04']);
     expect(aide.codes_departement).toEqual(['78']);
     expect(aide.codes_region).toEqual(['25']);
+    expect(aide.est_gratuit).toEqual(true);
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {

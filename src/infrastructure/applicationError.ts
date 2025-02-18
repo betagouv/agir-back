@@ -556,8 +556,12 @@ export class ApplicationError {
   static throwMissingPourcent() {
     this.throwAppError('104', `Attribut 'pourcent' manquant`, 400);
   }
-  static throwActionNotFound(code: string) {
-    this.throwAppError('105', `l'action de code [${code}] n'existe pas`, 404);
+  static throwActionNotFound(code: string, type: string) {
+    this.throwAppError(
+      '105',
+      `l'action de code [${code}] et de type [${type}] n'existe pas`,
+      404,
+    );
   }
   static throwCodeCommuneNotFound(code: string) {
     this.throwAppError(
@@ -570,6 +574,21 @@ export class ApplicationError {
     this.throwAppError(
       '107',
       `Problème détecté dans les paramètres d'authentification (code ou state)`,
+    );
+  }
+  static throwBadActionCodeFormat(code: string) {
+    this.throwAppError('108', `Le code d'une action est de forme`, 404);
+  }
+
+  static throwTypeActionNotFound(type: string) {
+    this.throwAppError('109', `Type d'action [${type}] inconnu`);
+  }
+
+  static throwSirenOuCodeInseeNotFound(code: string) {
+    this.throwAppError(
+      '110',
+      `le code [${code}] ne correspond à aucun code commune INSEE ou SIREN d'EPCI`,
+      404,
     );
   }
 

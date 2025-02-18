@@ -3,24 +3,27 @@ import {
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { OidcService } from '../infrastructure/auth/oidc.service';
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { EmailSender } from '../infrastructure/email/emailSender';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import { App } from '../domain/app';
+import { MailerUsecase } from './mailer.usecase';
+import { TypeNotification } from '../domain/notification/notificationHistory';
+import { FranceConnectUsecase } from './franceConnect.usecase';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 @Injectable()
 export class Connexion_v2_Usecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private oidcService: OidcService,
-    private emailSender: EmailSender,
     private codeManager: CodeManager,
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
+    private mailerUsecase: MailerUsecase,
+    private franceConnectUsecase: FranceConnectUsecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
   async loginUtilisateur(email: string, password: string) {
@@ -51,7 +54,7 @@ export class Connexion_v2_Usecase {
         user.email !== App.getGoogleTestEmail() &&
         user.email !== App.getAppleTestEmail()
       ) {
-        _this.sendCodeForConnexion(user);
+        _this.sendConnexionCode(user);
       }
     };
 
@@ -84,13 +87,13 @@ export class Connexion_v2_Usecase {
     const codeOkAction = async () => {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
 
-      const user = await _this.utilisateurRepository.findByEmail(email);
+      const user = await _this.utilisateurRepository.findByEmail(email, 'full');
       user.status = UtilisateurStatus.default;
 
       await _this.utilisateurRepository.activateAccount(utilisateur.id);
       await _this.utilisateurRepository.updateUtilisateur(user);
 
-      const token = await _this.oidcService.createNewInnerAppToken(user.id);
+      const token = await _this.tokenRepository.createNewAppToken(user.id);
       return { token: token, utilisateur: user };
     };
 
@@ -174,7 +177,9 @@ export class Connexion_v2_Usecase {
     );
   }
 
-  async logout_single_user(utilisateurId: string) {
+  async logout_single_user(
+    utilisateurId: string,
+  ): Promise<{ fc_logout_url?: URL }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
@@ -182,8 +187,12 @@ export class Connexion_v2_Usecase {
     utilisateur.force_connexion = true;
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    if (!App.isProd()) {
-      await this.oidcService.self_logout(utilisateurId);
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      return await this.franceConnectUsecase.logout_france_connect(
+        utilisateurId,
+      );
     }
   }
 
@@ -191,37 +200,17 @@ export class Connexion_v2_Usecase {
     await this.utilisateurRepository.disconnectAll();
   }
 
-  private async sendCodeForConnexion(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour,<br>
-Voici votre code pour valider votre connexion à l'application J'agis !<br><br>
-    
-code : ${utilisateur.code}<br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="${App.getBaseURLFront()}/URL_TO_SET">Page pour rentrer le code</a><br><br>
-    
-À très vite !`,
-      `${utilisateur.code} - Votre code connexion à J'agis`,
+  private async sendConnexionCode(utilisateur: Utilisateur) {
+    await this.mailerUsecase.sendUserEmailOfType(
+      TypeNotification.connexion_code,
+      utilisateur,
     );
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
-    this.emailSender.sendEmail(
-      utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour,<br>
-Voici votre code pour pouvoir modifier votre mot de passe de l'application J'agis !<br><br>
-    
-code : ${utilisateur.code}<br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de passe, ici le lien : <a href="${App.getBaseURLFront()}/mot-de-passe-oublie/redefinir-mot-de-passe?email=${
-        utilisateur.email
-      }">Page pour modifier votre mot de passe</a><br><br>
-    
-À très vite !`,
-      `Modification de mot de passe J'agis`,
+    await this.mailerUsecase.sendUserEmailOfType(
+      TypeNotification.change_mot_de_passe_code,
+      utilisateur,
     );
   }
 }

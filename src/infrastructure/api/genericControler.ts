@@ -12,6 +12,7 @@ import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.rep
 import { ControllerExceptionFilter } from './controllerException.filter';
 import { Thematique } from '../../domain/contenu/thematique';
 import { ApplicationError } from '../applicationError';
+import { TypeAction } from '../../domain/actions/typeAction';
 
 @UseFilters(new ControllerExceptionFilter())
 @Injectable()
@@ -54,6 +55,13 @@ export class GenericControler {
       ApplicationError.throwThematiqueNotFound(code_thematique);
     }
     return thematique;
+  }
+  public castTypeActionOrException(type_action: string): TypeAction {
+    const type = TypeAction[type_action];
+    if (!type) {
+      ApplicationError.throwTypeActionNotFound(type_action);
+    }
+    return type;
   }
 
   isCallerAdmin(req: Request) {

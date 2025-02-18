@@ -297,6 +297,33 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     );
     expect(dbUser.failed_login_count).toEqual(1);
   });
+
+  it('POST /utilisateurs/login_v2 - erreur 400 quand sel ou mdp manquant en base (user FranceConnect)', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: null,
+      passwordSalt: null,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login_v2')
+      .send({
+        mot_de_passe: '#bad password',
+        email: 'yo@truc.com',
+      });
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    }); // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Mauvaise adresse électronique ou mauvais mot de passe',
+    );
+    expect(dbUser.failed_login_count).toEqual(1);
+  });
   it('POST /utilisateurs/login_v2 - bad password twice, failed count = 2', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
@@ -363,7 +390,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     expect(dbUser.failed_login_count).toEqual(0);
   });
 
-  it(`POST /utilisateurs/login_v2_code -s onboarding ok si KYC_preference renseignée`, async () => {
+  it(`POST /utilisateurs/login_v2_code - onboarding ok si KYC_preference renseignée`, async () => {
     // GIVEN
     process.env.OTP_DEV = '123456';
 
@@ -534,6 +561,33 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
+    expect(response.body).toEqual({});
+    expect(userDB.force_connexion).toEqual(true);
+  });
+  it(`POST /utilisateurs/id/logout deconnect un utilisateur france connecté`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_LOGOUT_CALLBACK = '/logout-callback';
+    process.env.BASE_URL_FRONT = 'http://localhost:3000';
+    process.env.OIDC_URL_LOGOUT =
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout';
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.OIDC_STATE);
+
+    // WHEN
+    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/logout');
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.france_connect_logout_url).toContain(
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=456&state=',
+    );
+    expect(response.body.france_connect_logout_url).toContain(
+      '&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogout-callback',
+    );
     expect(userDB.force_connexion).toEqual(true);
   });
   it(`POST /utilisateurs/logout deconnect tous les utilisateurs`, async () => {

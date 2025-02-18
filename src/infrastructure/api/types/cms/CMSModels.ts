@@ -11,5 +11,9 @@ export enum CMSModel {
   kyc = 'kyc',
   mission = 'mission',
   action = 'action',
+  'action-classique' = 'action-classique',
+  'action-simulateur' = 'action-simulateur',
+  'action-bilan' = 'action-bilan',
+  'action-quizz' = 'action-quizz',
   unkown = 'unkown',
 }

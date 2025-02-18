@@ -65,7 +65,12 @@ export class ActionRepository {
       updated_at: undefined,
     };
     await this.prisma.action.upsert({
-      where: { cms_id: action.cms_id },
+      where: {
+        code_type: {
+          code: action.code,
+          type: action.type,
+        },
+      },
       create: {
         ...action_db,
       },
@@ -74,9 +79,14 @@ export class ActionRepository {
       },
     });
   }
-  async delete(cms_id: string): Promise<void> {
+  async delete(cms_id: string, type: TypeAction): Promise<void> {
     await this.prisma.action.delete({
-      where: { cms_id: cms_id },
+      where: {
+        cms_id_type: {
+          cms_id: cms_id,
+          type: type,
+        },
+      },
     });
   }
 
@@ -94,10 +104,17 @@ export class ActionRepository {
     });
     return result.map((elem) => this.buildActionDefinitionFromDB(elem));
   }
-  async getByCode(code: string): Promise<ActionDefinition> {
+
+  async getByCodeAndType(
+    code: string,
+    type: string,
+  ): Promise<ActionDefinition> {
     const result = await this.prisma.action.findUnique({
       where: {
-        code: code,
+        code_type: {
+          code: code,
+          type: type,
+        },
       },
     });
     return this.buildActionDefinitionFromDB(result);

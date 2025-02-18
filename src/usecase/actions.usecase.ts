@@ -14,6 +14,7 @@ import {
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { TypeAction } from '../domain/actions/typeAction';
 
 @Injectable()
 export class ActionUsecase {
@@ -105,11 +106,15 @@ export class ActionUsecase {
     return result;
   }
 
-  async getAction(code: string, code_commune: string): Promise<Action> {
-    const action_def = await this.actionRepository.getByCode(code);
+  async getAction(
+    code: string,
+    type: TypeAction,
+    code_commune: string,
+  ): Promise<Action> {
+    const action_def = await this.actionRepository.getByCodeAndType(code, type);
 
     if (!action_def) {
-      ApplicationError.throwActionNotFound(code);
+      ApplicationError.throwActionNotFound(code, type);
     }
 
     const action = new Action(action_def);
@@ -163,18 +168,18 @@ export class ActionUsecase {
 
   async getUtilisateurAction(
     code: string,
+    type: TypeAction,
     utilisateurId: string,
   ): Promise<Action> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
     );
-    Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCode(code);
+    const action_def = await this.actionRepository.getByCodeAndType(code, type);
 
     if (!action_def) {
-      ApplicationError.throwActionNotFound(code);
+      ApplicationError.throwActionNotFound(code, type);
     }
 
     const action = new Action(action_def);

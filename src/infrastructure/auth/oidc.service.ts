@@ -1,105 +1,70 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { OIDCStateRepository } from '../../../src/infrastructure/repository/oidcState.repository';
-import { OIDCState } from '../../../src/infrastructure/auth/oidcState';
 import axios from 'axios';
-import { JwtService } from '@nestjs/jwt';
+import { App } from '../../domain/app';
 const url = require('url');
 
 const APP_SCOPES = 'openid email given_name';
 const EIDAS_LEVEL = 'eidas1';
+
+export type FCUserInfo = {
+  sub: string;
+  email: string;
+  given_name: string;
+  given_name_array: string[];
+  aud: string;
+  exp: number;
+  iat: number;
+  iss: string;
+};
+
 @Injectable()
 export class OidcService {
-  constructor(
-    private jwtService: JwtService,
-    private oIDCStateRepository: OIDCStateRepository,
-  ) {}
+  generatedAuthRedirectUrl(): { url: URL; state: string } {
+    const state = uuidv4();
 
-  async generatedAuthRedirectUrlAndSaveState(): Promise<URL> {
-    let OIDC_STATE: OIDCState = {
-      state: uuidv4(),
-    };
     let redirect_url = new URL(process.env.OIDC_URL_AUTH);
     let params = redirect_url.searchParams;
     params.append('response_type', 'code');
     params.append('client_id', process.env.OIDC_CLIENT_ID);
     params.append(
       'redirect_uri',
-      process.env.BASE_URL_FRONT.concat(
-        `${process.env.OIDC_URL_LOGIN_CALLBACK}`,
-      ),
+      App.getBaseURLFront().concat(`${process.env.OIDC_URL_LOGIN_CALLBACK}`),
     );
     params.append('scope', APP_SCOPES);
     params.append('acr_values', EIDAS_LEVEL);
-    params.append('state', OIDC_STATE.state);
+    params.append('state', state);
     params.append('nonce', uuidv4());
 
-    await this.oIDCStateRepository.createNewState(OIDC_STATE);
-
     console.log(redirect_url);
-    return redirect_url;
+
+    return { url: redirect_url, state: state };
   }
 
-  async generatedLogoutUrlAndDeleteState(utilisateurId: string): Promise<URL> {
-    const logout_url = await this.generateLogoutUrl(utilisateurId);
-    if (logout_url) {
-      await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
-    }
-    return logout_url;
-  }
-
-  async self_logout(utilisateurId: string): Promise<void> {
-    let logout_url = await this.generateLogoutUrl(utilisateurId);
-    if (!logout_url) {
-      // RIEN A FAIRE
-      return;
-    }
-
-    let response;
-    try {
-      response = await axios.get(logout_url.toString());
-    } catch (error) {
-      console.log(error.message);
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-      return;
-    }
-    console.log(response);
-
-    // REMOVE STATE
-    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
-  }
-
-  private async generateLogoutUrl(utilisateurId: string): Promise<URL> {
-    let OIDC_STATE = await this.oIDCStateRepository.getByUtilisateurId(
-      utilisateurId,
-    );
-    if (!OIDC_STATE) {
-      return null;
-    }
+  public generateLogoutUrl(id_token: string): URL {
     let logout_url = new URL(process.env.OIDC_URL_LOGOUT);
+
     let params = logout_url.searchParams;
-    params.append('id_token_hint', OIDC_STATE.idtoken);
+
+    params.append('id_token_hint', id_token);
     params.append('state', uuidv4());
     params.append(
       'post_logout_redirect_uri',
-      process.env.BASE_URL.concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
+      App.getBaseURLFront().concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
     );
 
-    // REMOVE STATE
+    console.log(logout_url);
     return logout_url;
   }
 
-  async getAccessToken(
-    state: string,
+  async getAccessAndIdTokens(
     oidc_code: string,
-  ): Promise<string | null> {
+  ): Promise<{ access_token: string; id_token: string } | null> {
     let response;
     try {
       const params = new url.URLSearchParams({
         grant_type: 'authorization_code',
-        redirect_uri: process.env.BASE_URL_FRONT.concat(
+        redirect_uri: App.getBaseURLFront().concat(
           `${process.env.OIDC_URL_LOGIN_CALLBACK}`,
         ),
         code: oidc_code,
@@ -118,14 +83,15 @@ export class OidcService {
       return null;
     }
     console.log(response.data);
-    await this.oIDCStateRepository.updateState({
-      state: state,
-      idtoken: response.data.id_token,
-    });
 
-    return response.data.access_token;
+    return {
+      access_token: response.data.access_token,
+      id_token: response.data.id_token,
+    };
   }
-  async getUserDataByAccessToken(access_token: string): Promise<any | null> {
+  async getUserInfoByAccessToken(
+    access_token: string,
+  ): Promise<FCUserInfo | null> {
     let response;
     try {
       response = await axios.get(process.env.OIDC_URL_INFO, {
@@ -140,18 +106,20 @@ export class OidcService {
       console.log(error.response.headers);
       return null;
     }
-    return response.data;
-  }
 
-  async injectUtilisateurIdToState(state: string, utilisateurId: string) {
-    await this.oIDCStateRepository.deleteByUtilisateurId(utilisateurId);
-    await this.oIDCStateRepository.updateState({
-      state,
-      utilisateurId,
-    });
-  }
+    const user_data_base64: string = response.data;
 
-  async createNewInnerAppToken(utilisateurId: string): Promise<string> {
-    return this.jwtService.signAsync({ utilisateurId });
+    console.log('THIS IS USER DATA BASE64');
+    console.log(user_data_base64);
+
+    const blocks = user_data_base64.split('.');
+    const charge_utile = blocks[1];
+    const json_user_data = Buffer.from(charge_utile, 'base64').toString(
+      'ascii',
+    );
+    console.log(json_user_data);
+    const user_info: FCUserInfo = JSON.parse(json_user_data);
+
+    return user_info;
   }
 }

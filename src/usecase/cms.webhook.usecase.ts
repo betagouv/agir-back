@@ -86,7 +86,19 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateMission(cmsWebhookAPI);
       }
     }
-    if (cmsWebhookAPI.model === CMSModel.action) {
+
+    if (cmsWebhookAPI.model.startsWith('action')) {
+      const mapping_type_action: { [K in CMSModel]?: TypeAction } = {
+        'action-classique': TypeAction.classique,
+        'action-quizz': TypeAction.quizz,
+        'action-bilan': TypeAction.bilan,
+        'action-simulateur': TypeAction.simulateur,
+        action: TypeAction[cmsWebhookAPI.entry.type_action],
+      };
+
+      cmsWebhookAPI.entry.type_action =
+        mapping_type_action[cmsWebhookAPI.model];
+
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
           return this.deleteAction(cmsWebhookAPI);
@@ -98,6 +110,7 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateAction(cmsWebhookAPI);
       }
     }
+
     if ([CMSModel.article, CMSModel.quizz].includes(cmsWebhookAPI.model)) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -246,7 +259,10 @@ export class CMSWebhookUsecase {
     await this.missionRepository.delete(cmsWebhookAPI.entry.id);
   }
   async deleteAction(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.actionRepository.delete(cmsWebhookAPI.entry.id.toString());
+    await this.actionRepository.delete(
+      cmsWebhookAPI.entry.id.toString(),
+      TypeAction[cmsWebhookAPI.entry.type_action],
+    );
   }
 
   private getImageUrlFromImageField(image_field: CMSWebhookImageURLAPI) {
@@ -401,6 +417,7 @@ export class CMSWebhookUsecase {
       echelle: entry.echelle,
       url_source: entry.url_source,
       url_demande: entry.url_demande,
+      est_gratuit: entry.est_gratuit,
     };
   }
 

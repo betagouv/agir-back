@@ -113,12 +113,119 @@ export class CMSImportUsecase {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
       let action: ActionDefinition;
       try {
-        action = this.buildActionFromCMSPopulateData(element);
+        action = this.buildActionFromCMSPopulateData(
+          element,
+          TypeAction[element.attributes.type_action],
+        );
         liste.push(action);
         loading_result.push(`loaded action : ${action.cms_id}`);
       } catch (error) {
         loading_result.push(
           `Could not load action ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.actionRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+
+  async loadActionsBilanFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: ActionDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('action-bilans');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let action: ActionDefinition;
+      try {
+        action = this.buildActionFromCMSPopulateData(element, TypeAction.bilan);
+        liste.push(action);
+        loading_result.push(`loaded action-bilan : ${action.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load action-bilan ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.actionRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+  async loadActionsQuizzesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: ActionDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('action-quizzes');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let action: ActionDefinition;
+      try {
+        action = this.buildActionFromCMSPopulateData(element, TypeAction.quizz);
+        liste.push(action);
+        loading_result.push(`loaded action quizz : ${action.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load action-quizz ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.actionRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+
+  async loadActionsClassiquesFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: ActionDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('action-classiques');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let action: ActionDefinition;
+      try {
+        action = this.buildActionFromCMSPopulateData(
+          element,
+          TypeAction.classique,
+        );
+        liste.push(action);
+        loading_result.push(`loaded action classique : ${action.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load action-classique ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.actionRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+  async loadActionsSimulateursFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: ActionDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('action-simulateurs');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let action: ActionDefinition;
+      try {
+        action = this.buildActionFromCMSPopulateData(
+          element,
+          TypeAction.simulateur,
+        );
+        liste.push(action);
+        loading_result.push(`loaded action simulateur : ${action.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load action-simulateur ${element.id} : ${error.message}`,
         );
         loading_result.push(JSON.stringify(element));
       }
@@ -319,7 +426,11 @@ export class CMSImportUsecase {
       | 'thematiques'
       | 'partenaires'
       | 'conformites'
-      | 'actions',
+      | 'actions'
+      | 'action-bilans'
+      | 'action-quizzes'
+      | 'action-classiques'
+      | 'action-simulateurs',
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -328,6 +439,8 @@ export class CMSImportUsecase {
     const page_4 = '&pagination[start]=300&pagination[limit]=100';
     const page_5 = '&pagination[start]=400&pagination[limit]=100';
     const page_6 = '&pagination[start]=500&pagination[limit]=100';
+    const page_7 = '&pagination[start]=600&pagination[limit]=100';
+    const page_8 = '&pagination[start]=700&pagination[limit]=100';
     let response = null;
     const headers = {
       'Content-Type': 'application/json',
@@ -358,6 +471,14 @@ export class CMSImportUsecase {
     response = await axios.get(URL, { headers: headers });
     result = result.concat(response.data.data);
 
+    URL = this.buildPopulateURL(page_7, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
+    URL = this.buildPopulateURL(page_8, type);
+    response = await axios.get(URL, { headers: headers });
+    result = result.concat(response.data.data);
+
     return result;
   }
 
@@ -365,7 +486,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs',
     );
     return URL.concat(page);
   }
@@ -592,6 +713,7 @@ export class CMSImportUsecase {
       echelle: entry.attributes.echelle,
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
+      est_gratuit: !!entry.attributes.est_gratuit,
     };
   }
 
@@ -651,6 +773,7 @@ export class CMSImportUsecase {
   }
   private buildActionFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
+    type: TypeAction,
   ): ActionDefinition {
     return {
       cms_id: entry.id.toString(),
@@ -666,17 +789,17 @@ export class CMSImportUsecase {
       recette_categorie: entry.attributes.categorie_recettes
         ? CategorieRecherche[entry.attributes.categorie_recettes]
         : null,
-      type: TypeAction[entry.attributes.type_action],
+      type: type,
       besoins:
-        entry.attributes.besoins.data.length > 0
+        entry.attributes.besoins && entry.attributes.besoins.data.length > 0
           ? entry.attributes.besoins.data.map((elem) => elem.attributes.code)
           : [],
       quizz_ids:
-        entry.attributes.quizzes.data.length > 0
+        entry.attributes.quizzes && entry.attributes.quizzes.data.length > 0
           ? entry.attributes.quizzes.data.map((elem) => elem.id.toString())
           : [],
       kyc_ids:
-        entry.attributes.kycs.data.length > 0
+        entry.attributes.kycs && entry.attributes.kycs.data.length > 0
           ? entry.attributes.kycs.data.map((elem) => elem.id.toString())
           : [],
       thematique: entry.attributes.thematique.data

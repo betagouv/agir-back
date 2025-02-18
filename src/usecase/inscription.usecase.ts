@@ -18,6 +18,7 @@ import { TypeNotification } from '../domain/notification/notificationHistory';
 import { KYCID } from '../domain/kyc/KYCID';
 import { BooleanKYC } from '../domain/kyc/questionKYC';
 import { Feature } from '../domain/gamification/feature';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 export type Phrase = {
   phrase: string;
@@ -29,13 +30,13 @@ export class InscriptionUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private securityEmailManager: SecurityEmailManager,
-    private oidcService: OidcService,
     private codeManager: CodeManager,
     private situationNGCRepository: SituationNGCRepository,
     private mailerUsecase: MailerUsecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
-  async createUtilisateur(utilisateurInput: CreateUtilisateurAPI) {
+  async inscrire_utilisateur(utilisateurInput: CreateUtilisateurAPI) {
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
     }
@@ -43,6 +44,15 @@ export class InscriptionUsecase {
     PasswordManager.checkPasswordFormat(utilisateurInput.mot_de_passe);
 
     Utilisateur.checkEmailFormat(utilisateurInput.email);
+
+    const user_existe = await this.utilisateurRespository.does_email_exist(
+      utilisateurInput.email,
+    );
+
+    if (user_existe) {
+      this.sendExistingAccountEmail(utilisateurInput.email);
+      return;
+    }
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       utilisateurInput.email,
@@ -110,7 +120,7 @@ export class InscriptionUsecase {
       await _this.securityEmailManager.resetEmailSendingState(utilisateur);
       await _this.utilisateurRespository.activateAccount(utilisateur.id);
 
-      const token = await _this.oidcService.createNewInnerAppToken(
+      const token = await this.tokenRepository.createNewAppToken(
         utilisateur.id,
       );
       return { token };
@@ -148,9 +158,15 @@ export class InscriptionUsecase {
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.sendEmailOfType(
+    await this.mailerUsecase.sendUserEmailOfType(
       TypeNotification.inscription_code,
       utilisateur,
+    );
+  }
+  private async sendExistingAccountEmail(email: string) {
+    await this.mailerUsecase.sendAnonymousEmailOfType(
+      TypeNotification.email_existing_account,
+      email,
     );
   }
 }

@@ -137,7 +137,6 @@ export class CommuneRepository {
     }
     query += ' ; ';
 
-    console.log(query);
     const result: { nom: string; code_insee: string }[] =
       await this.prisma.$queryRawUnsafe(query);
     return result;

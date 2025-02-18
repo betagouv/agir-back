@@ -328,6 +328,7 @@ Cependant, une période transitoire permet de pouvoir continuer de bénéficier 
     expect(aideBody.url_simulateur).toEqual('/aides/velo');
     expect(aideBody.besoin).toEqual(Besoin.acheter_velo);
     expect(aideBody.besoin_desc).toEqual('Acheter un vélo');
+    expect(aideBody.est_gratuit).toEqual(false);
   });
   it('GET /utilisateurs/:utilisateurId/aides aide non visible si expirée', async () => {
     // GIVEN

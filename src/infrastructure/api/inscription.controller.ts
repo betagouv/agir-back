@@ -52,7 +52,7 @@ export class InscriptionController extends GenericControler {
     type: ProspectSubmitAPI,
   })
   async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
-    await this.inscriptionUsecase.createUtilisateur(body);
+    await this.inscriptionUsecase.inscrire_utilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }
 

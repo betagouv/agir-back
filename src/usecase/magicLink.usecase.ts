@@ -5,9 +5,10 @@ import {
 import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
-import { OidcService } from '../infrastructure/auth/oidc.service';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { App } from '../domain/app';
+import { Connexion_v2_Usecase } from './connexion.usecase';
+import { TokenRepository } from '../infrastructure/repository/token.repository';
 
 export type Phrase = {
   phrase: string;
@@ -21,7 +22,8 @@ export class MagicLinkUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
-    private oidcService: OidcService,
+    private connexionUsecase: Connexion_v2_Usecase,
+    private tokenRepository: TokenRepository,
   ) {}
 
   async validateLink(
@@ -63,7 +65,7 @@ export class MagicLinkUsecase {
     utilisateur.active_account = true;
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
-    const token = await this.oidcService.createNewInnerAppToken(utilisateur.id);
+    const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
     return { token: token, utilisateur: utilisateur };
   }

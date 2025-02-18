@@ -13,7 +13,10 @@ const jour_10 = jour_1 * 10;
 const jour_30 = jour_1 * 30;
 
 export enum TypeNotification {
+  email_existing_account = 'email_existing_account',
   inscription_code = 'inscription_code',
+  change_mot_de_passe_code = 'change_mot_de_passe_code',
+  connexion_code = 'connexion_code',
   welcome = 'welcome',
   late_onboarding = 'late_onboarding',
   waiting_action = 'waiting_action',

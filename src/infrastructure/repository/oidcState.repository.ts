@@ -12,9 +12,11 @@ export class OIDCStateRepository {
     }
   }
 
-  async createNewState(data: OIDCState) {
+  async createNewState(state_id: string) {
     return this.prisma.oIDC_STATE.create({
-      data,
+      data: {
+        state: state_id,
+      },
     });
   }
   async getByUtilisateurId(utilisateurId: string): Promise<OIDCState | null> {
@@ -32,19 +34,33 @@ export class OIDCStateRepository {
     });
   }
 
-  async deleteByUtilisateurId(utilisateurId: string) {
-    return this.prisma.oIDC_STATE.deleteMany({
+  async setIdToken(state_id: string, id_token: string) {
+    return this.prisma.oIDC_STATE.update({
       where: {
-        utilisateurId,
+        state: state_id,
+      },
+      data: {
+        idtoken: id_token,
       },
     });
   }
-  async updateState(data: OIDCState) {
+
+  async setUniqueUtilisateurId(state_id: string, utilisateurId: string) {
+    // Suppression d'un ancien état si existant pour l'utilisateur
+    await this.delete(utilisateurId);
+
+    // Nouvel id utilisateur
+    await this.setUtilisateurId(state_id, utilisateurId);
+  }
+
+  private async setUtilisateurId(state_id: string, utilisateurId: string) {
     return this.prisma.oIDC_STATE.update({
       where: {
-        state: data.state,
+        state: state_id,
       },
-      data,
+      data: {
+        utilisateurId: utilisateurId,
+      },
     });
   }
 }

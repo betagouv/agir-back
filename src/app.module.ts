@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { AuthController } from './infrastructure/api/auth.controller';
+import { FranceConnectController } from './infrastructure/api/france_connect.controller';
 import { AidesController } from './infrastructure/api/aides.controller';
 import { TestDataController } from './infrastructure/api/testData.controller';
 import { CMSController } from './infrastructure/api/incoming/cms.controller';
@@ -131,6 +131,8 @@ import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controll
 import { ActionRepository } from './infrastructure/repository/action.repository';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { ActionsController } from './infrastructure/api/actions.controller';
+import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
+import { TokenRepository } from './infrastructure/repository/token.repository';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -168,7 +170,7 @@ function getControllers(): any[] {
     ActionsController,
   );
   if (!App.isProd()) {
-    controllers.push(AuthController);
+    controllers.push(FranceConnectController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
   }
@@ -283,6 +285,8 @@ function getControllers(): any[] {
     PushNotificator,
     ActionRepository,
     ActionUsecase,
+    FranceConnectUsecase,
+    TokenRepository,
   ],
 })
 export class AppModule {}
