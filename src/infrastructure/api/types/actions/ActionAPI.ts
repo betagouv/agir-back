@@ -87,7 +87,7 @@ export class ActionAPI {
       type: action.type,
       thematique: action.thematique,
       kycs: [],
-      quizzes: [],
+      quizzes: action.quizz_liste.map((q) => QuizzBibliothequeAPI.map(q)),
       aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,

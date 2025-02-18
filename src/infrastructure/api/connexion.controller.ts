@@ -96,13 +96,11 @@ export class ConnexionController extends GenericControler {
     const result = await this.connexion_v2_Usecase.logout_single_user(
       utilisateurId,
     );
-    const final = {
+    return {
       france_connect_logout_url: result.fc_logout_url
         ? result.fc_logout_url.toString()
         : undefined,
     };
-    console.log(`YOOOO : ${JSON.stringify(final)}`);
-    return final;
   }
 
   @Post('utilisateurs/:utilisateurId/logout_bidon')

@@ -7,6 +7,7 @@ import { Thematique } from '../../../src/domain/contenu/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('Actions (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -287,6 +288,104 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(2);
     expect(action.nom_commune).toEqual('Dijon');
+  });
+
+  it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['456'],
+      type: TypeAction.quizz,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '456',
+      article_id: '1',
+      questions: {
+        liste_questions: [
+          {
+            libelle: "Qu'est-ce qu'un embout mousseur ?",
+            reponses: [
+              {
+                reponse: "Un composant d'une bombe de crème chantilly",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un élément d'une tireuse à bière",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un dispositif réduisant le débit d'eau du robinet",
+                est_bonne_reponse: true,
+              },
+            ],
+            explication_ko: 'ko',
+            explication_ok: 'ok',
+          },
+        ],
+      },
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire_id: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: [],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      categorie: Categorie.recommandation,
+      mois: [],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/quizz/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.quizzes).toHaveLength(1);
+    expect(action.quizzes[0]).toEqual({
+      article_id: '1',
+      content_id: '456',
+      difficulty: 1,
+      duree: 'pas long',
+      points: 10,
+      questions: [
+        {
+          explicationKO: 'ko',
+          explicationOk: 'ok',
+          libelle: "Qu'est-ce qu'un embout mousseur ?",
+          reponses: [
+            {
+              exact: false,
+              reponse: "Un composant d'une bombe de crème chantilly",
+            },
+            {
+              exact: false,
+              reponse: "Un élément d'une tireuse à bière",
+            },
+            {
+              exact: true,
+              reponse: "Un dispositif réduisant le débit d'eau du robinet",
+            },
+          ],
+        },
+      ],
+      sousTitre: 'sousTitre',
+      thematique_principale: 'climat',
+      titre: 'titreA',
+    });
   });
 
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {

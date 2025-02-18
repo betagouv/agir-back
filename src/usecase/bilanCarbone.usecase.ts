@@ -48,7 +48,6 @@ export class BilanCarboneUsecase {
     const up_to_date = await this.isBilanStatUpToDate(utilisateur);
 
     if (up_to_date) {
-      console.log('HAHAHAH');
       const value =
         await this.bilanCarboneStatistiqueRepository.getLastTotalValue(
           utilisateur.id,

@@ -15,6 +15,9 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { TypeAction } from '../domain/actions/typeAction';
+import { Quizz } from '../domain/contenu/quizz';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { BibliothequeUsecase } from './bibliotheque.usecase';
 
 @Injectable()
 export class ActionUsecase {
@@ -23,6 +26,7 @@ export class ActionUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
   async getOpenCatalogue(
@@ -214,6 +218,15 @@ export class ActionUsecase {
 
     action.setListeAides(linked_aides);
     action.services = liste_services;
+
+    action.quizz_liste = [];
+    for (const quizz_id of action_def.quizz_ids) {
+      const quizz = await this.bibliothequeUsecase.getQuizz(
+        utilisateurId,
+        quizz_id,
+      );
+      action.quizz_liste.push(quizz);
+    }
 
     return action;
   }

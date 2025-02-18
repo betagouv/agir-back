@@ -104,7 +104,6 @@ describe('Synthese (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    console.log(response.body);
 
     expect(response.body.nombre_aides_total).toEqual(1);
     expect(response.body.nombre_aides_nat_total).toEqual(0);
