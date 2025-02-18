@@ -388,6 +388,39 @@ describe('Actions (API test)', () => {
     });
   });
 
+  it.only(`GET /utilisateurs/id/actions/id/score - calcul le score d'une action quizz`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      },
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3'],
+      type: TypeAction.quizz,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/score',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ score: 67 });
+  });
+
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });

@@ -19,7 +19,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { ActionAPI } from './types/actions/ActionAPI';
+import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Thematique } from '../../domain/contenu/thematique';
@@ -179,5 +179,30 @@ export class ActionsController extends GenericControler {
       utilisateurId,
     );
     return ActionAPI.mapToAPI(result);
+  }
+  @Get('utilisateurs/:utilisateurId/actions/quizz/:code_action/score')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: ScoreActionAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le score courant de cette action de type quizz`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  async getActionQuizzScore(
+    @Param('code_action') code_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<ScoreActionAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.actionUsecase.calculeScoreQuizzAction(
+      utilisateurId,
+      code_action,
+    );
+    return { score: result };
   }
 }

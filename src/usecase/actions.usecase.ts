@@ -13,7 +13,7 @@ import {
 } from '../infrastructure/repository/commune/commune.repository';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { TypeAction } from '../domain/actions/typeAction';
 import { Quizz } from '../domain/contenu/quizz';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
@@ -179,6 +179,7 @@ export class ActionUsecase {
       utilisateurId,
       [],
     );
+    Utilisateur.checkState(utilisateur);
 
     const action_def = await this.actionRepository.getByCodeAndType(code, type);
 
@@ -229,5 +230,39 @@ export class ActionUsecase {
     }
 
     return action;
+  }
+
+  public async calculeScoreQuizzAction(
+    utilisateurId: string,
+    code_action_quizz: string,
+  ): Promise<number> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = await this.actionRepository.getByCodeAndType(
+      code_action_quizz,
+      TypeAction.quizz,
+    );
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code_action_quizz, TypeAction.quizz);
+    }
+
+    let pourcent_total = 0;
+    let nombre_quizz_done = 0;
+    for (const quizz_id of action_def.quizz_ids) {
+      const quizz = utilisateur.history.getQuizzHistoryById(quizz_id);
+      if (quizz) {
+        nombre_quizz_done++;
+        pourcent_total =
+          pourcent_total + (quizz.has100ScoreLastAttempt() ? 100 : 0);
+      }
+    }
+    if (nombre_quizz_done === 0) {
+      return 0;
+    }
+    return Math.round(pourcent_total / nombre_quizz_done);
   }
 }

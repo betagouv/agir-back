@@ -52,6 +52,10 @@ export class AideActionAPI {
   }
 }
 
+export class ScoreActionAPI {
+  score: number;
+}
+
 export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
