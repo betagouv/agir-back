@@ -139,27 +139,27 @@ export enum KYCID {
  */
 export type KYCComplexValues = {
   _default: { code: string; ngc_code?: string };
-  // KYC009: {
-  //   code: 'ma_voit' | 'loc_voit' | 'co_voit' | 'pas_voiture';
-  //   ngc_code: undefined;
-  // };
-  // KYC_transport_type_utilisateur:
-  //   | { code: 'proprio'; ngc_code: "'propriétaire'" }
-  //   | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
-  //   | { code: 'change_souvent'; ngc_code: "'non régulier'" };
-  // KYC_transport_voiture_gabarit:
-  //   | { code: 'petite'; ngc_code: "'petite'" }
-  //   | { code: 'moyenne'; ngc_code: "'moyenne'" }
-  //   | { code: 'berline'; ngc_code: "'berline'" }
-  //   | { code: 'SUV'; ngc_code: "'SUV'" }
-  //   | { code: 'VUL'; ngc_code: "'VUL'" };
-  // KYC_transport_voiture_motorisation:
-  //   | { code: 'thermique'; ngc_code: "'thermique'" }
-  //   | { code: 'hybride'; ngc_code: "'hybride'" }
-  //   | { code: 'electrique'; ngc_code: "'électrique'" };
-  // KYC_transport_voiture_thermique_carburant:
-  //   | { code: 'gazole_B7_B10'; ngc_code: "'gazole B7 ou B10'" }
-  //   | { code: 'essence_E5_E10'; ngc_code: "'essence E5 ou E10'" }
-  //   | { code: 'essence_E85'; ngc_code: "'essence E85'" }
-  //   | { code: 'GPL'; ngc_code: "'GPL'" };
+  KYC009: {
+    code: 'ma_voit' | 'loc_voit' | 'co_voit' | 'pas_voiture';
+    ngc_code: undefined;
+  };
+  KYC_transport_type_utilisateur:
+    | { code: 'proprio'; ngc_code: "'propriétaire'" }
+    | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
+    | { code: 'change_souvent'; ngc_code: "'non régulier'" };
+  KYC_transport_voiture_gabarit:
+    | { code: 'petite'; ngc_code: "'petite'" }
+    | { code: 'moyenne'; ngc_code: "'moyenne'" }
+    | { code: 'berline'; ngc_code: "'berline'" }
+    | { code: 'SUV'; ngc_code: "'SUV'" }
+    | { code: 'VUL'; ngc_code: "'VUL'" };
+  KYC_transport_voiture_motorisation:
+    | { code: 'thermique'; ngc_code: "'thermique'" }
+    | { code: 'hybride'; ngc_code: "'hybride'" }
+    | { code: 'electrique'; ngc_code: "'électrique'" };
+  KYC_transport_voiture_thermique_carburant:
+    | { code: 'gazole_B7_B10'; ngc_code: "'gazole B7 ou B10'" }
+    | { code: 'essence_E5_E10'; ngc_code: "'essence E5 ou E10'" }
+    | { code: 'essence_E85'; ngc_code: "'essence E85'" }
+    | { code: 'GPL'; ngc_code: "'GPL'" };
 };

@@ -49,6 +49,7 @@ import { QuestionsKYCController } from './infrastructure/api/questionKYC.control
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
+import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
 import { TodoController } from './infrastructure/api/todo.controller';
@@ -88,6 +89,7 @@ import { ImpactTransportsRepository } from './infrastructure/repository/services
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
+import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
 import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
@@ -125,6 +127,7 @@ import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
+import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
@@ -168,6 +171,7 @@ function getControllers(): any[] {
     ConformiteController,
     Synthese_v2Controller,
     ActionsController,
+    SimulateurVoitureController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
@@ -287,6 +291,8 @@ function getControllers(): any[] {
     ActionUsecase,
     FranceConnectUsecase,
     TokenRepository,
+    SimulateurVoitureUsecase,
+    SimulateurVoitureRepository,
   ],
 })
 export class AppModule {}

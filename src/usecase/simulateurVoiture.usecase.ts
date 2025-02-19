@@ -50,7 +50,7 @@ export class SimulateurVoitureUsecase {
 }
 
 function getParams(utilisateur: Utilisateur): SimulateurVoitureParams {
-  const questions = utilisateur.kyc_history.answered_questions;
+  const questions = utilisateur.kyc_history.getRawAnsweredKYCs();
   const params = new SimulateurVoitureParams();
 
   for (const question of questions) {

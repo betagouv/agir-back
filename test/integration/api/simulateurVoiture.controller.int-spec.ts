@@ -1,6 +1,6 @@
 import { KYCComplexValues, KYCID } from 'src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from 'src/domain/kyc/questionKYC';
-import { AlternativeAPI } from 'src/infrastructure/api/types/simulateur_voiture/SimualteurVoitureResultatAPI';
+import { AlternativeAPI } from 'src/infrastructure/api/types/simulateur_voiture/SimulateurVoitureResultatAPI';
 import { KycRepository } from 'src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -72,7 +72,7 @@ describe('/simulateur_voiture (API test)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        couts: 5410.099744675109,
+        couts: 5568.997957175108,
         empreinte: 1615.288885445806,
         gabarit: {
           label: 'SUV',
