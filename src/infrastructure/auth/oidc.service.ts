@@ -4,7 +4,7 @@ import axios from 'axios';
 import { App } from '../../domain/app';
 const url = require('url');
 
-const APP_SCOPES = 'openid email given_name';
+const APP_SCOPES = 'openid email given_name sub';
 const EIDAS_LEVEL = 'eidas1';
 
 export type FCUserInfo = {

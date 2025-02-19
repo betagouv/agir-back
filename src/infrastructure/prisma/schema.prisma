@@ -74,6 +74,7 @@ model Utilisateur {
   mobile_token               String?   @unique
   mobile_token_updated_at    DateTime? @db.Timestamptz(3)
   code_commune               String?
+  france_connect_sub         String?   @unique
 }
 
 model Statistique {

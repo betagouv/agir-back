@@ -648,6 +648,7 @@ export class TestUtil {
       mobile_token: null,
       mobile_token_updated_at: null,
       code_commune: null,
+      france_connect_sub: null,
       ...override,
     };
   }

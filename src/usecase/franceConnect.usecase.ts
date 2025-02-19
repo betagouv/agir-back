@@ -59,35 +59,60 @@ export class FranceConnectUsecase {
     );
     console.log(user_info);
 
-    // FINDING USER
-    let utilisateur = await this.utilisateurRepository.findByEmail(
+    // FINDING FRANCE CONNECT USER BY SUB
+    const fc_user = await this.utilisateurRepository.getByFranceConnectSub(
+      user_info.sub,
+      'full',
+    );
+    if (fc_user) {
+      return await this.log_ok_fc_user(oidc_state, fc_user);
+    }
+
+    // FINDING FRANCE CONNECT USER BY EMAIL
+    const standard_user = await this.utilisateurRepository.findByEmail(
       user_info.email,
       'full',
     );
-
-    if (!utilisateur) {
-      utilisateur = Utilisateur.createNewUtilisateur(
-        user_info.email,
-        false,
-        SourceInscription.france_connect,
+    if (standard_user) {
+      await this.utilisateurRepository.setFranceConnectSub(
+        standard_user.id,
+        user_info.sub,
       );
-
-      utilisateur.prenom = user_info.given_name;
-      utilisateur.status = UtilisateurStatus.default;
-      utilisateur.active_account = true;
-      utilisateur.est_valide_pour_classement = true;
-
-      await this.utilisateurRepository.createUtilisateur(utilisateur);
+      return await this.log_ok_fc_user(oidc_state, standard_user);
     }
 
+    // NEW UTILISATEUR CREATION
+    const new_utilisateur = Utilisateur.createNewUtilisateur(
+      user_info.email,
+      false,
+      SourceInscription.france_connect,
+    );
+
+    new_utilisateur.prenom = user_info.given_name;
+    new_utilisateur.status = UtilisateurStatus.default;
+    new_utilisateur.active_account = true;
+    new_utilisateur.est_valide_pour_classement = true;
+    new_utilisateur.france_connect_sub = user_info.sub;
+
+    await this.utilisateurRepository.createUtilisateur(new_utilisateur);
+
+    return await this.log_ok_fc_user(oidc_state, new_utilisateur);
+  }
+
+  private async log_ok_fc_user(
+    state: string,
+    utilisateur: Utilisateur,
+  ): Promise<{
+    token: string;
+    utilisateur: Utilisateur;
+  }> {
     await this.oIDCStateRepository.setUniqueUtilisateurId(
-      oidc_state,
+      state,
       utilisateur.id,
     );
 
     this.passwordManager.initLoginState(utilisateur);
 
-    // CREATING INNER APP TOKEN
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
     return { token: token, utilisateur: utilisateur };

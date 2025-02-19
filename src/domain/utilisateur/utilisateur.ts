@@ -104,6 +104,7 @@ export class Utilisateur {
   mobile_token: string;
   mobile_token_updated_at: Date;
   code_commune: string;
+  france_connect_sub: string;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -190,6 +191,7 @@ export class Utilisateur {
       mobile_token_updated_at: null,
       mobile_token: null,
       code_commune: null,
+      france_connect_sub: null,
     });
   }
 

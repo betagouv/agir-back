@@ -27,6 +27,18 @@ import { KycRepository } from '../kyc.repository';
 import { MissionRepository } from '../mission.repository';
 import { DefiRepository } from '../defi.repository';
 
+const OMIT_ALL_CONFIGURATION = {
+  todo: true,
+  gamification: true,
+  history: true,
+  kyc: true,
+  unlocked_features: true,
+  logement: true,
+  defis: true,
+  missions: true,
+  bilbiotheque_services: true,
+};
+
 @Injectable()
 export class UtilisateurRepository {
   constructor(private prisma: PrismaService) {}
@@ -86,17 +98,7 @@ export class UtilisateurRepository {
   }
   async getByEmailToken(token: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
-      omit: {
-        todo: true,
-        gamification: true,
-        history: true,
-        kyc: true,
-        unlocked_features: true,
-        logement: true,
-        defis: true,
-        missions: true,
-        bilbiotheque_services: true,
-      },
+      omit: OMIT_ALL_CONFIGURATION,
       where: {
         unsubscribe_mail_token: token,
       },
@@ -128,17 +130,7 @@ export class UtilisateurRepository {
   ): Promise<Utilisateur | null> {
     let omit = {};
     if (version === 'light') {
-      omit = {
-        todo: true,
-        gamification: true,
-        history: true,
-        kyc: true,
-        unlocked_features: true,
-        logement: true,
-        defis: true,
-        missions: true,
-        bilbiotheque_services: true,
-      };
+      omit = OMIT_ALL_CONFIGURATION;
     }
     const users = await this.prisma.utilisateur.findMany({
       omit: omit,
@@ -153,6 +145,34 @@ export class UtilisateurRepository {
       return null;
     }
     return this.buildUtilisateurFromDB(users[0]);
+  }
+  async getByFranceConnectSub(
+    sub: string,
+    version: 'full' | 'light' = 'light',
+  ): Promise<Utilisateur | null> {
+    let omit = {};
+    if (version === 'light') {
+      omit = OMIT_ALL_CONFIGURATION;
+    }
+    const user = await this.prisma.utilisateur.findUnique({
+      omit: omit,
+      where: {
+        france_connect_sub: sub,
+      },
+    });
+
+    return user ? this.buildUtilisateurFromDB(user) : null;
+  }
+
+  async setFranceConnectSub(utilisateurId: string, sub: string) {
+    await this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        france_connect_sub: sub,
+      },
+    });
   }
 
   async does_email_exist(email: string): Promise<boolean> {
@@ -541,6 +561,7 @@ export class UtilisateurRepository {
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
       code_commune: user.code_commune,
+      france_connect_sub: user.france_connect_sub,
     });
 
     if (result.kyc_history) {
@@ -617,6 +638,7 @@ export class UtilisateurRepository {
       notification_history: undefined,
       defis: undefined,
       code_commune: user.code_commune,
+      france_connect_sub: user.france_connect_sub,
     };
   }
 
