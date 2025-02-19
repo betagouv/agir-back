@@ -23,36 +23,6 @@ export class UniversController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [ThematiqueUniversAPI],
-  })
-  @ApiParam({
-    name: 'univers',
-    type: String,
-    enumName: 'univers',
-    required: true,
-    description: `l'univers demandé`,
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : Retourne les thematiques de d'un univers particulier d'un utilisateur donné`,
-  })
-  async getUniversThematiques(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('univers') univers: string,
-  ): Promise<ThematiqueUniversAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const them = univers ? this.castThematiqueOrException(univers) : undefined;
-    const result = await this.missionUsecase.getTuilesMissionsOfThematique(
-      utilisateurId,
-      them,
-    );
-    return result.map((e) => ThematiqueUniversAPI.mapToAPI(e));
-  }
-
   @Get('utilisateurs/:utilisateurId/thematiques_recommandees')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
