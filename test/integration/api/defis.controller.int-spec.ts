@@ -11,8 +11,6 @@ import {
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { Defi } from '.prisma/client';
-import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
-import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';

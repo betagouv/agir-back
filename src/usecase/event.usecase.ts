@@ -3,7 +3,6 @@ import { EventType, AppEvent } from '../domain/appEvent';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../src/domain/utilisateur/utilisateur';
 import { ContentType } from '../domain/contenu/contentType';
-import { LiveService } from '../../src/domain/service/serviceDefinition';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
 @Injectable()
@@ -41,18 +40,7 @@ export class EventUsecase {
   }
 
   private async processAccessConfLinky(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.todo],
-    );
-    const found = utilisateur.parcours_todo.findTodoElementByServiceId(
-      LiveService.linky,
-    );
-    if (found) {
-      found.todo.makeProgress(found.element);
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    // FIXME : à supprimer PLUS D'IMPACT TODO
   }
 
   private async processArticleNonFavoris(
@@ -92,66 +80,22 @@ export class EventUsecase {
   }
 
   private async processAccessRecommandations(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.todo],
-    );
-    const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-      ContentType.recommandations,
-    );
-    if (found) {
-      found.todo.makeProgress(found.element);
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    // FIXME : à supprimer PLUS D'IMPACT TODO
   }
 
   private async processAccessProfile(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.todo],
-    );
-    const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-      ContentType.profile,
-    );
-    if (found) {
-      found.todo.makeProgress(found.element);
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    // FIXME : à supprimer PLUS D'IMPACT TODO
   }
 
   private async processAccessCatalogueAides(utilisateurId: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.todo],
-    );
-    const found = utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-      ContentType.aides,
-    );
-    if (found) {
-      found.todo.makeProgress(found.element);
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    //  FIXME : à supprimer PLUS D'IMPACT TODO
   }
 
   private async processServiceInstalled(
     utilisateurId: string,
     event: AppEvent,
   ) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.todo],
-    );
-    const found = utilisateur.parcours_todo.findTodoElementByServiceId(
-      event.service_id,
-    );
-    if (found) {
-      found.todo.makeProgress(found.element);
-    }
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    //  FIXME : à supprimer PLUS D'IMPACT TODO
   }
 
   private async processCelebration(utilisateurId: string, event: AppEvent) {
@@ -174,7 +118,6 @@ export class EventUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
       ],
     );
 
@@ -191,7 +134,6 @@ export class EventUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
       ],
     );
 

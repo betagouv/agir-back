@@ -257,42 +257,6 @@ export class ProfileUsecase {
     }
   }
 
-  async liste5questOnboarding(): Promise<string[]> {
-    const result = [];
-    const kyc_catalogue = KycRepository.getCatalogue();
-    let count_onboarding_7_done = 0;
-    let count_onboarding_non_done = 0;
-
-    const userIdList = await this.utilisateurRepository.listUtilisateurIds({});
-    for (let index = 0; index < userIdList.length; index++) {
-      const user_id = userIdList[index];
-      const utilisateur = await this.utilisateurRepository.getById(user_id, [
-        Scope.todo,
-        Scope.kyc,
-      ]);
-      if (utilisateur.parcours_todo.isEndedTodo()) {
-        const enchainement_mini_bilan =
-          utilisateur.kyc_history.getEnchainementKYCsEligibles(
-            QuestionKYCUsecase.ENCHAINEMENTS[
-              'ENCHAINEMENT_KYC_mini_bilan_carbone'
-            ],
-          );
-        if (QuestionKYC.getProgression(enchainement_mini_bilan).current === 7) {
-          count_onboarding_7_done++;
-        } else {
-          result.push(
-            `user : ${utilisateur.id}/${utilisateur.email} - bilan incomplet`,
-          );
-        }
-      } else {
-        count_onboarding_non_done++;
-      }
-    }
-    result.push(`Onboarding_7_done : ${count_onboarding_7_done}`);
-    result.push(`Onboarding_non_done : ${count_onboarding_non_done}`);
-    return result;
-  }
-
   async updateAllUserCouvertureAides(): Promise<{
     couvert: number;
     pas_couvert: number;

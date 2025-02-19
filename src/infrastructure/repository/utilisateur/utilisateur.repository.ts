@@ -16,7 +16,6 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../domain/object_store/upgrader';
-import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Logement } from '../../../domain/logement/logement';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
@@ -28,7 +27,6 @@ import { MissionRepository } from '../mission.repository';
 import { DefiRepository } from '../defi.repository';
 
 const OMIT_ALL_CONFIGURATION = {
-  todo: true,
   gamification: true,
   history: true,
   kyc: true,
@@ -79,7 +77,6 @@ export class UtilisateurRepository {
     }
     const user = await this.prisma.utilisateur.findUnique({
       omit: {
-        todo: !scopes.includes(Scope.todo),
         gamification: !scopes.includes(Scope.gamification),
         history: !scopes.includes(Scope.history_article_quizz_aides),
         kyc: !scopes.includes(Scope.kyc),
@@ -238,7 +235,6 @@ export class UtilisateurRepository {
     }
     const user = await this.prisma.utilisateur.findUnique({
       omit: {
-        todo: !scopes.includes(Scope.todo),
         gamification: !scopes.includes(Scope.gamification),
         history: !scopes.includes(Scope.history_article_quizz_aides),
         kyc: !scopes.includes(Scope.kyc),
@@ -457,11 +453,6 @@ export class UtilisateurRepository {
           ),
         )
       : undefined;
-    const parcours_todo = user.todo
-      ? new ParcoursTodo(
-          Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
-        )
-      : undefined;
     const history = user.history
       ? new History(
           Upgrader.upgradeRaw(user.history, SerialisableDomain.History),
@@ -528,7 +519,6 @@ export class UtilisateurRepository {
       prevent_sendemail_before: user.prevent_sendemail_before,
       created_at: user.created_at,
       updated_at: user.updated_at,
-      parcours_todo: parcours_todo,
       gamification: gamification,
       history: history,
       kyc_history: kyc,
@@ -627,7 +617,6 @@ export class UtilisateurRepository {
       mobile_token_updated_at: user.mobile_token_updated_at,
       created_at: undefined,
       updated_at: undefined,
-      todo: undefined,
       gamification: undefined,
       unlocked_features: undefined,
       history: undefined,
@@ -646,10 +635,6 @@ export class UtilisateurRepository {
     user: Utilisateur,
   ): Partial<UtilisateurDB> {
     return {
-      todo: Upgrader.serialiseToLastVersion(
-        user.parcours_todo,
-        SerialisableDomain.ParcoursTodo,
-      ),
       gamification: Upgrader.serialiseToLastVersion(
         user.gamification,
         SerialisableDomain.Gamification,
@@ -719,9 +704,6 @@ export class UtilisateurRepository {
       }
       if (!scopes.includes(Scope.notification_history)) {
         versionned_data.notification_history = undefined;
-      }
-      if (!scopes.includes(Scope.todo)) {
-        versionned_data.todo = undefined;
       }
       if (!scopes.includes(Scope.unlocked_features)) {
         versionned_data.unlocked_features = undefined;

@@ -31,8 +31,6 @@ import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
-import { TodoController } from './infrastructure/api/todo.controller';
-import { TodoUsecase } from './usecase/todo.usecase';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { WinterController } from './infrastructure/api/incoming/winter.controller';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
@@ -145,7 +143,6 @@ function getControllers(): any[] {
     CMSController,
     CommunesController,
     ServiceController,
-    TodoController,
     WinterController,
     EventController,
     GamificationController,
@@ -217,7 +214,6 @@ function getControllers(): any[] {
     PasswordManager,
     ServiceUsecase,
     ServiceRepository,
-    TodoUsecase,
     ThematiqueRepository,
     FruitsEtLegumesServiceManager,
     EventUsecase,

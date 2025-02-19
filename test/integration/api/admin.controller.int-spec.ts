@@ -1,9 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/contenu/thematique';
-import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
@@ -24,8 +22,6 @@ import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
-import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -491,42 +487,7 @@ describe('Admin (API test)', () => {
     expect(userDB.commune_classement).toEqual('PALAISEAU');
     expect(userDB.points_classement).toEqual(10);
   });
-  it.skip('POST /admin/migrate_users migration V11 OK - user ayant pas fini les mission onboarding', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 1;
 
-    await TestUtil.create(DB.utilisateur, {
-      version: 10,
-      migration_enabled: true,
-      todo: todo,
-    });
-    process.env.USER_CURRENT_VERSION = '11';
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 11,
-            ok: true,
-            info: 'reset user car todo pas terminée',
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.parcours_todo.todo_active).toEqual(0);
-    expect(userDB.unlocked_features.unlocked_features).toEqual([]);
-  });
   it('POST /admin/migrate_users migration V12 OK - calcul code commune pour user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1139,62 +1100,6 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('En construction 🚧');
-  });
-  it('POST /admin/upgrade_user_todo complète la todo des utilisateurs', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    await TestUtil.create(DB.utilisateur, {
-      email: '1',
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                thematiques: [Thematique.climat],
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'quizz',
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: 'user-2',
-      email: '2',
-      todo: {
-        liste_todo: TodoCatalogue.getAllTodos(),
-        todo_active: 0,
-      },
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/upgrade_user_todo');
-
-    // THEN
-    const userDB_1 = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(2);
-    expect(response.body).toContain(`utilisateur utilisateur-id : true`);
-    expect(response.body).toContain(`utilisateur user-2 : false`);
-    expect(userDB_1.parcours_todo.todo_active).toEqual(0);
-    expect(userDB_2.parcours_todo.liste_todo).toHaveLength(
-      TodoCatalogue.getNombreTodo(),
-    );
   });
 
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {

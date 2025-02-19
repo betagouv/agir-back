@@ -2,7 +2,6 @@ import { CodeManager } from './manager/codeManager';
 import { PasswordManager } from './manager/passwordManager';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Gamification } from '../gamification/gamification';
-import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { KYCHistory } from '../kyc/kycHistory';
@@ -38,7 +37,6 @@ export enum SourceInscription {
 export enum Scope {
   ALL = 'ALL',
   core = 'core',
-  todo = 'todo',
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
@@ -72,7 +70,6 @@ export class Utilisateur {
   prevent_checkcode_before: Date;
   sent_email_count: number;
   prevent_sendemail_before: Date;
-  parcours_todo: ParcoursTodo;
   gamification: Gamification;
   missions: MissionsUtilisateur;
   history: History;
@@ -147,7 +144,6 @@ export class Utilisateur {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
-      parcours_todo: new ParcoursTodo(),
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
@@ -200,7 +196,6 @@ export class Utilisateur {
     this.commune_classement = null;
     this.code_postal_classement = null;
     this.tag_ponderation_set = {};
-    this.parcours_todo.reset();
     this.gamification.reset();
     this.unlocked_features.reset();
     this.history.reset();

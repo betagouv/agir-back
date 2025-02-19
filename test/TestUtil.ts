@@ -7,12 +7,10 @@ import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 const request = require('supertest');
 import { JwtService } from '@nestjs/jwt';
-import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
 import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../src/domain/gamification/feature';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
@@ -546,7 +544,6 @@ export class TestUtil {
         },
       ],
     };
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
 
     const history: History_v0 = {
       version: 0,
@@ -616,7 +613,6 @@ export class TestUtil {
       prevent_sendemail_before: new Date(),
       version: 0,
       migration_enabled: false,
-      todo: todo,
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,

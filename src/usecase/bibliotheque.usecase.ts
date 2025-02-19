@@ -120,7 +120,6 @@ export class BibliothequeUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
         Scope.logement,
       ],
     );
@@ -166,7 +165,6 @@ export class BibliothequeUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
       ],
     );
 
@@ -196,11 +194,6 @@ export class BibliothequeUsecase {
     ) {
       utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
       utilisateur.history.declarePointsQuizzEnPoche(content_id);
-      this.updateUserTodo(
-        utilisateur,
-        ContentType.quizz,
-        quizz_def.thematiques,
-      );
     }
 
     utilisateur.missions.validateArticleOrQuizzDone(
@@ -263,11 +256,6 @@ export class BibliothequeUsecase {
       );
       utilisateur.history.declarePointsArticleEnPoche(content_id);
     }
-    this.updateUserTodo(
-      utilisateur,
-      ContentType.article,
-      article_definition.thematiques,
-    );
 
     utilisateur.missions.validateArticleOrQuizzDone(
       content_id,
@@ -278,20 +266,5 @@ export class BibliothequeUsecase {
       utilisateur,
       DefiRepository.getCatalogue(),
     );
-  }
-
-  private updateUserTodo(
-    utilisateur: Utilisateur,
-    type: ContentType,
-    thematiques: Thematique[],
-  ) {
-    const matching =
-      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-        type,
-        thematiques,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
-    }
   }
 }

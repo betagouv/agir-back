@@ -169,7 +169,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -197,7 +196,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -270,7 +268,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -347,7 +344,6 @@ export class QuestionKYCUsecase {
     gain_points: boolean,
   ) {
     utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
-    this.updateUserTodo(utilisateur, code_question);
 
     if (
       !utilisateur.kyc_history.isQuestionAnsweredByCode(code_question) &&
@@ -395,8 +391,6 @@ export class QuestionKYCUsecase {
       utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
         code_question,
       );
-
-    this.updateUserTodo(utilisateur, code_question);
 
     if (!question_to_update.is_answererd && gain_points) {
       utilisateur.gamification.ajoutePoints(
@@ -486,16 +480,6 @@ export class QuestionKYCUsecase {
     this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
-  }
-
-  private updateUserTodo(utilisateur: Utilisateur, questionId: string) {
-    const matching =
-      utilisateur.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
-        questionId,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
-    }
   }
 
   private synchroAlimentationRegime(
