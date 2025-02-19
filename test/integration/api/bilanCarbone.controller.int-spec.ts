@@ -59,6 +59,11 @@ const KYC_DATA: QuestionKYC_v2 = {
   thematique: Thematique.alimentation,
 };
 
+const DEFAULT_TOTAL_KG = 8900.305086108707;
+const DEFAULT_TOTAL_G = 8900305;
+const DEFAULT_TRANSPORT_G = 1958482;
+const DEFAULT_ALIMENTATION_G = 2339167;
+
 describe('/bilan (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
 
@@ -129,14 +134,21 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8817.899984641037,
+      impact_kg_annee: DEFAULT_TOTAL_KG,
       top_3: [
         {
           label: 'Voiture',
-          pourcentage: 17,
-          pourcentage_categorie: 79,
-          impact_kg_annee: 1479.8813864187912,
+          pourcentage: 18,
+          pourcentage_categorie: 80,
+          impact_kg_annee: 1568.5480530854577,
           emoji: '🚘️',
+        },
+        {
+          label: 'Services publics',
+          pourcentage: 14,
+          pourcentage_categorie: 87,
+          impact_kg_annee: 1259.4428717769142,
+          emoji: '🏛',
         },
         {
           label: 'Viandes',
@@ -145,17 +157,10 @@ describe('/bilan (API test)', () => {
           impact_kg_annee: 1207.648,
           emoji: '🥩',
         },
-        {
-          label: 'Construction',
-          pourcentage: 11,
-          pourcentage_categorie: 48,
-          impact_kg_annee: 968.7934897866139,
-          emoji: '🧱',
-        },
       ],
       impact_thematique: [
         {
-          pourcentage: 27,
+          pourcentage: 26,
           thematique: 'alimentation',
           impact_kg_annee: 2339.1671821,
           details: [
@@ -198,28 +203,35 @@ describe('/bilan (API test)', () => {
           emoji: '🍴',
         },
         {
-          pourcentage: 23,
+          pourcentage: 24,
           thematique: 'logement',
-          impact_kg_annee: 2008.1154777827674,
+          impact_kg_annee: 2160.200464307907,
           details: [
             {
               label: 'Construction',
               pourcentage: 11,
-              pourcentage_categorie: 48,
+              pourcentage_categorie: 45,
               impact_kg_annee: 968.7934897866139,
               emoji: '🧱',
             },
             {
               label: 'Chauffage',
               pourcentage: 9,
-              pourcentage_categorie: 41,
+              pourcentage_categorie: 38,
               impact_kg_annee: 822.4772605840475,
               emoji: '🔥',
             },
             {
+              label: 'Vacances',
+              pourcentage: 2,
+              pourcentage_categorie: 7,
+              impact_kg_annee: 152.08498652513995,
+              emoji: '🏖',
+            },
+            {
               label: 'Electricité',
               pourcentage: 1,
-              pourcentage_categorie: 7,
+              pourcentage_categorie: 6,
               impact_kg_annee: 132.21789018483327,
               emoji: '⚡',
             },
@@ -244,32 +256,25 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🏊',
             },
-            {
-              label: 'Vacances',
-              pourcentage: 0,
-              pourcentage_categorie: 0,
-              impact_kg_annee: 0,
-              emoji: '🏖',
-            },
           ],
           emoji: '🏠',
         },
         {
-          pourcentage: 21,
+          pourcentage: 22,
           thematique: 'transport',
-          impact_kg_annee: 1869.8157455574071,
+          impact_kg_annee: 1958.4824122240736,
           details: [
             {
               label: 'Voiture',
-              pourcentage: 17,
-              pourcentage_categorie: 79,
-              impact_kg_annee: 1479.8813864187912,
+              pourcentage: 18,
+              pourcentage_categorie: 80,
+              impact_kg_annee: 1568.5480530854577,
               emoji: '🚘️',
             },
             {
               label: 'Avion',
               pourcentage: 4,
-              pourcentage_categorie: 17,
+              pourcentage_categorie: 16,
               impact_kg_annee: 312.2395338291978,
               emoji: '✈️',
             },
@@ -308,6 +313,10 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🚲',
             },
+            // FIXME: Les vacances sont à la fois comptées dans la thématique
+            // transport et à la fois dans la thématique logement.
+            // FIXME: Est-ce que l'on ne devrait pas rajouter un test qui
+            // vérifie que la somme de tous les pourcentages = 100% ?
             {
               label: 'Vacances',
               pourcentage: 0,
@@ -341,49 +350,49 @@ describe('/bilan (API test)', () => {
           emoji: '🏛️',
         },
         {
-          pourcentage: 13,
+          pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 1149.8963528144989,
+          impact_kg_annee: 991.5498010903609,
           details: [
             {
               label: 'Textile',
-              pourcentage: 6,
-              pourcentage_categorie: 42,
-              impact_kg_annee: 486.13999999999993,
+              pourcentage: 4,
+              pourcentage_categorie: 33,
+              impact_kg_annee: 327.79344827586203,
               emoji: '👕',
             },
             {
               label: 'Ameublement',
               pourcentage: 2,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 14,
               impact_kg_annee: 139.7448484848485,
               emoji: '🛋️',
             },
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 11,
+              pourcentage_categorie: 12,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
             {
               label: 'Numérique',
               pourcentage: 1,
-              pourcentage_categorie: 10,
+              pourcentage_categorie: 12,
               impact_kg_annee: 120.076661030303,
               emoji: '📺',
             },
             {
               label: 'Loisirs',
               pourcentage: 1,
-              pourcentage_categorie: 10,
+              pourcentage_categorie: 12,
               impact_kg_annee: 118.99921707433923,
               emoji: '🎭',
             },
             {
               label: 'Electroménager',
               pourcentage: 1,
-              pourcentage_categorie: 7,
+              pourcentage_categorie: 8,
               impact_kg_annee: 75.44090909090907,
               emoji: '🔌',
             },
@@ -408,7 +417,7 @@ describe('/bilan (API test)', () => {
     });
   });
 
-  it('GET /utilisateurs/id/bilans/last_v3 - get last bilan with proper data', async () => {
+  it('GET /utilisateurs/id/bilans/last_v3 - get last bilan with proper data #2', async () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
     await TestUtil.create(DB.kYC, {
@@ -640,14 +649,21 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8781.353920090594,
+      impact_kg_annee: 8863.759021558264,
       top_3: [
         {
           label: 'Voiture',
-          pourcentage: 17,
-          pourcentage_categorie: 79,
-          impact_kg_annee: 1479.8813864187912,
+          pourcentage: 18,
+          pourcentage_categorie: 80,
+          impact_kg_annee: 1568.5480530854577,
           emoji: '🚘️',
+        },
+        {
+          label: 'Services publics',
+          pourcentage: 14,
+          pourcentage_categorie: 87,
+          impact_kg_annee: 1259.4428717769142,
+          emoji: '🏛',
         },
         {
           label: 'Viandes',
@@ -655,13 +671,6 @@ describe('/bilan (API test)', () => {
           pourcentage_categorie: 52,
           impact_kg_annee: 1207.648,
           emoji: '🥩',
-        },
-        {
-          label: 'Construction',
-          pourcentage: 11,
-          pourcentage_categorie: 48,
-          impact_kg_annee: 968.7934897866139,
-          emoji: '🧱',
         },
       ],
       impact_thematique: [
@@ -709,28 +718,35 @@ describe('/bilan (API test)', () => {
           emoji: '🍴',
         },
         {
-          pourcentage: 23,
+          pourcentage: 24,
           thematique: 'logement',
-          impact_kg_annee: 2008.1154777827674,
+          impact_kg_annee: 2160.200464307907,
           details: [
             {
               label: 'Construction',
               pourcentage: 11,
-              pourcentage_categorie: 48,
+              pourcentage_categorie: 45,
               impact_kg_annee: 968.7934897866139,
               emoji: '🧱',
             },
             {
               label: 'Chauffage',
               pourcentage: 9,
-              pourcentage_categorie: 41,
+              pourcentage_categorie: 38,
               impact_kg_annee: 822.4772605840475,
               emoji: '🔥',
             },
             {
-              label: 'Electricité',
+              label: 'Vacances',
               pourcentage: 2,
               pourcentage_categorie: 7,
+              impact_kg_annee: 152.08498652513995,
+              emoji: '🏖',
+            },
+            {
+              label: 'Electricité',
+              pourcentage: 1,
+              pourcentage_categorie: 6,
               impact_kg_annee: 132.21789018483327,
               emoji: '⚡',
             },
@@ -755,32 +771,25 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🏊',
             },
-            {
-              label: 'Vacances',
-              pourcentage: 0,
-              pourcentage_categorie: 0,
-              impact_kg_annee: 0,
-              emoji: '🏖',
-            },
           ],
           emoji: '🏠',
         },
         {
-          pourcentage: 21,
+          pourcentage: 22,
           thematique: 'transport',
-          impact_kg_annee: 1869.8157455574071,
+          impact_kg_annee: 1958.4824122240736,
           details: [
             {
               label: 'Voiture',
-              pourcentage: 17,
-              pourcentage_categorie: 79,
-              impact_kg_annee: 1479.8813864187912,
+              pourcentage: 18,
+              pourcentage_categorie: 80,
+              impact_kg_annee: 1568.5480530854577,
               emoji: '🚘️',
             },
             {
               label: 'Avion',
               pourcentage: 4,
-              pourcentage_categorie: 17,
+              pourcentage_categorie: 16,
               impact_kg_annee: 312.2395338291978,
               emoji: '✈️',
             },
@@ -830,7 +839,7 @@ describe('/bilan (API test)', () => {
           emoji: '🚦',
         },
         {
-          pourcentage: 17,
+          pourcentage: 16,
           thematique: 'services_societaux',
           impact_kg_annee: 1450.9052263863641,
           details: [
@@ -852,49 +861,49 @@ describe('/bilan (API test)', () => {
           emoji: '🏛️',
         },
         {
-          pourcentage: 13,
+          pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 1149.8963528144989,
+          impact_kg_annee: 991.5498010903609,
           details: [
             {
               label: 'Textile',
-              pourcentage: 6,
-              pourcentage_categorie: 42,
-              impact_kg_annee: 486.13999999999993,
+              pourcentage: 4,
+              pourcentage_categorie: 33,
+              impact_kg_annee: 327.79344827586203,
               emoji: '👕',
             },
             {
               label: 'Ameublement',
               pourcentage: 2,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 14,
               impact_kg_annee: 139.7448484848485,
               emoji: '🛋️',
             },
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 11,
+              pourcentage_categorie: 12,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
             {
               label: 'Numérique',
               pourcentage: 1,
-              pourcentage_categorie: 10,
+              pourcentage_categorie: 12,
               impact_kg_annee: 120.076661030303,
               emoji: '📺',
             },
             {
               label: 'Loisirs',
               pourcentage: 1,
-              pourcentage_categorie: 10,
+              pourcentage_categorie: 12,
               impact_kg_annee: 118.99921707433923,
               emoji: '🎭',
             },
             {
               label: 'Electroménager',
               pourcentage: 1,
-              pourcentage_categorie: 7,
+              pourcentage_categorie: 8,
               impact_kg_annee: 75.44090909090907,
               emoji: '🔌',
             },
@@ -954,7 +963,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11135.581610501671,
+      11217.986711969339,
     );
   });
 
@@ -994,7 +1003,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      8817.899984641037,
+      DEFAULT_TOTAL_KG,
     );
   });
 
@@ -1111,9 +1120,9 @@ describe('/bilan (API test)', () => {
     });
 
     expect(stats.situation).toEqual({});
-    expect(stats.total_g).toEqual(8817899);
-    expect(stats.transport_g).toEqual(1869815);
-    expect(stats.alimenation_g).toEqual(2339167);
+    expect(stats.total_g).toEqual(DEFAULT_TOTAL_G);
+    expect(stats.transport_g).toEqual(DEFAULT_TRANSPORT_G);
+    expect(stats.alimenation_g).toEqual(DEFAULT_ALIMENTATION_G);
   });
   it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur avec une reponse alimentationNGC`, async () => {
     // GIVEN
@@ -1201,8 +1210,8 @@ describe('/bilan (API test)', () => {
     expect(stats.situation).toEqual({
       'alimentation . de saison . consommation': '"souvent"',
     });
-    expect(stats.total_g).toEqual(8781353);
-    expect(stats.transport_g).toEqual(1869815);
+    expect(stats.total_g).toEqual(8863759);
+    expect(stats.transport_g).toEqual(1958482);
     expect(stats.alimenation_g).toEqual(2302621);
   });
 
@@ -1426,7 +1435,7 @@ describe('/bilan (API test)', () => {
     expect(stats.situation).toEqual({
       'alimentation . boisson . alcool . litres': 5,
     });
-    expect(stats.total_g).toEqual(9052679);
+    expect(stats.total_g).toEqual(9135085);
 
     const stats2 = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: {
@@ -1447,13 +1456,13 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(8817.899984641037);
+    expect(response.body.impact_kg_annee).toEqual(DEFAULT_TOTAL_KG);
 
     const statsDB = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
       where: { utilisateurId: 'utilisateur-id' },
     });
 
-    expect(statsDB.total_g).toEqual(8817899);
+    expect(statsDB.total_g).toEqual(8900305);
   });
   it('GET /utilisateurs/id/bilans/total - ne recalcul pas et utilise la dernière valeur dans la table de stats', async () => {
     // GIVEN
@@ -1478,6 +1487,7 @@ describe('/bilan (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.impact_kg_annee).toEqual(0.123);
   });
+
   it('GET /utilisateurs/id/bilans/total - recalcul car la valeur de stats est trop vieille', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1499,6 +1509,6 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(8817.899984641037);
+    expect(response.body.impact_kg_annee).toEqual(DEFAULT_TOTAL_KG);
   });
 });
