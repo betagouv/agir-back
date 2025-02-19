@@ -32,7 +32,7 @@ export class DefiHistory {
     categorie?: Categorie,
     thematique?: Thematique,
   ): Defi[] {
-    let liste_nouveaux_defis = [];
+    let liste_nouveaux_defis: DefiDefinition[] = [];
     for (const defi_catalogue of this.catalogue) {
       const defi_utilisateur = this.getDefiFromHistory(
         defi_catalogue.content_id,
@@ -56,13 +56,15 @@ export class DefiHistory {
     return liste_nouveaux_defis.map((d) => this.buildDefiFromDefinition(d));
   }
 
-  public getDefisOfStatus(status_list: DefiStatus[]): Defi[] {
+  // NOTE: should we want to filter out undefined defi?
+  public getDefisOfStatus(status_list: DefiStatus[]): Array<Defi | undefined> {
     if (status_list.length === 0) {
       return this.defis
         .filter((e) => e.accessible || e.getStatus() !== DefiStatus.todo)
         .map((d) => this.refreshDefiFromCatalogue(d));
     }
-    const result = [];
+
+    const result: Defi[] = [];
     this.defis.forEach((defi_courant) => {
       if (
         status_list.includes(defi_courant.getStatus()) &&
@@ -72,10 +74,11 @@ export class DefiHistory {
         result.push(defi_courant);
       }
     });
+
     return result.map((d) => this.refreshDefiFromCatalogue(d));
   }
 
-  public getDefiOrException(id: string): Defi {
+  public getDefiOrException(id: string): Defi | undefined {
     let defi = this.getDefiFromHistory(id);
     if (defi) {
       return this.refreshDefiFromCatalogue(defi);
@@ -90,15 +93,17 @@ export class DefiHistory {
     user: Utilisateur,
     motif: string,
   ) {
-    let defi = this.getDefiFromHistory(defiId);
+    const defi = this.getDefiFromHistory(defiId);
     if (defi) {
       defi.setStatus(status, user);
       defi.motif = motif;
     } else {
-      let defi_catalogue = this.getFromCatalogueOrException(defiId);
-      defi_catalogue.setStatus(status, user);
-      defi_catalogue.motif = motif;
-      this.defis.push(defi_catalogue);
+      const defi_catalogue = this.getFromCatalogueOrException(defiId);
+      if (defi_catalogue) {
+        defi_catalogue.setStatus(status, user);
+        defi_catalogue.motif = motif;
+        this.defis.push(defi_catalogue);
+      }
     }
   }
 
@@ -127,7 +132,7 @@ export class DefiHistory {
       .length;
   }
 
-  public getDefiFromHistory(id: string): Defi {
+  public getDefiFromHistory(id: string): Defi | undefined {
     return this.refreshDefiFromCatalogue(
       this.defis.find((element) => element.id === id),
     );
@@ -145,7 +150,7 @@ export class DefiHistory {
     return false;
   }
 
-  public getPlusVieuxDefiEnCours(): Defi {
+  public getPlusVieuxDefiEnCours(): Defi | null {
     const defis_encours_avec_date = this.defis.filter(
       (d) => d.getStatus() === DefiStatus.en_cours && d.date_acceptation,
     );
@@ -155,12 +160,12 @@ export class DefiHistory {
     );
 
     if (defis_encours_avec_date.length > 0) {
-      return this.refreshDefiFromCatalogue(defis_encours_avec_date[0]);
+      return this.refreshDefiFromCatalogue(defis_encours_avec_date[0]) ?? null;
     }
     return null;
   }
 
-  private getFromCatalogueOrException(id: string): Defi {
+  private getFromCatalogueOrException(id: string): Defi | undefined {
     const definition = this.catalogue.find(
       (element) => element.content_id === id,
     );
@@ -170,10 +175,11 @@ export class DefiHistory {
     ApplicationError.throwDefiInconnue(id);
   }
 
-  private refreshDefiFromCatalogue(defi: Defi) {
+  private refreshDefiFromCatalogue(defi: Defi | undefined) {
     if (!defi) {
       return undefined;
     }
+
     const defi_cat = this.catalogue.find(
       (element) => element.content_id === defi.id,
     );

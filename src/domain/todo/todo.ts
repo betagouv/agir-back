@@ -84,7 +84,7 @@ export class Todo {
     }
   }
 
-  public isDone?(): boolean {
+  public isDone(): boolean {
     return this.todo.length === 0 && !this.hasPointsToEarn();
   }
 
@@ -93,7 +93,7 @@ export class Todo {
     return element.points;
   }
 
-  public hasPointsToEarn?(): boolean {
+  public hasPointsToEarn(): boolean {
     return (
       this.done.findIndex(
         (element) =>
@@ -102,26 +102,27 @@ export class Todo {
       ) >= 0
     );
   }
-  public moveElementToDone?(element: TodoElement) {
+  public moveElementToDone(element: TodoElement) {
     this.done.push(element);
     const index = this.todo.indexOf(element);
     this.todo.splice(index, 1);
   }
 
-  public findTodoElementByTypeAndThematique?(
+  public findTodoElementByTypeAndThematique(
     type: ContentType,
     thematiques?: Thematique[],
-  ): TodoElement {
+  ): TodoElement | undefined {
     return this.todo.find(
       (element) =>
         element.type === type &&
+        element.thematiques &&
         this.includesAtLeastOneOf(element.thematiques, thematiques),
     );
   }
 
-  public findTodoKYCOrMosaicElementByQuestionID?(
+  public findTodoKYCOrMosaicElementByQuestionID(
     content_id: string,
-  ): TodoElement {
+  ): TodoElement | undefined {
     return this.todo.find(
       (element) =>
         (element.type === ContentType.kyc ||
@@ -130,13 +131,17 @@ export class Todo {
     );
   }
 
-  public findDoneElementById?(elementId: string): TodoElement {
+  public findDoneElementById(elementId: string): TodoElement | undefined {
     return this.done.find((element) => element.id === elementId);
   }
-  public findTodoElementByServiceId?(service_id: string): TodoElement {
+
+  public findTodoElementByServiceId(
+    service_id: string,
+  ): TodoElement | undefined {
     return this.todo.find((element) => element.service_id === service_id);
   }
-  public findTodoElementByID?(id: string): TodoElement {
+
+  public findTodoElementByID(id: string): TodoElement | undefined {
     return this.todo.find((element) => element.id === id);
   }
 
@@ -146,7 +151,7 @@ export class Todo {
       this.moveElementToDone(element);
     }
   }
-  private includesAtLeastOneOf?(
+  private includesAtLeastOneOf(
     thematiquesElement: Thematique[],
     searchedThematiques?: Thematique[],
   ): boolean {

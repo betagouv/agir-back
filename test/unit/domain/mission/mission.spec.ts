@@ -5,10 +5,7 @@ import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { Mission_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { CodeMission } from '../../../../src/domain/mission/codeMission';
-import {
-  SourceInscription,
-  Utilisateur,
-} from '../../../../src/domain/utilisateur/utilisateur';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('Missions', () => {
   it('validateDefi : valider un seul défi NE termine PAS la mission', () => {
@@ -65,7 +62,7 @@ describe('Missions', () => {
     mission.validateDefiObjectif('2');
 
     // THEN
-    expect(mission.objectifs[1].isDone()).toEqual(true);
+    expect(mission.objectifs[1].isDone?.()).toEqual(true);
     expect(mission.isDone()).toEqual(false);
   });
   it('validateDefi : terminaison de mission', () => {
