@@ -24,8 +24,7 @@ import {
   UniversStatistique,
   Utilisateur,
 } from '@prisma/client';
-import { request } from 'express';
-import { ThematiqueRepository } from 'src/infrastructure/repository/thematique.repository';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeAction } from '../src/domain/actions/typeAction';
 import { Besoin } from '../src/domain/aides/besoin';
@@ -71,7 +70,7 @@ import { DefiRepository } from '../src/infrastructure/repository/defi.repository
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
-const request = require('supertest');
+import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
