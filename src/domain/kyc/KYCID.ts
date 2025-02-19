@@ -92,6 +92,8 @@ export enum KYCID {
   KYC_appareil_console_salon = 'KYC_appareil_console_salon',
   KYC_appareil_console_portable = 'KYC_appareil_console_portable',
   KYC_appareil_imprimante_nbr = 'KYC_appareil_imprimante_nbr',
+  KYC_meuble_armoire = 'KYC_meuble_armoire',
+  KYC_meuble_canape = 'KYC_meuble_canape',
   KYC_meuble_chaise = 'KYC_meuble_chaise',
   KYC_meuble_grand_meuble = 'KYC_meuble_grand_meuble',
   KYC_meuble_lit = 'KYC_meuble_lit',

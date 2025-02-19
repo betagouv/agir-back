@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
-import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
@@ -15,9 +11,6 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
-import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
-import { ApplicationError } from '../infrastructure/applicationError';
-import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 
 const FIELD_MAX_LENGTH = 280;
 
