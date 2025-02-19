@@ -106,6 +106,14 @@ export class GoneController extends GenericControler {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
+  @Get('utilisateurs/:utilisateurId/univers')
+  @ApiOperation({
+    summary: `DEPRECATED : obsolète`,
+  })
+  async getUnivers(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
   /*
 OK - /utilisateurs/{utilisateurId}/aides
 OK - /utilisateur/{utilisateurId}/bilans/last
@@ -122,7 +130,7 @@ OK - /utilisateurs/{utilisateurId}/recommandations
 - /utilisateurs/{utilisateurId}/recommandations_v2
 - /utilisateurs/{utilisateurId}/recherche_services/{universId}
 - /utilisateurs/{utilisateurId}/thematiques_recommandees
-- /utilisateurs/{utilisateurId}/univers
+OK - /utilisateurs/{utilisateurId}/univers
 - /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
 
 

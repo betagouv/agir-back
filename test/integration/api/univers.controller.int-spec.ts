@@ -347,53 +347,6 @@ describe('Univers (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.thematique, {
-      id_cms: 1,
-      code: Thematique.climat,
-      label: 'yo',
-      image_url: 'aaaa',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 2,
-      code: Thematique.alimentation,
-      label: 'ya',
-      image_url: 'bbbb',
-    });
-    await thematiqueRepository.loadThematiques();
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
-
-    // THEN
-    expect(response.status).toBe(200);
-  });
-  it(`GET /utilisateurs/id/univers - liste les univers de l'utilisateur, is_done à true`, async () => {
-    // GIVEN
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 3;
-
-    await TestUtil.create(DB.utilisateur, {
-      missions: mission_unique_done,
-      todo: todo,
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 1,
-      code: Thematique.alimentation,
-      label: 'ya',
-      image_url: 'bbbb',
-    });
-    await thematiqueRepository.loadThematiques();
-
-    // WHEN
-    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/univers');
-
-    // THEN
-    expect(response.status).toBe(200);
-  });
-
   it(`GET /utilisateurs/id/univers/id/thematiques - liste une thematique, donnée correctes, ajout mission à utilisateur si visible`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

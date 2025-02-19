@@ -23,37 +23,6 @@ export class UniversController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/univers')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [UniversAPI],
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : Retourne les univers auquels peut accéder l'utilisateur`,
-  })
-  async getUnivers(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ) {
-    this.checkCallerId(req, utilisateurId);
-    const liste_thematiques: Thematique[] = [
-      Thematique.alimentation,
-      Thematique.consommation,
-      Thematique.logement,
-      Thematique.transport,
-    ];
-    const liste_them_def: ThematiqueDefinition[] = [];
-    for (const thematique of liste_thematiques) {
-      const tuile = ThematiqueRepository.getThematiqueDefinition(thematique);
-      if (tuile) {
-        liste_them_def.push(tuile);
-      }
-    }
-    return liste_them_def.map((e) => UniversAPI.mapToAPI(e));
-    // SOON ^^ ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
-  }
-
   @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
