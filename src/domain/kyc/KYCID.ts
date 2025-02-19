@@ -128,38 +128,20 @@ export enum KYCID {
   KYC_transport_voiture_thermique_carburant = 'KYC_transport_voiture_thermique_carburant',
   KYC_transport_voiture_nbr_voyageurs = 'KYC_transport_voiture_nbr_voyageurs',
   KYC_type_logement = 'KYC_type_logement',
+  /** Est-ce une voiture d'occasion ? */
+  KYC_transport_voiture_occasion = 'KYC_transport_voiture_occasion',
+  /** Combien de temps envisagez-vous de la garder au total ? */
+  KYC_transport_voiture_duree_detention = 'KYC_transport_voiture_duree_detention',
+  /** Quelle est son année de fabrication ? */
+  KYC_transport_voiture_annee_fabrication = 'KYC_transport_voiture_annee_fabrication',
+  KYC_transport_voiture_prix_achat = 'KYC_transport_voiture_prix_achat',
+  /** Quelle est sa consommation moyenne de carburant ? */
+  KYC_transport_voiture_thermique_consomation_carburant = 'KYC_transport_voiture_thermique_consomation_carburant',
+  KYC_transport_voiture_thermique_prix_carburant = 'KYC_transport_voiture_thermique_prix_carburant',
+  KYC_transport_voiture_electrique_consommation = 'KYC_transport_voiture_electrique_consommation',
+  KYC_transport_voiture_electrique_prix_kwh = 'KYC_transport_voiture_electrique_prix_kwh',
+  KYC_transport_voiture_couts_entretien = 'KYC_transport_voiture_couts_entretien',
+  KYC_transport_voiture_couts_assurance = 'KYC_transport_voiture_couts_assurance',
+  KYC_transport_voiture_couts_stationnement = 'KYC_transport_voiture_couts_stationnement',
+  KYC_transport_voiture_couts_peage = 'KYC_transport_voiture_couts_peage',
 }
-
-/**
- * Associates KYC IDs with their corresponding values.
- *
- * @note This is a partial type as it's completed by hand when needed.
- *
- * TODO: use a generated NGCRuleValues type to type check the ngc_code values.
- */
-export type KYCComplexValues = {
-  _default: { code: string; ngc_code?: string };
-  KYC009: {
-    code: 'ma_voit' | 'loc_voit' | 'co_voit' | 'pas_voiture';
-    ngc_code: undefined;
-  };
-  KYC_transport_type_utilisateur:
-    | { code: 'proprio'; ngc_code: "'propriétaire'" }
-    | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
-    | { code: 'change_souvent'; ngc_code: "'non régulier'" };
-  KYC_transport_voiture_gabarit:
-    | { code: 'petite'; ngc_code: "'petite'" }
-    | { code: 'moyenne'; ngc_code: "'moyenne'" }
-    | { code: 'berline'; ngc_code: "'berline'" }
-    | { code: 'SUV'; ngc_code: "'SUV'" }
-    | { code: 'VUL'; ngc_code: "'VUL'" };
-  KYC_transport_voiture_motorisation:
-    | { code: 'thermique'; ngc_code: "'thermique'" }
-    | { code: 'hybride'; ngc_code: "'hybride'" }
-    | { code: 'electrique'; ngc_code: "'électrique'" };
-  KYC_transport_voiture_thermique_carburant:
-    | { code: 'gazole_B7_B10'; ngc_code: "'gazole B7 ou B10'" }
-    | { code: 'essence_E5_E10'; ngc_code: "'essence E5 ou E10'" }
-    | { code: 'essence_E85'; ngc_code: "'essence E85'" }
-    | { code: 'GPL'; ngc_code: "'GPL'" };
-};

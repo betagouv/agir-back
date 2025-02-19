@@ -1,7 +1,8 @@
-import { KYCComplexValues, KYCID } from 'src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from 'src/domain/kyc/questionKYC';
-import { AlternativeAPI } from 'src/infrastructure/api/types/simulateur_voiture/SimulateurVoitureResultatAPI';
-import { KycRepository } from 'src/infrastructure/repository/kyc.repository';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { KYCComplexValues } from '../../../src/domain/kyc/publicodesMapping';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { AlternativeAPI } from '../../../src/infrastructure/api/types/simulateur_voiture/SimulateurVoitureResultatAPI';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/simulateur_voiture (API test)', () => {
@@ -64,6 +65,7 @@ describe('/simulateur_voiture (API test)', () => {
       await setMotorisation('hybride');
       await setCarburant('essence_E85');
       await setGabarit('SUV');
+      await setVoitureOccasion(true);
 
       // THEN
       const response = await TestUtil.GET(
@@ -72,7 +74,7 @@ describe('/simulateur_voiture (API test)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        couts: 5568.997957175108,
+        couts: 4288.997957175108,
         empreinte: 1615.288885445806,
         gabarit: {
           label: 'SUV',
@@ -324,6 +326,27 @@ async function createKYCs() {
       },
     ],
   });
+
+  await TestUtil.create(DB.kYC, {
+    code: KYCID.KYC_transport_voiture_occasion,
+    id_cms: 145,
+    type: TypeReponseQuestionKYC.choix_unique,
+    is_ngc: false,
+    reponses: [
+      {
+        code: 'oui',
+        reponse: 'Oui',
+        ngc_code: 'oui',
+        selected: false,
+      },
+      {
+        code: 'non',
+        reponse: 'Non',
+        ngc_code: 'non',
+        selected: false,
+      },
+    ],
+  });
 }
 
 // NOTE: should we move this to a more generic helper function in TestUtil?
@@ -365,6 +388,13 @@ async function setGabarit(
 
 async function setKmParcourus(value: number) {
   await setKYC(KYCID.KYC_transport_voiture_km, [{ value: String(value) }]);
+}
+
+async function setVoitureOccasion(value: boolean) {
+  await setKYC(KYCID.KYC_transport_voiture_occasion, [
+    { code: 'oui', value: 'oui', selected: value },
+    { code: 'non', value: 'non', selected: !value },
+  ]);
 }
 
 async function setKYC(kyc: KYCID, values: object[]) {

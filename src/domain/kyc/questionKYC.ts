@@ -4,10 +4,10 @@ import { Thematique } from '../contenu/thematique';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
-import { KYCComplexValues } from './KYCID';
 import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
 import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
+import { KYCComplexValues } from './publicodesMapping';
 
 export enum TypeReponseQuestionKYC {
   libre = 'libre',

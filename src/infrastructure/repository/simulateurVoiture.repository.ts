@@ -1,21 +1,11 @@
-import {
-  CarSimulator,
-  Questions,
-  Situation,
-} from '@betagouv/publicodes-voiture';
+import { CarSimulator, Situation } from '@betagouv/publicodes-voiture';
 import { Injectable } from '@nestjs/common';
-
+import { SimulateurVoitureParams } from 'src/domain/simulateur_voiture/parametres';
 import {
   VoitureActuelle,
   VoitureAlternatives,
   VoitureCible,
-} from 'src/domain/simulateur_voiture/resultats';
-
-/**
- * Subsets of the {@link Situation} corresponding to {@link Questions} (i.e.
- * parameters) in the * car simulator.
- */
-type Params = Pick<Situation, keyof Questions>;
+} from '../../domain/simulateur_voiture/resultats';
 
 /**
  * Encapsulates the car simulator {@link Situation} and provides
@@ -23,10 +13,10 @@ type Params = Pick<Situation, keyof Questions>;
  *
  * PERF: How extra memory is used by this class in comparison to using a plain object?
  */
-export class SimulateurVoitureParams {
-  private params: Params;
+export class SimulateurVoitureParamsConstructor {
+  private params: SimulateurVoitureParams;
 
-  constructor(params?: Params) {
+  constructor(params?: SimulateurVoitureParams) {
     this.params = params ?? {};
   }
 
@@ -40,7 +30,10 @@ export class SimulateurVoitureParams {
    * @param key The key of the parameter to set.
    * @param value The value to set.
    */
-  public set<K extends keyof Params>(key: K, value: Params[K]) {
+  public set<K extends keyof SimulateurVoitureParams>(
+    key: K,
+    value: SimulateurVoitureParams[K],
+  ) {
     this.params[key] = value;
   }
 }
@@ -59,7 +52,9 @@ export class SimulateurVoitureRepository {
    * @param params The completed set of parameters (e.g. situation, answers) used
    * to compute the results.
    */
-  evaluateVoitureActuelle(params: SimulateurVoitureParams): VoitureActuelle {
+  evaluateVoitureActuelle(
+    params: SimulateurVoitureParamsConstructor,
+  ): VoitureActuelle {
     const contextualizedEngine = this.simulator
       .shallowCopy()
       .setSituation(params.getSituation());
@@ -75,7 +70,9 @@ export class SimulateurVoitureRepository {
    *
    * @note This is a heavy operation.
    */
-  evaluateAlternatives(params: SimulateurVoitureParams): VoitureAlternatives {
+  evaluateAlternatives(
+    params: SimulateurVoitureParamsConstructor,
+  ): VoitureAlternatives {
     const contextualizedEngine = this.simulator
       .shallowCopy()
       .setSituation(params.getSituation());
@@ -89,7 +86,9 @@ export class SimulateurVoitureRepository {
    * @param params The completed set of parameters (e.g. situation, answers) used
    * to compute the results.
    */
-  evaluateVoitureCible(params: SimulateurVoitureParams): VoitureCible {
+  evaluateVoitureCible(
+    params: SimulateurVoitureParamsConstructor,
+  ): VoitureCible {
     const contextualizedEngine = this.simulator
       .shallowCopy()
       .setSituation(params.getSituation());
