@@ -139,7 +139,7 @@ OK - /utilisateurs/{utilisateurId}/recommandations
 - /utilisateurs/{utilisateurId}/recherche_services/{universId}
 - /utilisateurs/{utilisateurId}/thematiques_recommandees
 OK - /utilisateurs/{utilisateurId}/univers
-- /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
+OK - /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
 
 
  recherche_services/${idService}/search => DEPRECATED => recherche_services/${idService}/search2
