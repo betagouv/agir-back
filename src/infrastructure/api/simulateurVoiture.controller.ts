@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SimulateurVoitureUsecase } from 'src/usecase/simulateurVoiture.usecase';
+import { SimulateurVoitureUsecase } from '../../usecase/simulateurVoiture.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import {

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { KYCID } from 'src/domain/kyc/KYCID';
+import { KYCID } from '../domain/kyc/KYCID';
 import {
   VoitureActuelle,
   VoitureAlternatives,
   VoitureCible,
-} from 'src/domain/simulateur_voiture/resultats';
-import { Scope, Utilisateur } from 'src/domain/utilisateur/utilisateur';
+} from '../domain/simulateur_voiture/resultats';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   SimulateurVoitureParams,
   SimulateurVoitureRepository,
-} from 'src/infrastructure/repository/simulateurVoiture.repository';
-import { UtilisateurRepository } from 'src/infrastructure/repository/utilisateur/utilisateur.repository';
+} from '../infrastructure/repository/simulateurVoiture.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class SimulateurVoitureUsecase {
