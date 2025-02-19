@@ -88,6 +88,24 @@ export class GoneController extends GenericControler {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/questionsKYC_v2/:questionId',
+  })
+  @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
+  async getQuestion(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recommandations')
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/recommandations_v3',
+  })
+  async getUserRecommandation(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
   /*
 OK - /utilisateurs/{utilisateurId}/aides
 OK - /utilisateur/{utilisateurId}/bilans/last
@@ -99,8 +117,8 @@ OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
 OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
 OK - /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
 OK - /utilisateurs/{utilisateurId}/questionsKYC
-- /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
-- /utilisateurs/{utilisateurId}/recommandations
+OK - /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
+OK - /utilisateurs/{utilisateurId}/recommandations
 - /utilisateurs/{utilisateurId}/recommandations_v2
 - /utilisateurs/{utilisateurId}/recherche_services/{universId}
 - /utilisateurs/{utilisateurId}/thematiques_recommandees

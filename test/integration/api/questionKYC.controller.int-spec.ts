@@ -174,20 +174,39 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_3',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.id).toEqual('_3');
-    expect(response.body.type).toEqual(TypeReponseQuestionKYC.choix_unique);
-    expect(response.body.points).toEqual(10);
-    expect(response.body.reponses_possibles).toEqual(['Oui', 'Non', 'A voir']);
-    expect(response.body.categorie).toEqual(Categorie.test);
-    expect(response.body.question).toEqual(
-      `Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?`,
-    );
-    expect(response.body.reponse).toEqual([]);
+    expect(response.body).toEqual({
+      categorie: 'test',
+      code: '_3',
+      is_NGC: false,
+      is_answered: false,
+      points: 10,
+      question:
+        "Est-ce qu'une analyse automatique de votre conso electrique vous intéresse ?",
+      reponse_multiple: [
+        {
+          code: 'oui',
+          label: 'Oui',
+          selected: false,
+        },
+        {
+          code: 'non',
+          label: 'Non',
+          selected: false,
+        },
+        {
+          code: 'peut_etre',
+          label: 'A voir',
+          selected: false,
+        },
+      ],
+      thematique: 'climat',
+      type: 'choix_unique',
+    });
   });
 
   it('GET /utilisateurs/id/questionsKYC/3 - renvoie une question entière OK sans réponse', async () => {
@@ -211,162 +230,24 @@ describe('/utilisateurs/id/questionsKYC (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/_3',
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_3',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      id: '_3',
-      question: 'Combien de Km ?',
-      reponse: [],
-      reponses_possibles: [],
       categorie: 'test',
-      points: 10,
-      type: 'entier',
+      code: '_3',
       is_NGC: false,
+      is_answered: false,
+      points: 10,
+      question: 'Combien de Km ?',
+      reponse_unique: {
+        unite: 'euro',
+      },
       thematique: 'climat',
+      type: 'entier',
     });
-  });
-  it(`GET /utilisateurs/id/questionsKYC/3 - renvoie les reponses possibles du catalogue, pas de la question historique `, async () => {
-    // GIVEN
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC001,
-      reponses: [
-        { label: 'AAA', code: Thematique.climat },
-        { label: 'BBB', code: Thematique.logement },
-      ],
-    });
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: KYCID.KYC001,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponse_complexe: [
-            {
-              label: 'Le climat',
-              code: Thematique.climat,
-              selected: true,
-            },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: false,
-            },
-            {
-              label: 'Ce que je mange',
-              code: Thematique.alimentation,
-              selected: false,
-            },
-            {
-              label: 'Comment je bouge',
-              code: Thematique.transport,
-              selected: false,
-            },
-          ],
-          tags: [],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/KYC001',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.reponses_possibles).toEqual(['AAA', 'BBB']);
-    expect(response.body.reponse).toEqual(['AAA']);
-  });
-  it('GET /utilisateurs/id/questionsKYC/bad - renvoie 404', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/bad',
-    );
-
-    // THEN
-    expect(response.status).toBe(404);
-  });
-  it('GET /utilisateurs/id/questionsKYC/question - renvoie la quesition avec la réponse', async () => {
-    // GIVEN
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: KYCID._2,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponse_complexe: [
-            {
-              label: 'Le climat',
-              code: Thematique.climat,
-              selected: true,
-            },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-            {
-              label: 'Ce que je mange',
-              code: Thematique.alimentation,
-              selected: false,
-            },
-          ],
-          tags: [],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      reponses: [
-        { label: 'Le climat', code: Thematique.climat },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-      ],
-    });
-    await kycRepository.loadDefinitions();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/questionsKYC/_2',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.question).toEqual(
-      `Quel est votre sujet principal d'intéret ?`,
-    );
-    expect(response.body.reponse).toEqual(['Le climat', 'Mon logement']);
   });
 
   it('PUT /utilisateurs/id/questionsKYC/1 - crée la reponse à la question 1, empoche les points', async () => {
