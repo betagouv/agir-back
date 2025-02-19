@@ -46,7 +46,7 @@ version du modèle.
 
 #### Migration à partir des KYCs
 
-Chaque KYCs utilisées dans J'agis peut être associée à une règle du modèle de
+Chaque [KYCs](./kycs.md) utilisées dans J'agis peut être associée à une règle du modèle de
 NGC. Cependant, lors de l'évolution du modèle, il est possible que ces règles
 soient renommées ou supprimées. Il est donc nécessaire de pouvoir appliquer les
 migrations sur la situation reconstruite à partir des KYCs avant d'effectuer le
