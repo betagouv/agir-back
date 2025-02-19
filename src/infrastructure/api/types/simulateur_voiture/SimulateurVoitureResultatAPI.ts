@@ -1,6 +1,6 @@
 import {
   Alternative,
-  CarInfos,
+  EvaluatedCarInfos,
   EvaluatedRuleInfos,
   TargetInfos,
 } from '@betagouv/publicodes-voiture';
@@ -102,7 +102,7 @@ export class VoitureInfosAPI {
   })
   carburant?: ValeurCalculeeAPI<VoitureCarburant>;
 
-  public static mapToAPI(infos: CarInfos): VoitureInfosAPI {
+  public static mapToAPI(infos: EvaluatedCarInfos): VoitureInfosAPI {
     return {
       couts: infos.cost.value,
       empreinte: infos.emissions.value,

@@ -12,7 +12,7 @@ import {
   AlternativeAPI,
   VoitureCibleAPI,
   VoitureInfosAPI,
-} from './types/simulateur_voiture/SimualteurVoitureResultatAPI';
+} from './types/simulateur_voiture/SimulateurVoitureResultatAPI';
 
 @Controller()
 @ApiBearerAuth()

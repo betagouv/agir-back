@@ -1,6 +1,6 @@
 import {
   Alternative,
-  CarInfos,
+  EvaluatedCarInfos,
   RuleValue,
   TargetInfos,
 } from '@betagouv/publicodes-voiture';
@@ -11,7 +11,7 @@ import {
  */
 export type SimulateurVoitureResultat = {
   /** Information about the current car. */
-  voiture_actuelle: CarInfos;
+  voiture_actuelle: EvaluatedCarInfos;
   /** Information about all the computed alternatives. */
   alternatives: Alternative[];
   /**
@@ -22,7 +22,7 @@ export type SimulateurVoitureResultat = {
 };
 
 /** NOTE: should we want to decouple with a specific implementation ? */
-export type VoitureActuelle = CarInfos;
+export type VoitureActuelle = EvaluatedCarInfos;
 export type VoitureAlternatives = Alternative[];
 export type VoitureCible = TargetInfos;
 
