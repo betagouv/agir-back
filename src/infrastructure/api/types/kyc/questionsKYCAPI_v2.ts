@@ -65,7 +65,7 @@ export class QuestionKYCAPI_v2 {
       question: question.question,
       reponse_unique: undefined,
       reponse_multiple: undefined,
-      is_answered: question.is_answererd,
+      is_answered: question.is_answered,
       categorie: question.categorie,
       points: question.points,
       type: question.type,

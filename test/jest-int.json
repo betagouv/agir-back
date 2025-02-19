@@ -6,5 +6,8 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "setupFilesAfterEnv": ["<rootDir>/jest-preload.js"]
+  "setupFilesAfterEnv": ["<rootDir>/jest-preload.js"],
+  "moduleNameMapper": {
+    "^src/(.*)": "<rootDir>/../src/$1"
+  }
 }

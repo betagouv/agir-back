@@ -9,5 +9,6 @@ updates:
       - dependencies
     allow:
       - dependency-name: '@betagouv/aides-velo'
+      - dependency-name: '@betagouv/publicodes-voiture'
       - dependency-name: '@incubateur-ademe/nosgestesclimat'
       - dependency-name: 'publicodes'

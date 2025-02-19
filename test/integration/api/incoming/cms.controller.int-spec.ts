@@ -1,20 +1,20 @@
-import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
-import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
-import { DB, TestUtil } from '../../../TestUtil';
-import { Besoin } from '../../../../src/domain/aides/besoin';
-import { CodeMission } from '../../../../src/domain/mission/codeMission';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import { ContentType } from '../../../../src/domain/contenu/contentType';
-import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
-import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
-import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
-import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
+import { Besoin } from '../../../../src/domain/aides/besoin';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
+import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
+import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
+import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
+import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -943,6 +943,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates an action', async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      // @ts-ignore FIXME: remove this when we have a proper typing for action
       cms_id: '123',
       code: 'code',
       type: TypeAction.quizz,

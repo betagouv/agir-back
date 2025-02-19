@@ -1,8 +1,8 @@
-import { TestUtil } from '../../../../test/TestUtil';
 import { Article } from '../../../../src/domain/contenu/article';
-import { History } from '../../../../src/domain/history/history';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { History } from '../../../../src/domain/history/history';
+import { TestUtil } from '../../../../test/TestUtil';
 
 const BASIC_ARTICLE: Article = new Article({
   ...TestUtil.articleData(),
