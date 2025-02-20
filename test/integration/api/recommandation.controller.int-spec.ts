@@ -89,7 +89,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.create(DB.article);
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/autre-id/recommandations_v2',
+      '/utilisateurs/autre-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(403);
@@ -106,7 +106,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(401);
@@ -127,7 +127,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -161,7 +161,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -186,7 +186,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -226,7 +226,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -268,7 +268,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -322,7 +322,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -362,7 +362,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -396,7 +396,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -519,7 +519,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2',
+      '/utilisateurs/utilisateur-id/recommandations_v3',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -598,7 +598,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2?univers=logement',
+      '/utilisateurs/utilisateur-id/thematiques/logement/recommandations',
     );
     // THEN
     expect(response.status).toBe(200);
@@ -679,7 +679,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v2?univers=logement',
+      '/utilisateurs/utilisateur-id/recommandations_v3?univers=logement',
     );
 
     // THEN

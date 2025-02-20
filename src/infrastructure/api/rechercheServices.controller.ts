@@ -139,28 +139,6 @@ export class RechecheServicesController extends GenericControler {
     return result.map((r) => CategoriesRechercheAPI.mapToAPI(r));
   }
 
-  @Get('utilisateurs/:utilisateurId/recherche_services/:universId')
-  @UseGuards(AuthGuard)
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : Liste des service disponible dans un univers donné`,
-  })
-  @ApiOkResponse({
-    type: [ServiceRechercheAPI],
-  })
-  async getListeServices_deprecated(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('universId') universId: string,
-  ): Promise<ServiceRechercheAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.rechercheServicesUsecase.getListServiceDef(
-      utilisateurId,
-      universId,
-    );
-    return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
-  }
-
   @Get(
     'utilisateurs/:utilisateurId/thematiques/:code_thematique/recherche_services',
   )

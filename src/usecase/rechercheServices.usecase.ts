@@ -204,23 +204,6 @@ export class RechercheServicesUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
-  // DEPRECATED
-  async getListServiceDef(
-    utilisateurId: string,
-    thematique: string,
-  ): Promise<NewServiceDefinition[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let result = this.newServiceCatalogue.getCatalogue();
-    result = result.filter((r) => r.thematique === thematique);
-
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
-
   async getListServicesOfThematique(
     utilisateurId: string,
     thematique: Thematique,
