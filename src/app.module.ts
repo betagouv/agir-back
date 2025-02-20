@@ -68,7 +68,7 @@ import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
-import { UniversController } from './infrastructure/api/univers.controller';
+import { ThematiqueController } from './infrastructure/api/thematique.controller';
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { MissionUsecase } from './usecase/mission.usecase';
@@ -131,6 +131,7 @@ import { ActionUsecase } from './usecase/actions.usecase';
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { TokenRepository } from './infrastructure/repository/token.repository';
+import { ThematiqueUsecase } from './usecase/thematique.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -153,7 +154,7 @@ function getControllers(): any[] {
     BibliothequeController,
     InscriptionController,
     DefisController,
-    UniversController,
+    ThematiqueController,
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
@@ -283,6 +284,7 @@ function getControllers(): any[] {
     ActionUsecase,
     FranceConnectUsecase,
     TokenRepository,
+    ThematiqueUsecase,
   ],
 })
 export class AppModule {}

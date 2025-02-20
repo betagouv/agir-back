@@ -23,7 +23,7 @@ import './api/questionKYC_v2.controller.int-spec';
 import './api/recherchServices.controller.int-spec';
 import './api/recommandation.controller.int-spec';
 import './api/service.controller.int-spec';
-import './api/univers.controller.int-spec';
+import './api/thematique.controller.int-spec';
 import './api/incoming/cms.controller.int-spec';
 import './api/incoming/winter.controller.int-spec';
 import './api/linky/linky.controller.int-spec';
