@@ -10,7 +10,10 @@ import {
   AideVeloNonCalculee,
 } from '../domain/aides/aideVelo';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
+import {
+  AideFilter,
+  AideRepository,
+} from '../../src/infrastructure/repository/aide.repository';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import {
   Commune,
@@ -26,6 +29,7 @@ import { AideExpirationWarningRepository } from '../infrastructure/repository/ai
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { App } from '../domain/app';
 import { EchelleAide } from '../domain/aides/echelle';
+import { Thematique } from '../domain/contenu/thematique';
 
 @Injectable()
 export class AidesUsecase {
@@ -166,6 +170,32 @@ export class AidesUsecase {
       ),
       utilisateur: utilisateur,
     };
+  }
+
+  async countAides(
+    thematique?: Thematique,
+    code_commune?: string,
+  ): Promise<number> {
+    const filtre: AideFilter = {};
+
+    if (code_commune) {
+      const codes_postaux =
+        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
+      const dept_region =
+        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
+
+      filtre.code_postal = codes_postaux[0];
+      filtre.code_commune = code_commune;
+      filtre.code_departement = dept_region.code_departement;
+      filtre.code_region = dept_region.code_region;
+    }
+
+    filtre.date_expiration = new Date();
+    if (thematique) {
+      filtre.thematiques = [thematique];
+    }
+
+    return await this.aideRepository.count(filtre);
   }
 
   async simulerAideVelo(

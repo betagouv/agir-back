@@ -161,28 +161,4 @@ export class GoneController extends GenericControler {
   async getListeServices_deprecated(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
-
-  /*
-
-OK - /utilisateurs/{utilisateurId}/aides
-OK - /utilisateur/{utilisateurId}/bilans/last
-OK - /utilisateur/{utilisateurId}/bilans/last_v2
-OK - /utilisateurs/{utilisateurId}/bilans/last_v2
-OK - /utilisateurs/{utilisateurId}/defis
-OK - /utilisateurs/{utilisateurId}/univers/{universId}/defis
-OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
-OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
-OK - /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
-OK - /utilisateurs/{utilisateurId}/questionsKYC
-OK - /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
-OK - /utilisateurs/{utilisateurId}/recommandations
-OK - /utilisateurs/{utilisateurId}/recommandations_v2
-OK - /utilisateurs/{utilisateurId}/recherche_services/{universId}
-OK - /utilisateurs/{utilisateurId}/thematiques_recommandees
-OK - /utilisateurs/{utilisateurId}/univers
-OK - /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
-OK - /recherche_services/${idService}/search => DEPRECATED => recherche_services/${idService}/search2
-OK - /utilisateurs/${utilisateurId}/thematiques/${thematiqueId}/defis => DEPRECATED => /utilisateurs/{userId}/defis_v2
-
-*/
 }

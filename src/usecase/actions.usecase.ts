@@ -29,9 +29,13 @@ export class ActionUsecase {
     private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
+  async countActions(thematique?: Thematique): Promise<number> {
+    return 0;
+  }
+
   async getOpenCatalogue(
-    thematique: Thematique,
-    code_commune: string,
+    thematique?: Thematique,
+    code_commune?: string,
   ): Promise<Action[]> {
     const liste_actions = await this.actionRepository.list({
       thematique: thematique,
