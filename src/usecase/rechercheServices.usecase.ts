@@ -27,60 +27,6 @@ export class RechercheServicesUsecase {
     utilisateurId: string,
     serviceId: ServiceRechercheID,
     filtre: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.logement, Scope.bilbiotheque_services],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const finder = this.rechercheServiceManager.getFinderById(serviceId);
-
-    if (!finder) {
-      ApplicationError.throwUnkonwnSearchService(serviceId);
-    }
-
-    if (
-      filtre.categorie &&
-      !finder.getManagedCategories().includes(filtre.categorie)
-    ) {
-      ApplicationError.throwUnkonwnCategorieForSearchService(
-        serviceId,
-        filtre.categorie,
-      );
-    }
-
-    if (
-      serviceId === ServiceRechercheID.proximite ||
-      serviceId === ServiceRechercheID.longue_vie_objets
-    ) {
-      if (!filtre.hasPoint()) {
-        if (!utilisateur.logement.code_postal) {
-          ApplicationError.throwUnkonwnUserLocation();
-        } else {
-          filtre.code_postal = utilisateur.logement.code_postal;
-          filtre.commune = utilisateur.logement.commune;
-        }
-      }
-    }
-    const result = await finder.find(filtre);
-
-    utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.ALL],
-    );
-
-    this.completeFavorisDataToResult(serviceId, result, utilisateur);
-
-    return result;
-  }
-
-  async search_2(
-    utilisateurId: string,
-    serviceId: ServiceRechercheID,
-    filtre: FiltreRecherche,
   ): Promise<{
     liste: ResultatRecherche[];
     encore_plus_resultats_dispo: boolean;

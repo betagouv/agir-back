@@ -188,7 +188,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/bad_service/search',
+      '/utilisateurs/utilisateur-id/recherche_services/bad_service/search2',
     );
 
     // THEN
@@ -203,7 +203,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search2',
     );
 
     // THEN
@@ -335,7 +335,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search2',
     ).send({ categorie: 'bad' });
 
     // THEN
@@ -348,7 +348,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search2',
     ).send({ categorie: CategorieRecherche.vegan });
 
     // THEN
@@ -670,19 +670,21 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
     ).send({ categorie: 'vege' });
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(10);
-    expect(response.body[0].difficulty_plat).toEqual('Intérmédiaire');
-    expect(response.body[0].est_favoris).toEqual(false);
-    expect(response.body[0].id).toEqual('10987');
-    expect(response.body[0].nombre_favoris).toEqual(0);
-    expect(response.body[0].temps_prepa_min).toEqual(10);
-    expect(response.body[0].titre).toEqual('Clafoutis salé au chèvre et curry');
-    expect(response.body[0].type_plat).toEqual('Plat');
+    expect(response.body.resultats).toHaveLength(10);
+    expect(response.body.resultats[0].difficulty_plat).toEqual('Intérmédiaire');
+    expect(response.body.resultats[0].est_favoris).toEqual(false);
+    expect(response.body.resultats[0].id).toEqual('10987');
+    expect(response.body.resultats[0].nombre_favoris).toEqual(0);
+    expect(response.body.resultats[0].temps_prepa_min).toEqual(10);
+    expect(response.body.resultats[0].titre).toEqual(
+      'Clafoutis salé au chèvre et curry',
+    );
+    expect(response.body.resultats[0].type_plat).toEqual('Plat');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
@@ -696,7 +698,7 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(10);
 
-    expect(response.body[0].ingredients).toEqual([
+    expect(response.body.resultats[0].ingredients).toEqual([
       {
         nom: 'Chèvre frais',
         ordre: 1,
@@ -779,7 +781,7 @@ describe('RechercheServices (API test)', () => {
       },
     ]);
 
-    expect(response.body[0].etapes_recette).toEqual([
+    expect(response.body.resultats[0].etapes_recette).toEqual([
       {
         ordre: 1,
         texte:

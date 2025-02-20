@@ -15,37 +15,6 @@ export class DefisUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  async getDefisOfThematique_deprecated(
-    utilisateurId: string,
-    thematique: Thematique,
-    filtre_status: string[],
-  ): Promise<Defi[]> {
-    if (filtre_status.length > 0) {
-      for (const status of filtre_status) {
-        if (!DefiStatus[status]) {
-          ApplicationError.throwUnknownDefiStatus(status);
-        }
-      }
-    } else {
-      filtre_status = [DefiStatus.en_cours];
-    }
-
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.defis, Scope.logement, Scope.missions],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let result = await this.getDefisOfThematiqueAndUtilisateur(
-      utilisateur,
-      thematique,
-    );
-
-    result = result.filter((d) => filtre_status.includes(d.getStatus()));
-
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
-
   async getAllDefis_v2(
     utilisateurId: string,
     thematique: Thematique,

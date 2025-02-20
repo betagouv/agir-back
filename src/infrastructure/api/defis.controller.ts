@@ -124,38 +124,4 @@ export class DefisController extends GenericControler {
     );
     return result.map((element) => DefiAPI.mapToAPI(element));
   }
-
-  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [DefiAPI],
-  })
-  @ApiQuery({
-    name: 'status',
-    enum: DefiStatus,
-    enumName: 'status',
-    isArray: true,
-    required: false,
-    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur visible pour une thematique donnée et débloqués par une mission, défi en_cours par défaut)",
-  })
-  async getAllUserDefisByThematique(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('code_thematique') code_thematique: string,
-    @Query('status') status: string,
-  ): Promise<DefiAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const them = this.castThematiqueOrException(code_thematique);
-    const result = await this.defisUsecase.getDefisOfThematique_deprecated(
-      utilisateurId,
-      them,
-      this.getStringListFromStringArrayAPIInput(status),
-    );
-    return result.map((element) => DefiAPI.mapToAPI(element));
-  }
 }
