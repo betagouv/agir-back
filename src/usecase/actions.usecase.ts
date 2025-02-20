@@ -30,7 +30,7 @@ export class ActionUsecase {
   ) {}
 
   async countActions(thematique?: Thematique): Promise<number> {
-    return 0;
+    return await this.actionRepository.count({ thematique: thematique });
   }
 
   async getOpenCatalogue(

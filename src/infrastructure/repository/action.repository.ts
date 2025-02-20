@@ -90,19 +90,32 @@ export class ActionRepository {
     });
   }
 
+  async count(filter: ActionFilter): Promise<number> {
+    const query = this.buildActionQuery(filter);
+
+    return await this.prisma.action.count(query);
+  }
+
   async list(filter: ActionFilter): Promise<ActionDefinition[]> {
+    const query = this.buildActionQuery(filter);
+
+    const result = await this.prisma.action.findMany(query);
+
+    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+  }
+
+  private buildActionQuery(filtre: ActionFilter): any {
     const main_filter = {};
 
-    if (filter.thematique) {
-      main_filter['thematique'] = filter.thematique;
+    if (filtre.thematique) {
+      main_filter['thematique'] = filtre.thematique;
     }
 
-    const result = await this.prisma.action.findMany({
+    return {
       where: {
         AND: main_filter,
       },
-    });
-    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+    };
   }
 
   async getByCodeAndType(

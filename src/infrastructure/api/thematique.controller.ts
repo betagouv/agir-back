@@ -3,13 +3,22 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { Controller, Param, UseGuards, Request, Get } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  UseGuards,
+  Request,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { GenericControler } from './genericControler';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { TuileThematiqueAPI } from './types/univers/TuileThematiqueAPI';
+import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesAPI';
+import { AuthGuard } from '../auth/guard';
 
 @Controller()
 @ApiBearerAuth()
@@ -23,14 +32,45 @@ export class ThematiqueController extends GenericControler {
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 5, ttl: 1000 } })
   @ApiOkResponse({
-    type: [TuileThematiqueAPI],
+    type: SyntheseThematiquesAPI,
   })
   @ApiOperation({
     summary: `Retourne la synthèse des 4 thématiques principales disponibles sur le services`,
   })
-  async getCatalogue(): Promise<TuileThematiqueAPI[]> {
+  @ApiQuery({
+    name: 'code_commune',
+    type: String,
+    required: false,
+    description: `code commune INSEE pour calculer le nombre d'aides disponibles pour les différentes thématiques`,
+  })
+  async getTuilesThematiques(
+    @Query('code_commune') code_commune: string,
+  ): Promise<SyntheseThematiquesAPI> {
+    const result = await this.thematiqueUsecase.getListeThematiquesPrincipales(
+      code_commune,
+    );
+    return SyntheseThematiquesAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: SyntheseThematiquesAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne la synthèse des 4 thématiques principales disponibles sur le services`,
+  })
+  async getUtilisateurTuilesThematiques(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<SyntheseThematiquesAPI> {
+    this.checkCallerId(req, utilisateurId);
+
     const result =
-      await this.thematiqueUsecase.getListeThematiquesPrincipales();
-    return result.map((r) => TuileThematiqueAPI.mapToAPI(r));
+      await this.thematiqueUsecase.getUtilisateurListeThematiquesPrincipales(
+        utilisateurId,
+      );
+
+    return SyntheseThematiquesAPI.mapToAPI(result);
   }
 }

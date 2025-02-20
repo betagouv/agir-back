@@ -21,7 +21,7 @@ import { MissionAPI } from './types/mission/MissionAPI';
 import { MissionUsecase } from '../../../src/usecase/mission.usecase';
 import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
-import { TuileMissionAPI } from './types/univers/TuileMissionAPI';
+import { TuileMissionAPI } from './types/mission/TuileMissionAPI';
 import { Thematique } from '../../domain/contenu/thematique';
 import { MissionAPI_v2 } from './types/mission/MissionAPI_v2';
 @ApiExtraModels(QuestionKYCAPI, MosaicKYCAPI)
