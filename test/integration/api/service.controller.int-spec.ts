@@ -1,5 +1,5 @@
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { DB, TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
 

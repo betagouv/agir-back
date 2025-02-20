@@ -1,4 +1,4 @@
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';

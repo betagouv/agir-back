@@ -3,7 +3,7 @@ import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
 import { TypeAction } from '../../../../domain/actions/typeAction';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { EchelleAide } from '../../../../domain/aides/echelle';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';

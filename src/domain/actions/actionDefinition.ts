@@ -1,5 +1,5 @@
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
 
 export class ActionDefinition {

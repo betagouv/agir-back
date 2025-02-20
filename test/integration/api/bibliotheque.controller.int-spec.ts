@@ -1,5 +1,5 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';

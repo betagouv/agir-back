@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import {
   CLE_PERSO,

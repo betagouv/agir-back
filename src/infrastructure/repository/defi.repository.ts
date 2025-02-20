@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Defi, Defi as DefiDB } from '@prisma/client';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
 import { Categorie } from '../../../src/domain/contenu/categorie';

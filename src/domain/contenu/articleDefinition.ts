@@ -1,5 +1,5 @@
 import { DifficultyLevel } from './difficultyLevel';
-import { Thematique } from './thematique';
+import { Thematique } from '../thematique/thematique';
 import { TagUtilisateur } from '../scoring/tagUtilisateur';
 import { Categorie } from './categorie';
 import { ContenuLocal } from './contenuLocal';

@@ -5,7 +5,7 @@ import { Besoin } from '../../../../src/domain/aides/besoin';
 import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';

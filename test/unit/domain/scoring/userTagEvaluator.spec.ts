@@ -5,7 +5,7 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../../src/domain/kyc/questionKYC';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';

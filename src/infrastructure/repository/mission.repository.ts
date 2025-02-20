@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Cron } from '@nestjs/schedule';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 @Injectable()
 export class MissionRepository {

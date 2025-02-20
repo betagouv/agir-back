@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TuileThematiqueAPI } from './TuileThematiqueAPI';
-import { ThematiqueSynthese } from '../../../../domain/contenu/thematiqueSynthese';
+import { ThematiqueSynthese } from '../../../../domain/thematique/thematiqueSynthese';
 
 export class SyntheseThematiquesAPI {
   @ApiProperty() nom_commune: string;

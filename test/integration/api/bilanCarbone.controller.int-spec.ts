@@ -11,7 +11,7 @@ import { ThematiqueRepository } from '../../../src/infrastructure/repository/the
 import { DB, TestUtil } from '../../TestUtil';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Feature } from '../../../src/domain/gamification/feature';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,

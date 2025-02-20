@@ -30,7 +30,7 @@ import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ApplicationError } from '../applicationError';
 import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 @Controller()
 @ApiBearerAuth()

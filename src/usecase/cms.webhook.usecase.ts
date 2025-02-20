@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';

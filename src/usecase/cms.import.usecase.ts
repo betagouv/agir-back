@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';

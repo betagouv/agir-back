@@ -4,7 +4,7 @@ import {
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { Tag } from '../../../src/domain/scoring/tag';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,

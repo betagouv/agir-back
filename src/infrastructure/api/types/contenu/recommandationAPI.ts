@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommandation } from '../../../../../src/domain/contenu/recommandation';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatus } from '../../../../../src/domain/defis/defi';
 

@@ -1,5 +1,5 @@
 import { ContentType } from '../contenu/contentType';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { PriorityContent } from '../scoring/priorityContent';
 
 export class ObjectifDefinition {

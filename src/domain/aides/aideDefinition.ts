@@ -1,5 +1,5 @@
 import { ContenuLocal } from '../contenu/contenuLocal';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { Besoin } from './besoin';
 
 export class AideDefinition implements ContenuLocal {

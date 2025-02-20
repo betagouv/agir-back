@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import {
+  Enchainement,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../domain/kyc/questionKYC';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KYCID } from '../../src/domain/kyc/KYCID';
@@ -21,7 +25,7 @@ export class QuestionKYCUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  static ENCHAINEMENTS: Record<string, string[]> = {
+  static ENCHAINEMENTS: { [key in Enchainement]?: (KYCID | KYCMosaicID)[] } = {
     ENCHAINEMENT_KYC_1: [
       KYCID.KYC001,
       KYCID.KYC002,

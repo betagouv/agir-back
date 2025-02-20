@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ActionDefinition } from '../../../../domain/actions/actionDefinition';
 import { TypeAction } from '../../../../domain/actions/typeAction';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { Action } from '../../../../domain/actions/action';
 
 export class ActionLightAPI {

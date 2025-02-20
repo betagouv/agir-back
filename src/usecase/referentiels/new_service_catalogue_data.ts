@@ -2,7 +2,7 @@ import { NewServiceDefinition } from '../../domain/bibliotheque_services/newServ
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ServiceAsyncID } from '../../domain/bibliotheque_services/serviceAsyncID';
 import { ServiceExterneID } from '../../domain/bibliotheque_services/serviceExterneID';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 const new_service_catalogue: NewServiceDefinition[] = [
   {

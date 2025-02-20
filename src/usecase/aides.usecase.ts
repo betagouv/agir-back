@@ -29,7 +29,7 @@ import { AideExpirationWarningRepository } from '../infrastructure/repository/ai
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { App } from '../domain/app';
 import { EchelleAide } from '../domain/aides/echelle';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 
 @Injectable()
 export class AidesUsecase {

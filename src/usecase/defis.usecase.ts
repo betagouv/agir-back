@@ -5,7 +5,7 @@ import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
 import { Feature } from '../../src/domain/gamification/feature';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
 
 @Injectable()

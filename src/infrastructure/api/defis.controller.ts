@@ -22,7 +22,7 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 @Controller()
 @ApiBearerAuth()

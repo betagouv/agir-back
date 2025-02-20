@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';
-import { TuileMission } from '../../../../domain/thematique/tuileMission';
+import { TuileMission } from '../../../../domain/mission/tuileMission';
 import { TypeMission } from '../../../../domain/mission/mission';
 
 export class TuileMissionAPI {

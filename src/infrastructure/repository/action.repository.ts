@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Action } from '@prisma/client';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Cron } from '@nestjs/schedule';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';

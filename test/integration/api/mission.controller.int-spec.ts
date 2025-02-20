@@ -13,7 +13,7 @@ import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
 import { Mission } from '@prisma/client';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';

@@ -7,7 +7,7 @@ import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Superficie } from '../../../src/domain/logement/logement';
 import _situationNGCTest from './situationNGCtest.json';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 

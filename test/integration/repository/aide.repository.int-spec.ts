@@ -1,5 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 
 describe('AideRepository', () => {

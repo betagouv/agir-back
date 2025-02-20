@@ -6,7 +6,7 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';

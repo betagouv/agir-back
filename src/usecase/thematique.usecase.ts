@@ -1,12 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { Thematique } from '../domain/contenu/thematique';
-import { ThematiqueSynthese } from '../domain/contenu/thematiqueSynthese';
+import { Thematique } from '../domain/thematique/thematique';
+import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { DetailThematique } from '../domain/thematique/detailThematique';
+import { Enchainement } from '../domain/kyc/questionKYC';
+import { Key } from 'readline';
+
+const THEMATIQUE_ENCHAINEMENT_MAPPING: Record<Thematique, Enchainement> = {
+  alimentation: Enchainement.ENCHAINEMENT_KYC_bilan_alimentation,
+  consommation: Enchainement.ENCHAINEMENT_KYC_bilan_consommation,
+  logement: Enchainement.ENCHAINEMENT_KYC_bilan_logement,
+  transport: Enchainement.ENCHAINEMENT_KYC_bilan_transport,
+  climat: Enchainement.ENCHAINEMENT_KYC_1,
+  dechet: Enchainement.ENCHAINEMENT_KYC_1,
+  loisir: Enchainement.ENCHAINEMENT_KYC_1,
+  services_societaux: Enchainement.ENCHAINEMENT_KYC_1,
+};
 
 @Injectable()
 export class ThematiqueUsecase {
@@ -16,6 +30,25 @@ export class ThematiqueUsecase {
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
   ) {}
+
+  public async getUtilisateurThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<DetailThematique> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const enchainement_id = THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
+
+    return {
+      thematique: thematique,
+      enchainement_questions_personalisation: enchainement_id,
+      personalisation_necessaire: true,
+    };
+  }
 
   public async getUtilisateurListeThematiquesPrincipales(
     utilisateurId: string,

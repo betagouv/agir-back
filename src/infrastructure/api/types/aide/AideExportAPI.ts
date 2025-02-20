@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
-import { Thematique } from '../../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class AideExportAPI {
   @ApiProperty() content_id: string;

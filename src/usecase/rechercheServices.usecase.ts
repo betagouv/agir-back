@@ -10,7 +10,7 @@ import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repositor
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
 @Injectable()

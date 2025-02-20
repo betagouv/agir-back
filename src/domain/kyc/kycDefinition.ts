@@ -1,5 +1,5 @@
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { Tag } from '../scoring/tag';
 import { ConditionKYC } from './conditionKYC';
 import { TypeReponseQuestionKYC, Unite } from './questionKYC';

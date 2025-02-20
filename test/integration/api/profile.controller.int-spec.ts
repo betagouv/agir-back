@@ -7,7 +7,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../src/domain/contenu/categorie';

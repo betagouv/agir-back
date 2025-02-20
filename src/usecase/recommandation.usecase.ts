@@ -13,7 +13,7 @@ import { ContentType } from '../../src/domain/contenu/contentType';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
-import { Thematique } from '../../src/domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';

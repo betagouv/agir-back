@@ -19,6 +19,8 @@ import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesAPI';
 import { AuthGuard } from '../auth/guard';
+import { Thematique } from '../../domain/thematique/thematique';
+import { DetailThematiquesAPI } from './types/thematiques/detailThematiquesAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -72,5 +74,38 @@ export class ThematiqueController extends GenericControler {
       );
 
     return SyntheseThematiquesAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: DetailThematiquesAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le détail d'une thematiques (question de personnalisatio, propositions d'action, etc)`,
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+  })
+  async getUtilisateurThematiqueCible(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+
+    @Request() req,
+  ): Promise<DetailThematiquesAPI> {
+    this.checkCallerId(req, utilisateurId);
+    let them;
+    if (code_thematique) {
+      them = this.castThematiqueOrException(code_thematique);
+    }
+
+    const result = await this.thematiqueUsecase.getUtilisateurThematique(
+      utilisateurId,
+      them,
+    );
+
+    return DetailThematiquesAPI.mapToAPI(result);
   }
 }

@@ -1,6 +1,6 @@
 import { TagUtilisateur } from '../scoring/tagUtilisateur';
 import { Categorie } from './categorie';
-import { Thematique } from './thematique';
+import { Thematique } from '../thematique/thematique';
 
 export type QuizzReponse = {
   reponse: string;

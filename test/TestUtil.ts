@@ -58,7 +58,7 @@ import {
 } from '../src/domain/utilisateur/utilisateur';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
-import { Thematique } from '../src/domain/contenu/thematique';
+import { Thematique } from '../src/domain/thematique/thematique';
 import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';

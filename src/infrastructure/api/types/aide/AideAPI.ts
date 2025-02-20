@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
-import { Thematique } from '../../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { Besoin } from '../../../../../src/domain/aides/besoin';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';

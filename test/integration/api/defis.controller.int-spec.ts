@@ -1,6 +1,6 @@
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatus } from '../../../src/domain/defis/defi';

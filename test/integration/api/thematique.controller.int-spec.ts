@@ -1,5 +1,5 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique (API test)', () => {
@@ -133,8 +133,8 @@ describe('Thematique (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      '/thematiques?code_commune=21231',
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques',
     );
 
     // THEN
@@ -146,6 +146,31 @@ describe('Thematique (API test)', () => {
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,
+    });
+  });
+  it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['21000'],
+      thematiques: [Thematique.alimentation],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      enchainement_questions_personalisation:
+        'ENCHAINEMENT_KYC_bilan_alimentation',
+      est_personalisation_necessaire: true,
+      thematique: 'alimentation',
+      liste_actions_recommandees: [],
     });
   });
 });

@@ -3,7 +3,7 @@ import { DB, TestUtil } from '../../TestUtil';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { EchelleAide } from '../../../src/domain/aides/echelle';

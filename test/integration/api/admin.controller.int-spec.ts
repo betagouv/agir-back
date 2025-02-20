@@ -1,6 +1,6 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { ServiceStatus } from '../../../src/domain/service/service';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';

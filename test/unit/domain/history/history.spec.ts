@@ -1,7 +1,7 @@
 import { TestUtil } from '../../../../test/TestUtil';
 import { Article } from '../../../../src/domain/contenu/article';
 import { History } from '../../../../src/domain/history/history';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 
 const BASIC_ARTICLE: Article = new Article({

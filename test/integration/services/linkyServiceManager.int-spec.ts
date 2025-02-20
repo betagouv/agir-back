@@ -8,7 +8,7 @@ import {
   LiveService,
   ServiceDefinitionData,
 } from '../../../src/domain/service/serviceDefinition';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';

@@ -1,6 +1,6 @@
 import { App } from '../app';
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
 

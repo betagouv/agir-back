@@ -22,7 +22,7 @@ import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { ActionLightAPI } from './types/actions/ActionLightAPI';
 
 @Controller()
