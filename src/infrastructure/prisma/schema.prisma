@@ -221,22 +221,23 @@ model Aide {
 }
 
 model Action {
-  code              String
-  cms_id            String
-  type              String   @default("classique")
-  titre             String
-  sous_titre        String?
-  pourquoi          String?
-  comment           String?
-  thematique        String
-  besoins           String[] @default([])
-  quizz_ids         String[] @default([])
-  kyc_ids           String[] @default([])
-  recette_categorie String?
-  lvo_action        String?
-  lvo_objet         String?
-  created_at        DateTime @default(now()) @db.Timestamptz(3)
-  updated_at        DateTime @updatedAt @db.Timestamptz(3)
+  code                String
+  cms_id              String
+  type                String   @default("classique")
+  titre               String
+  sous_titre          String?
+  quizz_felicitations String?
+  pourquoi            String?
+  comment             String?
+  thematique          String
+  besoins             String[] @default([])
+  quizz_ids           String[] @default([])
+  kyc_ids             String[] @default([])
+  recette_categorie   String?
+  lvo_action          String?
+  lvo_objet           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([code, type])
   @@unique([cms_id, type])

@@ -20,6 +20,7 @@ export class Action extends ActionDefinition {
     super(data);
     this.aides = [];
     this.services = [];
+    this.quizz_liste = [];
     this.nombre_aides = 0;
   }
 

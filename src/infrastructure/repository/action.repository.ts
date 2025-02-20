@@ -50,6 +50,7 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
       besoins: action.besoins,
       comment: action.comment,
@@ -150,6 +151,7 @@ export class ActionRepository {
       recette_categorie: CategorieRecherche[action.recette_categorie],
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
+      quizz_felicitations: action.quizz_felicitations,
     });
   }
 }

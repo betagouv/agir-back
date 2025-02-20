@@ -381,6 +381,7 @@ export class TestUtil {
       code: 'code_fonct',
       besoins: [],
       comment: 'Astuces',
+      quizz_felicitations: 'bien',
       pourquoi: 'En quelques mots',
       kyc_ids: [],
       lvo_action: CategorieRecherche.emprunter,

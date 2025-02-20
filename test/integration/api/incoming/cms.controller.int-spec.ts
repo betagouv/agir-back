@@ -76,6 +76,7 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       sous_titre: 'sous-titre',
       pourquoi: 'pourquoi',
+      felicitations: 'Bravo !!',
       comment: 'comment',
       objet_lvo: 'phone',
       action_lvo: 'donner',
@@ -857,6 +858,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
@@ -963,6 +965,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);

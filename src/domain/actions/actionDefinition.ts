@@ -1,4 +1,3 @@
-import { AideDefinition } from '../aides/aideDefinition';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../contenu/thematique';
 import { TypeAction } from './typeAction';
@@ -8,6 +7,7 @@ export class ActionDefinition {
   code: string;
   titre: string;
   sous_titre: string;
+  quizz_felicitations: string;
   besoins: string[];
   comment: string;
   pourquoi: string;

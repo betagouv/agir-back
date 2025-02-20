@@ -439,6 +439,7 @@ export class CMSWebhookUsecase {
       sous_titre: entry.sous_titre,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
+      quizz_felicitations: entry.felicitations,
       lvo_action: entry.action_lvo
         ? CategorieRecherche[entry.action_lvo]
         : null,
