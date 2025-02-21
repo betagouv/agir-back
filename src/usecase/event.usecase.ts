@@ -121,7 +121,10 @@ export class EventUsecase {
       ],
     );
 
-    await this.bibliothequeUsecase.readArticle(event.content_id, utilisateur);
+    await this.bibliothequeUsecase.internal_read_article(
+      event.content_id,
+      utilisateur,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

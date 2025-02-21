@@ -27,10 +27,6 @@ export class ActionUsecase {
     private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
-  async countActions(thematique?: Thematique): Promise<number> {
-    return await this.actionRepository.count({ thematique: thematique });
-  }
-
   async getOpenCatalogue(
     thematique?: Thematique,
     code_commune?: string,
@@ -231,10 +227,7 @@ export class ActionUsecase {
 
     action.quizz_liste = [];
     for (const quizz_id of action_def.quizz_ids) {
-      const quizz = await this.bibliothequeUsecase.getQuizz(
-        utilisateurId,
-        quizz_id,
-      );
+      const quizz = await this.bibliothequeUsecase.internal_get_quizz(quizz_id);
       action.quizz_liste.push(quizz);
     }
 
@@ -273,5 +266,9 @@ export class ActionUsecase {
       return 0;
     }
     return Math.round(pourcent_total / nombre_quizz_done);
+  }
+
+  async internal_count_actions(thematique?: Thematique): Promise<number> {
+    return await this.actionRepository.count({ thematique: thematique });
   }
 }

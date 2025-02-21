@@ -9,7 +9,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { DetailThematique } from '../domain/thematique/detailThematique';
 import { Enchainement } from '../domain/kyc/questionKYC';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: Record<Thematique, Enchainement> = {
   alimentation: Enchainement.ENCHAINEMENT_KYC_bilan_alimentation,
@@ -136,10 +135,10 @@ export class ThematiqueUsecase {
 
     const alimentation: ThematiqueSynthese = {
       thematique: Thematique.alimentation,
-      nombre_actions: await this.actionUsecase.countActions(
+      nombre_actions: await this.actionUsecase.internal_count_actions(
         Thematique.alimentation,
       ),
-      nombre_aides: await this.aidesUsecase.countAides(
+      nombre_aides: await this.aidesUsecase.internal_count_aides(
         Thematique.alimentation,
         code_commune,
       ),
@@ -149,10 +148,10 @@ export class ThematiqueUsecase {
 
     const logement: ThematiqueSynthese = {
       thematique: Thematique.logement,
-      nombre_actions: await this.actionUsecase.countActions(
+      nombre_actions: await this.actionUsecase.internal_count_actions(
         Thematique.logement,
       ),
-      nombre_aides: await this.aidesUsecase.countAides(
+      nombre_aides: await this.aidesUsecase.internal_count_aides(
         Thematique.logement,
         code_commune,
       ),
@@ -161,10 +160,10 @@ export class ThematiqueUsecase {
     };
     const transport: ThematiqueSynthese = {
       thematique: Thematique.transport,
-      nombre_actions: await this.actionUsecase.countActions(
+      nombre_actions: await this.actionUsecase.internal_count_actions(
         Thematique.transport,
       ),
-      nombre_aides: await this.aidesUsecase.countAides(
+      nombre_aides: await this.aidesUsecase.internal_count_aides(
         Thematique.transport,
         code_commune,
       ),
@@ -173,10 +172,10 @@ export class ThematiqueUsecase {
     };
     const consommation: ThematiqueSynthese = {
       thematique: Thematique.consommation,
-      nombre_actions: await this.actionUsecase.countActions(
+      nombre_actions: await this.actionUsecase.internal_count_actions(
         Thematique.consommation,
       ),
-      nombre_aides: await this.aidesUsecase.countAides(
+      nombre_aides: await this.aidesUsecase.internal_count_aides(
         Thematique.consommation,
         code_commune,
       ),

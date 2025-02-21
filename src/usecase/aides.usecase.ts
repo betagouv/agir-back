@@ -18,9 +18,7 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import {
   Commune,
   CommuneRepository,
-  Departement,
   EPCI,
-  Region,
 } from '../../src/infrastructure/repository/commune/commune.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -170,32 +168,6 @@ export class AidesUsecase {
       ),
       utilisateur: utilisateur,
     };
-  }
-
-  async countAides(
-    thematique?: Thematique,
-    code_commune?: string,
-  ): Promise<number> {
-    const filtre: AideFilter = {};
-
-    if (code_commune) {
-      const codes_postaux =
-        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
-      const dept_region =
-        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-
-      filtre.code_postal = codes_postaux[0];
-      filtre.code_commune = code_commune;
-      filtre.code_departement = dept_region.code_departement;
-      filtre.code_region = dept_region.code_region;
-    }
-
-    filtre.date_expiration = new Date();
-    if (thematique) {
-      filtre.thematiques = [thematique];
-    }
-
-    return await this.aideRepository.count(filtre);
   }
 
   async simulerAideVelo(
@@ -378,6 +350,32 @@ export class AidesUsecase {
       }
     }
     return result;
+  }
+
+  async internal_count_aides(
+    thematique?: Thematique,
+    code_commune?: string,
+  ): Promise<number> {
+    const filtre: AideFilter = {};
+
+    if (code_commune) {
+      const codes_postaux =
+        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
+      const dept_region =
+        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
+
+      filtre.code_postal = codes_postaux[0];
+      filtre.code_commune = code_commune;
+      filtre.code_departement = dept_region.code_departement;
+      filtre.code_region = dept_region.code_region;
+    }
+
+    filtre.date_expiration = new Date();
+    if (thematique) {
+      filtre.thematiques = [thematique];
+    }
+
+    return await this.aideRepository.count(filtre);
   }
 
   private async sent_aide_expiration_emails(

@@ -22,7 +22,6 @@ export class MagicLinkUsecase {
   constructor(
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
-    private connexionUsecase: Connexion_v2_Usecase,
     private tokenRepository: TokenRepository,
   ) {}
 

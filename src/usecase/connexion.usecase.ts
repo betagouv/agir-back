@@ -190,9 +190,10 @@ export class Connexion_v2_Usecase {
     if (App.isProd()) {
       return {}; // PAS de FC encore en PROD
     } else {
-      const result = await this.franceConnectUsecase.logout_france_connect(
-        utilisateurId,
-      );
+      const result =
+        await this.franceConnectUsecase.internal_logout_france_connect(
+          utilisateurId,
+        );
       return { fc_logout_url: result.fc_logout_url };
     }
   }
@@ -202,14 +203,14 @@ export class Connexion_v2_Usecase {
   }
 
   private async sendConnexionCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.sendUserEmailOfType(
+    await this.mailerUsecase.internal_send_user_email_of_type(
       TypeNotification.connexion_code,
       utilisateur,
     );
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.sendUserEmailOfType(
+    await this.mailerUsecase.internal_send_user_email_of_type(
       TypeNotification.change_mot_de_passe_code,
       utilisateur,
     );
