@@ -24,7 +24,6 @@ import { GenericControler } from './genericControler';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
-import { TodoUsecase } from '../../../src/usecase/todo.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
@@ -62,7 +61,6 @@ export class AdminController extends GenericControler {
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
     private referentielUsecase: ReferentielUsecase,
-    private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
     private statistiqueUsecase: StatistiqueUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
@@ -180,16 +178,6 @@ export class AdminController extends GenericControler {
     return await this.linkyUsecase.unsubscribeOrphanPRMs();
   }
 
-  @Post('/admin/upgrade_user_todo')
-  @ApiOperation({
-    summary: `enrichit la TODO des utilisateurs si besoin`,
-  })
-  @ApiOkResponse({ type: [String] })
-  async upgrade_user_todo(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.todoUsecase.updateAllUsersTodo();
-  }
-
   @Post('admin/contacts/synchronize')
   @ApiOperation({
     summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
@@ -282,15 +270,6 @@ export class AdminController extends GenericControler {
   async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.validerPrenoms(body);
-  }
-
-  @Post('/admin/lister_onboarding_a_5_quetions_done')
-  @ApiOperation({
-    summary: `Liste les users qui ont un onboarding à 5 questions réalisé`,
-  })
-  async lister5question(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.liste5questOnboarding();
   }
 
   @Post('/admin/send_all_emails_as_test/:utilisateurId')

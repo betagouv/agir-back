@@ -1,4 +1,4 @@
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { KYCID } from '../kyc/KYCID';
 import { BooleanKYC, QuestionKYC } from '../kyc/questionKYC';
 import { Utilisateur } from '../utilisateur/utilisateur';

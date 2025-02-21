@@ -1,7 +1,7 @@
 import { DB, TestUtil } from '../../TestUtil';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,

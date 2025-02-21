@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { Action, ActionService } from '../domain/actions/action';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
@@ -29,9 +29,13 @@ export class ActionUsecase {
     private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
+  async countActions(thematique?: Thematique): Promise<number> {
+    return await this.actionRepository.count({ thematique: thematique });
+  }
+
   async getOpenCatalogue(
-    thematique: Thematique,
-    code_commune: string,
+    thematique?: Thematique,
+    code_commune?: string,
   ): Promise<Action[]> {
     const liste_actions = await this.actionRepository.list({
       thematique: thematique,

@@ -1,4 +1,4 @@
-import { Thematique } from './thematique';
+import { Thematique } from '../thematique/thematique';
 
 export interface ContenuLocal {
   content_id: string;

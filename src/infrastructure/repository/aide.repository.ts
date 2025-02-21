@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { EchelleAide } from '../../domain/aides/echelle';

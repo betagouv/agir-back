@@ -26,35 +26,6 @@ export class RecommandationsController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/recommandations_v2')
-  @ApiOkResponse({ type: [RecommandationAPI] })
-  @UseGuards(AuthGuard)
-  @ApiQuery({
-    name: 'univers',
-    type: String,
-    required: false,
-    description: `filtrage par thematique, par exemple 'alimentation'`,
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : Liste les recommendations personnalisées de l'utilisateur, sans défis",
-  })
-  async getUserRecommandationV2(
-    @Request() req,
-    @Query('univers') univers: string,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<RecommandationAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-
-    const them = univers ? this.castThematiqueOrException(univers) : undefined;
-    const list = await this.recommandationUsecase.listRecommandationsV2(
-      utilisateurId,
-      them,
-    );
-    return list.map((reco) => RecommandationAPI.mapToAPI(reco));
-  }
-
   @Get('utilisateurs/:utilisateurId/thematiques/:thematique/recommandations')
   @ApiOkResponse({ type: [RecommandationAPI] })
   @UseGuards(AuthGuard)

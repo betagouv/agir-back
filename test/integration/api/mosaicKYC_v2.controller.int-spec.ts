@@ -1,6 +1,6 @@
 import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   TypeReponseQuestionKYC,

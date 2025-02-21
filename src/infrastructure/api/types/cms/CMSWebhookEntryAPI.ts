@@ -165,6 +165,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() comment: string;
+  @ApiProperty() felicitations: string;
   @ApiProperty() objet_lvo: string;
   @ApiProperty() action_lvo: string;
   @ApiProperty() source: string;

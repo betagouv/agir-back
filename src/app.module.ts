@@ -113,29 +113,8 @@ import { ContactUsecase } from './usecase/contact.usecase';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
-import { GamificationUsecase } from './usecase/gamification.usecase';
-import { InscriptionUsecase } from './usecase/inscription.usecase';
-import { LinkyUsecase } from './usecase/linky.usecase';
-import { MagicLinkUsecase } from './usecase/magicLink.usecase';
-import { MailerUsecase } from './usecase/mailer.usecase';
-import { MigrationUsecase } from './usecase/migration.usescase';
-import { MissionUsecase } from './usecase/mission.usecase';
-import { ProfileUsecase } from './usecase/profile.usecase';
-import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
-import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
-import { RecommandationUsecase } from './usecase/recommandation.usecase';
-import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
-import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
-import { ServiceUsecase } from './usecase/service.usecase';
-import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
-import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
-import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
-import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
-import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
-import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
-import { TodoUsecase } from './usecase/todo.usecase';
+import { TokenRepository } from './infrastructure/repository/token.repository';
+import { ThematiqueUsecase } from './usecase/thematique.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -148,7 +127,6 @@ function getControllers(): any[] {
     CMSController,
     CommunesController,
     ServiceController,
-    TodoController,
     WinterController,
     EventController,
     GamificationController,
@@ -159,7 +137,7 @@ function getControllers(): any[] {
     BibliothequeController,
     InscriptionController,
     DefisController,
-    UniversController,
+    ThematiqueController,
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
@@ -221,7 +199,6 @@ function getControllers(): any[] {
     PasswordManager,
     ServiceUsecase,
     ServiceRepository,
-    TodoUsecase,
     ThematiqueRepository,
     FruitsEtLegumesServiceManager,
     EventUsecase,
@@ -291,8 +268,7 @@ function getControllers(): any[] {
     ActionUsecase,
     FranceConnectUsecase,
     TokenRepository,
-    SimulateurVoitureUsecase,
-    SimulateurVoitureRepository,
+    ThematiqueUsecase,
   ],
 })
 export class AppModule {}

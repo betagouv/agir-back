@@ -3,7 +3,7 @@ import { DB, TestUtil } from '../../TestUtil';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
@@ -122,6 +122,7 @@ describe('Actions (API test)', () => {
     expect(action.pourquoi).toEqual('En quelques mots');
     expect(action.titre).toEqual('The titre');
     expect(action.sous_titre).toEqual('Sous titre');
+    expect(action.quizz_felicitations).toEqual('bien');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
     expect(action.services).toHaveLength(2);
@@ -388,7 +389,7 @@ describe('Actions (API test)', () => {
     });
   });
 
-  it.only(`GET /utilisateurs/id/actions/id/score - calcul le score d'une action quizz`, async () => {
+  it(`GET /utilisateurs/id/actions/id/score - calcul le score d'une action quizz`, async () => {
     // GIVEN
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.quizz, { content_id: '2' });

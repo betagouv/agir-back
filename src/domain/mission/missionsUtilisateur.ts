@@ -1,5 +1,5 @@
 import { ContentType } from '../contenu/contentType';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
 import { MissionsUtilisateur_v1 } from '../object_store/mission/MissionsUtilisateur_v1';

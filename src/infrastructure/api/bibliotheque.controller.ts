@@ -20,7 +20,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { BibliothequeAPI } from './types/contenu/contenuBiblioAPI';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { ArticleBibliothequeAPI } from './types/contenu/articleAPI';
 import { QuizzBibliothequeAPI } from './types/contenu/quizzAPI';

@@ -1,7 +1,7 @@
 import { Situation } from 'publicodes';
 import { DottedName } from '@incubateur-ademe/nosgestesclimat';
 
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 
 export type RegleNGC = DottedName;
 export type SituationNGC = Situation<DottedName>;

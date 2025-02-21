@@ -11,7 +11,7 @@ import {
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 const KYC = {
   code: KYCID.KYC007,

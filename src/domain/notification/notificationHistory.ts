@@ -104,27 +104,9 @@ export class NotificationHistory {
 
     const result = [];
 
-    this.addOnboardingIfEligible(result, utilisateur);
-
     this.addWaitingActionIfEligible(result, utilisateur);
 
     return result.filter((n) => this.isNotificationActive(n));
-  }
-
-  private addOnboardingIfEligible(
-    encours: TypeNotification[],
-    utilisateur: Utilisateur,
-  ) {
-    if (!this.was_sent(TypeNotification.late_onboarding)) {
-      const age = this.getAgeCreationUtilisateur(utilisateur);
-      if (
-        utilisateur.active_account &&
-        age < jour_30 &&
-        age > jour_8 &&
-        !utilisateur.parcours_todo.isEndedTodo()
-      )
-        encours.push(TypeNotification.late_onboarding);
-    }
   }
 
   private addWaitingActionIfEligible(

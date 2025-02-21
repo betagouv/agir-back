@@ -68,7 +68,6 @@ export class InscriptionUsecase {
     utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (utilisateurInput.situation_ngc_id) {
-      utilisateurToCreate.parcours_todo.dropLastMission();
       utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
 
       const situation = await this.situationNGCRepository.getSituationNGCbyId(

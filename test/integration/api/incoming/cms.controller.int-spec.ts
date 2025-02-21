@@ -1,4 +1,13 @@
 import { KYC, Mission } from '.prisma/client';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { ContentType } from '../../../../src/domain/contenu/contentType';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
+import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
+import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
@@ -76,6 +85,7 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       sous_titre: 'sous-titre',
       pourquoi: 'pourquoi',
+      felicitations: 'Bravo !!',
       comment: 'comment',
       objet_lvo: 'phone',
       action_lvo: 'donner',
@@ -857,6 +867,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
@@ -964,6 +975,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);

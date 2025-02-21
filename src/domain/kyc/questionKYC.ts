@@ -1,6 +1,6 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
@@ -8,6 +8,15 @@ import { ConditionKYC } from './conditionKYC';
 import { KycDefinition } from './kycDefinition';
 import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
 import { KYCComplexValues } from './publicodesMapping';
+
+export enum Enchainement {
+  ENCHAINEMENT_KYC_1 = 'ENCHAINEMENT_KYC_1',
+  ENCHAINEMENT_KYC_mini_bilan_carbone = 'ENCHAINEMENT_KYC_mini_bilan_carbone',
+  ENCHAINEMENT_KYC_bilan_transport = 'ENCHAINEMENT_KYC_bilan_transport',
+  ENCHAINEMENT_KYC_bilan_logement = 'ENCHAINEMENT_KYC_bilan_logement',
+  ENCHAINEMENT_KYC_bilan_consommation = 'ENCHAINEMENT_KYC_bilan_consommation',
+  ENCHAINEMENT_KYC_bilan_alimentation = 'ENCHAINEMENT_KYC_bilan_alimentation',
+}
 
 export enum TypeReponseQuestionKYC {
   libre = 'libre',

@@ -20,12 +20,6 @@ export class ApplicationError {
   static throwForbiddenError() {
     this.throwAppError('002', 'Vous ne pouvez pas accéder à ces données');
   }
-  static throwUnfinishedTodoError() {
-    this.throwAppError(
-      '003',
-      `todo pas terminée, impossible d'encaisser les points`,
-    );
-  }
   static throwBadPasswordOrEmailError() {
     this.throwAppError(
       '004',

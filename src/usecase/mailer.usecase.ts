@@ -75,7 +75,7 @@ export class MailerUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
-        [Scope.notification_history, Scope.todo, Scope.defis],
+        [Scope.notification_history, Scope.defis],
       );
 
       if (

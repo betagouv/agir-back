@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Action } from '@prisma/client';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Cron } from '@nestjs/schedule';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
@@ -50,6 +50,7 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
       besoins: action.besoins,
       comment: action.comment,
@@ -90,19 +91,32 @@ export class ActionRepository {
     });
   }
 
+  async count(filter: ActionFilter): Promise<number> {
+    const query = this.buildActionQuery(filter);
+
+    return await this.prisma.action.count(query);
+  }
+
   async list(filter: ActionFilter): Promise<ActionDefinition[]> {
+    const query = this.buildActionQuery(filter);
+
+    const result = await this.prisma.action.findMany(query);
+
+    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+  }
+
+  private buildActionQuery(filtre: ActionFilter): any {
     const main_filter = {};
 
-    if (filter.thematique) {
-      main_filter['thematique'] = filter.thematique;
+    if (filtre.thematique) {
+      main_filter['thematique'] = filtre.thematique;
     }
 
-    const result = await this.prisma.action.findMany({
+    return {
       where: {
         AND: main_filter,
       },
-    });
-    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+    };
   }
 
   async getByCodeAndType(
@@ -137,6 +151,7 @@ export class ActionRepository {
       recette_categorie: CategorieRecherche[action.recette_categorie],
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
+      quizz_felicitations: action.quizz_felicitations,
     });
   }
 }

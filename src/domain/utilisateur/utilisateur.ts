@@ -20,6 +20,8 @@ import { ParcoursTodo } from '../todo/parcoursTodo';
 import { CodeManager } from './manager/codeManager';
 import { PasswordManager } from './manager/passwordManager';
 var crypto = require('crypto');
+import { v4 as uuidv4 } from 'uuid';
+import { ThematiqueHistory } from '../thematique/thematiqueHistory';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -38,7 +40,6 @@ export enum SourceInscription {
 export enum Scope {
   ALL = 'ALL',
   core = 'core',
-  todo = 'todo',
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
@@ -48,6 +49,7 @@ export enum Scope {
   missions = 'missions',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
+  thematique_history = 'thematique_history',
 }
 
 export class Utilisateur {
@@ -72,7 +74,6 @@ export class Utilisateur {
   prevent_checkcode_before: Date;
   sent_email_count: number;
   prevent_sendemail_before: Date;
-  parcours_todo: ParcoursTodo;
   gamification: Gamification;
   missions: MissionsUtilisateur;
   history: History;
@@ -97,6 +98,7 @@ export class Utilisateur {
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
+  thematique_history: ThematiqueHistory;
   unsubscribe_mail_token: string;
   est_valide_pour_classement: boolean;
   brevo_created_at: Date;
@@ -147,7 +149,6 @@ export class Utilisateur {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
-      parcours_todo: new ParcoursTodo(),
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
@@ -184,6 +185,7 @@ export class Utilisateur {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
+      thematique_history: new ThematiqueHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
       est_valide_pour_classement: false,
       brevo_created_at: null,
@@ -200,7 +202,6 @@ export class Utilisateur {
     this.commune_classement = null;
     this.code_postal_classement = null;
     this.tag_ponderation_set = {};
-    this.parcours_todo.reset();
     this.gamification.reset();
     this.unlocked_features.reset();
     this.history.reset();

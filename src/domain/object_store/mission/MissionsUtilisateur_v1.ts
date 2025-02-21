@@ -2,7 +2,7 @@ import { Versioned_v1 } from '../versioned';
 import { ContentType } from '../../contenu/contentType';
 import { Mission, Objectif } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { Thematique } from '../../contenu/thematique';
+import { Thematique } from '../../thematique/thematique';
 import { MissionsUtilisateur_v0 } from './MissionsUtilisateur_v0';
 
 export class Objectif_v1 {

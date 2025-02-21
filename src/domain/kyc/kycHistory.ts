@@ -1,7 +1,7 @@
 import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Utilisateur } from '../utilisateur/utilisateur';

@@ -1,13 +1,13 @@
+import { Besoin } from '../../../src/domain/aides/besoin';
+import { EchelleAide } from '../../../src/domain/aides/echelle';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
-import { Besoin } from '../../../src/domain/aides/besoin';
-import { EchelleAide } from '../../../src/domain/aides/echelle';
-import { Thematique } from '../../../src/domain/contenu/thematique';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
 import {
@@ -56,9 +56,8 @@ describe('Aide (API test)', () => {
       libelle: 'Bonus vélo',
       montant: 150,
       plafond: 150,
-      description: `Supprimé depuis le 2 décembre 2024.
-
-Cependant, une période transitoire permet de pouvoir continuer de bénéficier du bonus pour tout achat effectué avant le 14 février 2025 inclus (date de facturation).`,
+      description:
+        "Le bonus vélo est maintenu pour toute facture émise avant le 14 février 2025 (inclus). Vous avez jusqu'au 14 août 2025 pour faire votre demande. Passé ce délai, il ne sera plus possible de bénéficier du bonus.",
       lien: 'https://www.economie.gouv.fr/particuliers/prime-velo-electrique#',
       collectivite: {
         kind: 'pays',

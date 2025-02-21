@@ -5,7 +5,7 @@ import {
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   Superficie,
   TypeLogement,

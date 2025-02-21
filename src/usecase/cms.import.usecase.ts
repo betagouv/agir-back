@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
@@ -782,6 +782,7 @@ export class CMSImportUsecase {
       sous_titre: entry.attributes.sous_titre,
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
+      quizz_felicitations: entry.attributes.felicitations,
       lvo_objet: entry.attributes.objet_lvo,
       lvo_action: entry.attributes.action_lvo
         ? CategorieRecherche[entry.attributes.action_lvo]

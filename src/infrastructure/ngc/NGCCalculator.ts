@@ -12,7 +12,7 @@ import {
   SituationNGC,
 } from '../../domain/bilan/bilanCarbone';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 const { migrateSituation } = require('@publicodes/tools/migration');
 

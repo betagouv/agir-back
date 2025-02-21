@@ -3,7 +3,7 @@ import { ServiceExterneID } from '../../../../domain/bibliotheque_services/servi
 import { NewServiceDefinition } from '../../../../domain/bibliotheque_services/newServiceDefinition';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ServiceAsyncID } from '../../../../domain/bibliotheque_services/serviceAsyncID';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class ServiceRechercheAPI {
   @ApiProperty({ enum: ServiceRechercheID }) id_service:

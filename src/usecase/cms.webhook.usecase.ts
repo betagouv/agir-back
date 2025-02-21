@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
@@ -439,6 +439,7 @@ export class CMSWebhookUsecase {
       sous_titre: entry.sous_titre,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
+      quizz_felicitations: entry.felicitations,
       lvo_action: entry.action_lvo
         ? CategorieRecherche[entry.action_lvo]
         : null,

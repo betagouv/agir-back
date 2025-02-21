@@ -18,8 +18,8 @@ import {
 } from '../infrastructure/repository/article.repository';
 import { Categorie } from '../domain/contenu/categorie';
 import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
-import { TuileMission } from '../domain/thematique/tuileMission';
-import { Thematique } from '../domain/contenu/thematique';
+import { TuileMission } from '../domain/mission/tuileMission';
+import { Thematique } from '../domain/thematique/thematique';
 import { PriorityContent } from '../domain/scoring/priorityContent';
 import { Article } from '../domain/contenu/article';
 

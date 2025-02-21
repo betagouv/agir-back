@@ -1,4 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import {
+  Enchainement,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../domain/kyc/questionKYC';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
@@ -21,13 +28,8 @@ export class QuestionKYCUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
-  static ENCHAINEMENTS: Record<string, string[]> = {
-    ENCHAINEMENT_KYC_1: [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCMosaicID.TEST_MOSAIC_ID,
-    ],
+  static ENCHAINEMENTS: { [key in Enchainement]?: (KYCID | KYCMosaicID)[] } = {
+    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
     ENCHAINEMENT_KYC_mini_bilan_carbone: [
       KYCID.KYC_transport_voiture_km,
       KYCID.KYC_transport_avion_3_annees,
@@ -169,7 +171,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -197,7 +198,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -270,7 +270,6 @@ export class QuestionKYCUsecase {
       utilisateurId,
       [
         Scope.kyc,
-        Scope.todo,
         Scope.gamification,
         Scope.missions,
         Scope.gamification,
@@ -347,7 +346,6 @@ export class QuestionKYCUsecase {
     gain_points: boolean,
   ) {
     utilisateur.kyc_history.checkQuestionExistsByCode(code_question);
-    this.updateUserTodo(utilisateur, code_question);
 
     if (
       !utilisateur.kyc_history.isQuestionAnsweredByCode(code_question) &&
@@ -396,9 +394,7 @@ export class QuestionKYCUsecase {
         code_question,
       );
 
-    this.updateUserTodo(utilisateur, code_question);
-
-    if (!question_to_update.is_answered && gain_points) {
+    if (!question_to_update.is_answererd && gain_points) {
       utilisateur.gamification.ajoutePoints(
         question_to_update.points,
         utilisateur,
@@ -486,16 +482,6 @@ export class QuestionKYCUsecase {
     this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
-  }
-
-  private updateUserTodo(utilisateur: Utilisateur, questionId: string) {
-    const matching =
-      utilisateur.parcours_todo.findTodoKYCOrMosaicElementByQuestionID(
-        questionId,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
-    }
   }
 
   private synchroAlimentationRegime(

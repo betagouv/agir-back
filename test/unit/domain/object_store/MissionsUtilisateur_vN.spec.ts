@@ -5,7 +5,7 @@ import {
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { MissionsUtilisateur_v1 } from '../../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 
 describe('MissionsUilisateur vN ', () => {

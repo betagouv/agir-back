@@ -6,7 +6,7 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../kyc/questionKYC';
-import { Thematique } from '../../contenu/thematique';
+import { Thematique } from '../../thematique/thematique';
 import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';

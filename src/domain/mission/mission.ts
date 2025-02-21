@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DefiDefinition } from '../defis/defiDefinition';
 import { DefiStatus } from '../defis/defi';
 import { KYCMosaicID } from '../kyc/KYCMosaicID';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import {
   Mission_v1,
   Objectif_v1,

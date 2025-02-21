@@ -10,7 +10,7 @@ import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repositor
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
 @Injectable()
@@ -24,60 +24,6 @@ export class RechercheServicesUsecase {
   ) {}
 
   async search(
-    utilisateurId: string,
-    serviceId: ServiceRechercheID,
-    filtre: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.logement, Scope.bilbiotheque_services],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const finder = this.rechercheServiceManager.getFinderById(serviceId);
-
-    if (!finder) {
-      ApplicationError.throwUnkonwnSearchService(serviceId);
-    }
-
-    if (
-      filtre.categorie &&
-      !finder.getManagedCategories().includes(filtre.categorie)
-    ) {
-      ApplicationError.throwUnkonwnCategorieForSearchService(
-        serviceId,
-        filtre.categorie,
-      );
-    }
-
-    if (
-      serviceId === ServiceRechercheID.proximite ||
-      serviceId === ServiceRechercheID.longue_vie_objets
-    ) {
-      if (!filtre.hasPoint()) {
-        if (!utilisateur.logement.code_postal) {
-          ApplicationError.throwUnkonwnUserLocation();
-        } else {
-          filtre.code_postal = utilisateur.logement.code_postal;
-          filtre.commune = utilisateur.logement.commune;
-        }
-      }
-    }
-    const result = await finder.find(filtre);
-
-    utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.ALL],
-    );
-
-    this.completeFavorisDataToResult(serviceId, result, utilisateur);
-
-    return result;
-  }
-
-  async search_2(
     utilisateurId: string,
     serviceId: ServiceRechercheID,
     filtre: FiltreRecherche,
@@ -127,7 +73,7 @@ export class RechercheServicesUsecase {
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.ALL],
+      [Scope.bilbiotheque_services],
     );
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
@@ -254,23 +200,6 @@ export class RechercheServicesUsecase {
 
     let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.is_available_inhouse);
-
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
-
-  // DEPRECATED
-  async getListServiceDef(
-    utilisateurId: string,
-    thematique: string,
-  ): Promise<NewServiceDefinition[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let result = this.newServiceCatalogue.getCatalogue();
-    result = result.filter((r) => r.thematique === thematique);
 
     return this.personnalisator.personnaliser(result, utilisateur);
   }

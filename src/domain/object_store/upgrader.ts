@@ -8,14 +8,13 @@ import { Logement_v0 } from './logement/logement_v0';
 import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur_v1 } from './mission/MissionsUtilisateur_v1';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
-import { ParcoursTodo_v0 } from './parcoursTodo/parcoursTodo_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
+import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
 
 export enum SerialisableDomain {
   UnlockedFeatures = 'UnlockedFeatures',
-  ParcoursTodo = 'ParcoursTodo',
   History = 'History',
   Gamification = 'Gamification',
   KYCHistory = 'KYCHistory',
@@ -24,12 +23,12 @@ export enum SerialisableDomain {
   MissionsUtilisateur = 'MissionsUtilisateur',
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
+  ThematiqueHistory = 'ThematiqueHistory',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
   UnlockedFeatures_v0: UnlockedFeatures_v0,
   UnlockedFeatures_v1: UnlockedFeatures_v1,
-  ParcoursTodo_v0: ParcoursTodo_v0,
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,
@@ -41,6 +40,7 @@ const CLASS_DICTIONNARY = {
   MissionsUtilisateur_v1: MissionsUtilisateur_v1,
   BibliothequeServices_v0: BibliothequeServices_v0,
   NotificationHistory_v0: NotificationHistory_v0,
+  ThematiqueHistory_v0: ThematiqueHistory_v0,
 };
 
 const DATE_REGEXP =

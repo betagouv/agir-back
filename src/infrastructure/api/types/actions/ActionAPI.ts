@@ -3,7 +3,7 @@ import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
 import { TypeAction } from '../../../../domain/actions/typeAction';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { EchelleAide } from '../../../../domain/aides/echelle';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
@@ -60,6 +60,7 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_aides_disponibles: number;
@@ -95,6 +96,7 @@ export class ActionAPI {
       aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,
+      quizz_felicitations: action.quizz_felicitations,
     };
   }
 }

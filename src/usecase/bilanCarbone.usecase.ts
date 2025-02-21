@@ -14,7 +14,7 @@ import { QuestionKYCUsecase } from './questionKYC.usecase';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { Feature } from '../domain/gamification/feature';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 

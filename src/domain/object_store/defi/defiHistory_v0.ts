@@ -1,5 +1,5 @@
 import { Versioned, Versioned_v0 } from '../versioned';
-import { Thematique } from '../../contenu/thematique';
+import { Thematique } from '../../thematique/thematique';
 import { Tag } from '../../scoring/tag';
 import { Defi, DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';

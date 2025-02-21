@@ -1,6 +1,6 @@
-import { Thematique } from '../contenu/thematique';
-import { Mission, TypeMission } from '../mission/mission';
-import { MissionDefinition } from '../mission/missionDefinition';
+import { Thematique } from '../thematique/thematique';
+import { Mission, TypeMission } from './mission';
+import { MissionDefinition } from './missionDefinition';
 import { PriorityContent } from '../scoring/priorityContent';
 
 export class TuileMission implements PriorityContent {

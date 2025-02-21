@@ -1,5 +1,5 @@
 import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';

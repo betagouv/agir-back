@@ -10,7 +10,7 @@ import { App } from '../../../src/domain/app';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { ControllerExceptionFilter } from './controllerException.filter';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { TypeAction } from '../../domain/actions/typeAction';
 

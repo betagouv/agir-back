@@ -11,6 +11,7 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../kyc/questionKYC';
+import { Thematique } from '../../thematique/thematique';
 import { Tag } from '../../scoring/tag';
 import { Versioned_v2 } from '../versioned';
 import { KYCHistory_v1 } from './kycHistory_v1';

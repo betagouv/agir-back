@@ -1,3 +1,19 @@
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
+import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
+const request = require('supertest');
+import { JwtService } from '@nestjs/jwt';
+import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
+import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
+import { Feature } from '../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
+import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
+import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Action,
   AideExpirationWarning,
@@ -61,16 +77,21 @@ import {
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
-import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
-import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
-import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
-import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
+import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
+import { CanalNotification } from '../src/domain/notification/notificationHistory';
+import { Thematique } from '../src/domain/thematique/thematique';
+import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
+import { History_v0 } from '../src/domain/object_store/history/history_v0';
+import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
-import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
+import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
+import { EchelleAide } from '../src/domain/aides/echelle';
+import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import { TypeAction } from '../src/domain/actions/typeAction';
+import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -388,6 +409,7 @@ export class TestUtil {
       code: 'code_fonct',
       besoins: [],
       comment: 'Astuces',
+      quizz_felicitations: 'bien',
       pourquoi: 'En quelques mots',
       kyc_ids: [],
       lvo_action: CategorieRecherche.emprunter,
@@ -551,7 +573,6 @@ export class TestUtil {
         },
       ],
     };
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
 
     const history: History_v0 = {
       version: 0,
@@ -564,6 +585,11 @@ export class TestUtil {
       version: 0,
       sent_notifications: [],
       enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    };
+
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [],
     };
 
     const gamification: Gamification_v0 = {
@@ -621,7 +647,6 @@ export class TestUtil {
       prevent_sendemail_before: new Date(),
       version: 0,
       migration_enabled: false,
-      todo: todo,
       gamification: gamification,
       unlocked_features: unlocked,
       history: history,
@@ -647,6 +672,7 @@ export class TestUtil {
       source_inscription: SourceInscription.web,
       unsubscribe_mail_token: null,
       notification_history: notifications,
+      thematique_history: thematique_history,
       est_valide_pour_classement: true,
       brevo_created_at: null,
       brevo_updated_at: null,
