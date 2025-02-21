@@ -15,8 +15,6 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { TypeAction } from '../domain/actions/typeAction';
-import { Quizz } from '../domain/contenu/quizz';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
 @Injectable()
@@ -88,6 +86,13 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    return await this.internal_get_user_actions(utilisateur, thematique);
+  }
+
+  public async internal_get_user_actions(
+    utilisateur: Utilisateur,
+    thematique: Thematique,
+  ): Promise<Action[]> {
     const liste_actions = await this.actionRepository.list({
       thematique: thematique,
     });
