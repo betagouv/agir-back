@@ -1,23 +1,15 @@
-import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { DB, TestUtil } from '../../TestUtil';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { Categorie } from '../../../src/domain/contenu/categorie';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 
 describe('Thematique (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  const kycRepository = new KycRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -269,5 +261,47 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(false);
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaire_id: '123',
+      echelle: EchelleAide.Commune,
+      codes_postaux: ['21000'],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
+    expect(
+      response.body.liste_actions_recommandees[0].nombre_aides_disponibles,
+    ).toEqual(1);
+    expect(response.body.liste_actions_recommandees[0].titre).toEqual(
+      'The titre',
+    );
   });
 });

@@ -10,7 +10,6 @@ import { EchelleAide } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 
 describe('Actions (API test)', () => {
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
 

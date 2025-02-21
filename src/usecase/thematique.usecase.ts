@@ -43,11 +43,21 @@ export class ThematiqueUsecase {
 
     const enchainement_id = THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
 
+    const personnalisation_done =
+      utilisateur.thematique_history.isPersonnalisationDone(thematique);
+
+    let actions = [];
+    if (personnalisation_done) {
+      actions = await this.actionUsecase.internal_get_user_actions(
+        utilisateur,
+        thematique,
+      );
+    }
     return {
       thematique: thematique,
       enchainement_questions_personnalisation: enchainement_id,
-      personnalisation_necessaire:
-        !utilisateur.thematique_history.isPersonnalisationDone(thematique),
+      personnalisation_necessaire: !personnalisation_done,
+      liste_actions: actions,
     };
   }
 

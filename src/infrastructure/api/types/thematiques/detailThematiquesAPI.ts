@@ -25,7 +25,9 @@ export class DetailThematiquesAPI {
       est_personnalisation_necessaire: detail.personnalisation_necessaire,
       enchainement_questions_personnalisation:
         detail.enchainement_questions_personnalisation,
-      liste_actions_recommandees: [],
+      liste_actions_recommandees: detail.liste_actions.map((a) =>
+        ActionLightAPI.mapToAPI(a),
+      ),
     };
   }
 }
