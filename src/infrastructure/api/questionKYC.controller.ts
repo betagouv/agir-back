@@ -1,4 +1,13 @@
 import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
@@ -7,25 +16,16 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Put,
-  Param,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-} from '@nestjs/common';
+import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
+import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
-import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
-import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
-import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
-import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
+import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
+import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { ReponseKYCAPI_v2 } from './types/kyc/reponseKYCAPI_v2';
+import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
 
 @Controller()
 @ApiExtraModels(

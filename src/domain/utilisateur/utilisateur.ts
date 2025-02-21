@@ -1,25 +1,25 @@
-import { CodeManager } from './manager/codeManager';
-import { PasswordManager } from './manager/passwordManager';
+import { v4 as uuidv4 } from 'uuid';
+import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
+import { App } from '../app';
+import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { DefiHistory } from '../defis/defiHistory';
 import { Gamification } from '../gamification/gamification';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
-import { KYCHistory } from '../kyc/kycHistory';
-import { Logement } from '../logement/logement';
-import { App } from '../app';
-import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Tag } from '../scoring/tag';
-import { DefiHistory } from '../defis/defiHistory';
-import { UserTagEvaluator } from '../scoring/userTagEvaluator';
-import { QuestionKYC } from '../kyc/questionKYC';
-import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
-import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
-import validator from 'validator';
+import { KYCHistory } from '../kyc/kycHistory';
+import { QuestionKYC } from '../kyc/questionKYC';
+import { Logement } from '../logement/logement';
+import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { NotificationHistory } from '../notification/notificationHistory';
-var crypto = require('crypto');
-import { v4 as uuidv4 } from 'uuid';
+import { Tag } from '../scoring/tag';
+import { TagPonderationSet } from '../scoring/tagPonderationSet';
+import { UserTagEvaluator } from '../scoring/userTagEvaluator';
 import { ThematiqueHistory } from '../thematique/thematiqueHistory';
+import { CodeManager } from './manager/codeManager';
+import { PasswordManager } from './manager/passwordManager';
+var crypto = require('crypto');
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -79,7 +79,7 @@ export class Utilisateur {
   version: number;
   migration_enabled: boolean;
   kyc_history: KYCHistory;
-  logement: Logement;
+  logement?: Logement;
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
   force_connexion: boolean;
@@ -269,7 +269,7 @@ export class Utilisateur {
 
   /**
    * Returns the total number of people in the household, including adults and
-   * children (see {@link UtilisateurData.logement}).
+   * children (see {@link Utilisateur.logement}).
    *
    * @ensures The result to be in the range [1, +∞[.
    */

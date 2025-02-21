@@ -1,11 +1,11 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { DB, TestUtil } from '../../TestUtil';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
