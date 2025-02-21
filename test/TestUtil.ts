@@ -1,19 +1,3 @@
-import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
-import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
-import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
-import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
-import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
-const request = require('supertest');
-import { JwtService } from '@nestjs/jwt';
-import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
-import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
-import { Feature } from '../src/domain/gamification/feature';
-import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
-import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import {
   Action,
   AideExpirationWarning,
@@ -48,7 +32,6 @@ import { EchelleAide } from '../src/domain/aides/echelle';
 import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
-import { Thematique } from '../src/domain/contenu/thematique';
 import { DefiStatus } from '../src/domain/defis/defi';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../src/domain/gamification/feature';
@@ -67,31 +50,26 @@ import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
-import { ParcoursTodo_v0 } from '../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
+import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Tag } from '../src/domain/scoring/tag';
 import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../src/domain/service/service';
-import { ParcoursTodo } from '../src/domain/todo/parcoursTodo';
+import { Thematique } from '../src/domain/thematique/thematique';
 import {
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
-import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
-import { CanalNotification } from '../src/domain/notification/notificationHistory';
-import { Thematique } from '../src/domain/thematique/thematique';
-import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
-import { History_v0 } from '../src/domain/object_store/history/history_v0';
-import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
+import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
+import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
+import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
-import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
-import { EchelleAide } from '../src/domain/aides/echelle';
-import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
-import { TypeAction } from '../src/domain/actions/typeAction';
-import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',

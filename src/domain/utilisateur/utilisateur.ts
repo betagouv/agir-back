@@ -16,12 +16,10 @@ import { NotificationHistory } from '../notification/notificationHistory';
 import { Tag } from '../scoring/tag';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
-import { ParcoursTodo } from '../todo/parcoursTodo';
+import { ThematiqueHistory } from '../thematique/thematiqueHistory';
 import { CodeManager } from './manager/codeManager';
 import { PasswordManager } from './manager/passwordManager';
 var crypto = require('crypto');
-import { v4 as uuidv4 } from 'uuid';
-import { ThematiqueHistory } from '../thematique/thematiqueHistory';
 
 export enum UtilisateurStatus {
   default = 'default',

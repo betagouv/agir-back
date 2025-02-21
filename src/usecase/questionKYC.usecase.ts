@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Enchainement,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../domain/kyc/questionKYC';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
-import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import {
+  Enchainement,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../domain/kyc/questionKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -394,7 +391,7 @@ export class QuestionKYCUsecase {
         code_question,
       );
 
-    if (!question_to_update.is_answererd && gain_points) {
+    if (!question_to_update.is_answered && gain_points) {
       utilisateur.gamification.ajoutePoints(
         question_to_update.points,
         utilisateur,

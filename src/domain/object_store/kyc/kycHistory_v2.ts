@@ -1,6 +1,5 @@
 import { ApplicationError } from '../../../infrastructure/applicationError';
 import { Categorie } from '../../contenu/categorie';
-import { Thematique } from '../../contenu/thematique';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
 import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory } from '../../kyc/kycHistory';
@@ -11,8 +10,8 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../kyc/questionKYC';
-import { Thematique } from '../../thematique/thematique';
 import { Tag } from '../../scoring/tag';
+import { Thematique } from '../../thematique/thematique';
 import { Versioned_v2 } from '../versioned';
 import { KYCHistory_v1 } from './kycHistory_v1';
 

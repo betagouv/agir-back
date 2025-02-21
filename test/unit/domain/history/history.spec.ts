@@ -1,9 +1,7 @@
 import { Article } from '../../../../src/domain/contenu/article';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { History } from '../../../../src/domain/history/history';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { History } from '../../../../src/domain/history/history';
 import { TestUtil } from '../../../../test/TestUtil';
 
 const BASIC_ARTICLE: Article = new Article({

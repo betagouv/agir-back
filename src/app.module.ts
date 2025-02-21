@@ -52,8 +52,7 @@ import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
-import { TodoController } from './infrastructure/api/todo.controller';
-import { UniversController } from './infrastructure/api/univers.controller';
+import { ThematiqueController } from './infrastructure/api/thematique.controller';
 import { OidcService } from './infrastructure/auth/oidc.service';
 import { BrevoRepository } from './infrastructure/contact/brevoRepository';
 import { EmailSender } from './infrastructure/email/emailSender';
@@ -113,7 +112,28 @@ import { ContactUsecase } from './usecase/contact.usecase';
 import { DefisUsecase } from './usecase/defis.usecase';
 import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
-import { TokenRepository } from './infrastructure/repository/token.repository';
+import { GamificationUsecase } from './usecase/gamification.usecase';
+import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { LinkyUsecase } from './usecase/linky.usecase';
+import { MagicLinkUsecase } from './usecase/magicLink.usecase';
+import { MailerUsecase } from './usecase/mailer.usecase';
+import { MigrationUsecase } from './usecase/migration.usescase';
+import { MissionUsecase } from './usecase/mission.usecase';
+import { ProfileUsecase } from './usecase/profile.usecase';
+import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
+import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
+import { RecommandationUsecase } from './usecase/recommandation.usecase';
+import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
+import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
+import { ServiceUsecase } from './usecase/service.usecase';
+import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
+import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
+import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
+import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
+import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
+import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
+import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
+import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 
 const SESSION_LIFETIME = '30 days';
@@ -269,6 +289,8 @@ function getControllers(): any[] {
     FranceConnectUsecase,
     TokenRepository,
     ThematiqueUsecase,
+    SimulateurVoitureUsecase,
+    SimulateurVoitureRepository,
   ],
 })
 export class AppModule {}

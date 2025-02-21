@@ -1,19 +1,10 @@
-import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
-import { DB, TestUtil } from '../../TestUtil';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
