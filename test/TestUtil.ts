@@ -379,7 +379,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static actionData(override?: Partial<Defi>): Action {
+  static actionData(override?: Partial<Action>): Action {
     return {
       cms_id: '111',
       titre: 'The titre',
