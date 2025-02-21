@@ -6,10 +6,10 @@ import { AidesUsecase } from './aides.usecase';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { DetailThematique } from '../domain/thematique/detailThematique';
 import { Enchainement } from '../domain/kyc/questionKYC';
-import { Key } from 'readline';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: Record<Thematique, Enchainement> = {
   alimentation: Enchainement.ENCHAINEMENT_KYC_bilan_alimentation,
@@ -37,7 +37,7 @@ export class ThematiqueUsecase {
   ): Promise<DetailThematique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -45,9 +45,45 @@ export class ThematiqueUsecase {
 
     return {
       thematique: thematique,
-      enchainement_questions_personalisation: enchainement_id,
-      personalisation_necessaire: true,
+      enchainement_questions_personnalisation: enchainement_id,
+      personnalisation_necessaire:
+        !utilisateur.thematique_history.isPersonnalisationDone(thematique),
     };
+  }
+
+  public async declarePersonnalisationOK(
+    utilisateurId: string,
+    thematique: Thematique,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    utilisateur.thematique_history.declarePersonnalisationDone(thematique);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+  public async resetPersonnalisation(
+    utilisateurId: string,
+    thematique: Thematique,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    utilisateur.thematique_history.resetPersonnalisation(thematique);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
   }
 
   public async getUtilisateurListeThematiquesPrincipales(

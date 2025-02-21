@@ -7,7 +7,7 @@ import {
   Personnalisator,
 } from '../../src/infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
-import { TestUtil } from '../../test/TestUtil';
+import { TestUtil } from '../TestUtil';
 
 describe('Personalisation', () => {
   const communeRepository = new CommuneRepository(TestUtil.prisma);

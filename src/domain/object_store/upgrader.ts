@@ -11,6 +11,7 @@ import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
+import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
 
 export enum SerialisableDomain {
   UnlockedFeatures = 'UnlockedFeatures',
@@ -22,6 +23,7 @@ export enum SerialisableDomain {
   MissionsUtilisateur = 'MissionsUtilisateur',
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
+  ThematiqueHistory = 'ThematiqueHistory',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -38,6 +40,7 @@ const CLASS_DICTIONNARY = {
   MissionsUtilisateur_v1: MissionsUtilisateur_v1,
   BibliothequeServices_v0: BibliothequeServices_v0,
   NotificationHistory_v0: NotificationHistory_v0,
+  ThematiqueHistory_v0: ThematiqueHistory_v0,
 };
 
 const DATE_REGEXP =

@@ -69,6 +69,7 @@ import { ConformiteRepository } from '../src/infrastructure/repository/conformit
 import { EchelleAide } from '../src/domain/aides/echelle';
 import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { TypeAction } from '../src/domain/actions/typeAction';
+import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
 
 export enum DB {
   CMSWebhookAPI = 'CMSWebhookAPI',
@@ -559,6 +560,11 @@ export class TestUtil {
       enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     };
 
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [],
+    };
+
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
@@ -639,6 +645,7 @@ export class TestUtil {
       source_inscription: SourceInscription.web,
       unsubscribe_mail_token: null,
       notification_history: notifications,
+      thematique_history: thematique_history,
       est_valide_pour_classement: true,
       brevo_created_at: null,
       brevo_updated_at: null,

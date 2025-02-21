@@ -10,11 +10,11 @@ export class DetailThematiquesAPI {
     enum: Enchainement,
     description: `L'id d'un enchainement de question pour personnaliser la recommandation d'actions`,
   })
-  enchainement_questions_personalisation: Enchainement;
+  enchainement_questions_personnalisation: Enchainement;
   @ApiProperty({
     description: `boolean indiquant s'il est nécessaire de poser les questions de personnalisation pour l'utilisateur courant`,
   })
-  est_personalisation_necessaire: boolean;
+  est_personnalisation_necessaire: boolean;
 
   @ApiProperty({ type: [ActionLightAPI] })
   liste_actions_recommandees: ActionLightAPI[];
@@ -22,9 +22,9 @@ export class DetailThematiquesAPI {
   public static mapToAPI(detail: DetailThematique): DetailThematiquesAPI {
     return {
       thematique: detail.thematique,
-      est_personalisation_necessaire: detail.personalisation_necessaire,
-      enchainement_questions_personalisation:
-        detail.enchainement_questions_personalisation,
+      est_personnalisation_necessaire: detail.personnalisation_necessaire,
+      enchainement_questions_personnalisation:
+        detail.enchainement_questions_personnalisation,
       liste_actions_recommandees: [],
     };
   }

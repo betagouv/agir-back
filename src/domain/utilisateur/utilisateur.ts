@@ -19,6 +19,7 @@ import validator from 'validator';
 import { NotificationHistory } from '../notification/notificationHistory';
 var crypto = require('crypto');
 import { v4 as uuidv4 } from 'uuid';
+import { ThematiqueHistory } from '../thematique/thematiqueHistory';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -46,6 +47,7 @@ export enum Scope {
   missions = 'missions',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
+  thematique_history = 'thematique_history',
 }
 
 export class Utilisateur {
@@ -94,6 +96,7 @@ export class Utilisateur {
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
+  thematique_history: ThematiqueHistory;
   unsubscribe_mail_token: string;
   est_valide_pour_classement: boolean;
   brevo_created_at: Date;
@@ -180,6 +183,7 @@ export class Utilisateur {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
+      thematique_history: new ThematiqueHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
       est_valide_pour_classement: false,
       brevo_created_at: null,

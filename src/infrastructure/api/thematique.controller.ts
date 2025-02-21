@@ -13,6 +13,7 @@ import {
   Request,
   Get,
   Query,
+  Post,
 } from '@nestjs/common';
 import { GenericControler } from './genericControler';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
@@ -92,7 +93,6 @@ export class ThematiqueController extends GenericControler {
   async getUtilisateurThematiqueCible(
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_thematique') code_thematique: string,
-
     @Request() req,
   ): Promise<DetailThematiquesAPI> {
     this.checkCallerId(req, utilisateurId);
@@ -107,5 +107,55 @@ export class ThematiqueController extends GenericControler {
     );
 
     return DetailThematiquesAPI.mapToAPI(result);
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/personnalisation_ok',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Déclare la personnalisation faire pour cette thematique`,
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+  })
+  async setPersonnalisationDone(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let them;
+    if (code_thematique) {
+      them = this.castThematiqueOrException(code_thematique);
+    }
+    await this.thematiqueUsecase.declarePersonnalisationOK(utilisateurId, them);
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/reset_personnalisation',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Déclare la personnalisation à refaire sur cette thematique`,
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+  })
+  async resetPersonnalisation(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let them;
+    if (code_thematique) {
+      them = this.castThematiqueOrException(code_thematique);
+    }
+    await this.thematiqueUsecase.resetPersonnalisation(utilisateurId, them);
   }
 }

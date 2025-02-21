@@ -52,4 +52,4 @@ import './repository/services_recherche/presdechevous.repository.int-spec';
 import './services/linkyServiceManager.int-spec';
 import './usecase/linky.usecase.int-spec';
 import './usecase/contact.usecase.int-spec';
-import './personalisation.int-spec';
+import './personnalisation.int-spec';

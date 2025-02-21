@@ -26,12 +26,7 @@ export class QuestionKYCUsecase {
   ) {}
 
   static ENCHAINEMENTS: { [key in Enchainement]?: (KYCID | KYCMosaicID)[] } = {
-    ENCHAINEMENT_KYC_1: [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCMosaicID.TEST_MOSAIC_ID,
-    ],
+    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
     ENCHAINEMENT_KYC_mini_bilan_carbone: [
       KYCID.KYC_transport_voiture_km,
       KYCID.KYC_transport_avion_3_annees,

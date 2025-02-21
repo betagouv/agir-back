@@ -73,7 +73,7 @@ export class RechercheServicesUsecase {
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.ALL],
+      [Scope.bilbiotheque_services],
     );
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
