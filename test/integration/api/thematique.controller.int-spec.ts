@@ -304,4 +304,63 @@ describe('Thematique (API test)', () => {
       'The titre',
     );
   });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation - max 6 actions proposées`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(6);
+  });
+  it(`GET /utilisateurs/id/thematiques/alimentation - 3 actions si que 3 actions en base`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 3; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(3);
+  });
 });

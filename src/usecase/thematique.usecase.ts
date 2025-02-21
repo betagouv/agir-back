@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { Enchainement } from '../domain/kyc/questionKYC';
+import { DetailThematique } from '../domain/thematique/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ApplicationError } from '../infrastructure/applicationError';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
-import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import { ApplicationError } from '../infrastructure/applicationError';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { DetailThematique } from '../domain/thematique/detailThematique';
-import { Enchainement } from '../domain/kyc/questionKYC';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: Record<Thematique, Enchainement> = {
   alimentation: Enchainement.ENCHAINEMENT_KYC_bilan_alimentation,
@@ -40,24 +40,54 @@ export class ThematiqueUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    const result = new DetailThematique();
     const enchainement_id = THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
 
     const personnalisation_done =
       utilisateur.thematique_history.isPersonnalisationDone(thematique);
 
-    let actions = [];
-    if (personnalisation_done) {
-      actions = await this.actionUsecase.internal_get_user_actions(
-        utilisateur,
-        thematique,
-      );
+    result.enchainement_questions_personnalisation = enchainement_id;
+    result.thematique = thematique;
+    result.personnalisation_necessaire = !personnalisation_done;
+    result.liste_actions = [];
+
+    if (!personnalisation_done) {
+      return result;
     }
-    return {
-      thematique: thematique,
-      enchainement_questions_personnalisation: enchainement_id,
-      personnalisation_necessaire: !personnalisation_done,
-      liste_actions: actions,
-    };
+
+    if (utilisateur.thematique_history.plusDeSuggestionsDispo()) {
+      return result;
+    }
+
+    let actions = await this.actionUsecase.internal_get_user_actions(
+      utilisateur,
+      thematique,
+      utilisateur.thematique_history.getActionsExclues(),
+    );
+
+    actions = actions.slice(0, 6);
+    result.liste_actions = actions;
+
+    utilisateur.thematique_history.setActionsProposees(actions);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+
+    return result;
+  }
+
+  public async removeAction(
+    utilisateurId: string,
+    thematique: Thematique,
+    code_action: string,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
   }
 
   public async declarePersonnalisationOK(
@@ -77,6 +107,7 @@ export class ThematiqueUsecase {
       [Scope.thematique_history],
     );
   }
+
   public async resetPersonnalisation(
     utilisateurId: string,
     thematique: Thematique,

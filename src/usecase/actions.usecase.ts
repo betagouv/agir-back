@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { Thematique } from '../domain/thematique/thematique';
-import { ApplicationError } from '../infrastructure/applicationError';
 import { Action, ActionService } from '../domain/actions/action';
-import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { TypeAction } from '../domain/actions/typeAction';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { EchelleAide } from '../domain/aides/echelle';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { Thematique } from '../domain/thematique/thematique';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ApplicationError } from '../infrastructure/applicationError';
+import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 import {
   Commune,
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
-import { AideDefinition } from '../domain/aides/aideDefinition';
-import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { TypeAction } from '../domain/actions/typeAction';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
 @Injectable()
@@ -88,9 +87,11 @@ export class ActionUsecase {
   public async internal_get_user_actions(
     utilisateur: Utilisateur,
     thematique: Thematique,
+    codes_exclus?: string[],
   ): Promise<Action[]> {
     const liste_actions = await this.actionRepository.list({
       thematique: thematique,
+      codes_exclus: codes_exclus,
     });
 
     let result: Action[] = [];

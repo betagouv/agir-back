@@ -1,4 +1,13 @@
 import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
@@ -6,22 +15,13 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Param,
-  UseGuards,
-  Request,
-  Get,
-  Query,
-  Post,
-} from '@nestjs/common';
-import { GenericControler } from './genericControler';
-import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesAPI';
-import { AuthGuard } from '../auth/guard';
 import { Thematique } from '../../domain/thematique/thematique';
+import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
 import { DetailThematiquesAPI } from './types/thematiques/detailThematiquesAPI';
+import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -157,5 +157,36 @@ export class ThematiqueController extends GenericControler {
       them = this.castThematiqueOrException(code_thematique);
     }
     await this.thematiqueUsecase.resetPersonnalisation(utilisateurId, them);
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/:code_action/remove',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de proposition une action de code donné`,
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `Code de l'action à supprimer de la selection`,
+  })
+  async removeAction(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+    @Param('code_action') code_action: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let them;
+    if (code_thematique) {
+      them = this.castThematiqueOrException(code_thematique);
+    }
+    await this.thematiqueUsecase.removeAction(utilisateurId, them, code_action);
   }
 }

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Action } from '@prisma/client';
-import { Thematique } from '../../domain/thematique/thematique';
 import { Cron } from '@nestjs/schedule';
+import { Action } from '@prisma/client';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
+  codes_exclus?: string[];
 };
 
 @Injectable()
@@ -110,6 +111,12 @@ export class ActionRepository {
 
     if (filtre.thematique) {
       main_filter['thematique'] = filtre.thematique;
+    }
+
+    if (filtre.codes_exclus) {
+      main_filter['code'] = {
+        notIn: filtre.codes_exclus,
+      };
     }
 
     return {
