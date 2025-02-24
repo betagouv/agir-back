@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
-import { PartenaireDefinition } from '../../domain/contenu/partenaireDefinition';
 import { Partenaire } from '@prisma/client';
+import { Echelle } from '../../domain/aides/echelle';
+import { PartenaireDefinition } from '../../domain/contenu/partenaireDefinition';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PartenaireRepository {
@@ -41,6 +42,7 @@ export class PartenaireRepository {
         nom: partenaire.nom,
         url: partenaire.url,
         image_url: partenaire.image_url,
+        echelle: Echelle[partenaire.echelle],
       });
     }
     PartenaireRepository.catalogue_partenaires = new_map;
@@ -56,6 +58,7 @@ export class PartenaireRepository {
       image_url: partenaire.image_url,
       nom: partenaire.nom,
       url: partenaire.url,
+      echelle: partenaire.echelle,
       created_at: undefined,
       updated_at: undefined,
     };

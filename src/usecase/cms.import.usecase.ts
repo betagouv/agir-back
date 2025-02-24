@@ -564,6 +564,7 @@ export class CMSImportUsecase {
       image_url: this.getFirstImageUrlFromPopulate(
         entry.attributes.logo.data[0],
       ),
+      echelle: Echelle[entry.attributes.echelle],
     };
   }
 

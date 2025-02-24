@@ -523,6 +523,7 @@ export class CMSWebhookUsecase {
       nom: entry.nom,
       url: entry.lien,
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
+      echelle: Echelle[entry.echelle],
     };
   }
 

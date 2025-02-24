@@ -298,6 +298,7 @@ model Partenaire {
   nom        String?
   url        String?
   image_url  String?
+  echelle    String?
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 }

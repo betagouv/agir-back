@@ -684,6 +684,7 @@ export class TestUtil {
       image_url: 'logo_url',
       nom: 'ADEME',
       url: 'https://ademe.fr',
+      echelle: Echelle.National,
       created_at: undefined,
       updated_at: undefined,
       ...override,

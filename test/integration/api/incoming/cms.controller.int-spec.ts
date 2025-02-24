@@ -1,6 +1,7 @@
 import { KYC, Mission } from '.prisma/client';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../../src/domain/aides/besoin';
+import { Echelle } from '../../../../src/domain/aides/echelle';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
@@ -368,6 +369,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       nom: 'part',
       lien: 'the lien',
+      echelle: Echelle.Département,
       logo: [
         {
           formats: {
@@ -619,6 +621,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].url).toEqual('the lien');
+    expect(partenaire[0].echelle).toEqual(Echelle.Département);
     expect(partenaire[0].image_url).toEqual('https://haha');
   });
 
