@@ -1,5 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { Categorie } from '../../src/domain/contenu/categorie';
+import { ContentType } from '../../src/domain/contenu/contentType';
+import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { Article } from '../domain/contenu/article';
+import { Quizz } from '../domain/contenu/quizz';
+import { Recommandation } from '../domain/contenu/recommandation';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { Thematique } from '../domain/thematique/thematique';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import {
   ArticleFilter,
   ArticleRepository,
@@ -8,17 +21,7 @@ import {
   QuizzFilter,
   QuizzRepository,
 } from '../infrastructure/repository/quizz.repository';
-import { Recommandation } from '../domain/contenu/recommandation';
-import { ContentType } from '../../src/domain/contenu/contentType';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
-import { Thematique } from '../domain/thematique/thematique';
-import { Categorie } from '../../src/domain/contenu/categorie';
-import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Article } from '../domain/contenu/article';
-import { Quizz } from '../domain/contenu/quizz';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class RecommandationUsecase {
@@ -60,7 +63,9 @@ export class RecommandationUsecase {
 
     content = content.slice(0, 6);
 
-    return this.personnalisator.personnaliser(content, utilisateur);
+    return this.personnalisator.personnaliser(content, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   private getKYC(

@@ -6,6 +6,7 @@ import { Besoin } from '../domain/aides/besoin';
 import { Echelle } from '../domain/aides/echelle';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ContentType } from '../domain/contenu/contentType';
@@ -32,6 +33,7 @@ import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhoo
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
+import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
@@ -55,6 +57,7 @@ export class CMSWebhookUsecase {
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
+    private blockTextRepository: BlockTextRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -151,6 +154,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateFAQ(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.text) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateBlockTexte(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.conformite) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -195,6 +210,9 @@ export class CMSWebhookUsecase {
   async deleteFAQ(cmsWebhookAPI: CMSWebhookAPI) {
     await this.fAQRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+  async deleteBlockTexte(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.blockTextRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -217,6 +235,13 @@ export class CMSWebhookUsecase {
 
     await this.fAQRepository.upsert(
       this.buildFAQFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateBlockTexte(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.blockTextRepository.upsert(
+      this.buildBlockTexteFromCMSData(cmsWebhookAPI.entry),
     );
   }
   async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
@@ -535,6 +560,17 @@ export class CMSWebhookUsecase {
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
+    };
+  }
+
+  private buildBlockTexteFromCMSData(
+    entry: CMSWebhookEntryAPI,
+  ): BlockTextDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.code,
+      titre: entry.titre,
+      texte: entry.texte,
     };
   }
 

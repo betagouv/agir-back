@@ -93,6 +93,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
+  @ApiProperty() texte: string;
   @ApiProperty() categorie_recettes: string;
   @ApiProperty() est_visible: boolean;
   @ApiProperty() est_gratuit: boolean;

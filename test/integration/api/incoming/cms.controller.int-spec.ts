@@ -393,6 +393,16 @@ describe('/api/incoming/cms (API test)', () => {
       },
     },
   };
+  const CMS_DATA_BLOCKTEXT = {
+    model: CMSModel.text,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      code: '456',
+      titre: 'The titre',
+      texte: 'The texte',
+    },
+  };
   const CMS_DATA_QUIZZ = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
@@ -642,6 +652,25 @@ describe('/api/incoming/cms (API test)', () => {
     expect(faq[0].question).toEqual('The question');
     expect(faq[0].reponse).toEqual('The reponse');
     expect(faq[0].thematique).toEqual(Thematique.alimentation);
+  });
+
+  it('POST /api/incoming/cms - create a new BlockTexte', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_BLOCKTEXT,
+    );
+
+    // THEN
+    const faq = await TestUtil.prisma.blockText.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(faq).toHaveLength(1);
+    expect(faq[0].id_cms).toEqual('123');
+    expect(faq[0].code).toEqual('456');
+    expect(faq[0].titre).toEqual('The titre');
+    expect(faq[0].texte).toEqual('The texte');
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {

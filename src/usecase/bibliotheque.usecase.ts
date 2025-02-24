@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { Thematique } from '../domain/thematique/thematique';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import {
-  CLE_PERSO,
-  Personnalisator,
-} from '../infrastructure/personnalisation/personnalisator';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { Article } from '../domain/contenu/article';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
-import { Quizz } from '../domain/contenu/quizz';
+import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../domain/contenu/contentType';
+import { Quizz } from '../domain/contenu/quizz';
+import { Thematique } from '../domain/thematique/thematique';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class BibliothequeUsecase {

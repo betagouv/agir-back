@@ -1,6 +1,7 @@
 import {
   Action,
   AideExpirationWarning,
+  BlockText,
   Conformite,
   FAQ,
   KYC,
@@ -78,6 +79,7 @@ export enum DB {
   utilisateur = 'utilisateur',
   aide = 'aide',
   faq = 'faq',
+  blockText = 'blockText',
   conformite = 'conformite',
   defi = 'defi',
   service = 'service',
@@ -112,6 +114,7 @@ export class TestUtil {
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
     faq: TestUtil.partenaireData,
+    blockText: TestUtil.blockTextData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     defiStatistique: TestUtil.defiStatistiqueData,
@@ -220,6 +223,7 @@ export class TestUtil {
     await this.prisma.communesAndEPCI.deleteMany();
     await this.prisma.oIDC_STATE.deleteMany();
     await this.prisma.fAQ.deleteMany();
+    await this.prisma.blockText.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -696,6 +700,17 @@ export class TestUtil {
       question: 'question',
       reponse: 'reponse',
       thematique: Thematique.transport,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static blockTextData(override?: Partial<BlockText>): BlockText {
+    return {
+      id_cms: '123',
+      code: '456',
+      titre: 'titre',
+      texte: 'texte',
       created_at: undefined,
       updated_at: undefined,
       ...override,

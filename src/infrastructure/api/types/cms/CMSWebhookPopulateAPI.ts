@@ -28,6 +28,7 @@ export type CMSWebhookPopulateAPI = {
     nom: string;
     lien: string;
     titre: string;
+    texte: string;
     Titre: string;
     introduction: string;
     label: string;

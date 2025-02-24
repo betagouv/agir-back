@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
+import { BlockTextRepository } from '../repository/blockText.repository';
 import { CommuneRepository } from '../repository/commune/commune.repository';
 
 export enum CLE_PERSO {
   commune = '{COMMUNE}',
   code_postal = '{CODE_POSTAL}',
   espace_insecable = 'espace_insecable',
+  block_text_cms = 'block_text_cms',
 }
 
 @Injectable()
@@ -19,11 +21,8 @@ export class Personnalisator {
   public personnaliser<T>(
     obj: T,
     utilisateur: Utilisateur,
-    disable_actions?: CLE_PERSO[],
+    disable_actions: CLE_PERSO[] = [],
   ): T {
-    if (!disable_actions) {
-      disable_actions = [];
-    }
     if (obj === undefined) return undefined;
     if (obj === null) return null;
 
@@ -55,17 +54,23 @@ export class Personnalisator {
   private personnaliserText(
     text: string,
     utilisateur: Utilisateur,
-    disable_actions?: CLE_PERSO[],
+    disable_actions: CLE_PERSO[] = [],
   ): string {
     let new_value = text;
     if (!disable_actions.includes(CLE_PERSO.espace_insecable)) {
       new_value = this.replaceLastSpaceByNBSP(text);
     }
+
     for (const cle of this.KEYS_PERSO) {
       if (new_value.includes(cle) && !disable_actions.includes(cle)) {
         new_value = this.replace(new_value, cle, utilisateur);
       }
     }
+
+    if (!disable_actions.includes(CLE_PERSO.block_text_cms)) {
+      new_value = this.replaceCmsBlockText(new_value);
+    }
+
     return new_value;
   }
   private replace(
@@ -74,6 +79,17 @@ export class Personnalisator {
     utilisateur: Utilisateur,
   ): string {
     return source.replace(key, this.formatCle(key, utilisateur));
+  }
+
+  private replaceCmsBlockText(source: string): string {
+    let result = source;
+    for (const code of BlockTextRepository.getCodeIterator()) {
+      result = result.replace(
+        `{${code}}`,
+        BlockTextRepository.getTexteByCode(code),
+      );
+    }
+    return result;
   }
 
   private replaceLastSpaceByNBSP(source: string): string {

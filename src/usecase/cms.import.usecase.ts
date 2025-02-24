@@ -24,6 +24,7 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
@@ -36,6 +37,7 @@ import {
   ImageUrlAPI2,
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
@@ -55,6 +57,7 @@ export class CMSImportUsecase {
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
+    private blockTextRepository: BlockTextRepository,
   ) {}
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -290,6 +293,31 @@ export class CMSImportUsecase {
     return loading_result;
   }
 
+  async loadBlockTexteFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: BlockTextDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('texts');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let def: BlockTextDefinition;
+      try {
+        def = this.buildBlockTextFromCMSPopulateData(element);
+        liste.push(def);
+        loading_result.push(`loaded Block Texte : ${def.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load Block Texte ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.blockTextRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+
   async loadKYCFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_kyc: KycDefinition[] = [];
@@ -452,6 +480,7 @@ export class CMSImportUsecase {
       | 'defis'
       | 'kycs'
       | 'faqs'
+      | 'texts'
       | 'missions'
       | 'thematiques'
       | 'partenaires'
@@ -516,7 +545,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs&populate[39]=faqs',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts',
     );
     return URL.concat(page);
   }
@@ -565,6 +594,17 @@ export class CMSImportUsecase {
         entry.attributes.logo.data[0],
       ),
       echelle: Echelle[entry.attributes.echelle],
+    };
+  }
+
+  private buildBlockTextFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): BlockTextDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.attributes.code,
+      titre: entry.attributes.titre,
+      texte: entry.attributes.texte,
     };
   }
 

@@ -143,6 +143,16 @@ export class LoadCMSController extends GenericControler {
     return await this.cmsUsecase.loadFAQFromCMS();
   }
 
+  @Post('/admin/load_blocktexte_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les block de textes publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async load_blocktexte_from_cms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadBlockTexteFromCMS();
+  }
+
   @Post('/admin/load_quizzes_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les quizz publiés du CMS',

@@ -14,6 +14,7 @@ import {
   AideVeloAPI,
   AidesVeloParTypeAPI,
 } from '../../../src/infrastructure/api/types/aide/AidesVeloParTypeAPI';
+import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -22,6 +23,7 @@ import { DB, TestUtil } from '../../TestUtil';
 describe('Aide (API test)', () => {
   const OLD_ENV = process.env;
   let thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
 
@@ -341,6 +343,38 @@ describe('Aide (API test)', () => {
     expect(aideBody.besoin_desc).toEqual('Acheter un vélo');
     expect(aideBody.est_gratuit).toEqual(false);
   });
+
+  it(`GET /utilisateurs/:utilisateurId/aides remplace un block de texte dans une aide`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.load();
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      partenaire_id: '123',
+      contenu: 'ksqjfhqsjf {block_123} dfjksqmlmfjq',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+
+    const aideBody = response.body.liste_aides[0] as AideAPI;
+    expect(aideBody.contenu).toEqual('ksqjfhqsjf the texte dfjksqmlmfjq');
+  });
+
   it('GET /utilisateurs/:utilisateurId/aides aide non visible si expirée', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

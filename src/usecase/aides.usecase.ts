@@ -434,7 +434,7 @@ export class AidesUsecase {
 <br>
 <br>Je ne veux pas juger, mais son altesse a quand même un peu échoué dans sa mission de maintenir l'ordre dans le royaume....
 <br>
-<br>Je te souhaite une bien bonne journée, bien qu'elle commence un peu mal à mon goût.`,
+<br>Je te souhaite que cette journée finisse mieux qu'elle n'a commencé...`,
           `L'aide d'id ${id} est expirée et supprimée du catalogue utilisateur`,
         );
         if (sent_email) {

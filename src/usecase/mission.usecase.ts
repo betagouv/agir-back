@@ -1,27 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { ContentType } from '../../src/domain/contenu/contentType';
+import { DefiStatus } from '../../src/domain/defis/defi';
+import { Mission, Objectif } from '../../src/domain/mission/mission';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { Mission, Objectif } from '../../src/domain/mission/mission';
-import { ContentType } from '../../src/domain/contenu/contentType';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { DefiStatus } from '../../src/domain/defis/defi';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Article } from '../domain/contenu/article';
+import { Categorie } from '../domain/contenu/categorie';
 import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../domain/mission/missionDefinition';
+import { TuileMission } from '../domain/mission/tuileMission';
+import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
+import { PriorityContent } from '../domain/scoring/priorityContent';
+import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import {
   ArticleFilter,
   ArticleRepository,
 } from '../infrastructure/repository/article.repository';
-import { Categorie } from '../domain/contenu/categorie';
-import { PonderationApplicativeManager } from '../domain/scoring/ponderationApplicative';
-import { TuileMission } from '../domain/mission/tuileMission';
-import { Thematique } from '../domain/thematique/thematique';
-import { PriorityContent } from '../domain/scoring/priorityContent';
-import { Article } from '../domain/contenu/article';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class MissionUsecase {
@@ -83,7 +86,9 @@ export class MissionUsecase {
       [Scope.missions],
     );
 
-    return this.personnalisator.personnaliser(final_result, utilisateur);
+    return this.personnalisator.personnaliser(final_result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   async getTuilesMissionsOfThematique(
@@ -106,7 +111,9 @@ export class MissionUsecase {
       [Scope.missions],
     );
 
-    return this.personnalisator.personnaliser(final_result, utilisateur);
+    return this.personnalisator.personnaliser(final_result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   private async getOrderedListeMissionsOfThematique(
@@ -227,7 +234,9 @@ export class MissionUsecase {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     }
 
-    return this.personnalisator.personnaliser(mission_resultat, utilisateur);
+    return this.personnalisator.personnaliser(mission_resultat, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   async gagnerPointsDeObjectif(utilisateurId: string, objectifId: string) {

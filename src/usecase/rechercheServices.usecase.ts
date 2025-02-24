@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
-import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
-import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NewServiceDefinition } from '../domain/bibliotheque_services/newServiceDefinition';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
+import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
+import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Thematique } from '../domain/thematique/thematique';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
+import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
 
 @Injectable()
@@ -201,7 +204,9 @@ export class RechercheServicesUsecase {
     let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.is_available_inhouse);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   async getListServicesOfThematique(
@@ -217,7 +222,9 @@ export class RechercheServicesUsecase {
     let result = this.newServiceCatalogue.getCatalogue();
     result = result.filter((r) => r.thematique === thematique);
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   async getCategories(

@@ -67,6 +67,7 @@ import { AideExpirationWarningRepository } from './infrastructure/repository/aid
 import { ArticleRepository } from './infrastructure/repository/article.repository';
 import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
+import { BlockTextRepository } from './infrastructure/repository/blockText.repository';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
@@ -293,6 +294,7 @@ function getControllers(): any[] {
     SimulateurVoitureUsecase,
     SimulateurVoitureRepository,
     FAQRepository,
+    BlockTextRepository,
   ],
 })
 export class AppModule {}
