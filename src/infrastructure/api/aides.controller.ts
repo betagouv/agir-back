@@ -19,6 +19,7 @@ import { App } from '../../domain/app';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
+import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
@@ -84,6 +85,18 @@ export class AidesController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const aides = await this.aidesUsecase.getCatalogueAides(utilisateurId);
     return AideAPI_v2.mapToAPI(aides.aides, aides.utilisateur);
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @ApiOkResponse({ type: AideAPI })
+  @Get('aides/:id_cms')
+  async getAides_v2(
+    @Param('id_cms') id_cms: string,
+    @Request() req,
+  ): Promise<AideAPI> {
+    const aide = await this.aidesUsecase.getAideByIdCMS(id_cms);
+    return AideAPI.mapToAPI(aide);
   }
 
   @ApiOkResponse({ type: AidesVeloParTypeAPI })

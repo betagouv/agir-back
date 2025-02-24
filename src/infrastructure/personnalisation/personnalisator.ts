@@ -20,7 +20,7 @@ export class Personnalisator {
 
   public personnaliser<T>(
     obj: T,
-    utilisateur: Utilisateur,
+    utilisateur: Utilisateur = null,
     disable_actions: CLE_PERSO[] = [],
   ): T {
     if (obj === undefined) return undefined;
@@ -61,9 +61,11 @@ export class Personnalisator {
       new_value = this.replaceLastSpaceByNBSP(text);
     }
 
-    for (const cle of this.KEYS_PERSO) {
-      if (new_value.includes(cle) && !disable_actions.includes(cle)) {
-        new_value = this.replace(new_value, cle, utilisateur);
+    if (utilisateur) {
+      for (const cle of this.KEYS_PERSO) {
+        if (new_value.includes(cle) && !disable_actions.includes(cle)) {
+          new_value = this.replace(new_value, cle, utilisateur);
+        }
       }
     }
 

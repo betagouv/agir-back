@@ -170,6 +170,16 @@ export class AidesUsecase {
     };
   }
 
+  async getAideByIdCMS(cms_id: string): Promise<AideDefinition> {
+    const aide = await this.aideRepository.getByContentId(cms_id);
+
+    if (!aide) {
+      ApplicationError.throwAideNotFound(cms_id);
+    }
+
+    return this.personnalisator.personnaliser(aide);
+  }
+
   async simulerAideVelo(
     utilisateurId: string,
     prix_velo: number,

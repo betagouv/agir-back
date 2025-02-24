@@ -344,6 +344,74 @@ describe('Aide (API test)', () => {
     expect(aideBody.est_gratuit).toEqual(false);
   });
 
+  it(`GET /utilisateurs/:utilisateurId/aides/id consultation d'une aide à partir de son ID, non connecté`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.load();
+
+    await thematiqueRepository.upsert({
+      code: Thematique.climat,
+      titre: 'Climat !!',
+      id_cms: 2,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.upsert({
+      code: Thematique.logement,
+      titre: 'Logement !!',
+      id_cms: 5,
+      emoji: '🔥',
+      image_url: 'https://img',
+      label: 'the label',
+    });
+    await thematiqueRepository.loadThematiques();
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      partenaire_id: '123',
+      content_id: '45',
+      contenu: 'ksqjfhqsjf {block_123} dfjksqmlmfjq',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().get('/aides/45');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const aideBody = response.body as AideAPI;
+    expect(aideBody.content_id).toEqual('45');
+    expect(aideBody.codes_postaux).toEqual(['91120']);
+    expect(aideBody.contenu).toEqual('ksqjfhqsjf the texte dfjksqmlmfjq');
+    expect(aideBody.echelle).toEqual(Echelle.National);
+    expect(aideBody.is_simulateur).toEqual(true);
+    expect(aideBody.url_source).toEqual('https://hello');
+    expect(aideBody.url_demande).toEqual('https://demande');
+    expect(aideBody.partenaire_nom).toEqual('ADEME');
+    expect(aideBody.partenaire_url).toEqual('https://ademe.fr');
+    expect(aideBody.partenaire_logo_url).toEqual('logo_url');
+    expect(aideBody.montant_max).toEqual(999);
+    expect(aideBody.thematiques).toEqual([
+      Thematique.climat,
+      Thematique.logement,
+    ]);
+    expect(aideBody.thematiques_label).toEqual(['Climat !!', 'Logement !!']);
+    expect(aideBody.titre).toEqual('titreA');
+    expect(aideBody.url_simulateur).toEqual('/aides/velo');
+    expect(aideBody.besoin).toEqual(Besoin.acheter_velo);
+    expect(aideBody.besoin_desc).toEqual('Acheter un vélo');
+    expect(aideBody.est_gratuit).toEqual(false);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/aides remplace un block de texte dans une aide`, async () => {
     // GIVEN
 
