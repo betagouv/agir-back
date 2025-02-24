@@ -1004,9 +1004,9 @@ describe('Mission (API test)', () => {
     });
     await kycRepository.loadDefinitions();
 
-    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_3').send({
-      reponse: ['hoho'],
-    });
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_3').send([
+      { value: 'hoho' },
+    ]);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1353,12 +1353,12 @@ describe('Mission (API test)', () => {
     });
     await kycRepository.loadDefinitions();
 
-    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_1').send({
-      reponse: ['haha'],
-    });
-    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC/_1').send({
-      reponse: ['hehe'],
-    });
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_1').send([
+      { value: 'haha' },
+    ]);
+    await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_1').send([
+      { value: 'hehe' },
+    ]);
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1441,8 +1441,12 @@ describe('Mission (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC/_3',
-    ).send({ reponse: ['Oui'] });
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_3',
+    ).send([
+      { code: 'oui', selected: true },
+      { code: 'non', selected: false },
+      { code: 'peut_etre', selected: false },
+    ]);
 
     // THEN
     expect(response.status).toBe(200);

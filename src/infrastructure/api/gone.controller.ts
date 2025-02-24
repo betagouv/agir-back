@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
 import { ApplicationError } from '../applicationError';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiBearerAuth()
@@ -159,6 +159,15 @@ export class GoneController extends GenericControler {
     summary: `DEPRECATED : NEW  => utilisateurs/:utilisateurId/thematiques/:code_thematique/recherche_services`,
   })
   async getListeServices_deprecated(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/questionsKYC_v2/:questionId',
+  })
+  @Put('utilisateurs/:utilisateurId/questionsKYC/:questionId')
+  async updateResponse(@Request() req): Promise<void> {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 }

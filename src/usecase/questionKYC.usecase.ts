@@ -189,39 +189,6 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async updateResponseKYC_deprecated(
-    utilisateurId: string,
-    code_question: string,
-    reponse: string[],
-  ): Promise<void> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [
-        Scope.kyc,
-        Scope.gamification,
-        Scope.missions,
-        Scope.gamification,
-        Scope.logement,
-      ],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    this.updateQuestionOfCode_deprecated(
-      code_question,
-      null,
-      reponse,
-      utilisateur,
-      true,
-    );
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
     code_question: string,
     utilisateur: Utilisateur,
