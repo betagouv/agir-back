@@ -21,6 +21,7 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      liste_actions_vues: [{ type: TypeAction.classique, code: '1' }],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -43,6 +44,8 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      liste_actions_vues: [{ type: TypeAction.classique, code: '1' }],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,

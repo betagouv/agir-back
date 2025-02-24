@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { Action } from '@prisma/client';
 import {
   ActionDefinition,
-  TypeCode,
+  TypeCodeAction,
 } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
@@ -12,8 +12,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
-  type_codes_exclus?: TypeCode[];
-  type_codes_inclus?: TypeCode[];
+  type_codes_exclus?: TypeCodeAction[];
+  type_codes_inclus?: TypeCodeAction[];
   codes_exclus?: string[];
   codes_inclus?: string[];
 };

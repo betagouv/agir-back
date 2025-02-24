@@ -2,15 +2,18 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -289,6 +292,44 @@ describe('Actions (API test)', () => {
     expect(action.nom_commune).toEqual('Dijon');
   });
 
+  it(`GET /utilisateurs/id/actions/id - consultation track une action comme vue`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123' });
+
+    // THEN
+    const userDB_before = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.thematique_history],
+    );
+
+    expect(
+      userDB_before.thematique_history.isActionVue({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(false);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.thematique_history,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionVue({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
+  });
+
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
@@ -474,11 +515,13 @@ describe('Actions (API test)', () => {
   it(`GET /actions - liste le catalogue d'action : 2 actions`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code1',
       cms_id: '1',
       code: 'code1',
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code2',
       cms_id: '2',
       code: 'code2',
       thematique: Thematique.consommation,
@@ -496,11 +539,13 @@ describe('Actions (API test)', () => {
   it(`GET /actions - liste le catalogue d'action : filtre thematiques`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code1',
       cms_id: '1',
       code: 'code1',
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code2',
       cms_id: '2',
       code: 'code2',
       thematique: Thematique.consommation,
@@ -521,11 +566,13 @@ describe('Actions (API test)', () => {
   it(`GET /actions - liste le catalogue d'action : 400 si thematique inconnue`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code1',
       cms_id: '1',
       code: 'code1',
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code2',
       cms_id: '2',
       code: 'code2',
       thematique: Thematique.consommation,

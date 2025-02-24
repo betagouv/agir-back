@@ -184,7 +184,7 @@ export class ActionUsecase {
   ): Promise<Action> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -232,6 +232,16 @@ export class ActionUsecase {
       const quizz = await this.bibliothequeUsecase.internal_get_quizz(quizz_id);
       action.quizz_liste.push(quizz);
     }
+
+    utilisateur.thematique_history.setActionCommeVue({
+      type: type,
+      code: code,
+    });
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
 
     return action;
   }

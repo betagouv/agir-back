@@ -1,12 +1,12 @@
 import { Action } from '../../actions/action';
-import { TypeCode } from '../../actions/actionDefinition';
+import { TypeCodeAction } from '../../actions/actionDefinition';
 import { ThematiqueRecommandation_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../thematique';
 
 export class ThematiqueRecommandation {
   thematique: Thematique;
-  private actions_proposees: TypeCode[];
-  private actions_exclues: TypeCode[];
+  private actions_proposees: TypeCodeAction[];
+  private actions_exclues: TypeCodeAction[];
   private no_more_suggestions: boolean;
   private personnalisation_done: boolean;
 
@@ -32,10 +32,10 @@ export class ThematiqueRecommandation {
     this.actions_proposees = [];
   }
 
-  public getActionsExclues(): TypeCode[] {
+  public getActionsExclues(): TypeCodeAction[] {
     return this.actions_exclues;
   }
-  public getActionsProposees(): TypeCode[] {
+  public getActionsProposees(): TypeCodeAction[] {
     return this.actions_proposees;
   }
   public getNombreActionProposees(): number {
@@ -49,14 +49,14 @@ export class ThematiqueRecommandation {
     return this.personnalisation_done;
   }
 
-  public replaceAction(old_action: TypeCode, new_action: TypeCode) {
+  public replaceAction(old_action: TypeCodeAction, new_action: TypeCodeAction) {
     const position = this.indexOfTypeCode(this.actions_proposees, old_action);
     if (position >= 0) {
       this.actions_proposees[position] = new_action;
     }
   }
 
-  public addActionToExclusionList(action: TypeCode) {
+  public addActionToExclusionList(action: TypeCodeAction) {
     if (!this.doesActionsExcluesInclude(action)) {
       this.actions_exclues.push(action);
     }
@@ -69,7 +69,7 @@ export class ThematiqueRecommandation {
     }));
   }
 
-  public removeActionAndShift(action: TypeCode) {
+  public removeActionAndShift(action: TypeCodeAction) {
     const position = this.indexOfTypeCode(this.actions_proposees, action);
     if (position >= 0) {
       this.actions_proposees.splice(position, 1);
@@ -92,16 +92,19 @@ export class ThematiqueRecommandation {
     return result;
   }
 
-  public doesActionsProposeesInclude(type_code: TypeCode): boolean {
+  public doesActionsProposeesInclude(type_code: TypeCodeAction): boolean {
     const index = this.indexOfTypeCode(this.actions_proposees, type_code);
     return index !== -1;
   }
-  public doesActionsExcluesInclude(type_code: TypeCode): boolean {
+  public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
     const index = this.indexOfTypeCode(this.actions_exclues, type_code);
     return index !== -1;
   }
 
-  private indexOfTypeCode(array: TypeCode[], type_code: TypeCode): number {
+  private indexOfTypeCode(
+    array: TypeCodeAction[],
+    type_code: TypeCodeAction,
+  ): number {
     return array.findIndex(
       (a) => a.code === type_code.code && a.type === type_code.type,
     );

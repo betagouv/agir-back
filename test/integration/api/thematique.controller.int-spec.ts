@@ -182,6 +182,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -248,6 +250,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -286,6 +290,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -336,6 +342,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -374,6 +382,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -424,6 +434,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -469,6 +481,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -514,6 +528,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -575,6 +591,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -635,6 +653,8 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_vues: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,

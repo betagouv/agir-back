@@ -111,34 +111,6 @@ export class CMSImportUsecase {
     return loading_result;
   }
 
-  async loadActionsFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('actions');
-
-    for (let index = 0; index < CMS_DATA.length; index++) {
-      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
-      let action: ActionDefinition;
-      try {
-        action = this.buildActionFromCMSPopulateData(
-          element,
-          TypeAction[element.attributes.type_action],
-        );
-        liste.push(action);
-        loading_result.push(`loaded action : ${action.cms_id}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load action ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (let index = 0; index < liste.length; index++) {
-      await this.actionRepository.upsert(liste[index]);
-    }
-    return loading_result;
-  }
-
   async loadActionsBilanFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];

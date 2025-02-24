@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
-import { TypeCode } from '../domain/actions/actionDefinition';
+import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { Enchainement } from '../domain/kyc/questionKYC';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
@@ -105,7 +105,7 @@ export class ThematiqueUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const type_code: TypeCode = { type: type_action, code: code_action };
+    const type_code: TypeCodeAction = { type: type_action, code: code_action };
 
     if (
       utilisateur.thematique_history.doesActionsProposeesInclude(
