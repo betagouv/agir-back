@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../domain/thematique/thematique';
-import { DetailThematique } from '../../../../domain/thematique/detailThematique';
 import { Enchainement } from '../../../../domain/kyc/questionKYC';
+import { DetailThematique } from '../../../../domain/thematique/history/detailThematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { ActionLightAPI } from '../actions/ActionLightAPI';
 
 export class DetailThematiquesAPI {

@@ -860,7 +860,7 @@ export class CMSImportUsecase {
     entry: CMSWebhookPopulateAPI,
     type: TypeAction,
   ): ActionDefinition {
-    return {
+    return new ActionDefinition({
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       titre: entry.attributes.titre,
@@ -891,7 +891,7 @@ export class CMSImportUsecase {
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : Thematique.climat,
-    };
+    });
   }
 
   private buildKYCFromCMSPopulateData(

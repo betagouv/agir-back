@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Action } from '@prisma/client';
-import { ActionDefinition } from '../../domain/actions/actionDefinition';
+import {
+  ActionDefinition,
+  TypeCode,
+} from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../../domain/thematique/thematique';
@@ -9,6 +12,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
+  type_codes_exclus?: TypeCode[];
+  type_codes_inclus?: TypeCode[];
   codes_exclus?: string[];
   codes_inclus?: string[];
 };
@@ -64,6 +69,7 @@ export class ActionRepository {
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
       type: action.type,
+      type_code_id: action.getTypeCodeId(),
       created_at: undefined,
       updated_at: undefined,
     };
@@ -125,6 +131,24 @@ export class ActionRepository {
       main_filter.push({
         code: {
           in: filtre.codes_inclus,
+        },
+      });
+    }
+    if (filtre.type_codes_inclus) {
+      main_filter.push({
+        type_code_id: {
+          in: filtre.type_codes_inclus.map((t) =>
+            ActionDefinition.getIdFromTypeCode(t),
+          ),
+        },
+      });
+    }
+    if (filtre.type_codes_exclus) {
+      main_filter.push({
+        type_code_id: {
+          notIn: filtre.type_codes_exclus.map((t) =>
+            ActionDefinition.getIdFromTypeCode(t),
+          ),
         },
       });
     }

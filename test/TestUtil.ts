@@ -389,6 +389,7 @@ export class TestUtil {
   }
   static actionData(override?: Partial<Action>): Action {
     return {
+      type_code_id: 'classique_code_fonct',
       cms_id: '111',
       titre: 'The titre',
       sous_titre: 'Sous titre',

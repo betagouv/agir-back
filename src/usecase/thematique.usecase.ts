@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
+import { TypeCode } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 import { Enchainement } from '../domain/kyc/questionKYC';
-import { DetailThematique } from '../domain/thematique/detailThematique';
+import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -74,7 +76,7 @@ export class ThematiqueUsecase {
       actions = await this.actionUsecase.internal_get_user_actions(
         utilisateur,
         {
-          codes_inclus:
+          type_codes_inclus:
             utilisateur.thematique_history.getActionsProposees(thematique),
         },
       );
@@ -95,6 +97,7 @@ export class ThematiqueUsecase {
     utilisateurId: string,
     thematique: Thematique,
     code_action: string,
+    type_action: TypeAction,
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -102,34 +105,37 @@ export class ThematiqueUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    const type_code: TypeCode = { type: type_action, code: code_action };
+
     if (
-      utilisateur.thematique_history
-        .getActionsProposees(thematique)
-        .includes(code_action)
+      utilisateur.thematique_history.doesActionsProposeesInclude(
+        thematique,
+        type_code,
+      )
     ) {
       const new_action_list =
         await this.actionUsecase.internal_get_user_actions(utilisateur, {
           thematique: thematique,
-          codes_exclus:
+          type_codes_exclus:
             utilisateur.thematique_history.getActionsProposees(thematique),
         });
       if (new_action_list.length === 0) {
         utilisateur.thematique_history.removeActionAndShift(
           thematique,
-          code_action,
+          type_code,
         );
       } else {
         const new_action = new_action_list[0];
         utilisateur.thematique_history.switchAction(
           thematique,
-          code_action,
-          new_action.code,
+          type_code,
+          new_action.getTypeCode(),
         );
       }
     } else {
       utilisateur.thematique_history.addActionToExclusionList(
         thematique,
-        code_action,
+        type_code,
       );
     }
 

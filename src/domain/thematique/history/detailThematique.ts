@@ -1,6 +1,6 @@
-import { Action } from '../actions/action';
-import { Enchainement } from '../kyc/questionKYC';
-import { Thematique } from './thematique';
+import { Action } from '../../actions/action';
+import { Enchainement } from '../../kyc/questionKYC';
+import { Thematique } from '../thematique';
 
 export class DetailThematique {
   thematique: Thematique;

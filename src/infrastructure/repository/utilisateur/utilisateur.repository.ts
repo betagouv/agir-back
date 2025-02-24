@@ -1,31 +1,31 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
+import { Prisma, Utilisateur as UtilisateurDB } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
+import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import { History } from '../../../../src/domain/history/history';
+import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
+import { Gamification } from '../../../domain/gamification/gamification';
+import { KYCHistory } from '../../../domain/kyc/kycHistory';
+import { Logement } from '../../../domain/logement/logement';
+import { NotificationHistory } from '../../../domain/notification/notificationHistory';
+import {
+  SerialisableDomain,
+  Upgrader,
+} from '../../../domain/object_store/upgrader';
+import { ThematiqueHistory } from '../../../domain/thematique/history/thematiqueHistory';
 import {
   Scope,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
-import { ApplicationError } from '../../../../src/infrastructure/applicationError';
-import { Gamification } from '../../../domain/gamification/gamification';
-import { History } from '../../../../src/domain/history/history';
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
-import {
-  SerialisableDomain,
-  Upgrader,
-} from '../../../domain/object_store/upgrader';
-import { KYCHistory } from '../../../domain/kyc/kycHistory';
-import { Logement } from '../../../domain/logement/logement';
-import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
-import { NotificationHistory } from '../../../domain/notification/notificationHistory';
+import { PrismaService } from '../../prisma/prisma.service';
+import { DefiRepository } from '../defi.repository';
 import { KycRepository } from '../kyc.repository';
 import { MissionRepository } from '../mission.repository';
-import { DefiRepository } from '../defi.repository';
-import { ThematiqueHistory } from '../../../domain/thematique/thematiqueHistory';
 
 const OMIT_ALL_CONFIGURATION_JSON = {
   gamification: true,

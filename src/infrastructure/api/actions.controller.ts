@@ -1,28 +1,25 @@
 import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Param,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-  Patch,
-  Query,
-} from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Thematique } from '../../domain/thematique/thematique';
+import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
-import { ActionUsecase } from '../../usecase/actions.usecase';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Thematique } from '../../domain/thematique/thematique';
 import { ActionLightAPI } from './types/actions/ActionLightAPI';
 
 @Controller()

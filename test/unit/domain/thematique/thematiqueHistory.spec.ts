@@ -1,5 +1,6 @@
+import { TypeAction } from '../../../../src/domain/actions/typeAction';
+import { ThematiqueHistory } from '../../../../src/domain/thematique/history/thematiqueHistory';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { ThematiqueHistory } from '../../../../src/domain/thematique/thematiqueHistory';
 
 describe('ThematiqueHistory', () => {
   const OLD_ENV = process.env;
@@ -10,6 +11,36 @@ describe('ThematiqueHistory', () => {
 
   afterAll(async () => {
     process.env = OLD_ENV;
+  });
+
+  it(`doesActionsProposeesInclude : true si type code inclu`, () => {
+    // GIVEN
+    const thematique_history = new ThematiqueHistory({
+      version: 0,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { code: '123', type: TypeAction.classique },
+          ],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
+    });
+
+    // WHEN
+    const result = thematique_history.doesActionsProposeesInclude(
+      Thematique.alimentation,
+      {
+        code: '123',
+        type: TypeAction.classique,
+      },
+    );
+
+    // THEN
+    expect(result).toEqual(true);
   });
 
   it(`declarePersonnalisationDone : la thematique done`, () => {

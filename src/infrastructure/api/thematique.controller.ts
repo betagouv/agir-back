@@ -161,7 +161,7 @@ export class ThematiqueController extends GenericControler {
   }
 
   @Delete(
-    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/:code_action',
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/:type_action/:code_action',
   )
   @UseGuards(AuthGuard)
   @ApiOperation({
@@ -180,14 +180,21 @@ export class ThematiqueController extends GenericControler {
   async removeAction(
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_thematique') code_thematique: string,
+    @Param('type_action') type_action: string,
     @Param('code_action') code_action: string,
     @Request() req,
   ) {
     this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
     let them;
     if (code_thematique) {
       them = this.castThematiqueOrException(code_thematique);
     }
-    await this.thematiqueUsecase.removeAction(utilisateurId, them, code_action);
+    await this.thematiqueUsecase.removeAction(
+      utilisateurId,
+      them,
+      code_action,
+      type,
+    );
   }
 }

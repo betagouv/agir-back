@@ -1,14 +1,13 @@
+import { TypeCode } from '../../actions/actionDefinition';
+import { ThematiqueHistory } from '../../thematique/history/thematiqueHistory';
+import { ThematiqueRecommandation } from '../../thematique/history/thematiqueRecommandation';
 import { Thematique } from '../../thematique/thematique';
-import {
-  ThematiqueHistory,
-  ThematiqueRecommandation,
-} from '../../thematique/thematiqueHistory';
 import { Versioned_v0 } from '../versioned';
 
 export class ThematiqueRecommandation_v0 {
   thematique: Thematique;
-  codes_actions_proposees: string[];
-  codes_actions_exclues: string[];
+  codes_actions_proposees: TypeCode[];
+  codes_actions_exclues: TypeCode[];
   no_more_suggestions: boolean;
   personnalisation_done: boolean;
 

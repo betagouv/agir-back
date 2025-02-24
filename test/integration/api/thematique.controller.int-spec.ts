@@ -39,18 +39,21 @@ describe('Thematique (API test)', () => {
     await TestUtil.create(DB.action, {
       cms_id: '1',
       code: 'c1',
+      type_code_id: 'classique_c1',
       type: TypeAction.classique,
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
       cms_id: '2',
       code: 'c2',
+      type_code_id: 'classique_c2',
       type: TypeAction.classique,
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
       cms_id: '3',
       code: 'c3',
+      type_code_id: 'classique_c3',
       type: TypeAction.classique,
       thematique: Thematique.consommation,
     });
@@ -349,6 +352,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -386,6 +390,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 3; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -408,7 +413,11 @@ describe('Thematique (API test)', () => {
     ]);
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual(['1', '2', '3']);
+    ).toEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '3' },
+    ]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - ne propose que celles dans le bloc proposition`, async () => {
@@ -419,7 +428,11 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: ['1', '3', '6'],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '6' },
+          ],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -431,6 +444,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -459,7 +473,7 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: ['1'],
+          codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -472,6 +486,7 @@ describe('Thematique (API test)', () => {
     await TestUtil.create(DB.action, {
       code: '1',
       cms_id: '1',
+      type_code_id: 'classique_1',
       thematique: Thematique.alimentation,
     });
 
@@ -479,7 +494,7 @@ describe('Thematique (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/1',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/1',
     );
 
     // THEN
@@ -503,7 +518,14 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -515,6 +537,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -525,7 +548,7 @@ describe('Thematique (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/3',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
     );
 
     // THEN
@@ -536,7 +559,14 @@ describe('Thematique (API test)', () => {
     ]);
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual(['1', '2', '7', '4', '5', '6']);
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '7' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);
@@ -549,7 +579,14 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -561,6 +598,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 6; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -571,7 +609,7 @@ describe('Thematique (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/3',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
     );
 
     // THEN
@@ -582,7 +620,13 @@ describe('Thematique (API test)', () => {
     ]);
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual(['1', '2', '4', '5', '6']);
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);
@@ -595,7 +639,14 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -607,6 +658,7 @@ describe('Thematique (API test)', () => {
     });
     for (let index = 1; index <= 7; index++) {
       await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
         code: index.toString(),
         cms_id: index.toString(),
         thematique: Thematique.alimentation,
@@ -617,7 +669,7 @@ describe('Thematique (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/7',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/7',
     );
 
     // THEN
@@ -628,10 +680,17 @@ describe('Thematique (API test)', () => {
     ]);
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual(['1', '2', '3', '4', '5', '6']);
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '3' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
     expect(
       user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toEqual(['7']);
+    ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);

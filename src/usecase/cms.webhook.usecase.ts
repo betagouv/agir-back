@@ -485,7 +485,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
-    return {
+    return new ActionDefinition({
       cms_id: entry.id.toString(),
       titre: entry.titre,
       sous_titre: entry.sous_titre,
@@ -509,7 +509,7 @@ export class CMSWebhookUsecase {
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
       code: entry.code,
-    };
+    });
   }
 
   private buildDefiFromCMSData(entry: CMSWebhookEntryAPI): DefiDefinition {

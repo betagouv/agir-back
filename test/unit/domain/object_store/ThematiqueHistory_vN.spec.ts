@@ -1,11 +1,12 @@
+import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import {} from '../../../../src/domain/logement/logement';
 import { ThematiqueHistory_v0 } from '../../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
+import { ThematiqueHistory } from '../../../../src/domain/thematique/history/thematiqueHistory';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { ThematiqueHistory } from '../../../../src/domain/thematique/thematiqueHistory';
 
 describe('ThematiqueHistory vN ', () => {
   it('build OK from empty', () => {
@@ -23,8 +24,8 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: ['1', '2'],
-          codes_actions_proposees: ['3', '4'],
+          codes_actions_exclues: [{ type: TypeAction.classique, code: '2' }],
+          codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
           no_more_suggestions: false,
           personnalisation_done: true,
         },
@@ -45,8 +46,8 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: ['1', '2'],
-          codes_actions_proposees: ['3', '4'],
+          codes_actions_exclues: [{ type: TypeAction.classique, code: '2' }],
+          codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
           no_more_suggestions: false,
           personnalisation_done: true,
         },

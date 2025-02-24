@@ -16,7 +16,7 @@ import { NotificationHistory } from '../notification/notificationHistory';
 import { Tag } from '../scoring/tag';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
-import { ThematiqueHistory } from '../thematique/thematiqueHistory';
+import { ThematiqueHistory } from '../thematique/history/thematiqueHistory';
 import { CodeManager } from './manager/codeManager';
 import { PasswordManager } from './manager/passwordManager';
 var crypto = require('crypto');

@@ -222,6 +222,7 @@ model Aide {
 }
 
 model Action {
+  type_code_id        String?  @unique
   code                String
   cms_id              String
   type                String   @default("classique")
