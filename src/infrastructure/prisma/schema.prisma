@@ -222,7 +222,7 @@ model Aide {
 }
 
 model Action {
-  type_code_id        String?  @unique
+  type_code_id        String   @id
   code                String
   cms_id              String
   type                String   @default("classique")
