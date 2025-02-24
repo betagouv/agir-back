@@ -2,6 +2,7 @@ import {
   Action,
   AideExpirationWarning,
   Conformite,
+  FAQ,
   KYC,
   Mission,
   OIDC_STATE,
@@ -76,6 +77,7 @@ export enum DB {
   situationNGC = 'situationNGC',
   utilisateur = 'utilisateur',
   aide = 'aide',
+  faq = 'faq',
   conformite = 'conformite',
   defi = 'defi',
   service = 'service',
@@ -109,6 +111,7 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
+    faq: TestUtil.partenaireData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     defiStatistique: TestUtil.defiStatistiqueData,
@@ -216,6 +219,7 @@ export class TestUtil {
     await this.prisma.conformite.deleteMany();
     await this.prisma.communesAndEPCI.deleteMany();
     await this.prisma.oIDC_STATE.deleteMany();
+    await this.prisma.fAQ.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
 
@@ -480,7 +484,7 @@ export class TestUtil {
     };
   }
 
-  static utilisateurData(override?): Utilisateur {
+  static utilisateurData(override?: Partial<Utilisateur>): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [Feature.aides, Feature.defis],
@@ -612,7 +616,7 @@ export class TestUtil {
       passwordSalt: 'salt',
       email: 'yo@truc.com',
       revenu_fiscal: 10000,
-      parts: 2,
+      parts: 2 as any,
       abonnement_ter_loire: false,
       active_account: true,
       failed_login_count: 0,
@@ -625,14 +629,14 @@ export class TestUtil {
       prevent_sendemail_before: new Date(),
       version: 0,
       migration_enabled: false,
-      gamification: gamification,
-      unlocked_features: unlocked,
-      history: history,
+      gamification: gamification as any,
+      unlocked_features: unlocked as any,
+      history: history as any,
       created_at: undefined,
       updated_at: undefined,
-      kyc: kyc,
-      defis: defis,
-      logement: logement,
+      kyc: kyc as any,
+      defis: defis as any,
+      logement: logement as any,
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: null,
@@ -649,8 +653,8 @@ export class TestUtil {
       couverture_aides_ok: false,
       source_inscription: SourceInscription.web,
       unsubscribe_mail_token: null,
-      notification_history: notifications,
-      thematique_history: thematique_history,
+      notification_history: notifications as any,
+      thematique_history: thematique_history as any,
       est_valide_pour_classement: true,
       brevo_created_at: null,
       brevo_updated_at: null,
@@ -661,7 +665,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static thematiqueData(override?): ThematiqueDB {
+  static thematiqueData(override?: Partial<ThematiqueDB>): ThematiqueDB {
     return {
       code: Thematique.alimentation,
       titre: 'titre',
@@ -669,19 +673,36 @@ export class TestUtil {
       emoji: '🔥',
       image_url: 'https://img',
       label: 'the label',
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
-  static partenaireData(override?): Partenaire {
+  static partenaireData(override?: Partial<Partenaire>): Partenaire {
     return {
       content_id: '123',
       image_url: 'logo_url',
       nom: 'ADEME',
       url: 'https://ademe.fr',
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
-  static aideExpirationWarningData(override?): AideExpirationWarning {
+  static faqData(override?: Partial<FAQ>): FAQ {
+    return {
+      id_cms: '123',
+      question: 'question',
+      reponse: 'reponse',
+      thematique: Thematique.transport,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static aideExpirationWarningData(
+    override?: Partial<AideExpirationWarning>,
+  ): AideExpirationWarning {
     return {
       aide_cms_id: '123',
       expired: false,
@@ -695,17 +716,21 @@ export class TestUtil {
       ...override,
     };
   }
-  static serviceData(override?): Service {
+  static serviceData(override?: Partial<Service>): Service {
     return {
       id: 'service-id',
       utilisateurId: 'utilisateur-id',
       serviceDefinitionId: 'dummy_live',
       configuration: {},
       status: ServiceStatus.CREATED,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
-  static serviceDefinitionData(override?): ServiceDefinition {
+  static serviceDefinitionData(
+    override?: Partial<ServiceDefinition>,
+  ): ServiceDefinition {
     return {
       id: 'dummy_live',
       titre: 'titre',
@@ -722,10 +747,12 @@ export class TestUtil {
       sous_description: 'sous desc',
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }
-  static linkyData(override?): Linky {
+  static linkyData(override?: Partial<Linky>): Linky {
     return {
       prm: 'abc',
       winter_pk: '123',
@@ -741,7 +768,9 @@ export class TestUtil {
           day_value: 110,
           value_cumulee: null,
         },
-      ],
+      ] as any,
+      created_at: undefined,
+      updated_at: undefined,
       ...override,
     };
   }

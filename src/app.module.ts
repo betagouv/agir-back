@@ -71,6 +71,7 @@ import { CommuneRepository } from './infrastructure/repository/commune/commune.r
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
+import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
@@ -291,6 +292,7 @@ function getControllers(): any[] {
     ThematiqueUsecase,
     SimulateurVoitureUsecase,
     SimulateurVoitureRepository,
+    FAQRepository,
   ],
 })
 export class AppModule {}

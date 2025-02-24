@@ -1,24 +1,22 @@
+import { Defi } from '.prisma/client';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 import { DefiStatus } from '../../../src/domain/defis/defi';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { Thematique } from '../../../src/domain/thematique/thematique';
+import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
-import { DB, TestUtil } from '../../TestUtil';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { Defi } from '.prisma/client';
-import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { DB, TestUtil } from '../../TestUtil';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 const DEFI_1: Defi_v0 = {
@@ -480,7 +478,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
+      defis: defis as any,
       tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
     });
     await TestUtil.create(DB.quizz, {
@@ -572,7 +570,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.quizz, {
       content_id: '11',
@@ -649,7 +647,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.quizz, {
       content_id: '11',

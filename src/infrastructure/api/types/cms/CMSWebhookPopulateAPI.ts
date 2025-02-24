@@ -55,6 +55,7 @@ export type CMSWebhookPopulateAPI = {
     code: string;
     niveau: number;
     question: string;
+    reponse: string;
     short_question: string;
     pourquoi: string;
     description: string;

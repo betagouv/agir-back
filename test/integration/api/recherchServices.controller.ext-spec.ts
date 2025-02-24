@@ -1,24 +1,20 @@
-import {
-  CategorieRecherche,
-  CategorieRechercheManager,
-} from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
-import { Day } from '../../../src/domain/bibliotheque_services/types/days';
+import { CategorieRecherche } from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/recherche/serviceRechercheID';
 import {
-  Superficie,
-  TypeLogement,
   Chauffage,
   DPE,
+  Superficie,
+  TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { FruitsLegumesRepository } from '../../../src/infrastructure/repository/services_recherche/fruitsLegumes.repository';
 import { PresDeChezNousRepository } from '../../../src/infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { FruitLegume } from '../../../src/infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { DB, TestUtil } from '../../TestUtil';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const logement_palaiseau: Logement_v0 = {
   version: 0,
@@ -57,7 +53,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/longue_vie_objets/search renvoie qque chose`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -84,7 +82,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie les bonnes données`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -143,7 +143,7 @@ describe('RechercheServices (API test)', () => {
       proprietaire: true,
     };
 
-    await TestUtil.create(DB.utilisateur, { logement: logement_dijon });
+    await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -175,7 +175,7 @@ describe('RechercheServices (API test)', () => {
       proprietaire: true,
     };
 
-    await TestUtil.create(DB.utilisateur, { logement: logement_dijon });
+    await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -189,7 +189,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats par distance croissante`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -224,7 +226,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search prend en compte un point GPS argument`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -246,7 +250,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search rayon de 10km par défaut`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -260,7 +266,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search petit rayon => moins de résultats`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -276,7 +284,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search limite du nombre de résultats`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -293,7 +303,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/search renvoie une liste de résultats avec filtre de categorie`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -309,7 +321,9 @@ describe('RechercheServices (API test)', () => {
   });
   it(`POST /utlilisateur/id/recherche_services/proximite/last_results/id/add_to_favoris  ajoute au favoris suite à la dernière recherche`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     let response = await TestUtil.POST(
@@ -346,7 +360,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/proximite/last_results/id/add_to_favoris  ajoute 2 fois en favoris ne fait qu'un favoris`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     let response = await TestUtil.POST(
@@ -454,14 +470,14 @@ describe('RechercheServices (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio1,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'user2',
       email: 'email2',
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio2,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio2 as any,
     });
 
     TestUtil.token = process.env.CRON_API_KEY;
@@ -562,7 +578,9 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
     process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
@@ -601,7 +619,9 @@ describe('RechercheServices (API test)', () => {
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats`, async () => {
     // GIVEN
     FruitsLegumesRepository.API_TIMEOUT = 4000;
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
     process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
@@ -640,7 +660,9 @@ describe('RechercheServices (API test)', () => {
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search erreur 500 si timeout`, async () => {
     // GIVEN
     FruitsLegumesRepository.API_TIMEOUT = 5;
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
     process.env.BASE_URL_FRONT = 'https://site';
 
     // WHEN
@@ -655,7 +677,9 @@ describe('RechercheServices (API test)', () => {
   it(`POST /utlilisateur/id/recherche_services/fruits_legumes/search renvoie une liste de résultats si pas de categorie`, async () => {
     // GIVEN
     FruitsLegumesRepository.API_TIMEOUT = 4000;
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(

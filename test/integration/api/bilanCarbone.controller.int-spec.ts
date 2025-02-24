@@ -1,22 +1,22 @@
 import { KYC } from '@prisma/client';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { DB, TestUtil } from '../../TestUtil';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { Feature } from '../../../src/domain/gamification/feature';
-import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: 'KYC_saison_frequence',
@@ -92,7 +92,9 @@ describe('/bilan (API test)', () => {
       version: 1,
       unlocked_features: [Feature.bilan_carbone_detail],
     };
-    await TestUtil.create(DB.utilisateur, { unlocked_features: unlocked });
+    await TestUtil.create(DB.utilisateur, {
+      unlocked_features: unlocked as any,
+    });
 
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
@@ -558,8 +560,8 @@ describe('/bilan (API test)', () => {
       unlocked_features: [Feature.bilan_carbone_detail],
     };
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked,
-      kyc: kyc,
+      unlocked_features: unlocked as any,
+      kyc: kyc as any,
     });
 
     await TestUtil.create(DB.thematique, {
@@ -934,7 +936,9 @@ describe('/bilan (API test)', () => {
       version: 1,
       unlocked_features: [Feature.bilan_carbone_detail],
     };
-    await TestUtil.create(DB.utilisateur, { unlocked_features: unlocked });
+    await TestUtil.create(DB.utilisateur, {
+      unlocked_features: unlocked as any,
+    });
     await TestUtil.create(DB.kYC, {
       id_cms: 4,
       code: KYCID.KYC_superficie,
@@ -991,8 +995,8 @@ describe('/bilan (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-      unlocked_features: unlocked,
+      kyc: kyc as any,
+      unlocked_features: unlocked as any,
     });
 
     // WHEN
@@ -1188,7 +1192,7 @@ describe('/bilan (API test)', () => {
       emoji: '🔥',
     } as KYC);
 
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     TestUtil.token = process.env.CRON_API_KEY;
     await kycRepository.loadDefinitions();
     // WHEN
@@ -1280,7 +1284,7 @@ describe('/bilan (API test)', () => {
       emoji: '🔥',
     } as KYC);
 
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
 
     await TestUtil.prisma.bilanCarboneStatistique.create({
       data: {
@@ -1405,8 +1409,12 @@ describe('/bilan (API test)', () => {
       emoji: '🔥',
     } as KYC);
 
-    await TestUtil.create(DB.utilisateur, { kyc: kyc_bad });
-    await TestUtil.create(DB.utilisateur, { id: '2', email: '2', kyc: kyc_ok });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc_bad as any });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      kyc: kyc_ok as any,
+    });
 
     TestUtil.token = process.env.CRON_API_KEY;
 

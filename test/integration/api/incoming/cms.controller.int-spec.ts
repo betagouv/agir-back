@@ -377,6 +377,20 @@ describe('/api/incoming/cms (API test)', () => {
       ],
     },
   };
+  const CMS_DATA_FAQ = {
+    model: CMSModel.faq,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      question: 'The question',
+      reponse: 'The reponse',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
   const CMS_DATA_QUIZZ = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
@@ -606,6 +620,25 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].url).toEqual('the lien');
     expect(partenaire[0].image_url).toEqual('https://haha');
+  });
+
+  it('POST /api/incoming/cms - create a new FAQ', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_FAQ,
+    );
+
+    // THEN
+    const faq = await TestUtil.prisma.fAQ.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(faq).toHaveLength(1);
+    expect(faq[0].id_cms).toEqual('123');
+    expect(faq[0].question).toEqual('The question');
+    expect(faq[0].reponse).toEqual('The reponse');
+    expect(faq[0].thematique).toEqual(Thematique.alimentation);
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {

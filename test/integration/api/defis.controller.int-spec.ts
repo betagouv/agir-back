@@ -1,31 +1,31 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { Defi } from '.prisma/client';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
-import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
+import { Feature } from '../../../src/domain/gamification/feature';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { Defi } from '.prisma/client';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
-import {
-  Superficie,
-  TypeLogement,
-  Chauffage,
-  DPE,
-} from '../../../src/domain/logement/logement';
-import { Feature } from '../../../src/domain/gamification/feature';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -359,8 +359,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions,
+      defis: defis as any,
+      missions: missions as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -421,8 +421,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -479,8 +479,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -538,8 +538,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -598,8 +598,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -658,8 +658,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -704,8 +704,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
       history: {},
       defis: {
         defis: [DEFI_1],
-      },
-      logement,
+      } as any,
+      logement: logement as any,
     });
     ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
@@ -775,7 +775,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
       proprietaire: true,
     };
 
-    await TestUtil.create(DB.utilisateur, { defis: defis, logement });
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis as any,
+      logement: logement as any,
+    });
 
     ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
@@ -836,7 +839,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { defis: defis });
+    await TestUtil.create(DB.utilisateur, { defis: defis as any });
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -870,8 +873,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked,
-      gamification: gamification,
+      unlocked_features: unlocked as any,
+      gamification: gamification as any,
     });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
     await defiRepository.loadDefinitions();

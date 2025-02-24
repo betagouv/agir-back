@@ -107,6 +107,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type_action: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() reponse: string;
   @ApiProperty({ type: [CMSWebhookArticleAPI] })
   articles: CMSWebhookArticleAPI[];
   @ApiProperty({ type: [CMSWebhookQuestionAPI] })

@@ -360,6 +360,15 @@ model Thematique {
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
+model FAQ {
+  id_cms     String   @id
+  question   String
+  reponse    String
+  thematique String
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
 model Mission {
   id_cms       Int      @unique
   image_url    String?

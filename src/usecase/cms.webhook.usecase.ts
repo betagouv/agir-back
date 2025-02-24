@@ -12,6 +12,7 @@ import { ContentType } from '../domain/contenu/contentType';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { DefiDefinition } from '../domain/defis/defiDefinition';
+import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import {
@@ -33,6 +34,7 @@ import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
+import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
@@ -52,6 +54,7 @@ export class CMSWebhookUsecase {
     private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private fAQRepository: FAQRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -136,6 +139,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateAide(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.faq) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateFAQ(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.conformite) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -177,6 +192,9 @@ export class CMSWebhookUsecase {
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+  async deleteFAQ(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.fAQRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -192,6 +210,13 @@ export class CMSWebhookUsecase {
 
     await this.aideRepository.upsert(
       this.buildAideFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateFAQ(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.fAQRepository.upsert(
+      this.buildFAQFromCMSData(cmsWebhookAPI.entry),
     );
   }
   async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
@@ -498,6 +523,17 @@ export class CMSWebhookUsecase {
       nom: entry.nom,
       url: entry.lien,
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
+    };
+  }
+
+  private buildFAQFromCMSData(entry: CMSWebhookEntryAPI): FAQDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      question: entry.question,
+      reponse: entry.reponse,
+      thematique: entry.thematique
+        ? Thematique[entry.thematique.code]
+        : Thematique.climat,
     };
   }
 

@@ -108,7 +108,7 @@ describe('Notifications (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      notification_history: notifications,
+      notification_history: notifications as any,
     });
 
     await TestUtil.prisma.utilisateur.update({

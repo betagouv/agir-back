@@ -27,6 +27,7 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import { Thematique } from '../domain/thematique/thematique';
 import {
@@ -36,6 +37,7 @@ import {
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
@@ -52,6 +54,7 @@ export class CMSImportUsecase {
     private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private fAQRepository: FAQRepository,
   ) {}
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -262,6 +265,31 @@ export class CMSImportUsecase {
     return loading_result;
   }
 
+  async loadFAQFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: FAQDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('faqs');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let def: FAQDefinition;
+      try {
+        def = this.buildFAQFromCMSPopulateData(element);
+        liste.push(def);
+        loading_result.push(`loaded FAQ : ${def.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load FAQ ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.fAQRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+
   async loadKYCFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_kyc: KycDefinition[] = [];
@@ -423,6 +451,7 @@ export class CMSImportUsecase {
       | 'aides'
       | 'defis'
       | 'kycs'
+      | 'faqs'
       | 'missions'
       | 'thematiques'
       | 'partenaires'
@@ -487,7 +516,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs&populate[39]=faqs',
     );
     return URL.concat(page);
   }
@@ -535,6 +564,19 @@ export class CMSImportUsecase {
       image_url: this.getFirstImageUrlFromPopulate(
         entry.attributes.logo.data[0],
       ),
+    };
+  }
+
+  private buildFAQFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): FAQDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      question: entry.attributes.question,
+      reponse: entry.attributes.reponse,
+      thematique: entry.attributes.thematique.data
+        ? Thematique[entry.attributes.thematique.data.attributes.code]
+        : Thematique.climat,
     };
   }
 

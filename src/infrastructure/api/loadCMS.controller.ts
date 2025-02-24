@@ -5,8 +5,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
 import { CMSImportUsecase } from '../../usecase/cms.import.usecase';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiTags('Z - Load CMS')
@@ -131,6 +131,16 @@ export class LoadCMSController extends GenericControler {
   async load_partenaires_from_cms(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadPartenairesFromCMS();
+  }
+
+  @Post('/admin/load_faq_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les faq publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async load_faq_from_cms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadFAQFromCMS();
   }
 
   @Post('/admin/load_quizzes_from_cms')

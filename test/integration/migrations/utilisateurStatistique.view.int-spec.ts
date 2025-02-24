@@ -50,12 +50,12 @@ describe('UtilisateurView', () => {
         superficie: Superficie.superficie_100,
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
-      }),
+      }) as any,
       gamification: new Gamification({
         version: 0,
         points: 123,
         celebrations: [],
-      }),
+      }) as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
@@ -74,7 +74,7 @@ describe('UtilisateurView', () => {
         version: 0,
         points: 666,
         celebrations: [],
-      }),
+      }) as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur3',
@@ -89,7 +89,7 @@ describe('UtilisateurView', () => {
         version: 0,
         points: 0,
         celebrations: [],
-      }),
+      }) as any,
     });
 
     // WHEN

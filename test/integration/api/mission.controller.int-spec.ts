@@ -1,41 +1,37 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import {
-  TypeReponseQuestionKYC,
-  BooleanKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Mission } from '@prisma/client';
 import { EventType } from '../../../src/domain/appEvent';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
-import { Mission } from '@prisma/client';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { MosaicKYCDef, TypeMosaic } from '../../../src/domain/kyc/mosaicKYC';
 import {
-  MosaicKYC_CATALOGUE,
-  MosaicKYCDef,
-  TypeMosaic,
-} from '../../../src/domain/kyc/mosaicKYC';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+  BooleanKYC,
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
+import { ObjectifDefinition } from '../../../src/domain/mission/missionDefinition';
+import { DefiHistory_v0 } from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Mission (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
@@ -561,7 +557,10 @@ describe('Mission (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions as any,
+      defis: defis as any,
+    });
     await TestUtil.create(DB.mission, {
       ...mission_articles_tag,
       id_cms: 1,
@@ -637,8 +636,8 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_defi_seul_done,
-      defis: defis,
+      missions: missions_defi_seul_done as any,
+      defis: defis as any,
     });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -892,7 +891,7 @@ describe('Mission (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     };
-    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
+    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC as any });
 
     await TestUtil.create(DB.mission, mission_articles_tag);
 
@@ -947,7 +946,9 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (article)`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_seul as any,
+    });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
       label: 'Faut manger !',
@@ -983,7 +984,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (kyc)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_kyc_plus_article,
+      missions: missions_kyc_plus_article as any,
     });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1026,7 +1027,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (quizz)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions,
+      missions: missions as any,
     });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1066,7 +1067,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (defi)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions,
+      missions: missions as any,
     });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1104,7 +1105,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points pour l'objecif alors que le sous jacent n'est pas done`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions,
+      missions: missions as any,
     });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1131,7 +1132,9 @@ describe('Mission (API test)', () => {
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points deux fois pour l'objecif donné`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_article_seul });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_article_seul as any,
+    });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
       label: 'Faut manger !',
@@ -1323,7 +1326,7 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC });
+    await TestUtil.create(DB.utilisateur, { missions: missions_2_KYC as any });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
       label: 'Faut manger !',
@@ -1378,7 +1381,9 @@ describe('Mission (API test)', () => {
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_kyc_done as any,
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
@@ -1390,7 +1395,9 @@ describe('Mission (API test)', () => {
 
   it(`NEW GET /utilisateurs/id/missions/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_kyc_done as any,
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/missions/cereales/next_kyc',
@@ -1403,7 +1410,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un article débloqué suite à la réalisation de la KYC`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_kyc_plus_article,
+      missions: missions_kyc_plus_article as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -1454,7 +1461,7 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/:utilisateurId/missions/id - un defi débloqué lecture du dernier article`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
+      missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '1' });
@@ -1503,7 +1510,7 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/:utilisateurId/missions/id - un defi débloqué lecture du dernier article, mais non visible car condition par remplie`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
+      missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, {
@@ -1601,8 +1608,8 @@ describe('Mission (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
-      kyc: kyc,
+      missions: missions_article_plus_defi as any,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.defi, {
@@ -1638,7 +1645,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_quizz_plus_defi,
+      missions: missions_quizz_plus_defi as any,
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
@@ -1672,7 +1679,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - un defi débloqué suite dernier quizz, même si raté, et points déjà en poche`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_quizz_plus_defi,
+      missions: missions_quizz_plus_defi as any,
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
@@ -1707,7 +1714,7 @@ describe('Mission (API test)', () => {
   it(`GET /utilisateurs/:utilisateurId/thematiques/:thematique/mission - NON ajout mission si dernier defi abondonné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_defi_seul,
+      missions: missions_defi_seul as any,
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
@@ -1744,7 +1751,7 @@ describe('Mission (API test)', () => {
   it(`NEW GET /utilisateurs/:utilisateurId/missions/id - is_new true si rien fait`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
+      missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
 
@@ -1769,7 +1776,9 @@ describe('Mission (API test)', () => {
 
   it(`GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_kyc_done as any,
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/thematiques/cereales/next_kyc',
@@ -1781,7 +1790,9 @@ describe('Mission (API test)', () => {
 
   it(`NEW GET /utilisateurs/id/missions/:missionId/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { missions: missions_kyc_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_kyc_done as any,
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/missions/cereales/next_kyc',
@@ -1981,7 +1992,10 @@ describe('Mission (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { missions: missions, defis: defis });
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions as any,
+      defis: defis as any,
+    });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
       label: 'Faut manger !',
@@ -2114,7 +2128,9 @@ describe('Mission (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_unique_done as any,
+    });
 
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
@@ -2366,7 +2382,7 @@ describe('Mission (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       missions: {},
-      logement: logement_palaiseau,
+      logement: logement_palaiseau as any,
     });
 
     await TestUtil.create(DB.mission, mission_articles_tag);

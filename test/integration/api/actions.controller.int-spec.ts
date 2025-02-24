@@ -401,7 +401,7 @@ describe('Actions (API test)', () => {
           { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
           { content_id: '3', attempts: [{ date: new Date(), score: 100 }] },
         ],
-      },
+      } as any,
     });
 
     await TestUtil.create(DB.action, {

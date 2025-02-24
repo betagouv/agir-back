@@ -192,7 +192,7 @@ describe('Thematique (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
 
     // WHEN
@@ -258,7 +258,7 @@ describe('Thematique (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
 
     // WHEN
@@ -295,7 +295,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     await TestUtil.create(DB.action, {
       code: '123',
@@ -345,7 +345,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -382,7 +382,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 3; index++) {
       await TestUtil.create(DB.action, {
@@ -427,7 +427,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -467,7 +467,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     await TestUtil.create(DB.action, {
       code: '1',
@@ -511,7 +511,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -557,7 +557,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 6; index++) {
       await TestUtil.create(DB.action, {
@@ -603,7 +603,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
-      thematique_history: thematique_history,
+      thematique_history: thematique_history as any,
     });
     for (let index = 1; index <= 7; index++) {
       await TestUtil.create(DB.action, {

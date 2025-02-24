@@ -1,43 +1,43 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { ServiceStatus } from '../../../src/domain/service/service';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
-import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
-import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import { DefiStatus } from '../../../src/domain/defis/defi';
-import {
-  DefiHistory_v0,
-  Defi_v0,
-} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import {
-  KYCHistory_v2,
-  QuestionKYC_v2,
-} from '../../../src/domain/object_store/kyc/kycHistory_v2';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
-import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import {
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { ServiceStatus } from '../../../src/domain/service/service';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -302,7 +302,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       version: 3,
       migration_enabled: true,
-      gamification: gamification,
+      gamification: gamification as any,
     });
     process.env.USER_CURRENT_VERSION = '4';
 
@@ -363,7 +363,7 @@ describe('Admin (API test)', () => {
       version: 6,
       migration_enabled: true,
       logement: {},
-      defis: defis,
+      defis: defis as any,
     });
     process.env.USER_CURRENT_VERSION = '7';
 
@@ -509,7 +509,7 @@ describe('Admin (API test)', () => {
       version: 11,
       migration_enabled: true,
       code_commune: null,
-      logement: logement,
+      logement: logement as any,
     });
     process.env.USER_CURRENT_VERSION = '12';
 
@@ -557,7 +557,7 @@ describe('Admin (API test)', () => {
       version: 11,
       migration_enabled: true,
       code_commune: null,
-      logement: logement,
+      logement: logement as any,
     });
     process.env.USER_CURRENT_VERSION = '12';
 
@@ -691,7 +691,7 @@ describe('Admin (API test)', () => {
           date: new Date(123),
           value: 110,
         },
-      ],
+      ] as any,
     });
     await TestUtil.create(DB.linky, {
       prm: 'efg',
@@ -706,7 +706,7 @@ describe('Admin (API test)', () => {
           date: new Date(123),
           value: 200,
         },
-      ],
+      ] as any,
     });
     // WHEN
     const response = await TestUtil.POST('/services/clean_linky_data');
@@ -1281,14 +1281,14 @@ describe('Admin (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
-      defis: defis_1,
-      missions: missionsUtilisateur1,
+      defis: defis_1 as any,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'user-email@toto.fr',
-      defis: defis_2,
-      missions: missionsUtilisateur2,
+      defis: defis_2 as any,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -1367,7 +1367,7 @@ describe('Admin (API test)', () => {
             favoris: true,
           },
         ],
-      },
+      } as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
@@ -1396,7 +1396,7 @@ describe('Admin (API test)', () => {
             points_en_poche: false,
             favoris: false,
           },
-        ],
+        ] as any,
         quizz_interactions: [],
       },
     });
@@ -1414,7 +1414,7 @@ describe('Admin (API test)', () => {
             favoris: false,
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1476,7 +1476,7 @@ describe('Admin (API test)', () => {
             favoris: true,
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1607,22 +1607,22 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: '1',
-      defis: defis_user_1,
+      defis: defis_user_1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: '2',
-      defis: defis_user_2,
+      defis: defis_user_2 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: '3',
-      defis: defis_user_3,
+      defis: defis_user_3 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '4',
       email: '4',
-      defis: defis_user_4,
+      defis: defis_user_4 as any,
     });
 
     // WHEN
@@ -1732,7 +1732,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 100, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -1752,7 +1752,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 100, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     await TestUtil.create(DB.quizz, {
@@ -1804,7 +1804,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 0, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1862,7 +1862,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
       email: 'john-doe@dev.com',
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     const kyc_2: KYCHistory_v2 = {
@@ -1890,7 +1890,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'john-doedoe@dev.com',
-      kyc: kyc_2,
+      kyc: kyc_2 as any,
     });
 
     // WHEN
@@ -2139,12 +2139,12 @@ describe('Admin (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
-      missions: missionsUtilisateur1,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@test.com',
-      missions: missionsUtilisateur2,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -2342,12 +2342,12 @@ describe('Admin (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
-      missions: missionsUtilisateur1,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@test.com',
-      missions: missionsUtilisateur2,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -2621,7 +2621,9 @@ describe('Admin (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_unique_done as any,
+    });
 
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
@@ -2685,7 +2687,7 @@ describe('Admin (API test)', () => {
     });
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     await kycRepository.loadDefinitions();

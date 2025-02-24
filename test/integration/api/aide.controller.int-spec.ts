@@ -42,7 +42,10 @@ describe('Aide (API test)', () => {
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sous plafond OK, tranche 1', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 5000,
+      parts: 1 as any,
+    });
     process.env.MINIATURES_URL = 'http://localhost:3000';
 
     // WHEN
@@ -169,7 +172,10 @@ describe('Aide (API test)', () => {
 
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 5000, parts: 1 });
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 5000,
+      parts: 1 as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -185,7 +191,10 @@ describe('Aide (API test)', () => {
   });
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 2', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 10000, parts: 1 });
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 10000,
+      parts: 1 as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -201,7 +210,10 @@ describe('Aide (API test)', () => {
   });
   it(`POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, au dela tranche 2, pas d'aide`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { revenu_fiscal: 20000, parts: 1 });
+    await TestUtil.create(DB.utilisateur, {
+      revenu_fiscal: 20000,
+      parts: 1 as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -221,7 +233,7 @@ describe('Aide (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       revenu_fiscal: 10000,
-      parts: 1,
+      parts: 1 as any,
       logement: {
         version: 0,
         superficie: Superficie.superficie_150,
@@ -383,7 +395,7 @@ describe('Aide (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       logement: { code_postal: '22222' },
-      history: history,
+      history: history as any,
     });
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -412,7 +424,7 @@ describe('Aide (API test)', () => {
       aide_interactions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      history: history,
+      history: history as any,
     });
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -446,7 +458,7 @@ describe('Aide (API test)', () => {
       aide_interactions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      history: history,
+      history: history as any,
     });
     await TestUtil.create(DB.aide, {
       content_id: '1',

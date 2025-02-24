@@ -1,17 +1,17 @@
 import { EventType } from '../../../src/domain/appEvent';
-import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import {
   Celebration,
   CelebrationType,
 } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../src/domain/gamification/gamification';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -174,7 +174,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       version: 2,
-      missions: missions_article,
+      missions: missions_article as any,
     });
     await TestUtil.create(DB.article, {
       content_id: '1',
@@ -204,7 +204,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       version: 2,
-      missions: missions_quizz,
+      missions: missions_quizz as any,
     });
     await TestUtil.create(DB.quizz, {
       content_id: '1',
@@ -351,8 +351,8 @@ describe('EVENT (API test)', () => {
       unlocked_features: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      gamification: { points: 10, celebrations: [celeb] },
-      unlocked_features: unlocked,
+      gamification: { points: 10, celebrations: [celeb] } as any,
+      unlocked_features: unlocked as any,
     });
     // WHEN
     const response = await TestUtil.POST(
