@@ -1,11 +1,11 @@
+import {} from '../../../../src/domain/logement/logement';
+import { ThematiqueHistory_v0 } from '../../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import {} from '../../../../src/domain/logement/logement';
-import { ThematiqueHistory } from '../../../../src/domain/thematique/thematiqueHistory';
-import { ThematiqueHistory_v0 } from '../../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { ThematiqueHistory } from '../../../../src/domain/thematique/thematiqueHistory';
 
 describe('ThematiqueHistory vN ', () => {
   it('build OK from empty', () => {
@@ -24,6 +24,9 @@ describe('ThematiqueHistory vN ', () => {
         Thematique.alimentation,
         Thematique.logement,
       ],
+      codes_actions_exclues: ['9'],
+      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+      no_more_suggestions: false,
     });
 
     // WHEN
@@ -41,6 +44,9 @@ describe('ThematiqueHistory vN ', () => {
         Thematique.alimentation,
         Thematique.logement,
       ],
+      codes_actions_exclues: ['9'],
+      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+      no_more_suggestions: false,
     });
 
     // WHEN

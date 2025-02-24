@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Action } from '../domain/actions/action';
 import { Enchainement } from '../domain/kyc/questionKYC';
 import { DetailThematique } from '../domain/thematique/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
@@ -59,21 +60,30 @@ export class ThematiqueUsecase {
       return result;
     }
 
-    let actions = await this.actionUsecase.internal_get_user_actions(
-      utilisateur,
-      thematique,
-      utilisateur.thematique_history.getActionsExclues(),
-    );
-
-    actions = actions.slice(0, 6);
-    result.liste_actions = actions;
-
-    utilisateur.thematique_history.setActionsProposees(actions);
+    let actions: Action[];
+    if (utilisateur.thematique_history.getNombreActionProposees() === 0) {
+      actions = await this.actionUsecase.internal_get_user_actions(
+        utilisateur,
+        { thematique: thematique },
+      );
+      actions = actions.slice(0, 6);
+      utilisateur.thematique_history.setActionsProposees(actions);
+    } else {
+      actions = await this.actionUsecase.internal_get_user_actions(
+        utilisateur,
+        {
+          codes_inclus: utilisateur.thematique_history.getActionsProposees(),
+        },
+      );
+    }
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.thematique_history],
     );
+
+    actions = actions.slice(0, 6);
+    result.liste_actions = actions;
 
     return result;
   }
@@ -88,6 +98,32 @@ export class ThematiqueUsecase {
       [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
+
+    if (
+      utilisateur.thematique_history.getActionsProposees().includes(code_action)
+    ) {
+      const new_action_list =
+        await this.actionUsecase.internal_get_user_actions(utilisateur, {
+          thematique: thematique,
+          codes_exclus: utilisateur.thematique_history.getActionsProposees(),
+        });
+      if (new_action_list.length === 0) {
+        utilisateur.thematique_history.removeActionAndShift(code_action);
+      } else {
+        const new_action = new_action_list[0];
+        utilisateur.thematique_history.switchAction(
+          code_action,
+          new_action.code,
+        );
+      }
+    } else {
+      utilisateur.thematique_history.addActionToExclusionList(code_action);
+    }
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
   }
 
   public async declarePersonnalisationOK(

@@ -180,6 +180,9 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -238,6 +241,9 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -268,6 +274,9 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -310,6 +319,9 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -339,6 +351,9 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -362,5 +377,217 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(3);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getActionsProposees()).toEqual([
+      '1',
+      '2',
+      '3',
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation - ne propose que celles dans le bloc proposition`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: ['1', '3', '6'],
+      no_more_suggestions: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(3);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(response.body.liste_actions_recommandees[1].code).toEqual('3');
+    expect(response.body.liste_actions_recommandees[2].code).toEqual('6');
+  });
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/1 supprime la seul action proposable`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: ['1'],
+      no_more_suggestions: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/1',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getActionsProposees()).toEqual([]);
+    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(true);
+  });
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+      no_more_suggestions: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getActionsProposees()).toEqual([
+      '1',
+      '2',
+      '7',
+      '4',
+      '5',
+      '6',
+    ]);
+    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
+  });
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+      no_more_suggestions: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 6; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getActionsProposees()).toEqual([
+      '1',
+      '2',
+      '4',
+      '5',
+      '6',
+    ]);
+    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
+  });
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/7 supprime une action hors de la liste de propositions`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_personnalisations_done: [Thematique.alimentation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+      no_more_suggestions: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history,
+    });
+    for (let index = 1; index <= 7; index++) {
+      await TestUtil.create(DB.action, {
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/7',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getActionsProposees()).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
+    expect(user.thematique_history.getActionsExclues()).toEqual(['7']);
+    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
   });
 });

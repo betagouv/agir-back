@@ -10,6 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export type ActionFilter = {
   thematique?: Thematique;
   codes_exclus?: string[];
+  codes_inclus?: string[];
 };
 
 @Injectable()
@@ -107,16 +108,25 @@ export class ActionRepository {
   }
 
   private buildActionQuery(filtre: ActionFilter): any {
-    const main_filter = {};
+    const main_filter = [];
 
     if (filtre.thematique) {
-      main_filter['thematique'] = filtre.thematique;
+      main_filter.push({ thematique: filtre.thematique });
     }
 
     if (filtre.codes_exclus) {
-      main_filter['code'] = {
-        notIn: filtre.codes_exclus,
-      };
+      main_filter.push({
+        code: {
+          notIn: filtre.codes_exclus,
+        },
+      });
+    }
+    if (filtre.codes_inclus) {
+      main_filter.push({
+        code: {
+          in: filtre.codes_inclus,
+        },
+      });
     }
 
     return {

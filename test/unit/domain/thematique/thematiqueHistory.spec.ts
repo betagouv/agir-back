@@ -17,6 +17,9 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_personnalisations_done: [],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     });
 
     // WHEN
@@ -32,6 +35,9 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_personnalisations_done: [],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     });
 
     // WHEN
@@ -49,6 +55,9 @@ describe('ThematiqueHistory', () => {
         Thematique.alimentation,
         Thematique.consommation,
       ],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     });
 
     // WHEN
@@ -65,6 +74,9 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_personnalisations_done: [Thematique.consommation],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     });
 
     // WHEN
@@ -81,6 +93,9 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_personnalisations_done: [],
+      codes_actions_exclues: [],
+      codes_actions_proposees: [],
+      no_more_suggestions: false,
     });
 
     // WHEN

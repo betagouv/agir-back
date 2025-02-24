@@ -7,7 +7,10 @@ import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/se
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ActionRepository } from '../infrastructure/repository/action.repository';
+import {
+  ActionFilter,
+  ActionRepository,
+} from '../infrastructure/repository/action.repository';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import {
   Commune,
@@ -81,18 +84,16 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.internal_get_user_actions(utilisateur, thematique);
+    return await this.internal_get_user_actions(utilisateur, {
+      thematique: thematique,
+    });
   }
 
   public async internal_get_user_actions(
     utilisateur: Utilisateur,
-    thematique: Thematique,
-    codes_exclus?: string[],
+    filtre: ActionFilter,
   ): Promise<Action[]> {
-    const liste_actions = await this.actionRepository.list({
-      thematique: thematique,
-      codes_exclus: codes_exclus,
-    });
+    const liste_actions = await this.actionRepository.list(filtre);
 
     let result: Action[] = [];
     const commune = this.communeRepository.getCommuneByCodeINSEE(

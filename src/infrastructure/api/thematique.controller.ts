@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -159,8 +160,8 @@ export class ThematiqueController extends GenericControler {
     await this.thematiqueUsecase.resetPersonnalisation(utilisateurId, them);
   }
 
-  @Post(
-    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/:code_action/remove',
+  @Delete(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/:code_action',
   )
   @UseGuards(AuthGuard)
   @ApiOperation({
