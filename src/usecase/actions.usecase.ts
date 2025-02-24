@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { EchelleAide } from '../domain/aides/echelle';
+import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -62,7 +62,7 @@ export class ActionUsecase {
       for (const action_def of liste_actions) {
         const count_aides = await this.aideRepository.count({
           besoins: action_def.besoins,
-          echelle: EchelleAide.National,
+          echelle: Echelle.National,
           date_expiration: new Date(),
         });
         const action = new Action(action_def);
@@ -152,7 +152,7 @@ export class ActionUsecase {
     } else {
       linked_aides = await this.aideRepository.search({
         besoins: action_def.besoins,
-        echelle: EchelleAide.National,
+        echelle: Echelle.National,
         date_expiration: new Date(),
       });
     }

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { Aide as AideDB } from '@prisma/client';
-import { Thematique } from '../../domain/thematique/thematique';
-import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Besoin } from '../../../src/domain/aides/besoin';
-import { EchelleAide } from '../../domain/aides/echelle';
+import { AideDefinition } from '../../domain/aides/aideDefinition';
+import { Echelle } from '../../domain/aides/echelle';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type AideFilter = {
   maxNumber?: number;
@@ -14,7 +14,7 @@ export type AideFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
-  echelle?: EchelleAide;
+  echelle?: Echelle;
   date_expiration?: Date;
 };
 
@@ -184,7 +184,7 @@ export class AideRepository {
       codes_region: aideDB.codes_region,
       exclude_codes_commune: aideDB.exclude_codes_commune,
       include_codes_commune: aideDB.include_codes_commune,
-      echelle: aideDB.echelle,
+      echelle: Echelle[aideDB.echelle],
       url_source: aideDB.url_source,
       url_demande: aideDB.url_demande,
       partenaire_id: aideDB.partenaire_id,

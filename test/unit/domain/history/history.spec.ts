@@ -1,3 +1,4 @@
+import { Echelle } from '../../../../src/domain/aides/echelle';
 import { Article } from '../../../../src/domain/contenu/article';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { History } from '../../../../src/domain/history/history';
@@ -12,6 +13,7 @@ const BASIC_ARTICLE: Article = new Article({
   categorie: Categorie.recommandation,
   source: 'source',
   sources: [{ label: 'source 1', url: 'https//sources1' }],
+  echelle: Echelle.National,
 });
 
 describe('History', () => {

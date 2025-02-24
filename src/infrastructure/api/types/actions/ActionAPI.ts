@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
-import { TypeAction } from '../../../../domain/actions/typeAction';
-import { Thematique } from '../../../../domain/thematique/thematique';
-import { EchelleAide } from '../../../../domain/aides/echelle';
-import { AideDefinition } from '../../../../domain/aides/aideDefinition';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
-import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { Action, ActionService } from '../../../../domain/actions/action';
+import { TypeAction } from '../../../../domain/actions/typeAction';
+import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Echelle } from '../../../../domain/aides/echelle';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { Thematique } from '../../../../domain/thematique/thematique';
+import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
+import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 
 export class ServiceActionAPI {
   @ApiProperty({ enum: ServiceRechercheID })
@@ -29,7 +29,7 @@ export class ServiceActionAPI {
 export class AideActionAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: EchelleAide }) echelle: EchelleAide;
+  @ApiProperty({ enum: Echelle }) echelle: Echelle;
   @ApiProperty() montant_max: number;
   @ApiProperty() partenaire_nom: string;
   @ApiProperty() partenaire_url: string;
@@ -47,7 +47,7 @@ export class AideActionAPI {
       partenaire_nom: partenaire ? partenaire.nom : null,
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
-      echelle: EchelleAide[aide.echelle],
+      echelle: Echelle[aide.echelle],
     };
   }
 }

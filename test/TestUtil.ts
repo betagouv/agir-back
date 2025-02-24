@@ -28,7 +28,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeAction } from '../src/domain/actions/typeAction';
 import { Besoin } from '../src/domain/aides/besoin';
-import { EchelleAide } from '../src/domain/aides/echelle';
+import { Echelle } from '../src/domain/aides/echelle';
 import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
@@ -342,7 +342,7 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
       url_source: 'https://hello',
       url_demande: 'https://demande',
       est_gratuit: false,
@@ -772,6 +772,7 @@ export class TestUtil {
       exclude_codes_commune: [],
       codes_departement: [],
       codes_region: [],
+      echelle: Echelle.National,
       tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],

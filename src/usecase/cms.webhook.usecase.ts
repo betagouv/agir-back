@@ -1,42 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
-import { Thematique } from '../domain/thematique/thematique';
-import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
-import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import {
-  CMSWebhookEntryAPI,
-  CMSWebhookRubriqueAPI,
-} from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { AideRepository } from '../infrastructure/repository/aide.repository';
-import { DefiRepository } from '../infrastructure/repository/defi.repository';
-import { DefiDefinition } from '../domain/defis/defiDefinition';
-import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Besoin } from '../domain/aides/besoin';
+import { Echelle } from '../domain/aides/echelle';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { Categorie } from '../domain/contenu/categorie';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { ContentType } from '../domain/contenu/contentType';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { DefiDefinition } from '../domain/defis/defiDefinition';
+import { KycDefinition } from '../domain/kyc/kycDefinition';
+import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../domain/mission/missionDefinition';
-import { ContentType } from '../domain/contenu/contentType';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
-import { KycDefinition } from '../domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { Categorie } from '../domain/contenu/categorie';
-import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
+import { Thematique } from '../domain/thematique/thematique';
+import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
+import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
+import {
+  CMSWebhookEntryAPI,
+  CMSWebhookRubriqueAPI,
+} from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhookImageURLAPI';
-import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
-import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
-import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
-import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { ActionDefinition } from '../domain/actions/actionDefinition';
-import { TypeAction } from '../domain/actions/typeAction';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { DefiRepository } from '../infrastructure/repository/defi.repository';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -319,6 +320,7 @@ export class CMSWebhookUsecase {
       partenaire_id: hook.entry.partenaire
         ? '' + hook.entry.partenaire.id
         : null,
+      echelle: Echelle[hook.entry.echelle],
       rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
       codes_postaux: this.split(hook.entry.codes_postaux),
@@ -414,7 +416,7 @@ export class CMSWebhookUsecase {
       exclude_codes_commune: this.split(entry.exclude_codes_commune),
       codes_departement: this.split(entry.codes_departement),
       codes_region: this.split(entry.codes_region),
-      echelle: entry.echelle,
+      echelle: Echelle[entry.echelle],
       url_source: entry.url_source,
       url_demande: entry.url_demande,
       est_gratuit: entry.est_gratuit,

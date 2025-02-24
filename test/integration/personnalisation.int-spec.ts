@@ -18,6 +18,7 @@ describe('Personalisation', () => {
   });
 
   beforeEach(async () => {
+    await TestUtil.deleteAll();
     jest.clearAllMocks();
   });
 

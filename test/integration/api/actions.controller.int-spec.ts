@@ -1,5 +1,5 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
@@ -56,7 +56,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
 
@@ -82,7 +82,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
 
@@ -146,13 +146,13 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
     });
 
     await TestUtil.create(DB.partenaire);
@@ -186,7 +186,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
       date_expiration: new Date(1),
     });
 
@@ -208,7 +208,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
     });
 
     // WHEN
@@ -229,14 +229,14 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
     });
@@ -263,14 +263,14 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
     });
@@ -427,7 +427,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
       date_expiration: new Date(1),
     });

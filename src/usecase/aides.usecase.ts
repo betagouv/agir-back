@@ -5,29 +5,29 @@ import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repo
 import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
 
 import {
-  AidesVeloParType,
-  AideVelo,
-  AideVeloNonCalculee,
-} from '../domain/aides/aideVelo';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
   AideFilter,
   AideRepository,
 } from '../../src/infrastructure/repository/aide.repository';
-import { AideDefinition } from '../domain/aides/aideDefinition';
 import {
   Commune,
   CommuneRepository,
   EPCI,
 } from '../../src/infrastructure/repository/commune/commune.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AideDefinition } from '../domain/aides/aideDefinition';
+import {
+  AidesVeloParType,
+  AideVelo,
+  AideVeloNonCalculee,
+} from '../domain/aides/aideVelo';
+import { Echelle } from '../domain/aides/echelle';
+import { App } from '../domain/app';
+import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
-import { App } from '../domain/app';
-import { EchelleAide } from '../domain/aides/echelle';
-import { Thematique } from '../domain/thematique/thematique';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 
 @Injectable()
 export class AidesUsecase {
@@ -154,7 +154,7 @@ export class AidesUsecase {
     const aides_nationales = [];
     const aides_locales = [];
     for (const aide_def of result) {
-      if (aide_def.echelle === EchelleAide.National) {
+      if (aide_def.echelle === Echelle.National) {
         aides_nationales.push(aide_def);
       } else {
         aides_locales.push(aide_def);

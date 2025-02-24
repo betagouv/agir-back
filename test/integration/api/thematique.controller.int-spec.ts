@@ -1,5 +1,5 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { Echelle } from '../../../src/domain/aides/echelle';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -306,7 +306,7 @@ describe('Thematique (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
 

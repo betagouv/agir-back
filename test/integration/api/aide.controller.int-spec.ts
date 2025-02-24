@@ -1,5 +1,5 @@
 import { Besoin } from '../../../src/domain/aides/besoin';
-import { EchelleAide } from '../../../src/domain/aides/echelle';
+import { Echelle } from '../../../src/domain/aides/echelle';
 import {
   Chauffage,
   DPE,
@@ -310,7 +310,7 @@ describe('Aide (API test)', () => {
     expect(aideBody.content_id).toEqual('1');
     expect(aideBody.codes_postaux).toEqual(['91120']);
     expect(aideBody.contenu).toEqual("Contenu de l'aide");
-    expect(aideBody.echelle).toEqual(EchelleAide.National);
+    expect(aideBody.echelle).toEqual(Echelle.National);
     expect(aideBody.is_simulateur).toEqual(true);
     expect(aideBody.url_source).toEqual('https://hello');
     expect(aideBody.url_demande).toEqual('https://demande');

@@ -287,6 +287,7 @@ model Article {
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
   tag_article           String?
+  echelle               String?
   derniere_maj          DateTime? @db.Timestamptz(3)
   created_at            DateTime  @default(now()) @db.Timestamptz(3)
   updated_at            DateTime  @updatedAt @db.Timestamptz(3)

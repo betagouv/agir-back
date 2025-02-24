@@ -1,42 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { Thematique } from '../domain/thematique/thematique';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import axios from 'axios';
-import { AideDefinition } from '../domain/aides/aideDefinition';
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
-import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
-import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
+import { Categorie } from '../../src/domain/contenu/categorie';
+import { ContentType } from '../../src/domain/contenu/contentType';
+import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
+import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../../src/domain/mission/missionDefinition';
-import { ContentType } from '../../src/domain/contenu/contentType';
-import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import { Categorie } from '../../src/domain/contenu/categorie';
-import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
+import { AideDefinition } from '../domain/aides/aideDefinition';
+import { Echelle } from '../domain/aides/echelle';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
   ImageUrlAPI,
   ImageUrlAPI2,
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
-import { ArticleDefinition } from '../domain/contenu/articleDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
-import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
-import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
-import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
-import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { TypeAction } from '../domain/actions/typeAction';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -557,6 +558,7 @@ export class CMSImportUsecase {
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
+      echelle: Echelle[entry.attributes.echelle],
       partenaire_id: entry.attributes.partenaire.data
         ? '' + entry.attributes.partenaire.data.id
         : null,
@@ -710,7 +712,7 @@ export class CMSImportUsecase {
         entry.attributes.codes_departement,
       ),
       codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
-      echelle: entry.attributes.echelle,
+      echelle: Echelle[entry.attributes.echelle],
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
       est_gratuit: !!entry.attributes.est_gratuit,

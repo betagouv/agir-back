@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Article } from '../../domain/contenu/article';
 import { Article as ArticleDB } from '@prisma/client';
-import { Thematique } from '../../domain/thematique/thematique';
-import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Echelle } from '../../domain/aides/echelle';
+import { Article } from '../../domain/contenu/article';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type ArticleFilter = {
   maxNumber?: number;
@@ -57,6 +58,7 @@ export class ArticleRepository {
       rubrique_labels: article_def.rubrique_labels,
       sources: article_def.sources as any,
       derniere_maj: article_def.derniere_maj,
+      echelle: article_def.echelle,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -231,6 +233,7 @@ export class ArticleRepository {
       contenu: articleDB.contenu,
       sources: articleDB.sources as any,
       derniere_maj: articleDB.derniere_maj,
+      echelle: Echelle[articleDB.echelle],
     });
   }
 }

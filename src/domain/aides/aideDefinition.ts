@@ -1,6 +1,7 @@
 import { ContenuLocal } from '../contenu/contenuLocal';
 import { Thematique } from '../thematique/thematique';
 import { Besoin } from './besoin';
+import { Echelle } from './echelle';
 
 export class AideDefinition implements ContenuLocal {
   constructor(data: AideDefinition) {
@@ -17,7 +18,7 @@ export class AideDefinition implements ContenuLocal {
   codes_postaux: string[];
   thematiques: Thematique[];
   montant_max: number;
-  echelle: string;
+  echelle: Echelle;
   besoin: Besoin;
   besoin_desc: string;
   include_codes_commune: string[];
