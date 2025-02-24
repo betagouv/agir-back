@@ -1,5 +1,4 @@
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../../../src/domain/notification/notificationHistory';
 import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   SourceInscription,
   Utilisateur,

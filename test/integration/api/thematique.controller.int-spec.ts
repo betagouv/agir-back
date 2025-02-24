@@ -179,10 +179,15 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -240,10 +245,15 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -273,10 +283,15 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -318,10 +333,15 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -350,10 +370,15 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -381,21 +406,24 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user.thematique_history.getActionsProposees()).toEqual([
-      '1',
-      '2',
-      '3',
-    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual(['1', '2', '3']);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - ne propose que celles dans le bloc proposition`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: ['1', '3', '6'],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: ['1', '3', '6'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -427,16 +455,21 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: ['1'],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: ['1'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history,
     });
-    TestUtil.create(DB.action, {
+    await TestUtil.create(DB.action, {
       code: '1',
       cms_id: '1',
       thematique: Thematique.alimentation,
@@ -455,17 +488,26 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user.thematique_history.getActionsProposees()).toEqual([]);
-    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(true);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual([]);
+    expect(
+      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
+    ).toEqual(true);
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -492,24 +534,26 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user.thematique_history.getActionsProposees()).toEqual([
-      '1',
-      '2',
-      '7',
-      '4',
-      '5',
-      '6',
-    ]);
-    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual(['1', '2', '7', '4', '5', '6']);
+    expect(
+      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
+    ).toEqual(false);
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -536,23 +580,26 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user.thematique_history.getActionsProposees()).toEqual([
-      '1',
-      '2',
-      '4',
-      '5',
-      '6',
-    ]);
-    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual(['1', '2', '4', '5', '6']);
+    expect(
+      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
+    ).toEqual(false);
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/7 supprime une action hors de la liste de propositions`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [Thematique.alimentation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
     };
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
@@ -579,15 +626,14 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user.thematique_history.getActionsProposees()).toEqual([
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-    ]);
-    expect(user.thematique_history.getActionsExclues()).toEqual(['7']);
-    expect(user.thematique_history.plusDeSuggestionsDispo()).toEqual(false);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual(['1', '2', '3', '4', '5', '6']);
+    expect(
+      user.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toEqual(['7']);
+    expect(
+      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
+    ).toEqual(false);
   });
 });

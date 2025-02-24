@@ -16,92 +16,76 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [],
     });
 
     // WHEN
     thematique_history.declarePersonnalisationDone(Thematique.alimentation);
 
     // THEN
-    expect(thematique_history.getListePersonnalisationsDone()).toContain(
-      Thematique.alimentation,
-    );
+    expect(
+      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+    ).toEqual(true);
   });
-  it(`declarePersonnalisationDone : pas de doublon`, () => {
+  it(`declarePersonnalisationDone : la thematique done`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: false,
+        },
+      ],
     });
 
     // WHEN
     thematique_history.declarePersonnalisationDone(Thematique.alimentation);
-    thematique_history.declarePersonnalisationDone(Thematique.alimentation);
 
     // THEN
-    expect(thematique_history.getListePersonnalisationsDone()).toHaveLength(1);
+    expect(
+      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+    ).toEqual(true);
   });
   it(`resetPersonnalisation : supprime thematique OK`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [
-        Thematique.alimentation,
-        Thematique.consommation,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
       ],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
     });
 
     // WHEN
     thematique_history.resetPersonnalisation(Thematique.alimentation);
 
     // THEN
-    expect(thematique_history.getListePersonnalisationsDone()).toHaveLength(1);
-    expect(thematique_history.getListePersonnalisationsDone()).toContain(
-      Thematique.consommation,
-    );
+    expect(
+      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+    ).toEqual(false);
   });
   it(`resetPersonnalisation : supprime OK même si absent`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [Thematique.consommation],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [],
     });
 
     // WHEN
     thematique_history.resetPersonnalisation(Thematique.alimentation);
 
     // THEN
-    expect(thematique_history.getListePersonnalisationsDone()).toHaveLength(1);
-    expect(thematique_history.getListePersonnalisationsDone()).toContain(
-      Thematique.consommation,
-    );
-  });
-  it(`resetPersonnalisation : supprime OK même si vide`, () => {
-    // GIVEN
-    const thematique_history = new ThematiqueHistory({
-      version: 0,
-      liste_personnalisations_done: [],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
-    });
-
-    // WHEN
-    thematique_history.resetPersonnalisation(Thematique.alimentation);
-
-    // THEN
-    expect(thematique_history.getListePersonnalisationsDone()).toHaveLength(0);
+    expect(
+      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+    ).toEqual(false);
   });
 });

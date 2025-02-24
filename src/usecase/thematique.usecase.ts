@@ -56,23 +56,26 @@ export class ThematiqueUsecase {
       return result;
     }
 
-    if (utilisateur.thematique_history.plusDeSuggestionsDispo()) {
+    if (utilisateur.thematique_history.plusDeSuggestionsDispo(thematique)) {
       return result;
     }
 
     let actions: Action[];
-    if (utilisateur.thematique_history.getNombreActionProposees() === 0) {
+    if (
+      utilisateur.thematique_history.getNombreActionProposees(thematique) === 0
+    ) {
       actions = await this.actionUsecase.internal_get_user_actions(
         utilisateur,
         { thematique: thematique },
       );
       actions = actions.slice(0, 6);
-      utilisateur.thematique_history.setActionsProposees(actions);
+      utilisateur.thematique_history.setActionsProposees(thematique, actions);
     } else {
       actions = await this.actionUsecase.internal_get_user_actions(
         utilisateur,
         {
-          codes_inclus: utilisateur.thematique_history.getActionsProposees(),
+          codes_inclus:
+            utilisateur.thematique_history.getActionsProposees(thematique),
         },
       );
     }
@@ -100,24 +103,34 @@ export class ThematiqueUsecase {
     Utilisateur.checkState(utilisateur);
 
     if (
-      utilisateur.thematique_history.getActionsProposees().includes(code_action)
+      utilisateur.thematique_history
+        .getActionsProposees(thematique)
+        .includes(code_action)
     ) {
       const new_action_list =
         await this.actionUsecase.internal_get_user_actions(utilisateur, {
           thematique: thematique,
-          codes_exclus: utilisateur.thematique_history.getActionsProposees(),
+          codes_exclus:
+            utilisateur.thematique_history.getActionsProposees(thematique),
         });
       if (new_action_list.length === 0) {
-        utilisateur.thematique_history.removeActionAndShift(code_action);
+        utilisateur.thematique_history.removeActionAndShift(
+          thematique,
+          code_action,
+        );
       } else {
         const new_action = new_action_list[0];
         utilisateur.thematique_history.switchAction(
+          thematique,
           code_action,
           new_action.code,
         );
       }
     } else {
-      utilisateur.thematique_history.addActionToExclusionList(code_action);
+      utilisateur.thematique_history.addActionToExclusionList(
+        thematique,
+        code_action,
+      );
     }
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(

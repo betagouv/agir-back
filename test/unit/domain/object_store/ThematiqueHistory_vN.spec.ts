@@ -20,13 +20,15 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [
-        Thematique.alimentation,
-        Thematique.logement,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: ['1', '2'],
+          codes_actions_proposees: ['3', '4'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
       ],
-      codes_actions_exclues: ['9'],
-      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
-      no_more_suggestions: false,
     });
 
     // WHEN
@@ -40,13 +42,15 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
-      liste_personnalisations_done: [
-        Thematique.alimentation,
-        Thematique.logement,
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: ['1', '2'],
+          codes_actions_proposees: ['3', '4'],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
       ],
-      codes_actions_exclues: ['9'],
-      codes_actions_proposees: ['1', '2', '3', '4', '5', '6'],
-      no_more_suggestions: false,
     });
 
     // WHEN

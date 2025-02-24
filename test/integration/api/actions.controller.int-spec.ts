@@ -1,13 +1,12 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DB, TestUtil } from '../../TestUtil';
-import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
-import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { EchelleAide } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
+import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);

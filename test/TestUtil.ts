@@ -567,10 +567,7 @@ export class TestUtil {
 
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_personnalisations_done: [],
-      codes_actions_exclues: [],
-      codes_actions_proposees: [],
-      no_more_suggestions: false,
+      liste_thematiques: [],
     };
 
     const gamification: Gamification_v0 = {
