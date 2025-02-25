@@ -1,6 +1,7 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
@@ -101,6 +102,33 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
+    expect(action.deja_vue).toEqual(false);
+  });
+
+  it(`GET /utilisateurs/id/actions - boolean action deja vue`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
+      liste_thematiques: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+
+    const action: ActionLightAPI = response.body[0];
+
+    expect(action.deja_vue).toEqual(true);
   });
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
@@ -317,6 +345,7 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+    expect(response.body.deja_vue).toEqual(false);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.thematique_history,
@@ -328,6 +357,15 @@ describe('Actions (API test)', () => {
         code: '123',
       }),
     ).toEqual(true);
+
+    // WHEN
+    const response_2 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response_2.status).toBe(200);
+    expect(response_2.body.deja_vue).toEqual(true);
   });
 
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {

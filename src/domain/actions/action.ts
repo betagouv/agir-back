@@ -15,6 +15,7 @@ export class Action extends ActionDefinition {
   services: ActionService[];
   quizz_liste: Quizz[];
   nom_commune?: string;
+  deja_vue?: boolean;
 
   constructor(data: ActionDefinition) {
     super(data);

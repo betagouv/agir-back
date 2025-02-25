@@ -90,6 +90,12 @@ export class ThematiqueUsecase {
     actions = actions.slice(0, 6);
     result.liste_actions = actions;
 
+    for (const action of actions) {
+      action.deja_vue = utilisateur.thematique_history.isActionVue(
+        action.getTypeCode(),
+      );
+    }
+
     return result;
   }
 

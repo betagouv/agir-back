@@ -60,6 +60,7 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() deja_vue: boolean;
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
@@ -97,6 +98,7 @@ export class ActionAPI {
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
+      deja_vue: action.deja_vue,
     };
   }
 }

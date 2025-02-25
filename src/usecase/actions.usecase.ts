@@ -80,7 +80,7 @@ export class ActionUsecase {
   ): Promise<Action[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -111,6 +111,9 @@ export class ActionUsecase {
       });
       const action = new Action(action_def);
       action.nombre_aides = count_aides;
+      action.deja_vue = utilisateur.thematique_history.isActionVue(
+        action.getTypeCode(),
+      );
       result.push(action);
     }
 
@@ -233,10 +236,11 @@ export class ActionUsecase {
       action.quizz_liste.push(quizz);
     }
 
-    utilisateur.thematique_history.setActionCommeVue({
-      type: type,
-      code: code,
-    });
+    action.deja_vue = utilisateur.thematique_history.isActionVue(
+      action.getTypeCode(),
+    );
+
+    utilisateur.thematique_history.setActionCommeVue(action.getTypeCode());
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,

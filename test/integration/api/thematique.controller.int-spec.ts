@@ -330,12 +330,53 @@ describe('Thematique (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
     expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
+    expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(false);
     expect(
       response.body.liste_actions_recommandees[0].nombre_aides_disponibles,
     ).toEqual(1);
     expect(response.body.liste_actions_recommandees[0].titre).toEqual(
       'The titre',
     );
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue OK`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '123', type: TypeAction.classique }],
+
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          no_more_suggestions: false,
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      thematique: Thematique.alimentation,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
+    expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(true);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - max 6 actions proposées`, async () => {
