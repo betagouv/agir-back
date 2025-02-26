@@ -77,6 +77,11 @@ export class ThematiqueUsecase {
           type_codes_inclus: history.getActionsProposees(thema),
         },
       );
+      for (const action_proposee of history.getActionsProposees(thema)) {
+        detail_a_remplir.liste_actions.push(
+          actions.find((a) => a.equals(action_proposee)),
+        );
+      }
     } else {
       actions = await this.actionUsecase.internal_get_user_actions(
         utilisateur,
@@ -85,11 +90,9 @@ export class ThematiqueUsecase {
           type_codes_exclus: history.getActionsExclues(thema),
         },
       );
-      actions = actions.slice(0, 6);
-      history.setActionsProposees(thema, actions);
+      detail_a_remplir.liste_actions = actions.slice(0, 6);
+      history.setActionsProposees(thema, detail_a_remplir.liste_actions);
     }
-
-    detail_a_remplir.liste_actions = actions;
 
     for (const action of actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(

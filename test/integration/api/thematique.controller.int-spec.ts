@@ -553,11 +553,6 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
     ).toEqual([]);
-    /*
-    expect(
-      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
-    ).toEqual(true);
-    */
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle`, async () => {
     // GIVEN
@@ -617,12 +612,77 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
     ]);
-    /*
-    expect(
-      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
-    ).toEqual(false);
-    */
   });
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles, partant de 5 actions dispo`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+          ],
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 5; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+    ]);
+
+    // WHEN
+    const lecture = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(lecture.status).toBe(200);
+    expect(lecture.body.liste_actions_recommandees).toHaveLength(4);
+    expect(lecture.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(lecture.body.liste_actions_recommandees[1].code).toEqual('2');
+    expect(lecture.body.liste_actions_recommandees[2].code).toEqual('4');
+    expect(lecture.body.liste_actions_recommandees[3].code).toEqual('5');
+  });
+
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
@@ -680,11 +740,6 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
     ]);
-    /*
-    expect(
-      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
-    ).toEqual(false);
-    */
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/7 supprime une action hors de la liste de propositions`, async () => {
     // GIVEN
@@ -747,10 +802,5 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsExclues(Thematique.alimentation),
     ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
-    /*
-    expect(
-      user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
-    ).toEqual(false);
-    */
   });
 });
