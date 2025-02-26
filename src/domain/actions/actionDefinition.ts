@@ -1,4 +1,5 @@
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
+import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
 
@@ -23,6 +24,7 @@ export class ActionDefinition {
   recette_categorie: CategorieRecherche;
   type: TypeAction;
   thematique: Thematique;
+  tags_excluants: TagExcluant[];
 
   constructor(data: ActionDefinition) {
     Object.assign(this, data);

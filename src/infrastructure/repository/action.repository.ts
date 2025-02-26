@@ -7,6 +7,7 @@ import {
 } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { TagExcluant } from '../../domain/scoring/tagExcluant';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -70,6 +71,8 @@ export class ActionRepository {
       sous_titre: action.sous_titre,
       type: action.type,
       type_code_id: action.getTypeCodeId(),
+      tags_excluants: action.tags_excluants,
+
       created_at: undefined,
       updated_at: undefined,
     };
@@ -193,6 +196,7 @@ export class ActionRepository {
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
       quizz_felicitations: action.quizz_felicitations,
+      tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
     });
   }
 }

@@ -20,6 +20,7 @@ import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../domain/mission/missionDefinition';
+import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -509,6 +510,7 @@ export class CMSWebhookUsecase {
         ? Thematique[entry.thematique.code]
         : Thematique.climat,
       code: entry.code,
+      tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
     });
   }
 

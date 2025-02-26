@@ -68,6 +68,12 @@ export type CMSWebhookPopulateAPI = {
         lien: string;
       },
     ];
+    tags_excluants: [
+      {
+        id: number;
+        valeur: string;
+      },
+    ];
     articles: {
       data: [
         {

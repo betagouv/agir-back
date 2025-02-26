@@ -21,6 +21,10 @@ export class CMSWebhookSourceAPI {
   @ApiProperty() libelle: string;
   @ApiProperty() lien: string;
 }
+export class CMSWebhookTagExcluantAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() valeur: string;
+}
 export class CMSWebhookFamilleAPI {
   @ApiProperty() id: number;
   @ApiProperty() nom: string;
@@ -172,6 +176,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() action_lvo: string;
   @ApiProperty() source: string;
   @ApiProperty({ type: [CMSWebhookSourceAPI] }) sources: CMSWebhookSourceAPI[];
+  @ApiProperty({ type: [CMSWebhookTagExcluantAPI] })
+  tags_excluants: CMSWebhookTagExcluantAPI[];
   @ApiProperty() echelle: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;

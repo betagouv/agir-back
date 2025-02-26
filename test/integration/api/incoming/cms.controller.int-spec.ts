@@ -8,6 +8,7 @@ import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { TagExcluant } from '../../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
@@ -99,6 +100,13 @@ describe('/api/incoming/cms (API test)', () => {
           id: 4,
         },
       ],
+      tags_excluants: [
+        {
+          id: 1,
+          valeur: TagExcluant.a_un_velo,
+        },
+      ],
+
       besoins: [
         {
           code: 'composter',
@@ -133,6 +141,12 @@ describe('/api/incoming/cms (API test)', () => {
         },
       ],
       code: 'code',
+      tags_excluants: [
+        {
+          id: 1,
+          valeur: TagExcluant.a_un_velo,
+        },
+      ],
       thematique: {
         id: 1,
         titre: 'Alimentation',
@@ -934,6 +948,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - create a new action bilan', async () => {
@@ -957,6 +972,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
@@ -1042,6 +1058,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

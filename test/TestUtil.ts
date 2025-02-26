@@ -405,6 +405,7 @@ export class TestUtil {
       recette_categorie: CategorieRecherche.dinde_volaille,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
+      tags_excluants: [],
       created_at: undefined,
       updated_at: undefined,
       ...override,
