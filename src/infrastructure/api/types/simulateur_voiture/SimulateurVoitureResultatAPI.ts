@@ -123,9 +123,16 @@ export class AlternativeAPI extends VoitureInfosAPI {
       "Type de l'alternative (pour l'instant, il n'existe qu'un seul type d'alternative mais cela pourrait évoluer)",
   })
   type: 'voiture-individuelle';
+  @ApiProperty({
+    description: "Titre de l'alternative",
+    type: String,
+    example: 'Citadine électrique',
+  })
+  titre?: string;
 
   public static mapToAPI(alternative: Alternative): AlternativeAPI {
     return {
+      titre: alternative.title,
       type: AlternativeAPI.mapKindToAPI(alternative.kind),
       ...VoitureInfosAPI.mapToAPI(alternative),
     };
