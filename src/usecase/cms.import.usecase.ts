@@ -863,7 +863,7 @@ export class CMSImportUsecase {
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
-        : Thematique.climat,
+        : null,
       tags_excluants: entry.attributes.tags_excluants.map(
         (t) => TagExcluant[t.valeur],
       ),

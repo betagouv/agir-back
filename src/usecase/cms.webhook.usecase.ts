@@ -506,9 +506,7 @@ export class CMSWebhookUsecase {
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
         : null,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
+      thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
       tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
     });
