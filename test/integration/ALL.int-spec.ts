@@ -2,6 +2,7 @@ import { TestUtil } from '../TestUtil';
 
 TestUtil.ok_appclose = false;
 
+import './api/actions.controller.int-spec';
 import './api/admin.controller.int-spec';
 import './api/aide.controller.int-spec';
 import './api/bibliotheque.controller.int-spec';
@@ -27,7 +28,6 @@ import './api/recommandation.controller.int-spec';
 import './api/service.controller.int-spec';
 import './api/simulateurVoiture.controller.int-spec';
 import './api/thematique.controller.int-spec';
-import './api/thematiqueBoard.controller.int-spec';
 import './migrations/cartographieStatistique.view.int-spec';
 import './migrations/utilisateurStatistique.view.int-spec';
 import './personnalisation.int-spec';

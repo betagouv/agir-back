@@ -20,7 +20,7 @@ import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
-import { ActionLightAPI } from './types/actions/ActionLightAPI';
+import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -32,9 +32,9 @@ export class ActionsController extends GenericControler {
 
   @Get('actions')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
   @ApiOkResponse({
-    type: [ActionLightAPI],
+    type: CatalogueActionAPI,
   })
   @ApiOperation({
     summary: `Retourne le catalogue d'actions`,
@@ -43,8 +43,9 @@ export class ActionsController extends GenericControler {
     name: 'thematique',
     enum: Thematique,
     enumName: 'thematique',
+    isArray: true,
     required: false,
-    description: `filtrage par une thematique`,
+    description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
     name: 'code_commune',
@@ -53,24 +54,30 @@ export class ActionsController extends GenericControler {
     description: `code commune INSEE pour calculer le nombre d'aides disponible pour cette localisation`,
   })
   async getCatalogue(
-    @Query('thematique') thematique: string,
+    @Query('thematique') thematique: string[] | string,
     @Query('code_commune') code_commune: string,
-  ): Promise<ActionLightAPI[]> {
-    let them;
-    if (thematique) {
-      them = this.castThematiqueOrException(thematique);
+  ): Promise<CatalogueActionAPI> {
+    const liste_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(thematique);
+
+    const liste_thematiques: Thematique[] = [];
+
+    for (const them_string of liste_thematiques_input) {
+      liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
-    const result = await this.actionUsecase.getOpenCatalogue(
-      them,
+
+    const catalogue = await this.actionUsecase.getOpenCatalogue(
+      liste_thematiques,
       code_commune,
     );
-    return result.map((r) => ActionLightAPI.mapToAPI(r));
+
+    return CatalogueActionAPI.mapToAPI(catalogue);
   }
 
   @Get('utilisateurs/:utilisateurId/actions')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: [ActionLightAPI],
+    type: CatalogueActionAPI,
   })
   @ApiOperation({
     summary: `Retourne le catalogue d'actions pour un utilisateur donné`,
@@ -79,24 +86,29 @@ export class ActionsController extends GenericControler {
     name: 'thematique',
     enum: Thematique,
     enumName: 'thematique',
+    isArray: true,
     required: false,
-    description: `filtrage par une thematique`,
+    description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   async getCatalogueUtilisateur(
-    @Query('thematique') thematique: string,
+    @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
-  ): Promise<ActionLightAPI[]> {
+  ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
-    let them;
-    if (thematique) {
-      them = this.castThematiqueOrException(thematique);
+    const liste_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(thematique);
+
+    const liste_thematiques: Thematique[] = [];
+
+    for (const them_string of liste_thematiques_input) {
+      liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
-    const result = await this.actionUsecase.getUtilisateurCatalogue(
+    const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
-      them,
+      liste_thematiques,
     );
-    return result.map((r) => ActionLightAPI.mapToAPI(r));
+    return CatalogueActionAPI.mapToAPI(catalogue);
   }
 
   @Get('actions/:type_action/:code_action')

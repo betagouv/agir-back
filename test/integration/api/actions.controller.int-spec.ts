@@ -41,9 +41,46 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: false,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: false,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('code_fonct');
     expect(action.titre).toEqual('The titre');
@@ -52,6 +89,108 @@ describe('Actions (API test)', () => {
     expect(action.type).toEqual(TypeAction.classique);
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
     expect(action.nombre_aides_disponibles).toEqual(0);
+  });
+  it(`GET /actions - liste le catalogue d'action avec filtre thematique unique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?thematique=alimentation');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.code).toEqual('1');
+  });
+  it(`GET /actions - liste le catalogue d'action avec filtre thematique multiple`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.climat,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/actions?thematique=alimentation&thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: true,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: true,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
   });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
     // GIVEN
@@ -71,14 +210,14 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
   });
 
-  it(`GET /utilisateurs/id/actions - liste le catalogue d'action`, async () => {
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -97,18 +236,94 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
     expect(action.deja_vue).toEqual(false);
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.climat,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?thematique=alimentation&thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: true,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: true,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
   });
 
   it(`GET /utilisateurs/id/actions - boolean action deja vue`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
       liste_thematiques: [],
     };
@@ -124,9 +339,9 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.deja_vue).toEqual(true);
   });
@@ -550,57 +765,6 @@ describe('Actions (API test)', () => {
     expect(response.body.message).toEqual(`Type d'action [truc] inconnu`);
   });
 
-  it(`GET /actions - liste le catalogue d'action : 2 actions`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.action, {
-      type_code_id: 'classique_code1',
-      cms_id: '1',
-      code: 'code1',
-      thematique: Thematique.alimentation,
-    });
-    await TestUtil.create(DB.action, {
-      type_code_id: 'classique_code2',
-      cms_id: '2',
-      code: 'code2',
-      thematique: Thematique.consommation,
-    });
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.GET('/actions');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-  });
-  it(`GET /actions - liste le catalogue d'action : filtre thematiques`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.action, {
-      type_code_id: 'classique_code1',
-      cms_id: '1',
-      code: 'code1',
-      thematique: Thematique.alimentation,
-    });
-    await TestUtil.create(DB.action, {
-      type_code_id: 'classique_code2',
-      cms_id: '2',
-      code: 'code2',
-      thematique: Thematique.consommation,
-    });
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.GET('/actions?thematique=alimentation');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    const action: ActionLightAPI = response.body[0];
-
-    expect(action.code).toEqual('code1');
-  });
   it(`GET /actions - liste le catalogue d'action : 400 si thematique inconnue`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {

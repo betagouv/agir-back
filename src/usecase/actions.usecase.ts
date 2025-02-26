@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
+import { CatalogueAction } from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
@@ -16,6 +17,7 @@ import {
   Commune,
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
@@ -30,14 +32,15 @@ export class ActionUsecase {
   ) {}
 
   async getOpenCatalogue(
-    thematique?: Thematique,
+    filtre_thematiques: Thematique[],
     code_commune?: string,
-  ): Promise<Action[]> {
+  ): Promise<CatalogueAction> {
     const liste_actions = await this.actionRepository.list({
-      thematique: thematique,
+      liste_thematiques:
+        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
     });
 
-    let result: Action[] = [];
+    let result = new CatalogueAction();
     let commune: Commune;
     if (code_commune) {
       commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
@@ -56,7 +59,7 @@ export class ActionUsecase {
         });
         const action = new Action(action_def);
         action.nombre_aides = count_aides;
-        result.push(action);
+        result.actions.push(action);
       }
     } else {
       for (const action_def of liste_actions) {
@@ -67,26 +70,35 @@ export class ActionUsecase {
         });
         const action = new Action(action_def);
         action.nombre_aides = count_aides;
-        result.push(action);
+        result.actions.push(action);
       }
     }
+
+    this.setFiltreThematiqueToCatalogue(result, filtre_thematiques);
 
     return result;
   }
 
   async getUtilisateurCatalogue(
     utilisateurId: string,
-    thematique: Thematique,
-  ): Promise<Action[]> {
+    filtre_thematiques: Thematique[],
+  ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.internal_get_user_actions(utilisateur, {
-      thematique: thematique,
+    let result = new CatalogueAction();
+
+    result.actions = await this.internal_get_user_actions(utilisateur, {
+      liste_thematiques:
+        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
     });
+
+    this.setFiltreThematiqueToCatalogue(result, filtre_thematiques);
+
+    return result;
   }
 
   public async internal_get_user_actions(
@@ -286,5 +298,18 @@ export class ActionUsecase {
 
   async internal_count_actions(thematique?: Thematique): Promise<number> {
     return await this.actionRepository.count({ thematique: thematique });
+  }
+
+  private setFiltreThematiqueToCatalogue(
+    catalogue: CatalogueAction,
+    liste_thematiques: Thematique[],
+  ) {
+    for (const thematique of ThematiqueRepository.getAllThematiques()) {
+      if (thematique !== Thematique.services_societaux)
+        catalogue.addSelectedThematique(
+          thematique,
+          liste_thematiques.includes(thematique),
+        );
+    }
   }
 }
