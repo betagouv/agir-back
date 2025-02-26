@@ -19,6 +19,7 @@ import {
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
+import { ThematiqueBoardUsecase } from '../../usecase/thematiqueBoard.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DetailThematiquesAPI } from './types/thematiques/detailThematiquesAPI';
@@ -28,7 +29,10 @@ import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesA
 @ApiBearerAuth()
 @ApiTags('Thematiques')
 export class ThematiqueController extends GenericControler {
-  constructor(private thematiqueUsecase: ThematiqueUsecase) {
+  constructor(
+    private thematiqueUsecase: ThematiqueUsecase,
+    private thematiqueBoardUsecase: ThematiqueBoardUsecase,
+  ) {
     super();
   }
 
@@ -50,9 +54,10 @@ export class ThematiqueController extends GenericControler {
   async getTuilesThematiques(
     @Query('code_commune') code_commune: string,
   ): Promise<SyntheseThematiquesAPI> {
-    const result = await this.thematiqueUsecase.getListeThematiquesPrincipales(
-      code_commune,
-    );
+    const result =
+      await this.thematiqueBoardUsecase.getListeThematiquesPrincipales(
+        code_commune,
+      );
     return SyntheseThematiquesAPI.mapToAPI(result);
   }
 
@@ -71,7 +76,7 @@ export class ThematiqueController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
 
     const result =
-      await this.thematiqueUsecase.getUtilisateurListeThematiquesPrincipales(
+      await this.thematiqueBoardUsecase.getUtilisateurListeThematiquesPrincipales(
         utilisateurId,
       );
 

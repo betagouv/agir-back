@@ -137,6 +137,7 @@ import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase'
 import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
+import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -291,6 +292,7 @@ function getControllers(): any[] {
     FranceConnectUsecase,
     TokenRepository,
     ThematiqueUsecase,
+    ThematiqueBoardUsecase,
     SimulateurVoitureUsecase,
     SimulateurVoitureRepository,
     FAQRepository,
