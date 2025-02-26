@@ -5,11 +5,7 @@ import { DefiRepository } from '../../src/infrastructure/repository/defi.reposit
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
-import {
-  Enchainement,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../domain/kyc/questionKYC';
+import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -17,6 +13,19 @@ import {
 } from '../infrastructure/personnalisation/personnalisator';
 
 const FIELD_MAX_LENGTH = 280;
+
+export enum Enchainement {
+  ENCHAINEMENT_KYC_1 = 'ENCHAINEMENT_KYC_1',
+  ENCHAINEMENT_KYC_mini_bilan_carbone = 'ENCHAINEMENT_KYC_mini_bilan_carbone',
+  ENCHAINEMENT_KYC_bilan_transport = 'ENCHAINEMENT_KYC_bilan_transport',
+  ENCHAINEMENT_KYC_bilan_logement = 'ENCHAINEMENT_KYC_bilan_logement',
+  ENCHAINEMENT_KYC_bilan_consommation = 'ENCHAINEMENT_KYC_bilan_consommation',
+  ENCHAINEMENT_KYC_bilan_alimentation = 'ENCHAINEMENT_KYC_bilan_alimentation',
+  ENCHAINEMENT_KYC_personnalisation_alimentation = 'ENCHAINEMENT_KYC_personnalisation_alimentation',
+  ENCHAINEMENT_KYC_personnalisation_logement = 'ENCHAINEMENT_KYC_personnalisation_logement',
+  ENCHAINEMENT_KYC_personnalisation_transport = 'ENCHAINEMENT_KYC_personnalisation_transport',
+  ENCHAINEMENT_KYC_personnalisation_consommation = 'ENCHAINEMENT_KYC_personnalisation_consommation',
+}
 
 @Injectable()
 export class QuestionKYCUsecase {
@@ -76,6 +85,29 @@ export class QuestionKYCUsecase {
       KYCID.KYC_alimentation_litres_alcool,
       KYCID.KYC_gaspillage_alimentaire_frequence,
       KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
+    ],
+    ENCHAINEMENT_KYC_personnalisation_alimentation: [
+      KYCID.KYC_alimentation_regime,
+      KYCID.KYC_saison_frequence,
+      KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
+      KYCID.KYC_local_frequence,
+    ],
+    ENCHAINEMENT_KYC_personnalisation_transport: [
+      KYCID.KYC_transport_avion_3_annees,
+      KYCID.KYC003,
+      KYCID.KYC008,
+      KYCID.KYC_transport_voiture_thermique_carburant,
+    ],
+    ENCHAINEMENT_KYC_personnalisation_logement: [
+      KYCID.KYC_type_logement,
+      KYCID.KYC_proprietaire,
+      KYCID.KYC_jardin,
+      KYCMosaicID.MOSAIC_CHAUFFAGE,
+      KYCMosaicID.MOSAIC_RENO,
+    ],
+    ENCHAINEMENT_KYC_personnalisation_consommation: [
+      KYCID.KYC_consommation_relation_objets,
+      KYCID.KYC_consommation_type_consommateur,
     ],
   };
 

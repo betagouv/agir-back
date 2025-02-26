@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
-import { Enchainement } from '../domain/kyc/questionKYC';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
@@ -12,17 +11,15 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
+import { Enchainement } from './questionKYC.usecase';
 
-const THEMATIQUE_ENCHAINEMENT_MAPPING: Record<Thematique, Enchainement> = {
-  alimentation: Enchainement.ENCHAINEMENT_KYC_bilan_alimentation,
-  consommation: Enchainement.ENCHAINEMENT_KYC_bilan_consommation,
-  logement: Enchainement.ENCHAINEMENT_KYC_bilan_logement,
-  transport: Enchainement.ENCHAINEMENT_KYC_bilan_transport,
-  climat: Enchainement.ENCHAINEMENT_KYC_1,
-  dechet: Enchainement.ENCHAINEMENT_KYC_1,
-  loisir: Enchainement.ENCHAINEMENT_KYC_1,
-  services_societaux: Enchainement.ENCHAINEMENT_KYC_1,
-};
+const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =
+  {
+    alimentation: Enchainement.ENCHAINEMENT_KYC_personnalisation_alimentation,
+    consommation: Enchainement.ENCHAINEMENT_KYC_personnalisation_consommation,
+    logement: Enchainement.ENCHAINEMENT_KYC_personnalisation_logement,
+    transport: Enchainement.ENCHAINEMENT_KYC_personnalisation_transport,
+  };
 
 @Injectable()
 export class ThematiqueUsecase {
@@ -43,65 +40,67 @@ export class ThematiqueUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const result = new DetailThematique();
-    const enchainement_id = THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
-
     const personnalisation_done =
       utilisateur.thematique_history.isPersonnalisationDone(thematique);
 
-    result.enchainement_questions_personnalisation = enchainement_id;
+    const result = new DetailThematique();
     result.thematique = thematique;
-    result.personnalisation_necessaire = !personnalisation_done;
     result.liste_actions = [];
+    result.enchainement_questions_personnalisation =
+      THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
+    result.personnalisation_necessaire = !personnalisation_done;
 
-    if (!personnalisation_done) {
-      return result;
-    }
+    if (personnalisation_done) {
+      await this.buildThematiquePostPersonnalisation(result, utilisateur);
 
-    if (utilisateur.thematique_history.plusDeSuggestionsDispo(thematique)) {
-      return result;
-    }
-
-    let actions: Action[];
-    if (
-      utilisateur.thematique_history.getNombreActionProposees(thematique) === 0
-    ) {
-      actions = await this.actionUsecase.internal_get_user_actions(
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
-        { thematique: thematique },
-      );
-      actions = actions.slice(0, 6);
-      utilisateur.thematique_history.setActionsProposees(thematique, actions);
-    } else {
-      actions = await this.actionUsecase.internal_get_user_actions(
-        utilisateur,
-        {
-          type_codes_inclus:
-            utilisateur.thematique_history.getActionsProposees(thematique),
-        },
-      );
-    }
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.thematique_history],
-    );
-
-    actions = actions.slice(0, 6);
-    result.liste_actions = actions;
-
-    for (const action of actions) {
-      action.deja_vue = utilisateur.thematique_history.isActionVue(
-        action.getTypeCode(),
+        [Scope.thematique_history],
       );
     }
 
     return result;
   }
 
+  private async buildThematiquePostPersonnalisation(
+    detail_a_remplir: DetailThematique,
+    utilisateur: Utilisateur,
+  ): Promise<void> {
+    let actions: Action[];
+    const thema = detail_a_remplir.thematique;
+    const history = utilisateur.thematique_history;
+
+    if (history.existeDesPropositions(thema)) {
+      actions = await this.actionUsecase.internal_get_user_actions(
+        utilisateur,
+        {
+          type_codes_inclus: history.getActionsProposees(thema),
+        },
+      );
+    } else {
+      actions = await this.actionUsecase.internal_get_user_actions(
+        utilisateur,
+        {
+          thematique: thema,
+          type_codes_exclus: history.getActionsExclues(thema),
+        },
+      );
+      actions = actions.slice(0, 6);
+      history.setActionsProposees(thema, actions);
+    }
+
+    detail_a_remplir.liste_actions = actions;
+
+    for (const action of actions) {
+      action.deja_vue = utilisateur.thematique_history.isActionVue(
+        action.getTypeCode(),
+      );
+    }
+  }
+
   public async removeAction(
     utilisateurId: string,
-    thematique: Thematique,
+    thema: Thematique,
     code_action: string,
     type_action: TypeAction,
   ) {
@@ -110,39 +109,23 @@ export class ThematiqueUsecase {
       [Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
-
     const type_code: TypeCodeAction = { type: type_action, code: code_action };
+    const history = utilisateur.thematique_history;
 
-    if (
-      utilisateur.thematique_history.doesActionsProposeesInclude(
-        thematique,
-        type_code,
-      )
-    ) {
+    if (history.doesActionsProposeesInclude(thema, type_code)) {
       const new_action_list =
         await this.actionUsecase.internal_get_user_actions(utilisateur, {
-          thematique: thematique,
-          type_codes_exclus:
-            utilisateur.thematique_history.getActionsProposees(thematique),
+          thematique: thema,
+          type_codes_exclus: history.getActionsProposees(thema),
         });
       if (new_action_list.length === 0) {
-        utilisateur.thematique_history.removeActionAndShift(
-          thematique,
-          type_code,
-        );
+        history.removeActionAndShift(thema, type_code);
       } else {
         const new_action = new_action_list[0];
-        utilisateur.thematique_history.switchAction(
-          thematique,
-          type_code,
-          new_action.getTypeCode(),
-        );
+        history.switchAction(thema, type_code, new_action.getTypeCode());
       }
     } else {
-      utilisateur.thematique_history.addActionToExclusionList(
-        thematique,
-        type_code,
-      );
+      history.addActionToExclusionList(thema, type_code);
     }
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(

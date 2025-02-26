@@ -71,16 +71,13 @@ export class ThematiqueHistory {
     return this.liste_thematiques.find((t) => t.thematique === thematique);
   }
 
-  public plusDeSuggestionsDispo(thematique: Thematique): boolean {
-    return this.getRecommandationByThematique(
-      thematique,
-    )?.plusDeSuggestionsDispo();
-  }
-
   public getNombreActionProposees(thematique: Thematique): number {
-    return this.getRecommandationByThematique(
-      thematique,
-    )?.getNombreActionProposees();
+    const reco = this.getRecommandationByThematique(thematique);
+    return reco ? reco.getNombreActionProposees() : 0;
+  }
+  public existeDesPropositions(thematique: Thematique): boolean {
+    const reco = this.getRecommandationByThematique(thematique);
+    return reco ? reco.getNombreActionProposees() > 0 : false;
   }
 
   public setActionsProposees(thematique: Thematique, actions: Action[]) {

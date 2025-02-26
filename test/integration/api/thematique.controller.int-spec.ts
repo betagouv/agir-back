@@ -172,7 +172,7 @@ describe('Thematique (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       enchainement_questions_personnalisation:
-        'ENCHAINEMENT_KYC_bilan_alimentation',
+        'ENCHAINEMENT_KYC_personnalisation_alimentation',
       est_personnalisation_necessaire: true,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
@@ -189,7 +189,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -209,7 +208,7 @@ describe('Thematique (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       enchainement_questions_personnalisation:
-        'ENCHAINEMENT_KYC_bilan_alimentation',
+        'ENCHAINEMENT_KYC_personnalisation_alimentation',
       est_personnalisation_necessaire: false,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
@@ -257,7 +256,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -297,7 +295,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -350,7 +347,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -390,7 +386,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -430,7 +425,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -486,7 +480,6 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '3' },
             { type: TypeAction.classique, code: '6' },
           ],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -529,7 +522,6 @@ describe('Thematique (API test)', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -561,9 +553,11 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
     ).toEqual([]);
+    /*
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(true);
+    */
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle`, async () => {
     // GIVEN
@@ -583,7 +577,6 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '5' },
             { type: TypeAction.classique, code: '6' },
           ],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -624,9 +617,11 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
     ]);
+    /*
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);
+    */
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles`, async () => {
     // GIVEN
@@ -646,7 +641,6 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '5' },
             { type: TypeAction.classique, code: '6' },
           ],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -686,9 +680,11 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
     ]);
+    /*
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);
+    */
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/7 supprime une action hors de la liste de propositions`, async () => {
     // GIVEN
@@ -708,7 +704,6 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '5' },
             { type: TypeAction.classique, code: '6' },
           ],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -752,8 +747,10 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsExclues(Thematique.alimentation),
     ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
+    /*
     expect(
       user.thematique_history.plusDeSuggestionsDispo(Thematique.alimentation),
     ).toEqual(false);
+    */
   });
 });

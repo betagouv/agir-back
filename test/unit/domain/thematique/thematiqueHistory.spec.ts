@@ -25,7 +25,6 @@ describe('ThematiqueHistory', () => {
           codes_actions_proposees: [
             { code: '123', type: TypeAction.classique },
           ],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],
@@ -70,7 +69,6 @@ describe('ThematiqueHistory', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: false,
         },
       ],
@@ -94,7 +92,6 @@ describe('ThematiqueHistory', () => {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
-          no_more_suggestions: false,
           personnalisation_done: true,
         },
       ],

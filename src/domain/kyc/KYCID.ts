@@ -11,8 +11,7 @@ export enum KYCID {
   KYC005 = 'KYC005',
   KYC006 = 'KYC006',
   KYC007 = 'KYC007',
-  KYC008 = 'KYC008',
-  /** Comment réalisez-vous vos trajet en voiture ? */
+  KYC008 = 'KYC008', // Comment réalisez-vous vos trajet en voiture ?
   KYC009 = 'KYC009',
   KYC010 = 'KYC010',
   KYC011 = 'KYC011',
@@ -109,6 +108,7 @@ export enum KYCID {
   KYC_photovoltaiques = 'KYC_photovoltaiques',
   KYC_preference = 'KYC_preference',
   KYC_proprietaire = 'KYC_proprietaire',
+  KYC_jardin = 'KYC_jardin',
   KYC_saison_frequence = 'KYC_saison_frequence',
   KYC_superficie = 'KYC_superficie',
   KYC_transport_2roues_usager = 'KYC_transport_2roues_usager',

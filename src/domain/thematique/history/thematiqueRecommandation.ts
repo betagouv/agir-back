@@ -7,19 +7,16 @@ export class ThematiqueRecommandation {
   thematique: Thematique;
   private actions_proposees: TypeCodeAction[];
   private actions_exclues: TypeCodeAction[];
-  private no_more_suggestions: boolean;
   private personnalisation_done: boolean;
 
   constructor(thematique: Thematique, data?: ThematiqueRecommandation_v0) {
     this.thematique = thematique;
     this.actions_proposees = [];
     this.actions_exclues = [];
-    this.no_more_suggestions = false;
     this.personnalisation_done = false;
     if (data) {
       this.actions_proposees = data.codes_actions_proposees;
       this.actions_exclues = data.codes_actions_exclues;
-      this.no_more_suggestions = !!data.no_more_suggestions;
       this.personnalisation_done = !!data.personnalisation_done;
     }
   }
@@ -40,9 +37,6 @@ export class ThematiqueRecommandation {
   }
   public getNombreActionProposees(): number {
     return this.actions_proposees.length;
-  }
-  public plusDeSuggestionsDispo(): boolean {
-    return this.no_more_suggestions;
   }
 
   public isPersonnalisationDone(): boolean {
@@ -73,9 +67,6 @@ export class ThematiqueRecommandation {
     const position = this.indexOfTypeCode(this.actions_proposees, action);
     if (position >= 0) {
       this.actions_proposees.splice(position, 1);
-    }
-    if (this.actions_proposees.length === 0) {
-      this.no_more_suggestions = true;
     }
   }
 
