@@ -17,6 +17,7 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [],
       liste_thematiques: [
         {
@@ -47,6 +48,7 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [],
       liste_thematiques: [],
     });
@@ -63,6 +65,7 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [],
       liste_thematiques: [
         {
@@ -86,6 +89,7 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [],
       liste_thematiques: [
         {
@@ -109,6 +113,7 @@ describe('ThematiqueHistory', () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
+      liste_tags_excluants: [],
       liste_actions_vues: [],
       liste_thematiques: [],
     });

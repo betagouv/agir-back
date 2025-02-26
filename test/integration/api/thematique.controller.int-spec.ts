@@ -1,11 +1,46 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import {
+  BooleanKYC,
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
+import {
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const KYC_DATA: QuestionKYC_v2 = {
+  code: '1',
+  last_update: undefined,
+  id_cms: 11,
+  question: `question`,
+  type: TypeReponseQuestionKYC.choix_unique,
+  is_NGC: false,
+  a_supprimer: false,
+  categorie: Categorie.test,
+  points: 10,
+  reponse_complexe: undefined,
+  reponse_simple: undefined,
+  tags: [TagUtilisateur.appetence_bouger_sante],
+  thematique: Thematique.consommation,
+  ngc_key: '123',
+  short_question: 'short',
+  image_url: 'AAA',
+  conditions: [],
+  unite: Unite.kg,
+  emoji: '🔥',
+};
 
 describe('Thematique (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -183,7 +218,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -245,12 +280,66 @@ describe('Thematique (API test)', () => {
       ),
     ).toEqual(true);
   });
+
+  it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - recalcul des tag d'exclusion`, async () => {
+    // GIVEN
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC_proprietaire,
+          id_cms: 1,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            {
+              label: 'proprio',
+              code: BooleanKYC.oui,
+              selected: true,
+            },
+            {
+              label: 'pas proprio',
+              code: BooleanKYC.non,
+              selected: false,
+            },
+            {
+              label: 'je sais pas',
+              code: 'ne_sais_pas',
+              selected: false,
+            },
+          ],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+      code_commune: '21231',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const user_after = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user_after.thematique_history.getListeTagsExcluants()).toEqual([
+      'est_proprietaire',
+    ]);
+  });
+
   it(`POST /utilisateurs/id/thematiques/alimentation/personnalisation_ok - API set l'état de perso`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -289,7 +378,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -341,7 +430,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [{ code: '123', type: TypeAction.classique }],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -380,7 +469,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -414,12 +503,69 @@ describe('Thematique (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(6);
   });
+  it(`GET /utilisateurs/id/thematiques/alimentation - exfiltre les actions no eligibles pour cause de tag excluant`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_tags_excluants: [TagExcluant.a_un_velo],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 3; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_4',
+      code: '4',
+      cms_id: '4',
+      thematique: Thematique.alimentation,
+      tags_excluants: [TagExcluant.a_un_velo],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(3);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '3' },
+    ]);
+  });
   it(`GET /utilisateurs/id/thematiques/alimentation - 3 actions si que 3 actions en base`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -470,7 +616,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -516,7 +662,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -559,7 +705,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -619,6 +765,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_tags_excluants: [],
 
       liste_thematiques: [
         {
@@ -691,7 +838,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -764,7 +911,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -822,7 +969,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
-
+      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,

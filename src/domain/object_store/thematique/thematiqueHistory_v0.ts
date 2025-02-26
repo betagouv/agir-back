@@ -1,4 +1,5 @@
 import { TypeCodeAction } from '../../actions/actionDefinition';
+import { TagExcluant } from '../../scoring/tagExcluant';
 import { ThematiqueHistory } from '../../thematique/history/thematiqueHistory';
 import { ThematiqueRecommandation } from '../../thematique/history/thematiqueRecommandation';
 import { Thematique } from '../../thematique/thematique';
@@ -25,6 +26,7 @@ export class ThematiqueRecommandation_v0 {
 export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
   liste_actions_vues: TypeCodeAction[];
+  liste_tags_excluants: TagExcluant[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {
     return {
@@ -34,6 +36,7 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
         .map((t) => ThematiqueRecommandation_v0.serialise(t)),
 
       liste_actions_vues: domain.getListeActionsVues(),
+      liste_tags_excluants: domain.getListeTagsExcluants(),
     };
   }
 }

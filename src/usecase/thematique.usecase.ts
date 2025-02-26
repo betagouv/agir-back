@@ -7,6 +7,7 @@ import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
@@ -71,25 +72,19 @@ export class ThematiqueUsecase {
     const history = utilisateur.thematique_history;
 
     if (history.existeDesPropositions(thema)) {
-      actions = await this.actionUsecase.internal_get_user_actions(
-        utilisateur,
-        {
-          type_codes_inclus: history.getActionsProposees(thema),
-        },
-      );
+      actions = await this.getActionEligiblesUtilisateur(utilisateur, {
+        type_codes_inclus: history.getActionsProposees(thema),
+      });
       for (const action_proposee of history.getActionsProposees(thema)) {
         detail_a_remplir.liste_actions.push(
           actions.find((a) => a.equals(action_proposee)),
         );
       }
     } else {
-      actions = await this.actionUsecase.internal_get_user_actions(
-        utilisateur,
-        {
-          thematique: thema,
-          type_codes_exclus: history.getActionsExclues(thema),
-        },
-      );
+      actions = await this.getActionEligiblesUtilisateur(utilisateur, {
+        thematique: thema,
+        type_codes_exclus: history.getActionsExclues(thema),
+      });
       detail_a_remplir.liste_actions = actions.slice(0, 6);
       history.setActionsProposees(thema, detail_a_remplir.liste_actions);
     }
@@ -118,13 +113,15 @@ export class ThematiqueUsecase {
     if (history.doesActionsProposeesInclude(thema, type_code)) {
       history.exclureAction(thema, type_code);
 
-      const new_action_list =
-        await this.actionUsecase.internal_get_user_actions(utilisateur, {
+      const new_action_list = await this.getActionEligiblesUtilisateur(
+        utilisateur,
+        {
           thematique: thema,
           type_codes_exclus: history
             .getActionsProposees(thema)
             .concat(history.getActionsExclues(thema)),
-        });
+        },
+      );
       if (new_action_list.length === 0) {
         history.removeActionAndShift(thema, type_code);
       } else {
@@ -147,11 +144,15 @@ export class ThematiqueUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
 
     utilisateur.thematique_history.declarePersonnalisationDone(thematique);
+
+    utilisateur.thematique_history.recomputeTagExcluant(
+      utilisateur.kyc_history,
+    );
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
@@ -175,6 +176,32 @@ export class ThematiqueUsecase {
       utilisateur,
       [Scope.thematique_history],
     );
+  }
+
+  private async getActionEligiblesUtilisateur(
+    utilisateur: Utilisateur,
+    filtre: ActionFilter,
+  ): Promise<Action[]> {
+    const result: Action[] = [];
+
+    const liste_actions = await this.actionUsecase.internal_get_user_actions(
+      utilisateur,
+      filtre,
+    );
+
+    const tag_excluants =
+      utilisateur.thematique_history.getListeTagsExcluants();
+
+    for (const action of liste_actions) {
+      if (!this.hasIntersect(action.tags_excluants, tag_excluants)) {
+        result.push(action);
+      }
+    }
+    return result;
+  }
+
+  private hasIntersect(array_1: any[], array_2: any[]): boolean {
+    return array_1.some((v) => array_2.indexOf(v) !== -1);
   }
 
   public async getUtilisateurListeThematiquesPrincipales(

@@ -577,6 +577,7 @@ export class TestUtil {
 
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_tags_excluants: [],
       liste_thematiques: [],
       liste_actions_vues: [],
     };
