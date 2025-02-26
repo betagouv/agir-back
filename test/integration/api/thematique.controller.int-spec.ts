@@ -199,7 +199,7 @@ describe('Thematique (API test)', () => {
     ]);
   });
 
-  it(`POST /utilisateurs/id/thematiques/alimentation/personnalisation_ok - API set l'état de perso`, async () => {
+  it(`POST /utilisateurs/id/thematiques/alimentation/reset_personnalisation -  reset l'état de perso`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
@@ -208,8 +208,8 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [],
+          codes_actions_exclues: [{ code: '1', type: TypeAction.classique }],
+          codes_actions_proposees: [{ code: '2', type: TypeAction.classique }],
           personnalisation_done: true,
         },
       ],
@@ -236,6 +236,14 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(false);
+    expect(
+      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toEqual([]);
+    expect(
+      user_after.thematique_history.getActionsProposees(
+        Thematique.alimentation,
+      ),
+    ).toEqual([]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {

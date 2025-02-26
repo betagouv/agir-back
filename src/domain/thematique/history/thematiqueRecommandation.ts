@@ -27,6 +27,7 @@ export class ThematiqueRecommandation {
   public resetPersonnalisation() {
     this.personnalisation_done = false;
     this.actions_proposees = [];
+    this.actions_exclues = [];
   }
 
   public getActionsExclues(): TypeCodeAction[] {
