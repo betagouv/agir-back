@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { max } from 'rxjs';
 
 export class ApplicationError {
   @ApiProperty()
@@ -583,6 +582,13 @@ export class ApplicationError {
       '110',
       `le code [${code}] ne correspond à aucun code commune INSEE ou SIREN d'EPCI`,
       404,
+    );
+  }
+  static throwBadMosaiConfigurationError(id_mosaic: string) {
+    this.throwAppError(
+      '111',
+      `Erreur interne de configuration de la mosaic [${id_mosaic}]`,
+      500,
     );
   }
 
