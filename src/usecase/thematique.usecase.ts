@@ -121,7 +121,9 @@ export class ThematiqueUsecase {
       const new_action_list =
         await this.actionUsecase.internal_get_user_actions(utilisateur, {
           thematique: thema,
-          type_codes_exclus: history.getActionsProposees(thema),
+          type_codes_exclus: history
+            .getActionsProposees(thema)
+            .concat(history.getActionsExclues(thema)),
         });
       if (new_action_list.length === 0) {
         history.removeActionAndShift(thema, type_code);

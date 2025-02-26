@@ -613,6 +613,79 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '6' },
     ]);
   });
+
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle, prends en compte les actions exclues`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            { type: TypeAction.classique, code: '7' },
+            { type: TypeAction.classique, code: '8' },
+            { type: TypeAction.classique, code: '9' },
+          ],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '10' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
+    expect(
+      user.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '7' },
+      { type: TypeAction.classique, code: '8' },
+      { type: TypeAction.classique, code: '9' },
+      { type: TypeAction.classique, code: '3' },
+    ]);
+  });
+
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles, partant de 5 actions dispo`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
