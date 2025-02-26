@@ -657,7 +657,7 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    const user = await utilisateurRepository.getById('utilisateur-id', [
+    let user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
     expect(
@@ -668,6 +668,9 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '4' },
       { type: TypeAction.classique, code: '5' },
     ]);
+    expect(
+      user.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toStrictEqual([{ code: '3', type: TypeAction.classique }]);
 
     // WHEN
     const lecture = await TestUtil.GET(

@@ -116,6 +116,8 @@ export class ThematiqueUsecase {
     const history = utilisateur.thematique_history;
 
     if (history.doesActionsProposeesInclude(thema, type_code)) {
+      history.exclureAction(thema, type_code);
+
       const new_action_list =
         await this.actionUsecase.internal_get_user_actions(utilisateur, {
           thematique: thema,
@@ -128,7 +130,7 @@ export class ThematiqueUsecase {
         history.switchAction(thema, type_code, new_action.getTypeCode());
       }
     } else {
-      history.addActionToExclusionList(thema, type_code);
+      history.exclureAction(thema, type_code);
     }
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(

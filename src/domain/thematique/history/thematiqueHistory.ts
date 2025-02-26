@@ -113,7 +113,7 @@ export class ThematiqueHistory {
     return reco ? reco.getActionsExclues() : [];
   }
 
-  public addActionToExclusionList(
+  public exclureAction(
     thematique: Thematique,
     type_code_action: TypeCodeAction,
   ) {
