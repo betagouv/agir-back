@@ -53,9 +53,16 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `code commune INSEE pour calculer le nombre d'aides disponible pour cette localisation`,
   })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse, pour recherche textuelle`,
+  })
   async getCatalogue(
     @Query('thematique') thematique: string[] | string,
     @Query('code_commune') code_commune: string,
+    @Query('titre') titre?: string,
   ): Promise<CatalogueActionAPI> {
     const liste_thematiques_input =
       this.getStringListFromStringArrayAPIInput(thematique);
@@ -69,6 +76,7 @@ export class ActionsController extends GenericControler {
     const catalogue = await this.actionUsecase.getOpenCatalogue(
       liste_thematiques,
       code_commune,
+      titre,
     );
 
     return CatalogueActionAPI.mapToAPI(catalogue);
@@ -90,9 +98,16 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse, pour recherche textuelle`,
+  })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('titre') titre: string,
     @Request() req,
   ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
@@ -107,6 +122,7 @@ export class ActionsController extends GenericControler {
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
+      titre,
     );
     return CatalogueActionAPI.mapToAPI(catalogue);
   }

@@ -33,11 +33,13 @@ export class ActionUsecase {
 
   async getOpenCatalogue(
     filtre_thematiques: Thematique[],
-    code_commune?: string,
+    code_commune: string = null,
+    titre: string = undefined,
   ): Promise<CatalogueAction> {
     const liste_actions = await this.actionRepository.list({
       liste_thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
+      titre_fragment: titre,
     });
 
     let result = new CatalogueAction();
@@ -82,6 +84,7 @@ export class ActionUsecase {
   async getUtilisateurCatalogue(
     utilisateurId: string,
     filtre_thematiques: Thematique[],
+    titre: string = undefined,
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -94,6 +97,7 @@ export class ActionUsecase {
     result.actions = await this.internal_get_user_actions(utilisateur, {
       liste_thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
+      titre_fragment: titre,
     });
 
     this.setFiltreThematiqueToCatalogue(result, filtre_thematiques);

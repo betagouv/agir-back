@@ -18,6 +18,7 @@ export type ActionFilter = {
   type_codes_inclus?: TypeCodeAction[];
   codes_exclus?: string[];
   codes_inclus?: string[];
+  titre_fragment?: string;
 };
 
 @Injectable()
@@ -127,6 +128,14 @@ export class ActionRepository {
       main_filter.push({
         thematique: {
           in: filtre.liste_thematiques,
+        },
+      });
+    }
+    if (filtre.titre_fragment) {
+      main_filter.push({
+        titre: {
+          contains: filtre.titre_fragment,
+          mode: 'insensitive',
         },
       });
     }
