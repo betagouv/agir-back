@@ -15,6 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Consultation } from '../../domain/actions/catalogueAction';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AuthGuard } from '../auth/guard';
@@ -104,10 +105,17 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `une fragment du titre, insensible à la casse, pour recherche textuelle`,
   })
+  @ApiQuery({
+    name: 'consultation',
+    enum: Consultation,
+    required: false,
+    description: `indique si on veut lister toutes les actions, celles vues, ou celles pas vues`,
+  })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
+    @Query('consultation') consultation: string,
     @Request() req,
   ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
@@ -119,10 +127,15 @@ export class ActionsController extends GenericControler {
     for (const them_string of liste_thematiques_input) {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
+
+    const type_consulation =
+      this.castTypeConsultationActionOrException(consultation);
+
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
       titre,
+      type_consulation,
     );
     return CatalogueActionAPI.mapToAPI(catalogue);
   }

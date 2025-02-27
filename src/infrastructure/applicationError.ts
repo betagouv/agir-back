@@ -591,6 +591,9 @@ export class ApplicationError {
       500,
     );
   }
+  static throwTypeConsultationNotFound(type: string) {
+    this.throwAppError('112', `Type de consultation [${type}] inconnu`);
+  }
 
   private static throwAppError(
     code: string,

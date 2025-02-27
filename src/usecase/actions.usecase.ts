@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
-import { CatalogueAction } from '../domain/actions/catalogueAction';
+import {
+  CatalogueAction,
+  Consultation,
+} from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
@@ -85,6 +88,7 @@ export class ActionUsecase {
     utilisateurId: string,
     filtre_thematiques: Thematique[],
     titre: string = undefined,
+    consultation: Consultation = Consultation.tout,
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -92,48 +96,19 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    let result = new CatalogueAction();
+    let catalogue = new CatalogueAction();
 
-    result.actions = await this.internal_get_user_actions(utilisateur, {
+    catalogue.actions = await this.internal_get_user_actions(utilisateur, {
       liste_thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
       titre_fragment: titre,
     });
 
-    this.setFiltreThematiqueToCatalogue(result, filtre_thematiques);
+    this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
-    return result;
-  }
+    this.filtreParConsultation(catalogue, consultation, utilisateur);
 
-  public async internal_get_user_actions(
-    utilisateur: Utilisateur,
-    filtre: ActionFilter,
-  ): Promise<Action[]> {
-    const liste_actions = await this.actionRepository.list(filtre);
-
-    let result: Action[] = [];
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.code_commune,
-    );
-
-    for (const action_def of liste_actions) {
-      const count_aides = await this.aideRepository.count({
-        besoins: action_def.besoins,
-        code_postal: commune.codesPostaux[0],
-        code_commune: commune.code,
-        code_departement: commune.departement,
-        code_region: commune.region,
-        date_expiration: new Date(),
-      });
-      const action = new Action(action_def);
-      action.nombre_aides = count_aides;
-      action.deja_vue = utilisateur.thematique_history.isActionVue(
-        action.getTypeCode(),
-      );
-      result.push(action);
-    }
-
-    return result;
+    return catalogue;
   }
 
   async getAction(
@@ -304,6 +279,37 @@ export class ActionUsecase {
     return await this.actionRepository.count({ thematique: thematique });
   }
 
+  public async internal_get_user_actions(
+    utilisateur: Utilisateur,
+    filtre: ActionFilter,
+  ): Promise<Action[]> {
+    const liste_actions = await this.actionRepository.list(filtre);
+
+    let result: Action[] = [];
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.code_commune,
+    );
+
+    for (const action_def of liste_actions) {
+      const count_aides = await this.aideRepository.count({
+        besoins: action_def.besoins,
+        code_postal: commune.codesPostaux[0],
+        code_commune: commune.code,
+        code_departement: commune.departement,
+        code_region: commune.region,
+        date_expiration: new Date(),
+      });
+      const action = new Action(action_def);
+      action.nombre_aides = count_aides;
+      action.deja_vue = utilisateur.thematique_history.isActionVue(
+        action.getTypeCode(),
+      );
+      result.push(action);
+    }
+
+    return result;
+  }
+
   private setFiltreThematiqueToCatalogue(
     catalogue: CatalogueAction,
     liste_thematiques: Thematique[],
@@ -315,5 +321,31 @@ export class ActionUsecase {
           liste_thematiques.includes(thematique),
         );
     }
+  }
+
+  private filtreParConsultation(
+    catalogue: CatalogueAction,
+    type_consulation: Consultation,
+    utilisateur: Utilisateur,
+  ) {
+    if (!type_consulation || type_consulation === Consultation.tout) {
+      catalogue.consultation = Consultation.tout;
+      return;
+    }
+    catalogue.consultation = type_consulation;
+
+    const new_action_list: Action[] = [];
+
+    const target_vue = type_consulation === Consultation.vu;
+
+    for (const action of catalogue.actions) {
+      const est_vue = utilisateur.thematique_history.isActionVue(
+        action.getTypeCode(),
+      );
+      if ((est_vue && target_vue) || (!est_vue && !target_vue)) {
+        new_action_list.push(action);
+      }
+    }
+    catalogue.actions = new_action_list;
   }
 }

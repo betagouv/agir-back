@@ -7,12 +7,13 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { App } from '../../../src/domain/app';
+import { Consultation } from '../../domain/actions/catalogueAction';
+import { TypeAction } from '../../domain/actions/typeAction';
+import { Thematique } from '../../domain/thematique/thematique';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { ControllerExceptionFilter } from './controllerException.filter';
-import { Thematique } from '../../domain/thematique/thematique';
-import { ApplicationError } from '../applicationError';
-import { TypeAction } from '../../domain/actions/typeAction';
 
 @UseFilters(new ControllerExceptionFilter())
 @Injectable()
@@ -60,6 +61,16 @@ export class GenericControler {
     const type = TypeAction[type_action];
     if (!type) {
       ApplicationError.throwTypeActionNotFound(type_action);
+    }
+    return type;
+  }
+  public castTypeConsultationActionOrException(
+    consultation: string,
+  ): Consultation {
+    if (!consultation) return Consultation.tout;
+    const type = Consultation[consultation];
+    if (!type) {
+      ApplicationError.throwTypeConsultationNotFound(consultation);
     }
     return type;
   }
