@@ -1,16 +1,16 @@
+import { Injectable } from '@nestjs/common';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { OidcService } from '../infrastructure/auth/oidc.service';
-import { Injectable } from '@nestjs/common';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ProfileUsecase } from './profile.usecase';
+import { OidcService } from '../infrastructure/auth/oidc.service';
+import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { ProfileUsecase } from './profile.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -26,7 +26,10 @@ export class FranceConnectUsecase {
   async genererConnexionFranceConnect(): Promise<URL> {
     const redirect_infos = this.oidcService.generatedAuthRedirectUrl();
 
-    await this.oIDCStateRepository.createNewState(redirect_infos.state);
+    await this.oIDCStateRepository.createNewState(
+      redirect_infos.state,
+      redirect_infos.nonce,
+    );
 
     return redirect_infos.url;
   }
@@ -40,7 +43,10 @@ export class FranceConnectUsecase {
   }> {
     const state = await this.oIDCStateRepository.getByState(oidc_state);
     if (!state) {
-      ApplicationError.throwBadOIDCCodeState();
+      console.error(
+        `FranceConnect : state manquant en base de donnée : ${oidc_state}`,
+      );
+      ApplicationError.throwSecurityTechnicalProblemDetected();
     }
 
     console.log(state);
@@ -50,6 +56,15 @@ export class FranceConnectUsecase {
 
     console.log(`access token : [${tokens.access_token}]`);
     console.log(`id token : [${tokens.id_token}]`);
+
+    // CHECK NONCE
+    const id_token_data = this.oidcService.decodeIdToken(tokens.id_token);
+    if (id_token_data.nonce !== state.nonce) {
+      console.error(
+        `FranceConnect : mismatch sur NONCE => sent[${state.nonce}] VS received[${id_token_data.nonce}]`,
+      );
+      ApplicationError.throwSecurityTechnicalProblemDetected();
+    }
 
     await this.oIDCStateRepository.setIdToken(state.state, tokens.id_token);
 

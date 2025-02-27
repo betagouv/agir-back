@@ -417,6 +417,7 @@ export class TestUtil {
       state: '123',
       idtoken: '456',
       utilisateurId: 'utilisateur-id',
+      nonce: '789',
       created_at: undefined,
       updated_at: undefined,
       ...override,

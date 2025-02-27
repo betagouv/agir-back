@@ -563,10 +563,10 @@ export class ApplicationError {
       404,
     );
   }
-  static throwBadOIDCCodeState() {
+  static throwSecurityTechnicalProblemDetected() {
     this.throwAppError(
       '107',
-      `Problème détecté dans les paramètres d'authentification (code ou state)`,
+      `Problème détecté au cours de l'authentification sur des éléments de sécurité, c'est pas bien d'essayer de nous pirater ^^`,
     );
   }
   static throwBadActionCodeFormat(code: string) {

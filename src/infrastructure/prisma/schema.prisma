@@ -14,6 +14,7 @@ datasource db {
 model OIDC_STATE {
   state         String   @id
   utilisateurId String?  @unique
+  nonce         String?  @unique
   idtoken       String?
   created_at    DateTime @default(now()) @db.Timestamptz(3)
   updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
