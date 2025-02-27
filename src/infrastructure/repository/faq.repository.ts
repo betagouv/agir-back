@@ -8,10 +8,10 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class FAQRepository {
   constructor(private prisma: PrismaService) {
-    FAQRepository.catalogue = [];
+    FAQRepository.catalogue = new Map();
   }
 
-  private static catalogue: FAQDefinition[];
+  private static catalogue: Map<string, FAQDefinition>;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
@@ -24,19 +24,21 @@ export class FAQRepository {
   }
   @Cron('* * * * *')
   async loadFAQ(): Promise<void> {
+    const map = new Map();
     const result = await this.prisma.fAQ.findMany();
-    FAQRepository.catalogue = result.map((elem) =>
-      this.buildFAQDefinitionFromDB(elem),
-    );
+    for (const faq of result) {
+      map.set(faq.id_cms, this.buildFAQDefinitionFromDB(faq));
+    }
+    FAQRepository.catalogue = map;
   }
 
   public static resetCache() {
     // FOR TEST ONLY
-    FAQRepository.catalogue = [];
+    FAQRepository.catalogue = new Map();
   }
 
-  public static getCatalogue(): FAQDefinition[] {
-    return FAQRepository.catalogue;
+  public getFaqByCmsId(cms_id: string): FAQDefinition {
+    return FAQRepository.catalogue.get(cms_id);
   }
 
   async upsert(faq: FAQDefinition): Promise<void> {

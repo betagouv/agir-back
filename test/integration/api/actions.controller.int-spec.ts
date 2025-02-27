@@ -8,6 +8,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -16,6 +17,7 @@ describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const fAQRepository = new FAQRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -617,6 +619,28 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(0);
   });
+  it(`GET /actions/id - les éléments de FAQ`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
+    await TestUtil.create(DB.fAQ, { id_cms: '456' });
+
+    await fAQRepository.loadFAQ();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/classique/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.faqs).toEqual([
+      {
+        question: 'question',
+        reponse: 'reponse',
+      },
+    ]);
+  });
 
   it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
     // GIVEN
@@ -683,6 +707,30 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(2);
     expect(action.nom_commune).toEqual('Dijon');
+  });
+
+  it(`GET /utilisateurs/id/actions/id - accorche les faqs`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
+    await TestUtil.create(DB.fAQ, { id_cms: '456' });
+
+    await fAQRepository.loadFAQ();
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+    expect(action.faqs).toEqual([
+      {
+        question: 'question',
+        reponse: 'reponse',
+      },
+    ]);
   });
 
   it(`GET /utilisateurs/id/actions/id - consultation track une action comme vue`, async () => {

@@ -6,6 +6,7 @@ import { Echelle } from '../../../../domain/aides/echelle';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
@@ -52,6 +53,18 @@ export class AideActionAPI {
   }
 }
 
+export class FAQActionAPI {
+  @ApiProperty() question: string;
+  @ApiProperty() reponse: string;
+
+  public static mapToAPI(faq: FAQDefinition): FAQActionAPI {
+    return {
+      question: faq.question,
+      reponse: faq.reponse,
+    };
+  }
+}
+
 export class ScoreActionAPI {
   score: number;
 }
@@ -77,6 +90,9 @@ export class ActionAPI {
   @ApiProperty({ type: [AideActionAPI] })
   aides: AideActionAPI[];
 
+  @ApiProperty({ type: [FAQActionAPI] })
+  faqs: FAQActionAPI[];
+
   @ApiProperty({ type: [ServiceActionAPI] })
   services: ServiceActionAPI[];
 
@@ -99,6 +115,7 @@ export class ActionAPI {
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
       deja_vue: action.deja_vue,
+      faqs: action.faq_liste.map(FAQActionAPI.mapToAPI),
     };
   }
 }

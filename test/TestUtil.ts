@@ -78,7 +78,7 @@ export enum DB {
   situationNGC = 'situationNGC',
   utilisateur = 'utilisateur',
   aide = 'aide',
-  faq = 'faq',
+  fAQ = 'fAQ',
   blockText = 'blockText',
   conformite = 'conformite',
   defi = 'defi',
@@ -113,7 +113,7 @@ export class TestUtil {
     linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
-    faq: TestUtil.partenaireData,
+    fAQ: TestUtil.fAQData,
     blockText: TestUtil.blockTextData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
@@ -700,7 +700,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static faqData(override?: Partial<FAQ>): FAQ {
+  static fAQData(override?: Partial<FAQ>): FAQ {
     return {
       id_cms: '123',
       question: 'question',

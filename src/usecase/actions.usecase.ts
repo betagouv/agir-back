@@ -20,6 +20,7 @@ import {
   Commune,
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
+import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
@@ -32,6 +33,7 @@ export class ActionUsecase {
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private bibliothequeUsecase: BibliothequeUsecase,
+    private fAQRepository: FAQRepository,
   ) {}
 
   async getOpenCatalogue(
@@ -165,6 +167,11 @@ export class ActionUsecase {
       });
     }
 
+    action.faq_liste = [];
+    for (const faq_id of action_def.faq_ids) {
+      action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
+    }
+
     action.setListeAides(linked_aides);
     action.services = liste_services;
 
@@ -225,6 +232,11 @@ export class ActionUsecase {
     for (const quizz_id of action_def.quizz_ids) {
       const quizz = await this.bibliothequeUsecase.internal_get_quizz(quizz_id);
       action.quizz_liste.push(quizz);
+    }
+
+    action.faq_liste = [];
+    for (const faq_id of action_def.faq_ids) {
+      action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
     }
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(
