@@ -399,6 +399,7 @@ export class TestUtil {
       quizz_felicitations: 'bien',
       pourquoi: 'En quelques mots',
       kyc_ids: [],
+      faq_ids: [],
       lvo_action: CategorieRecherche.emprunter,
       lvo_objet: 'chaussure',
       quizz_ids: [],

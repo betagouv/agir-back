@@ -152,6 +152,17 @@ export type CMSWebhookPopulateAPI = {
         },
       ];
     };
+    faqs: {
+      data: [
+        {
+          id: number;
+          attributes: {
+            question: string;
+            reponse: string;
+          };
+        },
+      ];
+    };
     tags: {
       data: [
         {

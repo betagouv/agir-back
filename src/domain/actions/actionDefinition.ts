@@ -18,6 +18,7 @@ export class ActionDefinitionData {
   comment: string;
   pourquoi: string;
   kyc_ids: string[];
+  faq_ids: string[];
   lvo_action: CategorieRecherche;
   lvo_objet: string;
   quizz_ids: string[];

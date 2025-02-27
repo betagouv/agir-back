@@ -236,6 +236,7 @@ model Action {
   besoins             String[] @default([])
   quizz_ids           String[] @default([])
   kyc_ids             String[] @default([])
+  faq_ids             String[] @default([])
   recette_categorie   String?
   lvo_action          String?
   lvo_objet           String?

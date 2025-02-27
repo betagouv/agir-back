@@ -69,6 +69,7 @@ export class ActionRepository {
       lvo_objet: action.lvo_objet,
       pourquoi: action.pourquoi,
       quizz_ids: action.quizz_ids,
+      faq_ids: action.faq_ids,
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
       type: action.type,
@@ -214,6 +215,7 @@ export class ActionRepository {
       type: TypeAction[action.type],
       quizz_felicitations: action.quizz_felicitations,
       tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
+      faq_ids: action.faq_ids,
     });
   }
 }

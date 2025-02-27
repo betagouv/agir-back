@@ -92,6 +92,14 @@ describe('/api/incoming/cms (API test)', () => {
           id: 2,
         },
       ],
+      faqs: [
+        {
+          id: 5,
+        },
+        {
+          id: 6,
+        },
+      ],
       kycs: [
         {
           id: 3,
@@ -941,6 +949,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
@@ -1051,6 +1060,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
