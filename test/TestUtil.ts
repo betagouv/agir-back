@@ -226,6 +226,7 @@ export class TestUtil {
     await this.prisma.blockText.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
+    await this.prisma_stats.utilisateurCopy.deleteMany();
 
     ThematiqueRepository.resetCache();
     DefiRepository.resetCache();
@@ -672,6 +673,7 @@ export class TestUtil {
       mobile_token_updated_at: null,
       code_commune: null,
       france_connect_sub: null,
+      external_stat_id: null,
       ...override,
     };
   }

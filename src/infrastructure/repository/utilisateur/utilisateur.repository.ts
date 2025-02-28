@@ -300,6 +300,36 @@ export class UtilisateurRepository {
       },
     });
   }
+  async updateUtilisateurExternalStatId(
+    utilisateurId: string,
+    external_stat_id: string,
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        external_stat_id: external_stat_id,
+      },
+    });
+  }
+
+  async listePaginatedUsers(
+    skip: number,
+    take: number,
+    scopes: Scope[],
+  ): Promise<Utilisateur[]> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
+    const results = await this.prisma.utilisateur.findMany({
+      skip: skip,
+      take: take,
+      omit: this.buildOmitBlockFromScopes(scopes),
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildUtilisateurFromDB(r));
+  }
 
   async listUtilisateurIds(filter: {
     created_after?: Date;
@@ -412,6 +442,11 @@ export class UtilisateurRepository {
         updated_at: { gte: date },
       },
     });
+    return Number(count);
+  }
+
+  async countAll(): Promise<number> {
+    const count = await this.prisma.utilisateur.count();
     return Number(count);
   }
 
@@ -544,6 +579,7 @@ export class UtilisateurRepository {
       mobile_token_updated_at: user.mobile_token_updated_at,
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
+      external_stat_id: user.external_stat_id,
     });
 
     if (result.kyc_history) {
@@ -621,6 +657,7 @@ export class UtilisateurRepository {
       defis: undefined,
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
+      external_stat_id: user.external_stat_id,
     };
   }
 

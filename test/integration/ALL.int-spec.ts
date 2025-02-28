@@ -52,4 +52,5 @@ import './repository/utilisateur.repository.int-spec';
 import './repository/utilisateurBoard.repository.int-spec';
 import './services/linkyServiceManager.int-spec';
 import './usecase/contact.usecase.int-spec';
+import './usecase/duplicate.usecase.int-spec';
 import './usecase/linky.usecase.int-spec';

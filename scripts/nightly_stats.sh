@@ -1,0 +1,1 @@
+npm run execute dump_utilisateur_copy_for_stats

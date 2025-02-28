@@ -15,3 +15,16 @@ model TestTable {
   id   String @id
   type String
 }
+
+model UtilisateurCopy {
+  id                     String    @id
+  compte_actif           Boolean
+  revenu_fiscal          Int?
+  nombre_parts_fiscales  Decimal?  @db.Decimal(4, 2)
+  date_derniere_activite DateTime?
+  nombre_points          Int?      @default(0)
+  code_postal            String?
+  nom_commune            String?
+  code_insee_commune     String?
+  source_inscription     String?
+}

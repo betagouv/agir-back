@@ -92,6 +92,7 @@ import { LongueVieObjetsRepository } from './infrastructure/repository/services_
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
+import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
 import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
@@ -135,6 +136,7 @@ import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.us
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
+import { DuplicateUsecase } from './usecase/stats/new/duplicate.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
@@ -301,6 +303,8 @@ function getControllers(): any[] {
     FAQRepository,
     BlockTextRepository,
     AidesVeloUsecase,
+    DuplicateUsecase,
+    StatistiqueExternalRepository,
   ],
 })
 export class AppModule {}
