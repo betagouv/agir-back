@@ -14,6 +14,7 @@ import {
   EPCI,
 } from '../../src/infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Aide } from '../domain/aides/aide';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import {
   AidesVeloParType,
@@ -51,14 +52,17 @@ export class AidesUsecase {
     );
   }
 
-  async exportAides(): Promise<AideDefinition[]> {
+  async exportAides(): Promise<Aide[]> {
+    const result: Aide[] = [];
     const liste = await this.aideRepository.listAll();
-    for (const aide of liste) {
+    for (const aide_def of liste) {
+      const aide = new Aide(aide_def);
+
       const metropoles = new Set<string>();
       const cas = new Set<string>();
       const cus = new Set<string>();
       const ccs = new Set<string>();
-      for (const code_postal of aide.codes_postaux) {
+      for (const code_postal of aide_def.codes_postaux) {
         this.communeRepository
           .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'METRO')
           .map((m) => metropoles.add(m));
@@ -76,12 +80,33 @@ export class AidesUsecase {
       aide.cc = Array.from(ccs.values());
       aide.cu = Array.from(cus.values());
       aide.metropoles = Array.from(metropoles.values());
+      result.push(aide);
     }
-    liste.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
-    return liste;
+    result.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
+    return result;
   }
 
-  async clickAideInfosLink(utilisateurId: string, id_cms: string) {
+  async consulterAide(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.consulterAide(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+  }
+
+  async consulterAideInfosLink(utilisateurId: string, id_cms: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.history_article_quizz_aides],
@@ -95,9 +120,12 @@ export class AidesUsecase {
 
     utilisateur.history.clickAideInfosLink(id_cms);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
   }
-  async clickAideDemandeLink(utilisateurId: string, id_cms: string) {
+  async consulterAideDemandeLink(utilisateurId: string, id_cms: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.history_article_quizz_aides],
@@ -111,7 +139,10 @@ export class AidesUsecase {
 
     utilisateur.history.clickAideDemandeLink(id_cms);
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
   }
 
   async getCatalogueAides(
@@ -133,7 +164,7 @@ export class AidesUsecase {
         utilisateur.logement.code_postal,
       );
 
-    const result = await this.aideRepository.search({
+    const aide_def_liste = await this.aideRepository.search({
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region ? dept_region.code_departement : undefined,
@@ -141,23 +172,13 @@ export class AidesUsecase {
       date_expiration: new Date(),
     });
 
-    for (const aide of result) {
-      const aide_hist = utilisateur.history.getAideInteractionByIdCms(
-        aide.content_id,
-      );
-      if (aide_hist) {
-        aide.clicked_demande = aide_hist.clicked_demande;
-        aide.clicked_infos = aide_hist.clicked_infos;
-      }
-    }
-
-    const aides_nationales = [];
-    const aides_locales = [];
-    for (const aide_def of result) {
+    const aides_nationales: Aide[] = [];
+    const aides_locales: Aide[] = [];
+    for (const aide_def of aide_def_liste) {
       if (aide_def.echelle === Echelle.National) {
-        aides_nationales.push(aide_def);
+        aides_nationales.push(this.setHistoryData(aide_def, utilisateur));
       } else {
-        aides_locales.push(aide_def);
+        aides_locales.push(this.setHistoryData(aide_def, utilisateur));
       }
     }
 
@@ -176,6 +197,33 @@ export class AidesUsecase {
     if (!aide) {
       ApplicationError.throwAideNotFound(cms_id);
     }
+
+    return this.personnalisator.personnaliser(aide);
+  }
+
+  async getAideUtilisateurByIdCMS(
+    utilisateurId: string,
+    cms_id: string,
+  ): Promise<Aide> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_def = await this.aideRepository.getByContentId(cms_id);
+
+    if (!aide_def) {
+      ApplicationError.throwAideNotFound(cms_id);
+    }
+
+    const aide = this.setHistoryData(aide_def, utilisateur);
+
+    utilisateur.history.consulterAide(cms_id);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
 
     return this.personnalisator.personnaliser(aide);
   }
@@ -455,5 +503,21 @@ export class AidesUsecase {
         }
       }
     }
+  }
+
+  private setHistoryData(
+    aide_def: AideDefinition,
+    utilisateur: Utilisateur,
+  ): Aide {
+    const aide = new Aide(aide_def);
+    const aide_hist = utilisateur.history.getAideInteractionByIdCms(
+      aide_def.content_id,
+    );
+    if (aide_hist) {
+      aide.clicked_demande = aide_hist.clicked_demande;
+      aide.clicked_infos = aide_hist.clicked_infos;
+      aide.vue_at = aide_hist.vue_at;
+    }
+    return aide;
   }
 }

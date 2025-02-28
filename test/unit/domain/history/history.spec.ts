@@ -46,7 +46,12 @@ describe('History', () => {
         },
       ],
       aide_interactions: [
-        { clicked_demande: true, clicked_infos: false, content_id: '1' },
+        {
+          clicked_demande: true,
+          clicked_infos: false,
+          content_id: '1',
+          vue_at: new Date(),
+        },
       ],
     });
 
@@ -81,7 +86,12 @@ describe('History', () => {
         },
       ],
       aide_interactions: [
-        { clicked_demande: true, clicked_infos: false, content_id: '1' },
+        {
+          clicked_demande: true,
+          clicked_infos: false,
+          content_id: '1',
+          vue_at: new Date(),
+        },
       ],
     });
 

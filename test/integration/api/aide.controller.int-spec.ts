@@ -484,15 +484,25 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
-  it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée', async () => {
+  it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée / vue', async () => {
     // GIVEN
     const history: History_v0 = {
       version: 0,
       article_interactions: [],
       quizz_interactions: [],
       aide_interactions: [
-        { content_id: '1', clicked_demande: true, clicked_infos: false },
-        { content_id: '2', clicked_demande: false, clicked_infos: true },
+        {
+          content_id: '1',
+          clicked_demande: true,
+          clicked_infos: false,
+          vue_at: new Date(1),
+        },
+        {
+          content_id: '2',
+          clicked_demande: false,
+          clicked_infos: true,
+          vue_at: new Date(2),
+        },
       ],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -516,9 +526,11 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.clicked_infos).toEqual(false);
     expect(aideBody.clicked_demande).toEqual(true);
+    expect(aideBody.deja_vue_le).toEqual('1970-01-01T00:00:00.001Z');
   });
   it(`POST /utilisateurs/:utilisateurId/aides/id/vu_infos marque l'aide comme cliqué sur le lien d'infos `, async () => {
     // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
     const history: History_v0 = {
       version: 0,
       article_interactions: [],
@@ -551,8 +563,42 @@ describe('Aide (API test)', () => {
       content_id: '1',
     });
   });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/consulter marque l'aide comme vue`, async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: undefined,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/consulter',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.history.aide_interactions).toHaveLength(1);
+    expect(
+      userDB.history.aide_interactions[0].vue_at.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+  });
   it(`POST /utilisateurs/:utilisateurId/aides/id/vu_demande marque l'aide comme cliqué sur le lien demande `, async () => {
     // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
     const history: History_v0 = {
       version: 0,
       article_interactions: [],
@@ -685,7 +731,7 @@ describe('Aide (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.GET('/aides');
+    const response = await TestUtil.GET('/aides_export');
 
     // THEN
     expect(response.status).toBe(200);
@@ -716,6 +762,146 @@ describe('Aide (API test)', () => {
       `CC Rives de l'Ain - Pays du Cerdon`,
     );
     expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
+  });
+
+  it('GET /aides/id_cms récupère une aide unique en mode non connecté', async () => {
+    // GIVEN
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'], // metropole
+      partenaire_id: '123',
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().get('/aides/1');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      content_id: '1',
+      titre: 'titreA',
+      contenu: "Contenu de l'aide",
+      derniere_maj: null,
+      url_simulateur: '/aides/velo',
+      url_source: 'https://hello',
+      url_demande: 'https://demande',
+      is_simulateur: true,
+      codes_postaux: ['21000'],
+      thematiques: ['climat', 'logement'],
+      thematiques_label: ['climat', 'logement'],
+      montant_max: 999,
+      besoin_desc: 'Acheter un vélo',
+      besoin: 'acheter_velo',
+      partenaire_logo_url: 'logo_url',
+      partenaire_nom: 'ADEME',
+      partenaire_url: 'https://ademe.fr',
+      echelle: 'National',
+      est_gratuit: false,
+    });
+  });
+
+  it(`GET /aides/id_cms récupère une aide unique d'un utilisateur donnée`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [
+        {
+          content_id: '1',
+          clicked_demande: true,
+          clicked_infos: false,
+          vue_at: new Date(1),
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { history: history as any });
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'], // metropole
+      partenaire_id: '123',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides/1');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      content_id: '1',
+      titre: 'titreA',
+      contenu: "Contenu de l'aide",
+      derniere_maj: null,
+      url_simulateur: '/aides/velo',
+      url_source: 'https://hello',
+      url_demande: 'https://demande',
+      is_simulateur: true,
+      codes_postaux: ['21000'],
+      thematiques: ['climat', 'logement'],
+      thematiques_label: ['climat', 'logement'],
+      montant_max: 999,
+      besoin_desc: 'Acheter un vélo',
+      besoin: 'acheter_velo',
+      partenaire_logo_url: 'logo_url',
+      partenaire_nom: 'ADEME',
+      partenaire_url: 'https://ademe.fr',
+      echelle: 'National',
+      est_gratuit: false,
+      clicked_demande: true,
+      clicked_infos: false,
+      deja_vue_le: '1970-01-01T00:00:00.001Z',
+    });
+  });
+
+  it(`GET /aides/id_cms consulter une aide positionne la date de vue`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [
+        {
+          content_id: '1',
+          clicked_demande: false,
+          clicked_infos: false,
+          vue_at: undefined,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { history: history as any });
+    await TestUtil.create(DB.partenaire);
+    await partenaireRepository.loadPartenaires();
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'], // metropole
+      partenaire_id: '123',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides/1');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.deja_vue_le).toEqual(undefined);
+
+    // WHEN
+    const response_2 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides/1',
+    );
+
+    // THEN
+    expect(response_2.status).toBe(200);
+    expect(response_2.body.deja_vue_le).not.toBeNull();
+    expect(new Date(response_2.body.deja_vue_le).getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
   });
 
   it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {

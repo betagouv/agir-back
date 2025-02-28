@@ -1,11 +1,11 @@
+import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
+import { History } from '../../../../src/domain/history/history';
 import {
   QuizzAttempt,
   QuizzHistory,
 } from '../../../../src/domain/history/quizzHistory';
-import { ArticleHistory } from '../../../../src/domain/history/articleHistory';
-import { History } from '../../../../src/domain/history/history';
-import { Versioned, Versioned_v0 } from '../versioned';
 import { AideHistory } from '../../history/aideHistory';
+import { Versioned_v0 } from '../versioned';
 
 export class ArticleHistory_v0 {
   content_id: string;
@@ -38,6 +38,7 @@ export class QuizzAttempt_v0 {
 }
 export class AideHistory_v0 {
   content_id: string;
+  vue_at: Date;
   clicked_infos: boolean;
   clicked_demande: boolean;
 
@@ -46,6 +47,7 @@ export class AideHistory_v0 {
       content_id: elem.content_id,
       clicked_infos: elem.clicked_infos,
       clicked_demande: elem.clicked_demande,
+      vue_at: elem.vue_at,
     };
   }
 }

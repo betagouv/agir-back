@@ -25,12 +25,6 @@ export class AideDefinition implements ContenuLocal {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
-  ca?: string[];
-  cu?: string[];
-  cc?: string[];
-  metropoles?: string[];
-  clicked_demande?: boolean;
-  clicked_infos?: boolean;
   date_expiration: Date;
   derniere_maj: Date;
   est_gratuit: boolean;

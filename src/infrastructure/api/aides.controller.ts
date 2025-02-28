@@ -41,7 +41,7 @@ export class AidesController extends GenericControler {
     summary:
       "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
   })
-  @Get('aides')
+  @Get('aides_export')
   async getCatalogueAidesComplet(@Request() req): Promise<AideExportAPI[]> {
     this.checkCronAPIProtectedEndpoint(req);
     const aides = await this.aidesUsecase.exportAides();
@@ -59,8 +59,22 @@ export class AidesController extends GenericControler {
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.clickAideInfosLink(utilisateurId, aideId);
+    await this.aidesUsecase.consulterAideInfosLink(utilisateurId, aideId);
   }
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/consulter')
+  @ApiOperation({
+    summary: `Indique que l'utilisateur a consulté cette aide particulière`,
+  })
+  @UseGuards(AuthGuard)
+  async consulterAide(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('aideId') aideId: string,
+    @Request() req,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    await this.aidesUsecase.consulterAide(utilisateurId, aideId);
+  }
+
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')
   @ApiOperation({
     summary: `Indique que l'utilisateur est allé voir la page source de demande de l'aide`,
@@ -72,7 +86,7 @@ export class AidesController extends GenericControler {
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.clickAideDemandeLink(utilisateurId, aideId);
+    await this.aidesUsecase.consulterAideDemandeLink(utilisateurId, aideId);
   }
 
   @ApiOkResponse({ type: AideAPI_v2 })
@@ -88,14 +102,30 @@ export class AidesController extends GenericControler {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
   @ApiOkResponse({ type: AideAPI })
   @Get('aides/:id_cms')
-  async getAides_v2(
+  async getAideUnique(
     @Param('id_cms') id_cms: string,
     @Request() req,
   ): Promise<AideAPI> {
     const aide = await this.aidesUsecase.getAideByIdCMS(id_cms);
+    return AideAPI.mapToAPI(aide);
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: AideAPI })
+  @Get('utilisateurs/:utilisateurId/aides/:id_cms')
+  async getAideUtilisateur(
+    @Param('id_cms') id_cms: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<AideAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const aide = await this.aidesUsecase.getAideUtilisateurByIdCMS(
+      utilisateurId,
+      id_cms,
+    );
     return AideAPI.mapToAPI(aide);
   }
 
