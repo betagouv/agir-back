@@ -5,6 +5,7 @@ TestUtil.ok_appclose = false;
 import './api/actions.controller.int-spec';
 import './api/admin.controller.int-spec';
 import './api/aide.controller.int-spec';
+import './api/aideVelo.controller.int-spec';
 import './api/bibliotheque.controller.int-spec';
 import './api/bilanCarbone.controller.int-spec';
 import './api/communes.controller.int-spec';

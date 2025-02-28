@@ -42,6 +42,7 @@ import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
+import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 
@@ -423,5 +424,17 @@ export class AdminController extends GenericControler {
       },
       token,
     );
+  }
+
+  @ApiOkResponse({ type: [AideExportAPI] })
+  @ApiOperation({
+    summary:
+      "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
+  })
+  @Get('aides_export')
+  async getCatalogueAidesComplet(@Request() req): Promise<AideExportAPI[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    const aides = await this.adminUsecase.exportAides();
+    return aides.map((elem) => AideExportAPI.mapToAPI(elem));
   }
 }

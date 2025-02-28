@@ -1,13 +1,53 @@
 import { Injectable } from '@nestjs/common';
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Aide } from '../domain/aides/aide';
 import { KYCID } from '../domain/kyc/KYCID';
+import { Scope } from '../domain/utilisateur/utilisateur';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 @Injectable()
 export class AdminUsecase {
-  constructor(private utilisateurRepository: UtilisateurRepository) {}
+  constructor(
+    private utilisateurRepository: UtilisateurRepository,
+    private aideRepository: AideRepository,
+    private communeRepository: CommuneRepository,
+  ) {}
+
+  async exportAides(): Promise<Aide[]> {
+    const result: Aide[] = [];
+    const liste = await this.aideRepository.listAll();
+    for (const aide_def of liste) {
+      const aide = new Aide(aide_def);
+
+      const metropoles = new Set<string>();
+      const cas = new Set<string>();
+      const cus = new Set<string>();
+      const ccs = new Set<string>();
+      for (const code_postal of aide_def.codes_postaux) {
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'METRO')
+          .map((m) => metropoles.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CA')
+          .map((m) => cas.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CC')
+          .map((m) => ccs.add(m));
+        this.communeRepository
+          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CU')
+          .map((m) => cus.add(m));
+      }
+      aide.ca = Array.from(cas.values());
+      aide.cc = Array.from(ccs.values());
+      aide.cu = Array.from(cus.values());
+      aide.metropoles = Array.from(metropoles.values());
+      result.push(aide);
+    }
+    result.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
+    return result;
+  }
 
   async selectUserAvecVoiture(): Promise<any> {
     const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(

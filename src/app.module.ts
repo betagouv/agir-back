@@ -27,6 +27,7 @@ import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmailManager';
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
+import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
 import { CommunesController } from './infrastructure/api/communes.controller';
@@ -104,6 +105,7 @@ import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
 import { LinkyServiceManager } from './infrastructure/service/linky/LinkyServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
+import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
@@ -173,6 +175,7 @@ function getControllers(): any[] {
     Synthese_v2Controller,
     ActionsController,
     SimulateurVoitureController,
+    AidesVeloController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
@@ -297,6 +300,7 @@ function getControllers(): any[] {
     SimulateurVoitureRepository,
     FAQRepository,
     BlockTextRepository,
+    AidesVeloUsecase,
   ],
 })
 export class AppModule {}
