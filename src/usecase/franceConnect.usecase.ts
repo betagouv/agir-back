@@ -41,6 +41,13 @@ export class FranceConnectUsecase {
     token: string;
     utilisateur: Utilisateur;
   }> {
+    if (!oidc_code) {
+      ApplicationError.throwCodeFranceConnectManquant();
+    }
+    if (!oidc_state) {
+      ApplicationError.throwStateFranceConnectManquant();
+    }
+
     const state = await this.oIDCStateRepository.getByState(oidc_state);
     if (!state) {
       console.error(
@@ -51,13 +58,13 @@ export class FranceConnectUsecase {
 
     console.log(state);
 
-    // TOKEN ENDPOINT
+    // Récupération ACCESS_TOKEN
     const tokens = await this.oidcService.getAccessAndIdTokens(oidc_code);
 
     console.log(`access token : [${tokens.access_token}]`);
     console.log(`id token : [${tokens.id_token}]`);
 
-    // CHECK NONCE
+    // Vérification NONCE
     const id_token_data = this.oidcService.decodeIdToken(tokens.id_token);
     if (id_token_data.nonce !== state.nonce) {
       console.error(
@@ -68,13 +75,13 @@ export class FranceConnectUsecase {
 
     await this.oIDCStateRepository.setIdToken(state.state, tokens.id_token);
 
-    // INFO ENDPOINT
+    // INFOS UTILISATEUR
     const user_info = await this.oidcService.getUserInfoByAccessToken(
       tokens.access_token,
     );
     console.log(user_info);
 
-    // FINDING FRANCE CONNECT USER BY SUB
+    // RAPPROCHEMENT avec pivot technique France Connect - SUB
     const fc_user = await this.utilisateurRepository.getByFranceConnectSub(
       user_info.sub,
       'full',
@@ -83,7 +90,7 @@ export class FranceConnectUsecase {
       return await this.log_ok_fc_user(oidc_state, fc_user);
     }
 
-    // FINDING FRANCE CONNECT USER BY EMAIL
+    // RAPPROCHEMENT avec email d'un utilisateur J'agis
     const standard_user = await this.utilisateurRepository.findByEmail(
       user_info.email,
       'full',

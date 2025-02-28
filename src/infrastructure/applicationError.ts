@@ -566,7 +566,7 @@ export class ApplicationError {
   static throwSecurityTechnicalProblemDetected() {
     this.throwAppError(
       '107',
-      `Problème détecté au cours de l'authentification sur des éléments de sécurité, c'est pas bien d'essayer de nous pirater ^^`,
+      `Problème de sécurité détecté au cours de l'authentification, c'est pas bien d'essayer de nous pirater ^^`,
     );
   }
   static throwBadActionCodeFormat(code: string) {
@@ -593,6 +593,18 @@ export class ApplicationError {
   }
   static throwTypeConsultationNotFound(type: string) {
     this.throwAppError('112', `Type de consultation [${type}] inconnu`);
+  }
+  static throwCodeFranceConnectManquant() {
+    this.throwAppError(
+      '113',
+      `Un problème est survenu pendant la connexion France Connect, veuillez ré-essayer, ou choisir un autre fournisseur d'identité sur France Connect`,
+    );
+  }
+  static throwStateFranceConnectManquant() {
+    this.throwAppError(
+      '114',
+      `Un problème est survenu pendant la connexion France Connect, veuillez ré-essayer, ou choisir un autre fournisseur d'identité sur France Connect`,
+    );
   }
 
   private static throwAppError(
