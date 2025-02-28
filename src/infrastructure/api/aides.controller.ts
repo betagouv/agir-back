@@ -104,27 +104,27 @@ export class AidesController extends GenericControler {
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 1000 } })
   @ApiOkResponse({ type: AideAPI })
-  @Get('aides/:id_cms')
+  @Get('aides/:aideId')
   async getAideUnique(
-    @Param('id_cms') id_cms: string,
+    @Param('aideId') aideId: string,
     @Request() req,
   ): Promise<AideAPI> {
-    const aide = await this.aidesUsecase.getAideByIdCMS(id_cms);
+    const aide = await this.aidesUsecase.getAideByIdCMS(aideId);
     return AideAPI.mapToAPI(aide);
   }
 
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: AideAPI })
-  @Get('utilisateurs/:utilisateurId/aides/:id_cms')
+  @Get('utilisateurs/:utilisateurId/aides/:aideId')
   async getAideUtilisateur(
-    @Param('id_cms') id_cms: string,
+    @Param('aideId') aideId: string,
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
   ): Promise<AideAPI> {
     this.checkCallerId(req, utilisateurId);
     const aide = await this.aidesUsecase.getAideUtilisateurByIdCMS(
       utilisateurId,
-      id_cms,
+      aideId,
     );
     return AideAPI.mapToAPI(aide);
   }
