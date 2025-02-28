@@ -210,6 +210,15 @@ async function bootstrap() {
       );
       break;
 
+    case 'dump_kyc_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_kyc_copy_for_stats ${start_time}`);
+      await application.get(DuplicateUsecase).duplicateKYC();
+      console.log(
+        `STOP dump_kyc_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
     default:
       console.log('Command not found');
       process.exit(1);

@@ -31,6 +31,30 @@ export class DuplicateUsecase {
     }
   }
 
+  async duplicateKYC(block_size: number = 50) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllKYCData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.kyc],
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        const liste_kyc = user.kyc_history.getRawAnsweredKYCs();
+        for (const kyc of liste_kyc) {
+          await this.statistiqueExternalRepository.createKYCData(user.id, kyc);
+        }
+      }
+    }
+  }
+
   private async updateExternalStatIdIfNeeded(utilisateur: Utilisateur) {
     if (!utilisateur.external_stat_id) {
       utilisateur.external_stat_id = uuidv4();

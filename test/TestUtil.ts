@@ -227,6 +227,7 @@ export class TestUtil {
 
     await this.prisma_stats.testTable.deleteMany();
     await this.prisma_stats.utilisateurCopy.deleteMany();
+    await this.prisma_stats.kYCCopy.deleteMany();
 
     ThematiqueRepository.resetCache();
     DefiRepository.resetCache();

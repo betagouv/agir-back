@@ -28,3 +28,20 @@ model UtilisateurCopy {
   code_insee_commune     String?
   source_inscription     String?
 }
+
+model KYCCopy {
+  code_kyc              String
+  cms_id                String
+  user_id               String
+  question              String
+  thematique            String
+  derniere_mise_a_jour  DateTime? @db.Timestamptz(3)
+  type_question         String
+  reponse_texte         String?
+  reponse_entier        Int?
+  reponse_decimal       String?
+  reponse_unique_code   String?
+  reponse_multiple_code String[]  @default([])
+
+  @@unique([user_id, code_kyc])
+}
