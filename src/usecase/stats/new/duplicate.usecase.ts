@@ -26,7 +26,12 @@ export class DuplicateUsecase {
 
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
-        await this.statistiqueExternalRepository.createUserData(user);
+        try {
+          await this.statistiqueExternalRepository.createUserData(user);
+        } catch (error) {
+          console.error(error);
+          console.error(`Error Creating User : ${JSON.stringify(user)}`);
+        }
       }
     }
   }
@@ -49,7 +54,15 @@ export class DuplicateUsecase {
 
         const liste_kyc = user.kyc_history.getRawAnsweredKYCs();
         for (const kyc of liste_kyc) {
-          await this.statistiqueExternalRepository.createKYCData(user.id, kyc);
+          try {
+            await this.statistiqueExternalRepository.createKYCData(
+              user.id,
+              kyc,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(`Error Creating KYC : ${JSON.stringify(kyc)}`);
+          }
         }
       }
     }
