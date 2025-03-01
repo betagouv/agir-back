@@ -1,8 +1,8 @@
-npm run execute clean_linky_data
+## npm run execute clean_linky_data
 
-npm run execute upsert_service_definitions
+## npm run execute upsert_service_definitions
 
-npm run execute unsubscribe_oprhan_prms
+## npm run execute unsubscribe_oprhan_prms
 
 npm run execute all_defi_statistique
 

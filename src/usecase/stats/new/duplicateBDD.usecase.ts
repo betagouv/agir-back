@@ -5,7 +5,7 @@ import { StatistiqueExternalRepository } from '../../../infrastructure/repositor
 import { UtilisateurRepository } from '../../../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
-export class DuplicateUsecase {
+export class DuplicateBDDForStatsUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private statistiqueExternalRepository: StatistiqueExternalRepository,

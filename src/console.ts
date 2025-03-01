@@ -14,7 +14,7 @@ import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.us
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
-import { DuplicateUsecase } from './usecase/stats/new/duplicate.usecase';
+import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
@@ -202,7 +202,7 @@ async function bootstrap() {
     case 'dump_utilisateur_copy_for_stats':
       start_time = Date.now();
       console.log(`START dump_utilisateur_copy_for_stats ${start_time}`);
-      await application.get(DuplicateUsecase).duplicateUtilisateur();
+      await application.get(DuplicateBDDForStatsUsecase).duplicateUtilisateur();
       console.log(
         `STOP dump_utilisateur_copy_for_stats after ${
           Date.now() - start_time
@@ -213,7 +213,7 @@ async function bootstrap() {
     case 'dump_kyc_copy_for_stats':
       start_time = Date.now();
       console.log(`START dump_kyc_copy_for_stats ${start_time}`);
-      await application.get(DuplicateUsecase).duplicateKYC();
+      await application.get(DuplicateBDDForStatsUsecase).duplicateKYC();
       console.log(
         `STOP dump_kyc_copy_for_stats after ${Date.now() - start_time} ms`,
       );

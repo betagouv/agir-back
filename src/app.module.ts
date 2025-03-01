@@ -136,7 +136,7 @@ import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.us
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
-import { DuplicateUsecase } from './usecase/stats/new/duplicate.usecase';
+import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
 import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
@@ -303,7 +303,7 @@ function getControllers(): any[] {
     FAQRepository,
     BlockTextRepository,
     AidesVeloUsecase,
-    DuplicateUsecase,
+    DuplicateBDDForStatsUsecase,
     StatistiqueExternalRepository,
   ],
 })

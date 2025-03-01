@@ -10,7 +10,7 @@ import {
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { StatistiqueExternalRepository } from '../../../src/infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DuplicateUsecase } from '../../../src/usecase/stats/new/duplicate.usecase';
+import { DuplicateBDDForStatsUsecase } from '../../../src/usecase/stats/new/duplicateBDD.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -41,7 +41,7 @@ describe('Duplicate Usecase', () => {
   );
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
-  let duplicateUsecase = new DuplicateUsecase(
+  let duplicateUsecase = new DuplicateBDDForStatsUsecase(
     utilisateurRepository,
     statistiqueExternalRepository,
   );
