@@ -1,8 +1,8 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/thematique/thematique';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
-import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('ArticleRepository', () => {
   const OLD_ENV = process.env;
@@ -34,6 +34,7 @@ describe('ArticleRepository', () => {
       content_id: '2',
       tag_article: '456',
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -50,6 +51,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, {
       content_id: '1',
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -67,6 +69,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -84,6 +87,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -100,6 +104,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -117,6 +122,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -134,6 +140,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -151,6 +158,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({});
@@ -165,7 +173,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
-
+    await articleRepository.load();
     // WHEN
     const liste = await articleRepository.searchArticles({ maxNumber: 2 });
 
@@ -188,6 +196,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -213,6 +222,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -238,6 +248,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({});
@@ -251,6 +262,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -266,6 +278,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -291,6 +304,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -316,6 +330,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -340,6 +355,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -361,6 +377,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -379,6 +396,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -397,6 +415,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: ['91120'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -414,6 +433,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_departement: ['45', '46'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -430,6 +450,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_departement: ['45', '46'],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -447,6 +468,7 @@ describe('ArticleRepository', () => {
       include_codes_commune: ['45', '46'],
       exclude_codes_commune: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -464,6 +486,7 @@ describe('ArticleRepository', () => {
       include_codes_commune: ['45', '46'],
       exclude_codes_commune: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -481,6 +504,7 @@ describe('ArticleRepository', () => {
       exclude_codes_commune: ['45', '46'],
       include_codes_commune: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -498,6 +522,7 @@ describe('ArticleRepository', () => {
       exclude_codes_commune: ['45', '46'],
       include_codes_commune: [],
     });
+    await articleRepository.load();
 
     // WHEN
     const liste = await articleRepository.searchArticles({

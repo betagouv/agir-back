@@ -13,7 +13,7 @@ import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
-import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
+import { ArticleRepository } from '../../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../../TestUtil';
@@ -536,7 +536,7 @@ describe('/api/incoming/cms (API test)', () => {
   };
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
-  const actionRepository = new ActionRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -1208,6 +1208,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
     await TestUtil.create(DB.article, { content_id: '123' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -1384,6 +1385,7 @@ describe('/api/incoming/cms (API test)', () => {
       content_id: '123',
       soustitre: 'hahah',
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

@@ -555,7 +555,7 @@ describe('Actions (API test)', () => {
     });
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.loadPartenaires();
+    await partenaireRepository.load();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');

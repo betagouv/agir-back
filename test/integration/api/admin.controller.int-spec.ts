@@ -32,6 +32,7 @@ import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
@@ -67,6 +68,7 @@ describe('Admin (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -1354,6 +1356,8 @@ describe('Admin (API test)', () => {
       content_id: 'article-id-3',
       titre: 'Titre de mon article 3',
     });
+    await articleRepository.load();
+
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
       history: {

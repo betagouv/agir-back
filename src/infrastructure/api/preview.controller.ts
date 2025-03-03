@@ -1,34 +1,34 @@
 import {
   Controller,
   Get,
+  Headers,
   Param,
   Query,
-  Headers,
   Response,
 } from '@nestjs/common';
-import { Response as Res } from 'express';
 import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
-import { KycRepository } from '../repository/kyc.repository';
-import { NGCCalculator } from '../ngc/NGCCalculator';
-import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
-import { MissionRepository } from '../repository/mission.repository';
-import { ThematiqueRepository } from '../repository/thematique.repository';
+import axios from 'axios';
+import { Response as Res } from 'express';
+import { App } from '../../domain/app';
+import { Categorie } from '../../domain/contenu/categorie';
 import { ContentType } from '../../domain/contenu/contentType';
+import { DefiDefinition } from '../../domain/defis/defiDefinition';
+import { KycDefinition } from '../../domain/kyc/kycDefinition';
+import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
+import { MissionDefinition } from '../../domain/mission/missionDefinition';
+import { Thematique } from '../../domain/thematique/thematique';
+import { MissionUsecase } from '../../usecase/mission.usecase';
+import { NGCCalculator } from '../ngc/NGCCalculator';
 import {
   ArticleFilter,
   ArticleRepository,
 } from '../repository/article.repository';
-import { Categorie } from '../../domain/contenu/categorie';
-import { QuizzRepository } from '../repository/quizz.repository';
 import { DefiRepository } from '../repository/defi.repository';
-import { MissionDefinition } from '../../domain/mission/missionDefinition';
-import { MissionUsecase } from '../../usecase/mission.usecase';
-import { DefiDefinition } from '../../domain/defis/defiDefinition';
-import { KycDefinition } from '../../domain/kyc/kycDefinition';
-import { App } from '../../domain/app';
-import axios from 'axios';
-import { Thematique } from '../../domain/thematique/thematique';
+import { KycRepository } from '../repository/kyc.repository';
+import { MissionRepository } from '../repository/mission.repository';
+import { QuizzRepository } from '../repository/quizz.repository';
+import { ThematiqueRepository } from '../repository/thematique.repository';
+import { GenericControler } from './genericControler';
 import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
@@ -621,10 +621,9 @@ export class PreviewController extends GenericControler {
             DATA.ARTICLES_CANDIDATS = liste_article_preview;
             result.push(JSON.stringify(DATA, null, 2));
           } else {
-            const article =
-              await this.articleRepository.getArticleDefinitionByContentId(
-                objectif.content_id,
-              );
+            const article = await this.articleRepository.getArticle(
+              objectif.content_id,
+            );
             if (!article) {
               result.push(``);
               result.push(

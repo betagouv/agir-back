@@ -14,6 +14,7 @@ import {
 } from '../../../src/domain/scoring/ponderationApplicative';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -58,6 +59,7 @@ const DEFI_1_DEF: Defi = {
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {
@@ -85,6 +87,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article);
+    await articleRepository.load();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/autre-id/recommandations_v3',
@@ -101,6 +104,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       force_connexion: true,
     });
     await TestUtil.create(DB.article);
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -122,6 +126,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       image_url: 'https://',
       points: 10,
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -156,6 +161,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '2',
       codes_postaux: ['456'],
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -181,6 +187,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '2',
       codes_departement: ['22'],
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -221,6 +228,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '3',
       rubrique_ids: ['2'],
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -263,6 +271,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '3',
       rubrique_ids: ['3'],
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -391,6 +400,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       rubrique_ids: [],
       thematiques: [Thematique.transport],
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -511,6 +521,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['6', '5'],
     });
+    await articleRepository.load();
 
     await kycRepository.loadDefinitions();
     await defiRepository.loadDefinitions();
@@ -592,6 +603,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       thematiques: [Thematique.logement],
     });
+    await articleRepository.load();
     await kycRepository.loadDefinitions();
 
     // WHEN
@@ -673,6 +685,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematiques: [Thematique.logement],
       categorie: Categorie.mission,
     });
+    await articleRepository.load();
     await kycRepository.loadDefinitions();
 
     // WHEN

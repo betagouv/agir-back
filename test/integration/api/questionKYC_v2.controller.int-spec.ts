@@ -30,6 +30,7 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
@@ -102,6 +103,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   const missions_with_kyc: MissionsUtilisateur_v1 = {
     version: 1,
@@ -1757,6 +1759,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
 
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
+
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_reponse: 'yi' }]],

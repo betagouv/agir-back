@@ -67,8 +67,9 @@ export class BibliothequeUsecase {
   }
 
   public async getArticleAnonymous(content_id: string): Promise<Article> {
-    const article_definition =
-      await this.articleRepository.getArticleDefinitionByContentId(content_id);
+    const article_definition = await this.articleRepository.getArticle(
+      content_id,
+    );
 
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
@@ -89,11 +90,9 @@ export class BibliothequeUsecase {
     const quizz = new Quizz(quizz_def);
 
     if (quizz_def.article_id) {
-      quizz.article_contenu = (
-        await this.articleRepository.getArticleDefinitionByContentId(
-          quizz_def.article_id,
-        )
-      )?.contenu;
+      quizz.article = await this.articleRepository.getArticle(
+        quizz_def.article_id,
+      );
     }
 
     return quizz;
@@ -103,8 +102,9 @@ export class BibliothequeUsecase {
     utilisateurId: string,
     content_id: string,
   ): Promise<Article> {
-    const article_definition =
-      await this.articleRepository.getArticleDefinitionByContentId(content_id);
+    const article_definition = await this.articleRepository.getArticle(
+      content_id,
+    );
 
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
@@ -229,11 +229,9 @@ export class BibliothequeUsecase {
 
     const quizz = new Quizz(quizz_def);
     if (quizz_def.article_id) {
-      quizz.article_contenu = (
-        await this.articleRepository.getArticleDefinitionByContentId(
-          quizz_def.article_id,
-        )
-      )?.contenu;
+      quizz.article = await this.articleRepository.getArticle(
+        quizz_def.article_id,
+      );
     }
 
     return quizz;
@@ -247,8 +245,9 @@ export class BibliothequeUsecase {
 
     utilisateur.history.lireArticle(content_id);
 
-    const article_definition =
-      await this.articleRepository.getArticleDefinitionByContentId(content_id);
+    const article_definition = await this.articleRepository.getArticle(
+      content_id,
+    );
 
     if (!utilisateur.history.sontPointsArticleEnPoche(content_id)) {
       utilisateur.gamification.ajoutePoints(
