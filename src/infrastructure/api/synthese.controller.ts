@@ -26,7 +26,7 @@ import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { CommuneRepository } from '../repository/commune/commune.repository';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 

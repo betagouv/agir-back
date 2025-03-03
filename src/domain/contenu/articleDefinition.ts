@@ -1,8 +1,9 @@
-import { DifficultyLevel } from './difficultyLevel';
-import { Thematique } from './thematique';
+import { Echelle } from '../aides/echelle';
 import { TagUtilisateur } from '../scoring/tagUtilisateur';
+import { Thematique } from '../thematique/thematique';
 import { Categorie } from './categorie';
 import { ContenuLocal } from './contenuLocal';
+import { DifficultyLevel } from './difficultyLevel';
 
 export class SourceArticle {
   label: string;
@@ -21,6 +22,7 @@ export class ArticleDefinition implements ContenuLocal {
   rubrique_ids: string[];
   rubrique_labels: string[];
   codes_postaux: string[];
+  echelle: Echelle;
   duree: string;
   frequence: string;
   difficulty: DifficultyLevel;

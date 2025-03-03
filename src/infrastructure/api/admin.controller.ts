@@ -13,39 +13,38 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
-  ApiProperty,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
-import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
-import { GenericControler } from './genericControler';
-import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
-import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
-import { TodoUsecase } from '../../../src/usecase/todo.usecase';
-import { ContactUsecase } from '../../usecase/contact.usecase';
-import { ProfileUsecase } from '../../usecase/profile.usecase';
-import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
+import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
+import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
-import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
-import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
-import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
+import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
 import { App } from '../../domain/app';
-import { MailerUsecase } from '../../usecase/mailer.usecase';
-import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
-import { ApplicationError } from '../applicationError';
-import { PrismaService } from '../prisma/prisma.service';
-import { MissionUsecase } from '../../usecase/mission.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
-import { PushNotificator } from '../push_notifications/pushNotificator';
-import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { ContactUsecase } from '../../usecase/contact.usecase';
+import { MailerUsecase } from '../../usecase/mailer.usecase';
+import { MissionUsecase } from '../../usecase/mission.usecase';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
+import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
+import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
+import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
+import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
+import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
+import { ApplicationError } from '../applicationError';
+import { PrismaService } from '../prisma/prisma.service';
+import { PushNotificator } from '../push_notifications/pushNotificator';
+import { GenericControler } from './genericControler';
+import { AideExportAPI } from './types/aide/AideExportAPI';
+import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
+import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -62,7 +61,6 @@ export class AdminController extends GenericControler {
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
     private referentielUsecase: ReferentielUsecase,
-    private todoUsecase: TodoUsecase,
     private contactUsecase: ContactUsecase,
     private statistiqueUsecase: StatistiqueUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
@@ -180,16 +178,6 @@ export class AdminController extends GenericControler {
     return await this.linkyUsecase.unsubscribeOrphanPRMs();
   }
 
-  @Post('/admin/upgrade_user_todo')
-  @ApiOperation({
-    summary: `enrichit la TODO des utilisateurs si besoin`,
-  })
-  @ApiOkResponse({ type: [String] })
-  async upgrade_user_todo(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.todoUsecase.updateAllUsersTodo();
-  }
-
   @Post('admin/contacts/synchronize')
   @ApiOperation({
     summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
@@ -282,15 +270,6 @@ export class AdminController extends GenericControler {
   async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.validerPrenoms(body);
-  }
-
-  @Post('/admin/lister_onboarding_a_5_quetions_done')
-  @ApiOperation({
-    summary: `Liste les users qui ont un onboarding à 5 questions réalisé`,
-  })
-  async lister5question(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.liste5questOnboarding();
   }
 
   @Post('/admin/send_all_emails_as_test/:utilisateurId')
@@ -445,5 +424,17 @@ export class AdminController extends GenericControler {
       },
       token,
     );
+  }
+
+  @ApiOkResponse({ type: [AideExportAPI] })
+  @ApiOperation({
+    summary:
+      "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
+  })
+  @Get('aides_export')
+  async getCatalogueAidesComplet(@Request() req): Promise<AideExportAPI[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    const aides = await this.adminUsecase.exportAides();
+    return aides.map((elem) => AideExportAPI.mapToAPI(elem));
   }
 }

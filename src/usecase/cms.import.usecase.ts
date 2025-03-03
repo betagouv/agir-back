@@ -1,42 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { Thematique } from '../domain/contenu/thematique';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import axios from 'axios';
-import { AideDefinition } from '../domain/aides/aideDefinition';
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
-import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
-import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
 import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
+import { Categorie } from '../../src/domain/contenu/categorie';
+import { ContentType } from '../../src/domain/contenu/contentType';
+import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
+import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../../src/domain/mission/missionDefinition';
-import { ContentType } from '../../src/domain/contenu/contentType';
-import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
-import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
+import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
+import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import { Categorie } from '../../src/domain/contenu/categorie';
-import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
+import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
+import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
+import { AideDefinition } from '../domain/aides/aideDefinition';
+import { Echelle } from '../domain/aides/echelle';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { FAQDefinition } from '../domain/faq/FAQDefinition';
+import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { TagExcluant } from '../domain/scoring/tagExcluant';
+import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
   ImageUrlAPI,
   ImageUrlAPI2,
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
-import { ArticleDefinition } from '../domain/contenu/articleDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
-import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
-import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
-import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
-import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { TypeAction } from '../domain/actions/typeAction';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { FAQRepository } from '../infrastructure/repository/faq.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class CMSImportUsecase {
@@ -51,6 +57,8 @@ export class CMSImportUsecase {
     private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private fAQRepository: FAQRepository,
+    private blockTextRepository: BlockTextRepository,
   ) {}
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -100,34 +108,6 @@ export class CMSImportUsecase {
     }
     for (let index = 0; index < liste_defis.length; index++) {
       await this.defiRepository.upsert(liste_defis[index]);
-    }
-    return loading_result;
-  }
-
-  async loadActionsFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('actions');
-
-    for (let index = 0; index < CMS_DATA.length; index++) {
-      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
-      let action: ActionDefinition;
-      try {
-        action = this.buildActionFromCMSPopulateData(
-          element,
-          TypeAction[element.attributes.type_action],
-        );
-        liste.push(action);
-        loading_result.push(`loaded action : ${action.cms_id}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load action ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (let index = 0; index < liste.length; index++) {
-      await this.actionRepository.upsert(liste[index]);
     }
     return loading_result;
   }
@@ -257,6 +237,56 @@ export class CMSImportUsecase {
     }
     for (let index = 0; index < liste_partenaires.length; index++) {
       await this.partenaireRepository.upsert(liste_partenaires[index]);
+    }
+    return loading_result;
+  }
+
+  async loadFAQFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: FAQDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('faqs');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let def: FAQDefinition;
+      try {
+        def = this.buildFAQFromCMSPopulateData(element);
+        liste.push(def);
+        loading_result.push(`loaded FAQ : ${def.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load FAQ ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.fAQRepository.upsert(liste[index]);
+    }
+    return loading_result;
+  }
+
+  async loadBlockTexteFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste: BlockTextDefinition[] = [];
+    const CMS_DATA = await this.loadDataFromCMS('texts');
+
+    for (let index = 0; index < CMS_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_DATA[index];
+      let def: BlockTextDefinition;
+      try {
+        def = this.buildBlockTextFromCMSPopulateData(element);
+        liste.push(def);
+        loading_result.push(`loaded Block Texte : ${def.cms_id}`);
+      } catch (error) {
+        loading_result.push(
+          `Could not load Block Texte ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (let index = 0; index < liste.length; index++) {
+      await this.blockTextRepository.upsert(liste[index]);
     }
     return loading_result;
   }
@@ -422,6 +452,8 @@ export class CMSImportUsecase {
       | 'aides'
       | 'defis'
       | 'kycs'
+      | 'faqs'
+      | 'texts'
       | 'missions'
       | 'thematiques'
       | 'partenaires'
@@ -486,7 +518,7 @@ export class CMSImportUsecase {
     const URL = App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs',
+      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants',
     );
     return URL.concat(page);
   }
@@ -534,6 +566,31 @@ export class CMSImportUsecase {
       image_url: this.getFirstImageUrlFromPopulate(
         entry.attributes.logo.data[0],
       ),
+      echelle: Echelle[entry.attributes.echelle],
+    };
+  }
+
+  private buildBlockTextFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): BlockTextDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.attributes.code,
+      titre: entry.attributes.titre,
+      texte: entry.attributes.texte,
+    };
+  }
+
+  private buildFAQFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): FAQDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      question: entry.attributes.question,
+      reponse: entry.attributes.reponse,
+      thematique: entry.attributes.thematique.data
+        ? Thematique[entry.attributes.thematique.data.attributes.code]
+        : Thematique.climat,
     };
   }
 
@@ -557,6 +614,7 @@ export class CMSImportUsecase {
       soustitre: entry.attributes.sousTitre,
       source: entry.attributes.source,
       image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
+      echelle: Echelle[entry.attributes.echelle],
       partenaire_id: entry.attributes.partenaire.data
         ? '' + entry.attributes.partenaire.data.id
         : null,
@@ -710,7 +768,7 @@ export class CMSImportUsecase {
         entry.attributes.codes_departement,
       ),
       codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
-      echelle: entry.attributes.echelle,
+      echelle: Echelle[entry.attributes.echelle],
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
       est_gratuit: !!entry.attributes.est_gratuit,
@@ -775,13 +833,14 @@ export class CMSImportUsecase {
     entry: CMSWebhookPopulateAPI,
     type: TypeAction,
   ): ActionDefinition {
-    return {
+    return new ActionDefinition({
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       titre: entry.attributes.titre,
       sous_titre: entry.attributes.sous_titre,
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
+      quizz_felicitations: entry.attributes.felicitations,
       lvo_objet: entry.attributes.objet_lvo,
       lvo_action: entry.attributes.action_lvo
         ? CategorieRecherche[entry.attributes.action_lvo]
@@ -798,14 +857,21 @@ export class CMSImportUsecase {
         entry.attributes.quizzes && entry.attributes.quizzes.data.length > 0
           ? entry.attributes.quizzes.data.map((elem) => elem.id.toString())
           : [],
+      faq_ids:
+        entry.attributes.faqs && entry.attributes.faqs.data.length > 0
+          ? entry.attributes.faqs.data.map((elem) => elem.id.toString())
+          : [],
       kyc_ids:
         entry.attributes.kycs && entry.attributes.kycs.data.length > 0
           ? entry.attributes.kycs.data.map((elem) => elem.id.toString())
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
-        : Thematique.climat,
-    };
+        : null,
+      tags_excluants: entry.attributes.tags_excluants.map(
+        (t) => TagExcluant[t.valeur],
+      ),
+    });
   }
 
   private buildKYCFromCMSPopulateData(

@@ -1,15 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
-import { TypeAction } from '../../../../domain/actions/typeAction';
-import { Thematique } from '../../../../domain/contenu/thematique';
-import { EchelleAide } from '../../../../domain/aides/echelle';
-import { AideDefinition } from '../../../../domain/aides/aideDefinition';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
-import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { Action, ActionService } from '../../../../domain/actions/action';
+import { TypeAction } from '../../../../domain/actions/typeAction';
+import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Echelle } from '../../../../domain/aides/echelle';
+import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
+import { Thematique } from '../../../../domain/thematique/thematique';
+import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
+import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 
 export class ServiceActionAPI {
   @ApiProperty({ enum: ServiceRechercheID })
@@ -29,7 +30,7 @@ export class ServiceActionAPI {
 export class AideActionAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
-  @ApiProperty({ enum: EchelleAide }) echelle: EchelleAide;
+  @ApiProperty({ enum: Echelle }) echelle: Echelle;
   @ApiProperty() montant_max: number;
   @ApiProperty() partenaire_nom: string;
   @ApiProperty() partenaire_url: string;
@@ -47,15 +48,34 @@ export class AideActionAPI {
       partenaire_nom: partenaire ? partenaire.nom : null,
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
-      echelle: EchelleAide[aide.echelle],
+      echelle: Echelle[aide.echelle],
     };
   }
+}
+
+export class FAQActionAPI {
+  @ApiProperty() question: string;
+  @ApiProperty() reponse: string;
+
+  public static mapToAPI(faq: FAQDefinition): FAQActionAPI {
+    return {
+      question: faq.question,
+      reponse: faq.reponse,
+    };
+  }
+}
+
+export class ScoreActionAPI {
+  @ApiProperty() nombre_bonnes_reponses: number;
+  @ApiProperty() nombre_quizz_done: number;
 }
 
 export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() deja_vue: boolean;
+  @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_aides_disponibles: number;
@@ -70,6 +90,9 @@ export class ActionAPI {
 
   @ApiProperty({ type: [AideActionAPI] })
   aides: AideActionAPI[];
+
+  @ApiProperty({ type: [FAQActionAPI] })
+  faqs: FAQActionAPI[];
 
   @ApiProperty({ type: [ServiceActionAPI] })
   services: ServiceActionAPI[];
@@ -87,10 +110,13 @@ export class ActionAPI {
       type: action.type,
       thematique: action.thematique,
       kycs: [],
-      quizzes: [],
+      quizzes: action.quizz_liste.map((q) => QuizzBibliothequeAPI.map(q)),
       aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,
+      quizz_felicitations: action.quizz_felicitations,
+      deja_vue: action.deja_vue,
+      faqs: action.faq_liste.map(FAQActionAPI.mapToAPI),
     };
   }
 }

@@ -1,27 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { App } from '../../domain/app';
 const url = require('url');
 
-const APP_SCOPES = 'openid email given_name';
+const APP_SCOPES = 'openid email given_name sub';
 const EIDAS_LEVEL = 'eidas1';
 
 export type FCUserInfo = {
-  sub: string;
-  email: string;
-  given_name: string;
+  sub: string; // '93b1b2bf30db78a4c74df9c36afde68806411fda1c8952ed1051ce410040952ev1'
+  email: string; //'wossewodda-3728@yopmail.com'
+  given_name: string; //'Angela Claire Louise'
   given_name_array: string[];
-  aud: string;
-  exp: number;
-  iat: number;
-  iss: string;
+  aud: string; // '55f7fd3e83931809dc07a8928a613a7f89d4a63df60b9d059e61ad8312e55541'
+  exp: number; //1740645729
+  iat: number; //1740645669
+  iss: string; //'https://fcp-low.integ01.dev-franceconnect.fr/api/v2'
+};
+
+export type ID_TOKEN_FORMAT = {
+  sub: string; //'93b1b2bf30db78a4c74df9c36afde68806411fda1c8952ed1051ce410040952ev1';
+  auth_time: number; //1740645668;
+  acr: string; //'eidas1';
+  nonce: string; //'ac5e2e1a-e0e1-4824-8087-28b862226d64';
+  at_hash: string; //'DSd0aMdDE3KLzu8DuTxaTA';
+  aud: string; //'55f7fd3e83931809dc07a8928a613a7f89d4a63df60b9d059e61ad8312e55541';
+  exp: number; //1740645729;
+  iat: number; //1740645669;
+  iss: string; //'https://fcp-low.integ01.dev-franceconnect.fr/api/v2';
+};
+
+export type InitialisationURL = {
+  url: URL;
+  state: string;
+  nonce: string;
 };
 
 @Injectable()
 export class OidcService {
-  generatedAuthRedirectUrl(): { url: URL; state: string } {
+  generatedAuthRedirectUrl(): InitialisationURL {
     const state = uuidv4();
+    const nonce = uuidv4();
 
     let redirect_url = new URL(process.env.OIDC_URL_AUTH);
     let params = redirect_url.searchParams;
@@ -34,11 +53,11 @@ export class OidcService {
     params.append('scope', APP_SCOPES);
     params.append('acr_values', EIDAS_LEVEL);
     params.append('state', state);
-    params.append('nonce', uuidv4());
+    params.append('nonce', nonce);
 
     console.log(redirect_url);
 
-    return { url: redirect_url, state: state };
+    return { url: redirect_url, state: state, nonce: nonce };
   }
 
   public generateLogoutUrl(id_token: string): URL {
@@ -53,7 +72,6 @@ export class OidcService {
       App.getBaseURLFront().concat(process.env.OIDC_URL_LOGOUT_CALLBACK),
     );
 
-    console.log(logout_url);
     return logout_url;
   }
 
@@ -121,5 +139,12 @@ export class OidcService {
     const user_info: FCUserInfo = JSON.parse(json_user_data);
 
     return user_info;
+  }
+
+  public decodeIdToken(id_token: string): ID_TOKEN_FORMAT {
+    const blocks = id_token.split('.');
+    const charge_utile = blocks[1];
+    const json_data = Buffer.from(charge_utile, 'base64').toString('ascii');
+    return JSON.parse(json_data) as ID_TOKEN_FORMAT;
   }
 }

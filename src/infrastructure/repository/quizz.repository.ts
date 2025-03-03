@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Quizz as QuizzDB } from '@prisma/client';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { QuizzDefinition } from '../../domain/contenu/quizzDefinition';

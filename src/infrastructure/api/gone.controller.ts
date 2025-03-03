@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
 import { ApplicationError } from '../applicationError';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiBearerAuth()
@@ -88,28 +88,86 @@ export class GoneController extends GenericControler {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 
-  /*
-OK - /utilisateurs/{utilisateurId}/aides
-OK - /utilisateur/{utilisateurId}/bilans/last
-OK - /utilisateur/{utilisateurId}/bilans/last_v2
-OK - /utilisateurs/{utilisateurId}/bilans/last_v2
-OK - /utilisateurs/{utilisateurId}/defis
-OK - /utilisateurs/{utilisateurId}/univers/{universId}/defis
-OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission
-OK - /utilisateurs/{utilisateurId}/thematiques/{thematique}/mission/terminer
-OK - /utilisateurs/{utilisateurId}/enchainementQuestionsKYC/{enchainementId}
-OK - /utilisateurs/{utilisateurId}/questionsKYC
-- /utilisateurs/{utilisateurId}/questionsKYC/{questionId}
-- /utilisateurs/{utilisateurId}/recommandations
-- /utilisateurs/{utilisateurId}/recommandations_v2
-- /utilisateurs/{utilisateurId}/recherche_services/{universId}
-- /utilisateurs/{utilisateurId}/thematiques_recommandees
-- /utilisateurs/{utilisateurId}/univers
-- /utilisateurs/{utilisateurId}/univers/{univers}/thematiques
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/questionsKYC_v2/:questionId',
+  })
+  @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
+  async getQuestion(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 
+  @Get('utilisateurs/:utilisateurId/recommandations')
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/recommandations_v3',
+  })
+  async getUserRecommandation(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 
- recherche_services/${idService}/search => DEPRECATED => recherche_services/${idService}/search2
-  - /utilisateurs/${utilisateurId}/thematiques/${thematiqueId}/defis => DEPRECATED => /utilisateurs/{userId}/defis_v2
+  @Get('utilisateurs/:utilisateurId/univers')
+  @ApiOperation({
+    summary: `DEPRECATED : obsolète`,
+  })
+  async getUnivers(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 
-  */
+  @Get('utilisateurs/:utilisateurId/univers/:univers/thematiques')
+  @ApiOperation({
+    summary: `DEPRECATED : NEW => utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions`,
+  })
+  async getUniversThematiques(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques_recommandees')
+  @ApiOperation({
+    summary: `DEPRECATED : obsolète`,
+  })
+  async getThematiquesRecommandees(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search')
+  @ApiOperation({
+    summary: `DEPRECATED : NEW  => utilisateurs/:utilisateurId/recherche_services/:serviceId/search2`,
+  })
+  async recherche(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
+  @ApiOperation({
+    summary: 'DEPRECATED : NEW => utilisateurs/:utilisateurId/defis_v2',
+  })
+  async getAllUserDefisByThematique(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recommandations_v2')
+  @ApiOperation({
+    summary: 'DEPRECATED : NEW  => recommandations_v3',
+  })
+  async getUserRecommandationV2(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/recherche_services/:universId')
+  @ApiOperation({
+    summary: `DEPRECATED : NEW  => utilisateurs/:utilisateurId/thematiques/:code_thematique/recherche_services`,
+  })
+  async getListeServices_deprecated(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @ApiOperation({
+    summary:
+      'DEPRECATED : NEW => utilisateurs/:utilisateurId/questionsKYC_v2/:questionId',
+  })
+  @Put('utilisateurs/:utilisateurId/questionsKYC/:questionId')
+  async updateResponse(@Request() req): Promise<void> {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 }

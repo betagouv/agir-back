@@ -1,21 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
-import { AideDefinition } from '../../../../domain/aides/aideDefinition';
-import { Thematique } from '../../../../../src/domain/contenu/thematique';
 import { Besoin } from '../../../../../src/domain/aides/besoin';
+import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
+import { Aide } from '../../../../domain/aides/aide';
+import { Echelle } from '../../../../domain/aides/echelle';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
-import { EchelleAide } from '../../../../domain/aides/echelle';
 
 export class AideAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty() contenu: string;
-  @ApiProperty({ enum: EchelleAide }) echelle: EchelleAide;
+  @ApiProperty({ enum: Echelle }) echelle: Echelle;
   @ApiProperty() url_simulateur: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;
   @ApiProperty() derniere_maj: Date;
+  @ApiProperty() deja_vue_le: Date;
   @ApiProperty() is_simulateur: boolean;
   @ApiProperty() codes_postaux: string[];
   @ApiProperty({ enum: Thematique, enumName: 'Thematique', isArray: true })
@@ -32,7 +33,7 @@ export class AideAPI {
   @ApiProperty() partenaire_logo_url: string;
   @ApiProperty() est_gratuit: boolean;
 
-  public static mapToAPI(aide: AideDefinition): AideAPI {
+  public static mapToAPI(aide: Aide): AideAPI {
     let partenaire: PartenaireDefinition;
     if (aide.partenaire_id) {
       partenaire = PartenaireRepository.getPartenaire(aide.partenaire_id);
@@ -59,8 +60,9 @@ export class AideAPI {
       partenaire_nom: partenaire ? partenaire.nom : null,
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
-      echelle: EchelleAide[aide.echelle],
+      echelle: Echelle[aide.echelle],
       est_gratuit: aide.est_gratuit,
+      deja_vue_le: aide.vue_at,
     };
   }
 }

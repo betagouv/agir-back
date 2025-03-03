@@ -28,12 +28,14 @@ export type CMSWebhookPopulateAPI = {
     nom: string;
     lien: string;
     titre: string;
+    texte: string;
     Titre: string;
     introduction: string;
     label: string;
     sousTitre: string;
     sous_titre: string;
     comment: string;
+    felicitations: string;
     categorie_recettes: string;
     objet_lvo: string;
     action_lvo: string;
@@ -54,6 +56,7 @@ export type CMSWebhookPopulateAPI = {
     code: string;
     niveau: number;
     question: string;
+    reponse: string;
     short_question: string;
     pourquoi: string;
     description: string;
@@ -63,6 +66,12 @@ export type CMSWebhookPopulateAPI = {
         id: number;
         libelle: string;
         lien: string;
+      },
+    ];
+    tags_excluants: [
+      {
+        id: number;
+        valeur: string;
       },
     ];
     articles: {
@@ -139,6 +148,17 @@ export type CMSWebhookPopulateAPI = {
         {
           attributes: {
             code: string;
+          };
+        },
+      ];
+    };
+    faqs: {
+      data: [
+        {
+          id: number;
+          attributes: {
+            question: string;
+            reponse: string;
           };
         },
       ];

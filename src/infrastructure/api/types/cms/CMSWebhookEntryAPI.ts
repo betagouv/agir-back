@@ -21,6 +21,10 @@ export class CMSWebhookSourceAPI {
   @ApiProperty() libelle: string;
   @ApiProperty() lien: string;
 }
+export class CMSWebhookTagExcluantAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() valeur: string;
+}
 export class CMSWebhookFamilleAPI {
   @ApiProperty() id: number;
   @ApiProperty() nom: string;
@@ -93,6 +97,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
+  @ApiProperty() texte: string;
   @ApiProperty() categorie_recettes: string;
   @ApiProperty() est_visible: boolean;
   @ApiProperty() est_gratuit: boolean;
@@ -107,6 +112,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() type_action: string;
   @ApiProperty() label: string;
   @ApiProperty() question: string;
+  @ApiProperty() reponse: string;
   @ApiProperty({ type: [CMSWebhookArticleAPI] })
   articles: CMSWebhookArticleAPI[];
   @ApiProperty({ type: [CMSWebhookQuestionAPI] })
@@ -139,6 +145,9 @@ export class CMSWebhookEntryAPI {
   quizzes: IDAPI[];
 
   @ApiProperty({ type: [IDAPI] })
+  faqs: IDAPI[];
+
+  @ApiProperty({ type: [IDAPI] })
   kycs: IDAPI[];
 
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
@@ -165,10 +174,13 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() comment: string;
+  @ApiProperty() felicitations: string;
   @ApiProperty() objet_lvo: string;
   @ApiProperty() action_lvo: string;
   @ApiProperty() source: string;
   @ApiProperty({ type: [CMSWebhookSourceAPI] }) sources: CMSWebhookSourceAPI[];
+  @ApiProperty({ type: [CMSWebhookTagExcluantAPI] })
+  tags_excluants: CMSWebhookTagExcluantAPI[];
   @ApiProperty() echelle: string;
   @ApiProperty() url_source: string;
   @ApiProperty() url_demande: string;

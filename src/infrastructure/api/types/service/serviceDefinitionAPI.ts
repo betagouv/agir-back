@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { ServiceDefinition } from '../../../../../src/domain/service/serviceDefinition';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class ServiceDefinitionAPI {
   @ApiProperty() id: string;

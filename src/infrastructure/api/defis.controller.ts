@@ -22,7 +22,7 @@ import { DefisUsecase } from '../../../src/usecase/defis.usecase';
 import { DefiAPI, PatchDefiStatusAPI } from './types/defis/DefiAPI';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 @Controller()
 @ApiBearerAuth()
@@ -118,40 +118,6 @@ export class DefisController extends GenericControler {
       them = this.castThematiqueOrException(thematique);
     }
     const result = await this.defisUsecase.getAllDefis_v2(
-      utilisateurId,
-      them,
-      this.getStringListFromStringArrayAPIInput(status),
-    );
-    return result.map((element) => DefiAPI.mapToAPI(element));
-  }
-
-  @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique/defis')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: [DefiAPI],
-  })
-  @ApiQuery({
-    name: 'status',
-    enum: DefiStatus,
-    enumName: 'status',
-    isArray: true,
-    required: false,
-    description: `filtrage par status, plusieur status possible avec la notation ?status=XXX&status=YYY`,
-  })
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : SEE utilisateurs/:utilisateurId/defis_v2 (Retourne l'ensemble des défis de l'utilisateur visible pour une thematique donnée et débloqués par une mission, défi en_cours par défaut)",
-  })
-  async getAllUserDefisByThematique(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('code_thematique') code_thematique: string,
-    @Query('status') status: string,
-  ): Promise<DefiAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const them = this.castThematiqueOrException(code_thematique);
-    const result = await this.defisUsecase.getDefisOfThematique_deprecated(
       utilisateurId,
       them,
       this.getStringListFromStringArrayAPIInput(status),

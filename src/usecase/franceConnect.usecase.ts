@@ -1,16 +1,16 @@
+import { Injectable } from '@nestjs/common';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { OidcService } from '../infrastructure/auth/oidc.service';
-import { Injectable } from '@nestjs/common';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ProfileUsecase } from './profile.usecase';
+import { OidcService } from '../infrastructure/auth/oidc.service';
+import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { ProfileUsecase } from './profile.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -26,7 +26,10 @@ export class FranceConnectUsecase {
   async genererConnexionFranceConnect(): Promise<URL> {
     const redirect_infos = this.oidcService.generatedAuthRedirectUrl();
 
-    await this.oIDCStateRepository.createNewState(redirect_infos.state);
+    await this.oIDCStateRepository.createNewState(
+      redirect_infos.state,
+      redirect_infos.nonce,
+    );
 
     return redirect_infos.url;
   }
@@ -38,62 +41,106 @@ export class FranceConnectUsecase {
     token: string;
     utilisateur: Utilisateur;
   }> {
+    if (!oidc_code) {
+      ApplicationError.throwCodeFranceConnectManquant();
+    }
+    if (!oidc_state) {
+      ApplicationError.throwStateFranceConnectManquant();
+    }
+
     const state = await this.oIDCStateRepository.getByState(oidc_state);
     if (!state) {
-      ApplicationError.throwBadOIDCCodeState();
+      console.error(
+        `FranceConnect : state manquant en base de donnée : ${oidc_state}`,
+      );
+      ApplicationError.throwSecurityTechnicalProblemDetected();
     }
 
     console.log(state);
 
-    // TOKEN ENDPOINT
+    // Récupération ACCESS_TOKEN
     const tokens = await this.oidcService.getAccessAndIdTokens(oidc_code);
 
     console.log(`access token : [${tokens.access_token}]`);
     console.log(`id token : [${tokens.id_token}]`);
 
+    // Vérification NONCE
+    const id_token_data = this.oidcService.decodeIdToken(tokens.id_token);
+    if (id_token_data.nonce !== state.nonce) {
+      console.error(
+        `FranceConnect : mismatch sur NONCE => sent[${state.nonce}] VS received[${id_token_data.nonce}]`,
+      );
+      ApplicationError.throwSecurityTechnicalProblemDetected();
+    }
+
     await this.oIDCStateRepository.setIdToken(state.state, tokens.id_token);
 
-    // INFO ENDPOINT
+    // INFOS UTILISATEUR
     const user_info = await this.oidcService.getUserInfoByAccessToken(
       tokens.access_token,
     );
     console.log(user_info);
 
-    // FINDING USER
-    let utilisateur = await this.utilisateurRepository.findByEmail(
+    // RAPPROCHEMENT avec pivot technique France Connect - SUB
+    const fc_user = await this.utilisateurRepository.getByFranceConnectSub(
+      user_info.sub,
+      'full',
+    );
+    if (fc_user) {
+      return await this.log_ok_fc_user(oidc_state, fc_user);
+    }
+
+    // RAPPROCHEMENT avec email d'un utilisateur J'agis
+    const standard_user = await this.utilisateurRepository.findByEmail(
       user_info.email,
       'full',
     );
-
-    if (!utilisateur) {
-      utilisateur = Utilisateur.createNewUtilisateur(
-        user_info.email,
-        false,
-        SourceInscription.france_connect,
+    if (standard_user) {
+      await this.utilisateurRepository.setFranceConnectSub(
+        standard_user.id,
+        user_info.sub,
       );
-
-      utilisateur.prenom = user_info.given_name;
-      utilisateur.status = UtilisateurStatus.default;
-      utilisateur.active_account = true;
-      utilisateur.est_valide_pour_classement = true;
-
-      await this.utilisateurRepository.createUtilisateur(utilisateur);
+      return await this.log_ok_fc_user(oidc_state, standard_user);
     }
 
+    // NEW UTILISATEUR CREATION
+    const new_utilisateur = Utilisateur.createNewUtilisateur(
+      user_info.email,
+      false,
+      SourceInscription.france_connect,
+    );
+
+    new_utilisateur.prenom = user_info.given_name;
+    new_utilisateur.status = UtilisateurStatus.default;
+    new_utilisateur.active_account = true;
+    new_utilisateur.est_valide_pour_classement = true;
+    new_utilisateur.france_connect_sub = user_info.sub;
+
+    await this.utilisateurRepository.createUtilisateur(new_utilisateur);
+
+    return await this.log_ok_fc_user(oidc_state, new_utilisateur);
+  }
+
+  private async log_ok_fc_user(
+    state: string,
+    utilisateur: Utilisateur,
+  ): Promise<{
+    token: string;
+    utilisateur: Utilisateur;
+  }> {
     await this.oIDCStateRepository.setUniqueUtilisateurId(
-      oidc_state,
+      state,
       utilisateur.id,
     );
 
     this.passwordManager.initLoginState(utilisateur);
 
-    // CREATING INNER APP TOKEN
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
     return { token: token, utilisateur: utilisateur };
   }
 
-  async logout_france_connect(
+  async internal_logout_france_connect(
     utilisateurId: string,
   ): Promise<{ fc_logout_url?: URL }> {
     const state = await this.oIDCStateRepository.getByUtilisateurId(
@@ -104,7 +151,7 @@ export class FranceConnectUsecase {
       // RIEN A FAIRE
       return {};
     }
-    const logout_url = await this.oidcService.generateLogoutUrl(state.idtoken);
+    const logout_url = this.oidcService.generateLogoutUrl(state.idtoken);
 
     // REMOVE STATE
     await this.oIDCStateRepository.delete(utilisateurId);

@@ -1,42 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
-import { Thematique } from '../domain/contenu/thematique';
-import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
-import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import {
-  CMSWebhookEntryAPI,
-  CMSWebhookRubriqueAPI,
-} from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
-import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { AideRepository } from '../infrastructure/repository/aide.repository';
-import { DefiRepository } from '../infrastructure/repository/defi.repository';
-import { DefiDefinition } from '../domain/defis/defiDefinition';
-import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Besoin } from '../domain/aides/besoin';
+import { Echelle } from '../domain/aides/echelle';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
+import { Categorie } from '../domain/contenu/categorie';
+import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
+import { ContentType } from '../domain/contenu/contentType';
+import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
+import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { DefiDefinition } from '../domain/defis/defiDefinition';
+import { FAQDefinition } from '../domain/faq/FAQDefinition';
+import { KycDefinition } from '../domain/kyc/kycDefinition';
+import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
 import {
   MissionDefinition,
   ObjectifDefinition,
 } from '../domain/mission/missionDefinition';
-import { ContentType } from '../domain/contenu/contentType';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
-import { KycDefinition } from '../domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { Categorie } from '../domain/contenu/categorie';
-import { ArticleDefinition } from '../domain/contenu/articleDefinition';
+import { TagExcluant } from '../domain/scoring/tagExcluant';
+import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
+import { Thematique } from '../domain/thematique/thematique';
+import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
+import { CMSWebhookAPI } from '../infrastructure/api/types/cms/CMSWebhookAPI';
+import {
+  CMSWebhookEntryAPI,
+  CMSWebhookRubriqueAPI,
+} from '../infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { CMSWebhookImageURLAPI } from '../infrastructure/api/types/cms/CMSWebhookImageURLAPI';
-import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
-import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
-import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
-import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import { ActionDefinition } from '../domain/actions/actionDefinition';
-import { TypeAction } from '../domain/actions/typeAction';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
+import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
+import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
+import { DefiRepository } from '../infrastructure/repository/defi.repository';
+import { FAQRepository } from '../infrastructure/repository/faq.repository';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { MissionRepository } from '../infrastructure/repository/mission.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -51,6 +57,8 @@ export class CMSWebhookUsecase {
     private partenaireRepository: PartenaireRepository,
     private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
+    private fAQRepository: FAQRepository,
+    private blockTextRepository: BlockTextRepository,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -135,6 +143,30 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateAide(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel.faq) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateFAQ(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateFAQ(cmsWebhookAPI);
+      }
+    }
+    if (cmsWebhookAPI.model === CMSModel.text) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateBlockTexte(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateBlockTexte(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.conformite) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -176,6 +208,12 @@ export class CMSWebhookUsecase {
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+  async deleteFAQ(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.fAQRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
+  async deleteBlockTexte(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.blockTextRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -191,6 +229,20 @@ export class CMSWebhookUsecase {
 
     await this.aideRepository.upsert(
       this.buildAideFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateFAQ(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.fAQRepository.upsert(
+      this.buildFAQFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateBlockTexte(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.blockTextRepository.upsert(
+      this.buildBlockTexteFromCMSData(cmsWebhookAPI.entry),
     );
   }
   async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
@@ -319,6 +371,7 @@ export class CMSWebhookUsecase {
       partenaire_id: hook.entry.partenaire
         ? '' + hook.entry.partenaire.id
         : null,
+      echelle: Echelle[hook.entry.echelle],
       rubrique_ids: this.getIdsFromRubriques(hook.entry.rubriques),
       rubrique_labels: this.getTitresFromRubriques(hook.entry.rubriques),
       codes_postaux: this.split(hook.entry.codes_postaux),
@@ -414,7 +467,7 @@ export class CMSWebhookUsecase {
       exclude_codes_commune: this.split(entry.exclude_codes_commune),
       codes_departement: this.split(entry.codes_departement),
       codes_region: this.split(entry.codes_region),
-      echelle: entry.echelle,
+      echelle: Echelle[entry.echelle],
       url_source: entry.url_source,
       url_demande: entry.url_demande,
       est_gratuit: entry.est_gratuit,
@@ -433,12 +486,13 @@ export class CMSWebhookUsecase {
   }
 
   private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
-    return {
+    return new ActionDefinition({
       cms_id: entry.id.toString(),
       titre: entry.titre,
       sous_titre: entry.sous_titre,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
+      quizz_felicitations: entry.felicitations,
       lvo_action: entry.action_lvo
         ? CategorieRecherche[entry.action_lvo]
         : null,
@@ -448,15 +502,15 @@ export class CMSWebhookUsecase {
       quizz_ids: entry.quizzes
         ? entry.quizzes.map((elem) => elem.id.toString())
         : [],
+      faq_ids: entry.faqs ? entry.faqs.map((elem) => elem.id.toString()) : [],
       kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
         : null,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
+      thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
-    };
+      tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
+    });
   }
 
   private buildDefiFromCMSData(entry: CMSWebhookEntryAPI): DefiDefinition {
@@ -495,6 +549,29 @@ export class CMSWebhookUsecase {
       nom: entry.nom,
       url: entry.lien,
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
+      echelle: Echelle[entry.echelle],
+    };
+  }
+
+  private buildFAQFromCMSData(entry: CMSWebhookEntryAPI): FAQDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      question: entry.question,
+      reponse: entry.reponse,
+      thematique: entry.thematique
+        ? Thematique[entry.thematique.code]
+        : Thematique.climat,
+    };
+  }
+
+  private buildBlockTexteFromCMSData(
+    entry: CMSWebhookEntryAPI,
+  ): BlockTextDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.code,
+      titre: entry.titre,
+      texte: entry.texte,
     };
   }
 

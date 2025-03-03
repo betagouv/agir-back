@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Mission, Objectif } from '../../../../../src/domain/mission/mission';
 import { ContentType } from '../../../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../../../src/domain/defis/defi';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class ProgressionAPI {
   @ApiProperty() current: number;

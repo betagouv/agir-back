@@ -1,4 +1,4 @@
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { App } from '../app';
 
 export enum ScheduledService {

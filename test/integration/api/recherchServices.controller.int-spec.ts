@@ -2,20 +2,20 @@ import {
   CategorieRecherche,
   CategorieRechercheManager,
 } from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
-import { Day } from '../../../src/domain/bibliotheque_services/types/days';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/recherche/serviceRechercheID';
+import { Day } from '../../../src/domain/bibliotheque_services/types/days';
 import {
-  Superficie,
-  TypeLogement,
   Chauffage,
   DPE,
+  Superficie,
+  TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { BibliothequeServices_v0 } from '../../../src/domain/object_store/service/BibliothequeService_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ServiceFavorisStatistiqueRepository } from '../../../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 
 const logement_palaiseau: Logement_v0 = {
   version: 0,
@@ -118,8 +118,8 @@ describe('RechercheServices (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio as any,
     });
 
     TestUtil.token = process.env.CRON_API_KEY;
@@ -188,7 +188,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/bad_service/search',
+      '/utilisateurs/utilisateur-id/recherche_services/bad_service/search2',
     );
 
     // THEN
@@ -203,7 +203,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search2',
     );
 
     // THEN
@@ -279,7 +279,9 @@ describe('RechercheServices (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { bilbiotheque_services: biblio });
+    await TestUtil.create(DB.utilisateur, {
+      bilbiotheque_services: biblio as any,
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -335,7 +337,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/proximite/search',
+      '/utilisateurs/utilisateur-id/recherche_services/proximite/search2',
     ).send({ categorie: 'bad' });
 
     // THEN
@@ -348,7 +350,7 @@ describe('RechercheServices (API test)', () => {
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search',
+      '/utilisateurs/utilisateur-id/recherche_services/fruits_legumes/search2',
     ).send({ categorie: CategorieRecherche.vegan });
 
     // THEN
@@ -393,8 +395,8 @@ describe('RechercheServices (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio as any,
     });
 
     // WHEN
@@ -443,32 +445,6 @@ describe('RechercheServices (API test)', () => {
         is_default: false,
       },
     ]);
-  });
-
-  it(`GET /utlilisateur/id/recherche_services/universId  listes les services pour un univers donné`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recherche_services/alimentation',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body[0]).toStrictEqual({
-      id_service: 'fruits_legumes',
-      titre: 'Fruits et légumes de saison',
-      sous_titre: CategorieRechercheManager.getMoisCourant(),
-      icon_url: 'https://agir-front-dev.osc-fr1.scalingo.io/cerise.webp',
-      univers: 'alimentation',
-      external_url: 'https://impactco2.fr/outils/fruitsetlegumes',
-      is_available_inhouse: true,
-      thematique: 'alimentation',
-    });
-    expect(response.body[1].external_url).toEqual(
-      'https://presdecheznous.fr/map#/carte/91120',
-    );
   });
 
   it(`NEW GET /utlilisateur/id/thematiques/id/recherche_services  listes les services pour une thematique donnée`, async () => {
@@ -626,14 +602,14 @@ describe('RechercheServices (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'user1',
       email: 'email1',
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio1,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'user2',
       email: 'email2',
-      logement: logement_palaiseau,
-      bilbiotheque_services: biblio2,
+      logement: logement_palaiseau as any,
+      bilbiotheque_services: biblio2 as any,
     });
 
     // WHEN
@@ -666,23 +642,27 @@ describe('RechercheServices (API test)', () => {
 
   it(`POST /utlilisateur/id/recherche_services/recettes/search renvoie une liste de résultats`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/recherche_services/recettes/search',
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
     ).send({ categorie: 'vege' });
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(10);
-    expect(response.body[0].difficulty_plat).toEqual('Intérmédiaire');
-    expect(response.body[0].est_favoris).toEqual(false);
-    expect(response.body[0].id).toEqual('10987');
-    expect(response.body[0].nombre_favoris).toEqual(0);
-    expect(response.body[0].temps_prepa_min).toEqual(10);
-    expect(response.body[0].titre).toEqual('Clafoutis salé au chèvre et curry');
-    expect(response.body[0].type_plat).toEqual('Plat');
+    expect(response.body.resultats).toHaveLength(10);
+    expect(response.body.resultats[0].difficulty_plat).toEqual('Intérmédiaire');
+    expect(response.body.resultats[0].est_favoris).toEqual(false);
+    expect(response.body.resultats[0].id).toEqual('10987');
+    expect(response.body.resultats[0].nombre_favoris).toEqual(0);
+    expect(response.body.resultats[0].temps_prepa_min).toEqual(10);
+    expect(response.body.resultats[0].titre).toEqual(
+      'Clafoutis salé au chèvre et curry',
+    );
+    expect(response.body.resultats[0].type_plat).toEqual('Plat');
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
@@ -696,7 +676,7 @@ describe('RechercheServices (API test)', () => {
       userDB.bilbiotheque_services.liste_services[0].derniere_recherche,
     ).toHaveLength(10);
 
-    expect(response.body[0].ingredients).toEqual([
+    expect(response.body.resultats[0].ingredients).toEqual([
       {
         nom: 'Chèvre frais',
         ordre: 1,
@@ -779,7 +759,7 @@ describe('RechercheServices (API test)', () => {
       },
     ]);
 
-    expect(response.body[0].etapes_recette).toEqual([
+    expect(response.body.resultats[0].etapes_recette).toEqual([
       {
         ordre: 1,
         texte:
@@ -806,9 +786,34 @@ describe('RechercheServices (API test)', () => {
       },
     ]);
   });
+
+  it(`POST /utlilisateur/id/recherche_services/recettes/search2 filtres le recettes avec du poisson`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({
+      categorie: CategorieRecherche.poisson,
+      nombre_max_resultats: 200,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(196);
+    expect(response.body.resultats[0].titre).toEqual(
+      'Pavé de saumon au riz et aux fèves fraîches',
+    );
+  });
+
   it(`POST /utlilisateur/id/recherche_services/recettes/search prend en compte le nombre max de résultats`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -822,7 +827,9 @@ describe('RechercheServices (API test)', () => {
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo vege`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -836,7 +843,9 @@ describe('RechercheServices (API test)', () => {
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo vegan`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -850,7 +859,9 @@ describe('RechercheServices (API test)', () => {
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo volaile`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { logement: logement_palaiseau });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
 
     // WHEN
     const response = await TestUtil.POST(

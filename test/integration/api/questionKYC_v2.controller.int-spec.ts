@@ -1,41 +1,41 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
-  BooleanKYC,
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
-import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import {
-  Superficie,
-  TypeLogement,
-  Chauffage,
-  DPE,
-} from '../../../src/domain/logement/logement';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { KYC } from '.prisma/client';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
   MosaicKYC_CATALOGUE,
   MosaicKYCDef,
   TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import {
+  BooleanKYC,
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
+import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -203,7 +203,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, dbKYC);
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await kycRepository.loadDefinitions();
 
     // WHEN
@@ -450,7 +450,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
 
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
     const KYC_DB_DATA_: KYC = {
@@ -518,7 +518,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_mosaics: [],
       answered_questions: [],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: KYCID._3,
@@ -617,7 +617,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await kycRepository.loadDefinitions();
 
@@ -690,7 +690,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -752,7 +752,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_mosaics: [],
       answered_questions: [],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await kycRepository.loadDefinitions();
 
     await TestUtil.PUT(
@@ -791,7 +791,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
       logement: {
         version: 0,
         superficie: Superficie.superficie_150,
@@ -843,7 +843,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
       logement: {
         version: 0,
         superficie: Superficie.superficie_150,
@@ -893,7 +893,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
       logement: {
         version: 0,
         dpe: DPE.B,
@@ -963,8 +963,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-      logement: logement,
+      kyc: kyc as any,
+      logement: logement as any,
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1011,8 +1011,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-      logement: logement,
+      kyc: kyc as any,
+      logement: logement as any,
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1066,8 +1066,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-      logement: logement,
+      kyc: kyc as any,
+      logement: logement as any,
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1140,8 +1140,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
-      logement: logement,
+      kyc: kyc as any,
+      logement: logement as any,
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1180,7 +1180,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     await TestUtil.create(DB.kYC, {
@@ -1473,7 +1473,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -1518,7 +1518,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, KYC_DB_DATA);
     await kycRepository.loadDefinitions();
@@ -1554,7 +1554,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       ...KYC_DB_DATA,
@@ -1591,8 +1591,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc,
-      kyc: kyc,
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -1642,8 +1642,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc,
-      kyc: kyc,
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -1742,8 +1742,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi,
-      kyc: kyc,
+      missions: missions_article_plus_defi as any,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -1927,7 +1927,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: '1',
@@ -2079,7 +2079,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_mosaics: [],
       answered_questions: [],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await kycRepository.loadDefinitions();
 
     // WHEN

@@ -1,5 +1,4 @@
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../../../src/domain/notification/notificationHistory';
 import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   SourceInscription,
   Utilisateur,
@@ -199,33 +199,6 @@ describe('NotificationHistory', () => {
     expect(result).toEqual(false);
   });
 
-  it(`getNouvellesNotifications : notif late_onboarding`, () => {
-    // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
-    const utilisateur = Utilisateur.createNewUtilisateur(
-      'toto@dev.com',
-      false,
-      SourceInscription.mobile,
-    );
-    utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
-    utilisateur.active_account = true;
-
-    const notifications = new NotificationHistory({
-      version: 0,
-      sent_notifications: [],
-      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
-    });
-
-    // WHEN
-    const result = notifications.getNouvellesNotificationsAPousser(
-      CanalNotification.email,
-      utilisateur,
-    );
-
-    // THEN
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(TypeNotification.late_onboarding);
-  });
   it(`getNouvellesNotifications : pas de notif late_onboarding si compte non actif`, () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';

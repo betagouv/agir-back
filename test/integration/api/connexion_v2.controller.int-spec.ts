@@ -1,18 +1,18 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
-  Scope,
-  UtilisateurStatus,
-} from '../../../src/domain/utilisateur/utilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
+import {
+  Scope,
+  UtilisateurStatus,
+} from '../../../src/domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 function getFakeUtilisteur() {
   return {
@@ -449,7 +449,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
       active_account: true,
       parts: null,
       force_connexion: true,
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     // WHEN

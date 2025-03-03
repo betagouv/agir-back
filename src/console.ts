@@ -1,22 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { AidesUsecase } from './usecase/aides.usecase';
+import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
+import { CommunesUsecase } from './usecase/communes.usecase';
+import { ContactUsecase } from './usecase/contact.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
+import { MailerUsecase } from './usecase/mailer.usecase';
+import { ProfileUsecase } from './usecase/profile.usecase';
+import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
-import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
+import { ServiceUsecase } from './usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
-import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
-import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
-import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
-import { ProfileUsecase } from './usecase/profile.usecase';
-import { MailerUsecase } from './usecase/mailer.usecase';
-import { ContactUsecase } from './usecase/contact.usecase';
-import { ServiceUsecase } from './usecase/service.usecase';
-import { AidesUsecase } from './usecase/aides.usecase';
-import { CommunesUsecase } from './usecase/communes.usecase';
+import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
+import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
+import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
+import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -196,6 +197,25 @@ async function bootstrap() {
       await application.get(CommunesUsecase).loadAllEpciAndCOmmunes();
       console.log(
         `STOP load_communes_and_epci after ${Date.now() - start_time} ms`,
+      );
+      break;
+    case 'dump_utilisateur_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_utilisateur_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateUtilisateur();
+      console.log(
+        `STOP dump_utilisateur_copy_for_stats after ${
+          Date.now() - start_time
+        } ms`,
+      );
+      break;
+
+    case 'dump_kyc_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_kyc_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateKYC();
+      console.log(
+        `STOP dump_kyc_copy_for_stats after ${Date.now() - start_time} ms`,
       );
       break;
 

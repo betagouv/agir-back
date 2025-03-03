@@ -1,17 +1,23 @@
+import { Consultation } from '../../../src/domain/actions/catalogueAction';
+import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { Echelle } from '../../../src/domain/aides/echelle';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
+import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
-import { TypeAction } from '../../../src/domain/actions/typeAction';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
-import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
-import { EchelleAide } from '../../../src/domain/aides/echelle';
 
 describe('Actions (API test)', () => {
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const fAQRepository = new FAQRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -38,9 +44,46 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: false,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: false,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('code_fonct');
     expect(action.titre).toEqual('The titre');
@@ -50,6 +93,140 @@ describe('Actions (API test)', () => {
     expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
     expect(action.nombre_aides_disponibles).toEqual(0);
   });
+  it(`GET /actions - liste le catalogue d'action avec filtre thematique unique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?thematique=alimentation');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.code).toEqual('1');
+  });
+  it(`GET /actions - liste le catalogue recherche texte titre`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?titre=tou');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.code).toEqual('2');
+  });
+  it(`GET /actions - liste le catalogue d'action avec filtre thematique multiple`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.climat,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/actions?thematique=alimentation&thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: true,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: true,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
+  });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -57,7 +234,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
 
@@ -68,14 +245,14 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
   });
 
-  it(`GET /utilisateurs/id/actions - liste le catalogue d'action`, async () => {
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -83,7 +260,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
 
@@ -94,11 +271,231 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
+    expect(response.body.actions.length).toBe(1);
 
-    const action: ActionLightAPI = response.body[0];
+    const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
+    expect(action.deja_vue).toEqual(false);
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.climat,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?thematique=alimentation&thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: true,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: true,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre titre textuel`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?titre=belle',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+  });
+
+  it(`GET /utilisateurs/id/actions - filtre consultation`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?consultation=vu',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+    expect(response.body.consultation).toEqual(Consultation.vu);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?consultation=pas_vu',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('2');
+    expect(response.body.consultation).toEqual(Consultation.pas_vu);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?consultation=tout',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.consultation).toEqual(Consultation.tout);
+
+    // WHEN
+    response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.consultation).toEqual(Consultation.tout);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?consultation=blablabla',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Type de consultation [blablabla] inconnu',
+    );
+  });
+
+  it(`GET /utilisateurs/id/actions - boolean action deja vue`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_tags_excluants: [],
+      liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
+      liste_thematiques: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.deja_vue).toEqual(true);
   });
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
@@ -121,6 +518,7 @@ describe('Actions (API test)', () => {
     expect(action.pourquoi).toEqual('En quelques mots');
     expect(action.titre).toEqual('The titre');
     expect(action.sous_titre).toEqual('Sous titre');
+    expect(action.quizz_felicitations).toEqual('bien');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
     expect(action.services).toHaveLength(2);
@@ -146,13 +544,13 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
     });
 
     await TestUtil.create(DB.partenaire);
@@ -186,7 +584,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.National,
+      echelle: Echelle.National,
       date_expiration: new Date(1),
     });
 
@@ -208,7 +606,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
     });
 
     // WHEN
@@ -221,6 +619,28 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(0);
   });
+  it(`GET /actions/id - les éléments de FAQ`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
+    await TestUtil.create(DB.fAQ, { id_cms: '456' });
+
+    await fAQRepository.loadFAQ();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/classique/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.faqs).toEqual([
+      {
+        question: 'question',
+        reponse: 'reponse',
+      },
+    ]);
+  });
 
   it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
     // GIVEN
@@ -229,14 +649,14 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
     });
@@ -263,14 +683,14 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaire_id: '123',
-      echelle: EchelleAide.Département,
+      echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
     });
@@ -289,6 +709,212 @@ describe('Actions (API test)', () => {
     expect(action.nom_commune).toEqual('Dijon');
   });
 
+  it(`GET /utilisateurs/id/actions/id - accorche les faqs`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
+    await TestUtil.create(DB.fAQ, { id_cms: '456' });
+
+    await fAQRepository.loadFAQ();
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+    expect(action.faqs).toEqual([
+      {
+        question: 'question',
+        reponse: 'reponse',
+      },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/actions/id - consultation track une action comme vue`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123' });
+
+    // THEN
+    const userDB_before = await utilisateurRepository.getById(
+      'utilisateur-id',
+      [Scope.thematique_history],
+    );
+
+    expect(
+      userDB_before.thematique_history.isActionVue({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(false);
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.deja_vue).toEqual(false);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.thematique_history,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionVue({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
+
+    // WHEN
+    const response_2 = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response_2.status).toBe(200);
+    expect(response_2.body.deja_vue).toEqual(true);
+  });
+
+  it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['456'],
+      type: TypeAction.quizz,
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '456',
+      article_id: '1',
+      questions: {
+        liste_questions: [
+          {
+            libelle: "Qu'est-ce qu'un embout mousseur ?",
+            reponses: [
+              {
+                reponse: "Un composant d'une bombe de crème chantilly",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un élément d'une tireuse à bière",
+                est_bonne_reponse: false,
+              },
+              {
+                reponse: "Un dispositif réduisant le débit d'eau du robinet",
+                est_bonne_reponse: true,
+              },
+            ],
+            explication_ko: 'ko',
+            explication_ok: 'ok',
+          },
+        ],
+      },
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      source: 'ADEME',
+      image_url: 'https://',
+      partenaire_id: undefined,
+      tags_utilisateur: [],
+      rubrique_ids: ['3', '4'],
+      rubrique_labels: ['r3', 'r4'],
+      codes_postaux: [],
+      duree: 'pas long',
+      frequence: 'souvent',
+      difficulty: 1,
+      points: 10,
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      created_at: undefined,
+      updated_at: undefined,
+      categorie: Categorie.recommandation,
+      mois: [],
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/quizz/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.quizzes).toHaveLength(1);
+    expect(action.quizzes[0]).toEqual({
+      article_id: '1',
+      content_id: '456',
+      difficulty: 1,
+      duree: 'pas long',
+      points: 10,
+      questions: [
+        {
+          explicationKO: 'ko',
+          explicationOk: 'ok',
+          libelle: "Qu'est-ce qu'un embout mousseur ?",
+          reponses: [
+            {
+              exact: false,
+              reponse: "Un composant d'une bombe de crème chantilly",
+            },
+            {
+              exact: false,
+              reponse: "Un élément d'une tireuse à bière",
+            },
+            {
+              exact: true,
+              reponse: "Un dispositif réduisant le débit d'eau du robinet",
+            },
+          ],
+        },
+      ],
+      sousTitre: 'sousTitre',
+      thematique_principale: 'climat',
+      titre: 'titreA',
+    });
+  });
+
+  it(`GET /utilisateurs/id/actions/id/score - calcul le score d'une action quizz`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      } as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3'],
+      type: TypeAction.quizz,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/score',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_bonnes_reponses: 2,
+      nombre_quizz_done: 3,
+    });
+  });
+
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -296,7 +922,7 @@ describe('Actions (API test)', () => {
       content_id: '1',
       besoin: 'chauffer',
       partenaire_id: '123',
-      echelle: EchelleAide.Commune,
+      echelle: Echelle.Commune,
       codes_postaux: ['21000'],
       date_expiration: new Date(1),
     });
@@ -340,61 +966,16 @@ describe('Actions (API test)', () => {
     expect(response.body.message).toEqual(`Type d'action [truc] inconnu`);
   });
 
-  it(`GET /actions - liste le catalogue d'action : 2 actions`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.action, {
-      cms_id: '1',
-      code: 'code1',
-      thematique: Thematique.alimentation,
-    });
-    await TestUtil.create(DB.action, {
-      cms_id: '2',
-      code: 'code2',
-      thematique: Thematique.consommation,
-    });
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.GET('/actions');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-  });
-  it(`GET /actions - liste le catalogue d'action : filtre thematiques`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.action, {
-      cms_id: '1',
-      code: 'code1',
-      thematique: Thematique.alimentation,
-    });
-    await TestUtil.create(DB.action, {
-      cms_id: '2',
-      code: 'code2',
-      thematique: Thematique.consommation,
-    });
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.GET('/actions?thematique=alimentation');
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    const action: ActionLightAPI = response.body[0];
-
-    expect(action.code).toEqual('code1');
-  });
   it(`GET /actions - liste le catalogue d'action : 400 si thematique inconnue`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code1',
       cms_id: '1',
       code: 'code1',
       thematique: Thematique.alimentation,
     });
     await TestUtil.create(DB.action, {
+      type_code_id: 'classique_code2',
       cms_id: '2',
       code: 'code2',
       thematique: Thematique.consommation,

@@ -7,8 +7,7 @@ import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Superficie } from '../../../src/domain/logement/logement';
 import _situationNGCTest from './situationNGCtest.json';
-import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
@@ -514,39 +513,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(situtation.utilisateurId).toEqual(user.id);
   });
 
-  it(`POST /utilisateurs_v2 - integration situation NGC  => todo à 2 missions au lieu de 3`, async () => {
-    // GIVEN
-    process.env.NGC_API_KEY = '12345';
-
-    // WHEN
-    const response_post_situation = await TestUtil.getServer()
-      .post('/bilan/importFromNGC')
-      .set('apikey', `12345`)
-      .send({
-        situation: {
-          'transport . voiture . km': 20000,
-        },
-      });
-
-    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
-      response_post_situation.body.redirect_url,
-    );
-
-    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
-      mot_de_passe: '#1234567890HAHAa',
-      email: 'w@w.com',
-      source_inscription: 'mobile',
-      situation_ngc_id: situtation_id,
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
-
-    expect(user.parcours_todo.liste_todo).toHaveLength(
-      new ParcoursTodo().liste_todo.length - 1,
-    );
-  });
   it(`POST /utilisateurs_v2 - integration situation NGC  => feature bilan carbone dispo de suite`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';

@@ -1,47 +1,43 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { ServiceStatus } from '../../../src/domain/service/service';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TodoCatalogue } from '../../../src/domain/todo/todoCatalogue';
-import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { DefiStatus } from '../../../src/domain/defis/defi';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
-import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
-import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import { DefiStatus } from '../../../src/domain/defis/defi';
-import {
-  DefiHistory_v0,
-  Defi_v0,
-} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../../src/domain/kyc/questionKYC';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
-import { ParcoursTodo_v0 } from '../../../src/domain/object_store/parcoursTodo/parcoursTodo_v0';
-import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import {
-  KYCHistory_v2,
-  QuestionKYC_v2,
-} from '../../../src/domain/object_store/kyc/kycHistory_v2';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
-import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
+import {
+  DefiHistory_v0,
+  Defi_v0,
+} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import {
+  KYCHistory_v2,
+  QuestionKYC_v2,
+} from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
+import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { ServiceStatus } from '../../../src/domain/service/service';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
+import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -306,7 +302,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       version: 3,
       migration_enabled: true,
-      gamification: gamification,
+      gamification: gamification as any,
     });
     process.env.USER_CURRENT_VERSION = '4';
 
@@ -367,7 +363,7 @@ describe('Admin (API test)', () => {
       version: 6,
       migration_enabled: true,
       logement: {},
-      defis: defis,
+      defis: defis as any,
     });
     process.env.USER_CURRENT_VERSION = '7';
 
@@ -491,42 +487,7 @@ describe('Admin (API test)', () => {
     expect(userDB.commune_classement).toEqual('PALAISEAU');
     expect(userDB.points_classement).toEqual(10);
   });
-  it.skip('POST /admin/migrate_users migration V11 OK - user ayant pas fini les mission onboarding', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const todo: ParcoursTodo_v0 = ParcoursTodo_v0.serialise(new ParcoursTodo());
-    todo.todo_active = 1;
 
-    await TestUtil.create(DB.utilisateur, {
-      version: 10,
-      migration_enabled: true,
-      todo: todo,
-    });
-    process.env.USER_CURRENT_VERSION = '11';
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 11,
-            ok: true,
-            info: 'reset user car todo pas terminée',
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.parcours_todo.todo_active).toEqual(0);
-    expect(userDB.unlocked_features.unlocked_features).toEqual([]);
-  });
   it('POST /admin/migrate_users migration V12 OK - calcul code commune pour user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -548,7 +509,7 @@ describe('Admin (API test)', () => {
       version: 11,
       migration_enabled: true,
       code_commune: null,
-      logement: logement,
+      logement: logement as any,
     });
     process.env.USER_CURRENT_VERSION = '12';
 
@@ -596,7 +557,7 @@ describe('Admin (API test)', () => {
       version: 11,
       migration_enabled: true,
       code_commune: null,
-      logement: logement,
+      logement: logement as any,
     });
     process.env.USER_CURRENT_VERSION = '12';
 
@@ -730,7 +691,7 @@ describe('Admin (API test)', () => {
           date: new Date(123),
           value: 110,
         },
-      ],
+      ] as any,
     });
     await TestUtil.create(DB.linky, {
       prm: 'efg',
@@ -745,7 +706,7 @@ describe('Admin (API test)', () => {
           date: new Date(123),
           value: 200,
         },
-      ],
+      ] as any,
     });
     // WHEN
     const response = await TestUtil.POST('/services/clean_linky_data');
@@ -1140,62 +1101,6 @@ describe('Admin (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0].label).toEqual('En construction 🚧');
   });
-  it('POST /admin/upgrade_user_todo complète la todo des utilisateurs', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    await TestUtil.create(DB.utilisateur, {
-      email: '1',
-      todo: {
-        liste_todo: [
-          {
-            numero_todo: 1,
-            points_todo: 25,
-            done: [],
-            todo: [
-              {
-                titre: 'faire quizz climat',
-                thematiques: [Thematique.climat],
-                progression: { current: 0, target: 1 },
-                sont_points_en_poche: false,
-                type: 'quizz',
-                level: DifficultyLevel.L1,
-                points: 10,
-              },
-            ],
-          },
-        ],
-        todo_active: 0,
-      },
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: 'user-2',
-      email: '2',
-      todo: {
-        liste_todo: TodoCatalogue.getAllTodos(),
-        todo_active: 0,
-      },
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/upgrade_user_todo');
-
-    // THEN
-    const userDB_1 = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    const userDB_2 = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(2);
-    expect(response.body).toContain(`utilisateur utilisateur-id : true`);
-    expect(response.body).toContain(`utilisateur user-2 : false`);
-    expect(userDB_1.parcours_todo.todo_active).toEqual(0);
-    expect(userDB_2.parcours_todo.liste_todo).toHaveLength(
-      TodoCatalogue.getNombreTodo(),
-    );
-  });
 
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
     // GIVEN
@@ -1376,14 +1281,14 @@ describe('Admin (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
-      defis: defis_1,
-      missions: missionsUtilisateur1,
+      defis: defis_1 as any,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'user-email@toto.fr',
-      defis: defis_2,
-      missions: missionsUtilisateur2,
+      defis: defis_2 as any,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -1462,7 +1367,7 @@ describe('Admin (API test)', () => {
             favoris: true,
           },
         ],
-      },
+      } as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
@@ -1491,7 +1396,7 @@ describe('Admin (API test)', () => {
             points_en_poche: false,
             favoris: false,
           },
-        ],
+        ] as any,
         quizz_interactions: [],
       },
     });
@@ -1509,7 +1414,7 @@ describe('Admin (API test)', () => {
             favoris: false,
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1571,7 +1476,7 @@ describe('Admin (API test)', () => {
             favoris: true,
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1702,22 +1607,22 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: '1',
-      defis: defis_user_1,
+      defis: defis_user_1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: '2',
-      defis: defis_user_2,
+      defis: defis_user_2 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: '3',
-      defis: defis_user_3,
+      defis: defis_user_3 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '4',
       email: '4',
-      defis: defis_user_4,
+      defis: defis_user_4 as any,
     });
 
     // WHEN
@@ -1827,7 +1732,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 100, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -1847,7 +1752,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 100, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     await TestUtil.create(DB.quizz, {
@@ -1899,7 +1804,7 @@ describe('Admin (API test)', () => {
             attempts: [{ score: 0, date: new Date() }],
           },
         ],
-      },
+      } as any,
     });
 
     // WHEN
@@ -1957,7 +1862,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
       email: 'john-doe@dev.com',
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     const kyc_2: KYCHistory_v2 = {
@@ -1985,7 +1890,7 @@ describe('Admin (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-2',
       email: 'john-doedoe@dev.com',
-      kyc: kyc_2,
+      kyc: kyc_2 as any,
     });
 
     // WHEN
@@ -2234,12 +2139,12 @@ describe('Admin (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
-      missions: missionsUtilisateur1,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@test.com',
-      missions: missionsUtilisateur2,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -2437,12 +2342,12 @@ describe('Admin (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur1',
-      missions: missionsUtilisateur1,
+      missions: missionsUtilisateur1 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'idUtilisateur2',
       email: 'user2@test.com',
-      missions: missionsUtilisateur2,
+      missions: missionsUtilisateur2 as any,
     });
 
     // WHEN
@@ -2716,7 +2621,9 @@ describe('Admin (API test)', () => {
       ],
     };
 
-    await TestUtil.create(DB.utilisateur, { missions: mission_unique_done });
+    await TestUtil.create(DB.utilisateur, {
+      missions: mission_unique_done as any,
+    });
 
     await TestUtil.create(DB.thematique, {
       id_cms: 1,
@@ -2780,7 +2687,7 @@ describe('Admin (API test)', () => {
     });
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
 
     await kycRepository.loadDefinitions();
@@ -2891,5 +2798,60 @@ describe('Admin (API test)', () => {
     expect(aides_warning[0].last_month_sent).toEqual(true);
     expect(aides_warning[1].last_week_sent).toEqual(true);
     expect(aides_warning[2].expired_sent).toEqual(true);
+  });
+
+  it('GET /aides toutes les aides avec les bonnes meta données en mode export', async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['21000'], // metropole
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['01170'], // CA
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      codes_postaux: ['01160'], // CC
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '4',
+      codes_postaux: ['14280'], // CU
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/aides_export');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
+    expect(response.body[0]).toEqual({
+      content_id: '1',
+      titre: 'titreA',
+      contenu: "Contenu de l'aide",
+      codes_postaux: '21000',
+      thematiques: ['climat', 'logement'],
+      montant_max: 999,
+      codes_departement: '',
+      codes_region: '',
+      com_agglo: '',
+      com_urbaine: '',
+      com_com: '',
+      metropoles: 'Dijon Métropole',
+      echelle: 'National',
+      url_source: 'https://hello',
+      url_demande: 'https://demande',
+    });
+    expect(response.body[0].metropoles).toEqual('Dijon Métropole');
+    expect(response.body[1].com_agglo).toEqual('CA du Pays de Gex');
+    expect(response.body[2].com_agglo).toEqual(
+      'CA du Bassin de Bourg-en-Bresse',
+    );
+    expect(response.body[2].com_com).toEqual(
+      `CC Rives de l'Ain - Pays du Cerdon`,
+    );
+    expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
   });
 });

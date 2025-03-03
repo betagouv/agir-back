@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Thematique } from '../../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 import { Defi, DefiStatus } from '../../../../../src/domain/defis/defi';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { DefiStatistique } from '../../../../../src/domain/defis/defiStatistique';

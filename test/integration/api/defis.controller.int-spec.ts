@@ -1,33 +1,31 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DB, TestUtil } from '../../TestUtil';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { Defi } from '.prisma/client';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
-import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
+import { Feature } from '../../../src/domain/gamification/feature';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { CodeMission } from '../../../src/domain/mission/codeMission';
 import {
   DefiHistory_v0,
   Defi_v0,
 } from '../../../src/domain/object_store/defi/defiHistory_v0';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { Defi } from '.prisma/client';
-import { PonderationApplicativeManager } from '../../../src/domain/scoring/ponderationApplicative';
-import { TagRubrique } from '../../../src/domain/scoring/tagRubrique';
-import { ContentType } from '../../../src/domain/contenu/contentType';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
-import {
-  Superficie,
-  TypeLogement,
-  Chauffage,
-  DPE,
-} from '../../../src/domain/logement/logement';
-import { Feature } from '../../../src/domain/gamification/feature';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
+import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const DEFI_1_DEF: Defi = {
   content_id: '1',
@@ -320,167 +318,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('NEW GET /utilisateurs/utilisateur-id/defis - liste defis de l utilisateur par univers', async () => {
-    // GIVEN
-    const defis: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          ...DEFI_1,
-          id: '001',
-          status: DefiStatus.en_cours,
-        },
-        {
-          ...DEFI_1,
-          id: '002',
-          status: DefiStatus.en_cours,
-        },
-        {
-          ...DEFI_1,
-          id: '003',
-          status: DefiStatus.en_cours,
-        },
-      ],
-    };
-
-    const missions_defi_seul: MissionsUtilisateur_v1 = {
-      version: 1,
-      missions: [
-        {
-          id: '1',
-          done_at: null,
-          code: CodeMission.cereales,
-          image_url: 'image',
-          thematique: Thematique.alimentation,
-          titre: 'titre',
-          introduction: 'intro',
-
-          is_first: false,
-          est_examen: false,
-          objectifs: [
-            {
-              id: '0',
-              content_id: '001',
-              type: ContentType.defi,
-              titre: '1 defi',
-              points: 10,
-              is_locked: false,
-              done_at: new Date(),
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-            {
-              id: '1',
-              content_id: '002',
-              type: ContentType.defi,
-              titre: '1 defi',
-              points: 10,
-              is_locked: false,
-              done_at: null,
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-            {
-              id: '2',
-              content_id: '003',
-              type: ContentType.defi,
-              titre: '1 defi',
-              points: 10,
-              is_locked: true,
-              done_at: null,
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-          ],
-          est_visible: true,
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.thematique, {
-      id_cms: 2,
-      code: Thematique.alimentation,
-      label: 'Alimentation',
-    });
-    await thematiqueRepository.onApplicationBootstrap();
-
-    await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_defi_seul,
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/defis',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-
-    const defi: DefiAPI = response.body[0];
-
-    expect(defi.id).toBe('001');
-  });
-
-  it('NEW GET /utilisateurs/utilisateur-id/thematiques/id/defis - liste defis de l utilisateur par univers, sauf si fait', async () => {
-    // GIVEN
-
-    const defis: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          ...DEFI_1,
-          id: '001',
-          status: DefiStatus.fait,
-        },
-        {
-          ...DEFI_1,
-          id: '002',
-          status: DefiStatus.todo,
-        },
-        {
-          ...DEFI_1,
-          id: '003',
-          status: DefiStatus.todo,
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.thematique, {
-      id_cms: 1,
-      code: Thematique.climat,
-      label: 'Climat',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 2,
-      code: Thematique.alimentation,
-      label: 'Alimentation',
-    });
-    await TestUtil.create(DB.thematique, {
-      id_cms: 3,
-      code: Thematique.transport,
-      label: 'Transport',
-    });
-    await thematiqueRepository.onApplicationBootstrap();
-
-    await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions,
-    });
-    await TestUtil.create(DB.article, { content_id: '12' });
-    await TestUtil.create(DB.article, { content_id: '13' });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/defis',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(0);
-  });
-
   it('GET /utilisateurs/utilisateur-id/defis_v2 - liste defis de l utilisateur tout confondu (v2), pas les défis locked', async () => {
     // GIVEN
     const defis: DefiHistory_v0 = {
@@ -522,8 +359,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions,
+      defis: defis as any,
+      missions: missions as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -584,8 +421,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -642,8 +479,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -701,8 +538,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -761,8 +598,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -821,8 +658,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.utilisateur, {
-      defis: defis,
-      missions: missions_all_defi_unlocked,
+      defis: defis as any,
+      missions: missions_all_defi_unlocked as any,
     });
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
@@ -867,8 +704,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
       history: {},
       defis: {
         defis: [DEFI_1],
-      },
-      logement,
+      } as any,
+      logement: logement as any,
     });
     ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
@@ -938,7 +775,10 @@ describe('/utilisateurs/id/defis (API test)', () => {
       proprietaire: true,
     };
 
-    await TestUtil.create(DB.utilisateur, { defis: defis, logement });
+    await TestUtil.create(DB.utilisateur, {
+      defis: defis as any,
+      logement: logement as any,
+    });
 
     ThematiqueRepository.resetCache();
     await TestUtil.create(DB.thematique, {
@@ -999,7 +839,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { defis: defis });
+    await TestUtil.create(DB.utilisateur, { defis: defis as any });
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -1033,8 +873,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked,
-      gamification: gamification,
+      unlocked_features: unlocked as any,
+      gamification: gamification as any,
     });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
     await defiRepository.loadDefinitions();

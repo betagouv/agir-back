@@ -1,5 +1,5 @@
 import { ContentType } from '../../../../src/domain/contenu/contentType';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { History } from '../../../../src/domain/history/history';
 import { Mission } from '../../../../src/domain/mission/mission';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';

@@ -1,4 +1,3 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe.skip('/utilisateurs - Magic link - (API test)', () => {
@@ -16,6 +15,7 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
 
   afterAll(async () => {
+    await TestUtil.deleteAll();
     process.env = OLD_ENV;
     await TestUtil.appclose();
   });

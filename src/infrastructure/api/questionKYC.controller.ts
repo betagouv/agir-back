@@ -1,31 +1,30 @@
 import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Put,
-  Param,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-} from '@nestjs/common';
+import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
+import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
-import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
-import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
-import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
-import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
+import { QuestionKYCAPI } from './types/kyc/questionsKYCAPI';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
+import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { ReponseKYCAPI_v2 } from './types/kyc/reponseKYCAPI_v2';
+import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
 
 @Controller()
 @ApiExtraModels(
@@ -56,38 +55,6 @@ export class QuestionsKYCController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const result = await this.questionKYCUsecase.getALL(utilisateurId);
     return result.map((k) => QuestionKYCAPI_v2.mapToAPI(k));
-  }
-
-  @ApiOperation({
-    deprecated: true,
-    summary:
-      "DEPRECATED : Retourne une question d'id questionId avec sa réponse, reponse qui peut être null si l'utilsateur n'a pas répondu à la question encore",
-  })
-  @Get('utilisateurs/:utilisateurId/questionsKYC/:questionId')
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(QuestionKYCAPI) },
-        { $ref: getSchemaPath(MosaicKYCAPI) },
-      ],
-    },
-  })
-  async getQuestion(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('questionId') questionId: string,
-  ): Promise<QuestionKYCAPI | MosaicKYCAPI> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getQuestion(
-      utilisateurId,
-      questionId,
-    );
-    if (result.isMosaic()) {
-      return MosaicKYCAPI.mapToAPI(result);
-    } else {
-      return QuestionKYCAPI.mapToAPI(result);
-    }
   }
 
   @ApiOperation({
@@ -131,42 +98,6 @@ export class QuestionsKYCController extends GenericControler {
       enchainementId,
     );
     return result.map((q) => QuestionKYCAPI_v2.mapToAPI(q));
-  }
-
-  @ApiOperation({
-    deprecated: true,
-    summary: "DEPRECATED : Met à jour la réponse de la question d'id donné",
-  })
-  @ApiBody({
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(ReponseKYCMosaicAPI) },
-        { $ref: getSchemaPath(ReponseKYCAPI) },
-      ],
-    },
-  })
-  @Put('utilisateurs/:utilisateurId/questionsKYC/:questionId')
-  @UseGuards(AuthGuard)
-  async updateResponse(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('questionId') questionId: string,
-    @Body() body: ReponseKYCAPI | ReponseKYCMosaicAPI,
-  ): Promise<void> {
-    this.checkCallerId(req, utilisateurId);
-    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
-      await this.questionKYCUsecase.updateResponseMosaic_deprecated(
-        utilisateurId,
-        questionId,
-        (body as ReponseKYCMosaicAPI).reponse_mosaic,
-      );
-    } else {
-      await this.questionKYCUsecase.updateResponseKYC_deprecated(
-        utilisateurId,
-        questionId,
-        (body as ReponseKYCAPI).reponse,
-      );
-    }
   }
 
   @ApiOperation({

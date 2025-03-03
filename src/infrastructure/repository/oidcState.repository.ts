@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { OIDCState } from '../auth/oidcState';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class OIDCStateRepository {
@@ -12,10 +12,11 @@ export class OIDCStateRepository {
     }
   }
 
-  async createNewState(state_id: string) {
+  async createNewState(state_id: string, nonce: string) {
     return this.prisma.oIDC_STATE.create({
       data: {
         state: state_id,
+        nonce: nonce,
       },
     });
   }

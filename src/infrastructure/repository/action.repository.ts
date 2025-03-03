@@ -1,14 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Action } from '@prisma/client';
-import { Thematique } from '../../domain/contenu/thematique';
 import { Cron } from '@nestjs/schedule';
-import { ActionDefinition } from '../../domain/actions/actionDefinition';
+import { Action } from '@prisma/client';
+import {
+  ActionDefinition,
+  TypeCodeAction,
+} from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { TagExcluant } from '../../domain/scoring/tagExcluant';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
+  liste_thematiques?: Thematique[];
+  type_codes_exclus?: TypeCodeAction[];
+  type_codes_inclus?: TypeCodeAction[];
+  codes_exclus?: string[];
+  codes_inclus?: string[];
+  titre_fragment?: string;
 };
 
 @Injectable()
@@ -50,6 +60,7 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
       besoins: action.besoins,
       comment: action.comment,
@@ -58,9 +69,13 @@ export class ActionRepository {
       lvo_objet: action.lvo_objet,
       pourquoi: action.pourquoi,
       quizz_ids: action.quizz_ids,
+      faq_ids: action.faq_ids,
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
       type: action.type,
+      type_code_id: action.getTypeCodeId(),
+      tags_excluants: action.tags_excluants,
+
       created_at: undefined,
       updated_at: undefined,
     };
@@ -90,19 +105,80 @@ export class ActionRepository {
     });
   }
 
-  async list(filter: ActionFilter): Promise<ActionDefinition[]> {
-    const main_filter = {};
+  async count(filter: ActionFilter): Promise<number> {
+    const query = this.buildActionQuery(filter);
 
-    if (filter.thematique) {
-      main_filter['thematique'] = filter.thematique;
+    return await this.prisma.action.count(query);
+  }
+
+  async list(filter: ActionFilter): Promise<ActionDefinition[]> {
+    const query = this.buildActionQuery(filter);
+
+    const result = await this.prisma.action.findMany(query);
+
+    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+  }
+
+  private buildActionQuery(filtre: ActionFilter): any {
+    const main_filter = [];
+
+    if (filtre.thematique) {
+      main_filter.push({ thematique: filtre.thematique });
+    }
+    if (filtre.liste_thematiques) {
+      main_filter.push({
+        thematique: {
+          in: filtre.liste_thematiques,
+        },
+      });
+    }
+    if (filtre.titre_fragment) {
+      main_filter.push({
+        titre: {
+          contains: filtre.titre_fragment,
+          mode: 'insensitive',
+        },
+      });
     }
 
-    const result = await this.prisma.action.findMany({
+    if (filtre.codes_exclus) {
+      main_filter.push({
+        code: {
+          notIn: filtre.codes_exclus,
+        },
+      });
+    }
+    if (filtre.codes_inclus) {
+      main_filter.push({
+        code: {
+          in: filtre.codes_inclus,
+        },
+      });
+    }
+    if (filtre.type_codes_inclus) {
+      main_filter.push({
+        type_code_id: {
+          in: filtre.type_codes_inclus.map((t) =>
+            ActionDefinition.getIdFromTypeCode(t),
+          ),
+        },
+      });
+    }
+    if (filtre.type_codes_exclus) {
+      main_filter.push({
+        type_code_id: {
+          notIn: filtre.type_codes_exclus.map((t) =>
+            ActionDefinition.getIdFromTypeCode(t),
+          ),
+        },
+      });
+    }
+
+    return {
       where: {
         AND: main_filter,
       },
-    });
-    return result.map((elem) => this.buildActionDefinitionFromDB(elem));
+    };
   }
 
   async getByCodeAndType(
@@ -137,6 +213,9 @@ export class ActionRepository {
       recette_categorie: CategorieRecherche[action.recette_categorie],
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
+      quizz_felicitations: action.quizz_felicitations,
+      tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
+      faq_ids: action.faq_ids,
     });
   }
 }

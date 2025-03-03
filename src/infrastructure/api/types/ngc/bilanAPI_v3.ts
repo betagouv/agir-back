@@ -7,7 +7,7 @@ import {
   LienBilanThematique,
   NiveauImpact,
 } from '../../../../domain/bilan/bilanCarbone';
-import { Thematique } from '../../../../domain/contenu/thematique';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class DetailImpactAPI_v3 {
   @ApiProperty() label: string;

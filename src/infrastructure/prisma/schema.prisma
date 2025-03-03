@@ -14,6 +14,7 @@ datasource db {
 model OIDC_STATE {
   state         String   @id
   utilisateurId String?  @unique
+  nonce         String?  @unique
   idtoken       String?
   created_at    DateTime @default(now()) @db.Timestamptz(3)
   updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
@@ -28,7 +29,6 @@ model Utilisateur {
   passwordHash               String?   @default("hash")
   passwordSalt               String?   @default("salt")
   revenu_fiscal              Int?
-  todo                       Json      @default("{}") // versioné 
   gamification               Json      @default("{}") // versioné 
   history                    Json      @default("{}") // versioné 
   kyc                        Json      @default("{}") // versioné
@@ -38,6 +38,7 @@ model Utilisateur {
   missions                   Json      @default("{}") // versioné
   bilbiotheque_services      Json      @default("{}") // versioné
   notification_history       Json      @default("{}") // versioné
+  thematique_history         Json      @default("{}") // versioné
   created_at                 DateTime  @default(now()) @db.Timestamptz(3)
   updated_at                 DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count         Int       @default(0)
@@ -74,6 +75,8 @@ model Utilisateur {
   mobile_token               String?   @unique
   mobile_token_updated_at    DateTime? @db.Timestamptz(3)
   code_commune               String?
+  france_connect_sub         String?   @unique
+  external_stat_id           String?   @unique
 }
 
 model Statistique {
@@ -221,22 +224,26 @@ model Aide {
 }
 
 model Action {
-  code              String
-  cms_id            String
-  type              String   @default("classique")
-  titre             String
-  sous_titre        String?
-  pourquoi          String?
-  comment           String?
-  thematique        String
-  besoins           String[] @default([])
-  quizz_ids         String[] @default([])
-  kyc_ids           String[] @default([])
-  recette_categorie String?
-  lvo_action        String?
-  lvo_objet         String?
-  created_at        DateTime @default(now()) @db.Timestamptz(3)
-  updated_at        DateTime @updatedAt @db.Timestamptz(3)
+  type_code_id        String   @id
+  code                String
+  cms_id              String
+  type                String   @default("classique")
+  titre               String
+  sous_titre          String?
+  quizz_felicitations String?
+  pourquoi            String?
+  comment             String?
+  thematique          String
+  besoins             String[] @default([])
+  quizz_ids           String[] @default([])
+  kyc_ids             String[] @default([])
+  faq_ids             String[] @default([])
+  recette_categorie   String?
+  lvo_action          String?
+  lvo_objet           String?
+  tags_excluants      String[] @default([])
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([code, type])
   @@unique([cms_id, type])
@@ -285,6 +292,7 @@ model Article {
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
   tag_article           String?
+  echelle               String?
   derniere_maj          DateTime? @db.Timestamptz(3)
   created_at            DateTime  @default(now()) @db.Timestamptz(3)
   updated_at            DateTime  @updatedAt @db.Timestamptz(3)
@@ -295,6 +303,7 @@ model Partenaire {
   nom        String?
   url        String?
   image_url  String?
+  echelle    String?
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 }
@@ -353,6 +362,24 @@ model Thematique {
   label      String?
   titre      String?
   image_url  String?
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model FAQ {
+  id_cms     String   @id
+  question   String
+  reponse    String
+  thematique String
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model BlockText {
+  id_cms     String   @id
+  code       String   @unique
+  titre      String
+  texte      String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
@@ -9,23 +8,16 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
+import { AideAPI } from './types/aide/AideAPI';
 import { AideAPI_v2 } from './types/aide/AideAPI_v2';
-import { AideExportAPI } from './types/aide/AideExportAPI';
-import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
-import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
-import { InputAideVeloOpenAPI } from './types/aide/inputAideVeloOpenAPI';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { InputRecupererAideVeloAPI } from './types/aide/InputRecupererAideVeloAPI';
-import { AideVeloNonCalculeeAPI } from './types/aide/AideVeloNonCalculeesAPI';
-import { App } from '../../domain/app';
 
 @Controller()
 @ApiBearerAuth()
@@ -33,18 +25,6 @@ import { App } from '../../domain/app';
 export class AidesController extends GenericControler {
   constructor(private readonly aidesUsecase: AidesUsecase) {
     super();
-  }
-
-  @ApiOkResponse({ type: [AideExportAPI] })
-  @ApiOperation({
-    summary:
-      "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
-  })
-  @Get('aides')
-  async getCatalogueAidesComplet(@Request() req): Promise<AideExportAPI[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    const aides = await this.aidesUsecase.exportAides();
-    return aides.map((elem) => AideExportAPI.mapToAPI(elem));
   }
 
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_infos')
@@ -58,8 +38,22 @@ export class AidesController extends GenericControler {
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.clickAideInfosLink(utilisateurId, aideId);
+    await this.aidesUsecase.consulterAideInfosLink(utilisateurId, aideId);
   }
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/consulter')
+  @ApiOperation({
+    summary: `Indique que l'utilisateur a consulté cette aide particulière`,
+  })
+  @UseGuards(AuthGuard)
+  async consulterAide(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('aideId') aideId: string,
+    @Request() req,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    await this.aidesUsecase.consulterAide(utilisateurId, aideId);
+  }
+
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')
   @ApiOperation({
     summary: `Indique que l'utilisateur est allé voir la page source de demande de l'aide`,
@@ -71,7 +65,7 @@ export class AidesController extends GenericControler {
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.clickAideDemandeLink(utilisateurId, aideId);
+    await this.aidesUsecase.consulterAideDemandeLink(utilisateurId, aideId);
   }
 
   @ApiOkResponse({ type: AideAPI_v2 })
@@ -82,71 +76,37 @@ export class AidesController extends GenericControler {
     @Request() req,
   ): Promise<AideAPI_v2> {
     this.checkCallerId(req, utilisateurId);
-    const aides = await this.aidesUsecase.getCatalogueAides(utilisateurId);
+    const aides = await this.aidesUsecase.getCatalogueAidesUtilisateur(
+      utilisateurId,
+    );
     return AideAPI_v2.mapToAPI(aides.aides, aides.utilisateur);
   }
 
-  @ApiOkResponse({ type: AidesVeloParTypeAPI })
-  @Post('utilisateurs/:utilisateurId/simulerAideVelo')
-  @ApiBody({
-    type: InputAideVeloAPI,
-  })
-  @UseGuards(AuthGuard)
-  async getAllVelosByUtilisateur(
-    @Param('utilisateurId') utilisateurId: string,
-    @Body() body: InputAideVeloAPI,
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
+  @ApiOkResponse({ type: AideAPI })
+  @Get('aides/:aideId')
+  async getAideUnique(
+    @Param('aideId') aideId: string,
     @Request() req,
-  ): Promise<AidesVeloParTypeAPI> {
+  ): Promise<AideAPI> {
+    const aide = await this.aidesUsecase.getAideUniqueByIdCMS(aideId);
+    return AideAPI.mapToAPI(aide);
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: AideAPI })
+  @Get('utilisateurs/:utilisateurId/aides/:aideId')
+  async getAideUtilisateur(
+    @Param('aideId') aideId: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<AideAPI> {
     this.checkCallerId(req, utilisateurId);
-    const result = await this.aidesUsecase.simulerAideVelo(
+    const aide = await this.aidesUsecase.getAideUniqueUtilisateurByIdCMS(
       utilisateurId,
-      body.prix_du_velo,
-      body.etat_du_velo,
+      aideId,
     );
-    return AidesVeloParTypeAPI.mapToAPI(result);
-  }
-
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
-  @ApiOkResponse({ type: AidesVeloParTypeAPI })
-  @Post('aides/simulerAideVelo')
-  @ApiBody({
-    type: InputAideVeloOpenAPI,
-  })
-  async simulerAideVelo(
-    @Body() body: InputAideVeloOpenAPI,
-  ): Promise<AidesVeloParTypeAPI> {
-    const result = await this.aidesUsecase.simulerAideVeloParCodeCommmuneOuEPCI(
-      body.code_insee,
-      body.prix_du_velo,
-      body.rfr,
-      body.parts,
-      body.etat_du_velo,
-    );
-    return AidesVeloParTypeAPI.mapToAPI(result);
-  }
-
-  // NOTE: this could manage region and departement code as well in the future
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
-  @ApiOkResponse({ type: Array<AideVeloNonCalculeeAPI> })
-  @Post('aides/recupererAideVeloParCodeCommuneOuEPCI')
-  @ApiBody({
-    type: InputRecupererAideVeloAPI,
-  })
-  @ApiOperation({
-    summary:
-      "Récupère l'ensemble des aides vélo disponibile pour une commune ou un EPCI",
-    description:
-      "Par disponible, on entend que l'aide est disponible pour la commune ou l'EPCI, mais pas nécessairement proposée par cette dernière. Par exemple, une aide proposée par la région est disponible aux habitant:es d'une commune de la région.",
-  })
-  async recupererAidesVeloParCodeCommuneOuEPCI(
-    @Body() body: InputRecupererAideVeloAPI,
-  ): Promise<AideVeloNonCalculeeAPI[]> {
-    const result =
-      await this.aidesUsecase.recupererToutesLesAidesDisponiblesParCommuneOuEPCI(
-        body.code_insee_ou_siren,
-      );
-    return result.map(AideVeloNonCalculeeAPI.mapToAPI);
+    return AideAPI.mapToAPI(aide);
   }
 }

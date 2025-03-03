@@ -1,31 +1,43 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Utilisateur as UtilisateurDB, Prisma } from '@prisma/client';
+import { Prisma, Utilisateur as UtilisateurDB } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
+import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import { History } from '../../../../src/domain/history/history';
+import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
+import { ApplicationError } from '../../../../src/infrastructure/applicationError';
+import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
+import { Gamification } from '../../../domain/gamification/gamification';
+import { KYCHistory } from '../../../domain/kyc/kycHistory';
+import { Logement } from '../../../domain/logement/logement';
+import { NotificationHistory } from '../../../domain/notification/notificationHistory';
+import {
+  SerialisableDomain,
+  Upgrader,
+} from '../../../domain/object_store/upgrader';
+import { ThematiqueHistory } from '../../../domain/thematique/history/thematiqueHistory';
 import {
   Scope,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
-import { ApplicationError } from '../../../../src/infrastructure/applicationError';
-import { Gamification } from '../../../domain/gamification/gamification';
-import { History } from '../../../../src/domain/history/history';
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
-import {
-  SerialisableDomain,
-  Upgrader,
-} from '../../../domain/object_store/upgrader';
-import { ParcoursTodo } from '../../../../src/domain/todo/parcoursTodo';
-import { KYCHistory } from '../../../domain/kyc/kycHistory';
-import { Logement } from '../../../domain/logement/logement';
-import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
-import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
-import { NotificationHistory } from '../../../domain/notification/notificationHistory';
+import { PrismaService } from '../../prisma/prisma.service';
+import { DefiRepository } from '../defi.repository';
 import { KycRepository } from '../kyc.repository';
 import { MissionRepository } from '../mission.repository';
-import { DefiRepository } from '../defi.repository';
+
+const OMIT_ALL_CONFIGURATION_JSON = {
+  gamification: true,
+  history: true,
+  kyc: true,
+  unlocked_features: true,
+  logement: true,
+  defis: true,
+  missions: true,
+  bilbiotheque_services: true,
+  thematique_history: true,
+};
 
 @Injectable()
 export class UtilisateurRepository {
@@ -66,18 +78,7 @@ export class UtilisateurRepository {
       scopes = Object.values(Scope);
     }
     const user = await this.prisma.utilisateur.findUnique({
-      omit: {
-        todo: !scopes.includes(Scope.todo),
-        gamification: !scopes.includes(Scope.gamification),
-        history: !scopes.includes(Scope.history_article_quizz_aides),
-        kyc: !scopes.includes(Scope.kyc),
-        unlocked_features: !scopes.includes(Scope.unlocked_features),
-        logement: !scopes.includes(Scope.logement),
-        defis: !scopes.includes(Scope.defis),
-        missions: !scopes.includes(Scope.missions),
-        bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
-        notification_history: !scopes.includes(Scope.notification_history),
-      },
+      omit: this.buildOmitBlockFromScopes(scopes),
       where: {
         id,
       },
@@ -86,17 +87,7 @@ export class UtilisateurRepository {
   }
   async getByEmailToken(token: string): Promise<Utilisateur | null> {
     const user = await this.prisma.utilisateur.findUnique({
-      omit: {
-        todo: true,
-        gamification: true,
-        history: true,
-        kyc: true,
-        unlocked_features: true,
-        logement: true,
-        defis: true,
-        missions: true,
-        bilbiotheque_services: true,
-      },
+      omit: OMIT_ALL_CONFIGURATION_JSON,
       where: {
         unsubscribe_mail_token: token,
       },
@@ -128,17 +119,7 @@ export class UtilisateurRepository {
   ): Promise<Utilisateur | null> {
     let omit = {};
     if (version === 'light') {
-      omit = {
-        todo: true,
-        gamification: true,
-        history: true,
-        kyc: true,
-        unlocked_features: true,
-        logement: true,
-        defis: true,
-        missions: true,
-        bilbiotheque_services: true,
-      };
+      omit = OMIT_ALL_CONFIGURATION_JSON;
     }
     const users = await this.prisma.utilisateur.findMany({
       omit: omit,
@@ -153,6 +134,34 @@ export class UtilisateurRepository {
       return null;
     }
     return this.buildUtilisateurFromDB(users[0]);
+  }
+  async getByFranceConnectSub(
+    sub: string,
+    version: 'full' | 'light' = 'light',
+  ): Promise<Utilisateur | null> {
+    let omit = {};
+    if (version === 'light') {
+      omit = OMIT_ALL_CONFIGURATION_JSON;
+    }
+    const user = await this.prisma.utilisateur.findUnique({
+      omit: omit,
+      where: {
+        france_connect_sub: sub,
+      },
+    });
+
+    return user ? this.buildUtilisateurFromDB(user) : null;
+  }
+
+  async setFranceConnectSub(utilisateurId: string, sub: string) {
+    await this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        france_connect_sub: sub,
+      },
+    });
   }
 
   async does_email_exist(email: string): Promise<boolean> {
@@ -217,18 +226,7 @@ export class UtilisateurRepository {
       scopes = Object.values(Scope);
     }
     const user = await this.prisma.utilisateur.findUnique({
-      omit: {
-        todo: !scopes.includes(Scope.todo),
-        gamification: !scopes.includes(Scope.gamification),
-        history: !scopes.includes(Scope.history_article_quizz_aides),
-        kyc: !scopes.includes(Scope.kyc),
-        unlocked_features: !scopes.includes(Scope.unlocked_features),
-        logement: !scopes.includes(Scope.logement),
-        defis: !scopes.includes(Scope.defis),
-        missions: !scopes.includes(Scope.missions),
-        bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
-        notification_history: !scopes.includes(Scope.notification_history),
-      },
+      omit: this.buildOmitBlockFromScopes(scopes),
       where: {
         mobile_token: token,
       },
@@ -301,6 +299,36 @@ export class UtilisateurRepository {
         ...this.buildDBFromUtilisateurForUpdate(utilisateur, scopes),
       },
     });
+  }
+  async updateUtilisateurExternalStatId(
+    utilisateurId: string,
+    external_stat_id: string,
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        external_stat_id: external_stat_id,
+      },
+    });
+  }
+
+  async listePaginatedUsers(
+    skip: number,
+    take: number,
+    scopes: Scope[],
+  ): Promise<Utilisateur[]> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
+    const results = await this.prisma.utilisateur.findMany({
+      skip: skip,
+      take: take,
+      omit: this.buildOmitBlockFromScopes(scopes),
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildUtilisateurFromDB(r));
   }
 
   async listUtilisateurIds(filter: {
@@ -417,6 +445,11 @@ export class UtilisateurRepository {
     return Number(count);
   }
 
+  async countAll(): Promise<number> {
+    const count = await this.prisma.utilisateur.count();
+    return Number(count);
+  }
+
   private buildUtilisateurFromDB(user: Partial<UtilisateurDB>): Utilisateur {
     if (!user) {
       return null;
@@ -435,11 +468,6 @@ export class UtilisateurRepository {
             user.bilbiotheque_services,
             SerialisableDomain.BibliothequeServices,
           ),
-        )
-      : undefined;
-    const parcours_todo = user.todo
-      ? new ParcoursTodo(
-          Upgrader.upgradeRaw(user.todo, SerialisableDomain.ParcoursTodo),
         )
       : undefined;
     const history = user.history
@@ -487,6 +515,15 @@ export class UtilisateurRepository {
         )
       : undefined;
 
+    const thematique_history = user.thematique_history
+      ? new ThematiqueHistory(
+          Upgrader.upgradeRaw(
+            user.thematique_history,
+            SerialisableDomain.ThematiqueHistory,
+          ),
+        )
+      : undefined;
+
     const result = new Utilisateur({
       id: user.id,
       nom: user.nom,
@@ -508,7 +545,6 @@ export class UtilisateurRepository {
       prevent_sendemail_before: user.prevent_sendemail_before,
       created_at: user.created_at,
       updated_at: user.updated_at,
-      parcours_todo: parcours_todo,
       gamification: gamification,
       history: history,
       kyc_history: kyc,
@@ -534,6 +570,7 @@ export class UtilisateurRepository {
       couverture_aides_ok: user.couverture_aides_ok,
       source_inscription: SourceInscription[user.source_inscription],
       notification_history: notification_history,
+      thematique_history: thematique_history,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
@@ -541,6 +578,8 @@ export class UtilisateurRepository {
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
       code_commune: user.code_commune,
+      france_connect_sub: user.france_connect_sub,
+      external_stat_id: user.external_stat_id,
     });
 
     if (result.kyc_history) {
@@ -558,7 +597,7 @@ export class UtilisateurRepository {
   private buildNewDBUserFromUtilisateur(user: Utilisateur): UtilisateurDB {
     return {
       ...this.buildDBUserCoreDataFromUtilisateur(user),
-      ...this.buildDBVersionnedDataFromUtilisateur(user),
+      ...this.buildDBVersionnedDataFromUtilisateur(user, [Scope.ALL]),
     };
   }
 
@@ -606,7 +645,6 @@ export class UtilisateurRepository {
       mobile_token_updated_at: user.mobile_token_updated_at,
       created_at: undefined,
       updated_at: undefined,
-      todo: undefined,
       gamification: undefined,
       unlocked_features: undefined,
       history: undefined,
@@ -615,55 +653,82 @@ export class UtilisateurRepository {
       missions: undefined,
       bilbiotheque_services: undefined,
       notification_history: undefined,
+      thematique_history: undefined,
       defis: undefined,
       code_commune: user.code_commune,
+      france_connect_sub: user.france_connect_sub,
+      external_stat_id: user.external_stat_id,
     };
   }
 
   private buildDBVersionnedDataFromUtilisateur(
     user: Utilisateur,
+    scopes: Scope[],
   ): Partial<UtilisateurDB> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
     return {
-      todo: Upgrader.serialiseToLastVersion(
-        user.parcours_todo,
-        SerialisableDomain.ParcoursTodo,
-      ),
-      gamification: Upgrader.serialiseToLastVersion(
-        user.gamification,
-        SerialisableDomain.Gamification,
-      ),
-      unlocked_features: Upgrader.serialiseToLastVersion(
-        user.unlocked_features,
-        SerialisableDomain.UnlockedFeatures,
-      ),
-      history: Upgrader.serialiseToLastVersion(
-        user.history,
-        SerialisableDomain.History,
-      ),
-      logement: Upgrader.serialiseToLastVersion(
-        user.logement,
-        SerialisableDomain.Logement,
-      ),
-      kyc: Upgrader.serialiseToLastVersion(
-        user.kyc_history,
-        SerialisableDomain.KYCHistory,
-      ),
-      missions: Upgrader.serialiseToLastVersion(
-        user.missions,
-        SerialisableDomain.MissionsUtilisateur,
-      ),
-      bilbiotheque_services: Upgrader.serialiseToLastVersion(
-        user.bilbiotheque_services,
-        SerialisableDomain.BibliothequeServices,
-      ),
-      notification_history: Upgrader.serialiseToLastVersion(
-        user.notification_history,
-        SerialisableDomain.NotificationHistory,
-      ),
-      defis: Upgrader.serialiseToLastVersion(
-        user.defi_history,
-        SerialisableDomain.DefiHistory,
-      ),
+      gamification: scopes.includes(Scope.gamification)
+        ? Upgrader.serialiseToLastVersion(
+            user.gamification,
+            SerialisableDomain.Gamification,
+          )
+        : undefined,
+      unlocked_features: scopes.includes(Scope.unlocked_features)
+        ? Upgrader.serialiseToLastVersion(
+            user.unlocked_features,
+            SerialisableDomain.UnlockedFeatures,
+          )
+        : undefined,
+      history: scopes.includes(Scope.history_article_quizz_aides)
+        ? Upgrader.serialiseToLastVersion(
+            user.history,
+            SerialisableDomain.History,
+          )
+        : undefined,
+      logement: scopes.includes(Scope.logement)
+        ? Upgrader.serialiseToLastVersion(
+            user.logement,
+            SerialisableDomain.Logement,
+          )
+        : undefined,
+      kyc: scopes.includes(Scope.kyc)
+        ? Upgrader.serialiseToLastVersion(
+            user.kyc_history,
+            SerialisableDomain.KYCHistory,
+          )
+        : undefined,
+      missions: scopes.includes(Scope.missions)
+        ? Upgrader.serialiseToLastVersion(
+            user.missions,
+            SerialisableDomain.MissionsUtilisateur,
+          )
+        : undefined,
+      bilbiotheque_services: scopes.includes(Scope.bilbiotheque_services)
+        ? Upgrader.serialiseToLastVersion(
+            user.bilbiotheque_services,
+            SerialisableDomain.BibliothequeServices,
+          )
+        : undefined,
+      notification_history: scopes.includes(Scope.notification_history)
+        ? Upgrader.serialiseToLastVersion(
+            user.notification_history,
+            SerialisableDomain.NotificationHistory,
+          )
+        : undefined,
+      thematique_history: scopes.includes(Scope.thematique_history)
+        ? Upgrader.serialiseToLastVersion(
+            user.thematique_history,
+            SerialisableDomain.ThematiqueHistory,
+          )
+        : undefined,
+      defis: scopes.includes(Scope.defis)
+        ? Upgrader.serialiseToLastVersion(
+            user.defi_history,
+            SerialisableDomain.DefiHistory,
+          )
+        : undefined,
     };
   }
 
@@ -671,49 +736,36 @@ export class UtilisateurRepository {
     user: Utilisateur,
     scopes?: Scope[],
   ): Partial<UtilisateurDB> {
-    const versionned_data = this.buildDBVersionnedDataFromUtilisateur(user);
+    const versionned_data = this.buildDBVersionnedDataFromUtilisateur(
+      user,
+      scopes ? scopes : [Scope.ALL],
+    );
 
-    if (scopes && !scopes.includes(Scope.ALL)) {
-      if (!scopes.includes(Scope.bilbiotheque_services)) {
-        versionned_data.bilbiotheque_services = undefined;
-      }
-      if (!scopes.includes(Scope.defis)) {
-        versionned_data.defis = undefined;
-      }
-      if (!scopes.includes(Scope.gamification)) {
-        versionned_data.gamification = undefined;
-      }
-      if (!scopes.includes(Scope.history_article_quizz_aides)) {
-        versionned_data.history = undefined;
-      }
-      if (!scopes.includes(Scope.kyc)) {
-        versionned_data.kyc = undefined;
-      }
-      if (!scopes.includes(Scope.logement)) {
-        versionned_data.logement = undefined;
-      }
-      if (!scopes.includes(Scope.missions)) {
-        versionned_data.missions = undefined;
-      }
-      if (!scopes.includes(Scope.notification_history)) {
-        versionned_data.notification_history = undefined;
-      }
-      if (!scopes.includes(Scope.todo)) {
-        versionned_data.todo = undefined;
-      }
-      if (!scopes.includes(Scope.unlocked_features)) {
-        versionned_data.unlocked_features = undefined;
-      }
-      if (!scopes.includes(Scope.core)) {
-        return {
-          id: user.id,
-          ...versionned_data,
-        };
-      }
+    if (!scopes || scopes.includes(Scope.core)) {
+      return {
+        ...this.buildDBUserCoreDataFromUtilisateur(user),
+        ...versionned_data,
+      };
+    } else {
+      return {
+        id: user.id,
+        ...versionned_data,
+      };
     }
+  }
+
+  private buildOmitBlockFromScopes(scopes: Scope[]): any {
     return {
-      ...this.buildDBUserCoreDataFromUtilisateur(user),
-      ...versionned_data,
+      gamification: !scopes.includes(Scope.gamification),
+      history: !scopes.includes(Scope.history_article_quizz_aides),
+      kyc: !scopes.includes(Scope.kyc),
+      unlocked_features: !scopes.includes(Scope.unlocked_features),
+      logement: !scopes.includes(Scope.logement),
+      defis: !scopes.includes(Scope.defis),
+      missions: !scopes.includes(Scope.missions),
+      bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
+      notification_history: !scopes.includes(Scope.notification_history),
+      thematique_history: !scopes.includes(Scope.thematique_history),
     };
   }
 }

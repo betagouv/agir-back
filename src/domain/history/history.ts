@@ -45,6 +45,18 @@ export class History {
     this.aide_interactions = [];
   }
 
+  public consulterAide(id_cms: string) {
+    const interaction = this.getAideInteractionByIdCms(id_cms);
+    if (interaction) {
+      interaction.vue_at = new Date();
+    } else {
+      const new_interaction = new AideHistory({
+        content_id: id_cms,
+        vue_at: new Date(),
+      });
+      this.aide_interactions.push(new_interaction);
+    }
+  }
   public clickAideInfosLink(id_cms: string) {
     const interaction = this.getAideInteractionByIdCms(id_cms);
     if (interaction) {
@@ -53,7 +65,6 @@ export class History {
       const new_interaction = new AideHistory({
         content_id: id_cms,
         clicked_infos: true,
-        clicked_demande: false,
       });
       this.aide_interactions.push(new_interaction);
     }
@@ -65,7 +76,6 @@ export class History {
     } else {
       const new_interaction = new AideHistory({
         content_id: id_cms,
-        clicked_infos: false,
         clicked_demande: true,
       });
       this.aide_interactions.push(new_interaction);

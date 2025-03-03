@@ -1,29 +1,27 @@
 import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Param,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-  Patch,
-  Query,
-} from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Consultation } from '../../domain/actions/catalogueAction';
+import { Thematique } from '../../domain/thematique/thematique';
+import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { ActionAPI } from './types/actions/ActionAPI';
-import { ActionUsecase } from '../../usecase/actions.usecase';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Thematique } from '../../domain/contenu/thematique';
-import { ActionLightAPI } from './types/actions/ActionLightAPI';
+import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
+import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -35,9 +33,9 @@ export class ActionsController extends GenericControler {
 
   @Get('actions')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
   @ApiOkResponse({
-    type: [ActionLightAPI],
+    type: CatalogueActionAPI,
   })
   @ApiOperation({
     summary: `Retourne le catalogue d'actions`,
@@ -46,8 +44,9 @@ export class ActionsController extends GenericControler {
     name: 'thematique',
     enum: Thematique,
     enumName: 'thematique',
+    isArray: true,
     required: false,
-    description: `filtrage par une thematique`,
+    description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
     name: 'code_commune',
@@ -55,25 +54,39 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `code commune INSEE pour calculer le nombre d'aides disponible pour cette localisation`,
   })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse, pour recherche textuelle`,
+  })
   async getCatalogue(
-    @Query('thematique') thematique: string,
+    @Query('thematique') thematique: string[] | string,
     @Query('code_commune') code_commune: string,
-  ): Promise<ActionLightAPI[]> {
-    let them;
-    if (thematique) {
-      them = this.castThematiqueOrException(thematique);
+    @Query('titre') titre?: string,
+  ): Promise<CatalogueActionAPI> {
+    const liste_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(thematique);
+
+    const liste_thematiques: Thematique[] = [];
+
+    for (const them_string of liste_thematiques_input) {
+      liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
-    const result = await this.actionUsecase.getOpenCatalogue(
-      them,
+
+    const catalogue = await this.actionUsecase.getOpenCatalogue(
+      liste_thematiques,
       code_commune,
+      titre,
     );
-    return result.map((r) => ActionLightAPI.mapToAPI(r));
+
+    return CatalogueActionAPI.mapToAPI(catalogue);
   }
 
   @Get('utilisateurs/:utilisateurId/actions')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: [ActionLightAPI],
+    type: CatalogueActionAPI,
   })
   @ApiOperation({
     summary: `Retourne le catalogue d'actions pour un utilisateur donné`,
@@ -82,24 +95,49 @@ export class ActionsController extends GenericControler {
     name: 'thematique',
     enum: Thematique,
     enumName: 'thematique',
+    isArray: true,
     required: false,
-    description: `filtrage par une thematique`,
+    description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
+  })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse, pour recherche textuelle`,
+  })
+  @ApiQuery({
+    name: 'consultation',
+    enum: Consultation,
+    required: false,
+    description: `indique si on veut lister toutes les actions, celles vues, ou celles pas vues`,
   })
   async getCatalogueUtilisateur(
-    @Query('thematique') thematique: string,
+    @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
+    @Query('titre') titre: string,
+    @Query('consultation') consultation: string,
     @Request() req,
-  ): Promise<ActionLightAPI[]> {
+  ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
-    let them;
-    if (thematique) {
-      them = this.castThematiqueOrException(thematique);
+    const liste_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(thematique);
+
+    const liste_thematiques: Thematique[] = [];
+
+    for (const them_string of liste_thematiques_input) {
+      liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
-    const result = await this.actionUsecase.getUtilisateurCatalogue(
+
+    const type_consulation =
+      this.castTypeConsultationActionOrException(consultation);
+
+    const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
-      them,
+      liste_thematiques,
+      titre,
+      type_consulation,
     );
-    return result.map((r) => ActionLightAPI.mapToAPI(r));
+    return CatalogueActionAPI.mapToAPI(catalogue);
   }
 
   @Get('actions/:type_action/:code_action')
@@ -179,5 +217,30 @@ export class ActionsController extends GenericControler {
       utilisateurId,
     );
     return ActionAPI.mapToAPI(result);
+  }
+  @Get('utilisateurs/:utilisateurId/actions/quizz/:code_action/score')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: ScoreActionAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne le score courant de cette action de type quizz`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  async getActionQuizzScore(
+    @Param('code_action') code_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<ScoreActionAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.actionUsecase.calculeScoreQuizzAction(
+      utilisateurId,
+      code_action,
+    );
+    return result;
   }
 }

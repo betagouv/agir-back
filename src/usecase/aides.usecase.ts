@@ -1,118 +1,34 @@
 import { Injectable } from '@nestjs/common';
 
-import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repository';
-
-import { AidesRetrofitRepository } from '../infrastructure/repository/aidesRetrofit.repository';
-
 import {
-  AidesVeloParType,
-  AideVelo,
-  AideVeloNonCalculee,
-} from '../domain/aides/aideVelo';
+  AideFilter,
+  AideRepository,
+} from '../../src/infrastructure/repository/aide.repository';
+import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
+import { Aide } from '../domain/aides/aide';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import {
-  Commune,
-  CommuneRepository,
-  Departement,
-  EPCI,
-  Region,
-} from '../../src/infrastructure/repository/commune/commune.repository';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { Echelle } from '../domain/aides/echelle';
+import { App } from '../domain/app';
+import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { EmailSender } from '../infrastructure/email/emailSender';
-import { App } from '../domain/app';
-import { EchelleAide } from '../domain/aides/echelle';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 
 @Injectable()
 export class AidesUsecase {
   constructor(
-    private aidesVeloRepository: AidesVeloRepository,
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
-    private aidesRetrofitRepository: AidesRetrofitRepository,
     private emailSender: EmailSender,
     private aideRepository: AideRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
   ) {}
-  async getRetrofit(
-    codePostal: string,
-    revenuFiscalDeReference: string,
-  ): Promise<AideVelo[]> {
-    return this.aidesRetrofitRepository.get(
-      codePostal,
-      revenuFiscalDeReference,
-    );
-  }
 
-  async exportAides(): Promise<AideDefinition[]> {
-    const liste = await this.aideRepository.listAll();
-    for (const aide of liste) {
-      const metropoles = new Set<string>();
-      const cas = new Set<string>();
-      const cus = new Set<string>();
-      const ccs = new Set<string>();
-      for (const code_postal of aide.codes_postaux) {
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'METRO')
-          .map((m) => metropoles.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CA')
-          .map((m) => cas.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CC')
-          .map((m) => ccs.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CU')
-          .map((m) => cus.add(m));
-      }
-      aide.ca = Array.from(cas.values());
-      aide.cc = Array.from(ccs.values());
-      aide.cu = Array.from(cus.values());
-      aide.metropoles = Array.from(metropoles.values());
-    }
-    liste.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
-    return liste;
-  }
-
-  async clickAideInfosLink(utilisateurId: string, id_cms: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.history_article_quizz_aides],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const aide_exist = await this.aideRepository.exists(id_cms);
-    if (!aide_exist) {
-      ApplicationError.throwAideNotFound(id_cms);
-    }
-
-    utilisateur.history.clickAideInfosLink(id_cms);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-  async clickAideDemandeLink(utilisateurId: string, id_cms: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.history_article_quizz_aides],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const aide_exist = await this.aideRepository.exists(id_cms);
-    if (!aide_exist) {
-      ApplicationError.throwAideNotFound(id_cms);
-    }
-
-    utilisateur.history.clickAideDemandeLink(id_cms);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  async getCatalogueAides(
+  async getCatalogueAidesUtilisateur(
     utilisateurId: string,
   ): Promise<{ aides: AideDefinition[]; utilisateur: Utilisateur }> {
     const utilisateur = await this.utilisateurRepository.getById(
@@ -131,7 +47,7 @@ export class AidesUsecase {
         utilisateur.logement.code_postal,
       );
 
-    const result = await this.aideRepository.search({
+    const aide_def_liste = await this.aideRepository.search({
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region ? dept_region.code_departement : undefined,
@@ -139,23 +55,13 @@ export class AidesUsecase {
       date_expiration: new Date(),
     });
 
-    for (const aide of result) {
-      const aide_hist = utilisateur.history.getAideInteractionByIdCms(
-        aide.content_id,
-      );
-      if (aide_hist) {
-        aide.clicked_demande = aide_hist.clicked_demande;
-        aide.clicked_infos = aide_hist.clicked_infos;
-      }
-    }
-
-    const aides_nationales = [];
-    const aides_locales = [];
-    for (const aide_def of result) {
-      if (aide_def.echelle === EchelleAide.National) {
-        aides_nationales.push(aide_def);
+    const aides_nationales: Aide[] = [];
+    const aides_locales: Aide[] = [];
+    for (const aide_def of aide_def_liste) {
+      if (aide_def.echelle === Echelle.National) {
+        aides_nationales.push(this.setHistoryData(aide_def, utilisateur));
       } else {
-        aides_locales.push(aide_def);
+        aides_locales.push(this.setHistoryData(aide_def, utilisateur));
       }
     }
 
@@ -168,128 +74,100 @@ export class AidesUsecase {
     };
   }
 
-  async simulerAideVelo(
+  async getAideUniqueByIdCMS(cms_id: string): Promise<AideDefinition> {
+    const aide = await this.aideRepository.getByContentId(cms_id);
+
+    if (!aide) {
+      ApplicationError.throwAideNotFound(cms_id);
+    }
+
+    return this.personnalisator.personnaliser(aide);
+  }
+
+  async getAideUniqueUtilisateurByIdCMS(
     utilisateurId: string,
-    prix_velo: number,
-    etat_velo: 'neuf' | 'occasion' = 'neuf',
-  ): Promise<AidesVeloParType> {
+    cms_id: string,
+  ): Promise<Aide> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.logement],
+      [Scope.history_article_quizz_aides],
     );
     Utilisateur.checkState(utilisateur);
 
-    const RFR =
-      utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;
-    const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();
-    const ABONNEMENT =
-      utilisateur.abonnement_ter_loire === null
-        ? false
-        : utilisateur.abonnement_ter_loire;
+    const aide_def = await this.aideRepository.getByContentId(cms_id);
 
-    const code_insee = this.communeRepository.getCodeCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
-    const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
-    const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
-
-    return this.aidesVeloRepository.getSummaryVelos({
-      'localisation . code insee': code_insee,
-      'localisation . epci': epci?.nom,
-      'localisation . région': commune?.region,
-      'localisation . département': commune?.departement,
-      'vélo . prix': prix_velo,
-      'aides . pays de la loire . abonné TER': ABONNEMENT,
-      'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
-      'revenu fiscal de référence par part . revenu de référence': RFR,
-      'revenu fiscal de référence par part . nombre de parts': PARTS,
-      'vélo . état': etat_velo,
-    });
-  }
-
-  async simulerAideVeloParCodeCommmuneOuEPCI(
-    code_insee_commune_ou_EPCI: string,
-    prix_velo: number,
-    rfr: number,
-    parts: number,
-    etat_velo: 'neuf' | 'occasion' = 'neuf',
-  ): Promise<AidesVeloParType> {
-    let commune: Commune;
-    let code_EPCI = undefined;
-    let epci: EPCI = undefined;
-    const IS_EPCI = this.communeRepository.isCodeSirenEPCI(
-      code_insee_commune_ou_EPCI,
-    );
-    if (IS_EPCI) {
-      code_EPCI = code_insee_commune_ou_EPCI;
-      epci = this.communeRepository.getEPCIBySIRENCode(code_EPCI);
-    } else {
-      commune = this.communeRepository.getCommuneByCodeINSEE(
-        code_insee_commune_ou_EPCI,
-      );
+    if (!aide_def) {
+      ApplicationError.throwAideNotFound(cms_id);
     }
-    const code_commune_de_EPCI = epci?.membres[0].code;
-    const une_commune_EPCI =
-      this.communeRepository.getCommuneByCodeINSEE(code_commune_de_EPCI);
 
-    const region = commune?.region || une_commune_EPCI?.region;
-    const departement = commune?.departement || une_commune_EPCI?.departement;
+    const aide = this.setHistoryData(aide_def, utilisateur);
 
-    // FIXME: Si on accepte le fait que les paramètres peuvent être null, alors
-    // il faut le préciser dans l'API et il sera également préférable
-    // d'utiliser les valeurs par défaut du modèle pour maximiser le montant
-    // des aides.
-    return this.aidesVeloRepository.getSummaryVelos({
-      'localisation . code insee': IS_EPCI ? undefined : commune.code,
-      'localisation . epci': epci?.nom,
-      'localisation . région': region,
-      'localisation . département': departement,
-      'vélo . prix': prix_velo ? prix_velo : 1000,
-      'aides . pays de la loire . abonné TER': false,
-      'foyer . personnes': parts ? parts : 2,
-      'revenu fiscal de référence par part . revenu de référence': rfr
-        ? rfr
-        : 40000,
-      'revenu fiscal de référence par part . nombre de parts': parts,
-      'vélo . état': etat_velo,
-    });
+    utilisateur.history.consulterAide(cms_id);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+
+    return this.personnalisator.personnaliser(aide);
   }
 
-  /**
-   * Récupère toutes les aides disponible pour une commune ou un EPCI donné.
-   *
-   * @param code - Le code INSEE de la commune ou le code SIREN de l'EPCI.
-   * @returns La liste de toutes aides disponible pour la commune ou l'EPCI donné.
-   *
-   * @note Les aides ne sont pas calculées et peuvent donc ne pas être éligibles pour certaines personnes.
-   */
-  async recupererToutesLesAidesDisponiblesParCommuneOuEPCI(
-    code: string,
-  ): Promise<AideVeloNonCalculee[]> {
-    const isEPCI = this.communeRepository.isCodeSirenEPCI(code);
-    const commune: Commune | undefined = isEPCI
-      ? undefined
-      : this.communeRepository.getCommuneByCodeINSEE(code);
-    const epci: EPCI | undefined = isEPCI
-      ? this.communeRepository.getEPCIBySIRENCode(code)
-      : this.communeRepository.getEPCIByCommuneCodeINSEE(code);
+  async consulterAide(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
 
-    const codeCommuneDeEPCI = epci?.membres[0].code;
-    const communeDeEPCI =
-      this.communeRepository.getCommuneByCodeINSEE(codeCommuneDeEPCI);
-    const region = isEPCI ? communeDeEPCI?.region : commune?.region;
-    const departement = isEPCI
-      ? communeDeEPCI?.departement
-      : commune?.departement;
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
 
-    return this.aidesVeloRepository.getAllAidesIn({
-      'localisation . pays': 'France',
-      'localisation . code insee': isEPCI ? undefined : commune?.code,
-      'localisation . epci': epci?.nom,
-      'localisation . région': region,
-      'localisation . département': departement,
-    });
+    utilisateur.history.consulterAide(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+  }
+
+  async consulterAideInfosLink(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.clickAideInfosLink(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+  }
+  async consulterAideDemandeLink(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.clickAideDemandeLink(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
   }
 
   public async reportAideSoonExpired(): Promise<string[]> {
@@ -350,6 +228,32 @@ export class AidesUsecase {
     return result;
   }
 
+  async internal_count_aides(
+    thematique?: Thematique,
+    code_commune?: string,
+  ): Promise<number> {
+    const filtre: AideFilter = {};
+
+    if (code_commune) {
+      const codes_postaux =
+        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
+      const dept_region =
+        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
+
+      filtre.code_postal = codes_postaux[0];
+      filtre.code_commune = code_commune;
+      filtre.code_departement = dept_region.code_departement;
+      filtre.code_region = dept_region.code_region;
+    }
+
+    filtre.date_expiration = new Date();
+    if (thematique) {
+      filtre.thematiques = [thematique];
+    }
+
+    return await this.aideRepository.count(filtre);
+  }
+
   private async sent_aide_expiration_emails(
     type: 'month' | 'week' | 'expired',
     id: string,
@@ -406,7 +310,7 @@ export class AidesUsecase {
 <br>
 <br>Je ne veux pas juger, mais son altesse a quand même un peu échoué dans sa mission de maintenir l'ordre dans le royaume....
 <br>
-<br>Je te souhaite une bien bonne journée, bien qu'elle commence un peu mal à mon goût.`,
+<br>Je te souhaite que cette journée finisse mieux qu'elle n'a commencé...`,
           `L'aide d'id ${id} est expirée et supprimée du catalogue utilisateur`,
         );
         if (sent_email) {
@@ -417,5 +321,21 @@ export class AidesUsecase {
         }
       }
     }
+  }
+
+  private setHistoryData(
+    aide_def: AideDefinition,
+    utilisateur: Utilisateur,
+  ): Aide {
+    const aide = new Aide(aide_def);
+    const aide_hist = utilisateur.history.getAideInteractionByIdCms(
+      aide_def.content_id,
+    );
+    if (aide_hist) {
+      aide.clicked_demande = aide_hist.clicked_demande;
+      aide.clicked_infos = aide_hist.clicked_infos;
+      aide.vue_at = aide_hist.vue_at;
+    }
+    return aide;
   }
 }

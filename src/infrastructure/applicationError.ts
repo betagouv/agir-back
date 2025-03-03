@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { max } from 'rxjs';
 
 export class ApplicationError {
   @ApiProperty()
@@ -19,12 +18,6 @@ export class ApplicationError {
   }
   static throwForbiddenError() {
     this.throwAppError('002', 'Vous ne pouvez pas accéder à ces données');
-  }
-  static throwUnfinishedTodoError() {
-    this.throwAppError(
-      '003',
-      `todo pas terminée, impossible d'encaisser les points`,
-    );
   }
   static throwBadPasswordOrEmailError() {
     this.throwAppError(
@@ -570,10 +563,10 @@ export class ApplicationError {
       404,
     );
   }
-  static throwBadOIDCCodeState() {
+  static throwSecurityTechnicalProblemDetected() {
     this.throwAppError(
       '107',
-      `Problème détecté dans les paramètres d'authentification (code ou state)`,
+      `Problème de sécurité détecté au cours de l'authentification, c'est pas bien d'essayer de nous pirater ^^`,
     );
   }
   static throwBadActionCodeFormat(code: string) {
@@ -589,6 +582,28 @@ export class ApplicationError {
       '110',
       `le code [${code}] ne correspond à aucun code commune INSEE ou SIREN d'EPCI`,
       404,
+    );
+  }
+  static throwBadMosaiConfigurationError(id_mosaic: string) {
+    this.throwAppError(
+      '111',
+      `Erreur interne de configuration de la mosaic [${id_mosaic}]`,
+      500,
+    );
+  }
+  static throwTypeConsultationNotFound(type: string) {
+    this.throwAppError('112', `Type de consultation [${type}] inconnu`);
+  }
+  static throwCodeFranceConnectManquant() {
+    this.throwAppError(
+      '113',
+      `Un problème est survenu pendant la connexion France Connect, veuillez ré-essayer, ou choisir un autre fournisseur d'identité sur France Connect`,
+    );
+  }
+  static throwStateFranceConnectManquant() {
+    this.throwAppError(
+      '114',
+      `Un problème est survenu pendant la connexion France Connect, veuillez ré-essayer, ou choisir un autre fournisseur d'identité sur France Connect`,
     );
   }
 

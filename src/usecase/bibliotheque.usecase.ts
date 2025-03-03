@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ArticleRepository } from '../infrastructure/repository/article.repository';
-import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { Thematique } from '../domain/contenu/thematique';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import {
-  CLE_PERSO,
-  Personnalisator,
-} from '../infrastructure/personnalisation/personnalisator';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { Article } from '../domain/contenu/article';
-import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
-import { Quizz } from '../domain/contenu/quizz';
+import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../domain/contenu/contentType';
+import { Quizz } from '../domain/contenu/quizz';
+import { Thematique } from '../domain/thematique/thematique';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
+import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class BibliothequeUsecase {
@@ -120,7 +117,6 @@ export class BibliothequeUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
         Scope.logement,
       ],
     );
@@ -129,7 +125,7 @@ export class BibliothequeUsecase {
     const result =
       utilisateur.history.getArticleFromBibliotheque(article_definition);
 
-    await this.readArticle(content_id, utilisateur);
+    await this.internal_read_article(content_id, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
@@ -166,7 +162,6 @@ export class BibliothequeUsecase {
         Scope.gamification,
         Scope.missions,
         Scope.kyc,
-        Scope.todo,
       ],
     );
 
@@ -174,7 +169,7 @@ export class BibliothequeUsecase {
 
     await this.setQuizzResult(content_id, rounded_pourcent, utilisateur);
 
-    await this.readArticle(quizz_definition.article_id, utilisateur);
+    await this.internal_read_article(quizz_definition.article_id, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -196,11 +191,6 @@ export class BibliothequeUsecase {
     ) {
       utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
       utilisateur.history.declarePointsQuizzEnPoche(content_id);
-      this.updateUserTodo(
-        utilisateur,
-        ContentType.quizz,
-        quizz_def.thematiques,
-      );
     }
 
     utilisateur.missions.validateArticleOrQuizzDone(
@@ -225,6 +215,10 @@ export class BibliothequeUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    return await this.internal_get_quizz(content_id);
+  }
+
+  public async internal_get_quizz(content_id: string): Promise<Quizz> {
     const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
       content_id,
     );
@@ -242,13 +236,13 @@ export class BibliothequeUsecase {
       )?.contenu;
     }
 
-    return this.personnalisator.personnaliser(quizz, utilisateur, [
-      CLE_PERSO.espace_insecable,
-    ]);
+    return quizz;
   }
 
-  // FIXME : should be private
-  public async readArticle(content_id: string, utilisateur: Utilisateur) {
+  public async internal_read_article(
+    content_id: string,
+    utilisateur: Utilisateur,
+  ) {
     if (!content_id) return;
 
     utilisateur.history.lireArticle(content_id);
@@ -263,11 +257,6 @@ export class BibliothequeUsecase {
       );
       utilisateur.history.declarePointsArticleEnPoche(content_id);
     }
-    this.updateUserTodo(
-      utilisateur,
-      ContentType.article,
-      article_definition.thematiques,
-    );
 
     utilisateur.missions.validateArticleOrQuizzDone(
       content_id,
@@ -278,20 +267,5 @@ export class BibliothequeUsecase {
       utilisateur,
       DefiRepository.getCatalogue(),
     );
-  }
-
-  private updateUserTodo(
-    utilisateur: Utilisateur,
-    type: ContentType,
-    thematiques: Thematique[],
-  ) {
-    const matching =
-      utilisateur.parcours_todo.findTodoElementByTypeAndThematique(
-        type,
-        thematiques,
-      );
-    if (matching && !matching.element.isDone()) {
-      matching.todo.makeProgress(matching.element);
-    }
   }
 }

@@ -1,8 +1,9 @@
-import { TestUtil } from '../../../../test/TestUtil';
+import { Echelle } from '../../../../src/domain/aides/echelle';
 import { Article } from '../../../../src/domain/contenu/article';
-import { History } from '../../../../src/domain/history/history';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { History } from '../../../../src/domain/history/history';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { TestUtil } from '../../../../test/TestUtil';
 
 const BASIC_ARTICLE: Article = new Article({
   ...TestUtil.articleData(),
@@ -12,6 +13,7 @@ const BASIC_ARTICLE: Article = new Article({
   categorie: Categorie.recommandation,
   source: 'source',
   sources: [{ label: 'source 1', url: 'https//sources1' }],
+  echelle: Echelle.National,
 });
 
 describe('History', () => {
@@ -44,7 +46,12 @@ describe('History', () => {
         },
       ],
       aide_interactions: [
-        { clicked_demande: true, clicked_infos: false, content_id: '1' },
+        {
+          clicked_demande: true,
+          clicked_infos: false,
+          content_id: '1',
+          vue_at: new Date(),
+        },
       ],
     });
 
@@ -79,7 +86,12 @@ describe('History', () => {
         },
       ],
       aide_interactions: [
-        { clicked_demande: true, clicked_infos: false, content_id: '1' },
+        {
+          clicked_demande: true,
+          clicked_infos: false,
+          content_id: '1',
+          vue_at: new Date(),
+        },
       ],
     });
 

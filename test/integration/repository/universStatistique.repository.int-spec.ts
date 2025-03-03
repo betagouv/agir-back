@@ -1,6 +1,6 @@
 import { TestUtil } from '../../TestUtil';
 import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
-import { Thematique } from '../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 
 describe('UniversStatistiqueRepository', () => {
   const OLD_ENV = process.env;

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Thematique } from '../../domain/contenu/thematique';
 import { Cron } from '@nestjs/schedule';
+import { Thematique } from '../../domain/thematique/thematique';
 import { ThematiqueDefinition } from '../../domain/thematique/thematiqueDefinition';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ThematiqueRepository {

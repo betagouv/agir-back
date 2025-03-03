@@ -30,7 +30,7 @@ import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ApplicationError } from '../applicationError';
 import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
-import { Thematique } from '../../domain/contenu/thematique';
+import { Thematique } from '../../domain/thematique/thematique';
 
 @Controller()
 @ApiBearerAuth()
@@ -38,61 +38,6 @@ import { Thematique } from '../../domain/contenu/thematique';
 export class RechecheServicesController extends GenericControler {
   constructor(private rechercheServicesUsecase: RechercheServicesUsecase) {
     super();
-  }
-
-  @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search')
-  @UseGuards(AuthGuard)
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : recherche une categorie au sein d'un service de recherche donné`,
-  })
-  @ApiBody({
-    type: RechercheServiceInputAPI,
-  })
-  @ApiOkResponse({
-    type: [ResultatRechercheAPI],
-  })
-  @ApiParam({ name: 'serviceId', enum: ServiceRechercheID })
-  async recherche(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('serviceId') serviceId: ServiceRechercheID,
-    @Body() body: RechercheServiceInputAPI,
-  ): Promise<ResultatRechercheAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-
-    if (body.categorie && !CategorieRecherche[body.categorie]) {
-      ApplicationError.throwUnkonwnCategorie(body.categorie);
-    }
-    const filtre = {
-      categorie: CategorieRecherche[body.categorie],
-      point: body.longitude
-        ? { latitude: body.latitude, longitude: body.longitude }
-        : undefined,
-      nombre_max_resultats: body.nombre_max_resultats,
-      rayon_metres: body.rayon_metres,
-      distance_metres: body.distance_metres,
-    };
-
-    if (body.latitude_depart) {
-      filtre['rect_A'] = {
-        latitude: body.latitude_depart,
-        longitude: body.longitude_depart,
-      };
-    }
-    if (body.latitude_arrivee) {
-      filtre['rect_B'] = {
-        latitude: body.latitude_arrivee,
-        longitude: body.longitude_arrivee,
-      };
-    }
-
-    const result = await this.rechercheServicesUsecase.search(
-      utilisateurId,
-      ServiceRechercheID[serviceId],
-      new FiltreRecherche(filtre),
-    );
-    return result.map((r) => ResultatRechercheAPI.mapToAPI(r));
   }
 
   @Post('utilisateurs/:utilisateurId/recherche_services/:serviceId/search2')
@@ -141,7 +86,7 @@ export class RechecheServicesController extends GenericControler {
       };
     }
 
-    const result = await this.rechercheServicesUsecase.search_2(
+    const result = await this.rechercheServicesUsecase.search(
       utilisateurId,
       ServiceRechercheID[serviceId],
       new FiltreRecherche(filtre),
@@ -192,28 +137,6 @@ export class RechecheServicesController extends GenericControler {
       ServiceRechercheID[serviceId],
     );
     return result.map((r) => CategoriesRechercheAPI.mapToAPI(r));
-  }
-
-  @Get('utilisateurs/:utilisateurId/recherche_services/:universId')
-  @UseGuards(AuthGuard)
-  @ApiOperation({
-    deprecated: true,
-    summary: `DEPRECATED : Liste des service disponible dans un univers donné`,
-  })
-  @ApiOkResponse({
-    type: [ServiceRechercheAPI],
-  })
-  async getListeServices_deprecated(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('universId') universId: string,
-  ): Promise<ServiceRechercheAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.rechercheServicesUsecase.getListServiceDef(
-      utilisateurId,
-      universId,
-    );
-    return result.map((r) => ServiceRechercheAPI.mapToAPI(r));
   }
 
   @Get(

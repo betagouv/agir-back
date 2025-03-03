@@ -1,25 +1,25 @@
-import { CodeManager } from './manager/codeManager';
-import { PasswordManager } from './manager/passwordManager';
+import { v4 as uuidv4 } from 'uuid';
+import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
+import { App } from '../app';
+import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { DefiHistory } from '../defis/defiHistory';
 import { Gamification } from '../gamification/gamification';
-import { ParcoursTodo } from '../todo/parcoursTodo';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
-import { KYCHistory } from '../kyc/kycHistory';
-import { Logement } from '../logement/logement';
-import { App } from '../app';
-import { TagPonderationSet } from '../scoring/tagPonderationSet';
-import { Tag } from '../scoring/tag';
-import { DefiHistory } from '../defis/defiHistory';
-import { UserTagEvaluator } from '../scoring/userTagEvaluator';
-import { QuestionKYC } from '../kyc/questionKYC';
-import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
-import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { KYCID } from '../kyc/KYCID';
-import validator from 'validator';
+import { KYCHistory } from '../kyc/kycHistory';
+import { QuestionKYC } from '../kyc/questionKYC';
+import { Logement } from '../logement/logement';
+import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { NotificationHistory } from '../notification/notificationHistory';
+import { Tag } from '../scoring/tag';
+import { TagPonderationSet } from '../scoring/tagPonderationSet';
+import { UserTagEvaluator } from '../scoring/userTagEvaluator';
+import { ThematiqueHistory } from '../thematique/history/thematiqueHistory';
+import { CodeManager } from './manager/codeManager';
+import { PasswordManager } from './manager/passwordManager';
 var crypto = require('crypto');
-import { v4 as uuidv4 } from 'uuid';
 
 export enum UtilisateurStatus {
   default = 'default',
@@ -38,7 +38,6 @@ export enum SourceInscription {
 export enum Scope {
   ALL = 'ALL',
   core = 'core',
-  todo = 'todo',
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
@@ -48,6 +47,7 @@ export enum Scope {
   missions = 'missions',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
+  thematique_history = 'thematique_history',
 }
 
 export class Utilisateur {
@@ -72,7 +72,6 @@ export class Utilisateur {
   prevent_checkcode_before: Date;
   sent_email_count: number;
   prevent_sendemail_before: Date;
-  parcours_todo: ParcoursTodo;
   gamification: Gamification;
   missions: MissionsUtilisateur;
   history: History;
@@ -80,7 +79,7 @@ export class Utilisateur {
   version: number;
   migration_enabled: boolean;
   kyc_history: KYCHistory;
-  logement: Logement;
+  logement?: Logement;
   tag_ponderation_set: TagPonderationSet;
   defi_history: DefiHistory;
   force_connexion: boolean;
@@ -97,6 +96,7 @@ export class Utilisateur {
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
   notification_history: NotificationHistory;
+  thematique_history: ThematiqueHistory;
   unsubscribe_mail_token: string;
   est_valide_pour_classement: boolean;
   brevo_created_at: Date;
@@ -104,6 +104,8 @@ export class Utilisateur {
   mobile_token: string;
   mobile_token_updated_at: Date;
   code_commune: string;
+  france_connect_sub: string;
+  external_stat_id: string;
 
   constructor(data?: Utilisateur) {
     if (data) {
@@ -146,7 +148,6 @@ export class Utilisateur {
       prevent_checkcode_before: new Date(),
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
-      parcours_todo: new ParcoursTodo(),
       gamification: new Gamification(),
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
@@ -183,6 +184,7 @@ export class Utilisateur {
       couverture_aides_ok: false,
       source_inscription: source_inscription,
       notification_history: new NotificationHistory(),
+      thematique_history: new ThematiqueHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),
       est_valide_pour_classement: false,
       brevo_created_at: null,
@@ -190,6 +192,8 @@ export class Utilisateur {
       mobile_token_updated_at: null,
       mobile_token: null,
       code_commune: null,
+      france_connect_sub: null,
+      external_stat_id: uuidv4(),
     });
   }
 
@@ -198,7 +202,6 @@ export class Utilisateur {
     this.commune_classement = null;
     this.code_postal_classement = null;
     this.tag_ponderation_set = {};
-    this.parcours_todo.reset();
     this.gamification.reset();
     this.unlocked_features.reset();
     this.history.reset();
@@ -268,7 +271,7 @@ export class Utilisateur {
 
   /**
    * Returns the total number of people in the household, including adults and
-   * children (see {@link UtilisateurData.logement}).
+   * children (see {@link Utilisateur.logement}).
    *
    * @ensures The result to be in the range [1, +∞[.
    */

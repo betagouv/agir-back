@@ -9,20 +9,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOkResponse,
   ApiBearerAuth,
-  ApiQuery,
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger';
+import { ContentType } from '../../../src/domain/contenu/contentType';
+import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
+import { Thematique } from '../../domain/thematique/thematique';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { BibliothequeAPI } from './types/contenu/contenuBiblioAPI';
-import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
-import { Thematique } from '../../domain/contenu/thematique';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { ArticleBibliothequeAPI } from './types/contenu/articleAPI';
+import { BibliothequeAPI } from './types/contenu/contenuBiblioAPI';
 import { QuizzBibliothequeAPI } from './types/contenu/quizzAPI';
 import { QuizzAttemptAPI } from './types/contenu/quizzAttemptAPI';
 

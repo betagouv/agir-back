@@ -5,8 +5,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
 import { CMSImportUsecase } from '../../usecase/cms.import.usecase';
+import { GenericControler } from './genericControler';
 
 @Controller()
 @ApiTags('Z - Load CMS')
@@ -24,16 +24,6 @@ export class LoadCMSController extends GenericControler {
   async upsertAllCMSArticles(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadArticlesFromCMS();
-  }
-
-  @Post('/admin/load_actions_from_cms')
-  @ApiOperation({
-    summary: 'Upsert tous les actions publiés du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSActions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadActionsFromCMS();
   }
 
   @Post('/admin/load_actions_bilan_from_cms')
@@ -131,6 +121,26 @@ export class LoadCMSController extends GenericControler {
   async load_partenaires_from_cms(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.cmsUsecase.loadPartenairesFromCMS();
+  }
+
+  @Post('/admin/load_faq_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les faq publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async load_faq_from_cms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadFAQFromCMS();
+  }
+
+  @Post('/admin/load_blocktexte_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les block de textes publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async load_blocktexte_from_cms(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadBlockTexteFromCMS();
   }
 
   @Post('/admin/load_quizzes_from_cms')

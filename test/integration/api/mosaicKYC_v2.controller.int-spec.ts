@@ -1,27 +1,27 @@
 import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../src/domain/contenu/thematique';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DB, TestUtil } from '../../TestUtil';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
   MosaicKYC_CATALOGUE,
   MosaicKYCDef,
   TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../../src/domain/kyc/questionKYC';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   {
@@ -95,7 +95,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'BBB',
       code: '_2',
     });
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
     await kycRepository.loadDefinitions();
@@ -246,7 +246,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
     await kycRepository.loadDefinitions();
@@ -357,7 +357,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -529,7 +529,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -585,7 +585,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -640,7 +640,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: '_2',
     });
     await kycRepository.loadDefinitions();
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -715,7 +715,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic avec pas de réponses', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -730,7 +730,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC/id - maj mosaic réponses manquantes', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() });
+    await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -832,7 +832,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         },
       ],
     };
-    await TestUtil.create(DB.utilisateur, { kyc: kyc });
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await kycRepository.loadDefinitions();
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -955,7 +955,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       ...KYC_DB_DATA,
@@ -1070,7 +1070,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       ...KYC_DB_DATA,
@@ -1185,7 +1185,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc,
+      kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
       ...KYC_DB_DATA,

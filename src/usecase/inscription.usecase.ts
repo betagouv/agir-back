@@ -8,7 +8,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
-import { OidcService } from '../infrastructure/auth/oidc.service';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
@@ -68,7 +67,6 @@ export class InscriptionUsecase {
     utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (utilisateurInput.situation_ngc_id) {
-      utilisateurToCreate.parcours_todo.dropLastMission();
       utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
 
       const situation = await this.situationNGCRepository.getSituationNGCbyId(
@@ -158,13 +156,13 @@ export class InscriptionUsecase {
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.sendUserEmailOfType(
+    await this.mailerUsecase.internal_send_user_email_of_type(
       TypeNotification.inscription_code,
       utilisateur,
     );
   }
   private async sendExistingAccountEmail(email: string) {
-    await this.mailerUsecase.sendAnonymousEmailOfType(
+    await this.mailerUsecase.internal_send_anonymous_email_of_type(
       TypeNotification.email_existing_account,
       email,
     );

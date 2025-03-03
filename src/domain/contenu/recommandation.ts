@@ -1,4 +1,4 @@
-import { Thematique } from './thematique';
+import { Thematique } from '../thematique/thematique';
 import { ContentType } from './contentType';
 import { DefiStatus } from '../defis/defi';
 

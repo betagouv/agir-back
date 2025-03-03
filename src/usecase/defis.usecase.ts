@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { Defi, DefiStatus } from '../../src/domain/defis/defi';
+import { Feature } from '../../src/domain/gamification/feature';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { ThematiqueRepository } from '../../src/infrastructure/repository/thematique.repository';
-import { Feature } from '../../src/domain/gamification/feature';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
-import { Thematique } from '../domain/contenu/thematique';
+import { Thematique } from '../domain/thematique/thematique';
 import { ApplicationError } from '../infrastructure/applicationError';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
 export class DefisUsecase {
@@ -14,37 +17,6 @@ export class DefisUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private personnalisator: Personnalisator,
   ) {}
-
-  async getDefisOfThematique_deprecated(
-    utilisateurId: string,
-    thematique: Thematique,
-    filtre_status: string[],
-  ): Promise<Defi[]> {
-    if (filtre_status.length > 0) {
-      for (const status of filtre_status) {
-        if (!DefiStatus[status]) {
-          ApplicationError.throwUnknownDefiStatus(status);
-        }
-      }
-    } else {
-      filtre_status = [DefiStatus.en_cours];
-    }
-
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.defis, Scope.logement, Scope.missions],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    let result = await this.getDefisOfThematiqueAndUtilisateur(
-      utilisateur,
-      thematique,
-    );
-
-    result = result.filter((d) => filtre_status.includes(d.getStatus()));
-
-    return this.personnalisator.personnaliser(result, utilisateur);
-  }
 
   async getAllDefis_v2(
     utilisateurId: string,
@@ -90,7 +62,9 @@ export class DefisUsecase {
         defis_univers.filter((d) => filtre_status.includes(d.getStatus())),
       );
     }
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   async getById(utilisateurId: string, defiId: string): Promise<Defi> {
@@ -102,7 +76,9 @@ export class DefisUsecase {
 
     const defi = utilisateur.defi_history.getDefiOrException(defiId);
 
-    return this.personnalisator.personnaliser(defi, utilisateur);
+    return this.personnalisator.personnaliser(defi, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
   async updateStatus(
     utilisateurId: string,
@@ -145,6 +121,8 @@ export class DefisUsecase {
     for (const id_defi of list_defi_ids) {
       result.push(utilisateur.defi_history.getDefiOrException(id_defi));
     }
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 }

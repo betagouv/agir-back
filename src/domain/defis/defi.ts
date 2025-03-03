@@ -1,5 +1,5 @@
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
+import { Thematique } from '../thematique/thematique';
 import { Defi_v0 } from '../object_store/defi/defiHistory_v0';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';

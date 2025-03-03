@@ -28,6 +28,7 @@ export enum CategorieRecherche {
   vegan = 'vegan',
   dinde_volaille = 'dinde_volaille',
   saison = 'saison',
+  poisson = 'poisson',
   any_transport = 'any_transport',
 }
 
@@ -80,6 +81,7 @@ export class CategorieRechercheManager {
     decembre: 'décembre',
     dinde_volaille: 'avec volaille',
     saison: 'de saison',
+    poisson: 'avec poisson',
     vegan: '100% végétales',
     vege: 'végétariennes',
     any_transport: 'Tout mode de déplacement',

@@ -1,20 +1,22 @@
-import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
-import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
-import { DB, TestUtil } from '../../../TestUtil';
-import { Besoin } from '../../../../src/domain/aides/besoin';
-import { CodeMission } from '../../../../src/domain/mission/codeMission';
-import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYC, Mission } from '.prisma/client';
-import { Thematique } from '../../../../src/domain/contenu/thematique';
-import { Tag } from '../../../../src/domain/scoring/tag';
+import { TypeAction } from '../../../../src/domain/actions/typeAction';
+import { Besoin } from '../../../../src/domain/aides/besoin';
+import { Echelle } from '../../../../src/domain/aides/echelle';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { CodeMission } from '../../../../src/domain/mission/codeMission';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { TagExcluant } from '../../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
-import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
-import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
+import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
 import { ActionRepository } from '../../../../src/infrastructure/repository/action.repository';
-import { TypeAction } from '../../../../src/domain/actions/typeAction';
+import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
+import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
+import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
   const CMS_DATA_DEFI = {
@@ -76,6 +78,7 @@ describe('/api/incoming/cms (API test)', () => {
       titre: 'titre',
       sous_titre: 'sous-titre',
       pourquoi: 'pourquoi',
+      felicitations: 'Bravo !!',
       comment: 'comment',
       objet_lvo: 'phone',
       action_lvo: 'donner',
@@ -89,6 +92,14 @@ describe('/api/incoming/cms (API test)', () => {
           id: 2,
         },
       ],
+      faqs: [
+        {
+          id: 5,
+        },
+        {
+          id: 6,
+        },
+      ],
       kycs: [
         {
           id: 3,
@@ -97,6 +108,13 @@ describe('/api/incoming/cms (API test)', () => {
           id: 4,
         },
       ],
+      tags_excluants: [
+        {
+          id: 1,
+          valeur: TagExcluant.a_un_velo,
+        },
+      ],
+
       besoins: [
         {
           code: 'composter',
@@ -131,6 +149,12 @@ describe('/api/incoming/cms (API test)', () => {
         },
       ],
       code: 'code',
+      tags_excluants: [
+        {
+          id: 1,
+          valeur: TagExcluant.a_un_velo,
+        },
+      ],
       thematique: {
         id: 1,
         titre: 'Alimentation',
@@ -367,6 +391,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       nom: 'part',
       lien: 'the lien',
+      echelle: Echelle.Département,
       logo: [
         {
           formats: {
@@ -374,6 +399,30 @@ describe('/api/incoming/cms (API test)', () => {
           },
         },
       ],
+    },
+  };
+  const CMS_DATA_FAQ = {
+    model: CMSModel.faq,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      question: 'The question',
+      reponse: 'The reponse',
+      thematique: {
+        id: 1,
+        titre: 'Alimentation',
+        code: Thematique.alimentation,
+      },
+    },
+  };
+  const CMS_DATA_BLOCKTEXT = {
+    model: CMSModel.text,
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      code: '456',
+      titre: 'The titre',
+      texte: 'The texte',
     },
   };
   const CMS_DATA_QUIZZ = {
@@ -604,7 +653,46 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].url).toEqual('the lien');
+    expect(partenaire[0].echelle).toEqual(Echelle.Département);
     expect(partenaire[0].image_url).toEqual('https://haha');
+  });
+
+  it('POST /api/incoming/cms - create a new FAQ', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_FAQ,
+    );
+
+    // THEN
+    const faq = await TestUtil.prisma.fAQ.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(faq).toHaveLength(1);
+    expect(faq[0].id_cms).toEqual('123');
+    expect(faq[0].question).toEqual('The question');
+    expect(faq[0].reponse).toEqual('The reponse');
+    expect(faq[0].thematique).toEqual(Thematique.alimentation);
+  });
+
+  it('POST /api/incoming/cms - create a new BlockTexte', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_BLOCKTEXT,
+    );
+
+    // THEN
+    const faq = await TestUtil.prisma.blockText.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(faq).toHaveLength(1);
+    expect(faq[0].id_cms).toEqual('123');
+    expect(faq[0].code).toEqual('456');
+    expect(faq[0].titre).toEqual('The titre');
+    expect(faq[0].texte).toEqual('The texte');
   });
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
@@ -857,9 +945,11 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
@@ -867,6 +957,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - create a new action bilan', async () => {
@@ -890,6 +981,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
@@ -943,6 +1035,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates an action', async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
+      // @ts-ignore FIXME: remove this when we have a proper typing for action
       cms_id: '123',
       code: 'code',
       type: TypeAction.quizz,
@@ -963,9 +1056,11 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
     expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
@@ -973,6 +1068,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

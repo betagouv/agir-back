@@ -7,11 +7,9 @@ import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
-import { ParcoursTodo } from '../../../src/domain/todo/parcoursTodo';
 import { LinkyRepository } from '../repository/linky.repository';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
-import { Contact } from '../contact/contact';
 import { BrevoRepository } from '../contact/brevoRepository';
 import { GenericControler } from './genericControler';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
@@ -100,10 +98,6 @@ export class TestDataController extends GenericControler {
     delete clonedData.services;
     delete clonedData.questionsNGC;
     delete clonedData.linky;
-
-    if (!clonedData.todo) {
-      clonedData.todo = new ParcoursTodo();
-    }
 
     clonedData.unsubscribe_mail_token = crypto.randomUUID();
 

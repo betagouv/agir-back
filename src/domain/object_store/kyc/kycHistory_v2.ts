@@ -1,4 +1,7 @@
-import { Versioned_v2 } from '../versioned';
+import { ApplicationError } from '../../../infrastructure/applicationError';
+import { Categorie } from '../../contenu/categorie';
+import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory } from '../../kyc/kycHistory';
 import {
   KYCReponseComplexe,
@@ -7,13 +10,10 @@ import {
   TypeReponseQuestionKYC,
   Unite,
 } from '../../kyc/questionKYC';
-import { Thematique } from '../../contenu/thematique';
 import { Tag } from '../../scoring/tag';
-import { Categorie } from '../../contenu/categorie';
-import { ConditionKYC } from '../../kyc/conditionKYC';
-import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { Thematique } from '../../thematique/thematique';
+import { Versioned_v2 } from '../versioned';
 import { KYCHistory_v1 } from './kycHistory_v1';
-import { ApplicationError } from '../../../infrastructure/applicationError';
 
 export class ReponseSimple_v2 {
   unite?: Unite;
@@ -64,7 +64,7 @@ export class QuestionKYC_v2 {
   unite?: Unite;
   emoji?: string;
 
-  reponse_simple: ReponseSimple_v2;
+  reponse_simple?: ReponseSimple_v2;
   reponse_complexe: ReponseComplexe_v2[];
 
   static map(elem: QuestionKYC): QuestionKYC_v2 {

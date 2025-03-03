@@ -1,4 +1,4 @@
-import { Thematique } from '../../../../src/domain/contenu/thematique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   TypeReponseQuestionKYC,
   Unite,

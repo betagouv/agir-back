@@ -520,7 +520,7 @@ describe('Linky (API test)', () => {
           day_value: 1000,
           value_cumulee: null,
         },
-      ],
+      ] as any,
     });
     const hier = new Date();
     const ajd_minus_10 = new Date();
@@ -537,7 +537,7 @@ describe('Linky (API test)', () => {
           day_value: 1000,
           value_cumulee: null,
         },
-      ],
+      ] as any,
     });
 
     // WHEN

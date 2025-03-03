@@ -1,8 +1,9 @@
+import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../contenu/thematique';
 import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
+import { Thematique } from '../thematique/thematique';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
@@ -13,7 +14,6 @@ import {
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from './questionKYC';
-import validator from 'validator';
 
 type LogementInput = {
   nombre_adultes?: number;
@@ -582,9 +582,18 @@ export class KYCHistory {
       (element) => element.code === code,
     );
     if (answered) {
-      answered.is_answererd = true;
+      answered.is_answered = true;
     }
     return this.refreshQuestion(answered);
+  }
+  public getAnsweredQuestionByCode(code: string): QuestionKYC {
+    const answered = this.answered_questions.find(
+      (element) => element.code === code,
+    );
+    if (answered) {
+      answered.is_answered = true;
+    }
+    return answered;
   }
 
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {

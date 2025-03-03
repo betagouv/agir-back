@@ -1,18 +1,18 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import { Thematique } from '../../../src/domain/contenu/thematique';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 var crypto = require('crypto');
 
 function getFakeUtilisteur() {
@@ -1052,19 +1052,19 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       id: '1',
       email: '1',
       couverture_aides_ok: false,
-      logement: logement_91120,
+      logement: logement_91120 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       email: '2',
       couverture_aides_ok: false,
-      logement: logement_91120,
+      logement: logement_91120 as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       email: '3',
       couverture_aides_ok: false,
-      logement: logement_21000,
+      logement: logement_21000 as any,
     });
     await TestUtil.create(DB.aide, {
       content_id: '1',

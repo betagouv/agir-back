@@ -1,6 +1,8 @@
 import { AideDefinition } from '../aides/aideDefinition';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../bibliotheque_services/recherche/serviceRechercheID';
+import { Quizz } from '../contenu/quizz';
+import { FAQDefinition } from '../faq/FAQDefinition';
 import { ActionDefinition } from './actionDefinition';
 
 export class ActionService {
@@ -12,12 +14,17 @@ export class Action extends ActionDefinition {
   private aides: AideDefinition[];
   nombre_aides: number;
   services: ActionService[];
+  quizz_liste: Quizz[];
+  faq_liste: FAQDefinition[];
   nom_commune?: string;
+  deja_vue?: boolean;
 
   constructor(data: ActionDefinition) {
     super(data);
     this.aides = [];
     this.services = [];
+    this.quizz_liste = [];
+    this.faq_liste = [];
     this.nombre_aides = 0;
   }
 
