@@ -551,6 +551,7 @@ describe('Actions (API test)', () => {
       besoin: 'composter',
       partenaire_id: '123',
       echelle: Echelle.National,
+      est_gratuit: true,
     });
 
     await TestUtil.create(DB.partenaire);
@@ -574,6 +575,7 @@ describe('Actions (API test)', () => {
         partenaire_nom: 'ADEME',
         partenaire_url: 'https://ademe.fr',
         titre: 'titreA',
+        est_gratuit: true,
       },
     ]);
   });
