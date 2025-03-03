@@ -909,7 +909,10 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ score: 67 });
+    expect(response.body).toEqual({
+      nombre_bonnes_reponses: 2,
+      nombre_quizz_done: 3,
+    });
   });
 
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {

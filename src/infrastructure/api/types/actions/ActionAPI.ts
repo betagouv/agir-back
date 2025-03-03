@@ -66,7 +66,8 @@ export class FAQActionAPI {
 }
 
 export class ScoreActionAPI {
-  score: number;
+  @ApiProperty() nombre_bonnes_reponses: number;
+  @ApiProperty() nombre_quizz_done: number;
 }
 
 export class ActionAPI {

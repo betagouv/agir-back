@@ -256,7 +256,7 @@ export class ActionUsecase {
   public async calculeScoreQuizzAction(
     utilisateurId: string,
     code_action_quizz: string,
-  ): Promise<number> {
+  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.history_article_quizz_aides],
@@ -271,20 +271,20 @@ export class ActionUsecase {
       ApplicationError.throwActionNotFound(code_action_quizz, TypeAction.quizz);
     }
 
-    let pourcent_total = 0;
-    let nombre_quizz_done = 0;
+    let nbr_bonnes_reponses = 0;
+    let nbr_quizz_done = 0;
     for (const quizz_id of action_def.quizz_ids) {
       const quizz = utilisateur.history.getQuizzHistoryById(quizz_id);
       if (quizz) {
-        nombre_quizz_done++;
-        pourcent_total =
-          pourcent_total + (quizz.has100ScoreLastAttempt() ? 100 : 0);
+        nbr_quizz_done++;
+        nbr_bonnes_reponses =
+          nbr_bonnes_reponses + (quizz.has100ScoreLastAttempt() ? 1 : 0);
       }
     }
-    if (nombre_quizz_done === 0) {
-      return 0;
-    }
-    return Math.round(pourcent_total / nombre_quizz_done);
+    return {
+      nombre_bonnes_reponses: nbr_bonnes_reponses,
+      nombre_quizz_done: nbr_quizz_done,
+    };
   }
 
   async internal_count_actions(thematique?: Thematique): Promise<number> {

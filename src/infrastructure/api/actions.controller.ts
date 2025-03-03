@@ -241,6 +241,6 @@ export class ActionsController extends GenericControler {
       utilisateurId,
       code_action,
     );
-    return { score: result };
+    return result;
   }
 }
