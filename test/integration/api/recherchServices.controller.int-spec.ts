@@ -786,6 +786,29 @@ describe('RechercheServices (API test)', () => {
       },
     ]);
   });
+
+  it(`POST /utlilisateur/id/recherche_services/recettes/search2 filtres le recettes avec du poisson`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({
+      categorie: CategorieRecherche.poisson,
+      nombre_max_resultats: 200,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(196);
+    expect(response.body.resultats[0].titre).toEqual(
+      'Pavé de saumon au riz et aux fèves fraîches',
+    );
+  });
+
   it(`POST /utlilisateur/id/recherche_services/recettes/search prend en compte le nombre max de résultats`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

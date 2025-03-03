@@ -7,11 +7,11 @@ import {
   IngredientRecette,
   ResultatRecherche,
 } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
-import _recettes from './data/dump-recipes.2024-09-06.json';
 import _ingredients_recette from './data/dump-ingredient_recipe.2024-08-09.17-29-40.json';
 import _ingredients from './data/dump-ingredients.2024-08-09.17-44-22.json';
-import _etapes from './data/dump-recipe_steps.2024-08-09.17-47-05.json';
 import _units from './data/dump-measurement_units.2024-09-06.json';
+import _etapes from './data/dump-recipe_steps.2024-08-09.17-47-05.json';
+import _recettes from './data/dump-recipes.2024-09-06.json';
 
 // const API_URL = 'https://';
 
@@ -131,6 +131,8 @@ export class RecettesRepository implements FinderInterface {
         return 88;
       case CategorieRecherche.saison:
         return 811;
+      case CategorieRecherche.poisson:
+        return 196;
 
       default:
         return 0;
@@ -142,6 +144,7 @@ export class RecettesRepository implements FinderInterface {
       CategorieRecherche.vege,
       CategorieRecherche.dinde_volaille,
       CategorieRecherche.saison,
+      CategorieRecherche.poisson,
     ];
   }
 
@@ -167,6 +170,10 @@ export class RecettesRepository implements FinderInterface {
 
     if (filtre.categorie === CategorieRecherche.vege) {
       recherche = recherche.filter((a) => a.regime === 2);
+    }
+
+    if (filtre.categorie === CategorieRecherche.poisson) {
+      recherche = recherche.filter((a) => this.contientDuPoisson(a));
     }
 
     const max_result = filtre.nombre_max_resultats || 10;
@@ -224,6 +231,9 @@ export class RecettesRepository implements FinderInterface {
     return result;
   }
 
+  private contientDuPoisson(recette: Recette_RAW): boolean {
+    return recette.ingredient_food_practice.includes('contains_fish');
+  }
   private computeUnit(quantity: number, unit_id: number): string {
     const unit = this.getUnitFromId(unit_id);
     if (!unit) {
