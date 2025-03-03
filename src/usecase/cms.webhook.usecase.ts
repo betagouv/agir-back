@@ -4,6 +4,7 @@ import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Besoin } from '../domain/aides/besoin';
 import { Echelle } from '../domain/aides/echelle';
+import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
@@ -297,7 +298,7 @@ export class CMSWebhookUsecase {
     );
   }
   async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
+    if (cmsWebhookAPI.entry.publishedAt === null && App.isProd()) return;
 
     await this.actionRepository.upsert(
       this.buildActionFromCMSData(cmsWebhookAPI.entry),

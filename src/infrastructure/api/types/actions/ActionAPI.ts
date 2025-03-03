@@ -118,7 +118,7 @@ export class ActionAPI {
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
       deja_vue: action.deja_vue,
-      faqs: action.faq_liste.map(FAQActionAPI.mapToAPI),
+      faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
     };
   }
 }

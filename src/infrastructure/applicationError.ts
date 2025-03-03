@@ -606,6 +606,13 @@ export class ApplicationError {
       `Un problème est survenu pendant la connexion France Connect, veuillez ré-essayer, ou choisir un autre fournisseur d'identité sur France Connect`,
     );
   }
+  static throwActionNotFoundById(content_id: string, type: string) {
+    this.throwAppError(
+      '115',
+      `l'action d'id CMS [${content_id}] et de type [${type}] n'existe pas`,
+      404,
+    );
+  }
 
   private static throwAppError(
     code: string,
