@@ -379,6 +379,42 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
   });
+  it('PATCH /utilisateurs/id/profile - bloc update nom si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nom: 'THE NOM',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour le nom d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloc update nom si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+    );
+  });
   it('PATCH /utilisateurs/id/profile - le prenom est valide si un autre utilisateur avec même prenom valide existe', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

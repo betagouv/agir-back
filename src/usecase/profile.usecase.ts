@@ -1,23 +1,20 @@
+import { Injectable } from '@nestjs/common';
+import { Retryable } from 'typescript-retry-decorator';
+import validator from 'validator';
+import { Logement } from '../domain/logement/logement';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
-import { Injectable } from '@nestjs/common';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ServiceRepository } from '../infrastructure/repository/service.repository';
-import { ContactUsecase } from './contact.usecase';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import validator from 'validator';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
-import { Logement } from '../domain/logement/logement';
+import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
+import { ServiceRepository } from '../infrastructure/repository/service.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { ContactUsecase } from './contact.usecase';
 
 const FIELD_MAX_LENGTH = 40;
 
@@ -62,6 +59,9 @@ export class ProfileUsecase {
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
     if (profile.nom) {
+      if (utilisateur.isUtilisateurFranceConnecte()) {
+        ApplicationError.throwMajNomImpossibleFC();
+      }
       if (!char_regexp.test(profile.nom)) {
         ApplicationError.throwNotAlhpaNom();
       }
@@ -71,6 +71,9 @@ export class ProfileUsecase {
     }
 
     if (profile.prenom) {
+      if (utilisateur.isUtilisateurFranceConnecte()) {
+        ApplicationError.throwMajPrenomImpossibleFC();
+      }
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
       }

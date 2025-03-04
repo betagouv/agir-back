@@ -209,6 +209,10 @@ export class Utilisateur {
     this.kyc_history.reset();
   }
 
+  public isUtilisateurFranceConnecte?() {
+    return !!this.france_connect_sub;
+  }
+
   public setUnsubscribeEmailTokenIfMissing?() {
     if (!this.unsubscribe_mail_token) {
       this.unsubscribe_mail_token = Utilisateur.generateEmailToken();
