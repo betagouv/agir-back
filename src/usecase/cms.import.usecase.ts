@@ -44,6 +44,35 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 
+const FULL_POPULATE_URL =
+  '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques' +
+  '&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs' +
+  '&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi' +
+  '&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc' +
+  '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
+  '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
+  '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants';
+
+const enum CMSPluralAPIEndpoint {
+  articles = 'articles',
+  quizzes = 'quizzes',
+  aides = 'aides',
+  defis = 'defis',
+  kycs = 'kycs',
+  faqs = 'faqs',
+  texts = 'texts',
+  missions = 'missions',
+  thematiques = 'thematiques',
+  partenaires = 'partenaires',
+  conformites = 'conformites',
+  actions = 'actions',
+  'action-bilans' = 'action-bilans',
+  'action-quizzes' = 'action-quizzes',
+  'action-classiques' = 'action-classiques',
+  'action-simulateurs' = 'action-simulateurs',
+}
+
 @Injectable()
 export class CMSImportUsecase {
   constructor(
@@ -64,7 +93,9 @@ export class CMSImportUsecase {
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_articles: ArticleDefinition[] = [];
-    const CMS_ARTICLE_DATA = await this.loadDataFromCMS('articles');
+    const CMS_ARTICLE_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.articles,
+    );
 
     for (let index = 0; index < CMS_ARTICLE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_ARTICLE_DATA[index];
@@ -90,7 +121,9 @@ export class CMSImportUsecase {
   async loadDefisFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_defis: DefiDefinition[] = [];
-    const CMS_DEFI_DATA = await this.loadDataFromCMS('defis');
+    const CMS_DEFI_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.defis,
+    );
 
     for (let index = 0; index < CMS_DEFI_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
@@ -115,7 +148,9 @@ export class CMSImportUsecase {
   async loadActionsBilanFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('action-bilans');
+    const CMS_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['action-bilans'],
+    );
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -139,7 +174,9 @@ export class CMSImportUsecase {
   async loadActionsQuizzesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('action-quizzes');
+    const CMS_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['action-quizzes'],
+    );
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -161,10 +198,23 @@ export class CMSImportUsecase {
     return loading_result;
   }
 
+  async getActionClassiqueFromCMS(
+    content_id: string,
+  ): Promise<ActionDefinition> {
+    const CMS_DATA = await this.getSingleObjectDataFromCMS(
+      CMSPluralAPIEndpoint['action-classiques'],
+      content_id,
+    );
+
+    return this.buildActionFromCMSPopulateData(CMS_DATA, TypeAction.classique);
+  }
+
   async loadActionsClassiquesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('action-classiques');
+    const CMS_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['action-classiques'],
+    );
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -191,7 +241,9 @@ export class CMSImportUsecase {
   async loadActionsSimulateursFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('action-simulateurs');
+    const CMS_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['action-simulateurs'],
+    );
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -219,7 +271,9 @@ export class CMSImportUsecase {
   async loadPartenairesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_partenaires: PartenaireDefinition[] = [];
-    const CMS_PART_DATA = await this.loadDataFromCMS('partenaires');
+    const CMS_PART_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.partenaires,
+    );
 
     for (let index = 0; index < CMS_PART_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_PART_DATA[index];
@@ -244,7 +298,7 @@ export class CMSImportUsecase {
   async loadFAQFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: FAQDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('faqs');
+    const CMS_DATA = await this.loadDataFromCMS(CMSPluralAPIEndpoint.faqs);
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -269,7 +323,7 @@ export class CMSImportUsecase {
   async loadBlockTexteFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: BlockTextDefinition[] = [];
-    const CMS_DATA = await this.loadDataFromCMS('texts');
+    const CMS_DATA = await this.loadDataFromCMS(CMSPluralAPIEndpoint.texts);
 
     for (let index = 0; index < CMS_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_DATA[index];
@@ -294,7 +348,7 @@ export class CMSImportUsecase {
   async loadKYCFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_kyc: KycDefinition[] = [];
-    const CMS_KYC_DATA = await this.loadDataFromCMS('kycs');
+    const CMS_KYC_DATA = await this.loadDataFromCMS(CMSPluralAPIEndpoint.kycs);
 
     for (let index = 0; index < CMS_KYC_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_KYC_DATA[index];
@@ -319,7 +373,9 @@ export class CMSImportUsecase {
   async loadMissionsFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_missionsDef: MissionDefinition[] = [];
-    const CMS_MISSION_DATA = await this.loadDataFromCMS('missions');
+    const CMS_MISSION_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.missions,
+    );
 
     for (let index = 0; index < CMS_MISSION_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_MISSION_DATA[index];
@@ -344,7 +400,9 @@ export class CMSImportUsecase {
   async loadThematiquesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_themDef: ThematiqueDefinition[] = [];
-    const CMS_THEMATIQUE_DATA = await this.loadDataFromCMS('thematiques');
+    const CMS_THEMATIQUE_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.thematiques,
+    );
 
     for (let index = 0; index < CMS_THEMATIQUE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_THEMATIQUE_DATA[index];
@@ -371,7 +429,9 @@ export class CMSImportUsecase {
   async loadConformiteFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_confoDef: ConformiteDefinition[] = [];
-    const CMS_CONFO_DATA = await this.loadDataFromCMS('conformites');
+    const CMS_CONFO_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.conformites,
+    );
 
     for (let index = 0; index < CMS_CONFO_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_CONFO_DATA[index];
@@ -398,7 +458,9 @@ export class CMSImportUsecase {
   async loadAidesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_aides: AideDefinition[] = [];
-    const CMS_AIDE_DATA = await this.loadDataFromCMS('aides');
+    const CMS_AIDE_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.aides,
+    );
 
     for (let index = 0; index < CMS_AIDE_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_AIDE_DATA[index];
@@ -423,7 +485,9 @@ export class CMSImportUsecase {
   async loadQuizzFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste_quizzes: QuizzDefinition[] = [];
-    const CMS_QUIZZ_DATA = await this.loadDataFromCMS('quizzes');
+    const CMS_QUIZZ_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint.quizzes,
+    );
 
     for (let index = 0; index < CMS_QUIZZ_DATA.length; index++) {
       const element: CMSWebhookPopulateAPI = CMS_QUIZZ_DATA[index];
@@ -446,23 +510,7 @@ export class CMSImportUsecase {
   }
 
   private async loadDataFromCMS(
-    type:
-      | 'articles'
-      | 'quizzes'
-      | 'aides'
-      | 'defis'
-      | 'kycs'
-      | 'faqs'
-      | 'texts'
-      | 'missions'
-      | 'thematiques'
-      | 'partenaires'
-      | 'conformites'
-      | 'actions'
-      | 'action-bilans'
-      | 'action-quizzes'
-      | 'action-classiques'
-      | 'action-simulateurs',
+    type: CMSPluralAPIEndpoint,
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
     const page_1 = '&pagination[start]=0&pagination[limit]=100';
@@ -514,13 +562,35 @@ export class CMSImportUsecase {
     return result;
   }
 
-  private buildPopulateURL(page: string, type: string) {
-    const URL = App.getCmsURL().concat(
+  private async getSingleObjectDataFromCMS(
+    type: CMSPluralAPIEndpoint,
+    content_id: string,
+  ): Promise<CMSWebhookPopulateAPI> {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${App.getCmsApiKey()}`,
+    };
+
+    let URL = this.buildPopulateURLSingleObject(type, content_id);
+    const response = await axios.get(URL, { headers: headers });
+    return response.data.data;
+  }
+
+  private buildPopulateURL(page: string, type: CMSPluralAPIEndpoint) {
+    const URL = App.getCmsURL().concat('/', type, FULL_POPULATE_URL);
+    return URL.concat(page);
+  }
+  private buildPopulateURLSingleObject(
+    type: CMSPluralAPIEndpoint,
+    content_id: string,
+  ) {
+    return App.getCmsURL().concat(
       '/',
       type,
-      '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques&populate[5]=thematique&populate[6]=tags&populate[7]=besoin&populate[8]=univers&populate[9]=thematique_univers&populate[11]=objectifs&populate[12]=thematique_univers_unique&populate[13]=objectifs.article&populate[14]=objectifs.quizz&populate[15]=objectifs.defi&populate[16]=objectifs.kyc&populate[17]=reponses&populate[18]=OR_Conditions&populate[19]=OR_Conditions.AND_Conditions&populate[20]=OR_Conditions.AND_Conditions.kyc&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants',
+      '/',
+      content_id,
+      FULL_POPULATE_URL,
     );
-    return URL.concat(page);
   }
 
   private getImageUrlFromPopulate(imageUrl: ImageUrlAPI) {

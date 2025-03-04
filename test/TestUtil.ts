@@ -66,6 +66,7 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
@@ -235,6 +236,7 @@ export class TestUtil {
     MissionRepository.resetCache();
     PartenaireRepository.resetCache();
     ConformiteRepository.resetCache();
+    ArticleRepository.resetCache();
   }
 
   static getDate(date: string) {

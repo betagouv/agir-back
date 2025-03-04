@@ -24,6 +24,7 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
+import { CMSImportUsecase } from './cms.import.usecase';
 
 @Injectable()
 export class ActionUsecase {
@@ -33,6 +34,7 @@ export class ActionUsecase {
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private bibliothequeUsecase: BibliothequeUsecase,
+    private cMSImportUsecase: CMSImportUsecase,
     private fAQRepository: FAQRepository,
   ) {}
 
@@ -111,6 +113,55 @@ export class ActionUsecase {
     this.filtreParConsultation(catalogue, consultation, utilisateur);
 
     return catalogue;
+  }
+
+  async getActionPreview(
+    content_id: string,
+    type: TypeAction,
+  ): Promise<Action> {
+    if (type !== TypeAction.classique) {
+      ApplicationError.throwActionNotFoundById(content_id, type);
+    }
+
+    const action_def = await this.cMSImportUsecase.getActionClassiqueFromCMS(
+      content_id,
+    );
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFoundById(content_id, type);
+    }
+
+    const action = new Action(action_def);
+
+    const linked_aides = await this.aideRepository.search({
+      besoins: action_def.besoins,
+      echelle: Echelle.National,
+      date_expiration: new Date(),
+    });
+
+    const liste_services: ActionService[] = [];
+    if (action_def.recette_categorie) {
+      liste_services.push({
+        categorie: action_def.recette_categorie,
+        recherche_service_id: ServiceRechercheID.recettes,
+      });
+    }
+    if (action_def.lvo_action) {
+      liste_services.push({
+        categorie: action_def.lvo_action,
+        recherche_service_id: ServiceRechercheID.longue_vie_objets,
+      });
+    }
+
+    action.faq_liste = [];
+    for (const faq_id of action_def.faq_ids) {
+      action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
+    }
+
+    action.setListeAides(linked_aides);
+    action.services = liste_services;
+
+    return action;
   }
 
   async getAction(

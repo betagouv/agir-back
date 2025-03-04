@@ -15,7 +15,7 @@ export class PartenaireRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadPartenaires();
+      await this.load();
     } catch (error) {
       console.error(
         `Error loading partenaires definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -33,7 +33,7 @@ export class PartenaireRepository {
   }
 
   @Cron('* * * * *')
-  public async loadPartenaires() {
+  public async load() {
     const new_map: Map<string, PartenaireDefinition> = new Map();
     const listePartenaires = await this.prisma.partenaire.findMany();
     for (const partenaire of listePartenaires) {

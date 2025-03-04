@@ -103,6 +103,7 @@ export class AidesUsecase {
     const aide = this.setHistoryData(aide_def, utilisateur);
 
     utilisateur.history.consulterAide(cms_id);
+
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.history_article_quizz_aides],

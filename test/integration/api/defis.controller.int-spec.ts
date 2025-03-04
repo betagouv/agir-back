@@ -22,6 +22,7 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { DefiAPI } from '../../../src/infrastructure/api/types/defis/DefiAPI';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -48,6 +49,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -365,6 +367,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -427,6 +430,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -485,6 +489,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -544,6 +549,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -604,6 +610,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -664,6 +671,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
+    await articleRepository.load();
 
     // WHEN
     let response = await TestUtil.GET(

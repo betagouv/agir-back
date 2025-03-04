@@ -27,7 +27,7 @@ export class ServiceActionAPI {
   }
 }
 
-export class AideActionAPI {
+export class ActionAideAPI {
   @ApiProperty() content_id: string;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: Echelle }) echelle: Echelle;
@@ -35,8 +35,9 @@ export class AideActionAPI {
   @ApiProperty() partenaire_nom: string;
   @ApiProperty() partenaire_url: string;
   @ApiProperty() partenaire_logo_url: string;
+  @ApiProperty() est_gratuit: boolean;
 
-  public static mapToAPI(aide: AideDefinition): AideActionAPI {
+  public static mapToAPI(aide: AideDefinition): ActionAideAPI {
     let partenaire: PartenaireDefinition;
     if (aide.partenaire_id) {
       partenaire = PartenaireRepository.getPartenaire(aide.partenaire_id);
@@ -49,6 +50,7 @@ export class AideActionAPI {
       partenaire_url: partenaire ? partenaire.url : null,
       partenaire_logo_url: partenaire ? partenaire.image_url : null,
       echelle: Echelle[aide.echelle],
+      est_gratuit: aide.est_gratuit,
     };
   }
 }
@@ -88,8 +90,8 @@ export class ActionAPI {
   quizzes: QuizzBibliothequeAPI[];
   @ApiProperty({ type: [QuestionKYCAPI_v2] }) kycs: QuestionKYCAPI_v2[];
 
-  @ApiProperty({ type: [AideActionAPI] })
-  aides: AideActionAPI[];
+  @ApiProperty({ type: [ActionAideAPI] })
+  aides: ActionAideAPI[];
 
   @ApiProperty({ type: [FAQActionAPI] })
   faqs: FAQActionAPI[];
@@ -111,12 +113,12 @@ export class ActionAPI {
       thematique: action.thematique,
       kycs: [],
       quizzes: action.quizz_liste.map((q) => QuizzBibliothequeAPI.map(q)),
-      aides: action.getListeAides().map((a) => AideActionAPI.mapToAPI(a)),
+      aides: action.getListeAides().map((a) => ActionAideAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
       deja_vue: action.deja_vue,
-      faqs: action.faq_liste.map(FAQActionAPI.mapToAPI),
+      faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
     };
   }
 }

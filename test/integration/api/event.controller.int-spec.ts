@@ -10,11 +10,13 @@ import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   const missions_article: MissionsUtilisateur_v1 = {
     version: 1,
@@ -180,6 +182,7 @@ describe('EVENT (API test)', () => {
       content_id: '1',
       points: 5,
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -239,6 +242,8 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -270,6 +275,8 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -300,6 +307,8 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
+    await articleRepository.load();
+
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -381,6 +390,8 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, { content_id: '123' });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',
@@ -449,6 +460,8 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, { content_id: '123' });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/events',

@@ -5,7 +5,6 @@ import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import { MosaicKYCDef, TypeMosaic } from '../../../src/domain/kyc/mosaicKYC';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
@@ -26,6 +25,7 @@ import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
@@ -38,18 +38,8 @@ describe('Mission (API test)', () => {
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
-  const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
-    {
-      id: KYCMosaicID.TEST_MOSAIC_ID,
-      categorie: Categorie.test,
-      points: 10,
-      titre: 'Titre test',
-      type: TypeMosaic.mosaic_boolean,
-      question_kyc_codes: [KYCID._2, KYCID._3],
-      thematique: Thematique.alimentation,
-    },
-  ];
   const objectifs: ObjectifDefinition[] = [
     {
       content_id: '11',
@@ -739,6 +729,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -850,6 +841,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -959,6 +951,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
+    await articleRepository.load();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -1145,6 +1138,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
+    await articleRepository.load();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -1261,6 +1255,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       titre: 'hoho',
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -1468,6 +1463,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1517,6 +1513,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
@@ -1616,6 +1613,7 @@ describe('Mission (API test)', () => {
       kyc: kyc as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
@@ -1722,6 +1720,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: false,
@@ -1758,6 +1757,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
 
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -2178,6 +2178,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2280,6 +2281,7 @@ describe('Mission (API test)', () => {
       tag_article: 'composter',
       categorie: Categorie.mission,
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2359,6 +2361,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       codes_postaux: ['75002'],
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2441,6 +2444,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       tags_utilisateur: [TagUtilisateur.possede_maison],
     });
+    await articleRepository.load();
 
     const objectifs: ObjectifDefinition[] = [
       {

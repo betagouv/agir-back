@@ -1,6 +1,7 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -10,6 +11,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -68,6 +70,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article);
+    await articleRepository.load();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -116,6 +119,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       points: 10,
       image_url: 'https://',
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -212,6 +217,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '3',
       thematiques: [Thematique.logement],
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque?filtre_thematiques=logement',
@@ -257,6 +264,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -308,6 +317,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       titre: 'Huge Mistery',
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque?titre=MISTER',
@@ -350,6 +361,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
     await TestUtil.create(DB.article, { content_id: '4' });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque?favoris=true',
@@ -392,6 +405,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
     await TestUtil.create(DB.article, { content_id: '4' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -427,6 +441,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -463,6 +478,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       },
     });
     await TestUtil.create(DB.article, { content_id: '1', titre: 'titreA' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -492,7 +508,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       titre: 'titreA',
       partenaire_id: '123',
     });
-    await partenaireRepository.loadPartenaires();
+    await partenaireRepository.load();
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -527,7 +544,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       titre: 'titreA',
       partenaire_id: '123',
     });
-    await partenaireRepository.loadPartenaires();
+    await partenaireRepository.load();
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -557,6 +575,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       },
     });
     await TestUtil.create(DB.article, { content_id: '1' });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -627,7 +646,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, {
       content_id: '1',
       contenu: 'un très bon article',
+      sources: [
+        {
+          label: 'ADEME',
+          url: 'https://',
+        },
+      ],
     });
+    await articleRepository.load();
+
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -643,6 +671,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.thematique_principale).toEqual(Thematique.climat);
     expect(response.body.difficulty).toEqual(1);
     expect(response.body.article_contenu).toEqual('un très bon article');
+    expect(response.body.article_sources).toEqual([
+      {
+        label: 'ADEME',
+        url: 'https://',
+      },
+    ]);
     expect(response.body.article_id).toEqual('1');
     expect(response.body.questions).toEqual([
       {
@@ -675,7 +709,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       partenaire_id: '123',
       derniere_maj: new Date(123),
     });
-    await partenaireRepository.loadPartenaires();
+    await partenaireRepository.load();
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.GET('/bibliotheque/articles/1');
@@ -756,6 +791,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
+    await articleRepository.load();
 
     // WHEN
     const response = await TestUtil.getServer().get('/bibliotheque/quizz/123');
@@ -775,6 +811,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
@@ -810,6 +848,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',
@@ -834,6 +874,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
+    await articleRepository.load();
+
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/bibliotheque/quizz/123',

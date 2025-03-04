@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { Article as ArticleDB } from '@prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
@@ -28,7 +29,40 @@ export type ArticleFilter = {
 
 @Injectable()
 export class ArticleRepository {
-  constructor(private prisma: PrismaService) {}
+  private static catalogue_articles: Map<string, ArticleDefinition>;
+
+  constructor(private prisma: PrismaService) {
+    ArticleRepository.catalogue_articles = new Map();
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    try {
+      await this.load();
+    } catch (error) {
+      console.error(
+        `Error loading partenaires definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+  }
+
+  @Cron('* * * * *')
+  public async load() {
+    const new_map: Map<string, ArticleDefinition> = new Map();
+    const liste_articles = await this.prisma.article.findMany();
+    for (const article of liste_articles) {
+      new_map.set(article.content_id, this.buildArticleFromDB(article));
+    }
+    ArticleRepository.catalogue_articles = new_map;
+  }
+
+  public static resetCache() {
+    // FOR TEST ONLY
+    ArticleRepository.catalogue_articles = new Map();
+  }
+
+  public getArticle(cms_id: string): ArticleDefinition {
+    return ArticleRepository.catalogue_articles.get(cms_id);
+  }
 
   async upsert(article_def: ArticleDefinition): Promise<void> {
     const article_to_save: ArticleDB = {
@@ -73,15 +107,6 @@ export class ArticleRepository {
     await this.prisma.article.delete({
       where: { content_id: content_id },
     });
-  }
-
-  async getArticleDefinitionByContentId(
-    content_id: string,
-  ): Promise<ArticleDefinition> {
-    const result = await this.prisma.article.findUnique({
-      where: { content_id: content_id },
-    });
-    return this.buildArticleFromDB(result);
   }
 
   async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {

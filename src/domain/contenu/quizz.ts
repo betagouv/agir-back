@@ -1,12 +1,13 @@
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
+import { ArticleDefinition } from './articleDefinition';
 import { QuizzDefinition } from './quizzDefinition';
 
 export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
-  article_contenu?: string;
+  article?: ArticleDefinition;
 
   constructor(data: QuizzDefinition) {
     super();
