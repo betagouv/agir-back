@@ -341,6 +341,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public static isTrueBooleanString(str: string): boolean {
+    if (!str) return false;
     return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
   }
 
