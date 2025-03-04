@@ -236,7 +236,7 @@ export class ActionUsecase {
   ): Promise<Action> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -289,6 +289,10 @@ export class ActionUsecase {
     for (const faq_id of action_def.faq_ids) {
       action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
     }
+
+    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      action_def.kyc_ids,
+    );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(
       action.getTypeCode(),

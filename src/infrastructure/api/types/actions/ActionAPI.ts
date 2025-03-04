@@ -111,7 +111,7 @@ export class ActionAPI {
       pourquoi: action.pourquoi,
       type: action.type,
       thematique: action.thematique,
-      kycs: [],
+      kycs: action.kycs?.map(QuestionKYCAPI_v2.mapToAPI) ?? [],
       quizzes: action.quizz_liste.map((q) => QuizzBibliothequeAPI.map(q)),
       aides: action.getListeAides().map((a) => ActionAideAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
