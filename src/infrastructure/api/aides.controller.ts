@@ -40,6 +40,7 @@ export class AidesController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     await this.aidesUsecase.consulterAideInfosLink(utilisateurId, aideId);
   }
+
   @Post('utilisateurs/:utilisateurId/aides/:aideId/consulter')
   @ApiOperation({
     summary: `Indique que l'utilisateur a consulté cette aide particulière`,
@@ -52,6 +53,20 @@ export class AidesController extends GenericControler {
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
     await this.aidesUsecase.consulterAide(utilisateurId, aideId);
+  }
+
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/derouler')
+  @ApiOperation({
+    summary: `Indique que l'utilisateur a déroulé cette aide dans le catalogue`,
+  })
+  @UseGuards(AuthGuard)
+  async deroulerAide(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('aideId') aideId: string,
+    @Request() req,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    await this.aidesUsecase.deroulerAide(utilisateurId, aideId);
   }
 
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')
