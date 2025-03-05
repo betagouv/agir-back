@@ -21,6 +21,7 @@ import {
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
@@ -36,6 +37,7 @@ export class ActionUsecase {
     private bibliothequeUsecase: BibliothequeUsecase,
     private cMSImportUsecase: CMSImportUsecase,
     private fAQRepository: FAQRepository,
+    private kycRespository: KycRepository,
   ) {}
 
   async getOpenCatalogue(
@@ -292,6 +294,14 @@ export class ActionUsecase {
 
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
       action_def.kyc_ids,
+    );
+    const kycs = await Promise.all(
+      action_def.kyc_ids.map((kyc_id) =>
+        this.kycRespository.getByCMS_ID(Number(kyc_id)),
+      ),
+    );
+    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      kycs.map((kyc) => kyc.code),
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(

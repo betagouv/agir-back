@@ -2,6 +2,8 @@ import { Consultation } from '../../../src/domain/actions/catalogueAction';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -9,6 +11,7 @@ import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionA
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -18,6 +21,7 @@ describe('Actions (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -781,6 +785,55 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response_2.status).toBe(200);
     expect(response_2.body.deja_vue).toEqual(true);
+  });
+
+  it(`GET /utilisateurs/id/actions/id - action de type simulateur doit contenir une liste de KYCs (quelles soient répondues ou non)`, async () => {
+    // GIVEN
+    const KYC2 = {
+      id_cms: 502,
+      code: 'KYC2',
+      type: TypeReponseQuestionKYC.entier,
+      question: '',
+      categorie: Categorie.test,
+      points: 0,
+      is_ngc: false,
+      tags: [],
+      thematique: Thematique.alimentation,
+      conditions: [],
+    };
+    await TestUtil.create(DB.kYC, { id_cms: 501, code: 'KYC1' });
+    await TestUtil.create(DB.kYC, KYC2 as any);
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC2,
+          is_NGC: false,
+          last_update: undefined,
+          reponse_complexe: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.simulateur,
+      kyc_ids: ['501', '502'],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/simulateur/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.kycs).toHaveLength(2);
   });
 
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
