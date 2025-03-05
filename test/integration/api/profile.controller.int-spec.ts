@@ -73,6 +73,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(dbUser).toBeNull();
   });
+
+  it(`DELETE /utilisateurs/id supprime un utilisateur france connecté`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_LOGOUT_CALLBACK = '/logout-callback';
+    process.env.BASE_URL_FRONT = 'http://localhost:3000';
+    process.env.OIDC_URL_LOGOUT =
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout';
+
+    await TestUtil.create(DB.utilisateur, { france_connect_sub: '123' });
+    await TestUtil.create(DB.OIDC_STATE);
+
+    // WHEN
+    const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.france_connect_logout_url).toContain(
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=456&state=',
+    );
+    expect(response.body.france_connect_logout_url).toContain(
+      '&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogout-callback',
+    );
+  });
+
   it('DELETE /admin/utilisateurs/id en mode admin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

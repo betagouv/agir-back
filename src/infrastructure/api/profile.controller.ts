@@ -11,24 +11,25 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ProfileUsecase } from '../../usecase/profile.usecase';
 import {
-  ApiTags,
-  ApiBody,
-  ApiOkResponse,
-  ApiExtraModels,
-  ApiOperation,
   ApiBearerAuth,
+  ApiBody,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
   ApiProperty,
+  ApiTags,
 } from '@nestjs/swagger';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { logoutAPI } from './types/utilisateur/logoutAPI';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
   LogementAPI,
   UtilisateurProfileAPI,
   UtilisateurUpdateProfileAPI,
 } from './types/utilisateur/utilisateurProfileAPI';
-import { GenericControler } from './genericControler';
-import { AuthGuard } from '../auth/guard';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -50,15 +51,23 @@ export class ProfileController extends GenericControler {
 
   @Delete('utilisateurs/:utilisateurId')
   @ApiOperation({
-    summary: "Suppression du compte d'un utilisateur d'id donnée",
+    summary:
+      "Suppression du compte d'un utilisateur d'id donnée, en retour URL optionnelle de logout France Connect",
   })
   @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: logoutAPI })
   async deleteUtilisateurById(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-  ) {
+  ): Promise<logoutAPI> {
     this.checkCallerId(req, utilisateurId);
-    await this.profileUsecase.deleteUtilisateur(utilisateurId);
+    const result = await this.profileUsecase.deleteUtilisateur(utilisateurId);
+
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
   }
 
   @Get('utilisateurs/:utilisateurId')

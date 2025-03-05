@@ -10,7 +10,6 @@ import { OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ProfileUsecase } from './profile.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -19,7 +18,6 @@ export class FranceConnectUsecase {
     private oidcService: OidcService,
     private passwordManager: PasswordManager,
     private oIDCStateRepository: OIDCStateRepository,
-    private profileUsecase: ProfileUsecase,
     private tokenRepository: TokenRepository,
   ) {}
 

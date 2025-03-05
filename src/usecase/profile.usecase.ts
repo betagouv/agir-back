@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
+import { App } from '../domain/app';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -15,6 +16,7 @@ import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repo
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ContactUsecase } from './contact.usecase';
+import { FranceConnectUsecase } from './franceConnect.usecase';
 
 const FIELD_MAX_LENGTH = 40;
 
@@ -32,6 +34,7 @@ export class ProfileUsecase {
     private contactUsecase: ContactUsecase,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
+    private franceConnectUsecase: FranceConnectUsecase,
   ) {}
 
   @Retryable({
@@ -281,19 +284,35 @@ export class ProfileUsecase {
     }
     return { couvert, pas_couvert };
   }
-  async deleteUtilisateur(utilisateurId: string) {
+  async deleteUtilisateur(
+    utilisateurId: string,
+  ): Promise<{ fc_logout_url?: URL }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
     );
+    const result = {
+      fc_logout_url: undefined,
+    };
+
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      const logout_url =
+        await this.franceConnectUsecase.internal_logout_france_connect(
+          utilisateurId,
+        );
+      result.fc_logout_url = logout_url.fc_logout_url;
+    }
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);
-  }
 
+    return result;
+  }
   private async resetUser(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
