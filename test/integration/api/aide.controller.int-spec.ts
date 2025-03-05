@@ -231,6 +231,70 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par thematique simple', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+      thematiques: [Thematique.alimentation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      thematiques: [Thematique.logement, Thematique.consommation],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2?thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(2);
+  });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par thematique multiple', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+      thematiques: [Thematique.alimentation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      thematiques: [Thematique.logement, Thematique.consommation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '4',
+      thematiques: [Thematique.consommation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '5',
+      thematiques: [Thematique.climat],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '6',
+      thematiques: [Thematique.loisir],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2?thematique=logement&thematique=climat',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(3);
+  });
   it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée / vue', async () => {
     // GIVEN
     const history: History_v0 = {

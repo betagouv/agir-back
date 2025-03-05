@@ -30,6 +30,7 @@ export class AidesUsecase {
 
   async getCatalogueAidesUtilisateur(
     utilisateurId: string,
+    filtre_thematiques: Thematique[],
   ): Promise<{ aides: AideDefinition[]; utilisateur: Utilisateur }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -53,6 +54,8 @@ export class AidesUsecase {
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
       date_expiration: new Date(),
+      thematiques:
+        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
     });
 
     const aides_nationales: Aide[] = [];

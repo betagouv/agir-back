@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -10,14 +11,16 @@ import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Thematique } from '../../domain/thematique/thematique';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { AideAPI } from './types/aide/AideAPI';
-import { AideAPI_v2 } from './types/aide/AideAPI_v2';
+import { CatalogueAideAPI } from './types/aide/CatalogueAideAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -83,18 +86,36 @@ export class AidesController extends GenericControler {
     await this.aidesUsecase.consulterAideDemandeLink(utilisateurId, aideId);
   }
 
-  @ApiOkResponse({ type: AideAPI_v2 })
+  @ApiOkResponse({ type: CatalogueAideAPI })
+  @ApiQuery({
+    name: 'thematique',
+    enum: Thematique,
+    enumName: 'thematique',
+    isArray: true,
+    required: false,
+    description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
+  })
   @Get('utilisateurs/:utilisateurId/aides_v2')
   @UseGuards(AuthGuard)
   async getCatalogueAides_v2(
     @Param('utilisateurId') utilisateurId: string,
+    @Query('thematique') thematique: string[] | string,
     @Request() req,
-  ): Promise<AideAPI_v2> {
+  ): Promise<CatalogueAideAPI> {
     this.checkCallerId(req, utilisateurId);
+    const liste_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(thematique);
+
+    const liste_thematiques: Thematique[] = [];
+
+    for (const them_string of liste_thematiques_input) {
+      liste_thematiques.push(this.castThematiqueOrException(them_string));
+    }
     const aides = await this.aidesUsecase.getCatalogueAidesUtilisateur(
       utilisateurId,
+      liste_thematiques,
     );
-    return AideAPI_v2.mapToAPI(aides.aides, aides.utilisateur);
+    return CatalogueAideAPI.mapToAPI(aides.aides, aides.utilisateur);
   }
 
   @UseGuards(ThrottlerGuard)
