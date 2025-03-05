@@ -138,7 +138,7 @@ export class FranceConnectUsecase {
     return { token: token, utilisateur: utilisateur };
   }
 
-  async internal_logout_france_connect(
+  async external_logout_france_connect(
     utilisateurId: string,
   ): Promise<{ fc_logout_url?: URL }> {
     const state = await this.oIDCStateRepository.getByUtilisateurId(

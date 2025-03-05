@@ -85,10 +85,10 @@ export class ThematiqueBoardUsecase {
     if (thematique === Thematique.alimentation) {
       return {
         thematique: Thematique.alimentation,
-        nombre_actions: await this.actionUsecase.internal_count_actions(
+        nombre_actions: await this.actionUsecase.external_count_actions(
           Thematique.alimentation,
         ),
-        nombre_aides: await this.aidesUsecase.internal_count_aides(
+        nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.alimentation,
           code_commune,
         ),
@@ -99,10 +99,10 @@ export class ThematiqueBoardUsecase {
     if (thematique === Thematique.logement) {
       return {
         thematique: Thematique.logement,
-        nombre_actions: await this.actionUsecase.internal_count_actions(
+        nombre_actions: await this.actionUsecase.external_count_actions(
           Thematique.logement,
         ),
-        nombre_aides: await this.aidesUsecase.internal_count_aides(
+        nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.logement,
           code_commune,
         ),
@@ -113,10 +113,10 @@ export class ThematiqueBoardUsecase {
     if (thematique === Thematique.transport) {
       return {
         thematique: Thematique.transport,
-        nombre_actions: await this.actionUsecase.internal_count_actions(
+        nombre_actions: await this.actionUsecase.external_count_actions(
           Thematique.transport,
         ),
-        nombre_aides: await this.aidesUsecase.internal_count_aides(
+        nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.transport,
           code_commune,
         ),
@@ -127,10 +127,10 @@ export class ThematiqueBoardUsecase {
     if (thematique === Thematique.consommation) {
       return {
         thematique: Thematique.consommation,
-        nombre_actions: await this.actionUsecase.internal_count_actions(
+        nombre_actions: await this.actionUsecase.external_count_actions(
           Thematique.consommation,
         ),
-        nombre_aides: await this.aidesUsecase.internal_count_aides(
+        nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.consommation,
           code_commune,
         ),

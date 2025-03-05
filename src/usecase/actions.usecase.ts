@@ -102,7 +102,7 @@ export class ActionUsecase {
 
     let catalogue = new CatalogueAction();
 
-    catalogue.actions = await this.internal_get_user_actions(utilisateur, {
+    catalogue.actions = await this.external_get_user_actions(utilisateur, {
       liste_thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
       titre_fragment: titre,
@@ -281,7 +281,7 @@ export class ActionUsecase {
 
     action.quizz_liste = [];
     for (const quizz_id of action_def.quizz_ids) {
-      const quizz = await this.bibliothequeUsecase.internal_get_quizz(quizz_id);
+      const quizz = await this.bibliothequeUsecase.external_get_quizz(quizz_id);
       action.quizz_liste.push(quizz);
     }
 
@@ -342,11 +342,11 @@ export class ActionUsecase {
     };
   }
 
-  async internal_count_actions(thematique?: Thematique): Promise<number> {
+  async external_count_actions(thematique?: Thematique): Promise<number> {
     return await this.actionRepository.count({ thematique: thematique });
   }
 
-  public async internal_get_user_actions(
+  public async external_get_user_actions(
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {

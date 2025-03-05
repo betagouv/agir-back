@@ -125,7 +125,7 @@ export class BibliothequeUsecase {
     const result =
       utilisateur.history.getArticleFromBibliotheque(article_definition);
 
-    await this.internal_read_article(content_id, utilisateur);
+    await this.external_read_article(content_id, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
@@ -169,7 +169,7 @@ export class BibliothequeUsecase {
 
     await this.setQuizzResult(content_id, rounded_pourcent, utilisateur);
 
-    await this.internal_read_article(quizz_definition.article_id, utilisateur);
+    await this.external_read_article(quizz_definition.article_id, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -215,10 +215,10 @@ export class BibliothequeUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.internal_get_quizz(content_id);
+    return await this.external_get_quizz(content_id);
   }
 
-  public async internal_get_quizz(content_id: string): Promise<Quizz> {
+  public async external_get_quizz(content_id: string): Promise<Quizz> {
     const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
       content_id,
     );
@@ -237,7 +237,7 @@ export class BibliothequeUsecase {
     return quizz;
   }
 
-  public async internal_read_article(
+  public async external_read_article(
     content_id: string,
     utilisateur: Utilisateur,
   ) {

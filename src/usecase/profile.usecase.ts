@@ -313,7 +313,7 @@ export class ProfileUsecase {
       return {}; // PAS de FC encore en PROD
     } else {
       const logout_url =
-        await this.franceConnectUsecase.internal_logout_france_connect(
+        await this.franceConnectUsecase.external_logout_france_connect(
           utilisateurId,
         );
       result.fc_logout_url = logout_url.fc_logout_url;

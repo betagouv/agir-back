@@ -248,7 +248,7 @@ export class AidesUsecase {
     return result;
   }
 
-  async internal_count_aides(
+  async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
   ): Promise<number> {

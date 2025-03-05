@@ -51,7 +51,7 @@ export class MailerUsecase {
       if (utilisateur.notification_history.isWelcomeEmailToSend(utilisateur)) {
         utilisateur.setUnsubscribeEmailTokenIfMissing();
 
-        const is_sent_email = await this.internal_send_user_email_of_type(
+        const is_sent_email = await this.external_send_user_email_of_type(
           TypeNotification.welcome,
           utilisateur,
         );
@@ -97,7 +97,7 @@ export class MailerUsecase {
       for (const notif_type of notif_type_liste) {
         utilisateur.setUnsubscribeEmailTokenIfMissing();
 
-        const is_sent_email = await this.internal_send_user_email_of_type(
+        const is_sent_email = await this.external_send_user_email_of_type(
           notif_type,
           utilisateur,
         );
@@ -135,7 +135,7 @@ export class MailerUsecase {
     return result;
   }
 
-  public async internal_send_user_email_of_type(
+  public async external_send_user_email_of_type(
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
     update_history: boolean = true,
@@ -164,7 +164,7 @@ export class MailerUsecase {
     return false;
   }
 
-  public async internal_send_anonymous_email_of_type(
+  public async external_send_anonymous_email_of_type(
     type_notif: TypeNotification,
     target_email: string,
   ): Promise<boolean> {
@@ -188,7 +188,7 @@ export class MailerUsecase {
     utilisateur: Utilisateur,
     log: string[],
   ) {
-    if (await this.internal_send_user_email_of_type(type, utilisateur, false)) {
+    if (await this.external_send_user_email_of_type(type, utilisateur, false)) {
       log.push(type);
     }
   }

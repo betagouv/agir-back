@@ -197,7 +197,7 @@ export class ThematiqueUsecase {
   ): Promise<Action[]> {
     const result: Action[] = [];
 
-    const liste_actions = await this.actionUsecase.internal_get_user_actions(
+    const liste_actions = await this.actionUsecase.external_get_user_actions(
       utilisateur,
       filtre,
     );
