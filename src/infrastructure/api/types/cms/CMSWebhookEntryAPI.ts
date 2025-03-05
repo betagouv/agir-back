@@ -148,7 +148,7 @@ export class CMSWebhookEntryAPI {
   faqs: IDAPI[];
 
   @ApiProperty({ type: [IDAPI] })
-  kycs: IDAPI[];
+  kycs: CodeAPI[];
 
   @ApiProperty({ type: [CMSWebhookUniversAPI] })
   univers: CMSWebhookUniversAPI[];

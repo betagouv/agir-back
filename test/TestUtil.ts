@@ -402,7 +402,7 @@ export class TestUtil {
       comment: 'Astuces',
       quizz_felicitations: 'bien',
       pourquoi: 'En quelques mots',
-      kyc_ids: [],
+      kyc_codes: [],
       faq_ids: [],
       lvo_action: CategorieRecherche.emprunter,
       lvo_objet: 'chaussure',

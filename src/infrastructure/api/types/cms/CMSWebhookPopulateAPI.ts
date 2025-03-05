@@ -140,6 +140,9 @@ export type CMSWebhookPopulateAPI = {
       data: [
         {
           id: number;
+          attributes: {
+            code: string;
+          };
         },
       ];
     };

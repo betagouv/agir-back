@@ -291,7 +291,7 @@ export class ActionUsecase {
     }
 
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      action_def.kyc_ids,
+      action_def.kyc_codes,
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(
@@ -311,7 +311,7 @@ export class ActionUsecase {
   public async calculeScoreQuizzAction(
     utilisateurId: string,
     code_action_quizz: string,
-  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses }> {
+  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses: number }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.history_article_quizz_aides],

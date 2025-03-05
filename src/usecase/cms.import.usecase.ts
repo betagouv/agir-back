@@ -931,9 +931,9 @@ export class CMSImportUsecase {
         entry.attributes.faqs && entry.attributes.faqs.data.length > 0
           ? entry.attributes.faqs.data.map((elem) => elem.id.toString())
           : [],
-      kyc_ids:
+      kyc_codes:
         entry.attributes.kycs && entry.attributes.kycs.data.length > 0
-          ? entry.attributes.kycs.data.map((elem) => elem.id.toString())
+          ? entry.attributes.kycs.data.map((elem) => elem.attributes.code)
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
