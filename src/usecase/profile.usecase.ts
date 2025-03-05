@@ -62,7 +62,7 @@ export class ProfileUsecase {
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
     if (profile.nom) {
-      if (utilisateur.isUtilisateurFranceConnecte()) {
+      if (!utilisateur.isNomPrenomModifiable()) {
         ApplicationError.throwMajNomImpossibleFC();
       }
       if (!char_regexp.test(profile.nom)) {
@@ -74,7 +74,7 @@ export class ProfileUsecase {
     }
 
     if (profile.prenom) {
-      if (utilisateur.isUtilisateurFranceConnecte()) {
+      if (!utilisateur.isNomPrenomModifiable()) {
         ApplicationError.throwMajPrenomImpossibleFC();
       }
       if (!char_regexp.test(profile.prenom)) {

@@ -213,6 +213,10 @@ export class Utilisateur {
     return !!this.france_connect_sub;
   }
 
+  public isNomPrenomModifiable?() {
+    return !this.isUtilisateurFranceConnecte();
+  }
+
   public setUnsubscribeEmailTokenIfMissing?() {
     if (!this.unsubscribe_mail_token) {
       this.unsubscribe_mail_token = Utilisateur.generateEmailToken();

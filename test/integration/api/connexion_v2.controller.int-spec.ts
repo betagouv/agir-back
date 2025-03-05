@@ -121,6 +121,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
+    expect(response.body.utilisateur.is_nom_prenom_modifiable).toEqual(true);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,

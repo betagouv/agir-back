@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import {
-  TypeLogement,
-  Superficie,
   Chauffage,
   DPE,
   Logement,
+  Superficie,
+  TypeLogement,
 } from '../../../../domain/logement/logement';
-import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 
 export class LogementAPI {
   @ApiProperty({ required: false })
@@ -69,24 +69,36 @@ export class UtilisateurUpdateProfileAPI {
 export class UtilisateurProfileAPI {
   @ApiProperty({ required: true })
   nom: string;
+
   @ApiProperty({ required: true })
   prenom: string;
+
   @ApiProperty({ required: false })
   annee_naissance: number;
+
   @ApiProperty({ required: true })
   email: string;
+
   @ApiProperty({ required: false })
   code_postal?: string;
+
   @ApiProperty({ required: false })
   commune?: string;
+
   @ApiProperty({ required: false })
   revenu_fiscal?: number;
+
   @ApiProperty({ required: true })
   mot_de_passe?: string;
+
   @ApiProperty({ required: false })
   nombre_de_parts_fiscales: number;
+
   @ApiProperty({ required: false })
   abonnement_ter_loire: boolean;
+
+  @ApiProperty()
+  is_nom_prenom_modifiable: boolean;
 
   @ApiProperty({ type: LogementAPI })
   logement: LogementAPI;
@@ -103,6 +115,7 @@ export class UtilisateurProfileAPI {
       abonnement_ter_loire: user.abonnement_ter_loire,
       logement: LogementAPI.mapToAPI(user.logement),
       annee_naissance: user.annee_naissance,
+      is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
     };
   }
 }

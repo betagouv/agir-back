@@ -180,6 +180,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
+    expect(response.body.is_nom_prenom_modifiable).toEqual(true);
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -403,7 +404,19 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
   });
-  it('PATCH /utilisateurs/id/profile - bloc update nom si FC', async () => {
+  it('GET /utilisateurs/id/profile boolean nom_prenom_non_modifiable', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.is_nom_prenom_modifiable).toEqual(false);
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update nom si FC', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       france_connect_sub: '123',
@@ -421,7 +434,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       "Impossible de mettre à jour le nom d'un utilisatueur France Connecté",
     );
   });
-  it('PATCH /utilisateurs/id/profile - bloc update nom si FC', async () => {
+  it('PATCH /utilisateurs/id/profile - bloque update nom si FC', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       france_connect_sub: '123',
