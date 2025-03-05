@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Classement } from '../../domain/gamification/classement';
 import { Utilisateur } from '@prisma/client';
 import { Pourcentile } from '../../domain/gamification/board';
+import { Classement } from '../../domain/gamification/classement';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UtilisateurBoardRepository {
@@ -341,7 +341,7 @@ export class UtilisateurBoardRepository {
       code_postal: (ub.logement as any).code_postal,
       commune: (ub.logement as any).commune,
       points: ub.points_classement,
-      prenom: ub.prenom,
+      pseudo: ub.pseudo,
       utilisateurId: ub.id,
       rank: ub.rank,
       rank_commune: ub.rank_commune,

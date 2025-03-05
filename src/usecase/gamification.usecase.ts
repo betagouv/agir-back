@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Gamification } from '../domain/gamification/gamification';
-import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisateurBoard.repository';
 import { Board } from '../domain/gamification/board';
-import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { Classement } from '../domain/gamification/classement';
+import { Gamification } from '../domain/gamification/gamification';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { UtilisateurBoardRepository } from '../infrastructure/repository/utilisateurBoard.repository';
 
 @Injectable()
 export class GamificationUsecase {
@@ -206,7 +206,7 @@ export class GamificationUsecase {
       code_postal: utilisateur.code_postal_classement,
       commune: utilisateur.commune_classement,
       points: utilisateur.points_classement,
-      prenom: utilisateur.prenom,
+      pseudo: utilisateur.pseudo,
       utilisateurId: utilisateur.id,
       rank: utilisateur.rank,
       rank_commune: utilisateur.rank_commune,

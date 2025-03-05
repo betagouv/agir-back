@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { EmailSender } from '../infrastructure/email/emailSender';
 import {
   CanalNotification,
   TypeNotification,
 } from '../domain/notification/notificationHistory';
-import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { EmailSender } from '../infrastructure/email/emailSender';
+import { EmailTemplateRepository } from '../infrastructure/email/emailTemplate.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const day_10 = 1000 * 60 * 60 * 24 * 10;
 
@@ -149,7 +149,7 @@ export class MailerUsecase {
     if (email) {
       const sent_email = await this.emailSender.sendEmail(
         utilisateur.email,
-        utilisateur.prenom,
+        utilisateur.pseudo,
         email.body,
         email.subject,
       );

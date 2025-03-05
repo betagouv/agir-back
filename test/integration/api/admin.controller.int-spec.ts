@@ -586,6 +586,41 @@ describe('Admin (API test)', () => {
     expect(userDB.code_commune).toEqual(null);
     expect(userDB.version).toEqual(12);
   });
+  it('POST /admin/migrate_users migration V13 OK - prenom => pseudo', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 12,
+      migration_enabled: true,
+      prenom: 'yo',
+      pseudo: null,
+    });
+    process.env.USER_CURRENT_VERSION = '13';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 13,
+            ok: true,
+            info: 'pseudo set ok',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.pseudo).toEqual('yo');
+    expect(userDB.version).toEqual(13);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -2424,31 +2459,31 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur, {
       id: '1',
-      prenom: 'A',
+      pseudo: 'A',
       est_valide_pour_classement: false,
       email: '1',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
-      prenom: 'B',
+      pseudo: 'B',
       est_valide_pour_classement: false,
       email: '2',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
-      prenom: 'C',
+      pseudo: 'C',
       est_valide_pour_classement: true,
       email: '3',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '4',
-      prenom: '',
+      pseudo: '',
       est_valide_pour_classement: false,
       email: '4',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '5',
-      prenom: null,
+      pseudo: null,
       est_valide_pour_classement: false,
       email: '5',
     });
@@ -2458,34 +2493,34 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body).toContainEqual({ id: '1', prenom: 'A' });
-    expect(response.body).toContainEqual({ id: '2', prenom: 'B' });
+    expect(response.body).toContainEqual({ id: '1', pseudo: 'A' });
+    expect(response.body).toContainEqual({ id: '2', pseudo: 'B' });
   });
   it('POST /admin/valider_prenoms', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur, {
       id: '1',
-      prenom: 'A',
+      pseudo: 'A',
       est_valide_pour_classement: false,
       email: '1',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
-      prenom: 'B',
+      pseudo: 'B',
       est_valide_pour_classement: false,
       email: '2',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
-      prenom: 'C',
+      pseudo: 'C',
       est_valide_pour_classement: false,
       email: '3',
     });
     // WHEN
     const response = await TestUtil.POST('/admin/valider_prenoms').send([
-      { id: '1', prenom: 'George' },
-      { id: '2', prenom: 'Paul' },
+      { id: '1', pseudo: 'George' },
+      { id: '2', pseudo: 'Paul' },
     ]);
 
     // THEN
@@ -2493,7 +2528,7 @@ describe('Admin (API test)', () => {
     const listeUsers = await TestUtil.prisma.utilisateur.findMany({
       select: {
         id: true,
-        prenom: true,
+        pseudo: true,
         est_valide_pour_classement: true,
       },
       orderBy: {
@@ -2504,17 +2539,17 @@ describe('Admin (API test)', () => {
       {
         est_valide_pour_classement: true,
         id: '1',
-        prenom: 'George',
+        pseudo: 'George',
       },
       {
         est_valide_pour_classement: true,
         id: '2',
-        prenom: 'Paul',
+        pseudo: 'Paul',
       },
       {
         est_valide_pour_classement: false,
         id: '3',
-        prenom: 'C',
+        pseudo: 'C',
       },
     ]);
   });

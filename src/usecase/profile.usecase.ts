@@ -73,6 +73,23 @@ export class ProfileUsecase {
       }
     }
 
+    if (profile.pseudo) {
+      if (!char_regexp.test(profile.pseudo)) {
+        ApplicationError.throwNotAlhpaPseudo();
+      }
+      if (profile.pseudo.length > FIELD_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'pseudo',
+          profile.pseudo,
+          FIELD_MAX_LENGTH,
+        );
+      }
+      const pseudo_valide = await this.utilisateurRepository.isPseudoValide(
+        profile.pseudo,
+      );
+      utilisateur.est_valide_pour_classement = pseudo_valide;
+    }
+
     if (profile.prenom) {
       if (!utilisateur.isNomPrenomModifiable()) {
         ApplicationError.throwMajPrenomImpossibleFC();
@@ -87,10 +104,6 @@ export class ProfileUsecase {
           FIELD_MAX_LENGTH,
         );
       }
-      const prenom_valide = await this.utilisateurRepository.isPrenomValide(
-        profile.prenom,
-      );
-      utilisateur.est_valide_pour_classement = prenom_valide;
     }
 
     if (profile.revenu_fiscal) {
@@ -111,17 +124,18 @@ export class ProfileUsecase {
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
+    utilisateur.pseudo = profile.pseudo;
     utilisateur.annee_naissance = profile.annee_naissance;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async listPrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
-    return await this.utilisateurRepository.listePrenomsAValider();
+  async listPseudosAValider(): Promise<{ id: string; pseudo: string }[]> {
+    return await this.utilisateurRepository.listePseudosAValider();
   }
-  async validerPrenoms(input: { id: string; prenom: string }[]) {
+  async validerPseudos(input: { id: string; pseudo: string }[]) {
     for (const user of input) {
-      await this.utilisateurRepository.validerPrenom(user.id, user.prenom);
+      await this.utilisateurRepository.validerPseudo(user.id, user.pseudo);
     }
   }
 

@@ -677,6 +677,7 @@ export class TestUtil {
       code_commune: null,
       france_connect_sub: null,
       external_stat_id: null,
+      pseudo: 'pseudo',
       ...override,
     };
   }

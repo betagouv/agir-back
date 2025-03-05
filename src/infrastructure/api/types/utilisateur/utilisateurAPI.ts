@@ -7,6 +7,9 @@ export class UtilisateurAPI {
   id: string;
 
   @ApiProperty()
+  pseudo: string;
+
+  @ApiProperty()
   nom: string;
 
   @ApiProperty()
@@ -37,6 +40,7 @@ export class UtilisateurAPI {
       is_onboarding_done: user.isOnboardingDone(),
       couverture_aides_ok: user.couverture_aides_ok,
       is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
+      pseudo: user.pseudo,
     };
   }
 }

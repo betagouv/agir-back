@@ -44,7 +44,7 @@ import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
-import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
+import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -255,9 +255,9 @@ export class AdminController extends GenericControler {
   })
   async getPrenomsAValider(
     @Request() req,
-  ): Promise<{ id: string; prenom: string }[]> {
+  ): Promise<{ id: string; pseudo: string }[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.listPrenomsAValider();
+    return await this.profileUsecase.listPseudosAValider();
   }
 
   @Post('/admin/valider_prenoms')
@@ -265,11 +265,11 @@ export class AdminController extends GenericControler {
     summary: `valide la liste de prenoms argument`,
   })
   @ApiBody({
-    type: [ValiderPrenomAPI],
+    type: [ValiderPseudoAPI],
   })
-  async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
+  async validerPrenoms(@Request() req, @Body() body: ValiderPseudoAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.validerPrenoms(body);
+    return await this.profileUsecase.validerPseudos(body);
   }
 
   @Post('/admin/send_all_emails_as_test/:utilisateurId')

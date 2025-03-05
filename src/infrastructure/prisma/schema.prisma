@@ -23,6 +23,7 @@ model OIDC_STATE {
 model Utilisateur {
   id                         String    @id
   email                      String?   @unique
+  pseudo                     String?
   nom                        String?   @default("nom")
   prenom                     String?   @default("prenom")
   annee_naissance            Int?

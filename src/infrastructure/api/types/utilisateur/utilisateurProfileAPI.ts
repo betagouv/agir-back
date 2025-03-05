@@ -50,15 +50,17 @@ export class LogementAPI {
 }
 
 export class UtilisateurUpdateProfileAPI {
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  pseudo: string;
+  @ApiProperty({ required: false })
   nom: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   prenom: string;
   @ApiProperty({ required: false })
   annee_naissance: number;
   @ApiProperty({ required: false })
   revenu_fiscal?: number;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   mot_de_passe?: string;
   @ApiProperty({ required: false })
   nombre_de_parts_fiscales: number;
@@ -72,6 +74,9 @@ export class UtilisateurProfileAPI {
 
   @ApiProperty({ required: true })
   prenom: string;
+
+  @ApiProperty({ required: true })
+  pseudo: string;
 
   @ApiProperty({ required: false })
   annee_naissance: number;
@@ -116,6 +121,7 @@ export class UtilisateurProfileAPI {
       logement: LogementAPI.mapToAPI(user.logement),
       annee_naissance: user.annee_naissance,
       is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
+      pseudo: user.pseudo,
     };
   }
 }

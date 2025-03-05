@@ -1,7 +1,6 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { Pourcentile } from '../../../src/domain/gamification/board';
-import { equal } from 'assert';
+import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('UtilisateurBoardRepository', () => {
   let repo = new UtilisateurBoardRepository(TestUtil.prisma);
@@ -56,7 +55,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -65,7 +64,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 25,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '4',
         rank: null,
         rank_commune: null,
@@ -74,7 +73,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -120,7 +119,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -129,7 +128,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 25,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '4',
         rank: null,
         rank_commune: null,
@@ -138,7 +137,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -184,7 +183,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -193,7 +192,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -202,7 +201,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 15,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '5',
         rank: null,
         rank_commune: null,
@@ -269,7 +268,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -278,7 +277,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 25,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '4',
         rank: null,
         rank_commune: null,
@@ -287,7 +286,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -354,7 +353,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -363,7 +362,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 25,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '4',
         rank: null,
         rank_commune: null,
@@ -372,7 +371,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -439,7 +438,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 30,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: 'user',
         rank: null,
         rank_commune: null,
@@ -448,7 +447,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 20,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '2',
         rank: null,
         rank_commune: null,
@@ -457,7 +456,7 @@ describe('UtilisateurBoardRepository', () => {
         code_postal: '91120',
         commune: 'PALAISEAU',
         points: 15,
-        prenom: 'prenom',
+        pseudo: 'pseudo',
         utilisateurId: '5',
         rank: null,
         rank_commune: null,
@@ -504,7 +503,7 @@ describe('UtilisateurBoardRepository', () => {
       id: '1',
       code_postal_classement: '91120',
       commune_classement: 'PALAISEAU',
-      prenom: 'toto',
+      pseudo: 'toto',
     });
     await repo.update_rank_user_france();
 
@@ -523,7 +522,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[0].utilisateurId).toEqual('1');
     expect(liste[0].code_postal).toEqual('91120');
     expect(liste[0].commune).toEqual('PALAISEAU');
-    expect(liste[0].prenom).toEqual('toto');
+    expect(liste[0].pseudo).toEqual('toto');
     expect(liste[0].points).toEqual(10);
     expect(liste[0].rank).toEqual(1);
   });
@@ -535,7 +534,7 @@ describe('UtilisateurBoardRepository', () => {
       id: '1',
       code_postal_classement: '91120',
       commune_classement: 'PALAISEAU',
-      prenom: 'toto',
+      pseudo: 'toto',
     });
 
     // WHEN
@@ -553,7 +552,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste[0].utilisateurId).toEqual('1');
     expect(liste[0].code_postal).toEqual('91120');
     expect(liste[0].commune).toEqual('PALAISEAU');
-    expect(liste[0].prenom).toEqual('toto');
+    expect(liste[0].pseudo).toEqual('toto');
     expect(liste[0].points).toEqual(10);
   });
   it('utilisateur_classement_proximite : extract correct pour apres', async () => {

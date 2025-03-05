@@ -627,6 +627,10 @@ export class ApplicationError {
     );
   }
 
+  static throwNotAlhpaPseudo() {
+    this.throwAppError('068', `Le pseudo ne doit contenir que des lettres`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

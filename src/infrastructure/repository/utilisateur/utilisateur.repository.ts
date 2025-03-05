@@ -47,27 +47,27 @@ export class UtilisateurRepository {
     await this.prisma.utilisateur.delete({ where: { id: utilisateurId } });
   }
 
-  async listePrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
+  async listePseudosAValider(): Promise<{ id: string; pseudo: string }[]> {
     return await this.prisma.utilisateur.findMany({
       where: {
         est_valide_pour_classement: false,
         active_account: true,
         NOT: {
-          OR: [{ prenom: '' }, { prenom: null }],
+          OR: [{ pseudo: '' }, { pseudo: null }],
         },
       },
       select: {
         id: true,
-        prenom: true,
+        pseudo: true,
       },
     });
   }
 
-  async validerPrenom(utilisateurId: string, prenom: string) {
+  async validerPseudo(utilisateurId: string, pseudo: string) {
     await this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: {
-        prenom: prenom,
+        pseudo: pseudo,
         est_valide_pour_classement: true,
       },
     });
@@ -103,10 +103,10 @@ export class UtilisateurRepository {
     return count !== 0;
   }
 
-  async isPrenomValide(prenom: string): Promise<boolean> {
+  async isPseudoValide(pseudo: string): Promise<boolean> {
     const count = await this.prisma.utilisateur.count({
       where: {
-        prenom: prenom,
+        pseudo: pseudo,
         est_valide_pour_classement: true,
       },
     });
@@ -580,6 +580,7 @@ export class UtilisateurRepository {
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
+      pseudo: user.pseudo,
     });
 
     if (result.kyc_history) {
@@ -658,6 +659,7 @@ export class UtilisateurRepository {
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
+      pseudo: user.pseudo,
     };
   }
 

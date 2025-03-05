@@ -181,6 +181,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
     expect(response.body.is_nom_prenom_modifiable).toEqual(true);
+    expect(response.body.pseudo).toEqual('pseudo');
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -382,6 +383,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
+      pseudo: 'hahah',
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -392,6 +394,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     fakeUser.passwordSalt = dbUser.passwordSalt;
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
+    expect(dbUser.pseudo).toEqual('hahah');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.annee_naissance).toEqual(1234);
     expect(dbUser.revenu_fiscal).toEqual(12345);
@@ -452,25 +455,25 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
     );
   });
-  it('PATCH /utilisateurs/id/profile - le prenom est valide si un autre utilisateur avec même prenom valide existe', async () => {
+  it('PATCH /utilisateurs/id/profile - le pseudo est valide si un autre utilisateur avec même pseudo valide existe', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       email: '1',
       est_valide_pour_classement: true,
-      prenom: 'TOTO',
+      pseudo: 'pseudo OK',
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
       email: '2',
       est_valide_pour_classement: false,
-      prenom: 'Insulte',
+      pseudo: 'Insulte',
     });
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
     ).send({
-      prenom: 'TOTO',
+      pseudo: 'pseudo OK',
     });
     expect(response.status).toEqual(200);
 
@@ -478,7 +481,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUser.prenom).toEqual('TOTO');
     expect(dbUser.est_valide_pour_classement).toEqual(true);
   });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYCs', async () => {
