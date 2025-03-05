@@ -76,6 +76,11 @@ describe('Thematique (API test)', () => {
       est_personnalisation_necessaire: true,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
+      nom_commune: 'Dijon',
+      nombre_actions: 0,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
     });
   });
   it(`GET /utilisateurs/id/thematiques/alimentation - personnalisation done`, async () => {
@@ -112,6 +117,11 @@ describe('Thematique (API test)', () => {
       est_personnalisation_necessaire: false,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
+      nom_commune: 'Dijon',
+      nombre_actions: 0,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
     });
   });
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso`, async () => {

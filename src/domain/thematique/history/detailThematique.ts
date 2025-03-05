@@ -7,4 +7,9 @@ export class DetailThematique {
   enchainement_questions_personnalisation: Enchainement;
   personnalisation_necessaire: boolean;
   liste_actions: Action[];
+  nom_commune: string;
+  nombre_recettes: number;
+  nombre_actions: number;
+  nombre_aides: number;
+  nombre_simulateurs: number;
 }

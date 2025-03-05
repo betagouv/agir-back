@@ -6,6 +6,11 @@ import { ActionLightAPI } from '../actions/ActionLightAPI';
 
 export class DetailThematiquesAPI {
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
+  @ApiProperty() nom_commune: string;
+  @ApiProperty() nombre_recettes: number;
+  @ApiProperty() nombre_actions: number;
+  @ApiProperty() nombre_aides: number;
+  @ApiProperty() nombre_simulateurs: number;
   @ApiProperty({
     enum: Enchainement,
     description: `L'id d'un enchainement de question pour personnaliser la recommandation d'actions`,
@@ -28,6 +33,11 @@ export class DetailThematiquesAPI {
       liste_actions_recommandees: detail.liste_actions.map((a) =>
         ActionLightAPI.mapToAPI(a),
       ),
+      nombre_actions: detail.nombre_actions,
+      nombre_aides: detail.nombre_aides,
+      nombre_recettes: detail.nombre_recettes,
+      nombre_simulateurs: detail.nombre_simulateurs,
+      nom_commune: detail.nom_commune,
     };
   }
 }

@@ -6,9 +6,11 @@ import { DetailThematique } from '../domain/thematique/history/detailThematique'
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ActionFilter } from '../infrastructure/repository/action.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { Enchainement } from './questionKYC.usecase';
+import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =
   {
@@ -23,6 +25,8 @@ export class ThematiqueUsecase {
   constructor(
     private actionUsecase: ActionUsecase,
     private utilisateurRepository: UtilisateurRepository,
+    private communeRepository: CommuneRepository,
+    private thematiqueBoardUsecase: ThematiqueBoardUsecase,
   ) {}
 
   public async getUtilisateurThematique(
@@ -44,6 +48,21 @@ export class ThematiqueUsecase {
     result.enchainement_questions_personnalisation =
       THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
     result.personnalisation_necessaire = !personnalisation_done;
+
+    result.nom_commune = this.communeRepository.getLibelleCommuneLowerCase(
+      utilisateur.code_commune,
+    );
+
+    const detailThematique =
+      await this.thematiqueBoardUsecase.external_thematique_synthese(
+        thematique,
+        utilisateur.code_commune,
+      );
+
+    result.nombre_actions = detailThematique.nombre_actions;
+    result.nombre_aides = detailThematique.nombre_aides;
+    result.nombre_recettes = detailThematique.nombre_recettes;
+    result.nombre_simulateurs = detailThematique.nombre_simulateurs;
 
     if (personnalisation_done) {
       await this.buildThematiquePostPersonnalisation(result, utilisateur);

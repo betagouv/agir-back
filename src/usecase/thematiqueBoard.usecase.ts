@@ -55,58 +55,89 @@ export class ThematiqueBoardUsecase {
       result.nom_commune = commune.nom;
     }
 
-    const alimentation: ThematiqueSynthese = {
-      thematique: Thematique.alimentation,
-      nombre_actions: await this.actionUsecase.internal_count_actions(
-        Thematique.alimentation,
-      ),
-      nombre_aides: await this.aidesUsecase.internal_count_aides(
-        Thematique.alimentation,
-        code_commune,
-      ),
-      nombre_recettes: 1150,
-      nombre_simulateurs: 0,
-    };
+    const alimentation = await this.external_thematique_synthese(
+      Thematique.alimentation,
+      code_commune,
+    );
 
-    const logement: ThematiqueSynthese = {
-      thematique: Thematique.logement,
-      nombre_actions: await this.actionUsecase.internal_count_actions(
-        Thematique.logement,
-      ),
-      nombre_aides: await this.aidesUsecase.internal_count_aides(
-        Thematique.logement,
-        code_commune,
-      ),
-      nombre_recettes: undefined,
-      nombre_simulateurs: 0,
-    };
-    const transport: ThematiqueSynthese = {
-      thematique: Thematique.transport,
-      nombre_actions: await this.actionUsecase.internal_count_actions(
-        Thematique.transport,
-      ),
-      nombre_aides: await this.aidesUsecase.internal_count_aides(
-        Thematique.transport,
-        code_commune,
-      ),
-      nombre_recettes: undefined,
-      nombre_simulateurs: 0,
-    };
-    const consommation: ThematiqueSynthese = {
-      thematique: Thematique.consommation,
-      nombre_actions: await this.actionUsecase.internal_count_actions(
-        Thematique.consommation,
-      ),
-      nombre_aides: await this.aidesUsecase.internal_count_aides(
-        Thematique.consommation,
-        code_commune,
-      ),
-      nombre_recettes: undefined,
-      nombre_simulateurs: 0,
-    };
+    const logement = await this.external_thematique_synthese(
+      Thematique.logement,
+      code_commune,
+    );
+    const transport = await this.external_thematique_synthese(
+      Thematique.transport,
+      code_commune,
+    );
+    const consommation = await this.external_thematique_synthese(
+      Thematique.consommation,
+      code_commune,
+    );
 
     result.thematiques.push(alimentation, logement, transport, consommation);
 
     return result;
+  }
+
+  public async external_thematique_synthese(
+    thematique: Thematique,
+    code_commune: string,
+  ): Promise<ThematiqueSynthese> {
+    if (thematique === Thematique.alimentation) {
+      return {
+        thematique: Thematique.alimentation,
+        nombre_actions: await this.actionUsecase.internal_count_actions(
+          Thematique.alimentation,
+        ),
+        nombre_aides: await this.aidesUsecase.internal_count_aides(
+          Thematique.alimentation,
+          code_commune,
+        ),
+        nombre_recettes: 1150,
+        nombre_simulateurs: 0,
+      };
+    }
+    if (thematique === Thematique.logement) {
+      return {
+        thematique: Thematique.logement,
+        nombre_actions: await this.actionUsecase.internal_count_actions(
+          Thematique.logement,
+        ),
+        nombre_aides: await this.aidesUsecase.internal_count_aides(
+          Thematique.logement,
+          code_commune,
+        ),
+        nombre_recettes: undefined,
+        nombre_simulateurs: 0,
+      };
+    }
+    if (thematique === Thematique.transport) {
+      return {
+        thematique: Thematique.transport,
+        nombre_actions: await this.actionUsecase.internal_count_actions(
+          Thematique.transport,
+        ),
+        nombre_aides: await this.aidesUsecase.internal_count_aides(
+          Thematique.transport,
+          code_commune,
+        ),
+        nombre_recettes: undefined,
+        nombre_simulateurs: 0,
+      };
+    }
+    if (thematique === Thematique.consommation) {
+      return {
+        thematique: Thematique.consommation,
+        nombre_actions: await this.actionUsecase.internal_count_actions(
+          Thematique.consommation,
+        ),
+        nombre_aides: await this.aidesUsecase.internal_count_aides(
+          Thematique.consommation,
+          code_commune,
+        ),
+        nombre_recettes: undefined,
+        nombre_simulateurs: 0,
+      };
+    }
+    return undefined;
   }
 }
