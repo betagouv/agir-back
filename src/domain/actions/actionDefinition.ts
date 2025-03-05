@@ -17,7 +17,7 @@ export class ActionDefinitionData {
   besoins: string[];
   comment: string;
   pourquoi: string;
-  kyc_ids: string[];
+  kyc_codes: string[];
   faq_ids: string[];
   lvo_action: CategorieRecherche;
   lvo_objet: string;

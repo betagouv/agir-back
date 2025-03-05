@@ -504,7 +504,7 @@ export class CMSWebhookUsecase {
         ? entry.quizzes.map((elem) => elem.id.toString())
         : [],
       faq_ids: entry.faqs ? entry.faqs.map((elem) => elem.id.toString()) : [],
-      kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
+      kyc_codes: entry.kycs ? entry.kycs.map((elem) => elem.code) : [],
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
         : null,

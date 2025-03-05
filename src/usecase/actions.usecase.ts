@@ -21,7 +21,6 @@ import {
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
@@ -37,7 +36,6 @@ export class ActionUsecase {
     private bibliothequeUsecase: BibliothequeUsecase,
     private cMSImportUsecase: CMSImportUsecase,
     private fAQRepository: FAQRepository,
-    private kycRespository: KycRepository,
   ) {}
 
   async getOpenCatalogue(
@@ -293,15 +291,7 @@ export class ActionUsecase {
     }
 
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      action_def.kyc_ids,
-    );
-    const kycs = await Promise.all(
-      action_def.kyc_ids.map((kyc_id) =>
-        this.kycRespository.getByCMS_ID(Number(kyc_id)),
-      ),
-    );
-    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      kycs.map((kyc) => kyc.code),
+      action_def.kyc_codes,
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(
@@ -321,7 +311,7 @@ export class ActionUsecase {
   public async calculeScoreQuizzAction(
     utilisateurId: string,
     code_action_quizz: string,
-  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses }> {
+  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses: number }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.history_article_quizz_aides],

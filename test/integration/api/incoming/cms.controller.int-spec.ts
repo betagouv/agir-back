@@ -1,4 +1,8 @@
 import { KYC, Mission } from '.prisma/client';
+import {
+  CMSWebhookEntryAPI,
+  CMSWebhookObjectifAPI,
+} from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Echelle } from '../../../../src/domain/aides/echelle';
@@ -13,6 +17,7 @@ import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
+import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 import { ArticleRepository } from '../../../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
@@ -69,7 +74,7 @@ describe('/api/incoming/cms (API test)', () => {
     },
   };
 
-  const CMS_DATA_ACTION = {
+  const CMS_DATA_ACTION: CMSWebhookAPI = {
     model: CMSModel.action,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -102,25 +107,31 @@ describe('/api/incoming/cms (API test)', () => {
       ],
       kycs: [
         {
-          id: 3,
+          id: 7,
+          code: 'KYC01',
         },
         {
-          id: 4,
+          id: 8,
+          code: 'KYC02',
         },
       ],
       tags_excluants: [
         {
-          id: 1,
+          id: 9,
           valeur: TagExcluant.a_un_velo,
         },
       ],
 
       besoins: [
         {
+          id: 10,
           code: 'composter',
+          description: '',
         },
         {
+          id: 11,
           code: 'mieux_manger',
+          description: '',
         },
       ],
       code: 'code',
@@ -129,10 +140,10 @@ describe('/api/incoming/cms (API test)', () => {
         titre: 'Alimentation',
         code: Thematique.alimentation,
       },
-    },
+    } as CMSWebhookEntryAPI,
   };
 
-  const CMS_DATA_ACTION_BILAN = {
+  const CMS_DATA_ACTION_BILAN: CMSWebhookAPI = {
     model: CMSModel['action-bilan'],
     event: CMSEvent['entry.publish'],
     entry: {
@@ -143,9 +154,11 @@ describe('/api/incoming/cms (API test)', () => {
       kycs: [
         {
           id: 3,
+          code: 'KYC03',
         },
         {
           id: 4,
+          code: 'KYC04',
         },
       ],
       code: 'code',
@@ -160,10 +173,10 @@ describe('/api/incoming/cms (API test)', () => {
         titre: 'Alimentation',
         code: Thematique.alimentation,
       },
-    },
+    } as CMSWebhookEntryAPI,
   };
 
-  const CMS_DATA_DEFI_bad_tag = {
+  const CMS_DATA_DEFI_bad_tag: CMSWebhookAPI = {
     model: CMSModel.defi,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -199,16 +212,19 @@ describe('/api/incoming/cms (API test)', () => {
             {
               code_reponse: 'oui',
               kyc: {
-                code: '123',
+                code: 'KYC05',
                 id: 1,
+                ngc_code: '',
+                reponse: '',
               },
             },
           ],
         },
       ],
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_KYC = {
+
+  const CMS_DATA_KYC: CMSWebhookAPI = {
     model: CMSModel.kyc,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -228,6 +244,7 @@ describe('/api/incoming/cms (API test)', () => {
         formats: {
           thumbnail: { url: 'https://' },
         },
+        url: 'http://monurl',
       },
       reponses: [
         {
@@ -243,7 +260,11 @@ describe('/api/incoming/cms (API test)', () => {
           ngc_code: '456',
         },
       ],
-      thematique: { id: 1, code: Thematique.alimentation },
+      thematique: {
+        id: 1,
+        code: Thematique.alimentation,
+        titre: 'Thematique alimentation',
+      },
       tags: [
         { id: 1, code: 'capacite_physique' },
         { id: 2, code: 'possede_velo' },
@@ -255,16 +276,19 @@ describe('/api/incoming/cms (API test)', () => {
             {
               code_reponse: 'yop',
               kyc: {
-                code: '999',
+                code: 'KYC06',
                 id: 8888,
+                ngc_code: '',
+                reponse: '',
               },
             },
           ],
         },
       ],
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_MISSION = {
+
+  const CMS_DATA_MISSION: CMSWebhookAPI = {
     model: CMSModel.mission,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -279,6 +303,7 @@ describe('/api/incoming/cms (API test)', () => {
         formats: {
           thumbnail: { url: 'https://' },
         },
+        url: '',
       },
       thematique: {
         id: 1,
@@ -286,25 +311,41 @@ describe('/api/incoming/cms (API test)', () => {
         code: Thematique.alimentation,
       },
       objectifs: [
-        { id: 1, titre: 'do it article', points: 5, article: { id: 11 } },
-        { id: 2, titre: 'do it defi', points: 10, defi: { id: 12 } },
+        {
+          id: 1,
+          titre: 'do it article',
+          points: 5,
+          article: { id: 11 },
+        } as CMSWebhookObjectifAPI,
+        {
+          id: 2,
+          titre: 'do it defi',
+          points: 10,
+          defi: { id: 12 },
+        } as CMSWebhookObjectifAPI,
         {
           id: 3,
           titre: 'do it kyc',
           points: 15,
           kyc: { code: KYCID.KYC001, id: 100 },
-        },
-        { id: 4, titre: 'do it quizz', points: 20, quizz: { id: 13 } },
+        } as CMSWebhookObjectifAPI,
+        {
+          id: 4,
+          titre: 'do it quizz',
+          points: 20,
+          quizz: { id: 13 },
+        } as CMSWebhookObjectifAPI,
         {
           id: 5,
           titre: 'do it article generique',
           points: 5,
           tag_article: { code: '111' },
-        },
+        } as CMSWebhookObjectifAPI,
       ],
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_AIDE = {
+
+  const CMS_DATA_AIDE: CMSWebhookAPI = {
     model: CMSModel.aide,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -337,9 +378,10 @@ describe('/api/incoming/cms (API test)', () => {
       codes_departement: '78',
       codes_region: '25',
       est_gratuit: true,
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_ARTICLE = {
+
+  const CMS_DATA_ARTICLE: CMSWebhookAPI = {
     model: CMSModel.article,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -372,6 +414,7 @@ describe('/api/incoming/cms (API test)', () => {
         formats: {
           thumbnail: { url: 'https://haha' },
         },
+        url: '',
       },
       difficulty: 3,
       points: 20,
@@ -382,9 +425,10 @@ describe('/api/incoming/cms (API test)', () => {
       exclude_codes_commune: '03,04',
       codes_departement: '78',
       codes_region: '25',
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_PARTENAIRE = {
+
+  const CMS_DATA_PARTENAIRE: CMSWebhookAPI = {
     model: CMSModel.partenaire,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -397,11 +441,13 @@ describe('/api/incoming/cms (API test)', () => {
           formats: {
             thumbnail: { url: 'https://haha' },
           },
+          url: '',
         },
       ],
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_FAQ = {
+
+  const CMS_DATA_FAQ: CMSWebhookAPI = {
     model: CMSModel.faq,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -413,9 +459,10 @@ describe('/api/incoming/cms (API test)', () => {
         titre: 'Alimentation',
         code: Thematique.alimentation,
       },
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_BLOCKTEXT = {
+
+  const CMS_DATA_BLOCKTEXT: CMSWebhookAPI = {
     model: CMSModel.text,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -423,9 +470,10 @@ describe('/api/incoming/cms (API test)', () => {
       code: '456',
       titre: 'The titre',
       texte: 'The texte',
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_QUIZZ = {
+
+  const CMS_DATA_QUIZZ: CMSWebhookAPI = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
     entry: {
@@ -441,14 +489,18 @@ describe('/api/incoming/cms (API test)', () => {
             {
               reponse: 'a',
               exact: true,
+              id: 4,
             },
             {
               reponse: 'b',
               exact: false,
+              id: 5,
             },
           ],
+          id: 2,
         },
         {
+          id: 6,
           libelle: '2nd question',
           explicationOk: 'OK_2',
           explicationKO: 'KO_2',
@@ -456,10 +508,12 @@ describe('/api/incoming/cms (API test)', () => {
             {
               reponse: 'c',
               exact: false,
+              id: 7,
             },
             {
               reponse: 'd',
               exact: true,
+              id: 8,
             },
           ],
         },
@@ -487,21 +541,23 @@ describe('/api/incoming/cms (API test)', () => {
         formats: {
           thumbnail: { url: 'https://' },
         },
+        url: '',
       },
       difficulty: 3,
       points: 20,
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       mois: '0,1',
-    },
+    } as CMSWebhookEntryAPI,
   };
-  const CMS_DATA_QUIZZ_UNPUBLISH = {
+
+  const CMS_DATA_QUIZZ_UNPUBLISH: CMSWebhookAPI = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.unpublish'],
     entry: {
       id: 123,
       titre: 'titre',
-      sousTitre: 'soustitre 222',
+      sous_titre: 'soustitre 222',
       thematique_gamification: {
         id: 1,
         titre: 'Alimentation',
@@ -532,8 +588,9 @@ describe('/api/incoming/cms (API test)', () => {
       codes_postaux: '91120,75002',
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       mois: '0,1',
-    },
+    } as unknown as CMSWebhookEntryAPI,
   };
+
   const kycRepository = new KycRepository(TestUtil.prisma);
   const defiRepository = new DefiRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
@@ -777,7 +834,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
     expect(item.conditions).toStrictEqual([
-      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+      [{ id_kyc: 8888, code_kyc: 'KYC06', code_reponse: 'yop' }],
     ]);
   });
   it('POST /api/incoming/cms - updates kyc', async () => {
@@ -828,7 +885,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.thematique).toEqual(Thematique.alimentation);
     expect(item.tags).toEqual([Tag.capacite_physique, Tag.possede_velo]);
     expect(item.conditions).toStrictEqual([
-      [{ id_kyc: 8888, code_kyc: '999', code_reponse: 'yop' }],
+      [{ id_kyc: 8888, code_kyc: 'KYC06', code_reponse: 'yop' }],
     ]);
   });
   it('POST /api/incoming/cms - create a new mission', async () => {
@@ -948,7 +1005,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
-    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
@@ -976,7 +1033,7 @@ describe('/api/incoming/cms (API test)', () => {
     const action = actions[0];
     expect(action.titre).toEqual('titre');
     expect(action.sous_titre).toEqual('sous-titre');
-    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.kyc_codes).toEqual(['KYC03', 'KYC04']);
     expect(action.type).toEqual(TypeAction.bilan);
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
@@ -1059,7 +1116,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
-    expect(action.kyc_ids).toEqual(['3', '4']);
+    expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');

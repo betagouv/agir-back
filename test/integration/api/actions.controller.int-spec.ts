@@ -822,7 +822,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, {
       code: '123',
       type: TypeAction.simulateur,
-      kyc_ids: ['501', '502'],
+      kyc_codes: ['KYC1', 'KYC2'],
     });
     await kycRepository.loadDefinitions();
 
