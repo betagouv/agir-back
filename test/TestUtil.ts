@@ -38,7 +38,7 @@ import { DefiStatus } from '../src/domain/defis/defi';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../src/domain/gamification/feature';
 import { KYCID } from '../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
@@ -487,7 +487,7 @@ export class TestUtil {
       ],
       short_question: 'short',
       image_url: 'URL',
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       emoji: '🎉',
       conditions: [],
 
@@ -560,7 +560,7 @@ export class TestUtil {
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🎉',
           ngc_key: '1223',
           thematique: Thematique.climat,

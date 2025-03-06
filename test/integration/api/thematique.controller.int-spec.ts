@@ -5,7 +5,6 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import {
   KYCHistory_v2,
@@ -38,7 +37,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 

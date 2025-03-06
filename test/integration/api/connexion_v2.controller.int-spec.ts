@@ -1,9 +1,6 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
@@ -439,7 +436,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],

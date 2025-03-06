@@ -812,7 +812,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
-    expect(item.unite).toEqual('kg');
+    expect(item.unite).toEqual({
+      abreviation: 'kg',
+      long: 'kilogramme',
+    });
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
     expect(item.a_supprimer).toEqual(true);
@@ -863,7 +866,10 @@ describe('/api/incoming/cms (API test)', () => {
     expect(item.type).toEqual(TypeReponseQuestionKYC.choix_multiple);
     expect(item.categorie).toEqual(Categorie.mission);
     expect(item.points).toEqual(5);
-    expect(item.unite).toEqual('kg');
+    expect(item.unite).toEqual({
+      abreviation: 'kg',
+      long: 'kilogramme',
+    });
     expect(item.emoji).toEqual('🔥');
     expect(item.is_ngc).toEqual(false);
     expect(item.a_supprimer).toEqual(true);

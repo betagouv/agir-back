@@ -29,7 +29,7 @@ import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { Thematique } from '../domain/thematique/thematique';
 import {
@@ -364,9 +364,12 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
+
+    // PERF: use Promise.all?
     for (let index = 0; index < liste_kyc.length; index++) {
       await this.kycRepository.upsert(liste_kyc[index]);
     }
+
     return loading_result;
   }
 
@@ -619,11 +622,6 @@ export class CMSImportUsecase {
       }
     }
     return url;
-  }
-  private extractUnite(label_unite: string) {
-    if (!label_unite) return null;
-    const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
-    return unite ? unite : null;
   }
 
   private buildPartenaireFromCMSPopulateData(
@@ -954,7 +952,7 @@ export class CMSImportUsecase {
       categorie: Categorie[entry.attributes.categorie],
       emoji: entry.attributes.emoji,
       points: entry.attributes.points,
-      unite: this.extractUnite(entry.attributes.unite),
+      unite: parseUnite(entry.attributes.unite),
       is_ngc: entry.attributes.is_ngc,
       a_supprimer: !!entry.attributes.A_SUPPRIMER,
       ngc_key: entry.attributes.ngc_key,

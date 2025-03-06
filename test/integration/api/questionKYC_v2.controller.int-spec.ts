@@ -11,7 +11,6 @@ import {
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -67,7 +66,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 
@@ -84,7 +83,7 @@ const KYC_DB_DATA: KYC = {
   short_question: 'short',
   tags: ['A'],
   thematique: Thematique.dechet,
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   type: TypeReponseQuestionKYC.choix_multiple,
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
@@ -201,7 +200,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, dbKYC);
@@ -242,6 +241,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       selected: true,
     });
   });
+
   it('GET /utilisateurs/id/questionsKYC_v2 - liste N questions', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -296,7 +296,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -363,7 +363,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           label: 'short',
           selected: false,
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
         },
         {
           code: '_2',
@@ -371,7 +371,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           label: 'short',
           selected: false,
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
         },
       ],
       categorie: 'test',
@@ -442,7 +442,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🎉',
           ngc_key: '1223',
           thematique: Thematique.climat,
@@ -469,7 +469,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       short_question: 'short',
       tags: ['A'],
       thematique: Thematique.dechet,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_multiple,
       question: `Quel est votre sujet principal d'intéret ?`,
       reponses: [
@@ -1325,7 +1325,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
@@ -1402,7 +1402,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             image_url: 'BBB',
             label: 'short 2',
             emoji: '🔥',
-            unite: 'kg',
+            unite: { abreviation: 'kg' },
             selected: false,
           },
           {
@@ -1410,7 +1410,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             image_url: 'CCC',
             label: 'short 3',
             emoji: '🔥',
-            unite: 'kg',
+            unite: { abreviation: 'kg' },
             selected: false,
           },
         ],
@@ -1548,6 +1548,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_answered: false,
     });
   });
+
   it(`GET /utilisateurs/id/questionsKYC_V2/question - renvoie la question unique depuis catalogue seul`, async () => {
     // GIVEN
     const kyc: KYCHistory_v2 = {
@@ -1575,7 +1576,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
-      reponse_unique: { unite: 'kg' },
+      reponse_unique: {
+        unite: { abreviation: 'kg' },
+      },
       categorie: 'mission',
       points: 123,
       type: 'entier',
@@ -1737,7 +1740,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],

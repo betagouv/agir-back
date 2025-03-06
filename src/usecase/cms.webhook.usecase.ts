@@ -16,7 +16,7 @@ import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { DefiDefinition } from '../domain/defis/defiDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import {
   MissionDefinition,
   ObjectifDefinition,
@@ -587,7 +587,7 @@ export class CMSWebhookUsecase {
       ngc_key: entry.ngc_key,
       points: entry.points,
       emoji: entry.emoji,
-      unite: this.extractUnite(entry.unite),
+      unite: parseUnite(entry.unite),
       question: entry.question,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
@@ -617,12 +617,6 @@ export class CMSWebhookUsecase {
           )
         : [],
     };
-  }
-
-  private extractUnite(label_unite: string) {
-    if (!label_unite) return null;
-    const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
-    return unite ? unite : null;
   }
 
   private buildMissionFromCMSData(

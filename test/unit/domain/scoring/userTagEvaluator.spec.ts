@@ -1,14 +1,11 @@
-import { ApplicativePonderationSetName } from '../../../../src/domain/scoring/ponderationApplicative';
-import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../../src/domain/kyc/questionKYC';
-import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { ApplicativePonderationSetName } from '../../../../src/domain/scoring/ponderationApplicative';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('UseragEvaluator', () => {
@@ -55,7 +52,7 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
-        unite: Unite.kg,
+        unite: { abreviation: 'kg' },
         emoji: '🔥',
       }),
     ]);
@@ -106,7 +103,7 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
-        unite: Unite.kg,
+        unite: { abreviation: 'kg' },
         emoji: '🔥',
       }),
     ]);
@@ -168,7 +165,7 @@ describe('UseragEvaluator', () => {
         short_question: 'short',
         image_url: 'AAA',
         conditions: [],
-        unite: Unite.kg,
+        unite: { abreviation: 'kg' },
         emoji: '🔥',
       }),
     ]);

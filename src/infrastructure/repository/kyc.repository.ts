@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { KYC } from '@prisma/client';
-import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../../domain/kyc/questionKYC';
-import { Thematique } from '../../domain/thematique/thematique';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Cron } from '@nestjs/schedule';
+import { KYC } from '@prisma/client';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KycDefinition } from '../../../src/domain/kyc/kycDefinition';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class KycRepository {
@@ -105,7 +105,12 @@ export class KycRepository {
       short_question: kycDB.short_question,
       image_url: kycDB.image_url,
       conditions: kycDB.conditions as any,
-      unite: Unite[kycDB.unite],
+      unite: kycDB.unite
+        ? {
+            abreviation: kycDB.unite['abreviation'],
+            long: kycDB.unite['long'],
+          }
+        : undefined,
       emoji: kycDB.emoji,
       a_supprimer: kycDB.a_supprimer,
     });
