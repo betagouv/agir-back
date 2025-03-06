@@ -99,7 +99,7 @@ export class QuestionKYCUsecase {
     ENCHAINEMENT_KYC_personnalisation_transport: [
       KYCID.KYC_transport_avion_3_annees,
       KYCID.KYC003,
-      KYCID.KYC008,
+      KYCID.KYC009,
       KYCID.KYC_transport_voiture_thermique_carburant,
     ],
     ENCHAINEMENT_KYC_personnalisation_logement: [
