@@ -64,8 +64,6 @@ export class InscriptionUsecase {
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
-    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     if (utilisateurInput.situation_ngc_id) {
       await this.external_inject_situation_to_user_kycs(
         utilisateurToCreate,
@@ -133,6 +131,8 @@ export class InscriptionUsecase {
     utilisateurToCreate: Utilisateur,
     situation_ngc_id: string,
   ) {
+    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
     utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
 
     const situation = await this.situationNGCRepository.getSituationNGCbyId(
