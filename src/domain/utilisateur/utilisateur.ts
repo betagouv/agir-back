@@ -136,11 +136,11 @@ export class Utilisateur extends UtilisateurData {
     source_inscription: SourceInscription,
   ): Utilisateur {
     return new Utilisateur({
+      id: uuidv4(),
       pseudo: null,
       nom: null,
       prenom: null,
       email: email,
-      id: uuidv4(),
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,

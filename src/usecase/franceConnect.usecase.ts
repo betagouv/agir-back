@@ -10,6 +10,7 @@ import { OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { InscriptionUsecase } from './inscription.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -19,6 +20,7 @@ export class FranceConnectUsecase {
     private passwordManager: PasswordManager,
     private oIDCStateRepository: OIDCStateRepository,
     private tokenRepository: TokenRepository,
+    private inscriptionUsecase: InscriptionUsecase,
   ) {}
 
   async genererConnexionFranceConnect(): Promise<URL> {
@@ -35,6 +37,7 @@ export class FranceConnectUsecase {
   async connecterOuInscrire(
     oidc_state: string,
     oidc_code: string,
+    situation_ngc_id?: string,
   ): Promise<{
     token: string;
     utilisateur: Utilisateur;
@@ -113,6 +116,13 @@ export class FranceConnectUsecase {
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
     new_utilisateur.france_connect_sub = user_info.sub;
+
+    if (situation_ngc_id) {
+      await this.inscriptionUsecase.external_inject_situation_to_user_kycs(
+        new_utilisateur,
+        situation_ngc_id,
+      );
+    }
 
     await this.utilisateurRepository.createUtilisateur(new_utilisateur);
 

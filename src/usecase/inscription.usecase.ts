@@ -67,36 +67,10 @@ export class InscriptionUsecase {
     utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
     if (utilisateurInput.situation_ngc_id) {
-      utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
-
-      const situation = await this.situationNGCRepository.getSituationNGCbyId(
+      await this.external_inject_situation_to_user_kycs(
+        utilisateurToCreate,
         utilisateurInput.situation_ngc_id,
       );
-      if (situation) {
-        await this.situationNGCRepository.setUtilisateurIdToSituation(
-          utilisateurToCreate.id,
-          utilisateurInput.situation_ngc_id,
-        );
-
-        utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
-          KYCID.KYC_bilan,
-          BooleanKYC.oui,
-        );
-        const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
-          situation.situation as any,
-          utilisateurToCreate,
-        );
-
-        utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
-
-        if (updated_keys.length > 0) {
-          console.log(
-            `Updated NGC kycs for ${
-              utilisateurInput.email
-            } : ${updated_keys.join('|')}`,
-          );
-        }
-      }
     }
 
     await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
@@ -153,6 +127,42 @@ export class InscriptionUsecase {
       utilisateur,
       okAction,
     );
+  }
+
+  async external_inject_situation_to_user_kycs(
+    utilisateurToCreate: Utilisateur,
+    situation_ngc_id: string,
+  ) {
+    utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
+
+    const situation = await this.situationNGCRepository.getSituationNGCbyId(
+      situation_ngc_id,
+    );
+    if (situation) {
+      await this.situationNGCRepository.setUtilisateurIdToSituation(
+        utilisateurToCreate.id,
+        situation_ngc_id,
+      );
+
+      utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
+        KYCID.KYC_bilan,
+        BooleanKYC.oui,
+      );
+      const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
+        situation.situation as any,
+        utilisateurToCreate,
+      );
+
+      utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
+
+      if (updated_keys.length > 0) {
+        console.log(
+          `Updated NGC kycs for ${
+            utilisateurToCreate.email
+          } : ${updated_keys.join('|')}`,
+        );
+      }
+    }
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {
