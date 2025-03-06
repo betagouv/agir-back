@@ -57,7 +57,7 @@ export class FranceConnectController extends GenericControler {
 
   @ApiOperation({
     summary:
-      'finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
+      'Finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
   })
   @Post('login_france_connect_step_2')
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
