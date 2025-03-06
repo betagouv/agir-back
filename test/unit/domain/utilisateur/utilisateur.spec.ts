@@ -1,17 +1,16 @@
+import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import {
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../../../../src/domain/kyc/questionKYC';
+import { Logement } from '../../../../src/domain/logement/logement';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
-import { Logement } from '../../../../src/domain/logement/logement';
-import {
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../../src/domain/kyc/questionKYC';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 const KYC = {
   code: KYCID.KYC007,
@@ -42,7 +41,7 @@ const KYC = {
   short_question: 'short',
   image_url: 'https://',
   conditions: [],
-  unite: Unite.euro,
+  unite: { abreviation: 'euro' },
   emoji: '🔥',
   reponse_simple: undefined,
   thematique: Thematique.alimentation,
@@ -170,7 +169,7 @@ describe('Objet Utilisateur', () => {
       short_question: 'short',
       image_url: 'https://',
       conditions: [],
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       emoji: '🔥',
       reponse_simple: undefined,
       thematique: Thematique.alimentation,

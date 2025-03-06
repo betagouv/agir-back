@@ -26,12 +26,45 @@ export enum BooleanKYC {
   non = 'non',
 }
 
-export enum Unite {
-  kg = 'kg',
-  g = 'l',
-  km = 'km',
-  l = 'l',
-  euro = 'euro',
+/**
+ * @example
+ * // CMS string: 'kg (kilogramme)'
+ * { abreviation: 'kg', long: 'kilogramme'}
+ *
+ * // CMS string: '€/kWh (euro par kilowattheure)'
+ * { abreviation: '€/kWh', long: 'euro par kilowattheure'}
+ *
+ * // CMS string: 'kg'
+ * { abreviation: 'kg' }
+ */
+export type Unite = {
+  abreviation: string;
+  long?: string;
+};
+
+/**
+ * @example
+ * extractUnite('kg (kilogramme)') === { abreviation: 'kg', long: 'kilogramme'}
+ * extractUnite('€/kWh (euro par kilowattheure)') === { abreviation: '€/kWh', long: 'euro par kilowattheure'}
+ * extractUnite('kg') === { abreviation: 'kg' }
+ * extractUnite() === null
+ */
+export function parseUnite(label_unite: string | undefined): Unite | null {
+  if (!label_unite) {
+    return null;
+  }
+
+  const space_index = label_unite.indexOf(' ');
+
+  return space_index === -1
+    ? { abreviation: label_unite }
+    : {
+        abreviation: label_unite.substring(0, space_index),
+        long: label_unite
+          .substring(space_index + 1)
+          .replace(/^\(/, '')
+          .replace(/\)$/, ''),
+      };
 }
 
 export class KYCReponse {

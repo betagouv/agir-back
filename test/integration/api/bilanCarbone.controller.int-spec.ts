@@ -3,10 +3,7 @@ import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
 import {
   KYCHistory_v2,
@@ -53,7 +50,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   image_url: '111',
   short_question: 'short',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
   reponse_simple: undefined,
   thematique: Thematique.alimentation,
@@ -475,7 +472,7 @@ describe('/bilan (API test)', () => {
           image_url: '111',
           short_question: 'short',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
           reponse_simple: undefined,
           thematique: Thematique.alimentation,
@@ -521,7 +518,7 @@ describe('/bilan (API test)', () => {
           image_url: '111',
           short_question: 'short',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
           thematique: Thematique.alimentation,
           reponse_simple: undefined,
@@ -546,7 +543,7 @@ describe('/bilan (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       is_ngc: true,
       a_supprimer: false,
@@ -1183,7 +1180,7 @@ describe('/bilan (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       is_ngc: true,
       a_supprimer: false,
@@ -1275,7 +1272,7 @@ describe('/bilan (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       is_ngc: true,
       a_supprimer: false,
@@ -1378,7 +1375,7 @@ describe('/bilan (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       is_ngc: true,
       a_supprimer: false,
@@ -1400,7 +1397,7 @@ describe('/bilan (API test)', () => {
       image_url: '111',
       short_question: 'short',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       is_ngc: true,
       a_supprimer: false,

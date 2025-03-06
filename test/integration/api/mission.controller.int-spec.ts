@@ -4,11 +4,9 @@ import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -145,58 +143,7 @@ describe('Mission (API test)', () => {
       },
     ],
   };
-  const mission_avec_mosaic: MissionsUtilisateur_v1 = {
-    version: 1,
-    missions: [
-      {
-        id: '1',
-        done_at: null,
-        code: CodeMission.cereales,
-        image_url: 'image',
-        thematique: Thematique.alimentation,
-        titre: 'titre',
-        introduction: 'intro',
-        is_first: true,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '_1',
-            type: ContentType.kyc,
-            titre: '1 question pour vous',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-          {
-            id: '1',
-            content_id: KYCMosaicID.TEST_MOSAIC_ID,
-            type: ContentType.mosaic,
-            titre: 'Mosaic pour vous',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-          {
-            id: '2',
-            content_id: '_3',
-            type: ContentType.kyc,
-            titre: 'Dernière question',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-        ],
-        est_visible: true,
-        est_examen: false,
-      },
-    ],
-  };
+
   const missions_kyc_done: MissionsUtilisateur_v1 = {
     version: 1,
     missions: [
@@ -1603,7 +1550,7 @@ describe('Mission (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],

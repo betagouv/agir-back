@@ -7,13 +7,27 @@ import {
   Unite,
 } from '../../../../domain/kyc/questionKYC';
 
+export class UniteAPI {
+  @ApiProperty({}) abreviation: string;
+  @ApiProperty({ required: false }) long?: string;
+
+  public static mapToAPI(unite: Unite | undefined): UniteAPI | undefined {
+    if (unite) {
+      return {
+        abreviation: unite.abreviation,
+        long: unite.long,
+      };
+    }
+  }
+}
+
 export class ReponseUniqueAPI {
   @ApiProperty() value: string;
-  @ApiProperty({ enum: Unite, required: false }) unite: Unite;
+  @ApiProperty({ type: UniteAPI, required: false }) unite?: Unite;
 
   public static mapToAPI(reponse: KYCReponseSimple): ReponseUniqueAPI {
     return {
-      unite: reponse.unite,
+      unite: UniteAPI.mapToAPI(reponse.unite),
       value: reponse.value,
     };
   }
@@ -25,7 +39,7 @@ export class ReponseMultipleAPI {
   @ApiProperty({ required: false }) selected?: boolean;
   @ApiProperty({ required: false }) emoji?: string;
   @ApiProperty({ required: false }) image_url?: string;
-  @ApiProperty({ enum: Unite, required: false }) unite?: Unite;
+  @ApiProperty({ type: UniteAPI, required: false }) unite?: UniteAPI;
 }
 
 export class QuestionKYCAPI_v2 {
@@ -76,7 +90,7 @@ export class QuestionKYCAPI_v2 {
     if (question.isSimpleQuestion()) {
       result.reponse_unique = {
         value: question.getReponseSimpleValue(),
-        unite: question.getReponseSimpleUnite(),
+        unite: UniteAPI.mapToAPI(question.getReponseSimpleUnite()),
       };
     } else if (question.isChoixQuestion()) {
       result.reponse_multiple = question
@@ -95,7 +109,7 @@ export class QuestionKYCAPI_v2 {
             label: r.label,
             emoji: r.emoji,
             image_url: r.image_url,
-            unite: r.unite,
+            unite: UniteAPI.mapToAPI(r.unite),
           };
           if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
             return {

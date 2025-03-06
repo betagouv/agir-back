@@ -4,10 +4,7 @@ import { DefiStatus } from '../../../src/domain/defis/defi';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
@@ -58,7 +55,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 describe('Admin (API test)', () => {
@@ -2708,7 +2705,7 @@ describe('Admin (API test)', () => {
           points: 10,
           tags: [],
           reponse_simple: {
-            unite: Unite.km,
+            unite: { abreviation: 'kg' },
             value: '123',
           },
           conditions: [],
