@@ -12,11 +12,16 @@ export class OIDCStateRepository {
     }
   }
 
-  async createNewState(state_id: string, nonce: string) {
+  async createNewState(
+    state_id: string,
+    nonce: string,
+    situation_ngc_id?: string,
+  ) {
     return this.prisma.oIDC_STATE.create({
       data: {
         state: state_id,
         nonce: nonce,
+        situation_ngc_id: situation_ngc_id,
       },
     });
   }

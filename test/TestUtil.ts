@@ -423,6 +423,7 @@ export class TestUtil {
       idtoken: '456',
       utilisateurId: 'utilisateur-id',
       nonce: '789',
+      situation_ngc_id: '94cfcd83-487c-4e7a-b944-d38165eb36e5',
       created_at: undefined,
       updated_at: undefined,
       ...override,

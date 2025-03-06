@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Query,
   Redirect,
   Request,
@@ -37,9 +38,17 @@ export class FranceConnectController extends GenericControler {
     summary:
       'Initie une redirection vers France Connect pour processus de connexion',
   })
-  async login() {
+  @ApiQuery({
+    name: 'situation_ngc_id',
+    type: String,
+    required: false,
+    description: `id d'une situation NGC en attente de liaison avec le futur compte utilisateur`,
+  })
+  async login(@Query('situation_ngc_id') situation_ngc_id: string) {
     const redirect_url =
-      await this.franceConnectUsecase.genererConnexionFranceConnect();
+      await this.franceConnectUsecase.genererConnexionFranceConnect(
+        situation_ngc_id,
+      );
     return { url: redirect_url };
   }
 
@@ -59,27 +68,18 @@ export class FranceConnectController extends GenericControler {
     required: true,
     description: `token technique pour protéger le flux de connexion`,
   })
-  @ApiQuery({
-    name: 'situation_ngc_id',
-    type: String,
-    required: false,
-    description: `id d'une situation NGC en attente de liaison avec le futur compte utilisateur`,
-  })
-  @Get('login_france_connect_step_2')
+  @Post('login_france_connect_step_2')
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
   async login_callback(
     @Query('oidc_code') oidc_code: string,
     @Query('oidc_state') oidc_state: string,
-    @Query('situation_ngc_id') situation_ngc_id: string,
   ): Promise<LoggedUtilisateurAPI> {
     console.log(`oidc_code : [${oidc_code}]`);
     console.log(`oidc_state : [${oidc_state}]`);
-    console.log(`situation_ngc_id : [${situation_ngc_id}]`);
 
     const user_data = await this.franceConnectUsecase.connecterOuInscrire(
       oidc_state,
       oidc_code,
-      situation_ngc_id,
     );
 
     return LoggedUtilisateurAPI.mapToAPI(

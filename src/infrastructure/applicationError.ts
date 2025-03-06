@@ -631,6 +631,10 @@ export class ApplicationError {
     this.throwAppError('068', `Le pseudo ne doit contenir que des lettres`);
   }
 
+  static throwBadSituationID(id: string) {
+    this.throwAppError('068', `L'id de situation ${id} ne semble pas correct`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,
