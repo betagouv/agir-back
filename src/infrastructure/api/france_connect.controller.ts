@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -9,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -19,6 +21,7 @@ import { AuthGuard } from '../auth/guard';
 import { OidcService } from '../auth/oidc.service';
 import { OIDCStateRepository } from '../repository/oidcState.repository';
 import { GenericControler } from './genericControler';
+import { CodeStateAPI } from './types/utilisateur/CodeStateAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 
 @Controller()
@@ -56,30 +59,20 @@ export class FranceConnectController extends GenericControler {
     summary:
       'finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
   })
-  @ApiQuery({
-    name: 'oidc_code',
-    type: String,
-    required: true,
-    description: `code OIDC pour finalisation connexion/inscription`,
-  })
-  @ApiQuery({
-    name: 'oidc_state',
-    type: String,
-    required: true,
-    description: `token technique pour protéger le flux de connexion`,
-  })
   @Post('login_france_connect_step_2')
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
+  @ApiBody({
+    type: CodeStateAPI,
+  })
   async login_callback(
-    @Query('oidc_code') oidc_code: string,
-    @Query('oidc_state') oidc_state: string,
+    @Body() body: CodeStateAPI,
   ): Promise<LoggedUtilisateurAPI> {
-    console.log(`oidc_code : [${oidc_code}]`);
-    console.log(`oidc_state : [${oidc_state}]`);
+    console.log(`oidc_code : [${body.oidc_code}]`);
+    console.log(`oidc_state : [${body.oidc_state}]`);
 
     const user_data = await this.franceConnectUsecase.connecterOuInscrire(
-      oidc_state,
-      oidc_code,
+      body.oidc_state,
+      body.oidc_code,
     );
 
     return LoggedUtilisateurAPI.mapToAPI(
