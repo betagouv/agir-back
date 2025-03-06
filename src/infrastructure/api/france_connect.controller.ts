@@ -21,7 +21,7 @@ import { AuthGuard } from '../auth/guard';
 import { OidcService } from '../auth/oidc.service';
 import { OIDCStateRepository } from '../repository/oidcState.repository';
 import { GenericControler } from './genericControler';
-import { CodeStateAPI } from './types/utilisateur/CodeStateAPI';
+import { CodeStateInputAPI } from './types/utilisateur/codeStateInputAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 
 @Controller()
@@ -62,10 +62,10 @@ export class FranceConnectController extends GenericControler {
   @Post('login_france_connect_step_2')
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiBody({
-    type: CodeStateAPI,
+    type: CodeStateInputAPI,
   })
   async login_callback(
-    @Body() body: CodeStateAPI,
+    @Body() body: CodeStateInputAPI,
   ): Promise<LoggedUtilisateurAPI> {
     console.log(`oidc_code : [${body.oidc_code}]`);
     console.log(`oidc_state : [${body.oidc_state}]`);
