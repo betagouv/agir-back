@@ -232,6 +232,8 @@ model Action {
   type                String   @default("classique")
   titre               String
   sous_titre          String?
+  consigne            String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
+  label_compteur      String   @default("**453 actions** réalisées par la communauté")
   quizz_felicitations String?
   pourquoi            String?
   comment             String?
@@ -402,25 +404,25 @@ model Mission {
 }
 
 model KYC {
-  id_cms           Int      @unique
-  code             String   @unique
-  type             String
-  categorie        String
-  points           Int
-  is_ngc           Boolean
-  a_supprimer      Boolean  @default(false)
-  ngc_key          String?
-  question         String
-  short_question   String?
-  reponses         Json     @default("{}")
-  thematique       String
-  tags             String[] @default([])
-  image_url        String?
-  unite            Json? // { abreviation: string, long?: string };
-  emoji            String?
-  conditions       Json     @default("[]")
-  created_at       DateTime @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms         Int      @unique
+  code           String   @unique
+  type           String
+  categorie      String
+  points         Int
+  is_ngc         Boolean
+  a_supprimer    Boolean  @default(false)
+  ngc_key        String?
+  question       String
+  short_question String?
+  reponses       Json     @default("{}")
+  thematique     String
+  tags           String[] @default([])
+  image_url      String?
+  unite          Json? // { abreviation: string, long?: string };
+  emoji          String?
+  conditions     Json     @default("[]")
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Conformite {

@@ -70,6 +70,8 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
       besoins: action.besoins,
@@ -226,6 +228,8 @@ export class ActionRepository {
       quizz_felicitations: action.quizz_felicitations,
       tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
       faq_ids: action.faq_ids,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
     });
   }
 }

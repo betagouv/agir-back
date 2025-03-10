@@ -906,6 +906,12 @@ export class CMSImportUsecase {
       code: entry.attributes.code,
       titre: entry.attributes.titre,
       sous_titre: entry.attributes.sous_titre,
+      consigne:
+        entry.attributes.consigne ||
+        'Réalisez cette action dans les prochaines semaines et partagez vos retours',
+      label_compteur:
+        entry.attributes.label_compteur ||
+        '**453 actions** réalisées par la communauté',
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       quizz_felicitations: entry.attributes.felicitations,

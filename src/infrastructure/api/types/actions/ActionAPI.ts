@@ -76,6 +76,8 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() consigne: string;
+  @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
   @ApiProperty() quizz_felicitations: string;
@@ -103,10 +105,12 @@ export class ActionAPI {
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: Math.round(Math.random() * 1000),
-      nombre_aides_disponibles: Math.round(Math.random() * 10),
+      nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,
       sous_titre: action.sous_titre,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
       besoins: action.besoins,
       comment: action.comment,
       pourquoi: action.pourquoi,

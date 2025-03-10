@@ -491,6 +491,8 @@ export class CMSWebhookUsecase {
       cms_id: entry.id.toString(),
       titre: entry.titre,
       sous_titre: entry.sous_titre,
+      consigne: entry.consigne,
+      label_compteur: entry.label_compteur,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
       quizz_felicitations: entry.felicitations,

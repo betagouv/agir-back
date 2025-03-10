@@ -13,6 +13,8 @@ export class ActionDefinitionData {
   code: string;
   titre: string;
   sous_titre: string;
+  consigne: string;
+  label_compteur: string;
   quizz_felicitations: string;
   besoins: string[];
   comment: string;

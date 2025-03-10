@@ -525,6 +525,8 @@ describe('Actions (API test)', () => {
     expect(action.comment).toEqual('Astuces');
     expect(action.pourquoi).toEqual('En quelques mots');
     expect(action.titre).toEqual('The titre');
+    expect(action.consigne).toEqual('consigne');
+    expect(action.label_compteur).toEqual('label_compteur');
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.quizz_felicitations).toEqual('bien');
     expect(action.thematique).toEqual(Thematique.consommation);
@@ -683,6 +685,54 @@ describe('Actions (API test)', () => {
 
     expect(action.aides).toHaveLength(2);
     expect(action.nom_commune).toEqual('Dijon');
+  });
+
+  it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    delete response.body.nombre_actions_en_cours;
+
+    expect(response.body).toEqual({
+      aides: [],
+      besoins: ['composter'],
+      code: '123',
+      comment: 'Astuces',
+      consigne: 'consigne',
+      deja_faite: false,
+      deja_vue: false,
+      faqs: [],
+      kycs: [],
+      label_compteur: 'label_compteur',
+      nom_commune: 'Dijon',
+      nombre_aides_disponibles: 0,
+      pourquoi: 'En quelques mots',
+      quizz_felicitations: 'bien',
+      quizzes: [],
+      services: [
+        {
+          categorie: 'dinde_volaille',
+          recherche_service_id: 'recettes',
+        },
+        {
+          categorie: 'emprunter',
+          recherche_service_id: 'longue_vie_objets',
+        },
+      ],
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+    });
   });
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {

@@ -397,6 +397,8 @@ export class TestUtil {
       cms_id: '111',
       titre: 'The titre',
       sous_titre: 'Sous titre',
+      consigne: 'consigne',
+      label_compteur: 'label_compteur',
       code: 'code_fonct',
       besoins: [],
       comment: 'Astuces',

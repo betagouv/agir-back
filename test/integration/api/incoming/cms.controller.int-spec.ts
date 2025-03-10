@@ -82,6 +82,8 @@ describe('/api/incoming/cms (API test)', () => {
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       titre: 'titre',
       sous_titre: 'sous-titre',
+      consigne: 'Faites rapidement',
+      label_compteur: 'tout le monde a déjà fait !',
       pourquoi: 'pourquoi',
       felicitations: 'Bravo !!',
       comment: 'comment',
@@ -1006,6 +1008,9 @@ describe('/api/incoming/cms (API test)', () => {
     const action = actions[0];
     expect(action.titre).toEqual('titre');
     expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.consigne).toEqual('Faites rapidement');
+    expect(action.label_compteur).toEqual('tout le monde a déjà fait !');
+
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
