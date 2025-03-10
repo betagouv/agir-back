@@ -908,4 +908,148 @@ describe('Thematique (API test)', () => {
       user.thematique_history.getActionsExclues(Thematique.alimentation),
     ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
   });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste et en piochant une nouvelle action`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    // WHEN
+    await TestUtil.prisma.action.delete({
+      where: {
+        type_code_id: 'classique_' + 3,
+      },
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // THEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(6);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
+    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
+    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
+    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
+    expect(response.body.liste_actions_recommandees[5].code).toEqual('7');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+      { type: TypeAction.classique, code: '7' },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste, place vide si plus d'actions`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
+          personnalisation_done: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 6; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    // WHEN
+    await TestUtil.prisma.action.delete({
+      where: {
+        type_code_id: 'classique_' + 3,
+      },
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // THEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(5);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
+    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
+    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
+    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
+  });
 });

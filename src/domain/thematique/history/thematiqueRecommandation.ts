@@ -70,6 +70,11 @@ export class ThematiqueRecommandation {
       this.actions_proposees.splice(position, 1);
     }
   }
+  public appendAction(action: TypeCodeAction) {
+    if (this.actions_proposees.length < 6) {
+      this.actions_proposees.push(action);
+    }
+  }
 
   public extractActionsAProposer(actions: Action[]): Action[] {
     const result: Action[] = [];
