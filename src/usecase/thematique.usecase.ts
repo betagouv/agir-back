@@ -89,9 +89,10 @@ export class ThematiqueUsecase {
         type_codes_inclus: history.getActionsProposees(thema),
       });
       for (const action_proposee of history.getActionsProposees(thema)) {
-        detail_a_remplir.liste_actions.push(
-          actions.find((a) => a.equals(action_proposee)),
-        );
+        const action_cible = actions.find((a) => a.equals(action_proposee));
+        if (action_cible) {
+          detail_a_remplir.liste_actions.push(action_cible);
+        }
       }
     } else {
       actions = await this.getActionEligiblesUtilisateur(utilisateur, {
