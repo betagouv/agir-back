@@ -1678,6 +1678,125 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     );
   });
 
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - champ integer de type integer', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.entier,
+      points: 10,
+      question: 'Combien de litres ?',
+      reponses: [],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: 'haha',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `L'attribut 'value' doit être de type entier, reçu : [haha]`,
+    );
+  });
+
+  it(`PUT /utilisateurs/id/questionsKYC_v2/1 - champ decimal avec separateur '.' et ','`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.decimal,
+      points: 10,
+      question: 'Combien de litres ?',
+      reponses: [],
+    });
+    await kycRepository.loadDefinitions();
+
+    // WHEN
+    let response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '2.3',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '2,3',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.kyc_history
+        .getAnsweredQuestionByCode('_1')
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(2.3);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '123',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: 'hoho',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+
+    expect(response.body.message).toBe(
+      `L'attribut 'value' doit être de type decimal, reçu : [hoho]`,
+    );
+  });
+
   it(`PUT /utilisateurs/id/questionsKYC_v2/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
     // GIVEN
     const missions_article_plus_defi: MissionsUtilisateur_v1 = {

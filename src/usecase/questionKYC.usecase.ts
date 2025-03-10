@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import validator from 'validator';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
@@ -403,16 +404,24 @@ export class QuestionKYCUsecase {
     if (!input_reponse_payload[0].value) {
       ApplicationError.throwMissingValue(question_to_update.code);
     }
-    if (question_to_update.isChampLibre()) {
-      if (input_reponse_payload[0].value.length > FIELD_MAX_LENGTH) {
-        ApplicationError.throwTooBigData(
-          'value',
-          input_reponse_payload[0].value,
-          FIELD_MAX_LENGTH,
-        );
-      }
+
+    const input = input_reponse_payload[0].value;
+
+    if (input.length > FIELD_MAX_LENGTH) {
+      ApplicationError.throwTooBigData('value', input, FIELD_MAX_LENGTH);
     }
-    question_to_update.setReponseSimpleValue(input_reponse_payload[0].value);
+    if (question_to_update.isChampEntier()) {
+      if (!validator.isInt('' + input))
+        ApplicationError.throwKycNoInteger(input);
+    }
+    if (question_to_update.isChampDecimal()) {
+      const alt_decimal = input.replace(',', '.');
+      if (!validator.isDecimal('' + alt_decimal))
+        ApplicationError.throwKycNoDecimal(input);
+      question_to_update.setReponseSimpleValue(alt_decimal);
+      return;
+    }
+    question_to_update.setReponseSimpleValue(input);
   }
   private updateQuestionChoixUnique(
     question_to_update: QuestionKYC,

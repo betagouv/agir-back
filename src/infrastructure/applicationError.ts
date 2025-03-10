@@ -622,17 +622,29 @@ export class ApplicationError {
   }
   static throwMajPrenomImpossibleFC() {
     this.throwAppError(
-      '116',
+      '117',
       `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
     );
   }
 
   static throwNotAlhpaPseudo() {
-    this.throwAppError('068', `Le pseudo ne doit contenir que des lettres`);
+    this.throwAppError('118', `Le pseudo ne doit contenir que des lettres`);
   }
 
   static throwBadSituationID(id: string) {
-    this.throwAppError('068', `L'id de situation ${id} ne semble pas correct`);
+    this.throwAppError('119', `L'id de situation ${id} ne semble pas correct`);
+  }
+  static throwKycNoInteger(value: string) {
+    this.throwAppError(
+      '120',
+      `L'attribut 'value' doit être de type entier, reçu : [${value}]`,
+    );
+  }
+  static throwKycNoDecimal(value: string) {
+    this.throwAppError(
+      '121',
+      `L'attribut 'value' doit être de type decimal, reçu : [${value}]`,
+    );
   }
 
   private static throwAppError(

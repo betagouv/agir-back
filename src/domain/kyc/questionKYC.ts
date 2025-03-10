@@ -335,6 +335,12 @@ export class QuestionKYC implements TaggedContent {
   public isChampLibre(): boolean {
     return this.type === TypeReponseQuestionKYC.libre;
   }
+  public isChampEntier(): boolean {
+    return this.type === TypeReponseQuestionKYC.entier;
+  }
+  public isChampDecimal(): boolean {
+    return this.type === TypeReponseQuestionKYC.decimal;
+  }
   public isChoixMultiple(): boolean {
     return this.type === TypeReponseQuestionKYC.choix_multiple;
   }
