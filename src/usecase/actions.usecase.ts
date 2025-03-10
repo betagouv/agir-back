@@ -51,7 +51,7 @@ export class ActionUsecase {
       titre_fragment: titre,
     });
 
-    let result = new CatalogueAction();
+    let catalogue = new CatalogueAction();
     let commune: Commune;
     if (code_commune) {
       commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
@@ -70,7 +70,7 @@ export class ActionUsecase {
         });
         const action = new Action(action_def);
         action.nombre_aides = count_aides;
-        result.actions.push(action);
+        catalogue.actions.push(action);
       }
     } else {
       for (const action_def of liste_actions) {
@@ -81,13 +81,18 @@ export class ActionUsecase {
         });
         const action = new Action(action_def);
         action.nombre_aides = count_aides;
-        result.actions.push(action);
+        catalogue.actions.push(action);
       }
     }
 
-    this.setFiltreThematiqueToCatalogue(result, filtre_thematiques);
+    this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
-    return result;
+    for (const action of catalogue.actions) {
+      action.nombre_actions_faites =
+        this.compteurActionsRepository.getNombreFaites(action);
+    }
+
+    return catalogue;
   }
 
   async getUtilisateurCatalogue(
@@ -113,6 +118,11 @@ export class ActionUsecase {
     this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
     this.filtreParConsultation(catalogue, consultation, utilisateur);
+
+    for (const action of catalogue.actions) {
+      action.nombre_actions_faites =
+        this.compteurActionsRepository.getNombreFaites(action);
+    }
 
     return catalogue;
   }
@@ -228,9 +238,12 @@ export class ActionUsecase {
     action.setListeAides(linked_aides);
     action.services = liste_services;
 
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
+
     action.label_compteur = action.label_compteur.replace(
       '{NBR_ACTIONS}',
-      '' + this.compteurActionsRepository.getNombreFaites(action),
+      '' + nbr_faites,
     );
 
     return action;
@@ -333,9 +346,11 @@ export class ActionUsecase {
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);
     action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
     action.label_compteur = action.label_compteur.replace(
       '{NBR_ACTIONS}',
-      '' + this.compteurActionsRepository.getNombreFaites(action),
+      '' + nbr_faites,
     );
 
     utilisateur.thematique_history.setActionCommeVue(action);

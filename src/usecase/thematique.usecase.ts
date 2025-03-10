@@ -7,6 +7,7 @@ import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { Enchainement } from './questionKYC.usecase';
@@ -26,6 +27,7 @@ export class ThematiqueUsecase {
     private actionUsecase: ActionUsecase,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
+    private compteurActionsRepository: CompteurActionsRepository,
     private thematiqueBoardUsecase: ThematiqueBoardUsecase,
   ) {}
 
@@ -115,6 +117,8 @@ export class ThematiqueUsecase {
     for (const action of detailThematique.liste_actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
+      action.nombre_actions_faites =
+        this.compteurActionsRepository.getNombreFaites(action);
     }
   }
 

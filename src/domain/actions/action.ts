@@ -14,6 +14,7 @@ export class ActionService {
 export class Action extends ActionDefinition {
   private aides: AideDefinition[];
   nombre_aides: number;
+  nombre_actions_faites: number;
   services: ActionService[];
   quizz_liste: Quizz[];
   faq_liste: FAQDefinition[];
@@ -29,6 +30,7 @@ export class Action extends ActionDefinition {
     this.quizz_liste = [];
     this.faq_liste = [];
     this.nombre_aides = 0;
+    this.nombre_actions_faites = 0;
   }
 
   public setListeAides(liste: AideDefinition[]) {

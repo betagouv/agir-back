@@ -98,7 +98,7 @@ describe('Actions (API test)', () => {
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
-    expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
+    expect(action.nombre_actions_en_cours).toEqual(0);
     expect(action.nombre_aides_disponibles).toEqual(0);
   });
   it(`GET /actions - liste le catalogue d'action avec filtre thematique unique`, async () => {
@@ -235,6 +235,39 @@ describe('Actions (API test)', () => {
       },
     ]);
   });
+  it(`GET /actions - liste le catalogue d'action : données de base`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: 'code_fonct',
+      besoins: ['composter'],
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      faites: 45,
+      vues: 154,
+    });
+    await compteurActionsRepository.loadCache();
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    expect(response.body.actions[0]).toEqual({
+      code: 'code_fonct',
+      nombre_actions_en_cours: 45,
+      nombre_aides_disponibles: 0,
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+    });
+  });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -245,7 +278,6 @@ describe('Actions (API test)', () => {
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
-
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
@@ -271,6 +303,14 @@ describe('Actions (API test)', () => {
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await compteurActionsRepository.loadCache();
 
     await actionRepository.onApplicationBootstrap();
 
@@ -283,9 +323,17 @@ describe('Actions (API test)', () => {
 
     const action: ActionLightAPI = response.body.actions[0];
 
-    expect(action.nombre_aides_disponibles).toEqual(1);
-    expect(action.deja_vue).toEqual(false);
-    expect(action.deja_faite).toEqual(false);
+    expect(action).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 45,
+      nombre_aides_disponibles: 1,
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
@@ -558,7 +606,7 @@ describe('Actions (API test)', () => {
     });
     expect(action.kycs).toEqual([]);
     expect(action.quizzes).toEqual([]);
-    expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
+    expect(action.nombre_actions_en_cours).toEqual(45);
     expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
     expect(action.nom_commune).toBeUndefined();
   });
@@ -731,14 +779,13 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    delete response.body.nombre_actions_en_cours;
-
     expect(response.body).toEqual({
       aides: [],
       besoins: ['composter'],
       code: '123',
       comment: 'Astuces',
       consigne: 'consigne',
+      nombre_actions_en_cours: 45,
       deja_faite: false,
       deja_vue: false,
       faqs: [],

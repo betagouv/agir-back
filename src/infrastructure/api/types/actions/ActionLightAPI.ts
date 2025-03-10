@@ -16,7 +16,7 @@ export class ActionLightAPI {
 
   public static mapToAPI(action: Action): ActionLightAPI {
     return {
-      nombre_actions_en_cours: Math.round(Math.random() * 1000),
+      nombre_actions_en_cours: action.nombre_actions_faites,
       nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,
