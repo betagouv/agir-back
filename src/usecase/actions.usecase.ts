@@ -294,9 +294,7 @@ export class ActionUsecase {
       action_def.kyc_codes,
     );
 
-    action.deja_vue = utilisateur.thematique_history.isActionVue(
-      action.getTypeCode(),
-    );
+    action.deja_vue = utilisateur.thematique_history.isActionVue(action);
 
     utilisateur.thematique_history.setActionCommeVue(action.getTypeCode());
 
@@ -368,9 +366,7 @@ export class ActionUsecase {
       });
       const action = new Action(action_def);
       action.nombre_aides = count_aides;
-      action.deja_vue = utilisateur.thematique_history.isActionVue(
-        action.getTypeCode(),
-      );
+      action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       result.push(action);
     }
 

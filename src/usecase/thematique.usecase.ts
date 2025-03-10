@@ -113,9 +113,7 @@ export class ThematiqueUsecase {
     }
 
     for (const action of detailThematique.liste_actions) {
-      action.deja_vue = utilisateur.thematique_history.isActionVue(
-        action.getTypeCode(),
-      );
+      action.deja_vue = utilisateur.thematique_history.isActionVue(action);
     }
   }
 
