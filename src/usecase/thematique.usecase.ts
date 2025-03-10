@@ -114,6 +114,7 @@ export class ThematiqueUsecase {
 
     for (const action of detailThematique.liste_actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
+      action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
     }
   }
 
@@ -165,7 +166,7 @@ export class ThematiqueUsecase {
         history.removeActionAndShift(thema, action_to_remove);
       } else {
         const new_action = new_action_list[0];
-        history.switchAction(thema, action_to_remove, new_action.getTypeCode());
+        history.switchAction(thema, action_to_remove, new_action);
       }
     }
   }
@@ -235,10 +236,7 @@ export class ThematiqueUsecase {
           nouvelles_actions_copy,
         );
         if (new_action) {
-          utilisateur.thematique_history.appendAction(
-            thematique,
-            new_action.getTypeCode(),
-          );
+          utilisateur.thematique_history.appendAction(thematique, new_action);
         }
       }
     }

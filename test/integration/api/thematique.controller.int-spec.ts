@@ -87,6 +87,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -213,6 +214,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -260,6 +262,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -299,6 +302,9 @@ describe('Thematique (API test)', () => {
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
     expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
     expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(false);
+    expect(response.body.liste_actions_recommandees[0].deja_faite).toEqual(
+      false,
+    );
     expect(
       response.body.liste_actions_recommandees[0].nombre_aides_disponibles,
     ).toEqual(1);
@@ -307,11 +313,12 @@ describe('Thematique (API test)', () => {
     );
   });
 
-  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue OK`, async () => {
+  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue / faite OK`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [{ code: '123', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '123', type: TypeAction.classique }],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -344,6 +351,9 @@ describe('Thematique (API test)', () => {
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
     expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
     expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(true);
+    expect(response.body.liste_actions_recommandees[0].deja_faite).toEqual(
+      true,
+    );
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - max 6 actions proposées`, async () => {
@@ -351,6 +361,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -390,6 +401,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [TagExcluant.a_un_velo],
       liste_thematiques: [
         {
@@ -447,6 +459,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -498,6 +511,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -544,6 +558,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -587,6 +602,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -647,6 +663,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
 
       liste_thematiques: [
@@ -720,6 +737,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -793,6 +811,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -851,6 +870,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -914,6 +934,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -987,6 +1008,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {

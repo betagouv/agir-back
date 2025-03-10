@@ -30,7 +30,7 @@ describe('Actions (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    await actionRepository.loadActions();
+    await actionRepository.loadCache();
   });
 
   afterAll(async () => {
@@ -281,6 +281,7 @@ describe('Actions (API test)', () => {
 
     expect(action.nombre_aides_disponibles).toEqual(1);
     expect(action.deja_vue).toEqual(false);
+    expect(action.deja_faite).toEqual(false);
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
@@ -396,6 +397,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -475,12 +477,13 @@ describe('Actions (API test)', () => {
     );
   });
 
-  it(`GET /utilisateurs/id/actions - boolean action deja vue`, async () => {
+  it(`GET /utilisateurs/id/actions - boolean action deja vue / deja faite`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
+      liste_actions_faites: [{ type: TypeAction.classique, code: '123' }],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -500,6 +503,7 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.deja_vue).toEqual(true);
+    expect(action.deja_faite).toEqual(true);
   });
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
@@ -1043,5 +1047,48 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
+  });
+
+  it(`POST /utilisateurs/id/actions/id/faite - indique que l'action est faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionFaite({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
   });
 });

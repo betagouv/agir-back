@@ -20,6 +20,7 @@ export class Action extends ActionDefinition {
   kycs: QuestionKYC[] | undefined;
   nom_commune?: string;
   deja_vue?: boolean;
+  deja_faite?: boolean;
 
   constructor(data: ActionDefinition) {
     super(data);

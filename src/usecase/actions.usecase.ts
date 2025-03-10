@@ -229,6 +229,34 @@ export class ActionUsecase {
     return action;
   }
 
+  async faireAction(
+    code: string,
+    type: TypeAction,
+    utilisateurId: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = ActionRepository.getActionDefinitionByTypeCode({
+      type: type,
+      code: code,
+    });
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code, type);
+    }
+
+    utilisateur.thematique_history.setActionCommeFaite(action_def);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+
   async getUtilisateurAction(
     code: string,
     type: TypeAction,
@@ -295,8 +323,9 @@ export class ActionUsecase {
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);
+    action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
 
-    utilisateur.thematique_history.setActionCommeVue(action.getTypeCode());
+    utilisateur.thematique_history.setActionCommeVue(action);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
@@ -367,6 +396,7 @@ export class ActionUsecase {
       const action = new Action(action_def);
       action.nombre_aides = count_aides;
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
+      action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       result.push(action);
     }
 
@@ -402,9 +432,7 @@ export class ActionUsecase {
     const target_vue = type_consulation === Consultation.vu;
 
     for (const action of catalogue.actions) {
-      const est_vue = utilisateur.thematique_history.isActionVue(
-        action.getTypeCode(),
-      );
+      const est_vue = utilisateur.thematique_history.isActionVue(action);
       if ((est_vue && target_vue) || (!est_vue && !target_vue)) {
         new_action_list.push(action);
       }

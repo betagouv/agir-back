@@ -47,13 +47,16 @@ export class ThematiqueRecommandation {
   public replaceAction(old_action: TypeCodeAction, new_action: TypeCodeAction) {
     const position = this.indexOfTypeCode(this.actions_proposees, old_action);
     if (position >= 0) {
-      this.actions_proposees[position] = new_action;
+      this.actions_proposees[position] = {
+        type: new_action.type,
+        code: new_action.code,
+      };
     }
   }
 
   public addActionToExclusionList(action: TypeCodeAction) {
     if (!this.doesActionsExcluesInclude(action)) {
-      this.actions_exclues.push(action);
+      this.actions_exclues.push({ type: action.type, code: action.code });
     }
   }
 
@@ -72,7 +75,7 @@ export class ThematiqueRecommandation {
   }
   public appendAction(action: TypeCodeAction) {
     if (this.actions_proposees.length < 6) {
-      this.actions_proposees.push(action);
+      this.actions_proposees.push({ type: action.type, code: action.code });
     }
   }
 

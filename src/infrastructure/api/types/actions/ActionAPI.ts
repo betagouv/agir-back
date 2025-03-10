@@ -77,6 +77,7 @@ export class ActionAPI {
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
   @ApiProperty() deja_vue: boolean;
+  @ApiProperty() deja_faite: boolean;
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
@@ -118,6 +119,7 @@ export class ActionAPI {
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
       deja_vue: action.deja_vue,
+      deja_faite: action.deja_faite,
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
     };
   }

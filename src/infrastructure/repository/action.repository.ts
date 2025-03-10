@@ -24,14 +24,14 @@ export type ActionFilter = {
 @Injectable()
 export class ActionRepository {
   constructor(private prisma: PrismaService) {
-    ActionRepository.catalogue = [];
+    ActionRepository.catalogue = new Map();
   }
 
-  private static catalogue: ActionDefinition[];
+  private static catalogue: Map<string, ActionDefinition>;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadActions();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading Action definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -39,20 +39,30 @@ export class ActionRepository {
     }
   }
   @Cron('* * * * *')
-  async loadActions(): Promise<void> {
-    const result = await this.prisma.action.findMany();
-    ActionRepository.catalogue = result.map((elem) =>
-      this.buildActionDefinitionFromDB(elem),
-    );
+  async loadCache(): Promise<void> {
+    const new_map: Map<string, ActionDefinition> = new Map();
+
+    const liste = await this.prisma.action.findMany();
+    for (const action_db of liste) {
+      new_map.set(
+        action_db.type_code_id,
+        this.buildActionDefinitionFromDB(action_db),
+      );
+    }
+    ActionRepository.catalogue = new_map;
   }
 
   public static resetCache() {
     // FOR TEST ONLY
-    ActionRepository.catalogue = [];
+    ActionRepository.catalogue = new Map();
   }
 
-  public static getCatalogue(): ActionDefinition[] {
-    return ActionRepository.catalogue;
+  public static getActionDefinitionByTypeCode(
+    type_code: TypeCodeAction,
+  ): ActionDefinition {
+    return ActionRepository.catalogue.get(
+      ActionDefinition.getIdFromTypeCode(type_code),
+    );
   }
 
   async upsert(action: ActionDefinition): Promise<void> {

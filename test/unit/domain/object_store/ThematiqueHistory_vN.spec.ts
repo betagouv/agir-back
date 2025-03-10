@@ -23,6 +23,7 @@ describe('ThematiqueHistory vN ', () => {
     const domain_start = new ThematiqueHistory({
       version: 0,
       liste_actions_vues: [{ type: TypeAction.classique, code: '1' }],
+      liste_actions_faites: [{ type: TypeAction.classique, code: '5' }],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
       liste_thematiques: [
         {
@@ -46,6 +47,7 @@ describe('ThematiqueHistory vN ', () => {
     const domain_start = new ThematiqueHistory({
       version: 0,
       liste_actions_vues: [{ type: TypeAction.classique, code: '1' }],
+      liste_actions_faites: [{ type: TypeAction.classique, code: '5' }],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
       liste_thematiques: [
         {

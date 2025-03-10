@@ -19,6 +19,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -50,6 +51,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [],
     });
 
@@ -67,6 +69,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -91,6 +94,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -115,6 +119,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [],
     });
 

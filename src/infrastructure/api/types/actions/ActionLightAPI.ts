@@ -9,6 +9,7 @@ export class ActionLightAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() deja_vue: boolean;
+  @ApiProperty() deja_faite: boolean;
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
@@ -23,6 +24,7 @@ export class ActionLightAPI {
       type: action.type,
       thematique: action.thematique,
       deja_vue: action.deja_vue,
+      deja_faite: action.deja_faite,
     };
   }
 }

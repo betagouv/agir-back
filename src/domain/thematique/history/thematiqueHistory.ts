@@ -10,11 +10,13 @@ import { ThematiqueRecommandation } from './thematiqueRecommandation';
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_vues: TypeCodeAction[];
+  private liste_actions_faites: TypeCodeAction[];
   private liste_tags_excluants: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
     this.liste_actions_vues = [];
+    this.liste_actions_faites = [];
     this.liste_tags_excluants = [];
     if (data) {
       if (data.liste_thematiques) {
@@ -24,6 +26,9 @@ export class ThematiqueHistory {
       }
       if (data.liste_actions_vues) {
         this.liste_actions_vues = data.liste_actions_vues;
+      }
+      if (data.liste_actions_faites) {
+        this.liste_actions_faites = data.liste_actions_faites;
       }
       if (data.liste_tags_excluants) {
         this.liste_tags_excluants = data.liste_tags_excluants;
@@ -74,13 +79,25 @@ export class ThematiqueHistory {
   public getListeActionsVues(): TypeCodeAction[] {
     return this.liste_actions_vues;
   }
+  public getListeActionsFaites(): TypeCodeAction[] {
+    return this.liste_actions_faites;
+  }
   public isActionVue(action: TypeCodeAction): boolean {
     return this.indexOfTypeCode(this.liste_actions_vues, action) !== -1;
   }
 
+  public isActionFaite(action: TypeCodeAction): boolean {
+    return this.indexOfTypeCode(this.liste_actions_faites, action) !== -1;
+  }
+
   public setActionCommeVue(action: TypeCodeAction) {
     if (this.indexOfTypeCode(this.liste_actions_vues, action) === -1) {
-      this.liste_actions_vues.push(action);
+      this.liste_actions_vues.push({ type: action.type, code: action.code });
+    }
+  }
+  public setActionCommeFaite(action: TypeCodeAction) {
+    if (this.indexOfTypeCode(this.liste_actions_faites, action) === -1) {
+      this.liste_actions_faites.push({ type: action.type, code: action.code });
     }
   }
 
