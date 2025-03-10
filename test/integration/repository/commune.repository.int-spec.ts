@@ -1,5 +1,5 @@
-import { TestUtil } from '../../TestUtil';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('CommuneRepository', () => {
   let communeRepository = new CommuneRepository(TestUtil.prisma);

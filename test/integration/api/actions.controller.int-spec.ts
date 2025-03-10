@@ -10,6 +10,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
@@ -18,6 +19,9 @@ import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const compteurActionsRepository = new CompteurActionsRepository(
+    TestUtil.prisma,
+  );
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
@@ -508,9 +512,21 @@ describe('Actions (API test)', () => {
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action);
-
+    await TestUtil.create(DB.action, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      label_compteur: '{NBR_ACTIONS} haha',
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      faites: 45,
+      vues: 154,
+    });
     await actionRepository.onApplicationBootstrap();
+    await compteurActionsRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/code_fonct');
@@ -526,7 +542,7 @@ describe('Actions (API test)', () => {
     expect(action.pourquoi).toEqual('En quelques mots');
     expect(action.titre).toEqual('The titre');
     expect(action.consigne).toEqual('consigne');
-    expect(action.label_compteur).toEqual('label_compteur');
+    expect(action.label_compteur).toEqual('45 haha');
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.quizz_felicitations).toEqual('bien');
     expect(action.thematique).toEqual(Thematique.consommation);
@@ -690,7 +706,22 @@ describe('Actions (API test)', () => {
   it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      label_compteur: '{NBR_ACTIONS} haha',
+      besoins: ['composter'],
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await actionRepository.onApplicationBootstrap();
+    await compteurActionsRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -712,7 +743,7 @@ describe('Actions (API test)', () => {
       deja_vue: false,
       faqs: [],
       kycs: [],
-      label_compteur: 'label_compteur',
+      label_compteur: '45 haha',
       nom_commune: 'Dijon',
       nombre_aides_disponibles: 0,
       pourquoi: 'En quelques mots',
@@ -1140,5 +1171,11 @@ describe('Actions (API test)', () => {
         code: '123',
       }),
     ).toEqual(true);
+
+    const compteur = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(compteur.length).toEqual(1);
+    expect(compteur[0].faites).toEqual(1);
+    expect(compteur[0].type_code_id).toEqual('classique_123');
   });
 });

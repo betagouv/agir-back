@@ -37,6 +37,7 @@ import './repository/aideVelo.repository.int-spec';
 import './repository/article.repository.int-spec';
 import './repository/articleStatistique.repository.int-spec';
 import './repository/commune.repository.int-spec';
+import './repository/compteurActions.repository.int-spec';
 import './repository/defi.repository.int-spec';
 import './repository/emailTemplate.repository.int-spec';
 import './repository/linky.repository.int-spec';

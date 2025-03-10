@@ -70,6 +70,7 @@ import { ArticleStatistiqueRepository } from './infrastructure/repository/articl
 import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
 import { BlockTextRepository } from './infrastructure/repository/blockText.repository';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from './infrastructure/repository/compteurActions.repository';
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { DefiRepository } from './infrastructure/repository/defi.repository';
 import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
@@ -305,6 +306,7 @@ function getControllers(): any[] {
     AidesVeloUsecase,
     DuplicateBDDForStatsUsecase,
     StatistiqueExternalRepository,
+    CompteurActionsRepository,
   ],
 })
 export class AppModule {}

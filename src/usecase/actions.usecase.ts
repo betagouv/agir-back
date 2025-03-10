@@ -20,6 +20,7 @@ import {
   Commune,
   CommuneRepository,
 } from '../infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -30,6 +31,7 @@ import { CMSImportUsecase } from './cms.import.usecase';
 export class ActionUsecase {
   constructor(
     private actionRepository: ActionRepository,
+    private compteurActionsRepository: CompteurActionsRepository,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
@@ -226,6 +228,11 @@ export class ActionUsecase {
     action.setListeAides(linked_aides);
     action.services = liste_services;
 
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + this.compteurActionsRepository.getNombreFaites(action),
+    );
+
     return action;
   }
 
@@ -255,6 +262,8 @@ export class ActionUsecase {
       utilisateur,
       [Scope.thematique_history],
     );
+
+    await this.compteurActionsRepository.incrementFaite(action_def);
   }
 
   async getUtilisateurAction(
@@ -324,6 +333,10 @@ export class ActionUsecase {
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);
     action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + this.compteurActionsRepository.getNombreFaites(action),
+    );
 
     utilisateur.thematique_history.setActionCommeVue(action);
 

@@ -2,6 +2,7 @@ import {
   Action,
   AideExpirationWarning,
   BlockText,
+  CompteurActions,
   Conformite,
   FAQ,
   KYC,
@@ -91,6 +92,7 @@ export enum DB {
   partenaire = 'partenaire',
   aideExpirationWarning = 'aideExpirationWarning',
   quizz = 'quizz',
+  compteurActions = 'compteurActions',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
   kYC = 'kYC',
@@ -115,6 +117,7 @@ export class TestUtil {
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
     fAQ: TestUtil.fAQData,
+    compteurActions: TestUtil.compteurActionsData,
     blockText: TestUtil.blockTextData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
@@ -224,6 +227,7 @@ export class TestUtil {
     await this.prisma.communesAndEPCI.deleteMany();
     await this.prisma.oIDC_STATE.deleteMany();
     await this.prisma.fAQ.deleteMany();
+    await this.prisma.compteurActions.deleteMany();
     await this.prisma.blockText.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
@@ -716,6 +720,20 @@ export class TestUtil {
       question: 'question',
       reponse: 'reponse',
       thematique: Thematique.transport,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static compteurActionsData(
+    override?: Partial<CompteurActions>,
+  ): CompteurActions {
+    return {
+      code: 'code',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code',
+      faites: 0,
+      vues: 0,
       created_at: undefined,
       updated_at: undefined,
       ...override,
