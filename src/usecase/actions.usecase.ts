@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
   Consultation,
@@ -260,7 +261,7 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = ActionRepository.getActionDefinitionByTypeCode({
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
       type: type,
       code: code,
     });
@@ -466,5 +467,43 @@ export class ActionUsecase {
       }
     }
     catalogue.actions = new_action_list;
+  }
+
+  async updateActionStats(block_size: number = 50): Promise<void> {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const result_stats = new Map<string, { vues: number; faites: number }>();
+
+    const all_action_defs = this.actionRepository.getActionCompleteList();
+    for (const action_def of all_action_defs) {
+      result_stats.set(action_def.getTypeCodeId(), { vues: 0, faites: 0 });
+    }
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+        );
+
+      for (const user of current_user_list) {
+        for (const type_code of user.thematique_history.getListeActionsVues()) {
+          result_stats.get(ActionDefinition.getIdFromTypeCode(type_code))
+            .vues++;
+        }
+        for (const type_code of user.thematique_history.getListeActionsFaites()) {
+          result_stats.get(ActionDefinition.getIdFromTypeCode(type_code))
+            .faites++;
+        }
+      }
+    }
+    for (const [key, value] of result_stats.entries()) {
+      await this.compteurActionsRepository.setCompteur(
+        ActionDefinition.getTypeCodeFromString(key),
+        value.vues,
+        value.faites,
+      );
+    }
   }
 }

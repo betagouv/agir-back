@@ -95,7 +95,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -246,7 +246,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -353,7 +353,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -525,7 +525,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -581,7 +581,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -636,7 +636,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -834,7 +834,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -996,7 +996,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1111,7 +1111,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1226,7 +1226,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(

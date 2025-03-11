@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ActionUsecase } from './usecase/actions.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
@@ -216,6 +217,15 @@ async function bootstrap() {
       await application.get(DuplicateBDDForStatsUsecase).duplicateKYC();
       console.log(
         `STOP dump_kyc_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
+    case 'refresh_action_stats':
+      start_time = Date.now();
+      console.log(`START refresh_action_stats ${start_time}`);
+      await application.get(ActionUsecase).updateActionStats();
+      console.log(
+        `STOP refresh_action_stats after ${Date.now() - start_time} ms`,
       );
       break;
 

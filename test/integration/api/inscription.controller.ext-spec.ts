@@ -1,6 +1,6 @@
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { DB, TestUtil } from '../../TestUtil';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { TestUtil } from '../../TestUtil';
 //import _situationNGCTest from './situationNGCtest.json';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -54,7 +54,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const reponse_injectKYCs = await TestUtil.POST('/admin/load_kycs_from_cms');
     expect(reponse_injectKYCs.status).toEqual(201);
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     const situationId = await importSitutationAndGetId(_situationNGCTest);
 

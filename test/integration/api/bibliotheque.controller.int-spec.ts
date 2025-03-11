@@ -70,7 +70,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article);
-    await articleRepository.load();
+    await articleRepository.loadCache();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bibliotheque',
@@ -97,7 +97,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
@@ -119,7 +119,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       points: 10,
       image_url: 'https://',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -180,7 +180,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
@@ -217,7 +217,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '3',
       thematiques: [Thematique.logement],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -264,7 +264,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -317,7 +317,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       titre: 'Huge Mistery',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -361,7 +361,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
     await TestUtil.create(DB.article, { content_id: '4' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -405,7 +405,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
     await TestUtil.create(DB.article, { content_id: '4' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -441,7 +441,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     });
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -478,7 +478,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       },
     });
     await TestUtil.create(DB.article, { content_id: '1', titre: 'titreA' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -508,8 +508,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       titre: 'titreA',
       partenaire_id: '123',
     });
-    await partenaireRepository.load();
-    await articleRepository.load();
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -544,8 +544,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       titre: 'titreA',
       partenaire_id: '123',
     });
-    await partenaireRepository.load();
-    await articleRepository.load();
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -575,7 +575,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       },
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -653,9 +653,9 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         },
       ],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -709,8 +709,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       partenaire_id: '123',
       derniere_maj: new Date(123),
     });
-    await partenaireRepository.load();
-    await articleRepository.load();
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/bibliotheque/articles/1');
@@ -791,7 +791,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.getServer().get('/bibliotheque/quizz/123');
@@ -811,7 +811,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -848,7 +848,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -874,7 +874,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '1',
       contenu: 'un très bon article',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(

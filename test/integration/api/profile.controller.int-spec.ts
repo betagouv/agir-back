@@ -633,7 +633,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'KYC_menage',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -720,7 +720,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -756,7 +756,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -982,7 +982,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(

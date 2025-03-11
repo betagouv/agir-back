@@ -57,12 +57,16 @@ export class ActionRepository {
     ActionRepository.catalogue = new Map();
   }
 
-  public static getActionDefinitionByTypeCode(
+  public getActionDefinitionByTypeCode(
     type_code: TypeCodeAction,
   ): ActionDefinition {
     return ActionRepository.catalogue.get(
       ActionDefinition.getIdFromTypeCode(type_code),
     );
+  }
+
+  public getActionCompleteList(): ActionDefinition[] {
+    return Array.from(ActionRepository.catalogue.values());
   }
 
   async upsert(action: ActionDefinition): Promise<void> {

@@ -37,7 +37,7 @@ export class ArticleRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.load();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading partenaires definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -46,7 +46,7 @@ export class ArticleRepository {
   }
 
   @Cron('* * * * *')
-  public async load() {
+  public async loadCache() {
     const new_map: Map<string, ArticleDefinition> = new Map();
     const liste_articles = await this.prisma.article.findMany();
     for (const article of liste_articles) {

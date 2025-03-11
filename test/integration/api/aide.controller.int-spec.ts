@@ -36,7 +36,7 @@ describe('Aide (API test)', () => {
     // GIVEN
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await thematiqueRepository.upsert({
       code: Thematique.climat,
@@ -54,7 +54,7 @@ describe('Aide (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, { partenaire_id: '123' });
 
@@ -95,7 +95,7 @@ describe('Aide (API test)', () => {
     // GIVEN
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
     await TestUtil.create(DB.blockText, {
       code: 'block_123',
       id_cms: '1',
@@ -103,7 +103,7 @@ describe('Aide (API test)', () => {
       texte: 'the texte',
     });
 
-    await blockTextRepository.load();
+    await blockTextRepository.loadCache();
 
     await thematiqueRepository.upsert({
       code: Thematique.climat,
@@ -121,7 +121,7 @@ describe('Aide (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       partenaire_id: '123',
@@ -169,7 +169,7 @@ describe('Aide (API test)', () => {
       texte: 'the texte',
     });
 
-    await blockTextRepository.load();
+    await blockTextRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
@@ -560,7 +560,7 @@ describe('Aide (API test)', () => {
   it('GET /aides/id_cms récupère une aide unique en mode non connecté', async () => {
     // GIVEN
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -614,7 +614,7 @@ describe('Aide (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, { history: history as any });
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -671,7 +671,7 @@ describe('Aide (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, { history: history as any });
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',

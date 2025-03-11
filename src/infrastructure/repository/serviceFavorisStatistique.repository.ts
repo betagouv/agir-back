@@ -1,6 +1,6 @@
-import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ServiceFavorisStatistiqueRepository {
@@ -9,7 +9,7 @@ export class ServiceFavorisStatistiqueRepository {
   static service_favoris_map: Map<string, Map<string, number>> = new Map();
 
   @Cron('* * * * *')
-  async loadCachedData(): Promise<void> {
+  async loadCache(): Promise<void> {
     const new_service_favoris_map = new Map();
 
     const all = await this.prisma.servicesFavorisStatistique.findMany();
@@ -26,6 +26,10 @@ export class ServiceFavorisStatistiqueRepository {
 
     ServiceFavorisStatistiqueRepository.service_favoris_map =
       new_service_favoris_map;
+  }
+
+  public static resetCache() {
+    ServiceFavorisStatistiqueRepository.service_favoris_map = new Map();
   }
 
   public static getFavorisCount(

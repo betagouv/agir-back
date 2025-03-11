@@ -67,12 +67,17 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { ActionRepository } from '../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
+import { BlockTextRepository } from '../src/infrastructure/repository/blockText.repository';
+import { CompteurActionsRepository } from '../src/infrastructure/repository/compteurActions.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
+import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
+import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
@@ -229,18 +234,24 @@ export class TestUtil {
     await this.prisma.fAQ.deleteMany();
     await this.prisma.compteurActions.deleteMany();
     await this.prisma.blockText.deleteMany();
+    await this.prisma.servicesFavorisStatistique.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
 
-    ThematiqueRepository.resetCache();
+    ActionRepository.resetCache();
+    ArticleRepository.resetCache();
+    BlockTextRepository.resetCache();
+    CompteurActionsRepository.resetCache();
+    ConformiteRepository.resetCache();
     DefiRepository.resetCache();
+    FAQRepository.resetCache();
     KycRepository.resetCache();
     MissionRepository.resetCache();
     PartenaireRepository.resetCache();
-    ConformiteRepository.resetCache();
-    ArticleRepository.resetCache();
+    ServiceFavorisStatistiqueRepository.resetCache();
+    ThematiqueRepository.resetCache();
   }
 
   static getDate(date: string) {

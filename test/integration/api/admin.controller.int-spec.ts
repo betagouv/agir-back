@@ -1,3 +1,4 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
@@ -24,11 +25,13 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
@@ -66,6 +69,7 @@ describe('Admin (API test)', () => {
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -428,7 +432,7 @@ describe('Admin (API test)', () => {
       kyc: kyc,
     });
     process.env.USER_CURRENT_VERSION = '8';
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -1388,7 +1392,7 @@ describe('Admin (API test)', () => {
       content_id: 'article-id-3',
       titre: 'Titre de mon article 3',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
@@ -2726,7 +2730,7 @@ describe('Admin (API test)', () => {
       kyc: kyc as any,
     });
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/admin/utilisateur_avec_voiture');
@@ -2889,5 +2893,100 @@ describe('Admin (API test)', () => {
       `CC Rives de l'Ain - Pays du Cerdon`,
     );
     expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
+  });
+
+  it('POST /admin/refresh_action_stats no actions', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(actionStats).toHaveLength(0);
+  });
+  it('POST /admin/refresh_action_stats 2 actions', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    const thematique_history2: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [
+        { code: '1', type: TypeAction.classique },
+        { code: '2', type: TypeAction.classique },
+      ],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      thematique_history: thematique_history1 as any,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+      thematique_history: thematique_history2 as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+    expect(actionStats).toHaveLength(2);
+
+    const action1 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_1' },
+    });
+    const action2 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_2' },
+    });
+
+    expect(action1.faites).toEqual(1);
+    expect(action1.vues).toEqual(2);
+    expect(action2.faites).toEqual(0);
+    expect(action2.vues).toEqual(1);
   });
 });

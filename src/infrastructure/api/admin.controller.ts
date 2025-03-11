@@ -24,6 +24,7 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleSta
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
 import { App } from '../../domain/app';
+import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
@@ -60,6 +61,7 @@ export class AdminController extends GenericControler {
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
+    private actionUsecase: ActionUsecase,
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private statistiqueUsecase: StatistiqueUsecase,
@@ -396,6 +398,15 @@ export class AdminController extends GenericControler {
   async load_communes_epci(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.communesUsecase.loadAllEpciAndCOmmunes();
+  }
+
+  @Post('/admin/refresh_action_stats')
+  @ApiOperation({
+    summary: `recalcule les stats de vues et réalisaiton des actions`,
+  })
+  async refresh_action_stats(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.actionUsecase.updateActionStats();
   }
 
   @Post('/admin/test_push_mobile')

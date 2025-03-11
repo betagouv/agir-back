@@ -15,7 +15,7 @@ export class FAQRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadFAQ();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading FAQ definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -23,7 +23,7 @@ export class FAQRepository {
     }
   }
   @Cron('* * * * *')
-  async loadFAQ(): Promise<void> {
+  async loadCache(): Promise<void> {
     const map = new Map();
     const result = await this.prisma.fAQ.findMany();
     for (const faq of result) {

@@ -123,7 +123,7 @@ describe('/bilan (API test)', () => {
       titre: 'Services sociétaux',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -591,8 +591,8 @@ describe('/bilan (API test)', () => {
       titre: 'Services sociétaux',
       image_url: 'bbbb',
     });
-    await thematiqueRepository.loadThematiques();
-    await kycRepository.loadDefinitions();
+    await thematiqueRepository.loadCache();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -947,7 +947,7 @@ describe('/bilan (API test)', () => {
       ngc_key: 'logement . surface',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     // WHEN
     const rep = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
@@ -1191,7 +1191,7 @@ describe('/bilan (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     TestUtil.token = process.env.CRON_API_KEY;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
 
@@ -1296,7 +1296,7 @@ describe('/bilan (API test)', () => {
     });
 
     TestUtil.token = process.env.CRON_API_KEY;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
@@ -1415,7 +1415,7 @@ describe('/bilan (API test)', () => {
 
     TestUtil.token = process.env.CRON_API_KEY;
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');

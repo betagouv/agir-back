@@ -510,7 +510,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -583,7 +583,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -621,7 +621,7 @@ describe('Mission (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -676,7 +676,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -788,7 +788,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -898,7 +898,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -942,7 +942,7 @@ describe('Mission (API test)', () => {
       question: `HAHA`,
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_3').send([
       { value: 'hoho' },
@@ -1019,7 +1019,7 @@ describe('Mission (API test)', () => {
       content_id: '2',
       points: 0,
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     await TestUtil.PATCH('/utilisateurs/utilisateur-id/defis/2').send({
       status: DefiStatus.fait,
@@ -1085,7 +1085,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -1202,7 +1202,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       titre: 'hoho',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -1293,7 +1293,7 @@ describe('Mission (API test)', () => {
       question: `HIHI`,
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_1').send([
       { value: 'haha' },
@@ -1379,7 +1379,7 @@ describe('Mission (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1410,7 +1410,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1418,7 +1418,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1460,7 +1460,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
@@ -1471,7 +1471,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1560,12 +1560,12 @@ describe('Mission (API test)', () => {
       kyc: kyc as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1598,7 +1598,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1632,7 +1632,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1667,13 +1667,13 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: false,
       code: CodeMission.cereales,
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -1704,7 +1704,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1955,7 +1955,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     const mission_article: Mission = {
       id_cms: 1,
@@ -2125,7 +2125,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2228,7 +2228,7 @@ describe('Mission (API test)', () => {
       tag_article: 'composter',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2308,7 +2308,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       codes_postaux: ['75002'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2391,7 +2391,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       tags_utilisateur: [TagUtilisateur.possede_maison],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {

@@ -182,7 +182,7 @@ describe('EVENT (API test)', () => {
       content_id: '1',
       points: 5,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -242,7 +242,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -275,7 +275,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -307,7 +307,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
@@ -390,7 +390,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, { content_id: '123' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -460,7 +460,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, { content_id: '123' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(

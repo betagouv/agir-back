@@ -629,7 +629,7 @@ describe('Actions (API test)', () => {
     });
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -700,7 +700,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
     await TestUtil.create(DB.fAQ, { id_cms: '456' });
 
-    await fAQRepository.loadFAQ();
+    await fAQRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -853,7 +853,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
     await TestUtil.create(DB.fAQ, { id_cms: '456' });
 
-    await fAQRepository.loadFAQ();
+    await fAQRepository.loadCache();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/actions/classique/123',
@@ -956,7 +956,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.simulateur,
       kyc_codes: ['KYC1', 'KYC2'],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(

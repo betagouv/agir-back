@@ -53,6 +53,25 @@ export class CompteurActionsRepository {
     return compteur ? compteur.faites : 0;
   }
 
+  async setCompteur(action: TypeCodeAction, vues: number, faites: number) {
+    await this.prisma.compteurActions.upsert({
+      where: {
+        type_code_id: ActionDefinition.getIdFromTypeCode(action),
+      },
+      create: {
+        code: action.code,
+        type: action.type,
+        type_code_id: ActionDefinition.getIdFromTypeCode(action),
+        faites: faites,
+        vues: vues,
+      },
+      update: {
+        vues: vues,
+        faites: faites,
+      },
+    });
+  }
+
   async incrementVue(type_code: TypeCodeAction): Promise<void> {
     await this.prisma.compteurActions.upsert({
       where: {

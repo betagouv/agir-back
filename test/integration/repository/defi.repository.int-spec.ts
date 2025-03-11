@@ -1,7 +1,7 @@
-import { DB, TestUtil } from '../../TestUtil';
+import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
-import { Categorie } from '../../../src/domain/contenu/categorie';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('DefiRepository', () => {
   const OLD_ENV = process.env;
@@ -33,7 +33,7 @@ describe('DefiRepository', () => {
       content_id: '2',
       categorie: Categorie.recommandation,
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -50,7 +50,7 @@ describe('DefiRepository', () => {
     await TestUtil.create(DB.defi, {
       content_id: '1',
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -68,7 +68,7 @@ describe('DefiRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const liste = await defiRepository.list({
@@ -86,7 +86,7 @@ describe('DefiRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const liste = await defiRepository.list({

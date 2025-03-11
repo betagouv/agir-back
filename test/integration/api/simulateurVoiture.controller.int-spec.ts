@@ -59,7 +59,7 @@ describe('/simulateur_voiture (API test)', () => {
       // NOTE: could only be done once for all tests?
       await createKYCs();
       await TestUtil.create(DB.utilisateur);
-      await kycRepository.loadDefinitions();
+      await kycRepository.loadCache();
 
       // WHEN
       await setMotorisation('hybride');
@@ -128,7 +128,7 @@ describe('/simulateur_voiture (API test)', () => {
       // GIVEN
       await createKYCs();
       await TestUtil.create(DB.utilisateur);
-      await kycRepository.loadDefinitions();
+      await kycRepository.loadCache();
 
       // WHEN
       await setGabarit('VUL');
@@ -174,7 +174,7 @@ describe('/simulateur_voiture (API test)', () => {
       // GIVEN
       await createKYCs();
       await TestUtil.create(DB.utilisateur);
-      await kycRepository.loadDefinitions();
+      await kycRepository.loadCache();
 
       await setKmParcourus(0);
 

@@ -845,7 +845,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates kyc', async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, { id_cms: 123 });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -1072,7 +1072,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates a  defi', async () => {
     // GIVEN
     await TestUtil.create(DB.defi);
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -1276,7 +1276,7 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates existing article in article table', async () => {
     // GIVEN
     await TestUtil.create(DB.article, { content_id: '123' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -1453,7 +1453,7 @@ describe('/api/incoming/cms (API test)', () => {
       content_id: '123',
       soustitre: 'hahah',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(

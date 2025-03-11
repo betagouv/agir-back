@@ -18,7 +18,7 @@ export class KycRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadDefinitions();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading KYC definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -27,7 +27,7 @@ export class KycRepository {
   }
 
   @Cron('* * * * *')
-  async loadDefinitions(): Promise<void> {
+  async loadCache(): Promise<void> {
     const result = await this.prisma.kYC.findMany();
     KycRepository.catalogue_kyc = result.map((elem) =>
       this.buildKYCDefFromDB(elem),

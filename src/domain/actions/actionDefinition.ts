@@ -40,6 +40,15 @@ export class ActionDefinition extends ActionDefinitionData {
     return type_code.type + '_' + type_code.code;
   }
 
+  public static getTypeCodeFromString(type_code: string): TypeCodeAction {
+    console.log(type_code);
+    const separateur = type_code.indexOf('_');
+    return {
+      type: TypeAction[type_code.substring(0, separateur)],
+      code: type_code.slice(separateur + 1),
+    };
+  }
+
   public getTypeCodeId(): string {
     return this.type + '_' + this.code;
   }

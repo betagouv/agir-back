@@ -14,7 +14,7 @@ export class BlockTextRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.load();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading BlockText definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -22,7 +22,7 @@ export class BlockTextRepository {
     }
   }
   @Cron('* * * * *')
-  async load(): Promise<void> {
+  async loadCache(): Promise<void> {
     const result = await this.prisma.blockText.findMany();
     const new_map: Map<string, BlockTextDefinition> = new Map();
     for (const block of result) {
