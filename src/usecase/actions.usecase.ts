@@ -489,12 +489,20 @@ export class ActionUsecase {
 
       for (const user of current_user_list) {
         for (const type_code of user.thematique_history.getListeActionsVues()) {
-          result_stats.get(ActionDefinition.getIdFromTypeCode(type_code))
-            .vues++;
+          const stat = result_stats.get(
+            ActionDefinition.getIdFromTypeCode(type_code),
+          );
+          if (stat) {
+            stat.vues++;
+          }
         }
         for (const type_code of user.thematique_history.getListeActionsFaites()) {
-          result_stats.get(ActionDefinition.getIdFromTypeCode(type_code))
-            .faites++;
+          const stat = result_stats.get(
+            ActionDefinition.getIdFromTypeCode(type_code),
+          );
+          if (stat) {
+            stat.faites++;
+          }
         }
       }
     }

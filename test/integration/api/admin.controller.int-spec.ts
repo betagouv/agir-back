@@ -2919,6 +2919,45 @@ describe('Admin (API test)', () => {
 
     expect(actionStats).toHaveLength(0);
   });
+  it(`POST /admin/refresh_action_stats pas d'erreurs si action manquante`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '2', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      thematique_history: thematique_history1 as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(actionStats).toHaveLength(1);
+    expect(actionStats[0].faites).toEqual(0);
+    expect(actionStats[0].vues).toEqual(1);
+  });
   it('POST /admin/refresh_action_stats 2 actions', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
