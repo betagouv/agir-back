@@ -474,11 +474,6 @@ export class ActionUsecase {
 
     const result_stats = new Map<string, { vues: number; faites: number }>();
 
-    const all_action_defs = this.actionRepository.getActionCompleteList();
-    for (const action_def of all_action_defs) {
-      result_stats.set(action_def.getTypeCodeId(), { vues: 0, faites: 0 });
-    }
-
     for (let index = 0; index < total_user_count; index = index + block_size) {
       const current_user_list =
         await this.utilisateurRepository.listePaginatedUsers(
@@ -494,6 +489,11 @@ export class ActionUsecase {
           );
           if (stat) {
             stat.vues++;
+          } else {
+            result_stats.set(ActionDefinition.getIdFromTypeCode(type_code), {
+              faites: 0,
+              vues: 1,
+            });
           }
         }
         for (const type_code of user.thematique_history.getListeActionsFaites()) {
@@ -502,6 +502,11 @@ export class ActionUsecase {
           );
           if (stat) {
             stat.faites++;
+          } else {
+            result_stats.set(ActionDefinition.getIdFromTypeCode(type_code), {
+              faites: 1,
+              vues: 0,
+            });
           }
         }
       }

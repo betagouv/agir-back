@@ -2954,9 +2954,19 @@ describe('Admin (API test)', () => {
 
     const actionStats = await TestUtil.prisma.compteurActions.findMany();
 
-    expect(actionStats).toHaveLength(1);
-    expect(actionStats[0].faites).toEqual(0);
-    expect(actionStats[0].vues).toEqual(1);
+    expect(actionStats).toHaveLength(2);
+
+    const action1 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_1' },
+    });
+    const action2 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_2' },
+    });
+
+    expect(action1.faites).toEqual(0);
+    expect(action1.vues).toEqual(1);
+    expect(action2.faites).toEqual(1);
+    expect(action2.vues).toEqual(0);
   });
   it('POST /admin/refresh_action_stats 2 actions', async () => {
     // GIVEN
