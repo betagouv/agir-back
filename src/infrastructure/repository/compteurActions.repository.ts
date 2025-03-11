@@ -24,7 +24,7 @@ export class CompteurActionsRepository {
       );
     }
   }
-  @Cron('* * * * *')
+  @Cron('*/5 * * * *')
   async loadCache(): Promise<void> {
     const new_map: Map<string, CompteurActions> = new Map();
 
@@ -73,14 +73,15 @@ export class CompteurActionsRepository {
   }
 
   async incrementVue(type_code: TypeCodeAction): Promise<void> {
-    await this.prisma.compteurActions.upsert({
+    const type_code_id = ActionDefinition.getIdFromTypeCode(type_code);
+    const result = await this.prisma.compteurActions.upsert({
       where: {
-        type_code_id: ActionDefinition.getIdFromTypeCode(type_code),
+        type_code_id: type_code_id,
       },
       create: {
         code: type_code.code,
         type: type_code.type,
-        type_code_id: ActionDefinition.getIdFromTypeCode(type_code),
+        type_code_id: type_code_id,
         faites: 0,
         vues: 1,
       },
@@ -90,16 +91,19 @@ export class CompteurActionsRepository {
         },
       },
     });
+    CompteurActionsRepository.catalogue.set(type_code_id, result);
   }
   async incrementFaite(type_code: TypeCodeAction): Promise<void> {
-    await this.prisma.compteurActions.upsert({
+    const type_code_id = ActionDefinition.getIdFromTypeCode(type_code);
+
+    const result = await this.prisma.compteurActions.upsert({
       where: {
-        type_code_id: ActionDefinition.getIdFromTypeCode(type_code),
+        type_code_id: type_code_id,
       },
       create: {
         code: type_code.code,
         type: type_code.type,
-        type_code_id: ActionDefinition.getIdFromTypeCode(type_code),
+        type_code_id: type_code_id,
         faites: 1,
         vues: 0,
       },
@@ -109,5 +113,6 @@ export class CompteurActionsRepository {
         },
       },
     });
+    CompteurActionsRepository.catalogue.set(type_code_id, result);
   }
 }

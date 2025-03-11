@@ -356,6 +356,8 @@ export class ActionUsecase {
 
     utilisateur.thematique_history.setActionCommeVue(action);
 
+    await this.compteurActionsRepository.incrementVue(action);
+
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.thematique_history],
