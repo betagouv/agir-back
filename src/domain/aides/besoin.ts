@@ -1,3 +1,4 @@
+// FIXME: shouldn't be an enum a they are abitrary and can change over time
 export enum Besoin {
   acheter_velo = 'acheter_velo',
   emprunter_velo = 'emprunter_velo',
@@ -15,4 +16,18 @@ export enum Besoin {
   composter = 'composter',
   emprunter_gob_reu = 'emprunter_gob_reu',
   couches_lavables = 'couches_lavables',
+  collecte_dechets_verts = 'collecte_dechets_verts',
+  energies_renouvelables = 'energies_renouvelables',
+  covoiturer = 'covoiturer',
+  acheter_voiture_électrique = 'acheter_voiture_électrique',
+  vegetaliser_logement = 'vegetaliser_logement',
+  reparer_velo = 'reparer_velo',
+  trier_dechets = 'trier_dechets',
+  reduire_dechets = 'reduire_dechets',
+  'Économiser-eau' = 'Économiser-eau',
+  "Agir pour l'environnement" = "Agir pour l'environnement",
+  'Planter une haie' = 'Planter une haie',
+  'Pratiquer une activité sportive dans la nature' = 'Pratiquer une activité sportive dans la nature',
+  'Utiliser des protections hygiéniques lavables' = 'Utiliser des protections hygiéniques lavables',
+  "Gérer sa consommation d'énergie" = "Gérer sa consommation d'énergie",
 }
