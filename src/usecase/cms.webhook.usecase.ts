@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { Besoin } from '../domain/aides/besoin';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
@@ -462,7 +461,7 @@ export class CMSWebhookUsecase {
         ? Math.round(parseFloat(entry.montantMaximum))
         : null,
       url_simulateur: entry.url_detail_front,
-      besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
+      besoin: entry.besoin ? entry.besoin.code : null,
       besoin_desc: entry.besoin ? entry.besoin.description : null,
       include_codes_commune: this.split(entry.include_codes_commune),
       exclude_codes_commune: this.split(entry.exclude_codes_commune),

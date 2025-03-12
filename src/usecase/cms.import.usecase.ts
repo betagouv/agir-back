@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
-import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ContentType } from '../../src/domain/contenu/contentType';
@@ -821,7 +820,7 @@ export class CMSImportUsecase {
         : null,
       url_simulateur: entry.attributes.url_detail_front,
       besoin: entry.attributes.besoin.data
-        ? Besoin[entry.attributes.besoin.data.attributes.code]
+        ? entry.attributes.besoin.data.attributes.code
         : null,
       besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description

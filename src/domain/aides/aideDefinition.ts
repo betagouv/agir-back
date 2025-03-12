@@ -1,6 +1,5 @@
 import { ContenuLocal } from '../contenu/contenuLocal';
 import { Thematique } from '../thematique/thematique';
-import { Besoin } from './besoin';
 import { Echelle } from './echelle';
 
 export class AideDefinition implements ContenuLocal {
@@ -19,7 +18,7 @@ export class AideDefinition implements ContenuLocal {
   thematiques: Thematique[];
   montant_max: number;
   echelle: Echelle;
-  besoin: Besoin;
+  besoin: string;
   besoin_desc: string;
   include_codes_commune: string[];
   exclude_codes_commune: string[];

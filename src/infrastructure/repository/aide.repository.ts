@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Aide as AideDB } from '@prisma/client';
-import { Besoin } from '../../../src/domain/aides/besoin';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Echelle } from '../../domain/aides/echelle';
 import { Thematique } from '../../domain/thematique/thematique';
@@ -178,7 +177,7 @@ export class AideRepository {
       is_simulateur: aideDB.is_simulateur,
       montant_max: aideDB.montant_max,
       url_simulateur: aideDB.url_simulateur,
-      besoin: Besoin[aideDB.besoin],
+      besoin: aideDB.besoin,
       besoin_desc: aideDB.besoin_desc,
       codes_departement: aideDB.codes_departement,
       codes_region: aideDB.codes_region,
