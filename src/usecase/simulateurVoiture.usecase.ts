@@ -54,7 +54,9 @@ export class SimulateurVoitureUsecase {
 function getParams(
   utilisateur: Utilisateur,
 ): SimulateurVoitureParamsConstructor {
-  const questions = utilisateur.kyc_history.getRawAnsweredKYCs();
+  const questions = utilisateur.kyc_history
+    .getRawAnsweredKYCs()
+    .filter((kyc) => utilisateur.kyc_history.isKYCEligible(kyc));
   const params = new SimulateurVoitureParamsConstructor();
 
   for (const question of questions) {
