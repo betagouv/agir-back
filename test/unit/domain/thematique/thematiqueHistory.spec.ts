@@ -28,6 +28,7 @@ describe('ThematiqueHistory', () => {
             { code: '123', type: TypeAction.classique },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     });
@@ -76,6 +77,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: false,
+          personnalisation_done_once: false,
         },
       ],
     });
@@ -101,6 +103,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     });

@@ -181,10 +181,15 @@ export class ThematiqueUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc],
+      [Scope.thematique_history, Scope.kyc, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
+    if (
+      !utilisateur.thematique_history.isPersonnalisationDoneOnce(thematique)
+    ) {
+      utilisateur.gamification.ajoutePoints(25, utilisateur);
+    }
     utilisateur.thematique_history.declarePersonnalisationDone(thematique);
 
     utilisateur.thematique_history.recomputeTagExcluant(
@@ -193,7 +198,7 @@ export class ThematiqueUsecase {
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.gamification, Scope.core],
     );
   }
 

@@ -10,6 +10,7 @@ export class ThematiqueRecommandation_v0 {
   codes_actions_proposees: TypeCodeAction[];
   codes_actions_exclues: TypeCodeAction[];
   personnalisation_done: boolean;
+  personnalisation_done_once: boolean;
 
   static serialise(
     domain: ThematiqueRecommandation,
@@ -18,6 +19,7 @@ export class ThematiqueRecommandation_v0 {
       codes_actions_exclues: domain.getActionsExclues(),
       codes_actions_proposees: domain.getActionsProposees(),
       personnalisation_done: domain.isPersonnalisationDone(),
+      personnalisation_done_once: domain.isPersonnalisationDoneOnce(),
       thematique: domain.thematique,
     };
   }

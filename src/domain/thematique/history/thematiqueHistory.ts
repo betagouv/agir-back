@@ -69,6 +69,10 @@ export class ThematiqueHistory {
     const reco_existante = this.getRecommandationByThematique(thematique);
     return !!reco_existante && reco_existante.isPersonnalisationDone();
   }
+  public isPersonnalisationDoneOnce(thematique: Thematique): boolean {
+    const reco_existante = this.getRecommandationByThematique(thematique);
+    return !!reco_existante && reco_existante.isPersonnalisationDoneOnce();
+  }
 
   public getListeThematiques(): ThematiqueRecommandation[] {
     return this.liste_thematiques;

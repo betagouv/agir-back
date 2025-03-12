@@ -6,6 +6,7 @@ import {
   BooleanKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/questionKYC';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
@@ -95,6 +96,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -126,7 +128,32 @@ describe('Thematique (API test)', () => {
   });
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          personnalisation_done: false,
+          personnalisation_done_once: false,
+        },
+      ],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+    });
 
     // THEN
     const user_before = await utilisateurRepository.getById('utilisateur-id', [
@@ -154,6 +181,58 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(true);
+    expect(
+      user_after.thematique_history.isPersonnalisationDoneOnce(
+        Thematique.alimentation,
+      ),
+    ).toEqual(true);
+    expect(user_after.points_classement).toEqual(25);
+    expect(user_after.gamification.getPoints()).toEqual(25);
+  });
+  it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso compte pas les points si deja perso faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          personnalisation_done: false,
+          personnalisation_done_once: false,
+        },
+      ],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+    });
+    // WHEN
+    await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
+    );
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const user_after = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user_after.points_classement).toEqual(25);
+    expect(user_after.gamification.getPoints()).toEqual(25);
   });
 
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - recalcul des tag d'exclusion`, async () => {
@@ -222,6 +301,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [{ code: '1', type: TypeAction.classique }],
           codes_actions_proposees: [{ code: '2', type: TypeAction.classique }],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -248,13 +328,10 @@ describe('Thematique (API test)', () => {
       ),
     ).toEqual(false);
     expect(
-      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toEqual([]);
-    expect(
-      user_after.thematique_history.getActionsProposees(
+      user_after.thematique_history.isPersonnalisationDoneOnce(
         Thematique.alimentation,
       ),
-    ).toEqual([]);
+    ).toEqual(true);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {
@@ -270,6 +347,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -327,6 +405,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -370,6 +449,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -410,6 +490,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -468,6 +549,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -524,6 +606,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -567,6 +650,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -618,6 +702,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -684,6 +769,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -752,6 +838,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '5' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -827,6 +914,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -886,6 +974,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -950,6 +1039,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -1024,6 +1114,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
