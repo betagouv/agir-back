@@ -1,34 +1,26 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Headers,
-  Response,
-} from '@nestjs/common';
-import { Response as Res } from 'express';
+import { Controller, Get, Param, Query, Response } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiExcludeController,
   ApiOkResponse,
   ApiProperty,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
-import { ArticleRepository } from '../repository/article.repository';
+import { Response as Res } from 'express';
+import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { App } from '../../domain/app';
-import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
-import { Scope } from '../../domain/utilisateur/utilisateur';
-import { AideRepository } from '../repository/aide.repository';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { RechercheServiceManager } from '../../domain/bibliotheque_services/recherche/rechercheServiceManager';
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
-import { CommuneRepository } from '../repository/commune/commune.repository';
-import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { Thematique } from '../../domain/thematique/thematique';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
-import { AideDefinition } from '../../domain/aides/aideDefinition';
+import { Thematique } from '../../domain/thematique/thematique';
+import { Scope } from '../../domain/utilisateur/utilisateur';
+import { AideRepository } from '../repository/aide.repository';
+import { ArticleRepository } from '../repository/article.repository';
+import { CommuneRepository } from '../repository/commune/commune.repository';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { GenericControler } from './genericControler';
 
 export class ArticleLocalAPI {
   @ApiProperty() id: string;
@@ -166,7 +158,7 @@ export class SyntheseController extends GenericControler {
         Scope.gamification,
         Scope.defis,
       ]);
-      nombre_points_moyen += user.gamification.points;
+      nombre_points_moyen += user.gamification.getPoints();
       nombre_defis_encours += user.defi_history.getNombreDefisEnCours();
       nombre_defis_realises += user.defi_history.getNombreDefisRealises();
     }

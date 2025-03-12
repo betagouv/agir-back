@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gamification } from '../../../../domain/gamification/gamification';
+import { Feature } from '../../../../../src/domain/gamification/feature';
 import {
   Celebration,
   CelebrationType,
 } from '../../../../domain/gamification/celebrations/celebration';
-import { Feature } from '../../../../../src/domain/gamification/feature';
+import { Gamification } from '../../../../domain/gamification/gamification';
 import { MissionRepository } from '../../../repository/mission.repository';
 
 export class RevealAPI {
@@ -45,7 +45,7 @@ export class GamificationAPI {
 
   public static mapToAPI(gamif: Gamification): GamificationAPI {
     return {
-      points: gamif.points,
+      points: gamif.getPoints(),
       niveau: gamif.getNiveau(),
       current_points_in_niveau: gamif.getCurrent_points_in_niveau(),
       point_target_in_niveau: gamif.getPoint_target_in_niveau(),

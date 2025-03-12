@@ -1,9 +1,9 @@
+import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { Gamification_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { Gamification } from '../../../../src/domain/gamification/gamification';
-import { Gamification_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
 import {
   SourceInscription,
   Utilisateur,
@@ -20,7 +20,7 @@ describe('Gamification vN ', () => {
     // THEN
 
     expect(domain.celebrations).toHaveLength(0);
-    expect(domain.points).toEqual(0);
+    expect(domain.getPoints()).toEqual(0);
   });
   it('serialise <=> deserialise v0 OK', () => {
     // GIVEN

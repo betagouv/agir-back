@@ -4,6 +4,13 @@ import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
 
+const POINTS: Record<TypeAction, number> = {
+  bilan: 50,
+  classique: 100,
+  quizz: 20,
+  simulateur: 30,
+};
+
 export type TypeCodeAction = {
   type: TypeAction;
   code: string;
@@ -58,5 +65,12 @@ export class ActionDefinition extends ActionDefinitionData {
 
   public equals(type_code: TypeCodeAction): boolean {
     return this.code === type_code.code && this.type === type_code.type;
+  }
+
+  public getNombrePoints(): number {
+    return POINTS[this.type];
+  }
+  public static getNombrePointsOfTypeAction(type: TypeAction): number {
+    return POINTS[type];
   }
 }

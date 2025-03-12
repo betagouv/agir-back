@@ -919,7 +919,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (kyc)`, async () => {
     // GIVEN
@@ -962,7 +962,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (quizz)`, async () => {
     // GIVEN
@@ -1001,7 +1001,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[2].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (defi)`, async () => {
@@ -1040,7 +1040,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[3].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points pour l'objecif alors que le sous jacent n'est pas done`, async () => {
     // GIVEN
@@ -1068,7 +1068,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(false);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points deux fois pour l'objecif donné`, async () => {
     // GIVEN
@@ -1109,7 +1109,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
     // GIVEN
@@ -1185,7 +1185,7 @@ describe('Mission (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
 
   it(`NEW GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
@@ -1263,7 +1263,7 @@ describe('Mission (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
@@ -1319,7 +1319,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[1].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(40);
+    expect(userDB.gamification.getPoints()).toEqual(40);
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN

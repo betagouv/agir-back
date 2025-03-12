@@ -372,7 +372,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.gamification.points).toEqual(15);
+    expect(dbUser.gamification.getPoints()).toEqual(15);
 
     expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
 

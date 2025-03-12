@@ -3,6 +3,7 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -1186,10 +1187,17 @@ describe('Actions (API test)', () => {
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
 
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      gamification: gamification as any,
+      points_classement: 0,
     });
     await TestUtil.create(DB.action, {
       code: '123',
@@ -1217,6 +1225,68 @@ describe('Actions (API test)', () => {
         code: '123',
       }),
     ).toEqual(true);
+    expect(userDB.points_classement).toEqual(100);
+    expect(userDB.gamification.getPoints()).toEqual(100);
+
+    const compteur = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(compteur.length).toEqual(1);
+    expect(compteur[0].faites).toEqual(1);
+    expect(compteur[0].type_code_id).toEqual('classique_123');
+  });
+
+  it(`POST /utilisateurs/id/actions/id/faite - faire 2 fois ne raporte qu'une fois des point`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+      points_classement: 0,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionFaite({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
+    expect(userDB.points_classement).toEqual(100);
+    expect(userDB.gamification.getPoints()).toEqual(100);
 
     const compteur = await TestUtil.prisma.compteurActions.findMany();
 

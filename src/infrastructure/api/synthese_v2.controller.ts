@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Response,
-  UseGuards,
-} from '@nestjs/common';
-import { Response as Res } from 'express';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -14,16 +6,15 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
-import { ArticleRepository } from '../repository/article.repository';
-import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
-import { Scope } from '../../domain/utilisateur/utilisateur';
-import { AideRepository } from '../repository/aide.repository';
-import { RechercheServiceManager } from '../../domain/bibliotheque_services/recherche/rechercheServiceManager';
-import { CommuneRepository } from '../repository/commune/commune.repository';
-import { ContenuLocal } from '../../domain/contenu/contenuLocal';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ContenuLocal } from '../../domain/contenu/contenuLocal';
+import { Scope } from '../../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../applicationError';
+import { AideRepository } from '../repository/aide.repository';
+import { ArticleRepository } from '../repository/article.repository';
+import { CommuneRepository } from '../repository/commune/commune.repository';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { GenericControler } from './genericControler';
 
 export class ArticleLocalAPI {
   @ApiProperty() id: string;
@@ -196,7 +187,7 @@ export class Synthese_v2Controller extends GenericControler {
         Scope.gamification,
         Scope.defis,
       ]);
-      nombre_points_moyen += user.gamification.points;
+      nombre_points_moyen += user.gamification.getPoints();
       nombre_defis_encours += user.defi_history.getNombreDefisEnCours();
       nombre_defis_realises += user.defi_history.getNombreDefisRealises();
     }

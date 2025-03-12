@@ -26,7 +26,7 @@ export class StatistiqueExternalRepository {
         code_postal: utilisateur.logement.code_postal,
         nom_commune: utilisateur.logement.commune,
 
-        nombre_points: utilisateur.gamification.points,
+        nombre_points: utilisateur.gamification.getPoints(),
 
         nombre_parts_fiscales: utilisateur.parts,
         revenu_fiscal: utilisateur.revenu_fiscal,

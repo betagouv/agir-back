@@ -933,6 +933,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(userDB.gamification.points).toBe(15);
+    expect(userDB.gamification.getPoints()).toBe(15);
   });
 });

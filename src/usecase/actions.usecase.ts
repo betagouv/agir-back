@@ -257,7 +257,7 @@ export class ActionUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -269,15 +269,19 @@ export class ActionUsecase {
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
     }
+    if (!utilisateur.thematique_history.isActionFaite(action_def)) {
+      await this.compteurActionsRepository.incrementFaite(action_def);
 
-    utilisateur.thematique_history.setActionCommeFaite(action_def);
+      utilisateur.thematique_history.setActionCommeFaite(
+        action_def,
+        utilisateur,
+      );
 
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.thematique_history],
-    );
-
-    await this.compteurActionsRepository.incrementFaite(action_def);
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        utilisateur,
+        [Scope.thematique_history, Scope.gamification, Scope.core],
+      );
+    }
   }
 
   async getUtilisateurAction(
