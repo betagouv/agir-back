@@ -175,7 +175,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '3' });
     await articleRepository.loadCache();
     // WHEN
-    const liste = await articleRepository.searchArticles({ maxNumber: 2 });
+    const liste = await articleRepository.searchArticles({ take: 2 });
 
     // THEN
     expect(liste).toHaveLength(2);

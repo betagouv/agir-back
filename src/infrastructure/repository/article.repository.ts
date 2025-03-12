@@ -11,7 +11,6 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 export type ArticleFilter = {
-  maxNumber?: number;
   thematiques?: Thematique[];
   code_postal?: string;
   difficulty?: DifficultyLevel;
@@ -25,6 +24,8 @@ export type ArticleFilter = {
   code_departement?: string;
   code_commune?: string;
   tag_article?: string;
+  skip?: number;
+  take?: number;
 };
 
 @Injectable()
@@ -214,7 +215,8 @@ export class ArticleRepository {
     }
 
     const finalQuery = {
-      take: filter.maxNumber,
+      skip: filter.skip,
+      take: filter.take,
       where: {
         AND: main_filter,
       },

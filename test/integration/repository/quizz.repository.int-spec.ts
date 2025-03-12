@@ -1,11 +1,11 @@
-import { DB, TestUtil } from '../../TestUtil';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
-import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('QuizzRepository', () => {
   const OLD_ENV = process.env;

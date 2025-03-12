@@ -253,7 +253,11 @@ export class History {
   }
 
   private sortByDate(articles: Article[]) {
-    articles.sort((a, b) => b.read_date.getTime() - a.read_date.getTime());
+    articles.sort(
+      (a, b) =>
+        (b.read_date ? b.read_date.getTime() : 0) -
+        (a.read_date ? a.read_date.getTime() : 0),
+    );
   }
 
   private findQuizzByIdOrCreate(content_id: string): QuizzHistory {

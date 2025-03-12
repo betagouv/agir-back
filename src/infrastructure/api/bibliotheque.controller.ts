@@ -16,8 +16,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { BibliothequeUsecase } from '../../../src/usecase/bibliotheque.usecase';
+import { IncludeArticle } from '../../domain/contenu/includeArticle';
 import { Thematique } from '../../domain/thematique/thematique';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -54,18 +54,6 @@ export class BibliothequeController extends GenericControler {
     required: false,
     description: `si à 'true' ne ramène que le contenu en favoris utilisateur`,
   })
-  @ApiQuery({
-    name: 'type',
-    enum: ContentType,
-    required: false,
-    description: `le type de contenu recherché : article, quizz, etc`,
-  })
-  @ApiQuery({
-    name: 'content_id',
-    type: String,
-    required: false,
-    description: `l'id de contenu pour récupérer un contenu spécifique, si présent, les bloc de filtre n'est pas présent dans la réponse`,
-  })
   @UseGuards(AuthGuard)
   async getBibliotheque(
     @Request() req,
@@ -88,6 +76,69 @@ export class BibliothequeController extends GenericControler {
       titre,
       favoris ? favoris : false,
     );
+    return BibliothequeAPI.mapToAPI(biblio);
+  }
+
+  @Get('utilisateurs/:utilisateurId/bibliotheque_v2')
+  @ApiOkResponse({ type: BibliothequeAPI })
+  @ApiQuery({
+    name: 'filtre_thematiques',
+    type: String,
+    required: false,
+    description: `Une liste de codes de thématiques spérarées par des virgules`,
+  })
+  @ApiQuery({
+    name: 'titre',
+    type: String,
+    required: false,
+    description: `une fragment du titre, insensible à la casse`,
+  })
+  @ApiQuery({
+    name: 'include',
+    enum: IncludeArticle,
+    required: false,
+    description: `indique si on veut tout les articles, les lus, ou les favoris (qui sont de fait lus)`,
+  })
+  @ApiQuery({
+    name: 'skip',
+    type: Number,
+    required: false,
+    description: `Combien de premiers éléments on veut écarter du résultat`,
+  })
+  @ApiQuery({
+    name: 'take',
+    type: Number,
+    required: false,
+    description: `Combien d'élements max on souhaite en retour`,
+  })
+  @UseGuards(AuthGuard)
+  async getBibliotheque_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Query('filtre_thematiques') filtre_thematiques?: string,
+    @Query('titre') titre?: string,
+    @Query('include') include?: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ): Promise<BibliothequeAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    let thematiques = [];
+    if (filtre_thematiques) {
+      const thematiques_strings = filtre_thematiques.split(',');
+      thematiques = thematiques_strings.map((them) => Thematique[them]);
+    }
+    const include_value = this.castIncludeArticleOrException(include);
+
+    const biblio = await this.bibliothequeUsecase.rechercheBiblio_v2(
+      utilisateurId,
+      thematiques,
+      titre,
+      include_value,
+      skip ? parseInt(skip) : undefined,
+      take ? parseInt(take) : undefined,
+    );
+
     return BibliothequeAPI.mapToAPI(biblio);
   }
 

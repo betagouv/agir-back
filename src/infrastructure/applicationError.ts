@@ -646,6 +646,12 @@ export class ApplicationError {
       `L'attribut 'value' doit être de type decimal, reçu : [${value}]`,
     );
   }
+  static throwTypeIncludeNotFound(value: string) {
+    this.throwAppError(
+      '122',
+      `Valeur 'include' incorrecte [${value}], sont acceptés = tout / lu / favoris`,
+    );
+  }
 
   private static throwAppError(
     code: string,

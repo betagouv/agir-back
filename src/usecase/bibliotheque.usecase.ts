@@ -3,6 +3,7 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Article } from '../domain/contenu/article';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../domain/contenu/contentType';
+import { IncludeArticle } from '../domain/contenu/includeArticle';
 import { Quizz } from '../domain/contenu/quizz';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -54,6 +55,54 @@ export class BibliothequeUsecase {
       );
 
     result.addArticles(ordered_articles);
+
+    for (const thematique of ThematiqueRepository.getAllThematiques()) {
+      if (thematique !== Thematique.services_societaux)
+        result.addSelectedThematique(
+          thematique,
+          filtre_thematiques.includes(thematique),
+        );
+    }
+
+    return this.personnalisator.personnaliser(result, utilisateur);
+  }
+
+  // tous les articles par défaut
+  async rechercheBiblio_v2(
+    utilisateurId: string,
+    filtre_thematiques: Thematique[],
+    titre: string,
+    include: IncludeArticle,
+    skip: number = 0,
+    take: number = 10,
+  ): Promise<Bibliotheque> {
+    let result = new Bibliotheque();
+
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides, Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    let articles_candidats_ids: string[];
+    if (include !== 'tout') {
+      articles_candidats_ids = utilisateur.history.searchArticlesIds({
+        est_lu: include === 'lu',
+        est_favoris: include === 'favoris',
+      });
+    }
+
+    const articles = await this.articleRepository.searchArticles({
+      include_ids: articles_candidats_ids,
+      thematiques:
+        filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
+      titre_fragment: titre,
+    });
+
+    const ordered_articles =
+      utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
+
+    result.addArticles(ordered_articles.slice(skip, skip + take));
 
     for (const thematique of ThematiqueRepository.getAllThematiques()) {
       if (thematique !== Thematique.services_societaux)

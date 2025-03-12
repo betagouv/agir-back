@@ -1,4 +1,5 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
@@ -891,5 +892,290 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
     ).toEqual(100);
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, favoris first, puis ordre de lecture decroissant', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(4);
+    expect(response.body.contenu[0].content_id).toEqual('1');
+    expect(response.body.contenu[1].content_id).toEqual('3');
+    expect(response.body.contenu[2].content_id).toEqual('2');
+    expect(response.body.contenu[3].content_id).toEqual('4');
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - que les favoris', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?include=favoris',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(1);
+    expect(response.body.contenu[0].content_id).toEqual('1');
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - que les lus', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?include=lu',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(3);
+    expect(response.body.contenu[0].content_id).toEqual('1');
+    expect(response.body.contenu[1].content_id).toEqual('3');
+    expect(response.body.contenu[2].content_id).toEqual('2');
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - zap les 2 premiers', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?skip=2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu[0].content_id).toEqual('2');
+    expect(response.body.contenu[1].content_id).toEqual('4');
+  });
+  it('GET /utilisateurs/id/bibliotheque_v2 - zap les 2 premiers, en prend 1 seul', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?skip=2&take=1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(1);
+    expect(response.body.contenu[0].content_id).toEqual('2');
   });
 });
