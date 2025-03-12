@@ -267,6 +267,7 @@ describe('Actions (API test)', () => {
       thematique: 'consommation',
       titre: 'The titre',
       type: 'classique',
+      points: 100,
     });
   });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
@@ -334,6 +335,7 @@ describe('Actions (API test)', () => {
       thematique: 'consommation',
       titre: 'The titre',
       type: 'classique',
+      points: 100,
     });
   });
 
@@ -811,6 +813,7 @@ describe('Actions (API test)', () => {
       thematique: 'consommation',
       titre: 'The titre',
       type: 'classique',
+      points: 100,
     });
   });
 

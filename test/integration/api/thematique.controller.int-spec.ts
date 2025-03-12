@@ -300,17 +300,18 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
-    expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
-    expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(false);
-    expect(response.body.liste_actions_recommandees[0].deja_faite).toEqual(
-      false,
-    );
-    expect(
-      response.body.liste_actions_recommandees[0].nombre_aides_disponibles,
-    ).toEqual(1);
-    expect(response.body.liste_actions_recommandees[0].titre).toEqual(
-      'The titre',
-    );
+    expect(response.body.liste_actions_recommandees[0]).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 0,
+      nombre_aides_disponibles: 1,
+      points: 100,
+      sous_titre: 'Sous titre',
+      thematique: 'alimentation',
+      titre: 'The titre',
+      type: 'classique',
+    });
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue / faite OK`, async () => {

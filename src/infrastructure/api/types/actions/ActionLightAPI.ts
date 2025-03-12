@@ -7,6 +7,7 @@ export class ActionLightAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() points: number;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
@@ -25,6 +26,7 @@ export class ActionLightAPI {
       thematique: action.thematique,
       deja_vue: action.deja_vue,
       deja_faite: action.deja_faite,
+      points: action.getNombrePoints(),
     };
   }
 }

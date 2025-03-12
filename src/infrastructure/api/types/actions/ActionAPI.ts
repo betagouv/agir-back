@@ -77,6 +77,7 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() points: number;
   @ApiProperty() consigne: string;
   @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
@@ -126,6 +127,7 @@ export class ActionAPI {
       deja_vue: action.deja_vue,
       deja_faite: action.deja_faite,
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
+      points: action.getNombrePoints(),
     };
   }
 }
