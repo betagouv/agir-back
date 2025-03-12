@@ -41,7 +41,6 @@ export class ActionDefinition extends ActionDefinitionData {
   }
 
   public static getTypeCodeFromString(type_code: string): TypeCodeAction {
-    console.log(type_code);
     const separateur = type_code.indexOf('_');
     return {
       type: TypeAction[type_code.substring(0, separateur)],

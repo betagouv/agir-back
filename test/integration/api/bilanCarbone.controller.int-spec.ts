@@ -601,7 +601,6 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    console.log(response.body);
     expect(response.body.pourcentage_completion_totale).toEqual(21);
     expect(response.body.liens_bilans_thematique).toEqual([
       {
