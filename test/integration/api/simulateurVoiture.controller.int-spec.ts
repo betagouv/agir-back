@@ -101,6 +101,51 @@ describe('/simulateur_voiture (API test)', () => {
       expect(response2.body.empreinte).toEqual(0);
       expect(response2.body.motorisation.valeur).toEqual('hybride');
     });
+
+    test("prend correctement en compte les KYCs même après avoir modifié une question conditionnant l'applicabilité d'autres questions", async () => {
+      // GIVEN
+      // NOTE: could only be done once for all tests?
+      await createKYCs();
+      await TestUtil.create(DB.utilisateur);
+      await kycRepository.loadCache();
+
+      // WHEN
+      await setEstProprietaire(true);
+      await setPrixAchat(100000);
+
+      // THEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat/voiture_actuelle',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        couts: 8624.802752132495,
+        empreinte: 3022.851504292707,
+        gabarit: {
+          label: 'Berline',
+          valeur: 'berline',
+        },
+        motorisation: {
+          label: 'Thermique',
+          valeur: 'thermique',
+        },
+        carburant: {
+          label: 'Essence',
+          valeur: 'essence E5 ou E10',
+        },
+      });
+
+      // WHEN
+      await setEstProprietaire(false);
+
+      const response2 = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat/voiture_actuelle',
+      );
+
+      expect(response2.status).toBe(200);
+      expect(response2.body.couts).toEqual(6370.257297587041);
+    });
   });
 
   describe('GET /utilisateurs/id/simulateur_voiture/resultat/voiture_cible', () => {
@@ -223,6 +268,49 @@ describe('/simulateur_voiture (API test)', () => {
 
 async function createKYCs() {
   // NOTE: this seems to be hacky, KYCs should already sync with the DB
+  //
+  await TestUtil.create(DB.kYC, {
+    code: KYCID.KYC_transport_type_utilisateur,
+    id_cms: 140,
+    question:
+      'Utilisez-vous majoritairement la même voiture pour vous déplacer ?',
+    type: TypeReponseQuestionKYC.choix_unique,
+    is_ngc: true,
+    reponses: [
+      {
+        code: 'proprio',
+        label: 'Oui, je suis propriétaire',
+        ngc_code: "'proprio'",
+        selected: false,
+      },
+      {
+        code: 'pas_la_mienne',
+        label: "Non, ce n'est pas la mienne",
+        ngc_code: "'pas_la_mienne'",
+        selected: false,
+      },
+      {
+        code: 'change_souvent',
+        label: 'Non, je change souvent de voiture',
+        ngc_code: "'change_souvent'",
+        selected: false,
+      },
+    ],
+  });
+  await TestUtil.create(DB.kYC, {
+    code: KYCID.KYC_transport_voiture_prix_achat,
+    id_cms: 146,
+    type: TypeReponseQuestionKYC.entier,
+    is_ngc: true,
+    conditions: [
+      [
+        {
+          id_kyc: 140,
+          code_reponse: 'proprio',
+        },
+      ],
+    ],
+  });
   await TestUtil.create(DB.kYC, {
     code: KYCID.KYC_transport_voiture_motorisation,
     id_cms: 141,
@@ -388,6 +476,20 @@ async function setGabarit(
 
 async function setKmParcourus(value: number) {
   await setKYC(KYCID.KYC_transport_voiture_km, [{ value: String(value) }]);
+}
+
+async function setEstProprietaire(value: boolean) {
+  await setKYC(KYCID.KYC_transport_type_utilisateur, [
+    { code: 'proprio', selected: value },
+    { code: 'pas_la_mienne' },
+    { code: 'change_souvent', selected: !value },
+  ]);
+}
+
+async function setPrixAchat(value: number) {
+  await setKYC(KYCID.KYC_transport_voiture_prix_achat, [
+    { value: String(value) },
+  ]);
 }
 
 async function setVoitureOccasion(value: boolean) {
