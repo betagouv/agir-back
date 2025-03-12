@@ -1106,6 +1106,114 @@ describe('Actions (API test)', () => {
     });
   });
 
+  it(`GET /utilisateurs/id/actions/id/faite - gagne les points sur quizz si 4 réponses sur 6`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '4' });
+    await TestUtil.create(DB.quizz, { content_id: '5' });
+    await TestUtil.create(DB.quizz, { content_id: '6' });
+
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '4', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '5', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '6', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      } as any,
+      gamification: gamification as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3', '4', '5', '6'],
+      type: TypeAction.quizz,
+      type_code_id: 'quizz_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/faite',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.points_classement).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
+  });
+
+  it(`GET /utilisateurs/id/actions/id/faite - gagne PAS les points sur quizz si 3 réponses sur 6`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '4' });
+    await TestUtil.create(DB.quizz, { content_id: '5' });
+    await TestUtil.create(DB.quizz, { content_id: '6' });
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '4', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '5', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '6', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      } as any,
+      gamification: gamification as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3', '4', '5', '6'],
+      type: TypeAction.quizz,
+      type_code_id: 'quizz_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.points_classement).toEqual(0);
+    expect(userDB.gamification.getPoints()).toEqual(0);
+  });
+
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });

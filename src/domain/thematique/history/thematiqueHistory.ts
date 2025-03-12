@@ -1,12 +1,8 @@
 import { Action } from '../../actions/action';
-import {
-  ActionDefinition,
-  TypeCodeAction,
-} from '../../actions/actionDefinition';
+import { TypeCodeAction } from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
 import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
-import { Utilisateur } from '../../utilisateur/utilisateur';
 import { Thematique } from '../thematique';
 import { KycTagExcluantTranslator } from './kycTagTranslator';
 import { ThematiqueRecommandation } from './thematiqueRecommandation';
@@ -99,14 +95,12 @@ export class ThematiqueHistory {
       this.liste_actions_vues.push({ type: action.type, code: action.code });
     }
   }
-  public setActionCommeFaite(action: TypeCodeAction, utilisateur: Utilisateur) {
+  public setActionCommeFaite(action: TypeCodeAction): boolean {
     if (this.indexOfTypeCode(this.liste_actions_faites, action) === -1) {
-      utilisateur.gamification.ajoutePoints(
-        ActionDefinition.getNombrePointsOfTypeAction(action.type),
-        utilisateur,
-      );
       this.liste_actions_faites.push({ type: action.type, code: action.code });
+      return true;
     }
+    return false;
   }
 
   public getRecommandationByThematique(

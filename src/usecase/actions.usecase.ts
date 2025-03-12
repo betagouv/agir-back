@@ -257,7 +257,11 @@ export class ActionUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.gamification],
+      [
+        Scope.thematique_history,
+        Scope.gamification,
+        Scope.history_article_quizz_aides,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -272,10 +276,23 @@ export class ActionUsecase {
     if (!utilisateur.thematique_history.isActionFaite(action_def)) {
       await this.compteurActionsRepository.incrementFaite(action_def);
 
-      utilisateur.thematique_history.setActionCommeFaite(
-        action_def,
-        utilisateur,
+      utilisateur.thematique_history.setActionCommeFaite(action_def);
+
+      const points = ActionDefinition.getNombrePointsOfTypeAction(
+        action_def.type,
       );
+
+      if (action_def.type === TypeAction.quizz) {
+        const score = await this.external_calcul_score_quizz_action(
+          action_def,
+          utilisateur,
+        );
+        if (score.nombre_bonnes_reponses >= 4) {
+          utilisateur.gamification.ajoutePoints(points, utilisateur);
+        }
+      } else {
+        utilisateur.gamification.ajoutePoints(points, utilisateur);
+      }
 
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
@@ -388,9 +405,16 @@ export class ActionUsecase {
       ApplicationError.throwActionNotFound(code_action_quizz, TypeAction.quizz);
     }
 
+    return this.external_calcul_score_quizz_action(action_def, utilisateur);
+  }
+
+  async external_calcul_score_quizz_action(
+    action: ActionDefinition,
+    utilisateur: Utilisateur,
+  ): Promise<{ nombre_quizz_done: number; nombre_bonnes_reponses: number }> {
     let nbr_bonnes_reponses = 0;
     let nbr_quizz_done = 0;
-    for (const quizz_id of action_def.quizz_ids) {
+    for (const quizz_id of action.quizz_ids) {
       const quizz = utilisateur.history.getQuizzHistoryById(quizz_id);
       if (quizz) {
         nbr_quizz_done++;
