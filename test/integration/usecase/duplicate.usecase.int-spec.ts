@@ -81,7 +81,7 @@ describe('Duplicate Usecase', () => {
       code_postal: '91120',
       compte_actif: true,
       date_derniere_activite: new Date(1),
-      id: '123',
+      user_id: '123',
       nom_commune: 'PALAISEAU',
       nombre_points: 10,
       revenu_fiscal: 10000,
@@ -123,7 +123,7 @@ describe('Duplicate Usecase', () => {
 
     expect(userDB[0].external_stat_id).not.toBeNull();
     expect(userDB[0].external_stat_id.length).toBeGreaterThan(20);
-    expect(stats_users[0].id).toEqual(userDB[0].external_stat_id);
+    expect(stats_users[0].user_id).toEqual(userDB[0].external_stat_id);
   });
 
   it('duplicateKYC : copy ok 1 KYC de type choix unique', async () => {
@@ -168,6 +168,7 @@ describe('Duplicate Usecase', () => {
     expect(stats_kycs).toHaveLength(1);
 
     const kycDB = stats_kycs[0];
+    expect(kycDB.user_id).toEqual('123');
     expect(kycDB.code_kyc).toEqual('1');
     expect(kycDB.cms_id).toEqual('10');
     expect(kycDB.question).toEqual('question');

@@ -20,7 +20,7 @@ export class StatistiqueExternalRepository {
   public async createUserData(utilisateur: Utilisateur) {
     await this.prismaStats.utilisateurCopy.create({
       data: {
-        id: utilisateur.external_stat_id,
+        user_id: utilisateur.external_stat_id,
 
         code_insee_commune: utilisateur.code_commune,
         code_postal: utilisateur.logement.code_postal,

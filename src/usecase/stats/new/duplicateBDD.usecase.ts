@@ -56,7 +56,7 @@ export class DuplicateBDDForStatsUsecase {
         for (const kyc of liste_kyc) {
           try {
             await this.statistiqueExternalRepository.createKYCData(
-              user.id,
+              user.external_stat_id,
               kyc,
             );
           } catch (error) {

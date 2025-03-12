@@ -17,7 +17,7 @@ model TestTable {
 }
 
 model UtilisateurCopy {
-  id                     String    @id
+  user_id                String    @id
   compte_actif           Boolean
   revenu_fiscal          Int?
   nombre_parts_fiscales  Decimal?  @db.Decimal(4, 2)
