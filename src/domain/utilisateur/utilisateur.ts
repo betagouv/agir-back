@@ -246,11 +246,14 @@ export class Utilisateur extends UtilisateurData {
     );
 
     const ok_pseudo = !!this.pseudo && this.pseudo !== '';
+    const ok_prenom = !!this.prenom && this.prenom !== '';
 
     const ok_code_postal =
       !!this.logement.code_postal && this.logement.code_postal.length === 5;
 
-    return ok_pseudo && ok_code_postal && KYC_preference_answered;
+    return (
+      (ok_pseudo || ok_prenom) && ok_code_postal && KYC_preference_answered
+    );
   }
 
   public isMagicLinkCodeExpired(): boolean {
