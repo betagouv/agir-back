@@ -1,3 +1,4 @@
+import { Besoin } from '../aides/besoin';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
@@ -16,7 +17,7 @@ export class ActionDefinitionData {
   consigne: string;
   label_compteur: string;
   quizz_felicitations: string;
-  besoins: string[];
+  besoins: Besoin[];
   comment: string;
   pourquoi: string;
   kyc_codes: string[];

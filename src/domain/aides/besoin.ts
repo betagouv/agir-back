@@ -1,4 +1,4 @@
-export enum Besoin {
+export enum CodeBesoin {
   acheter_velo = 'acheter_velo',
   emprunter_velo = 'emprunter_velo',
   louer_velo = 'louer_velo',
@@ -30,3 +30,6 @@ export enum Besoin {
   protections_hygieniques_lavables = 'protections_hygieniques_lavables',
   gerer_conso_energie = 'gerer_conso_energie',
 }
+
+export type Besoin = CodeBesoin | string;
+export const Besoin = { ...CodeBesoin };

@@ -24,7 +24,7 @@ export class AideAPI {
   @ApiProperty({ type: [String] })
   thematiques_label: string[];
   @ApiProperty() montant_max: number;
-  @ApiProperty({ enum: Besoin }) besoin: string;
+  @ApiProperty({ enum: Besoin }) besoin: Besoin;
   @ApiProperty() besoin_desc: string;
   @ApiProperty() clicked_demande: boolean;
   @ApiProperty() clicked_infos: boolean;

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Action, ActionService } from '../../../../domain/actions/action';
 import { TypeAction } from '../../../../domain/actions/typeAction';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Besoin } from '../../../../domain/aides/besoin';
 import { Echelle } from '../../../../domain/aides/echelle';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
@@ -84,7 +85,7 @@ export class ActionAPI {
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_aides_disponibles: number;
-  @ApiProperty({ type: [String] }) besoins: string[];
+  @ApiProperty({ enum: Besoin, isArray: true }) besoins: Besoin[];
   @ApiProperty() comment: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
