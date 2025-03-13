@@ -1515,4 +1515,54 @@ describe('/bilan (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.impact_kg_annee).toEqual(DEFAULT_TOTAL_KG);
   });
+
+  it('GET /utilisateurs/id/bilans/last_v3/code_thematique - bilan par thematique, data OK', async () => {
+    // GIVEN
+    const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
+
+    await TestUtil.create(DB.utilisateur);
+
+    await TestUtil.create(DB.thematique, {
+      id_cms: 1,
+      code: Thematique.transport,
+      titre: 'The Transport',
+      image_url: 'aaaa',
+    });
+    await thematiqueRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bilans/last_v3/transport',
+    );
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      thematique: 'transport',
+      impact_kg_annee: 1958.4824122240736,
+      details: [
+        {
+          label: 'Voiture',
+          impact_kg_annee: 1568.5480530854577,
+          emoji: '🚘️',
+        },
+        { label: 'Avion', impact_kg_annee: 312.2395338291978, emoji: '✈️' },
+        {
+          label: 'Transports en commun',
+          impact_kg_annee: 33.7904763482199,
+          emoji: '🚌',
+        },
+        {
+          label: '2 roues',
+          impact_kg_annee: 23.196418035061875,
+          emoji: '🛵',
+        },
+        { label: 'Ferry', impact_kg_annee: 11.88805068661542, emoji: '⛴' },
+        { label: 'Train', impact_kg_annee: 8.8198802395209, emoji: '🚋' },
+        { label: 'Mobilité douce', impact_kg_annee: 0, emoji: '🚲' },
+        { label: 'Vacances', impact_kg_annee: 0, emoji: '🏖️' },
+      ],
+      emoji: '🚦',
+    });
+  });
 });

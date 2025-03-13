@@ -1,11 +1,4 @@
 import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
-import {
   Controller,
   Get,
   Param,
@@ -14,10 +7,20 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { GenericControler } from './genericControler';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Thematique } from '../../domain/thematique/thematique';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
 import { BilanCarboneDashboardAPI_v3 } from './types/ngc/bilanAPI_v3';
+import { BilanThematiqueAPI } from './types/ngc/bilanThematiqueAPI';
 import { BilanTotalAPI } from './types/ngc/bilanTotalAPI';
 
 @Controller()
@@ -55,6 +58,38 @@ export class BilanCarboneController extends GenericControler {
       bilan.bilan_synthese,
       force,
     );
+  }
+
+  @Get('utilisateurs/:utilisateurId/bilans/last_v3/:code_thematique')
+  @ApiOperation({
+    summary:
+      "Renvoie le bilan carbone courant de l'utilisateur pour une thematique donnée",
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: BilanThematiqueAPI,
+  })
+  @UseGuards(AuthGuard)
+  async getBilan_V3_thematique(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+  ): Promise<BilanThematiqueAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const them = this.castThematiqueOrException(code_thematique);
+
+    const bilan =
+      await this.bilanCarboneUsecase.getCurrentBilanByUtilisateurIdAndThematique(
+        utilisateurId,
+        them,
+      );
+    return BilanThematiqueAPI.mapToAPI(bilan);
   }
 
   @ApiOkResponse({ type: BilanTotalAPI })

@@ -7,14 +7,121 @@ import {
   BilanCarbone,
   DetailImpact,
   ImpactThematique,
+  ImpactThematiqueStandalone,
   NB_SEMAINES_PAR_ANNEE,
   RegleNGC,
   SituationNGC,
 } from '../../domain/bilan/bilanCarbone';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Thematique } from '../../domain/thematique/thematique';
+import { ApplicationError } from '../applicationError';
 
 const { migrateSituation } = require('@publicodes/tools/migration');
+
+const regles_transport: RegleNGC[] = [
+  'transport',
+  'transport . voiture',
+  'transport . avion',
+  'transport . deux roues',
+  'transport . mobilité douce',
+  'transport . transports commun',
+  'transport . train',
+  'transport . vacances',
+  'transport . ferry',
+];
+const regles_logement: RegleNGC[] = [
+  'logement',
+  'logement . construction',
+  'logement . électricité',
+  'logement . chauffage',
+  'logement . climatisation',
+  'logement . piscine',
+  'logement . extérieur',
+  'logement . vacances',
+];
+const regles_alimentation: RegleNGC[] = [
+  'alimentation',
+  'alimentation . petit déjeuner annuel',
+  'alimentation . plats . viande rouge',
+  'alimentation . plats . viande blanche',
+  'alimentation . plats . poisson gras',
+  'alimentation . plats . poisson blanc',
+  'alimentation . plats . végétarien',
+  'alimentation . plats . végétalien',
+  'alimentation . boisson',
+];
+const regles_consommation: RegleNGC[] = [
+  'divers',
+  'divers . animaux domestiques',
+  'divers . textile',
+  'divers . électroménager',
+  'divers . ameublement',
+  'divers . numérique',
+  'divers . loisirs',
+  'divers . autres produits',
+  'divers . tabac',
+];
+const regles_services_societaux: RegleNGC[] = [
+  'services sociétaux',
+  'services sociétaux . services publics',
+  'services sociétaux . services marchands',
+];
+const REGLES_NGC: { [key in Thematique]?: RegleNGC[] } = {
+  alimentation: regles_alimentation,
+  consommation: regles_consommation,
+  logement: regles_logement,
+  transport: regles_transport,
+  services_societaux: regles_services_societaux,
+};
+
+export type ValeursAlimentation = {
+  alimentation: number;
+  alimentation_petit_dej: number;
+  alimentation_viande_par_semaine: number;
+  alimentation_viande: number;
+  alimentation_poisson_par_semaine: number;
+  alimentation_poisson: number;
+  alimentation_fruits_legumes_par_semaine: number;
+  alimentation_fruits_legumes: number;
+  alimentation_boisson: number;
+};
+export type ValeursTransport = {
+  transport: number;
+  transport_voiture: number;
+  transport_avion: number;
+  transport_2roues: number;
+  transport_mob_douce: number;
+  transport_commun: number;
+  transport_train: number;
+  transport_vacances: number;
+  transport_ferry: number;
+};
+export type ValeursLogement = {
+  logement: number;
+  logement_constr: number;
+  logement_elec: number;
+  logement_chauf: number;
+  logement_clim: number;
+  logement_piscine: number;
+  logement_ext: number;
+  logement_vacances: number;
+};
+export type ValeursConsommation = {
+  divers: number;
+  divers_animaux: number;
+  divers_textile: number;
+  divers_electro: number;
+  divers_ameublement: number;
+  divers_numérique: number;
+  divers_loisirs: number;
+  divers_autres_produits: number;
+  divers_tabac: number;
+};
+export type ValeursServicesSocietaux = {
+  services_societaux: number;
+  services_societaux_pub: number;
+  services_societaux_march: number;
+};
 
 @Injectable()
 export class NGCCalculator {
@@ -89,398 +196,416 @@ export class NGCCalculator {
     return result_map;
   }
 
+  computeBilanCarboneThematiqueFromSituation(
+    situation: SituationNGC,
+    thematique: Thematique,
+  ): ImpactThematiqueStandalone {
+    if (!REGLES_NGC[thematique]) {
+      ApplicationError.throwThematiqueForBilanNotAvailable(thematique);
+    }
+
+    let result: ImpactThematiqueStandalone;
+
+    switch (thematique) {
+      case Thematique.alimentation:
+        result = this.formatBilanAlimentation(
+          this.computeValeursAlimentation(situation),
+        );
+        break;
+      case Thematique.transport:
+        result = this.formatBilanTransport(
+          this.computeValeursTransport(situation),
+        );
+        break;
+      case Thematique.logement:
+        result = this.formatBilanLogement(
+          this.computeValeursLogement(situation),
+        );
+        break;
+      case Thematique.consommation:
+        result = this.formatBilanConsommation(
+          this.computeValeursConsommation(situation),
+        );
+        break;
+      case Thematique.services_societaux:
+        result = this.formatBilanServiceSocietaux(
+          this.computeValeursServiceSocietaux(situation),
+        );
+        break;
+      default:
+        break;
+    }
+
+    sortResultInPlaceImpactThematiqueStandalone(result);
+
+    return result;
+  }
+
   computeBilanCarboneFromSituation(situation: SituationNGC): BilanCarbone {
-    const entryList: RegleNGC[] = [
+    const entryList = [].concat(
       'bilan',
-      'transport',
-      'transport . voiture',
-      'transport . avion',
-      'transport . deux roues',
-      'transport . mobilité douce',
-      'transport . transports commun',
-      'transport . train',
-      'transport . vacances',
-      'transport . ferry',
-      'logement',
-      'logement . construction',
-      'logement . électricité',
-      'logement . chauffage',
-      'logement . climatisation',
-      'logement . piscine',
-      'logement . extérieur',
-      'logement . vacances',
-      'divers',
-      'divers . animaux domestiques',
-      'divers . textile',
-      'divers . électroménager',
-      'divers . ameublement',
-      'divers . numérique',
-      'divers . loisirs',
-      'divers . autres produits',
-      'divers . tabac',
-      'alimentation',
-      'alimentation . petit déjeuner annuel',
-      'alimentation . plats . viande rouge',
-      'alimentation . plats . viande blanche',
-      'alimentation . plats . poisson gras',
-      'alimentation . plats . poisson blanc',
-      'alimentation . plats . végétarien',
-      'alimentation . plats . végétalien',
-      'alimentation . boisson',
-      'services sociétaux',
-      'services sociétaux . services publics',
-      'services sociétaux . services marchands',
-    ];
-
-    const resultMap = this.computeEntryListValues(situation, entryList);
-
-    const getValueOf = (key: RegleNGC) =>
-      getValueFromMap<RegleNGC>(resultMap, key);
-
-    const total = getValueOf('bilan');
-
-    const transport = getValueOf('transport');
-    const transport_voiture = getValueOf('transport . voiture');
-    const transport_avion = getValueOf('transport . avion');
-    const transport_2roues = getValueOf('transport . deux roues');
-    const transport_mob_douce = getValueOf('transport . mobilité douce');
-    const transport_commun = getValueOf('transport . transports commun');
-    const transport_train = getValueOf('transport . train');
-    const transport_vacances = getValueOf('transport . vacances');
-    const transport_ferry = getValueOf('transport . ferry');
-
-    const logement = getValueOf('logement');
-    const logement_constr = getValueOf('logement . construction');
-    const logement_elec = getValueOf('logement . électricité');
-    const logement_chauf = getValueOf('logement . chauffage');
-    const logement_clim = getValueOf('logement . climatisation');
-    const logement_piscine = getValueOf('logement . piscine');
-    const logement_ext = getValueOf('logement . extérieur');
-    const logement_vacances = getValueOf('logement . vacances');
-
-    const divers = getValueOf('divers');
-    const divers_animaux = getValueOf('divers . animaux domestiques');
-    const divers_textile = getValueOf('divers . textile');
-    const divers_electro = getValueOf('divers . électroménager');
-    const divers_ameublement = getValueOf('divers . ameublement');
-    const divers_numérique = getValueOf('divers . numérique');
-    const divers_loisirs = getValueOf('divers . loisirs');
-    const divers_autres_produits = getValueOf('divers . autres produits');
-    const divers_tabac = getValueOf('divers . tabac');
-
-    const alimentation = getValueOf('alimentation');
-    const alimentation_petit_dej = getValueOf(
-      'alimentation . petit déjeuner annuel',
+      REGLES_NGC[Thematique.logement],
+      REGLES_NGC[Thematique.alimentation],
+      REGLES_NGC[Thematique.transport],
+      REGLES_NGC[Thematique.consommation],
+      REGLES_NGC[Thematique.services_societaux],
     );
 
-    const alimentation_viande_par_semaine =
-      getValueOf('alimentation . plats . viande rouge') +
-      getValueOf('alimentation . plats . viande blanche');
-    const alimentation_viande =
-      alimentation_viande_par_semaine * NB_SEMAINES_PAR_ANNEE;
+    const full_computing = this.computeEntryListValues(situation, entryList);
 
-    const alimentation_poisson_par_semaine =
-      getValueOf('alimentation . plats . poisson gras') +
-      getValueOf('alimentation . plats . poisson blanc');
-    const alimentation_poisson =
-      alimentation_poisson_par_semaine * NB_SEMAINES_PAR_ANNEE;
-
-    const alimentation_fruits_legumes_par_semaine =
-      getValueOf('alimentation . plats . végétarien') +
-      getValueOf('alimentation . plats . végétalien');
-    const alimentation_fruits_legumes =
-      alimentation_fruits_legumes_par_semaine * NB_SEMAINES_PAR_ANNEE;
-
-    const alimentation_boisson = getValueOf('alimentation . boisson');
-
-    const services_societaux = getValueOf('services sociétaux');
-    const services_societaux_pub = getValueOf(
-      'services sociétaux . services publics',
-    );
-    const services_societaux_march = getValueOf(
-      'services sociétaux . services marchands',
-    );
+    const total = this.extractTotal(full_computing);
+    const val_trans = this.extractValeursTransport(full_computing);
+    const val_log = this.extractValeursLogement(full_computing);
+    const val_conso = this.extractValeursConsommation(full_computing);
+    const val_alim = this.extractValeursAlimentation(full_computing);
+    const val_soc = this.extractValeursServiceSocietaux(full_computing);
 
     const impacts: ImpactThematique[] = [];
     impacts.push({
-      pourcentage: roundedPercentOf(transport, total),
+      pourcentage: roundedPercentOf(val_trans.transport, total),
       thematique: Thematique.transport,
-      impact_kg_annee: transport,
+      impact_kg_annee: val_trans.transport,
       emoji: '🚦',
       details: [
         {
           label: 'Voiture',
-          pourcentage: roundedPercentOf(transport_voiture, total),
-          pourcentage_categorie: roundedPercentOf(transport_voiture, transport),
-          impact_kg_annee: transport_voiture,
+          pourcentage: roundedPercentOf(val_trans.transport_voiture, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_trans.transport_voiture,
+            val_trans.transport,
+          ),
+          impact_kg_annee: val_trans.transport_voiture,
           emoji: '🚘️',
         },
         {
           label: 'Avion',
-          pourcentage: roundedPercentOf(transport_avion, total),
+          pourcentage: roundedPercentOf(val_trans.transport_avion, total),
           pourcentage_categorie: Math.round(
-            (transport_avion / transport) * 100,
+            (val_trans.transport_avion / val_trans.transport) * 100,
           ),
-          impact_kg_annee: transport_avion,
+          impact_kg_annee: val_trans.transport_avion,
           emoji: '✈️',
         },
         {
           label: '2 roues',
-          pourcentage: roundedPercentOf(transport_2roues, total),
-          pourcentage_categorie: roundedPercentOf(transport_2roues, transport),
-          impact_kg_annee: transport_2roues,
+          pourcentage: roundedPercentOf(val_trans.transport_2roues, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_trans.transport_2roues,
+            val_trans.transport,
+          ),
+          impact_kg_annee: val_trans.transport_2roues,
           emoji: '🛵',
         },
         {
           label: 'Mobilité douce',
-          pourcentage: roundedPercentOf(transport_mob_douce, total),
+          pourcentage: roundedPercentOf(val_trans.transport_mob_douce, total),
           pourcentage_categorie: roundedPercentOf(
-            transport_mob_douce,
-            transport,
+            val_trans.transport_mob_douce,
+            val_trans.transport,
           ),
-          impact_kg_annee: transport_mob_douce,
+          impact_kg_annee: val_trans.transport_mob_douce,
           emoji: '🚲',
         },
         {
           label: 'Transports en commun',
-          pourcentage: roundedPercentOf(transport_commun, total),
-          pourcentage_categorie: roundedPercentOf(transport_commun, transport),
-          impact_kg_annee: transport_commun,
+          pourcentage: roundedPercentOf(val_trans.transport_commun, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_trans.transport_commun,
+            val_trans.transport,
+          ),
+          impact_kg_annee: val_trans.transport_commun,
           emoji: '🚌',
         },
         {
           label: 'Train',
-          pourcentage: roundedPercentOf(transport_train, total),
-          pourcentage_categorie: roundedPercentOf(transport_train, transport),
-          impact_kg_annee: transport_train,
+          pourcentage: roundedPercentOf(val_trans.transport_train, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_trans.transport_train,
+            val_trans.transport,
+          ),
+          impact_kg_annee: val_trans.transport_train,
           emoji: '🚋',
         },
         {
           label: 'Vacances',
-          pourcentage: roundedPercentOf(transport_vacances, total),
+          pourcentage: roundedPercentOf(val_trans.transport_vacances, total),
           pourcentage_categorie: roundedPercentOf(
-            transport_vacances,
-            transport,
+            val_trans.transport_vacances,
+            val_trans.transport,
           ),
-          impact_kg_annee: transport_vacances,
+          impact_kg_annee: val_trans.transport_vacances,
           emoji: '🏖️',
         },
         {
           label: 'Ferry',
-          pourcentage: roundedPercentOf(transport_ferry, total),
-          pourcentage_categorie: roundedPercentOf(transport_ferry, transport),
-          impact_kg_annee: transport_ferry,
+          pourcentage: roundedPercentOf(val_trans.transport_ferry, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_trans.transport_ferry,
+            val_trans.transport,
+          ),
+          impact_kg_annee: val_trans.transport_ferry,
           emoji: '⛴',
         },
       ],
     });
     impacts.push({
-      pourcentage: roundedPercentOf(logement, total),
+      pourcentage: roundedPercentOf(val_log.logement, total),
       thematique: Thematique.logement,
-      impact_kg_annee: logement,
+      impact_kg_annee: val_log.logement,
       emoji: '🏠',
       details: [
         {
           label: 'Construction',
-          pourcentage: roundedPercentOf(logement_constr, total),
-          pourcentage_categorie: roundedPercentOf(logement_constr, logement),
-          impact_kg_annee: logement_constr,
+          pourcentage: roundedPercentOf(val_log.logement_constr, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_constr,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_constr,
           emoji: '🧱',
         },
         {
           label: 'Electricité',
-          pourcentage: roundedPercentOf(logement_elec, total),
-          pourcentage_categorie: roundedPercentOf(logement_elec, logement),
-          impact_kg_annee: logement_elec,
+          pourcentage: roundedPercentOf(val_log.logement_elec, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_elec,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_elec,
           emoji: '⚡',
         },
         {
           label: 'Chauffage',
-          pourcentage: roundedPercentOf(logement_chauf, total),
-          pourcentage_categorie: roundedPercentOf(logement_chauf, logement),
-          impact_kg_annee: logement_chauf,
+          pourcentage: roundedPercentOf(val_log.logement_chauf, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_chauf,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_chauf,
           emoji: '🔥',
         },
         {
           label: 'Climatisation',
-          pourcentage: roundedPercentOf(logement_clim, total),
-          pourcentage_categorie: roundedPercentOf(logement_clim, logement),
-          impact_kg_annee: logement_clim,
+          pourcentage: roundedPercentOf(val_log.logement_clim, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_clim,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_clim,
           emoji: '❄️',
         },
         {
           label: 'Piscine',
-          pourcentage: roundedPercentOf(logement_piscine, total),
-          pourcentage_categorie: roundedPercentOf(logement_piscine, logement),
-          impact_kg_annee: logement_piscine,
+          pourcentage: roundedPercentOf(val_log.logement_piscine, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_piscine,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_piscine,
           emoji: '🏊',
         },
         {
           label: 'Extérieur',
-          pourcentage: roundedPercentOf(logement_ext, total),
-          pourcentage_categorie: roundedPercentOf(logement_ext, logement),
-          impact_kg_annee: logement_ext,
+          pourcentage: roundedPercentOf(val_log.logement_ext, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_ext,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_ext,
           emoji: '☘️',
         },
         {
           label: 'Vacances',
-          pourcentage: roundedPercentOf(logement_vacances, total),
-          pourcentage_categorie: roundedPercentOf(logement_vacances, logement),
-          impact_kg_annee: logement_vacances,
+          pourcentage: roundedPercentOf(val_log.logement_vacances, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_log.logement_vacances,
+            val_log.logement,
+          ),
+          impact_kg_annee: val_log.logement_vacances,
           emoji: '🏖',
         },
       ],
     });
     impacts.push({
-      pourcentage: roundedPercentOf(divers, total),
+      pourcentage: roundedPercentOf(val_conso.divers, total),
       thematique: Thematique.consommation,
-      impact_kg_annee: divers,
+      impact_kg_annee: val_conso.divers,
       emoji: '📦',
       details: [
         {
           label: 'Animaux',
-          pourcentage: roundedPercentOf(divers_animaux, total),
-          pourcentage_categorie: roundedPercentOf(divers_animaux, divers),
-          impact_kg_annee: divers_animaux,
+          pourcentage: roundedPercentOf(val_conso.divers_animaux, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_animaux,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_animaux,
           emoji: '🐶',
         },
         {
           label: 'Electroménager',
-          pourcentage: roundedPercentOf(divers_electro, total),
-          pourcentage_categorie: roundedPercentOf(divers_electro, divers),
-          impact_kg_annee: divers_electro,
+          pourcentage: roundedPercentOf(val_conso.divers_electro, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_electro,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_electro,
           emoji: '🔌',
         },
         {
           label: 'Ameublement',
-          pourcentage: roundedPercentOf(divers_ameublement, total),
-          pourcentage_categorie: roundedPercentOf(divers_ameublement, divers),
-          impact_kg_annee: divers_ameublement,
+          pourcentage: roundedPercentOf(val_conso.divers_ameublement, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_ameublement,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_ameublement,
           emoji: '🛋️',
         },
         {
           label: 'Numérique',
-          pourcentage: roundedPercentOf(divers_numérique, total),
-          pourcentage_categorie: roundedPercentOf(divers_numérique, divers),
-          impact_kg_annee: divers_numérique,
+          pourcentage: roundedPercentOf(val_conso.divers_numérique, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_numérique,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_numérique,
           emoji: '📺',
         },
         {
           label: 'Loisirs',
-          pourcentage: roundedPercentOf(divers_loisirs, total),
-          pourcentage_categorie: roundedPercentOf(divers_loisirs, divers),
-          impact_kg_annee: divers_loisirs,
+          pourcentage: roundedPercentOf(val_conso.divers_loisirs, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_loisirs,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_loisirs,
           emoji: '🎭',
         },
         {
           label: 'Autres produits',
-          pourcentage: roundedPercentOf(divers_autres_produits, total),
-          pourcentage_categorie: roundedPercentOf(
-            divers_autres_produits,
-            divers,
+          pourcentage: roundedPercentOf(
+            val_conso.divers_autres_produits,
+            total,
           ),
-          impact_kg_annee: divers_autres_produits,
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_autres_produits,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_autres_produits,
           emoji: '📦',
         },
         {
           label: 'Tabac',
-          pourcentage: roundedPercentOf(divers_tabac, total),
-          pourcentage_categorie: roundedPercentOf(divers_tabac, divers),
-          impact_kg_annee: divers_tabac,
+          pourcentage: roundedPercentOf(val_conso.divers_tabac, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_tabac,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_tabac,
           emoji: '🚬',
         },
         {
           label: 'Textile',
-          pourcentage: roundedPercentOf(divers_textile, total),
-          pourcentage_categorie: roundedPercentOf(divers_textile, divers),
-          impact_kg_annee: divers_textile,
+          pourcentage: roundedPercentOf(val_conso.divers_textile, total),
+          pourcentage_categorie: roundedPercentOf(
+            val_conso.divers_textile,
+            val_conso.divers,
+          ),
+          impact_kg_annee: val_conso.divers_textile,
           emoji: '👕',
         },
       ],
     });
     impacts.push({
-      pourcentage: roundedPercentOf(alimentation, total),
+      pourcentage: roundedPercentOf(val_alim.alimentation, total),
       thematique: Thematique.alimentation,
-      impact_kg_annee: alimentation,
+      impact_kg_annee: val_alim.alimentation,
       emoji: '🍴',
       details: [
         {
           label: 'Petit déjeuner',
-          pourcentage: roundedPercentOf(alimentation_petit_dej, total),
+          pourcentage: roundedPercentOf(val_alim.alimentation_petit_dej, total),
           pourcentage_categorie: roundedPercentOf(
-            alimentation_petit_dej,
-            alimentation,
+            val_alim.alimentation_petit_dej,
+            val_alim.alimentation,
           ),
-          impact_kg_annee: alimentation_petit_dej,
+          impact_kg_annee: val_alim.alimentation_petit_dej,
           emoji: '🥐',
         },
         {
           label: 'Viandes',
-          pourcentage: roundedPercentOf(alimentation_viande, total),
+          pourcentage: roundedPercentOf(val_alim.alimentation_viande, total),
           pourcentage_categorie: roundedPercentOf(
-            alimentation_viande,
-            alimentation,
+            val_alim.alimentation_viande,
+            val_alim.alimentation,
           ),
-          impact_kg_annee: alimentation_viande,
+          impact_kg_annee: val_alim.alimentation_viande,
           emoji: '🥩',
         },
         {
           label: 'Poissons',
-          pourcentage: roundedPercentOf(alimentation_poisson, total),
+          pourcentage: roundedPercentOf(val_alim.alimentation_poisson, total),
           pourcentage_categorie: roundedPercentOf(
-            alimentation_poisson,
-            alimentation,
+            val_alim.alimentation_poisson,
+            val_alim.alimentation,
           ),
-          impact_kg_annee: alimentation_poisson,
+          impact_kg_annee: val_alim.alimentation_poisson,
           emoji: '🐟',
         },
         {
           label: 'Fruits & Légumes',
-          pourcentage: roundedPercentOf(alimentation_fruits_legumes, total),
-          pourcentage_categorie: roundedPercentOf(
-            alimentation_fruits_legumes,
-            alimentation,
+          pourcentage: roundedPercentOf(
+            val_alim.alimentation_fruits_legumes,
+            total,
           ),
-          impact_kg_annee: alimentation_fruits_legumes,
+          pourcentage_categorie: roundedPercentOf(
+            val_alim.alimentation_fruits_legumes,
+            val_alim.alimentation,
+          ),
+          impact_kg_annee: val_alim.alimentation_fruits_legumes,
           emoji: '🥦',
         },
         {
           label: 'Boissons',
-          pourcentage: roundedPercentOf(alimentation_boisson, total),
+          pourcentage: roundedPercentOf(val_alim.alimentation_boisson, total),
           pourcentage_categorie: roundedPercentOf(
-            alimentation_boisson,
-            alimentation,
+            val_alim.alimentation_boisson,
+            val_alim.alimentation,
           ),
-          impact_kg_annee: alimentation_boisson,
+          impact_kg_annee: val_alim.alimentation_boisson,
           emoji: '🥤',
         },
       ],
     });
 
     impacts.push({
-      pourcentage: roundedPercentOf(services_societaux, total),
+      pourcentage: roundedPercentOf(val_soc.services_societaux, total),
       thematique: Thematique.services_societaux,
-      impact_kg_annee: services_societaux,
+      impact_kg_annee: val_soc.services_societaux,
       emoji: '🏛️',
       details: [
         {
           label: 'Services publics',
-          pourcentage: roundedPercentOf(services_societaux_pub, total),
+          pourcentage: roundedPercentOf(val_soc.services_societaux_pub, total),
           pourcentage_categorie: roundedPercentOf(
-            services_societaux_pub,
-            services_societaux,
+            val_soc.services_societaux_pub,
+            val_soc.services_societaux,
           ),
-          impact_kg_annee: services_societaux_pub,
+          impact_kg_annee: val_soc.services_societaux_pub,
           emoji: '🏛',
         },
         {
           label: 'Services marchands',
-          pourcentage: roundedPercentOf(services_societaux_march, total),
-          pourcentage_categorie: roundedPercentOf(
-            services_societaux_march,
-            services_societaux,
+          pourcentage: roundedPercentOf(
+            val_soc.services_societaux_march,
+            total,
           ),
-          impact_kg_annee: services_societaux_march,
+          pourcentage_categorie: roundedPercentOf(
+            val_soc.services_societaux_march,
+            val_soc.services_societaux,
+          ),
+          impact_kg_annee: val_soc.services_societaux_march,
           emoji: '✉️',
         },
       ],
@@ -520,6 +645,384 @@ export class NGCCalculator {
       },
     };
   }
+
+  private formatBilanAlimentation(
+    bilan: ValeursAlimentation,
+  ): ImpactThematiqueStandalone {
+    return {
+      thematique: Thematique.alimentation,
+      impact_kg_annee: bilan.alimentation,
+      emoji: '🍴',
+      details: [
+        {
+          label: 'Petit déjeuner',
+          impact_kg_annee: bilan.alimentation_petit_dej,
+          emoji: '🥐',
+        },
+        {
+          label: 'Viandes',
+          impact_kg_annee: bilan.alimentation_viande,
+          emoji: '🥩',
+        },
+        {
+          label: 'Poissons',
+          impact_kg_annee: bilan.alimentation_poisson,
+          emoji: '🐟',
+        },
+        {
+          label: 'Fruits & Légumes',
+          impact_kg_annee: bilan.alimentation_fruits_legumes,
+          emoji: '🥦',
+        },
+        {
+          label: 'Boissons',
+          impact_kg_annee: bilan.alimentation_boisson,
+          emoji: '🥤',
+        },
+      ],
+    };
+  }
+
+  private formatBilanTransport(
+    bilan: ValeursTransport,
+  ): ImpactThematiqueStandalone {
+    return {
+      thematique: Thematique.transport,
+      impact_kg_annee: bilan.transport,
+      emoji: '🚦',
+      details: [
+        {
+          label: 'Voiture',
+          impact_kg_annee: bilan.transport_voiture,
+          emoji: '🚘️',
+        },
+        {
+          label: 'Avion',
+          impact_kg_annee: bilan.transport_avion,
+          emoji: '✈️',
+        },
+        {
+          label: '2 roues',
+          impact_kg_annee: bilan.transport_2roues,
+          emoji: '🛵',
+        },
+        {
+          label: 'Mobilité douce',
+          impact_kg_annee: bilan.transport_mob_douce,
+          emoji: '🚲',
+        },
+        {
+          label: 'Transports en commun',
+          impact_kg_annee: bilan.transport_commun,
+          emoji: '🚌',
+        },
+        {
+          label: 'Train',
+          impact_kg_annee: bilan.transport_train,
+          emoji: '🚋',
+        },
+        {
+          label: 'Vacances',
+          impact_kg_annee: bilan.transport_vacances,
+          emoji: '🏖️',
+        },
+        {
+          label: 'Ferry',
+          impact_kg_annee: bilan.transport_ferry,
+          emoji: '⛴',
+        },
+      ],
+    };
+  }
+
+  private formatBilanLogement(
+    bilan: ValeursLogement,
+  ): ImpactThematiqueStandalone {
+    return {
+      thematique: Thematique.logement,
+      impact_kg_annee: bilan.logement,
+      emoji: '🏠',
+      details: [
+        {
+          label: 'Construction',
+          impact_kg_annee: bilan.logement_constr,
+          emoji: '🧱',
+        },
+        {
+          label: 'Electricité',
+          impact_kg_annee: bilan.logement_elec,
+          emoji: '⚡',
+        },
+        {
+          label: 'Chauffage',
+          impact_kg_annee: bilan.logement_chauf,
+          emoji: '🔥',
+        },
+        {
+          label: 'Climatisation',
+          impact_kg_annee: bilan.logement_clim,
+          emoji: '❄️',
+        },
+        {
+          label: 'Piscine',
+          impact_kg_annee: bilan.logement_piscine,
+          emoji: '🏊',
+        },
+        {
+          label: 'Extérieur',
+          impact_kg_annee: bilan.logement_ext,
+          emoji: '☘️',
+        },
+        {
+          label: 'Vacances',
+          impact_kg_annee: bilan.logement_vacances,
+          emoji: '🏖',
+        },
+      ],
+    };
+  }
+  private formatBilanConsommation(
+    bilan: ValeursConsommation,
+  ): ImpactThematiqueStandalone {
+    return {
+      thematique: Thematique.consommation,
+      impact_kg_annee: bilan.divers,
+      emoji: '📦',
+      details: [
+        {
+          label: 'Animaux',
+          impact_kg_annee: bilan.divers_animaux,
+          emoji: '🐶',
+        },
+        {
+          label: 'Electroménager',
+          impact_kg_annee: bilan.divers_electro,
+          emoji: '🔌',
+        },
+        {
+          label: 'Ameublement',
+          impact_kg_annee: bilan.divers_ameublement,
+          emoji: '🛋️',
+        },
+        {
+          label: 'Numérique',
+          impact_kg_annee: bilan.divers_numérique,
+          emoji: '📺',
+        },
+        {
+          label: 'Loisirs',
+          impact_kg_annee: bilan.divers_loisirs,
+          emoji: '🎭',
+        },
+        {
+          label: 'Autres produits',
+          impact_kg_annee: bilan.divers_autres_produits,
+          emoji: '📦',
+        },
+        {
+          label: 'Tabac',
+          impact_kg_annee: bilan.divers_tabac,
+          emoji: '🚬',
+        },
+        {
+          label: 'Textile',
+          impact_kg_annee: bilan.divers_textile,
+          emoji: '👕',
+        },
+      ],
+    };
+  }
+
+  private formatBilanServiceSocietaux(
+    bilan: ValeursServicesSocietaux,
+  ): ImpactThematiqueStandalone {
+    return {
+      thematique: Thematique.services_societaux,
+      impact_kg_annee: bilan.services_societaux,
+      emoji: '🏛️',
+      details: [
+        {
+          label: 'Services publics',
+          impact_kg_annee: bilan.services_societaux_pub,
+          emoji: '🏛',
+        },
+        {
+          label: 'Services marchands',
+          impact_kg_annee: bilan.services_societaux_march,
+          emoji: '✉️',
+        },
+      ],
+    };
+  }
+
+  private computeValeursAlimentation(
+    situation: SituationNGC,
+  ): ValeursAlimentation {
+    const entryList = REGLES_NGC[Thematique.alimentation];
+
+    return this.extractValeursAlimentation(
+      this.computeEntryListValues(situation, entryList),
+    );
+  }
+
+  private extractValeursAlimentation(
+    resultMap: Map<RegleNGC, Evaluation>,
+  ): ValeursAlimentation {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    const viande_par_semaine =
+      getValueOf('alimentation . plats . viande rouge') +
+      getValueOf('alimentation . plats . viande blanche');
+
+    const poisson_par_semaine =
+      getValueOf('alimentation . plats . poisson gras') +
+      getValueOf('alimentation . plats . poisson blanc');
+
+    const fruits_legumes_par_semaine =
+      getValueOf('alimentation . plats . végétarien') +
+      getValueOf('alimentation . plats . végétalien');
+
+    return {
+      alimentation: getValueOf('alimentation'),
+      alimentation_petit_dej: getValueOf(
+        'alimentation . petit déjeuner annuel',
+      ),
+      alimentation_viande_par_semaine: viande_par_semaine,
+      alimentation_viande: viande_par_semaine * NB_SEMAINES_PAR_ANNEE,
+      alimentation_poisson_par_semaine: poisson_par_semaine,
+      alimentation_poisson: poisson_par_semaine * NB_SEMAINES_PAR_ANNEE,
+      alimentation_fruits_legumes_par_semaine: fruits_legumes_par_semaine,
+      alimentation_fruits_legumes:
+        fruits_legumes_par_semaine * NB_SEMAINES_PAR_ANNEE,
+      alimentation_boisson: getValueOf('alimentation . boisson'),
+    };
+  }
+
+  private computeValeursTransport(situation: SituationNGC): ValeursTransport {
+    const entryList = REGLES_NGC[Thematique.transport];
+
+    return this.extractValeursTransport(
+      this.computeEntryListValues(situation, entryList),
+    );
+  }
+
+  private extractValeursTransport(
+    resultMap: Map<RegleNGC, Evaluation>,
+  ): ValeursTransport {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return {
+      transport: getValueOf('transport'),
+      transport_voiture: getValueOf('transport . voiture'),
+      transport_avion: getValueOf('transport . avion'),
+      transport_2roues: getValueOf('transport . deux roues'),
+      transport_mob_douce: getValueOf('transport . mobilité douce'),
+      transport_commun: getValueOf('transport . transports commun'),
+      transport_train: getValueOf('transport . train'),
+      transport_vacances: getValueOf('transport . vacances'),
+      transport_ferry: getValueOf('transport . ferry'),
+    };
+  }
+
+  private computeValeurTotal(situation: SituationNGC): number {
+    const entryList: RegleNGC[] = ['bilan'];
+
+    const resultMap = this.computeEntryListValues(situation, entryList);
+
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return getValueOf('bilan');
+  }
+
+  private computeValeursLogement(situation: SituationNGC): ValeursLogement {
+    const entryList = REGLES_NGC[Thematique.logement];
+
+    return this.extractValeursLogement(
+      this.computeEntryListValues(situation, entryList),
+    );
+  }
+
+  private extractValeursLogement(
+    resultMap: Map<RegleNGC, Evaluation>,
+  ): ValeursLogement {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return {
+      logement: getValueOf('logement'),
+      logement_constr: getValueOf('logement . construction'),
+      logement_elec: getValueOf('logement . électricité'),
+      logement_chauf: getValueOf('logement . chauffage'),
+      logement_clim: getValueOf('logement . climatisation'),
+      logement_piscine: getValueOf('logement . piscine'),
+      logement_ext: getValueOf('logement . extérieur'),
+      logement_vacances: getValueOf('logement . vacances'),
+    };
+  }
+  private computeValeursConsommation(
+    situation: SituationNGC,
+  ): ValeursConsommation {
+    const entryList = REGLES_NGC[Thematique.consommation];
+
+    return this.extractValeursConsommation(
+      this.computeEntryListValues(situation, entryList),
+    );
+  }
+
+  private extractValeursConsommation(
+    resultMap: Map<RegleNGC, Evaluation>,
+  ): ValeursConsommation {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return {
+      divers: getValueOf('divers'),
+      divers_animaux: getValueOf('divers . animaux domestiques'),
+      divers_textile: getValueOf('divers . textile'),
+      divers_electro: getValueOf('divers . électroménager'),
+      divers_ameublement: getValueOf('divers . ameublement'),
+      divers_numérique: getValueOf('divers . numérique'),
+      divers_loisirs: getValueOf('divers . loisirs'),
+      divers_autres_produits: getValueOf('divers . autres produits'),
+      divers_tabac: getValueOf('divers . tabac'),
+    };
+  }
+
+  private computeValeursServiceSocietaux(
+    situation: SituationNGC,
+  ): ValeursServicesSocietaux {
+    const entryList = REGLES_NGC[Thematique.services_societaux];
+
+    return this.extractValeursServiceSocietaux(
+      this.computeEntryListValues(situation, entryList),
+    );
+  }
+
+  private extractValeursServiceSocietaux(
+    resultMap: Map<RegleNGC, Evaluation>,
+  ): ValeursServicesSocietaux {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return {
+      services_societaux: getValueOf('services sociétaux'),
+      services_societaux_pub: getValueOf(
+        'services sociétaux . services publics',
+      ),
+      services_societaux_march: getValueOf(
+        'services sociétaux . services marchands',
+      ),
+    };
+  }
+  private extractTotal(resultMap: Map<RegleNGC, Evaluation>): number {
+    const getValueOf = (key: RegleNGC) =>
+      getValueFromMap<RegleNGC>(resultMap, key);
+
+    return getValueOf('bilan');
+  }
 }
 
 function roundedPercentOf(value: number, total: number): number {
@@ -536,6 +1039,11 @@ function sortResultInPlace(liste: ImpactThematique[]) {
   for (const thematique of liste) {
     thematique.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
   }
+}
+function sortResultInPlaceImpactThematiqueStandalone(
+  impact: ImpactThematiqueStandalone,
+) {
+  impact.details.sort((a, b) => b.impact_kg_annee - a.impact_kg_annee);
 }
 
 function computeTop3Details(liste_impacts: ImpactThematique[]): DetailImpact[] {

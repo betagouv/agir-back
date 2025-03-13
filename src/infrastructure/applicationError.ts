@@ -653,6 +653,13 @@ export class ApplicationError {
     );
   }
 
+  static throwThematiqueForBilanNotAvailable(them: string) {
+    this.throwAppError(
+      '123',
+      `Thematique [${them}] non supportée pour la calcul du bilan carbone`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
