@@ -28,8 +28,10 @@ import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmail
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
 import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
+import { AsciiPreviewController } from './infrastructure/api/ascii.preview.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
+import { CmsPreviewController } from './infrastructure/api/cms.preview.controller';
 import { CommunesController } from './infrastructure/api/communes.controller';
 import { ConformiteController } from './infrastructure/api/conformite.controller';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
@@ -44,7 +46,6 @@ import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { MissionController } from './infrastructure/api/mission.controller';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
-import { PreviewController } from './infrastructure/api/preview.controller';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
@@ -111,6 +112,7 @@ import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
+import { CmsPreviewUsecase } from './usecase/cmsPreview.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ConformiteUsecase } from './usecase/conformite.usecase';
 import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
@@ -169,7 +171,7 @@ function getControllers(): any[] {
     MissionController,
     RechecheServicesController,
     BilanCarboneController,
-    PreviewController,
+    AsciiPreviewController,
     NotificationsController,
     LoadCMSController,
     SyntheseController,
@@ -179,6 +181,7 @@ function getControllers(): any[] {
     ActionsController,
     SimulateurVoitureController,
     AidesVeloController,
+    CmsPreviewController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
@@ -307,6 +310,7 @@ function getControllers(): any[] {
     DuplicateBDDForStatsUsecase,
     StatistiqueExternalRepository,
     CompteurActionsRepository,
+    CmsPreviewUsecase,
   ],
 })
 export class AppModule {}

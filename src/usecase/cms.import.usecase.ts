@@ -208,6 +208,24 @@ export class CMSImportUsecase {
     return this.buildActionFromCMSPopulateData(CMS_DATA, TypeAction.classique);
   }
 
+  async getAideFromCMS(content_id: string): Promise<AideDefinition> {
+    const CMS_DATA = await this.getSingleObjectDataFromCMS(
+      CMSPluralAPIEndpoint['aides'],
+      content_id,
+    );
+
+    return this.buildAideFromCMSPopulateData(CMS_DATA);
+  }
+
+  async getArticleFromCMS(content_id: string): Promise<ArticleDefinition> {
+    const CMS_DATA = await this.getSingleObjectDataFromCMS(
+      CMSPluralAPIEndpoint['articles'],
+      content_id,
+    );
+
+    return this.buildArticleFromCMSPopulateData(CMS_DATA);
+  }
+
   async loadActionsClassiquesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];

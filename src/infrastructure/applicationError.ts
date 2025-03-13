@@ -660,6 +660,13 @@ export class ApplicationError {
     );
   }
 
+  static throwPreviewNotAvailable(content_id: string, type: string) {
+    this.throwAppError(
+      '124',
+      `la preview pour pour l'objet de type [${type}] et d'id [${content_id}] n'est pas disponible`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

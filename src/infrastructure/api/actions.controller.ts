@@ -206,33 +206,6 @@ export class ActionsController extends GenericControler {
     );
     return ActionAPI.mapToAPI(result);
   }
-  @Get('preview/actions/:type_action/:content_id')
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 1, ttl: 1000 } })
-  @ApiOkResponse({
-    type: ActionAPI,
-  })
-  @ApiOperation({
-    summary: `Retourne la preview CMS d'une action (elle peut encore être en DRAFT côté CMS)`,
-  })
-  @ApiParam({
-    name: 'type_action',
-    enum: TypeAction,
-    description: `type de l'action (classique/bilan/quizz/etc)`,
-  })
-  @ApiParam({
-    name: 'content_id',
-    type: String,
-    description: `id CMS de l'action`,
-  })
-  async getActionPreview(
-    @Param('content_id') content_id: string,
-    @Param('type_action') type_action: string,
-  ): Promise<ActionAPI> {
-    let type = this.castTypeActionOrException(type_action);
-    const result = await this.actionUsecase.getActionPreview(content_id, type);
-    return ActionAPI.mapToAPI(result);
-  }
 
   @Get('utilisateurs/:utilisateurId/actions/:type_action/:code_action')
   @UseGuards(AuthGuard)
