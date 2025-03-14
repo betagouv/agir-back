@@ -64,7 +64,7 @@ export class CmsPreviewController extends GenericControler {
 
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
-  @Get('bibliotheque/articles/:content_id')
+  @Get('cms_preview/articles/:content_id')
   @ApiOkResponse({ type: PreviewArticleAPI })
   @ApiOperation({
     summary: `Consultation d'un article sans connexion`,
