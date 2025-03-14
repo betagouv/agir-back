@@ -23,7 +23,7 @@ export class CmsPreviewUsecase {
   async getActionPreview(
     content_id: string,
     type: TypeAction,
-  ): Promise<Action> {
+  ): Promise<{ data: object; action: Action }> {
     if (type !== TypeAction.classique) {
       ApplicationError.throwPreviewNotAvailable(content_id, type);
     }
@@ -66,20 +66,24 @@ export class CmsPreviewUsecase {
     action.setListeAides(linked_aides);
     action.services = liste_services;
 
-    return action;
+    return { data: {}, action: action };
   }
 
-  async getAidePreviewByIdCMS(cms_id: string): Promise<AideDefinition> {
+  async getAidePreviewByIdCMS(
+    cms_id: string,
+  ): Promise<{ data: object; aide: AideDefinition }> {
     const aide_def = await this.cMSImportUsecase.getAideFromCMS(cms_id);
 
     if (!aide_def) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    return this.personnalisator.personnaliser(aide_def);
+    return { data: {}, aide: this.personnalisator.personnaliser(aide_def) };
   }
 
-  public async getArticlePreviewByIdCMS(content_id: string): Promise<Article> {
+  public async getArticlePreviewByIdCMS(
+    content_id: string,
+  ): Promise<{ data: object; article: Article }> {
     const article_def = await this.cMSImportUsecase.getArticleFromCMS(
       content_id,
     );
@@ -88,6 +92,9 @@ export class CmsPreviewUsecase {
       ApplicationError.throwArticleNotFound(content_id);
     }
 
-    return this.personnalisator.personnaliser(new Article(article_def));
+    return {
+      data: {},
+      article: this.personnalisator.personnaliser(new Article(article_def)),
+    };
   }
 }

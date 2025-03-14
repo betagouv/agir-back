@@ -9,9 +9,9 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CmsPreviewUsecase } from '../../usecase/cmsPreview.usecase';
 import { GenericControler } from './genericControler';
-import { ActionAPI } from './types/actions/ActionAPI';
-import { AideAPI } from './types/aide/AideAPI';
-import { ArticleBibliothequeAPI } from './types/contenu/articleAPI';
+import { PreviewActionAPI } from './types/previews/PreviewActionAPI';
+import { PreviewAideAPI } from './types/previews/PreviewAideAPI';
+import { PreviewArticleAPI } from './types/previews/PreviewArticleAPI';
 
 @ApiTags('CMS Previews')
 @Controller()
@@ -24,7 +24,7 @@ export class CmsPreviewController extends GenericControler {
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
   @ApiOkResponse({
-    type: ActionAPI,
+    type: PreviewActionAPI,
   })
   @ApiOperation({
     summary: `Retourne la preview CMS d'une action (elle peut encore être en DRAFT côté CMS)`,
@@ -42,39 +42,39 @@ export class CmsPreviewController extends GenericControler {
   async getActionPreview(
     @Param('content_id') content_id: string,
     @Param('type_action') type_action: string,
-  ): Promise<ActionAPI> {
+  ): Promise<PreviewActionAPI> {
     let type = this.castTypeActionOrException(type_action);
     const result = await this.cmsPreviewUsecase.getActionPreview(
       content_id,
       type,
     );
-    return ActionAPI.mapToAPI(result);
+    return PreviewActionAPI.mapToAPI(result);
   }
 
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
-  @ApiOkResponse({ type: AideAPI })
+  @ApiOkResponse({ type: PreviewAideAPI })
   @Get('cms_preview/aides/:content_id')
   async getAideUnique(
     @Param('content_id') content_id: string,
-  ): Promise<AideAPI> {
+  ): Promise<PreviewAideAPI> {
     const aide = await this.cmsPreviewUsecase.getAidePreviewByIdCMS(content_id);
-    return AideAPI.mapToAPI(aide);
+    return PreviewAideAPI.mapToAPI(aide);
   }
 
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
   @Get('bibliotheque/articles/:content_id')
-  @ApiOkResponse({ type: ArticleBibliothequeAPI })
+  @ApiOkResponse({ type: PreviewArticleAPI })
   @ApiOperation({
     summary: `Consultation d'un article sans connexion`,
   })
   async getArticleNonConnecte(
     @Param('content_id') content_id: string,
-  ): Promise<ArticleBibliothequeAPI> {
+  ): Promise<PreviewArticleAPI> {
     const article = await this.cmsPreviewUsecase.getArticlePreviewByIdCMS(
       content_id,
     );
-    return ArticleBibliothequeAPI.mapArticleToAPI(article);
+    return PreviewArticleAPI.mapToAPI(article);
   }
 }
