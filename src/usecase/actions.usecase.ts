@@ -227,8 +227,6 @@ export class ActionUsecase {
     if (!utilisateur.thematique_history.isActionFaite(action_def)) {
       await this.compteurActionsRepository.incrementFaite(action_def);
 
-      utilisateur.thematique_history.setActionCommeFaite(action_def);
-
       const points = ActionDefinition.getNombrePointsOfTypeAction(
         action_def.type,
       );
@@ -240,10 +238,14 @@ export class ActionUsecase {
         );
         if (score.nombre_bonnes_reponses >= 4) {
           utilisateur.gamification.ajoutePoints(points, utilisateur);
+        } else {
+          ApplicationError.throwQuizzPasTerminable(code);
         }
       } else {
         utilisateur.gamification.ajoutePoints(points, utilisateur);
       }
+
+      utilisateur.thematique_history.setActionCommeFaite(action_def);
 
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,

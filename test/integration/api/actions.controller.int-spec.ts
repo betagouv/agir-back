@@ -1204,7 +1204,7 @@ describe('Actions (API test)', () => {
     );
 
     // THEN
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(400);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
