@@ -1,3 +1,4 @@
+import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -13,6 +14,7 @@ import _situationNGCTest from './situationNGCtest.json';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
+  const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
 
@@ -22,6 +24,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
   beforeEach(async () => {
     process.env = { ...OLD_ENV }; // Make a copy
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     process.env.EMAIL_ENABLED = 'false';
@@ -29,12 +32,12 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
   afterAll(async () => {
     process.env = OLD_ENV;
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
     await TestUtil.appclose();
   });
 
   it('POST /utilisateurs_v2 - create new utilisateur avec seulement email et mot de passe', async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '2';
     process.env.OTP_DEV = '112233';
 
     // WHEN
@@ -64,16 +67,14 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
-    expect(user.version).toEqual(2);
     expect(user.active_account).toEqual(false);
 
     expect(user.logement.code_postal).toEqual(null);
     expect(user.logement.commune).toEqual(null);
     expect(user.unlocked_features.unlocked_features).toHaveLength(0);
   });
-  it('POST /utilisateurs_v2 - no user version defaults to 0', async () => {
+  it('POST /utilisateurs_v2 - no user version defaults to App version', async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = undefined;
 
     // WHEN
     const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
@@ -85,7 +86,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(0);
+    expect(user.version).toEqual(13);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {

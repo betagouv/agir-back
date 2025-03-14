@@ -1,7 +1,9 @@
+import { App } from '../../../src/domain/app';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe.skip('/utilisateurs - Magic link - (API test)', () => {
   const OLD_ENV = process.env;
+  const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -9,6 +11,7 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
 
   beforeEach(async () => {
     process.env = { ...OLD_ENV }; // Make a copy
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     process.env.EMAIL_ENABLED = 'false';
@@ -17,6 +20,7 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   afterAll(async () => {
     await TestUtil.deleteAll();
     process.env = OLD_ENV;
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
     await TestUtil.appclose();
   });
 
