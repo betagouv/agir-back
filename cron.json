@@ -5,7 +5,7 @@
       "size": "M"
     },
     {
-      "command": "0 * * * * ./scripts/nightly_stats.sh",
+      "command": "0 4 * * * ./scripts/nightly_stats.sh",
       "size": "L"
     },
     {
