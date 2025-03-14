@@ -25,6 +25,20 @@ export class GamificationUsecase {
 
     return utilisateur.gamification;
   }
+  async popupResetVue(utilisateurId: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.gamification],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    utilisateur.gamification.popup_reset_vue = true;
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.gamification],
+    );
+  }
 
   async classementLocal(utilisateurId: string): Promise<Board> {
     await this.utilisateurBoardRepository.update_rank_user_commune_V2();

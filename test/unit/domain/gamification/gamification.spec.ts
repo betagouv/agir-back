@@ -32,6 +32,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 0,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -49,6 +50,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 5,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -66,6 +68,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 50,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -83,6 +86,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 50,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -100,6 +104,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 7,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -117,6 +122,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 10,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -134,6 +140,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 5,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -151,6 +158,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 7,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 10],
@@ -168,6 +176,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 7,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 15],
@@ -185,6 +194,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 3,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 15],
@@ -202,6 +212,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 20,
+        popup_reset_vue: false,
         celebrations: [],
       },
       [5, 15],
@@ -240,6 +251,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 20,
+        popup_reset_vue: false,
         celebrations: [celeb_1, celeb_2, celeb_3],
       },
       [5, 15],
@@ -268,6 +280,7 @@ describe('Gamification', () => {
       {
         version: 0,
         points: 20,
+        popup_reset_vue: false,
         celebrations: [celeb],
       },
       [5, 15],

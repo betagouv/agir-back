@@ -108,6 +108,9 @@ export class UtilisateurProfileAPI {
   @ApiProperty({ type: LogementAPI })
   logement: LogementAPI;
 
+  @ApiProperty()
+  popup_reset_est_vue: boolean;
+
   public static mapToAPI(user: Utilisateur): UtilisateurProfileAPI {
     return {
       email: user.email,
@@ -122,6 +125,7 @@ export class UtilisateurProfileAPI {
       annee_naissance: user.annee_naissance,
       is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
       pseudo: user.pseudo,
+      popup_reset_est_vue: user.gamification.popup_reset_vue,
     };
   }
 }

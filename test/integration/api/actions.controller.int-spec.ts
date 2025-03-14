@@ -1118,6 +1118,7 @@ describe('Actions (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
+      popup_reset_vue: false,
       celebrations: [],
     };
 
@@ -1172,6 +1173,7 @@ describe('Actions (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
+      popup_reset_vue: false,
       celebrations: [],
     };
 
@@ -1302,6 +1304,7 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       celebrations: [],
+      popup_reset_vue: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1359,6 +1362,7 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       celebrations: [],
+      popup_reset_vue: false,
     };
 
     await TestUtil.create(DB.utilisateur, {

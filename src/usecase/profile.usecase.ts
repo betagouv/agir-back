@@ -216,6 +216,7 @@ export class ProfileUsecase {
       Scope.unlocked_features,
       Scope.logement,
       Scope.kyc,
+      Scope.gamification,
     ]);
     Utilisateur.checkState(utilisateur);
     utilisateur.logement.commune_label = this.communeRepository.formatCommune(

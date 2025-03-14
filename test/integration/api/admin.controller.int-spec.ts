@@ -287,6 +287,7 @@ describe('Admin (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 620,
+      popup_reset_vue: false,
       celebrations: [
         {
           id: 'celebration-id',

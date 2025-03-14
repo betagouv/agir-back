@@ -48,6 +48,7 @@ export class Celebration_v0 {
 export class Gamification_v0 extends Versioned_v0 {
   points: number;
   celebrations: Celebration_v0[];
+  popup_reset_vue: boolean;
 
   constructor() {
     super();
@@ -60,6 +61,7 @@ export class Gamification_v0 extends Versioned_v0 {
       version: 0,
       points: domain.getPoints(),
       celebrations: domain.celebrations.map((e) => Celebration_v0.map(e)),
+      popup_reset_vue: domain.popup_reset_vue,
     };
   }
 }

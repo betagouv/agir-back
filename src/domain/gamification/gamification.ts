@@ -11,11 +11,14 @@ let SEUILS_NIVEAUX: number[] = [
 export class Gamification {
   private points: number;
   celebrations: Celebration[];
+  popup_reset_vue: boolean;
 
   constructor(data?: Gamification_v0, seuils?: number[]) {
     this.reset();
 
     if (data) {
+      this.popup_reset_vue = !!data.popup_reset_vue;
+
       if (data.points) {
         this.points = data.points;
       }
@@ -33,6 +36,7 @@ export class Gamification {
   public reset() {
     this.points = 0;
     this.celebrations = [];
+    this.popup_reset_vue = false;
   }
 
   public terminerCelebration(id: string, utilisateur: Utilisateur) {
