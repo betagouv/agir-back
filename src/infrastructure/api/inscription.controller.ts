@@ -1,35 +1,25 @@
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Post,
-  Redirect,
-  UseGuards,
-  Headers,
-} from '@nestjs/common';
-import {
-  ApiTags,
   ApiBody,
-  ApiOkResponse,
-  ApiExtraModels,
-  ApiOperation,
-  ApiFoundResponse,
   ApiHeader,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { App } from '../../domain/app';
+import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
+import { InscriptionUsecase } from '../../usecase/inscription.usecase';
+import { ApplicationError } from '../applicationError';
+import { GenericControler } from './genericControler';
+import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
+import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
+import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
 import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
-import { GenericControler } from './genericControler';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
-import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { InscriptionUsecase } from '../../usecase/inscription.usecase';
-import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { App } from '../../domain/app';
-import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
-import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
-import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
-import { ApplicationError } from '../applicationError';
-import { throttle } from 'rxjs';
 
 @Controller()
 @ApiTags('1 - Utilisateur - Inscription')

@@ -1,15 +1,14 @@
 import {
-  SourceInscription,
-  Utilisateur,
-} from '../../../../src/domain/utilisateur/utilisateur';
-import { TestUtil } from '../../../../test/TestUtil';
-import { Gamification } from '../../../../src/domain/gamification/gamification';
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
-import {
   Celebration,
   CelebrationType,
 } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../../src/domain/gamification/feature';
+import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
+import {
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('Gamification', () => {
   it('ajoutePoints : ajoute bien les points ', () => {
@@ -24,7 +23,7 @@ describe('Gamification', () => {
     gamification.ajoutePoints(5, user);
 
     // THEN
-    expect(gamification.points).toEqual(5);
+    expect(gamification.getPoints()).toEqual(5);
     expect(user.points_classement).toEqual(5);
   });
   it('getNiveau : retourne niveau 1 OK', () => {

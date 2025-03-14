@@ -1,11 +1,11 @@
-import { Versioned, Versioned_v0 } from '../versioned';
-import { Gamification } from '../../../../src/domain/gamification/gamification';
-import { Feature } from '../../../../src/domain/gamification/feature';
 import {
   Celebration,
   CelebrationType,
 } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Reveal } from '../../../../src/domain/gamification/celebrations/reveal';
+import { Feature } from '../../../../src/domain/gamification/feature';
+import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { Versioned_v0 } from '../versioned';
 
 export class Reveal_v0 {
   id: string;
@@ -58,7 +58,7 @@ export class Gamification_v0 extends Versioned_v0 {
   static serialise(domain: Gamification): Gamification_v0 {
     return {
       version: 0,
-      points: domain.points,
+      points: domain.getPoints(),
       celebrations: domain.celebrations.map((e) => Celebration_v0.map(e)),
     };
   }

@@ -1,23 +1,23 @@
+import { Injectable } from '@nestjs/common';
+import { Feature } from '../domain/gamification/feature';
+import { KYCID } from '../domain/kyc/KYCID';
+import { BooleanKYC } from '../domain/kyc/questionKYC';
+import { TypeNotification } from '../domain/notification/notificationHistory';
+import { CodeManager } from '../domain/utilisateur/manager/codeManager';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
+import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import {
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
-import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
-import { ApplicationError } from '../infrastructure/applicationError';
-import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
-import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
+import { ApplicationError } from '../infrastructure/applicationError';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
-import { MailerUsecase } from './mailer.usecase';
-import { TypeNotification } from '../domain/notification/notificationHistory';
-import { KYCID } from '../domain/kyc/KYCID';
-import { BooleanKYC } from '../domain/kyc/questionKYC';
-import { Feature } from '../domain/gamification/feature';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { MailerUsecase } from './mailer.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -64,39 +64,11 @@ export class InscriptionUsecase {
     utilisateurToCreate.setPassword(utilisateurInput.mot_de_passe);
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
-    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
     if (utilisateurInput.situation_ngc_id) {
-      utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
-
-      const situation = await this.situationNGCRepository.getSituationNGCbyId(
+      await this.external_inject_situation_to_user_kycs(
+        utilisateurToCreate,
         utilisateurInput.situation_ngc_id,
       );
-      if (situation) {
-        await this.situationNGCRepository.setUtilisateurIdToSituation(
-          utilisateurToCreate.id,
-          utilisateurInput.situation_ngc_id,
-        );
-
-        utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
-          KYCID.KYC_bilan,
-          BooleanKYC.oui,
-        );
-        const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
-          situation.situation as any,
-          utilisateurToCreate,
-        );
-
-        utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
-
-        if (updated_keys.length > 0) {
-          console.log(
-            `Updated NGC kycs for ${
-              utilisateurInput.email
-            } : ${updated_keys.join('|')}`,
-          );
-        }
-      }
     }
 
     await this.utilisateurRespository.createUtilisateur(utilisateurToCreate);
@@ -155,14 +127,52 @@ export class InscriptionUsecase {
     );
   }
 
+  async external_inject_situation_to_user_kycs(
+    utilisateurToCreate: Utilisateur,
+    situation_ngc_id: string,
+  ) {
+    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+    utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
+
+    const situation = await this.situationNGCRepository.getSituationNGCbyId(
+      situation_ngc_id,
+    );
+    if (situation) {
+      await this.situationNGCRepository.setUtilisateurIdToSituation(
+        utilisateurToCreate.id,
+        situation_ngc_id,
+      );
+
+      utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
+        KYCID.KYC_bilan,
+        BooleanKYC.oui,
+      );
+      const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
+        situation.situation as any,
+        utilisateurToCreate,
+      );
+
+      utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
+
+      if (updated_keys.length > 0) {
+        console.log(
+          `Updated NGC kycs for ${
+            utilisateurToCreate.email
+          } : ${updated_keys.join('|')}`,
+        );
+      }
+    }
+  }
+
   private async sendValidationCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.internal_send_user_email_of_type(
+    await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.inscription_code,
       utilisateur,
     );
   }
   private async sendExistingAccountEmail(email: string) {
-    await this.mailerUsecase.internal_send_anonymous_email_of_type(
+    await this.mailerUsecase.external_send_anonymous_email_of_type(
       TypeNotification.email_existing_account,
       email,
     );

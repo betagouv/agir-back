@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-const fs = require('node:fs/promises');
 import Handlebars from 'handlebars';
 import { App } from '../../domain/app';
 import { TypeNotification } from '../../domain/notification/notificationHistory';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
+const fs = require('node:fs/promises');
 const path = require('path');
 
 @Injectable()
@@ -105,7 +105,7 @@ export class EmailTemplateRepository {
         return {
           subject: `Bienvenue dans J'agis !`,
           body: this.email_welcome({
-            PRENOM: utilisateur.prenom,
+            PRENOM: utilisateur.pseudo,
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
@@ -116,7 +116,7 @@ export class EmailTemplateRepository {
         return {
           subject: `Vos premiers pas avec J'agis 🌱`,
           body: this.email_relance_onboarding({
-            PRENOM: utilisateur.prenom,
+            PRENOM: utilisateur.pseudo,
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,
@@ -129,7 +129,7 @@ export class EmailTemplateRepository {
           return {
             subject: `Avez-vous relevé le défi ? Validez votre progression sur J'agis !`,
             body: this.email_relance_action({
-              PRENOM: utilisateur.prenom,
+              PRENOM: utilisateur.pseudo,
               CONTACT_EMAIL: utilisateur.email,
               UNSUBSCRIBE_URL: unsubscribe_URL,
               TITRE_ACTION: defi.titre,

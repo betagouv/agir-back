@@ -1,19 +1,16 @@
+import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { KYCHistory_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
+import { KYCHistory_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../../src/domain/kyc/questionKYC';
-import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { Tag } from '../../../../src/domain/scoring/tag';
-import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
-import { KYCHistory_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
-import { KYCHistory_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 describe('KYC vN ', () => {
   it('build OK from empty', () => {
@@ -44,7 +41,7 @@ describe('KYC vN ', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_simple: {
-            unite: Unite.kg,
+            unite: { abreviation: 'kg' },
             value: 'fafa',
           },
           reponse_complexe: [
@@ -60,7 +57,7 @@ describe('KYC vN ', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🔥',
           ngc_key: '87654',
           thematique: Thematique.consommation,
@@ -92,7 +89,7 @@ describe('KYC vN ', () => {
           categorie: Categorie.test,
           points: 10,
           reponse_simple: {
-            unite: Unite.kg,
+            unite: { abreviation: 'kg' },
             value: 'fafa',
           },
           reponse_complexe: [
@@ -108,7 +105,7 @@ describe('KYC vN ', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🔥',
           ngc_key: '87654',
           thematique: Thematique.consommation,

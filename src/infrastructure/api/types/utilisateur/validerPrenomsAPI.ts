@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ValiderPrenomAPI {
+export class ValiderPseudoAPI {
   @ApiProperty({ required: true })
-  prenom: string;
+  pseudo: string;
 
   @ApiProperty({ required: true })
   id: string;

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
-import { Besoin } from '../domain/aides/besoin';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
@@ -16,7 +15,7 @@ import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { DefiDefinition } from '../domain/defis/defiDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import {
   MissionDefinition,
   ObjectifDefinition,
@@ -462,7 +461,7 @@ export class CMSWebhookUsecase {
         ? Math.round(parseFloat(entry.montantMaximum))
         : null,
       url_simulateur: entry.url_detail_front,
-      besoin: entry.besoin ? Besoin[entry.besoin.code] : null,
+      besoin: entry.besoin ? entry.besoin.code : null,
       besoin_desc: entry.besoin ? entry.besoin.description : null,
       include_codes_commune: this.split(entry.include_codes_commune),
       exclude_codes_commune: this.split(entry.exclude_codes_commune),
@@ -491,6 +490,8 @@ export class CMSWebhookUsecase {
       cms_id: entry.id.toString(),
       titre: entry.titre,
       sous_titre: entry.sous_titre,
+      consigne: entry.consigne,
+      label_compteur: entry.label_compteur,
       pourquoi: entry.pourquoi,
       comment: entry.comment,
       quizz_felicitations: entry.felicitations,
@@ -504,7 +505,7 @@ export class CMSWebhookUsecase {
         ? entry.quizzes.map((elem) => elem.id.toString())
         : [],
       faq_ids: entry.faqs ? entry.faqs.map((elem) => elem.id.toString()) : [],
-      kyc_ids: entry.kycs ? entry.kycs.map((elem) => elem.id.toString()) : [],
+      kyc_codes: entry.kycs ? entry.kycs.map((elem) => elem.code) : [],
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
         : null,
@@ -587,7 +588,7 @@ export class CMSWebhookUsecase {
       ngc_key: entry.ngc_key,
       points: entry.points,
       emoji: entry.emoji,
-      unite: this.extractUnite(entry.unite),
+      unite: parseUnite(entry.unite),
       question: entry.question,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
@@ -617,12 +618,6 @@ export class CMSWebhookUsecase {
           )
         : [],
     };
-  }
-
-  private extractUnite(label_unite: string) {
-    if (!label_unite) return null;
-    const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
-    return unite ? unite : null;
   }
 
   private buildMissionFromCMSData(

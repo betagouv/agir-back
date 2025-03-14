@@ -9,7 +9,7 @@ let SEUILS_NIVEAUX: number[] = [
 ];
 
 export class Gamification {
-  points: number;
+  private points: number;
   celebrations: Celebration[];
 
   constructor(data?: Gamification_v0, seuils?: number[]) {
@@ -47,6 +47,10 @@ export class Gamification {
   public ajoutePoints(new_points: number, utilisateur: Utilisateur) {
     this.points += new_points;
     utilisateur.points_classement = this.points;
+  }
+
+  public getPoints(): number {
+    return this.points;
   }
 
   public revealDefis() {

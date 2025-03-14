@@ -182,7 +182,7 @@ describe('EVENT (API test)', () => {
       content_id: '1',
       points: 5,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -198,7 +198,7 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
       [Scope.ALL],
     );
-    expect(dbUtilisateur.gamification.points).toStrictEqual(15);
+    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(15);
     expect(
       dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
@@ -229,7 +229,7 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
       [Scope.ALL],
     );
-    expect(dbUtilisateur.gamification.points).toStrictEqual(15);
+    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(15);
     expect(
       dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
@@ -242,7 +242,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -258,7 +258,7 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
       [Scope.ALL],
     );
-    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
+    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(30);
     expect(dbUtilisateur.points_classement).toStrictEqual(30);
     expect(
       dbUtilisateur.history.getArticleHistoryById('123').points_en_poche,
@@ -275,7 +275,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -291,7 +291,7 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
       [Scope.ALL],
     );
-    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
+    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(30);
     expect(
       dbUtilisateur.history.getArticleHistoryById('123').points_en_poche,
     ).toStrictEqual(true);
@@ -307,7 +307,7 @@ describe('EVENT (API test)', () => {
       content_id: '123',
       points: 20,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
@@ -327,7 +327,7 @@ describe('EVENT (API test)', () => {
       'utilisateur-id',
       [Scope.ALL],
     );
-    expect(dbUtilisateur.gamification.points).toStrictEqual(30);
+    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(30);
   });
   it('POST /utilisateurs/id/events - supprime une celebration', async () => {
     // GIVEN
@@ -390,7 +390,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, { content_id: '123' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -460,7 +460,7 @@ describe('EVENT (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, { content_id: '123' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(

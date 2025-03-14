@@ -1,13 +1,12 @@
-import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { DefiStatus } from '../../../../src/domain/defis/defi';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
-import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
-import { Gamification } from '../../../../src/domain/gamification/gamification';
-import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
-import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { DefiStatus } from '../../../../src/domain/defis/defi';
+import { DefiDefinition } from '../../../../src/domain/defis/defiDefinition';
+import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
+import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -165,7 +164,7 @@ describe('DefiHistory', () => {
       DefiStatus.fait,
     );
     expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
-    expect(user.gamification.points).toEqual(5);
+    expect(user.gamification.getPoints()).toEqual(5);
   });
   it('updateStatus : maj status defi deja dans historique', () => {
     // GIVEN
@@ -185,7 +184,7 @@ describe('DefiHistory', () => {
       DefiStatus.fait,
     );
     expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
-    expect(user.gamification.points).toEqual(5);
+    expect(user.gamification.getPoints()).toEqual(5);
   });
   it('updateStatus : on ne gagne pas 2 fois les points', () => {
     // GIVEN
@@ -206,7 +205,7 @@ describe('DefiHistory', () => {
       DefiStatus.fait,
     );
     expect(defiHistory.getRAWDefiListe()[0].motif).toEqual('toto');
-    expect(user.gamification.points).toEqual(5);
+    expect(user.gamification.getPoints()).toEqual(5);
   });
   it('getDefisOfStatus : liste les défis avec status', () => {
     // GIVEN

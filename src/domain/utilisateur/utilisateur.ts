@@ -50,9 +50,10 @@ export enum Scope {
   thematique_history = 'thematique_history',
 }
 
-export class Utilisateur {
+export class UtilisateurData {
   id: string;
   email: string;
+  pseudo: string;
   nom: string;
   prenom: string;
   annee_naissance: number;
@@ -107,10 +108,17 @@ export class Utilisateur {
   france_connect_sub: string;
   external_stat_id: string;
 
-  constructor(data?: Utilisateur) {
+  constructor(data?: UtilisateurData) {
     if (data) {
       Object.assign(this, data);
     }
+  }
+}
+
+export class Utilisateur extends UtilisateurData {
+  constructor(data?: UtilisateurData) {
+    super(data);
+
     if (!this.failed_login_count) this.failed_login_count = 0;
     if (!this.prevent_login_before) this.prevent_login_before = new Date();
     if (!this.sent_email_count) this.sent_email_count = 0;
@@ -128,10 +136,11 @@ export class Utilisateur {
     source_inscription: SourceInscription,
   ): Utilisateur {
     return new Utilisateur({
+      id: uuidv4(),
+      pseudo: null,
       nom: null,
       prenom: null,
       email: email,
-      id: uuidv4(),
       revenu_fiscal: null,
       parts: null,
       abonnement_ter_loire: false,
@@ -197,7 +206,7 @@ export class Utilisateur {
     });
   }
 
-  public resetAllHistory?() {
+  public resetAllHistory() {
     this.points_classement = 0;
     this.commune_classement = null;
     this.code_postal_classement = null;
@@ -209,40 +218,51 @@ export class Utilisateur {
     this.kyc_history.reset();
   }
 
-  public setUnsubscribeEmailTokenIfMissing?() {
+  public isUtilisateurFranceConnecte() {
+    return !!this.france_connect_sub;
+  }
+
+  public isNomPrenomModifiable() {
+    return !this.isUtilisateurFranceConnecte();
+  }
+
+  public setUnsubscribeEmailTokenIfMissing() {
     if (!this.unsubscribe_mail_token) {
       this.unsubscribe_mail_token = Utilisateur.generateEmailToken();
     }
   }
 
-  public vientDeNGC?() {
+  public vientDeNGC() {
     return this.source_inscription === SourceInscription.web_ngc;
   }
 
-  private static generateEmailToken?(): string {
+  private static generateEmailToken(): string {
     return crypto.randomUUID();
   }
 
-  public isOnboardingDone?(): boolean {
+  public isOnboardingDone(): boolean {
     const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
       KYCID.KYC_preference,
     );
 
+    const ok_pseudo = !!this.pseudo && this.pseudo !== '';
     const ok_prenom = !!this.prenom && this.prenom !== '';
 
     const ok_code_postal =
       !!this.logement.code_postal && this.logement.code_postal.length === 5;
 
-    return ok_prenom && ok_code_postal && KYC_preference_answered;
+    return (
+      (ok_pseudo || ok_prenom) && ok_code_postal && KYC_preference_answered
+    );
   }
 
-  public isMagicLinkCodeExpired?(): boolean {
+  public isMagicLinkCodeExpired(): boolean {
     return (
       this.code === null ||
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }
-  static checkState?(utilisateur: Utilisateur) {
+  static checkState(utilisateur: Utilisateur) {
     if (!utilisateur) {
       ApplicationError.throwMissingUser();
     }
@@ -251,7 +271,7 @@ export class Utilisateur {
     }
   }
 
-  public getNombrePartsFiscalesOuEstimee?() {
+  public getNombrePartsFiscalesOuEstimee() {
     if (this.parts !== null) {
       return this.parts;
     }
@@ -275,18 +295,18 @@ export class Utilisateur {
    *
    * @ensures The result to be in the range [1, +∞[.
    */
-  public getNombrePersonnesDansLogement?(): number {
+  public getNombrePersonnesDansLogement(): number {
     return Math.max(
       this.logement.nombre_adultes + this.logement.nombre_enfants,
       1,
     );
   }
 
-  public setPassword?(password: string) {
+  public setPassword(password: string) {
     PasswordManager.setUserPassword(this, password);
   }
 
-  public setNew6DigitCode?() {
+  public setNew6DigitCode() {
     CodeManager.setNew6DigitCode(this);
     this.code_generation_time = new Date();
   }
@@ -297,18 +317,18 @@ export class Utilisateur {
     }
   }
 
-  public does_get_article_quizz_from_repo?(): boolean {
+  public does_get_article_quizz_from_repo(): boolean {
     return this.version > 0;
   }
 
-  public isAdmin?(): boolean {
+  public isAdmin(): boolean {
     return App.isAdmin(this.id);
   }
 
-  public increaseTagValue?(tag: Tag, value: number) {
+  public increaseTagValue(tag: Tag, value: number) {
     this.setTagValue(tag, this.getTagValue(tag) + value);
   }
-  public increaseTagForAnswers?(
+  public increaseTagForAnswers(
     tag: Tag,
     kyc: QuestionKYC,
     map: Record<string, number>,
@@ -321,7 +341,7 @@ export class Utilisateur {
       }
     }
   }
-  public increaseTagValueIfElse?(
+  public increaseTagValueIfElse(
     tag: Tag,
     when: boolean,
     value_yes: number,
@@ -333,14 +353,14 @@ export class Utilisateur {
     );
   }
 
-  public recomputeRecoTags?() {
+  public recomputeRecoTags() {
     UserTagEvaluator.recomputeRecoTags(this);
   }
 
-  public getTagValue?(tag: Tag) {
+  public getTagValue(tag: Tag) {
     return this.tag_ponderation_set[tag] ? this.tag_ponderation_set[tag] : 0;
   }
-  public setTagValue?(tag: Tag, value: number) {
+  public setTagValue(tag: Tag, value: number) {
     this.tag_ponderation_set[tag] = value;
   }
 }

@@ -2,22 +2,31 @@ import { Consultation } from '../../../src/domain/actions/catalogueAction';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const compteurActionsRepository = new CompteurActionsRepository(
+    TestUtil.prisma,
+  );
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -26,7 +35,7 @@ describe('Actions (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    await actionRepository.loadActions();
+    await actionRepository.loadCache();
   });
 
   afterAll(async () => {
@@ -90,7 +99,7 @@ describe('Actions (API test)', () => {
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
-    expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
+    expect(action.nombre_actions_en_cours).toEqual(0);
     expect(action.nombre_aides_disponibles).toEqual(0);
   });
   it(`GET /actions - liste le catalogue d'action avec filtre thematique unique`, async () => {
@@ -227,6 +236,40 @@ describe('Actions (API test)', () => {
       },
     ]);
   });
+  it(`GET /actions - liste le catalogue d'action : données de base`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: 'code_fonct',
+      besoins: ['composter'],
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      faites: 45,
+      vues: 154,
+    });
+    await compteurActionsRepository.loadCache();
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    expect(response.body.actions[0]).toEqual({
+      code: 'code_fonct',
+      nombre_actions_en_cours: 45,
+      nombre_aides_disponibles: 0,
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+      points: 100,
+    });
+  });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -237,7 +280,6 @@ describe('Actions (API test)', () => {
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
-
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
@@ -263,6 +305,14 @@ describe('Actions (API test)', () => {
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await compteurActionsRepository.loadCache();
 
     await actionRepository.onApplicationBootstrap();
 
@@ -275,8 +325,18 @@ describe('Actions (API test)', () => {
 
     const action: ActionLightAPI = response.body.actions[0];
 
-    expect(action.nombre_aides_disponibles).toEqual(1);
-    expect(action.deja_vue).toEqual(false);
+    expect(action).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 45,
+      nombre_aides_disponibles: 1,
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+      points: 100,
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
@@ -392,6 +452,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -471,12 +532,13 @@ describe('Actions (API test)', () => {
     );
   });
 
-  it(`GET /utilisateurs/id/actions - boolean action deja vue`, async () => {
+  it(`GET /utilisateurs/id/actions - boolean action deja vue / deja faite`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
+      liste_actions_faites: [{ type: TypeAction.classique, code: '123' }],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -496,13 +558,26 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.deja_vue).toEqual(true);
+    expect(action.deja_faite).toEqual(true);
   });
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action);
-
+    await TestUtil.create(DB.action, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      label_compteur: '{NBR_ACTIONS} haha',
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      faites: 45,
+      vues: 154,
+    });
     await actionRepository.onApplicationBootstrap();
+    await compteurActionsRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/code_fonct');
@@ -517,6 +592,8 @@ describe('Actions (API test)', () => {
     expect(action.comment).toEqual('Astuces');
     expect(action.pourquoi).toEqual('En quelques mots');
     expect(action.titre).toEqual('The titre');
+    expect(action.consigne).toEqual('consigne');
+    expect(action.label_compteur).toEqual('45 haha');
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.quizz_felicitations).toEqual('bien');
     expect(action.thematique).toEqual(Thematique.consommation);
@@ -532,7 +609,7 @@ describe('Actions (API test)', () => {
     });
     expect(action.kycs).toEqual([]);
     expect(action.quizzes).toEqual([]);
-    expect(action.nombre_actions_en_cours).toBeGreaterThanOrEqual(0);
+    expect(action.nombre_actions_en_cours).toEqual(45);
     expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
     expect(action.nom_commune).toBeUndefined();
   });
@@ -555,7 +632,7 @@ describe('Actions (API test)', () => {
     });
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -626,7 +703,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
     await TestUtil.create(DB.fAQ, { id_cms: '456' });
 
-    await fAQRepository.loadFAQ();
+    await fAQRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -677,6 +754,69 @@ describe('Actions (API test)', () => {
     expect(action.nom_commune).toEqual('Dijon');
   });
 
+  it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      label_compteur: '{NBR_ACTIONS} haha',
+      besoins: ['composter'],
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await actionRepository.onApplicationBootstrap();
+    await compteurActionsRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      aides: [],
+      besoins: ['composter'],
+      code: '123',
+      comment: 'Astuces',
+      consigne: 'consigne',
+      nombre_actions_en_cours: 45,
+      deja_faite: false,
+      deja_vue: false,
+      faqs: [],
+      kycs: [],
+      label_compteur: '45 haha',
+      nom_commune: 'Dijon',
+      nombre_aides_disponibles: 0,
+      pourquoi: 'En quelques mots',
+      quizz_felicitations: 'bien',
+      quizzes: [],
+      services: [
+        {
+          categorie: 'dinde_volaille',
+          recherche_service_id: 'recettes',
+        },
+        {
+          categorie: 'emprunter',
+          recherche_service_id: 'longue_vie_objets',
+        },
+      ],
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+      points: 100,
+    });
+  });
+
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
@@ -717,7 +857,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
     await TestUtil.create(DB.fAQ, { id_cms: '456' });
 
-    await fAQRepository.loadFAQ();
+    await fAQRepository.loadCache();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/actions/classique/123',
@@ -781,6 +921,55 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response_2.status).toBe(200);
     expect(response_2.body.deja_vue).toEqual(true);
+  });
+
+  it(`GET /utilisateurs/id/actions/id - action de type simulateur doit contenir une liste de KYCs (quelles soient répondues ou non)`, async () => {
+    // GIVEN
+    const KYC2 = {
+      id_cms: 502,
+      code: 'KYC2',
+      type: TypeReponseQuestionKYC.entier,
+      question: '',
+      categorie: Categorie.test,
+      points: 0,
+      is_ngc: false,
+      tags: [],
+      thematique: Thematique.alimentation,
+      conditions: [],
+    };
+    await TestUtil.create(DB.kYC, { id_cms: 501, code: 'KYC1' });
+    await TestUtil.create(DB.kYC, KYC2 as any);
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC2,
+          is_NGC: false,
+          last_update: undefined,
+          reponse_complexe: [],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.simulateur,
+      kyc_codes: ['KYC1', 'KYC2'],
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/simulateur/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.kycs).toHaveLength(2);
   });
 
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
@@ -917,6 +1106,114 @@ describe('Actions (API test)', () => {
     });
   });
 
+  it(`GET /utilisateurs/id/actions/id/faite - gagne les points sur quizz si 4 réponses sur 6`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '4' });
+    await TestUtil.create(DB.quizz, { content_id: '5' });
+    await TestUtil.create(DB.quizz, { content_id: '6' });
+
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '4', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '5', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '6', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      } as any,
+      gamification: gamification as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3', '4', '5', '6'],
+      type: TypeAction.quizz,
+      type_code_id: 'quizz_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/faite',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.points_classement).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
+  });
+
+  it(`GET /utilisateurs/id/actions/id/faite - gagne PAS les points sur quizz si 3 réponses sur 6`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.quizz, { content_id: '1' });
+    await TestUtil.create(DB.quizz, { content_id: '2' });
+    await TestUtil.create(DB.quizz, { content_id: '3' });
+    await TestUtil.create(DB.quizz, { content_id: '4' });
+    await TestUtil.create(DB.quizz, { content_id: '5' });
+    await TestUtil.create(DB.quizz, { content_id: '6' });
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      history: {
+        quizz_interactions: [
+          { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '2', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '3', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '4', attempts: [{ date: new Date(), score: 0 }] },
+          { content_id: '5', attempts: [{ date: new Date(), score: 100 }] },
+          { content_id: '6', attempts: [{ date: new Date(), score: 100 }] },
+        ],
+      } as any,
+      gamification: gamification as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      quizz_ids: ['1', '2', '3', '4', '5', '6'],
+      type: TypeAction.quizz,
+      type_code_id: 'quizz_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/quizz/123/faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.points_classement).toEqual(0);
+    expect(userDB.gamification.getPoints()).toEqual(0);
+  });
+
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -990,5 +1287,122 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(400);
+  });
+
+  it(`POST /utilisateurs/id/actions/id/faite - indique que l'action est faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+      points_classement: 0,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionFaite({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
+    expect(userDB.points_classement).toEqual(100);
+    expect(userDB.gamification.getPoints()).toEqual(100);
+
+    const compteur = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(compteur.length).toEqual(1);
+    expect(compteur[0].faites).toEqual(1);
+    expect(compteur[0].type_code_id).toEqual('classique_123');
+  });
+
+  it(`POST /utilisateurs/id/actions/id/faite - faire 2 fois ne raporte qu'une fois des point`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+      points_classement: 0,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(
+      userDB.thematique_history.isActionFaite({
+        type: TypeAction.classique,
+        code: '123',
+      }),
+    ).toEqual(true);
+    expect(userDB.points_classement).toEqual(100);
+    expect(userDB.gamification.getPoints()).toEqual(100);
+
+    const compteur = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(compteur.length).toEqual(1);
+    expect(compteur[0].faites).toEqual(1);
+    expect(compteur[0].type_code_id).toEqual('classique_123');
   });
 });

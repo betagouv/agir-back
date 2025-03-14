@@ -7,6 +7,9 @@ export class UtilisateurAPI {
   id: string;
 
   @ApiProperty()
+  pseudo: string;
+
+  @ApiProperty()
   nom: string;
 
   @ApiProperty()
@@ -16,7 +19,10 @@ export class UtilisateurAPI {
   email?: string;
 
   @ApiProperty()
-  is_onboarding_done?: boolean;
+  is_onboarding_done: boolean;
+
+  @ApiProperty()
+  is_nom_prenom_modifiable: boolean;
 
   @ApiProperty()
   couverture_aides_ok: boolean;
@@ -33,6 +39,8 @@ export class UtilisateurAPI {
       fonctionnalites_debloquees: user.unlocked_features.getUnlockedFeatures(),
       is_onboarding_done: user.isOnboardingDone(),
       couverture_aides_ok: user.couverture_aides_ok,
+      is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
+      pseudo: user.pseudo,
     };
   }
 }

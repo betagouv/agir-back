@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { App } from '../domain/app';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { App } from '../domain/app';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
@@ -241,6 +241,26 @@ export class MigrationUsecase {
     };
   }
   private async migrate_13(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+    utilisateur.pseudo = utilisateur.prenom;
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+    return {
+      ok: true,
+      info: `pseudo set ok`,
+    };
+  }
+  private async migrate_14(
     user_id: string,
     version: number,
   ): Promise<{ ok: boolean; info: string }> {

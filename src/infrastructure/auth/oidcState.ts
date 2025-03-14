@@ -3,4 +3,5 @@ export type OIDCState = {
   utilisateurId?: string;
   idtoken?: string;
   nonce?: string;
+  situation_ngc_id?: string;
 };

@@ -11,7 +11,6 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 export type ArticleFilter = {
-  maxNumber?: number;
   thematiques?: Thematique[];
   code_postal?: string;
   difficulty?: DifficultyLevel;
@@ -25,6 +24,8 @@ export type ArticleFilter = {
   code_departement?: string;
   code_commune?: string;
   tag_article?: string;
+  skip?: number;
+  take?: number;
 };
 
 @Injectable()
@@ -37,7 +38,7 @@ export class ArticleRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.load();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading partenaires definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -46,7 +47,7 @@ export class ArticleRepository {
   }
 
   @Cron('* * * * *')
-  public async load() {
+  public async loadCache() {
     const new_map: Map<string, ArticleDefinition> = new Map();
     const liste_articles = await this.prisma.article.findMany();
     for (const article of liste_articles) {
@@ -214,7 +215,8 @@ export class ArticleRepository {
     }
 
     const finalQuery = {
-      take: filter.maxNumber,
+      skip: filter.skip,
+      take: filter.take,
       where: {
         AND: main_filter,
       },

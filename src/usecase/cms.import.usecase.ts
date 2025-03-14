@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
-import { Besoin } from '../../src/domain/aides/besoin';
 import { App } from '../../src/domain/app';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ContentType } from '../../src/domain/contenu/contentType';
@@ -29,7 +28,7 @@ import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
-import { TypeReponseQuestionKYC, Unite } from '../domain/kyc/questionKYC';
+import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { Thematique } from '../domain/thematique/thematique';
 import {
@@ -209,6 +208,24 @@ export class CMSImportUsecase {
     return this.buildActionFromCMSPopulateData(CMS_DATA, TypeAction.classique);
   }
 
+  async getAideFromCMS(content_id: string): Promise<AideDefinition> {
+    const CMS_DATA = await this.getSingleObjectDataFromCMS(
+      CMSPluralAPIEndpoint['aides'],
+      content_id,
+    );
+
+    return this.buildAideFromCMSPopulateData(CMS_DATA);
+  }
+
+  async getArticleFromCMS(content_id: string): Promise<ArticleDefinition> {
+    const CMS_DATA = await this.getSingleObjectDataFromCMS(
+      CMSPluralAPIEndpoint['articles'],
+      content_id,
+    );
+
+    return this.buildArticleFromCMSPopulateData(CMS_DATA);
+  }
+
   async loadActionsClassiquesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
     const liste: ActionDefinition[] = [];
@@ -364,9 +381,12 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
+
+    // PERF: use Promise.all?
     for (let index = 0; index < liste_kyc.length; index++) {
       await this.kycRepository.upsert(liste_kyc[index]);
     }
+
     return loading_result;
   }
 
@@ -620,11 +640,6 @@ export class CMSImportUsecase {
     }
     return url;
   }
-  private extractUnite(label_unite: string) {
-    if (!label_unite) return null;
-    const unite = Unite[label_unite.substring(0, label_unite.indexOf(' '))];
-    return unite ? unite : null;
-  }
 
   private buildPartenaireFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
@@ -823,7 +838,7 @@ export class CMSImportUsecase {
         : null,
       url_simulateur: entry.attributes.url_detail_front,
       besoin: entry.attributes.besoin.data
-        ? Besoin[entry.attributes.besoin.data.attributes.code]
+        ? entry.attributes.besoin.data.attributes.code
         : null,
       besoin_desc: entry.attributes.besoin.data
         ? entry.attributes.besoin.data.attributes.description
@@ -908,6 +923,12 @@ export class CMSImportUsecase {
       code: entry.attributes.code,
       titre: entry.attributes.titre,
       sous_titre: entry.attributes.sous_titre,
+      consigne:
+        entry.attributes.consigne ||
+        'Réalisez cette action dans les prochaines semaines et partagez vos retours',
+      label_compteur:
+        entry.attributes.label_compteur ||
+        '**453 actions** réalisées par la communauté',
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       quizz_felicitations: entry.attributes.felicitations,
@@ -931,9 +952,9 @@ export class CMSImportUsecase {
         entry.attributes.faqs && entry.attributes.faqs.data.length > 0
           ? entry.attributes.faqs.data.map((elem) => elem.id.toString())
           : [],
-      kyc_ids:
+      kyc_codes:
         entry.attributes.kycs && entry.attributes.kycs.data.length > 0
-          ? entry.attributes.kycs.data.map((elem) => elem.id.toString())
+          ? entry.attributes.kycs.data.map((elem) => elem.attributes.code)
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
@@ -954,7 +975,7 @@ export class CMSImportUsecase {
       categorie: Categorie[entry.attributes.categorie],
       emoji: entry.attributes.emoji,
       points: entry.attributes.points,
-      unite: this.extractUnite(entry.attributes.unite),
+      unite: parseUnite(entry.attributes.unite),
       is_ngc: entry.attributes.is_ngc,
       a_supprimer: !!entry.attributes.A_SUPPRIMER,
       ngc_key: entry.attributes.ngc_key,

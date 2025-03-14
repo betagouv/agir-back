@@ -614,6 +614,59 @@ export class ApplicationError {
     );
   }
 
+  static throwMajNomImpossibleFC() {
+    this.throwAppError(
+      '116',
+      `Impossible de mettre à jour le nom d'un utilisatueur France Connecté`,
+    );
+  }
+  static throwMajPrenomImpossibleFC() {
+    this.throwAppError(
+      '117',
+      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+    );
+  }
+
+  static throwNotAlhpaPseudo() {
+    this.throwAppError('118', `Le pseudo ne doit contenir que des lettres`);
+  }
+
+  static throwBadSituationID(id: string) {
+    this.throwAppError('119', `L'id de situation ${id} ne semble pas correct`);
+  }
+  static throwKycNoInteger(value: string) {
+    this.throwAppError(
+      '120',
+      `L'attribut 'value' doit être de type entier, reçu : [${value}]`,
+    );
+  }
+  static throwKycNoDecimal(value: string) {
+    this.throwAppError(
+      '121',
+      `L'attribut 'value' doit être de type decimal, reçu : [${value}]`,
+    );
+  }
+  static throwTypeIncludeNotFound(value: string) {
+    this.throwAppError(
+      '122',
+      `Valeur 'include' incorrecte [${value}], sont acceptés = tout / lu / favoris`,
+    );
+  }
+
+  static throwThematiqueForBilanNotAvailable(them: string) {
+    this.throwAppError(
+      '123',
+      `Thematique [${them}] non supportée pour la calcul du bilan carbone`,
+    );
+  }
+
+  static throwPreviewNotAvailable(content_id: string, type: string) {
+    this.throwAppError(
+      '124',
+      `la preview pour pour l'objet de type [${type}] et d'id [${content_id}] n'est pas disponible`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

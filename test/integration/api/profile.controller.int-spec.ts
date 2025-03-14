@@ -73,6 +73,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(dbUser).toBeNull();
   });
+
+  it(`DELETE /utilisateurs/id supprime un utilisateur france connecté`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_LOGOUT_CALLBACK = '/logout-callback';
+    process.env.BASE_URL_FRONT = 'http://localhost:3000';
+    process.env.OIDC_URL_LOGOUT =
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout';
+
+    await TestUtil.create(DB.utilisateur, { france_connect_sub: '123' });
+    await TestUtil.create(DB.OIDC_STATE);
+
+    // WHEN
+    const response = await TestUtil.DELETE('/utilisateurs/utilisateur-id');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.france_connect_logout_url).toContain(
+      'https://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=456&state=',
+    );
+    expect(response.body.france_connect_logout_url).toContain(
+      '&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogout-callback',
+    );
+  });
+
   it('DELETE /admin/utilisateurs/id en mode admin', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -156,6 +180,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
+    expect(response.body.is_nom_prenom_modifiable).toEqual(true);
+    expect(response.body.pseudo).toEqual('pseudo');
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
@@ -357,6 +383,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
+      pseudo: 'hahah',
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -367,6 +394,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     fakeUser.passwordSalt = dbUser.passwordSalt;
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
+    expect(dbUser.pseudo).toEqual('hahah');
     expect(dbUser.prenom).toEqual('THE PRENOM');
     expect(dbUser.annee_naissance).toEqual(1234);
     expect(dbUser.revenu_fiscal).toEqual(12345);
@@ -379,25 +407,73 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .toString(`hex`),
     );
   });
-  it('PATCH /utilisateurs/id/profile - le prenom est valide si un autre utilisateur avec même prenom valide existe', async () => {
+  it('GET /utilisateurs/id/profile boolean nom_prenom_non_modifiable', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      id: '1',
-      email: '1',
-      est_valide_pour_classement: true,
-      prenom: 'TOTO',
+      france_connect_sub: '123',
     });
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/profile');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.is_nom_prenom_modifiable).toEqual(false);
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update nom si FC', async () => {
+    // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      id: 'utilisateur-id',
-      email: '2',
-      est_valide_pour_classement: false,
-      prenom: 'Insulte',
+      france_connect_sub: '123',
     });
     // WHEN
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
     ).send({
-      prenom: 'TOTO',
+      nom: 'THE NOM',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour le nom d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update nom si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom: 'haha',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - le pseudo est valide si un autre utilisateur avec même pseudo valide existe', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      est_valide_pour_classement: true,
+      pseudo: 'pseudo OK',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      email: '2',
+      est_valide_pour_classement: false,
+      pseudo: 'Insulte',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      pseudo: 'pseudo OK',
     });
     expect(response.status).toEqual(200);
 
@@ -405,7 +481,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
       where: { id: 'utilisateur-id' },
     });
-    expect(dbUser.prenom).toEqual('TOTO');
     expect(dbUser.est_valide_pour_classement).toEqual(true);
   });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYCs', async () => {
@@ -558,7 +633,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'KYC_menage',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -645,7 +720,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -681,7 +756,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -907,7 +982,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         { label: 'Plus de 15 ans (ancien)', code: 'plus_15' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(

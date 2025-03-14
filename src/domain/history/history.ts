@@ -57,6 +57,20 @@ export class History {
       this.aide_interactions.push(new_interaction);
     }
   }
+
+  public deroulerAide(id_cms: string) {
+    const interaction = this.getAideInteractionByIdCms(id_cms);
+    if (interaction) {
+      interaction.deroulee_at = new Date();
+    } else {
+      const new_interaction = new AideHistory({
+        content_id: id_cms,
+        deroulee_at: new Date(),
+      });
+      this.aide_interactions.push(new_interaction);
+    }
+  }
+
   public clickAideInfosLink(id_cms: string) {
     const interaction = this.getAideInteractionByIdCms(id_cms);
     if (interaction) {
@@ -239,7 +253,11 @@ export class History {
   }
 
   private sortByDate(articles: Article[]) {
-    articles.sort((a, b) => b.read_date.getTime() - a.read_date.getTime());
+    articles.sort(
+      (a, b) =>
+        (b.read_date ? b.read_date.getTime() : 0) -
+        (a.read_date ? a.read_date.getTime() : 0),
+    );
   }
 
   private findQuizzByIdOrCreate(content_id: string): QuizzHistory {

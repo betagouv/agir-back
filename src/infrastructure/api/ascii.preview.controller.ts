@@ -33,11 +33,11 @@ import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
 
 // https://fsymbols.com/generators/carty/
 
-@ApiTags('Previews')
+@ApiTags('ASCII Previews')
 @Controller()
 @ApiExcludeController()
 @ApiBearerAuth()
-export class PreviewController extends GenericControler {
+export class AsciiPreviewController extends GenericControler {
   constructor(
     private kycRepository: KycRepository,
     private nGCCalculator: NGCCalculator,

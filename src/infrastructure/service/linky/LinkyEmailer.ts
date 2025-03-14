@@ -10,8 +10,8 @@ export class LinkyEmailer {
   async sendConfigurationKOEmail(utilisateur: Utilisateur) {
     this.emailSender.sendEmail(
       utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      utilisateur.pseudo,
+      `Bonjour ${utilisateur.pseudo},<br>
 Finalement le PRM que vous avez saisi semble incorrect.<br>
 Vous pouvez le corriger sur la page de configuration de votre service de suivi de consommation.<br><br>
 
@@ -25,8 +25,8 @@ Vous pouvez le corriger sur la page de configuration de votre service de suivi d
   async sendAvailableDataEmail(utilisateur: Utilisateur) {
     this.emailSender.sendEmail(
       utilisateur.email,
-      utilisateur.prenom,
-      `Bonjour ${utilisateur.prenom},<br>
+      utilisateur.pseudo,
+      `Bonjour ${utilisateur.pseudo},<br>
 Vous pouvez dès à présent :<br>
 - voir votre consommation électrique quotidienne<br>
 - consulter votre historique jusqu'à deux ans dès maintenant<br>

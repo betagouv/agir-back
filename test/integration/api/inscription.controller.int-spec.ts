@@ -1,15 +1,15 @@
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { Feature } from '../../../src/domain/gamification/feature';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { Superficie } from '../../../src/domain/logement/logement';
+import { Thematique } from '../../../src/domain/thematique/thematique';
+import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import { Feature } from '../../../src/domain/gamification/feature';
-import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
-import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Superficie } from '../../../src/domain/logement/logement';
 import _situationNGCTest from './situationNGCtest.json';
-import { Thematique } from '../../../src/domain/thematique/thematique';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -431,7 +431,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       ],
       ngc_key: 'logement . chauffage . bois . présent',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -562,7 +562,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       reponses: [],
       ngc_key: 'logement . surface',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -632,7 +632,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       ],
       ngc_key: 'alimentation . local . consommation',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()
@@ -745,7 +745,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
         { label: 'Ne sais pas', code: 'ne_sais_pas' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response_post_situation = await TestUtil.getServer()

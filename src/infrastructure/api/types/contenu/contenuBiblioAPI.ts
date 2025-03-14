@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { ContentType } from '../../../../../src/domain/contenu/contentType';
+import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import {
   Bibliotheque,
   ContenuBibliotheque,

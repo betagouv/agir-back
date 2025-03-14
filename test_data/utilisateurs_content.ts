@@ -4,6 +4,7 @@ const utilisateurs = {
   recette_livio: {
     nom: 'RECETTEUR',
     prenom: 'Livio',
+    pseudo: 'Livio',
     email: 'livio@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
@@ -21,6 +22,7 @@ const utilisateurs = {
   margaux: {
     nom: 'RECETTEUR',
     prenom: 'Margaux',
+    pseudo: 'Margaux',
     email: 'margaux@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
@@ -38,6 +40,7 @@ const utilisateurs = {
   abdellah: {
     nom: 'RECETTEUR',
     prenom: 'Abdellah',
+    pseudo: 'Abdellah',
     email: 'abdellah@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
@@ -55,6 +58,7 @@ const utilisateurs = {
   wojtek: {
     nom: 'RECETTEUR',
     prenom: 'Wojtek',
+    pseudo: 'Wojtek',
     email: 'ww@w.com',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
@@ -75,6 +79,7 @@ const utilisateurs = {
   },
   wojtek2: {
     nom: 'RECETTEUR',
+    pseudo: 'Wojtek2',
     prenom: 'Wojtek2',
     email: 'ww2@w.com',
     mot_de_passe: 'haha',
@@ -92,6 +97,7 @@ const utilisateurs = {
   },
   nina: {
     nom: 'RECETTEUR',
+    pseudo: 'Nina',
     prenom: 'Nina',
     email: 'nina@agir.dev',
     mot_de_passe: 'haha',
@@ -110,6 +116,7 @@ const utilisateurs = {
   lucas: {
     nom: 'RECETTEUR',
     prenom: 'Lucas',
+    pseudo: 'Lucas',
     email: 'lucas@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
@@ -126,6 +133,7 @@ const utilisateurs = {
   },
   jeremie: {
     nom: 'RECETTEUR',
+    pseudo: 'Jeremie',
     prenom: 'Jeremie',
     email: 'jeremie@agir.dev',
     mot_de_passe: 'haha',
@@ -144,24 +152,8 @@ const utilisateurs = {
   dorian: {
     nom: 'RECETTEUR',
     prenom: 'Dorian',
+    pseudo: 'Dorian',
     email: 'dorian@agir.dev',
-    mot_de_passe: 'haha',
-    revenu_fiscal: null,
-    parts: null,
-    version: 11,
-    gamification: {
-      points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
-    services: [],
-  },
-  dunia: {
-    nom: 'RECETTEUR',
-    prenom: 'Dunia',
-    email: 'dunia@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
@@ -177,25 +169,9 @@ const utilisateurs = {
   },
   guillaume: {
     nom: 'RECETTEUR',
+    pseudo: 'Guillaume',
     prenom: 'Guillaume',
     email: 'guillaume@agir.dev',
-    mot_de_passe: 'haha',
-    revenu_fiscal: null,
-    parts: null,
-    version: 11,
-    gamification: {
-      points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
-    services: [],
-  },
-  romane: {
-    nom: 'RECETTEUR',
-    prenom: 'Romane',
-    email: 'romane@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
@@ -212,6 +188,7 @@ const utilisateurs = {
   claire: {
     nom: 'RECETTEUR',
     prenom: 'Claire',
+    Pseudo: 'Claire',
     email: 'claire@agir.dev',
     mot_de_passe: 'haha',
     revenu_fiscal: null,

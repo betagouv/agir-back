@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Defi, Defi as DefiDB } from '@prisma/client';
-import { Thematique } from '../../domain/thematique/thematique';
-import { Tag } from '../../../src/domain/scoring/tag';
-import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
-import { Categorie } from '../../../src/domain/contenu/categorie';
 import { Cron } from '@nestjs/schedule';
+import { Defi, Defi as DefiDB } from '@prisma/client';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { DefiDefinition } from '../../../src/domain/defis/defiDefinition';
+import { Tag } from '../../../src/domain/scoring/tag';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type DefiFilter = {
   date?: Date;
@@ -22,7 +22,7 @@ export class DefiRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadDefinitions();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading Defi definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -30,7 +30,7 @@ export class DefiRepository {
     }
   }
   @Cron('* * * * *')
-  async loadDefinitions(): Promise<void> {
+  async loadCache(): Promise<void> {
     const result = await this.prisma.defi.findMany();
     DefiRepository.catalogue_defi = result.map((elem) =>
       this.buildDefiDefinitionFromDB(elem),

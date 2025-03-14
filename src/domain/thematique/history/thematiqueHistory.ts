@@ -10,11 +10,13 @@ import { ThematiqueRecommandation } from './thematiqueRecommandation';
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_vues: TypeCodeAction[];
+  private liste_actions_faites: TypeCodeAction[];
   private liste_tags_excluants: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
     this.liste_actions_vues = [];
+    this.liste_actions_faites = [];
     this.liste_tags_excluants = [];
     if (data) {
       if (data.liste_thematiques) {
@@ -24,6 +26,9 @@ export class ThematiqueHistory {
       }
       if (data.liste_actions_vues) {
         this.liste_actions_vues = data.liste_actions_vues;
+      }
+      if (data.liste_actions_faites) {
+        this.liste_actions_faites = data.liste_actions_faites;
       }
       if (data.liste_tags_excluants) {
         this.liste_tags_excluants = data.liste_tags_excluants;
@@ -37,29 +42,36 @@ export class ThematiqueHistory {
   }
 
   public declarePersonnalisationDone(thematique: Thematique) {
+    const reco_existante =
+      this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco_existante.setPersonnalisationDone();
+  }
+
+  public getOrCreateNewThematiqueRecommandation(
+    thematique: Thematique,
+  ): ThematiqueRecommandation {
     const reco_existante = this.getRecommandationByThematique(thematique);
     if (reco_existante) {
-      reco_existante.setPersonnalisationDone();
-    } else {
-      const new_reco = new ThematiqueRecommandation(thematique);
-      new_reco.setPersonnalisationDone();
-      this.liste_thematiques.push(new_reco);
+      return reco_existante;
     }
+    const new_reco = new ThematiqueRecommandation(thematique);
+    this.liste_thematiques.push(new_reco);
+    return new_reco;
   }
 
   public resetPersonnalisation(thematique: Thematique) {
-    const reco_existante = this.getRecommandationByThematique(thematique);
-
-    if (reco_existante) {
-      reco_existante.resetPersonnalisation();
-    } else {
-      this.liste_thematiques.push(new ThematiqueRecommandation(thematique));
-    }
+    const reco_existante =
+      this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco_existante.resetPersonnalisation();
   }
 
   public isPersonnalisationDone(thematique: Thematique): boolean {
     const reco_existante = this.getRecommandationByThematique(thematique);
     return !!reco_existante && reco_existante.isPersonnalisationDone();
+  }
+  public isPersonnalisationDoneOnce(thematique: Thematique): boolean {
+    const reco_existante = this.getRecommandationByThematique(thematique);
+    return !!reco_existante && reco_existante.isPersonnalisationDoneOnce();
   }
 
   public getListeThematiques(): ThematiqueRecommandation[] {
@@ -71,14 +83,28 @@ export class ThematiqueHistory {
   public getListeActionsVues(): TypeCodeAction[] {
     return this.liste_actions_vues;
   }
+  public getListeActionsFaites(): TypeCodeAction[] {
+    return this.liste_actions_faites;
+  }
   public isActionVue(action: TypeCodeAction): boolean {
     return this.indexOfTypeCode(this.liste_actions_vues, action) !== -1;
   }
 
+  public isActionFaite(action: TypeCodeAction): boolean {
+    return this.indexOfTypeCode(this.liste_actions_faites, action) !== -1;
+  }
+
   public setActionCommeVue(action: TypeCodeAction) {
     if (this.indexOfTypeCode(this.liste_actions_vues, action) === -1) {
-      this.liste_actions_vues.push(action);
+      this.liste_actions_vues.push({ type: action.type, code: action.code });
     }
+  }
+  public setActionCommeFaite(action: TypeCodeAction): boolean {
+    if (this.indexOfTypeCode(this.liste_actions_faites, action) === -1) {
+      this.liste_actions_faites.push({ type: action.type, code: action.code });
+      return true;
+    }
+    return false;
   }
 
   public getRecommandationByThematique(
@@ -97,17 +123,11 @@ export class ThematiqueHistory {
   }
 
   public setActionsProposees(thematique: Thematique, actions: Action[]) {
-    const reco_existante = this.getRecommandationByThematique(thematique);
-
-    if (reco_existante) {
-      reco_existante.setActionsProposees(actions);
-    } else {
-      const new_reco = new ThematiqueRecommandation(thematique);
-      new_reco.setPersonnalisationDone();
-      new_reco.setActionsProposees(actions);
-      this.liste_thematiques.push(new_reco);
-    }
+    const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco.setPersonnalisationDone();
+    reco.setActionsProposees(actions);
   }
+
   public getActionsProposees(thematique: Thematique): TypeCodeAction[] {
     const reco = this.getRecommandationByThematique(thematique);
     return reco ? reco.getActionsProposees() : [];
@@ -133,25 +153,24 @@ export class ThematiqueHistory {
     thematique: Thematique,
     type_code_action: TypeCodeAction,
   ) {
-    const reco_existante = this.getRecommandationByThematique(thematique);
-
-    if (reco_existante) {
-      reco_existante.addActionToExclusionList(type_code_action);
-    } else {
-      const new_reco = new ThematiqueRecommandation(thematique);
-      new_reco.setPersonnalisationDone();
-      new_reco.addActionToExclusionList(type_code_action);
-      this.liste_thematiques.push(new_reco);
-    }
+    const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco.setPersonnalisationDone();
+    reco.addActionToExclusionList(type_code_action);
   }
 
   public removeActionAndShift(
     thematique: Thematique,
     type_code_action: TypeCodeAction,
   ) {
-    this.getRecommandationByThematique(thematique).removeActionAndShift(
-      type_code_action,
-    );
+    const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco.removeActionAndShift(type_code_action);
+  }
+  public appendAction(
+    thematique: Thematique,
+    type_code_action: TypeCodeAction,
+  ) {
+    const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco.appendAction(type_code_action);
   }
 
   public switchAction(
@@ -159,10 +178,8 @@ export class ThematiqueHistory {
     type_code_old_action: TypeCodeAction,
     type_code_new_action: TypeCodeAction,
   ) {
-    this.getRecommandationByThematique(thematique).replaceAction(
-      type_code_old_action,
-      type_code_new_action,
-    );
+    const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
+    reco.replaceAction(type_code_old_action, type_code_new_action);
   }
 
   private indexOfTypeCode(

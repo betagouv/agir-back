@@ -10,7 +10,7 @@ import { OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ProfileUsecase } from './profile.usecase';
+import { InscriptionUsecase } from './inscription.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -19,16 +19,21 @@ export class FranceConnectUsecase {
     private oidcService: OidcService,
     private passwordManager: PasswordManager,
     private oIDCStateRepository: OIDCStateRepository,
-    private profileUsecase: ProfileUsecase,
     private tokenRepository: TokenRepository,
+    private inscriptionUsecase: InscriptionUsecase,
   ) {}
 
-  async genererConnexionFranceConnect(): Promise<URL> {
+  async genererConnexionFranceConnect(situation_ngc_id?: string): Promise<URL> {
     const redirect_infos = this.oidcService.generatedAuthRedirectUrl();
+
+    if (situation_ngc_id && situation_ngc_id.length !== 36) {
+      ApplicationError.throwBadSituationID(situation_ngc_id);
+    }
 
     await this.oIDCStateRepository.createNewState(
       redirect_infos.state,
       redirect_infos.nonce,
+      situation_ngc_id,
     );
 
     return redirect_infos.url;
@@ -116,6 +121,13 @@ export class FranceConnectUsecase {
     new_utilisateur.est_valide_pour_classement = true;
     new_utilisateur.france_connect_sub = user_info.sub;
 
+    if (state.situation_ngc_id) {
+      await this.inscriptionUsecase.external_inject_situation_to_user_kycs(
+        new_utilisateur,
+        state.situation_ngc_id,
+      );
+    }
+
     await this.utilisateurRepository.createUtilisateur(new_utilisateur);
 
     return await this.log_ok_fc_user(oidc_state, new_utilisateur);
@@ -140,7 +152,7 @@ export class FranceConnectUsecase {
     return { token: token, utilisateur: utilisateur };
   }
 
-  async internal_logout_france_connect(
+  async external_logout_france_connect(
     utilisateurId: string,
   ): Promise<{ fc_logout_url?: URL }> {
     const state = await this.oIDCStateRepository.getByUtilisateurId(

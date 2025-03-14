@@ -14,16 +14,27 @@ export class KycTagExcluantTranslator {
       result_set.add(TagExcluant.a_un_velo);
     }
     if (
-      this.code_l(this.getKYC(hist, KYCID.KYC009), [
-        'loc_voit',
-        'co_voit',
-        'pas_voiture',
+      this.code_l(this.getKYC(hist, KYCID.KYC_transport_type_utilisateur), [
+        'pas_la_mienne',
+        'change_souvent',
       ])
     ) {
       result_set.add(TagExcluant.na_pas_de_voiture);
     }
-    if (!!this.getKYC(hist, KYCID.KYC_transport_voiture_thermique_carburant)) {
+    if (
+      this.code_l(this.getKYC(hist, KYCID.KYC_transport_voiture_motorisation), [
+        'thermique',
+        'hybride',
+      ])
+    ) {
       result_set.add(TagExcluant.a_une_voiture_thermique);
+    }
+    if (
+      this.code_l(this.getKYC(hist, KYCID.KYC_transport_voiture_motorisation), [
+        'electrique',
+      ])
+    ) {
+      result_set.add(TagExcluant.a_une_voiture_electrique);
     }
     if (this.est_zero(this.getKYC(hist, KYCID.KYC_nbr_plats_viande_rouge))) {
       result_set.add(TagExcluant.ne_mange_pas_de_viande_rouge);

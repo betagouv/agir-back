@@ -51,6 +51,7 @@ describe('History', () => {
           clicked_infos: false,
           content_id: '1',
           vue_at: new Date(),
+          deroulee_at: undefined,
         },
       ],
     });
@@ -91,6 +92,7 @@ describe('History', () => {
           clicked_infos: false,
           content_id: '1',
           vue_at: new Date(),
+          deroulee_at: undefined,
         },
       ],
     });

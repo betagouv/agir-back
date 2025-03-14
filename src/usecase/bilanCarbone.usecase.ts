@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
-import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
   BilanCarbone,
   BilanCarboneSynthese,
-  SituationNGC,
+  ImpactThematiqueStandalone,
   NiveauImpact,
+  SituationNGC,
 } from '../domain/bilan/bilanCarbone';
-import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
+import { Feature } from '../domain/gamification/feature';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { Feature } from '../domain/gamification/feature';
+import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { Thematique } from '../domain/thematique/thematique';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
+import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
@@ -37,6 +38,24 @@ export class BilanCarboneUsecase {
     Utilisateur.checkState(utilisateur);
 
     return await this.computeBilanComplet(utilisateur);
+  }
+
+  async getCurrentBilanByUtilisateurIdAndThematique(
+    utilisateurId: string,
+    thematique: Thematique,
+  ): Promise<ImpactThematiqueStandalone> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc, Scope.logement, Scope.unlocked_features],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const situation = this.computeSituation(utilisateur);
+
+    return this.nGCCalculator.computeBilanCarboneThematiqueFromSituation(
+      situation,
+      thematique,
+    );
   }
 
   async getCurrentBilanValeurTotale(utilisateurId: string): Promise<number> {

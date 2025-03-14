@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Query,
   Request,
   UseGuards,
@@ -141,6 +142,32 @@ export class ActionsController extends GenericControler {
     return CatalogueActionAPI.mapToAPI(catalogue);
   }
 
+  @Post('utilisateurs/:utilisateurId/actions/:type_action/:code_action/faite')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `déclare qu'une action est faite`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  async faireAction(
+    @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.actionUsecase.faireAction(code_action, type, utilisateurId);
+  }
+
   @Get('actions/:type_action/:code_action')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 2000 } })
@@ -177,33 +204,6 @@ export class ActionsController extends GenericControler {
       type,
       code_commune,
     );
-    return ActionAPI.mapToAPI(result);
-  }
-  @Get('preview/actions/:type_action/:content_id')
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 1, ttl: 1000 } })
-  @ApiOkResponse({
-    type: ActionAPI,
-  })
-  @ApiOperation({
-    summary: `Retourne la preview CMS d'une action (elle peut encore être en DRAFT côté CMS)`,
-  })
-  @ApiParam({
-    name: 'type_action',
-    enum: TypeAction,
-    description: `type de l'action (classique/bilan/quizz/etc)`,
-  })
-  @ApiParam({
-    name: 'content_id',
-    type: String,
-    description: `id CMS de l'action`,
-  })
-  async getActionPreview(
-    @Param('content_id') content_id: string,
-    @Param('type_action') type_action: string,
-  ): Promise<ActionAPI> {
-    let type = this.castTypeActionOrException(type_action);
-    const result = await this.actionUsecase.getActionPreview(content_id, type);
     return ActionAPI.mapToAPI(result);
   }
 
@@ -246,6 +246,7 @@ export class ActionsController extends GenericControler {
     );
     return ActionAPI.mapToAPI(result);
   }
+
   @Get('utilisateurs/:utilisateurId/actions/quizz/:code_action/score')
   @UseGuards(AuthGuard)
   @ApiOkResponse({

@@ -36,7 +36,7 @@ describe('Aide (API test)', () => {
     // GIVEN
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await thematiqueRepository.upsert({
       code: Thematique.climat,
@@ -54,7 +54,7 @@ describe('Aide (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, { partenaire_id: '123' });
 
@@ -95,7 +95,7 @@ describe('Aide (API test)', () => {
     // GIVEN
 
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
     await TestUtil.create(DB.blockText, {
       code: 'block_123',
       id_cms: '1',
@@ -103,7 +103,7 @@ describe('Aide (API test)', () => {
       texte: 'the texte',
     });
 
-    await blockTextRepository.load();
+    await blockTextRepository.loadCache();
 
     await thematiqueRepository.upsert({
       code: Thematique.climat,
@@ -121,7 +121,7 @@ describe('Aide (API test)', () => {
       image_url: 'https://img',
       label: 'the label',
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       partenaire_id: '123',
@@ -169,7 +169,7 @@ describe('Aide (API test)', () => {
       texte: 'the texte',
     });
 
-    await blockTextRepository.load();
+    await blockTextRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
@@ -231,6 +231,70 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par thematique simple', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+      thematiques: [Thematique.alimentation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      thematiques: [Thematique.logement, Thematique.consommation],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2?thematique=logement',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(2);
+  });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par thematique multiple', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+      thematiques: [Thematique.alimentation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      thematiques: [Thematique.logement, Thematique.consommation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '4',
+      thematiques: [Thematique.consommation],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '5',
+      thematiques: [Thematique.climat],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '6',
+      thematiques: [Thematique.loisir],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2?thematique=logement&thematique=climat',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(3);
+  });
   it('GET /utilisateurs/:utilisateurId/aides indique si aide cliquée / demandée / vue', async () => {
     // GIVEN
     const history: History_v0 = {
@@ -243,12 +307,14 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
+          deroulee_at: undefined,
         },
         {
           content_id: '2',
           clicked_demande: false,
           clicked_infos: true,
           vue_at: new Date(2),
+          deroulee_at: undefined,
         },
       ],
     };
@@ -342,6 +408,40 @@ describe('Aide (API test)', () => {
     expect(
       userDB.history.aide_interactions[0].vue_at.getTime(),
     ).toBeGreaterThan(Date.now() - 100);
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/id/derouler marque l'aide comme déroulée`, async () => {
+    // GIVEN
+    process.env.CRON_API_KEY = TestUtil.token;
+    const history: History_v0 = {
+      version: 0,
+      article_interactions: [],
+      quizz_interactions: [],
+      aide_interactions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: undefined,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/derouler',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.history.aide_interactions).toHaveLength(1);
+    expect(
+      userDB.history.aide_interactions[0].deroulee_at.getTime(),
+    ).toBeGreaterThan(Date.now() - 100);
+    expect(userDB.history.aide_interactions[0].vue_at).toBeUndefined();
   });
   it(`POST /utilisateurs/:utilisateurId/aides/id/vu_demande marque l'aide comme cliqué sur le lien demande `, async () => {
     // GIVEN
@@ -460,7 +560,7 @@ describe('Aide (API test)', () => {
   it('GET /aides/id_cms récupère une aide unique en mode non connecté', async () => {
     // GIVEN
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -508,12 +608,13 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
+          deroulee_at: undefined,
         },
       ],
     };
     await TestUtil.create(DB.utilisateur, { history: history as any });
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -564,12 +665,13 @@ describe('Aide (API test)', () => {
           clicked_demande: false,
           clicked_infos: false,
           vue_at: undefined,
+          deroulee_at: undefined,
         },
       ],
     };
     await TestUtil.create(DB.utilisateur, { history: history as any });
     await TestUtil.create(DB.partenaire);
-    await partenaireRepository.load();
+    await partenaireRepository.loadCache();
 
     await TestUtil.create(DB.aide, {
       content_id: '1',

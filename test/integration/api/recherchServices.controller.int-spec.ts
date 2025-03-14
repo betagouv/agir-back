@@ -125,7 +125,7 @@ describe('RechercheServices (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.POST('/services/compute_stats');
 
-    await serviceFavorisStatistiqueRepository.loadCachedData();
+    await serviceFavorisStatistiqueRepository.loadCache();
 
     await TestUtil.generateAuthorizationToken('utilisateur-id');
 
@@ -654,7 +654,7 @@ describe('RechercheServices (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body.resultats).toHaveLength(10);
-    expect(response.body.resultats[0].difficulty_plat).toEqual('Intérmédiaire');
+    expect(response.body.resultats[0].difficulty_plat).toEqual('Intermédiaire');
     expect(response.body.resultats[0].est_favoris).toEqual(false);
     expect(response.body.resultats[0].id).toEqual('10987');
     expect(response.body.resultats[0].nombre_favoris).toEqual(0);

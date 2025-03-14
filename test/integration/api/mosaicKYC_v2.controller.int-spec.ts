@@ -7,10 +7,7 @@ import {
   MosaicKYCDef,
   TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
@@ -76,7 +73,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
@@ -98,7 +95,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -122,7 +119,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         image_url: 'AAA',
         label: 'short 1',
         selected: false,
-        unite: 'kg',
+        unite: { abreviation: 'kg' },
       },
       {
         code: '_2',
@@ -130,7 +127,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         image_url: 'BBB',
         label: 'short 2',
         selected: false,
-        unite: 'kg',
+        unite: { abreviation: 'kg' },
       },
     ]);
   });
@@ -160,7 +157,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
@@ -211,7 +208,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 1',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
         {
@@ -241,7 +238,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 2',
           image_url: 'BBB',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],
@@ -249,7 +246,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
 
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -268,7 +265,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_1',
           image_url: 'AAA_1',
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           selected: true,
         },
         {
@@ -276,7 +273,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_2',
           image_url: 'AAA_2',
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           selected: false,
         },
       ],
@@ -339,7 +336,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -356,7 +353,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -375,7 +372,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.gamification.points).toEqual(15);
+    expect(dbUser.gamification.getPoints()).toEqual(15);
 
     expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
 
@@ -432,7 +429,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'AAA',
       conditions: [],
       emoji: '🔥',
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
     });
     expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
       code: '_2',
@@ -484,7 +481,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'AAA',
       conditions: [],
       emoji: '🔥',
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
     });
   });
 
@@ -511,7 +508,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -528,7 +525,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -567,7 +564,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -584,7 +581,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -622,7 +619,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -639,7 +636,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'quest 2',
       code: '_2',
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { kyc: new KYCHistory_v2() as any });
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
@@ -672,8 +669,10 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       reponse_simple: {
-        unite: 'kg',
         value: '1',
+        unite: {
+          abreviation: 'kg',
+        },
       },
       reponse_complexe: [],
       ngc_key: 'a . b . c',
@@ -684,7 +683,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     });
     expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
@@ -696,8 +695,10 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       reponse_simple: {
-        unite: 'kg',
         value: '0',
+        unite: {
+          abreviation: 'kg',
+        },
       },
       reponse_complexe: [],
       ngc_key: 'a . b . c',
@@ -708,7 +709,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     });
   });
@@ -764,7 +765,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
@@ -806,7 +807,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 1',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
         {
@@ -827,13 +828,13 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           short_question: 'short 2',
           image_url: 'BBB',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
 
     // WHEN
@@ -855,7 +856,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short 1',
           image_url: 'AAA_1',
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           selected: false,
         },
         {
@@ -863,7 +864,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short 2',
           image_url: 'BBB_1',
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           selected: true,
         },
       ],
@@ -890,7 +891,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     short_question: 'short',
     tags: [TagUtilisateur.appetence_bouger_sante],
     thematique: Thematique.dechet,
-    unite: Unite.kg,
+    unite: { abreviation: 'kg' },
     type: TypeReponseQuestionKYC.choix_multiple,
     code: KYCID._2,
     question: `Quel est votre sujet principal d'intéret ?`,
@@ -932,7 +933,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     short_question: 'short',
     image_url: 'AAA',
     conditions: [],
-    unite: Unite.kg,
+    unite: { abreviation: 'kg' },
     emoji: '🔥',
   };
 
@@ -965,7 +966,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_a',
       points: 123,
       short_question: 'short_a',
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 1`,
       reponses: [
@@ -984,7 +985,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_b',
       points: 456,
       short_question: 'short_b',
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 2`,
       reponses: [
@@ -995,7 +996,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1014,7 +1015,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_a',
           emoji: 'a',
           image_url: 'img_a',
-          unite: 'kg',
+          unite: { abreviation: 'kg' },
           selected: false,
         },
         {
@@ -1022,7 +1023,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_b',
           emoji: 'b',
           image_url: 'img_b',
-          unite: 'euro',
+          unite: { abreviation: 'euro' },
           selected: false,
         },
       ],
@@ -1080,7 +1081,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_a',
       points: 123,
       short_question: 'short_a',
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 1`,
       reponses: [
@@ -1099,7 +1100,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_b',
       points: 456,
       short_question: 'short_b',
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 2`,
       reponses: [
@@ -1110,7 +1111,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1129,7 +1130,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_a',
           emoji: 'a',
           image_url: 'img_a',
-          unite: 'kg',
+          unite: { abreviation: 'kg' },
           selected: false,
         },
         {
@@ -1137,7 +1138,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_b',
           emoji: 'b',
           image_url: 'img_b',
-          unite: 'euro',
+          unite: { abreviation: 'euro' },
           selected: false,
         },
       ],
@@ -1195,7 +1196,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_a',
       points: 123,
       short_question: 'short_a',
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 1`,
       reponses: [
@@ -1214,7 +1215,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       image_url: 'img_b',
       points: 456,
       short_question: 'short_b',
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       type: TypeReponseQuestionKYC.choix_unique,
       question: `question 2`,
       reponses: [
@@ -1225,7 +1226,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       created_at: undefined,
       updated_at: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1244,7 +1245,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_a',
           emoji: 'a',
           image_url: 'img_a',
-          unite: 'kg',
+          unite: { abreviation: 'kg' },
           selected: true,
         },
         {
@@ -1252,7 +1253,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           label: 'short_b',
           emoji: 'b',
           image_url: 'img_b',
-          unite: 'euro',
+          unite: { abreviation: 'euro' },
           selected: false,
         },
       ],

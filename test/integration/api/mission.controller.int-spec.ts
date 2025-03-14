@@ -4,11 +4,9 @@ import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -145,58 +143,7 @@ describe('Mission (API test)', () => {
       },
     ],
   };
-  const mission_avec_mosaic: MissionsUtilisateur_v1 = {
-    version: 1,
-    missions: [
-      {
-        id: '1',
-        done_at: null,
-        code: CodeMission.cereales,
-        image_url: 'image',
-        thematique: Thematique.alimentation,
-        titre: 'titre',
-        introduction: 'intro',
-        is_first: true,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '_1',
-            type: ContentType.kyc,
-            titre: '1 question pour vous',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-          {
-            id: '1',
-            content_id: KYCMosaicID.TEST_MOSAIC_ID,
-            type: ContentType.mosaic,
-            titre: 'Mosaic pour vous',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-          {
-            id: '2',
-            content_id: '_3',
-            type: ContentType.kyc,
-            titre: 'Dernière question',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-        ],
-        est_visible: true,
-        est_examen: false,
-      },
-    ],
-  };
+
   const missions_kyc_done: MissionsUtilisateur_v1 = {
     version: 1,
     missions: [
@@ -563,7 +510,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -636,7 +583,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -674,7 +621,7 @@ describe('Mission (API test)', () => {
 
     await thematiqueRepository.onApplicationBootstrap();
     await missionRepository.onApplicationBootstrap();
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -729,7 +676,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -841,7 +788,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -951,7 +898,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -972,7 +919,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (kyc)`, async () => {
     // GIVEN
@@ -995,7 +942,7 @@ describe('Mission (API test)', () => {
       question: `HAHA`,
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_3').send([
       { value: 'hoho' },
@@ -1015,7 +962,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (quizz)`, async () => {
     // GIVEN
@@ -1054,7 +1001,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[2].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour l'objecif donné (defi)`, async () => {
@@ -1072,7 +1019,7 @@ describe('Mission (API test)', () => {
       content_id: '2',
       points: 0,
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     await TestUtil.PATCH('/utilisateurs/utilisateur-id/defis/2').send({
       status: DefiStatus.fait,
@@ -1093,7 +1040,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[3].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points pour l'objecif alors que le sous jacent n'est pas done`, async () => {
     // GIVEN
@@ -1121,7 +1068,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(false);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points deux fois pour l'objecif donné`, async () => {
     // GIVEN
@@ -1138,7 +1085,7 @@ describe('Mission (API test)', () => {
       content_id: '1',
       points: 0,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.POST('/utilisateurs/utilisateur-id/events').send({
       type: EventType.article_lu,
@@ -1162,7 +1109,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
   });
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
     // GIVEN
@@ -1238,7 +1185,7 @@ describe('Mission (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
 
   it(`NEW GET /utilisateurs/id/objectifs/id/gagner_points - n'empoche pas les points d'une mission pas vraiment commencer`, async () => {
@@ -1255,7 +1202,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       titre: 'hoho',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -1316,7 +1263,7 @@ describe('Mission (API test)', () => {
     let userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
 
   it(`GET /utilisateurs/id/objectifs/id/gagner_points - empoche les points pour deux KYC`, async () => {
@@ -1346,7 +1293,7 @@ describe('Mission (API test)', () => {
       question: `HIHI`,
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     await TestUtil.PUT('/utilisateurs/utilisateur-id/questionsKYC_v2/_1').send([
       { value: 'haha' },
@@ -1372,7 +1319,7 @@ describe('Mission (API test)', () => {
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[1].sont_points_en_poche,
     ).toEqual(true);
-    expect(userDB.gamification.points).toEqual(40);
+    expect(userDB.gamification.getPoints()).toEqual(40);
   });
   it(`GET /utilisateurs/id/thematiques/cereales/next_kyc - renvoie 404 si plus de kyc à faire`, async () => {
     // GIVEN
@@ -1432,7 +1379,7 @@ describe('Mission (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1444,7 +1391,6 @@ describe('Mission (API test)', () => {
     ]);
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
@@ -1463,7 +1409,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -1471,7 +1417,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1513,7 +1459,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ code_kyc: '1', code_reponse: 'yi' }]],
@@ -1524,7 +1470,7 @@ describe('Mission (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.POST(
@@ -1603,7 +1549,7 @@ describe('Mission (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],
@@ -1613,12 +1559,12 @@ describe('Mission (API test)', () => {
       kyc: kyc as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.defi, {
       content_id: '1',
       conditions: [[{ id_kyc: 1, code_kyc: '1', code_reponse: 'yi' }]],
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1651,7 +1597,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1685,7 +1631,7 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.quizz, { content_id: '1' });
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -1720,13 +1666,13 @@ describe('Mission (API test)', () => {
     });
     await TestUtil.create(DB.defi, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     await TestUtil.create(DB.mission, {
       id_cms: 1,
       est_visible: false,
       code: CodeMission.cereales,
     });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -1757,7 +1703,7 @@ describe('Mission (API test)', () => {
       missions: missions_article_plus_defi as any,
     });
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.create(DB.thematique, {
       code: Thematique.alimentation,
@@ -2008,7 +1954,7 @@ describe('Mission (API test)', () => {
     await thematiqueRepository.onApplicationBootstrap();
 
     await TestUtil.create(DB.defi, { content_id: '2' });
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     const mission_article: Mission = {
       id_cms: 1,
@@ -2178,7 +2124,7 @@ describe('Mission (API test)', () => {
       tag_article: 'autre',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2281,7 +2227,7 @@ describe('Mission (API test)', () => {
       tag_article: 'composter',
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2361,7 +2307,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       codes_postaux: ['75002'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {
@@ -2444,7 +2390,7 @@ describe('Mission (API test)', () => {
       categorie: Categorie.mission,
       tags_utilisateur: [TagUtilisateur.possede_maison],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     const objectifs: ObjectifDefinition[] = [
       {

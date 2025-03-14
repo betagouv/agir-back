@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
-import { ConformiteDefinition } from '../../domain/contenu/conformiteDefinition';
 import { Conformite } from '@prisma/client';
+import { ConformiteDefinition } from '../../domain/contenu/conformiteDefinition';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ConformiteRepository {
@@ -17,7 +17,7 @@ export class ConformiteRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadConformite();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading conformite definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -35,7 +35,7 @@ export class ConformiteRepository {
   }
 
   @Cron('* * * * *')
-  public async loadConformite() {
+  public async loadCache() {
     const new_map: Map<string, ConformiteDefinition> = new Map();
     const listeConfo = await this.prisma.conformite.findMany();
     for (const confo of listeConfo) {

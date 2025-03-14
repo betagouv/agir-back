@@ -1,18 +1,18 @@
+import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
+import { TypeNotification } from '../domain/notification/notificationHistory';
+import { CodeManager } from '../domain/utilisateur/manager/codeManager';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
+import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import {
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { Injectable } from '@nestjs/common';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { CodeManager } from '../domain/utilisateur/manager/codeManager';
-import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
-import { App } from '../domain/app';
-import { MailerUsecase } from './mailer.usecase';
-import { TypeNotification } from '../domain/notification/notificationHistory';
-import { FranceConnectUsecase } from './franceConnect.usecase';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { FranceConnectUsecase } from './franceConnect.usecase';
+import { MailerUsecase } from './mailer.usecase';
 
 @Injectable()
 export class Connexion_v2_Usecase {
@@ -191,7 +191,7 @@ export class Connexion_v2_Usecase {
       return {}; // PAS de FC encore en PROD
     } else {
       const result =
-        await this.franceConnectUsecase.internal_logout_france_connect(
+        await this.franceConnectUsecase.external_logout_france_connect(
           utilisateurId,
         );
       return { fc_logout_url: result.fc_logout_url };
@@ -203,14 +203,14 @@ export class Connexion_v2_Usecase {
   }
 
   private async sendConnexionCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.internal_send_user_email_of_type(
+    await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.connexion_code,
       utilisateur,
     );
   }
 
   private async sendMotDePasseCode(utilisateur: Utilisateur) {
-    await this.mailerUsecase.internal_send_user_email_of_type(
+    await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.change_mot_de_passe_code,
       utilisateur,
     );

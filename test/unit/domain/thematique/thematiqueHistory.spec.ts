@@ -19,6 +19,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -27,6 +28,7 @@ describe('ThematiqueHistory', () => {
             { code: '123', type: TypeAction.classique },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     });
@@ -50,6 +52,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [],
     });
 
@@ -67,12 +70,14 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: false,
+          personnalisation_done_once: false,
         },
       ],
     });
@@ -91,12 +96,14 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     });
@@ -115,6 +122,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_tags_excluants: [],
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_thematiques: [],
     });
 

@@ -1,19 +1,28 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
+  Post,
   Query,
   Redirect,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { OidcService } from '../auth/oidc.service';
-import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
-import { AuthGuard } from '../auth/guard';
-import { GenericControler } from './genericControler';
-import { OIDCStateRepository } from '../repository/oidcState.repository';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FranceConnectUsecase } from '../../usecase/franceConnect.usecase';
+import { AuthGuard } from '../auth/guard';
+import { OidcService } from '../auth/oidc.service';
+import { OIDCStateRepository } from '../repository/oidcState.repository';
+import { GenericControler } from './genericControler';
+import { CodeStateInputAPI } from './types/utilisateur/codeStateInputAPI';
+import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
 
 @Controller()
 @ApiTags('France Connect')
@@ -32,28 +41,38 @@ export class FranceConnectController extends GenericControler {
     summary:
       'Initie une redirection vers France Connect pour processus de connexion',
   })
-  async login() {
+  @ApiQuery({
+    name: 'situation_ngc_id',
+    type: String,
+    required: false,
+    description: `id d'une situation NGC en attente de liaison avec le futur compte utilisateur`,
+  })
+  async login(@Query('situation_ngc_id') situation_ngc_id: string) {
     const redirect_url =
-      await this.franceConnectUsecase.genererConnexionFranceConnect();
+      await this.franceConnectUsecase.genererConnexionFranceConnect(
+        situation_ngc_id,
+      );
     return { url: redirect_url };
   }
 
   @ApiOperation({
     summary:
-      'finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
+      'Finalise la connexion via france connect en échangeant un [code / state] pour un token applicatif',
   })
-  @Get('login_france_connect_step_2')
+  @Post('login_france_connect_step_2')
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
+  @ApiBody({
+    type: CodeStateInputAPI,
+  })
   async login_callback(
-    @Query('oidc_code') oidc_code: string,
-    @Query('oidc_state') oidc_state: string,
+    @Body() body: CodeStateInputAPI,
   ): Promise<LoggedUtilisateurAPI> {
-    console.log(`oidc_code : [${oidc_code}]`);
-    console.log(`oidc_state : [${oidc_state}]`);
+    console.log(`oidc_code : [${body.oidc_code}]`);
+    console.log(`oidc_state : [${body.oidc_state}]`);
 
     const user_data = await this.franceConnectUsecase.connecterOuInscrire(
-      oidc_state,
-      oidc_code,
+      body.oidc_state,
+      body.oidc_code,
     );
 
     return LoggedUtilisateurAPI.mapToAPI(

@@ -68,7 +68,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
     process.env = { ...OLD_ENV }; // Make a copy
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
@@ -87,7 +87,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { history: {} });
     await TestUtil.create(DB.article);
-    await articleRepository.load();
+    await articleRepository.loadCache();
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/autre-id/recommandations_v3',
@@ -104,7 +104,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       force_connexion: true,
     });
     await TestUtil.create(DB.article);
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -126,7 +126,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       image_url: 'https://',
       points: 10,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -161,7 +161,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '2',
       codes_postaux: ['456'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -187,7 +187,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '2',
       codes_departement: ['22'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -228,7 +228,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '3',
       rubrique_ids: ['2'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -271,7 +271,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       content_id: '3',
       rubrique_ids: ['3'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -325,7 +325,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
         answered_questions: [],
       },
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -400,7 +400,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       rubrique_ids: [],
       thematiques: [Thematique.transport],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -521,10 +521,10 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       rubrique_ids: ['6', '5'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
-    await kycRepository.loadDefinitions();
-    await defiRepository.loadDefinitions();
+    await kycRepository.loadCache();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -603,8 +603,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       codes_postaux: [],
       thematiques: [Thematique.logement],
     });
-    await articleRepository.load();
-    await kycRepository.loadDefinitions();
+    await articleRepository.loadCache();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -685,8 +685,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       thematiques: [Thematique.logement],
       categorie: Categorie.mission,
     });
-    await articleRepository.load();
-    await kycRepository.loadDefinitions();
+    await articleRepository.loadCache();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Action, ActionService } from '../../../../domain/actions/action';
 import { TypeAction } from '../../../../domain/actions/typeAction';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Besoin } from '../../../../domain/aides/besoin';
 import { Echelle } from '../../../../domain/aides/echelle';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
@@ -76,12 +77,16 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() points: number;
+  @ApiProperty() consigne: string;
+  @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
+  @ApiProperty() deja_faite: boolean;
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_aides_disponibles: number;
-  @ApiProperty({ type: [String] }) besoins: string[];
+  @ApiProperty({ enum: Besoin, isArray: true }) besoins: Besoin[];
   @ApiProperty() comment: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
@@ -101,24 +106,28 @@ export class ActionAPI {
 
   public static mapToAPI(action: Action): ActionAPI {
     return {
-      nombre_actions_en_cours: Math.round(Math.random() * 1000),
-      nombre_aides_disponibles: Math.round(Math.random() * 10),
+      nombre_actions_en_cours: action.nombre_actions_faites,
+      nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,
       sous_titre: action.sous_titre,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
       besoins: action.besoins,
       comment: action.comment,
       pourquoi: action.pourquoi,
       type: action.type,
       thematique: action.thematique,
-      kycs: [],
+      kycs: action.kycs?.map(QuestionKYCAPI_v2.mapToAPI) ?? [],
       quizzes: action.quizz_liste.map((q) => QuizzBibliothequeAPI.map(q)),
       aides: action.getListeAides().map((a) => ActionAideAPI.mapToAPI(a)),
       services: action.services.map((s) => ServiceActionAPI.map(s)),
       nom_commune: action.nom_commune,
       quizz_felicitations: action.quizz_felicitations,
       deja_vue: action.deja_vue,
+      deja_faite: action.deja_faite,
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
+      points: action.getNombrePoints(),
     };
   }
 }

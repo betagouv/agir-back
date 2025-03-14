@@ -17,7 +17,7 @@ export class ThematiqueRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadThematiques();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading thematiques definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -37,7 +37,7 @@ export class ThematiqueRepository {
   }
 
   @Cron('* * * * *')
-  public async loadThematiques() {
+  public async loadCache() {
     const new_map: Map<Thematique, ThematiqueDefinition> = new Map();
     const listeThematiques = await this.prisma.thematique.findMany();
     for (const them of listeThematiques) {

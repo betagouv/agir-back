@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Cron } from '@nestjs/schedule';
 import { Mission } from '@prisma/client';
 import { MissionDefinition } from '../../../src/domain/mission/missionDefinition';
-import { Cron } from '@nestjs/schedule';
 import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MissionRepository {
@@ -21,7 +21,7 @@ export class MissionRepository {
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.reloadMissions();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading missions definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -30,7 +30,7 @@ export class MissionRepository {
   }
 
   @Cron('* * * * *')
-  public async reloadMissions() {
+  public async loadCache() {
     const new_map_id: Map<number, MissionDefinition> = new Map();
     const new_map_code: Map<string, MissionDefinition> = new Map();
     const new_map_them: Map<Thematique, MissionDefinition[]> = new Map();

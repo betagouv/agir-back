@@ -1,13 +1,11 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
 import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
@@ -27,11 +25,13 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
@@ -58,7 +58,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 describe('Admin (API test)', () => {
@@ -69,6 +69,7 @@ describe('Admin (API test)', () => {
   const missionRepository = new MissionRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -431,7 +432,7 @@ describe('Admin (API test)', () => {
       kyc: kyc,
     });
     process.env.USER_CURRENT_VERSION = '8';
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -585,6 +586,41 @@ describe('Admin (API test)', () => {
     ]);
     expect(userDB.code_commune).toEqual(null);
     expect(userDB.version).toEqual(12);
+  });
+  it('POST /admin/migrate_users migration V13 OK - prenom => pseudo', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 12,
+      migration_enabled: true,
+      prenom: 'yo',
+      pseudo: null,
+    });
+    process.env.USER_CURRENT_VERSION = '13';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 13,
+            ok: true,
+            info: 'pseudo set ok',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.pseudo).toEqual('yo');
+    expect(userDB.version).toEqual(13);
   });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
@@ -1356,7 +1392,7 @@ describe('Admin (API test)', () => {
       content_id: 'article-id-3',
       titre: 'Titre de mon article 3',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur, {
       id: 'test-id-1',
@@ -2424,31 +2460,31 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur, {
       id: '1',
-      prenom: 'A',
+      pseudo: 'A',
       est_valide_pour_classement: false,
       email: '1',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
-      prenom: 'B',
+      pseudo: 'B',
       est_valide_pour_classement: false,
       email: '2',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
-      prenom: 'C',
+      pseudo: 'C',
       est_valide_pour_classement: true,
       email: '3',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '4',
-      prenom: '',
+      pseudo: '',
       est_valide_pour_classement: false,
       email: '4',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '5',
-      prenom: null,
+      pseudo: null,
       est_valide_pour_classement: false,
       email: '5',
     });
@@ -2458,34 +2494,34 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body).toContainEqual({ id: '1', prenom: 'A' });
-    expect(response.body).toContainEqual({ id: '2', prenom: 'B' });
+    expect(response.body).toContainEqual({ id: '1', pseudo: 'A' });
+    expect(response.body).toContainEqual({ id: '2', pseudo: 'B' });
   });
   it('POST /admin/valider_prenoms', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur, {
       id: '1',
-      prenom: 'A',
+      pseudo: 'A',
       est_valide_pour_classement: false,
       email: '1',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
-      prenom: 'B',
+      pseudo: 'B',
       est_valide_pour_classement: false,
       email: '2',
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
-      prenom: 'C',
+      pseudo: 'C',
       est_valide_pour_classement: false,
       email: '3',
     });
     // WHEN
     const response = await TestUtil.POST('/admin/valider_prenoms').send([
-      { id: '1', prenom: 'George' },
-      { id: '2', prenom: 'Paul' },
+      { id: '1', pseudo: 'George' },
+      { id: '2', pseudo: 'Paul' },
     ]);
 
     // THEN
@@ -2493,7 +2529,7 @@ describe('Admin (API test)', () => {
     const listeUsers = await TestUtil.prisma.utilisateur.findMany({
       select: {
         id: true,
-        prenom: true,
+        pseudo: true,
         est_valide_pour_classement: true,
       },
       orderBy: {
@@ -2504,17 +2540,17 @@ describe('Admin (API test)', () => {
       {
         est_valide_pour_classement: true,
         id: '1',
-        prenom: 'George',
+        pseudo: 'George',
       },
       {
         est_valide_pour_classement: true,
         id: '2',
-        prenom: 'Paul',
+        pseudo: 'Paul',
       },
       {
         est_valide_pour_classement: false,
         id: '3',
-        prenom: 'C',
+        pseudo: 'C',
       },
     ]);
   });
@@ -2673,7 +2709,7 @@ describe('Admin (API test)', () => {
           points: 10,
           tags: [],
           reponse_simple: {
-            unite: Unite.km,
+            unite: { abreviation: 'kg' },
             value: '123',
           },
           conditions: [],
@@ -2694,7 +2730,7 @@ describe('Admin (API test)', () => {
       kyc: kyc as any,
     });
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/admin/utilisateur_avec_voiture');
@@ -2857,5 +2893,149 @@ describe('Admin (API test)', () => {
       `CC Rives de l'Ain - Pays du Cerdon`,
     );
     expect(response.body[3].com_urbaine).toEqual('CU Caen la Mer');
+  });
+
+  it('POST /admin/refresh_action_stats no actions', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(actionStats).toHaveLength(0);
+  });
+  it(`POST /admin/refresh_action_stats pas d'erreurs si action manquante`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '2', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      thematique_history: thematique_history1 as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+
+    expect(actionStats).toHaveLength(2);
+
+    const action1 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_1' },
+    });
+    const action2 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_2' },
+    });
+
+    expect(action1.faites).toEqual(0);
+    expect(action1.vues).toEqual(1);
+    expect(action2.faites).toEqual(1);
+    expect(action2.vues).toEqual(0);
+  });
+  it('POST /admin/refresh_action_stats 2 actions', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    const thematique_history2: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [
+        { code: '1', type: TypeAction.classique },
+        { code: '2', type: TypeAction.classique },
+      ],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      thematique_history: thematique_history1 as any,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+      thematique_history: thematique_history2 as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_action_stats');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const actionStats = await TestUtil.prisma.compteurActions.findMany();
+    expect(actionStats).toHaveLength(2);
+
+    const action1 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_1' },
+    });
+    const action2 = await TestUtil.prisma.compteurActions.findUnique({
+      where: { type_code_id: 'classique_2' },
+    });
+
+    expect(action1.faites).toEqual(1);
+    expect(action1.vues).toEqual(2);
+    expect(action2.faites).toEqual(0);
+    expect(action2.vues).toEqual(1);
   });
 });

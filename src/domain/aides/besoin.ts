@@ -1,4 +1,4 @@
-export enum Besoin {
+export enum CodeBesoin {
   acheter_velo = 'acheter_velo',
   emprunter_velo = 'emprunter_velo',
   louer_velo = 'louer_velo',
@@ -15,4 +15,21 @@ export enum Besoin {
   composter = 'composter',
   emprunter_gob_reu = 'emprunter_gob_reu',
   couches_lavables = 'couches_lavables',
+  collecte_dechets_verts = 'collecte_dechets_verts',
+  energies_renouvelables = 'energies_renouvelables',
+  covoiturer = 'covoiturer',
+  acheter_voiture_electrique = 'acheter_voiture_electrique',
+  vegetaliser_logement = 'vegetaliser_logement',
+  reparer_velo = 'reparer_velo',
+  trier_dechets = 'trier_dechets',
+  reduire_dechets = 'reduire_dechets',
+  economiser_eau = 'economiser_eau',
+  agir_pour_environnement = 'agir_pour_environnement',
+  planter_haie = 'planter_haie',
+  sport_en_nature = 'sport_en_nature',
+  protections_hygieniques_lavables = 'protections_hygieniques_lavables',
+  gerer_conso_energie = 'gerer_conso_energie',
 }
+
+export type Besoin = CodeBesoin | string;
+export const Besoin = { ...CodeBesoin };

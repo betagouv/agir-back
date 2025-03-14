@@ -483,7 +483,7 @@ describe('RechercheServices (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.POST('/services/compute_stats');
 
-    await serviceFavorisStatistiqueRepository.loadCachedData();
+    await serviceFavorisStatistiqueRepository.loadCache();
 
     await TestUtil.generateAuthorizationToken('utilisateur-id');
 

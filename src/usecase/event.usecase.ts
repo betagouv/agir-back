@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EventType, AppEvent } from '../domain/appEvent';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Scope } from '../../src/domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AppEvent, EventType } from '../domain/appEvent';
 import { ContentType } from '../domain/contenu/contentType';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
@@ -121,7 +121,7 @@ export class EventUsecase {
       ],
     );
 
-    await this.bibliothequeUsecase.internal_read_article(
+    await this.bibliothequeUsecase.external_read_article(
       event.content_id,
       utilisateur,
     );

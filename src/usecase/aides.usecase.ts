@@ -30,6 +30,7 @@ export class AidesUsecase {
 
   async getCatalogueAidesUtilisateur(
     utilisateurId: string,
+    filtre_thematiques: Thematique[],
   ): Promise<{ aides: AideDefinition[]; utilisateur: Utilisateur }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -53,6 +54,8 @@ export class AidesUsecase {
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
       date_expiration: new Date(),
+      thematiques:
+        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
     });
 
     const aides_nationales: Aide[] = [];
@@ -125,6 +128,25 @@ export class AidesUsecase {
     }
 
     utilisateur.history.consulterAide(id_cms);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+  }
+  async deroulerAide(utilisateurId: string, id_cms: string) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    utilisateur.history.deroulerAide(id_cms);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
@@ -229,7 +251,7 @@ export class AidesUsecase {
     return result;
   }
 
-  async internal_count_aides(
+  async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
   ): Promise<number> {

@@ -1,17 +1,14 @@
-import { Thematique } from '../../../../src/domain/thematique/thematique';
-import {
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../../../src/domain/kyc/questionKYC';
-import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
-import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
+import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
+import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { QuestionKYC_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Tag } from '../../../../src/domain/scoring/tag';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
+import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
 
 const QUESTION_TEST: QuestionKYC_v2 = {
   id_cms: 1,
@@ -41,7 +38,7 @@ const QUESTION_TEST: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'https://',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
   thematique: Thematique.alimentation,
   reponse_simple: undefined,
@@ -64,7 +61,7 @@ const KYC_DEF = {
   short_question: 'short',
   image_url: 'https://',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 
@@ -526,7 +523,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         {
           ...QUESTION_TEST,
           type: TypeReponseQuestionKYC.entier,
-          reponse_simple: { value: '123', unite: Unite.kg },
+          reponse_simple: { value: '123', unite: { abreviation: 'kg' } },
           reponse_complexe: [],
         },
       ],
@@ -545,7 +542,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(question.getRAWReponseSimple()).toEqual({
       value: '123',
-      unite: 'kg',
+      unite: { abreviation: 'kg' },
     });
   });
 

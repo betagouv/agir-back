@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { App } from '../../../src/domain/app';
 import { Consultation } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { IncludeArticle } from '../../domain/contenu/includeArticle';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
@@ -64,6 +65,16 @@ export class GenericControler {
     }
     return type;
   }
+
+  public castIncludeArticleOrException(include: string): IncludeArticle {
+    if (!include) return IncludeArticle.tout;
+    const value = IncludeArticle[include];
+    if (!value) {
+      ApplicationError.throwTypeIncludeNotFound(include);
+    }
+    return value;
+  }
+
   public castTypeConsultationActionOrException(
     consultation: string,
   ): Consultation {

@@ -5,8 +5,8 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
@@ -38,7 +38,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 
@@ -76,6 +76,11 @@ describe('Thematique (API test)', () => {
       est_personnalisation_necessaire: true,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
+      nom_commune: 'Dijon',
+      nombre_actions: 0,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
     });
   });
   it(`GET /utilisateurs/id/thematiques/alimentation - personnalisation done`, async () => {
@@ -83,6 +88,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -90,6 +96,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -112,11 +119,41 @@ describe('Thematique (API test)', () => {
       est_personnalisation_necessaire: false,
       thematique: 'alimentation',
       liste_actions_recommandees: [],
+      nom_commune: 'Dijon',
+      nombre_actions: 0,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
     });
   });
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          personnalisation_done: false,
+          personnalisation_done_once: false,
+        },
+      ],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+    });
 
     // THEN
     const user_before = await utilisateurRepository.getById('utilisateur-id', [
@@ -144,6 +181,58 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(true);
+    expect(
+      user_after.thematique_history.isPersonnalisationDoneOnce(
+        Thematique.alimentation,
+      ),
+    ).toEqual(true);
+    expect(user_after.points_classement).toEqual(25);
+    expect(user_after.gamification.getPoints()).toEqual(25);
+  });
+  it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso compte pas les points si deja perso faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [],
+          personnalisation_done: false,
+          personnalisation_done_once: false,
+        },
+      ],
+    };
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 0,
+      celebrations: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+      gamification: gamification as any,
+    });
+    // WHEN
+    await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
+    );
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const user_after = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user_after.points_classement).toEqual(25);
+    expect(user_after.gamification.getPoints()).toEqual(25);
   });
 
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - recalcul des tag d'exclusion`, async () => {
@@ -204,6 +293,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -211,6 +301,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [{ code: '1', type: TypeAction.classique }],
           codes_actions_proposees: [{ code: '2', type: TypeAction.classique }],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -237,13 +328,10 @@ describe('Thematique (API test)', () => {
       ),
     ).toEqual(false);
     expect(
-      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toEqual([]);
-    expect(
-      user_after.thematique_history.getActionsProposees(
+      user_after.thematique_history.isPersonnalisationDoneOnce(
         Thematique.alimentation,
       ),
-    ).toEqual([]);
+    ).toEqual(true);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {
@@ -251,6 +339,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -258,6 +347,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -288,21 +378,26 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
-    expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
-    expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(false);
-    expect(
-      response.body.liste_actions_recommandees[0].nombre_aides_disponibles,
-    ).toEqual(1);
-    expect(response.body.liste_actions_recommandees[0].titre).toEqual(
-      'The titre',
-    );
+    expect(response.body.liste_actions_recommandees[0]).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 0,
+      nombre_aides_disponibles: 1,
+      points: 100,
+      sous_titre: 'Sous titre',
+      thematique: 'alimentation',
+      titre: 'The titre',
+      type: 'classique',
+    });
   });
 
-  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue OK`, async () => {
+  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue / faite OK`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [{ code: '123', type: TypeAction.classique }],
+      liste_actions_faites: [{ code: '123', type: TypeAction.classique }],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -310,6 +405,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -335,6 +431,9 @@ describe('Thematique (API test)', () => {
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
     expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
     expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(true);
+    expect(response.body.liste_actions_recommandees[0].deja_faite).toEqual(
+      true,
+    );
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - max 6 actions proposées`, async () => {
@@ -342,6 +441,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -349,6 +449,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -381,6 +482,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [TagExcluant.a_un_velo],
       liste_thematiques: [
         {
@@ -388,6 +490,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -438,6 +541,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -445,6 +549,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -489,6 +594,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -500,6 +606,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -535,6 +642,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -542,6 +650,7 @@ describe('Thematique (API test)', () => {
           codes_actions_exclues: [],
           codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -578,6 +687,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -592,6 +702,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -638,6 +749,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
 
       liste_thematiques: [
@@ -657,6 +769,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -711,6 +824,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -724,6 +838,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '5' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -784,6 +899,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -798,6 +914,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -842,6 +959,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_vues: [],
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -856,6 +974,7 @@ describe('Thematique (API test)', () => {
             { type: TypeAction.classique, code: '6' },
           ],
           personnalisation_done: true,
+          personnalisation_done_once: true,
         },
       ],
     };
@@ -898,5 +1017,153 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsExclues(Thematique.alimentation),
     ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste et en piochant une nouvelle action`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
+          personnalisation_done: true,
+          personnalisation_done_once: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    // WHEN
+    await TestUtil.prisma.action.delete({
+      where: {
+        type_code_id: 'classique_' + 3,
+      },
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // THEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(6);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
+    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
+    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
+    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
+    expect(response.body.liste_actions_recommandees[5].code).toEqual('7');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+      { type: TypeAction.classique, code: '7' },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste, place vide si plus d'actions`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          codes_actions_proposees: [
+            { type: TypeAction.classique, code: '1' },
+            { type: TypeAction.classique, code: '2' },
+            { type: TypeAction.classique, code: '3' },
+            { type: TypeAction.classique, code: '4' },
+            { type: TypeAction.classique, code: '5' },
+            { type: TypeAction.classique, code: '6' },
+          ],
+          personnalisation_done: true,
+          personnalisation_done_once: true,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    for (let index = 1; index <= 6; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    // WHEN
+    await TestUtil.prisma.action.delete({
+      where: {
+        type_code_id: 'classique_' + 3,
+      },
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // THEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(5);
+    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
+    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
+    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
+    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
+    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.thematique_history.getActionsProposees(Thematique.alimentation),
+    ).toStrictEqual([
+      { type: TypeAction.classique, code: '1' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '4' },
+      { type: TypeAction.classique, code: '5' },
+      { type: TypeAction.classique, code: '6' },
+    ]);
   });
 });

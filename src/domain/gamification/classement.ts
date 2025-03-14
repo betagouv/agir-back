@@ -5,7 +5,7 @@ export class Classement {
 
   utilisateurId: string;
   points: number;
-  prenom: string;
+  pseudo: string;
   code_postal: string;
   commune: string;
 

@@ -2,6 +2,7 @@ import {
   Action,
   AideExpirationWarning,
   BlockText,
+  CompteurActions,
   Conformite,
   FAQ,
   KYC,
@@ -38,7 +39,7 @@ import { DefiStatus } from '../src/domain/defis/defi';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../src/domain/gamification/feature';
 import { KYCID } from '../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC, Unite } from '../src/domain/kyc/questionKYC';
+import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
@@ -66,12 +67,17 @@ import { CMSEvent } from '../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
+import { ActionRepository } from '../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
+import { BlockTextRepository } from '../src/infrastructure/repository/blockText.repository';
+import { CompteurActionsRepository } from '../src/infrastructure/repository/compteurActions.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
+import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
+import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
@@ -91,6 +97,7 @@ export enum DB {
   partenaire = 'partenaire',
   aideExpirationWarning = 'aideExpirationWarning',
   quizz = 'quizz',
+  compteurActions = 'compteurActions',
   defiStatistique = 'defiStatistique',
   mission = 'mission',
   kYC = 'kYC',
@@ -115,6 +122,7 @@ export class TestUtil {
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
     fAQ: TestUtil.fAQData,
+    compteurActions: TestUtil.compteurActionsData,
     blockText: TestUtil.blockTextData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
@@ -224,19 +232,26 @@ export class TestUtil {
     await this.prisma.communesAndEPCI.deleteMany();
     await this.prisma.oIDC_STATE.deleteMany();
     await this.prisma.fAQ.deleteMany();
+    await this.prisma.compteurActions.deleteMany();
     await this.prisma.blockText.deleteMany();
+    await this.prisma.servicesFavorisStatistique.deleteMany();
 
     await this.prisma_stats.testTable.deleteMany();
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
 
-    ThematiqueRepository.resetCache();
+    ActionRepository.resetCache();
+    ArticleRepository.resetCache();
+    BlockTextRepository.resetCache();
+    CompteurActionsRepository.resetCache();
+    ConformiteRepository.resetCache();
     DefiRepository.resetCache();
+    FAQRepository.resetCache();
     KycRepository.resetCache();
     MissionRepository.resetCache();
     PartenaireRepository.resetCache();
-    ConformiteRepository.resetCache();
-    ArticleRepository.resetCache();
+    ServiceFavorisStatistiqueRepository.resetCache();
+    ThematiqueRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -397,12 +412,14 @@ export class TestUtil {
       cms_id: '111',
       titre: 'The titre',
       sous_titre: 'Sous titre',
+      consigne: 'consigne',
+      label_compteur: 'label_compteur',
       code: 'code_fonct',
       besoins: [],
       comment: 'Astuces',
       quizz_felicitations: 'bien',
       pourquoi: 'En quelques mots',
-      kyc_ids: [],
+      kyc_codes: [],
       faq_ids: [],
       lvo_action: CategorieRecherche.emprunter,
       lvo_objet: 'chaussure',
@@ -423,6 +440,7 @@ export class TestUtil {
       idtoken: '456',
       utilisateurId: 'utilisateur-id',
       nonce: '789',
+      situation_ngc_id: '94cfcd83-487c-4e7a-b944-d38165eb36e5',
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -486,7 +504,7 @@ export class TestUtil {
       ],
       short_question: 'short',
       image_url: 'URL',
-      unite: Unite.euro,
+      unite: { abreviation: 'euro' },
       emoji: '🎉',
       conditions: [],
 
@@ -559,7 +577,7 @@ export class TestUtil {
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🎉',
           ngc_key: '1223',
           thematique: Thematique.climat,
@@ -583,6 +601,7 @@ export class TestUtil {
 
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
       liste_actions_vues: [],
@@ -677,6 +696,7 @@ export class TestUtil {
       code_commune: null,
       france_connect_sub: null,
       external_stat_id: null,
+      pseudo: 'pseudo',
       ...override,
     };
   }
@@ -711,6 +731,20 @@ export class TestUtil {
       question: 'question',
       reponse: 'reponse',
       thematique: Thematique.transport,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static compteurActionsData(
+    override?: Partial<CompteurActions>,
+  ): CompteurActions {
+    return {
+      code: 'code',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code',
+      faites: 0,
+      vues: 0,
       created_at: undefined,
       updated_at: undefined,
       ...override,

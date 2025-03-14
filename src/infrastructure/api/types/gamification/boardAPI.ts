@@ -6,7 +6,7 @@ var crypto = require('crypto');
 export class ClassementAPI {
   @ApiProperty() id: string;
   @ApiProperty() points: number;
-  @ApiProperty() prenom: string;
+  @ApiProperty() pseudo: string;
   @ApiProperty() rank: number;
 
   public static mapToAPI(
@@ -16,7 +16,7 @@ export class ClassementAPI {
     return {
       points: classement.points,
       rank: local ? classement.rank_commune : classement.rank,
-      prenom: classement.prenom,
+      pseudo: classement.pseudo,
       id: crypto
         .createHash('md5')
         .update(classement.utilisateurId)

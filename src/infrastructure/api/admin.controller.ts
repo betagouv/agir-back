@@ -24,6 +24,7 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleSta
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
 import { App } from '../../domain/app';
+import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
@@ -44,7 +45,7 @@ import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
-import { ValiderPrenomAPI } from './types/utilisateur/validerPrenomsAPI';
+import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -60,6 +61,7 @@ export class AdminController extends GenericControler {
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
+    private actionUsecase: ActionUsecase,
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private statistiqueUsecase: StatistiqueUsecase,
@@ -255,9 +257,9 @@ export class AdminController extends GenericControler {
   })
   async getPrenomsAValider(
     @Request() req,
-  ): Promise<{ id: string; prenom: string }[]> {
+  ): Promise<{ id: string; pseudo: string }[]> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.listPrenomsAValider();
+    return await this.profileUsecase.listPseudosAValider();
   }
 
   @Post('/admin/valider_prenoms')
@@ -265,11 +267,11 @@ export class AdminController extends GenericControler {
     summary: `valide la liste de prenoms argument`,
   })
   @ApiBody({
-    type: [ValiderPrenomAPI],
+    type: [ValiderPseudoAPI],
   })
-  async validerPrenoms(@Request() req, @Body() body: ValiderPrenomAPI[]) {
+  async validerPrenoms(@Request() req, @Body() body: ValiderPseudoAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.validerPrenoms(body);
+    return await this.profileUsecase.validerPseudos(body);
   }
 
   @Post('/admin/send_all_emails_as_test/:utilisateurId')
@@ -396,6 +398,15 @@ export class AdminController extends GenericControler {
   async load_communes_epci(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.communesUsecase.loadAllEpciAndCOmmunes();
+  }
+
+  @Post('/admin/refresh_action_stats')
+  @ApiOperation({
+    summary: `recalcule les stats de vues et réalisaiton des actions`,
+  })
+  async refresh_action_stats(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.actionUsecase.updateActionStats();
   }
 
   @Post('/admin/test_push_mobile')

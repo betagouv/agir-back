@@ -24,14 +24,14 @@ export type ActionFilter = {
 @Injectable()
 export class ActionRepository {
   constructor(private prisma: PrismaService) {
-    ActionRepository.catalogue = [];
+    ActionRepository.catalogue = new Map();
   }
 
-  private static catalogue: ActionDefinition[];
+  private static catalogue: Map<string, ActionDefinition>;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      await this.loadActions();
+      await this.loadCache();
     } catch (error) {
       console.error(
         `Error loading Action definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
@@ -39,20 +39,34 @@ export class ActionRepository {
     }
   }
   @Cron('* * * * *')
-  async loadActions(): Promise<void> {
-    const result = await this.prisma.action.findMany();
-    ActionRepository.catalogue = result.map((elem) =>
-      this.buildActionDefinitionFromDB(elem),
-    );
+  async loadCache(): Promise<void> {
+    const new_map: Map<string, ActionDefinition> = new Map();
+
+    const liste = await this.prisma.action.findMany();
+    for (const action_db of liste) {
+      new_map.set(
+        action_db.type_code_id,
+        this.buildActionDefinitionFromDB(action_db),
+      );
+    }
+    ActionRepository.catalogue = new_map;
   }
 
   public static resetCache() {
     // FOR TEST ONLY
-    ActionRepository.catalogue = [];
+    ActionRepository.catalogue = new Map();
   }
 
-  public static getCatalogue(): ActionDefinition[] {
-    return ActionRepository.catalogue;
+  public getActionDefinitionByTypeCode(
+    type_code: TypeCodeAction,
+  ): ActionDefinition {
+    return ActionRepository.catalogue.get(
+      ActionDefinition.getIdFromTypeCode(type_code),
+    );
+  }
+
+  public getActionCompleteList(): ActionDefinition[] {
+    return Array.from(ActionRepository.catalogue.values());
   }
 
   async upsert(action: ActionDefinition): Promise<void> {
@@ -60,11 +74,13 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
       besoins: action.besoins,
       comment: action.comment,
-      kyc_ids: action.kyc_ids,
+      kyc_codes: action.kyc_codes,
       lvo_action: action.lvo_action,
       lvo_objet: action.lvo_objet,
       pourquoi: action.pourquoi,
@@ -206,7 +222,7 @@ export class ActionRepository {
       comment: action.comment,
       pourquoi: action.pourquoi,
       besoins: action.besoins,
-      kyc_ids: action.kyc_ids,
+      kyc_codes: action.kyc_codes,
       lvo_action: CategorieRecherche[action.lvo_action],
       lvo_objet: action.lvo_objet,
       quizz_ids: action.quizz_ids,
@@ -216,6 +232,8 @@ export class ActionRepository {
       quizz_felicitations: action.quizz_felicitations,
       tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
       faq_ids: action.faq_ids,
+      consigne: action.consigne,
+      label_compteur: action.label_compteur,
     });
   }
 }

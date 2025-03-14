@@ -313,7 +313,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
   });
 
   afterAll(async () => {
@@ -367,7 +367,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -430,7 +430,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -489,7 +489,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -549,7 +549,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -610,7 +610,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -671,7 +671,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.article, { content_id: '12' });
     await TestUtil.create(DB.article, { content_id: '13' });
     await TestUtil.create(DB.article, { content_id: '14' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.GET(
@@ -720,8 +720,8 @@ describe('/utilisateurs/id/defis (API test)', () => {
       id_cms: 1,
       label: 't1',
     });
-    await thematiqueRepository.loadThematiques();
-    await defiRepository.loadDefinitions();
+    await thematiqueRepository.loadCache();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/defis/1');
@@ -797,7 +797,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       content_id: '001',
       nombre_defis_realises: 123,
     });
-    await thematiqueRepository.loadThematiques();
+    await thematiqueRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -885,7 +885,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       gamification: gamification as any,
     });
     await TestUtil.create(DB.defi, DEFI_1_DEF);
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -917,7 +917,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.create(DB.defi, DEFI_1_DEF);
-    await defiRepository.loadDefinitions();
+    await defiRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -933,6 +933,6 @@ describe('/utilisateurs/id/defis (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(userDB.gamification.points).toBe(15);
+    expect(userDB.gamification.getPoints()).toBe(15);
   });
 });

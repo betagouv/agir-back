@@ -26,7 +26,7 @@ export class Contact {
   public static buildContactFromUtilisateur(user: Utilisateur): Contact {
     const result = new Contact();
     result.attributes = {
-      POINTS: user.gamification.points,
+      POINTS: user.gamification.getPoints(),
       EMAIL: user.email,
       CODE_POSTAL: user.logement.code_postal,
       DERNIERE_ACTIVITE: user.derniere_activite,

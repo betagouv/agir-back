@@ -1,5 +1,5 @@
-import { Situation } from 'publicodes';
 import { DottedName } from '@incubateur-ademe/nosgestesclimat';
+import { Situation } from 'publicodes';
 
 import { Thematique } from '../thematique/thematique';
 
@@ -11,6 +11,12 @@ export class DetailImpact {
   emoji: string;
   pourcentage: number;
   pourcentage_categorie: number;
+  impact_kg_annee: number;
+}
+
+export class DetailImpactStandalone {
+  label: string;
+  emoji: string;
   impact_kg_annee: number;
 }
 
@@ -27,6 +33,12 @@ export class ImpactThematique {
   impact_kg_annee: number;
   emoji: string;
   details: DetailImpact[];
+}
+export class ImpactThematiqueStandalone {
+  thematique: Thematique;
+  impact_kg_annee: number;
+  emoji: string;
+  details: DetailImpactStandalone[];
 }
 
 export class BilanCarbone {

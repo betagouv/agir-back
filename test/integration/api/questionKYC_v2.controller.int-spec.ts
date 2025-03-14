@@ -11,7 +11,6 @@ import {
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-  Unite,
 } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -67,7 +66,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   short_question: 'short',
   image_url: 'AAA',
   conditions: [],
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   emoji: '🔥',
 };
 
@@ -84,7 +83,7 @@ const KYC_DB_DATA: KYC = {
   short_question: 'short',
   tags: ['A'],
   thematique: Thematique.dechet,
-  unite: Unite.kg,
+  unite: { abreviation: 'kg' },
   type: TypeReponseQuestionKYC.choix_multiple,
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
@@ -201,12 +200,12 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, dbKYC);
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -242,6 +241,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       selected: true,
     });
   });
+
   it('GET /utilisateurs/id/questionsKYC_v2 - liste N questions', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -250,7 +250,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
     await TestUtil.create(DB.kYC, { id_cms: 3, code: KYCID._2 });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -296,7 +296,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       short_question: 'short',
       image_url: 'AAA',
       conditions: [],
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       created_at: undefined,
       updated_at: undefined,
       emoji: '🔥',
@@ -315,7 +315,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -363,7 +363,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           label: 'short',
           selected: false,
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
         },
         {
           code: '_2',
@@ -371,7 +371,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           label: 'short',
           selected: false,
           emoji: '🔥',
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
         },
       ],
       categorie: 'test',
@@ -397,7 +397,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         thematique: Thematique.alimentation,
       },
     ];
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -442,7 +442,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           short_question: 'short',
           image_url: 'URL',
           conditions: [],
-          unite: Unite.euro,
+          unite: { abreviation: 'euro' },
           emoji: '🎉',
           ngc_key: '1223',
           thematique: Thematique.climat,
@@ -469,7 +469,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       short_question: 'short',
       tags: ['A'],
       thematique: Thematique.dechet,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_multiple,
       question: `Quel est votre sujet principal d'intéret ?`,
       reponses: [
@@ -482,7 +482,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     };
     await TestUtil.create(DB.kYC, KYC_DB_DATA_);
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -534,7 +534,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'A voir', code: 'peut_etre' },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -621,7 +621,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -704,7 +704,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -755,7 +755,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC001',
@@ -818,7 +818,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -871,7 +871,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       question: 'Age maison',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -917,7 +917,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -976,7 +976,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       reponses: [],
       type: TypeReponseQuestionKYC.entier,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1027,7 +1027,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1093,7 +1093,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1156,7 +1156,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1234,7 +1234,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeReponseQuestionKYC.entier,
     });
 
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1325,7 +1325,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       conditions: [],
       created_at: undefined,
       updated_at: undefined,
-      unite: Unite.kg,
+      unite: { abreviation: 'kg' },
       emoji: '🔥',
     };
     await TestUtil.create(DB.kYC, {
@@ -1354,7 +1354,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
 
     await TestUtil.create(DB.utilisateur);
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1402,7 +1402,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             image_url: 'BBB',
             label: 'short 2',
             emoji: '🔥',
-            unite: 'kg',
+            unite: { abreviation: 'kg' },
             selected: false,
           },
           {
@@ -1410,7 +1410,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
             image_url: 'CCC',
             label: 'short 3',
             emoji: '🔥',
-            unite: 'kg',
+            unite: { abreviation: 'kg' },
             selected: false,
           },
         ],
@@ -1487,7 +1487,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1523,7 +1523,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, KYC_DB_DATA);
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1548,6 +1548,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_answered: false,
     });
   });
+
   it(`GET /utilisateurs/id/questionsKYC_V2/question - renvoie la question unique depuis catalogue seul`, async () => {
     // GIVEN
     const kyc: KYCHistory_v2 = {
@@ -1563,7 +1564,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeReponseQuestionKYC.entier,
       reponses: undefined,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1575,7 +1576,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
-      reponse_unique: { unite: 'kg' },
+      reponse_unique: {
+        unite: { abreviation: 'kg' },
+      },
       categorie: 'mission',
       points: 123,
       type: 'entier',
@@ -1604,7 +1607,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       question: 'Comment avez vous connu le service ?',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1627,7 +1630,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(20);
+    expect(userDB.gamification.getPoints()).toEqual(20);
     expect(
       userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
     ).toBeLessThan(Date.now());
@@ -1655,7 +1658,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       question: 'Comment avez vous connu le service ?',
       reponses: [],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1672,6 +1675,125 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       `L'attribut [value] doit être de longueur maximale 280, longueur reçue : 363`,
+    );
+  });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/1 - champ integer de type integer', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.entier,
+      points: 10,
+      question: 'Combien de litres ?',
+      reponses: [],
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: 'haha',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `L'attribut 'value' doit être de type entier, reçu : [haha]`,
+    );
+  });
+
+  it(`PUT /utilisateurs/id/questionsKYC_v2/1 - champ decimal avec separateur '.' et ','`, async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      missions: missions_with_kyc as any,
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.decimal,
+      points: 10,
+      question: 'Combien de litres ?',
+      reponses: [],
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    let response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '2.3',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '2,3',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      user.kyc_history
+        .getAnsweredQuestionByCode('_1')
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(2.3);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: '123',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    // WHEN
+    response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
+    ).send([
+      {
+        value: 'hoho',
+      },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(400);
+
+    expect(response.body.message).toBe(
+      `L'attribut 'value' doit être de type decimal, reçu : [hoho]`,
     );
   });
 
@@ -1737,7 +1859,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           short_question: 'short',
           image_url: 'AAA',
           conditions: [],
-          unite: Unite.kg,
+          unite: { abreviation: 'kg' },
           emoji: '🔥',
         },
       ],
@@ -1759,7 +1881,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
 
     await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     await TestUtil.create(DB.defi, {
       content_id: '1',
@@ -1771,8 +1893,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
 
     await thematiqueRepository.onApplicationBootstrap();
-    await kycRepository.loadDefinitions();
-    await defiRepository.loadDefinitions();
+    await kycRepository.loadCache();
+    await defiRepository.loadCache();
 
     // WHEN
     let response = await TestUtil.PUT(
@@ -1829,7 +1951,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1855,7 +1977,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1, 2 options', async () => {
     // GIVEN
@@ -1870,7 +1992,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1896,7 +2018,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.gamification.points).toEqual(10);
+    expect(userDB.gamification.getPoints()).toEqual(10);
   });
 
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1 type choix unique , deselect la réponse précédente', async () => {
@@ -1943,7 +2065,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -1981,7 +2103,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -2012,7 +2134,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       ],
       type: TypeReponseQuestionKYC.choix_unique,
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -2044,7 +2166,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Ce que je mange', code: Thematique.alimentation },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(
@@ -2076,7 +2198,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         { label: 'Comment je bouge', code: Thematique.transport },
       ],
     });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -2084,7 +2206,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadDefinitions();
+    await kycRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PUT(

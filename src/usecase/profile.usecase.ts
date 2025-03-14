@@ -1,23 +1,22 @@
+import { Injectable } from '@nestjs/common';
+import { Retryable } from 'typescript-retry-decorator';
+import validator from 'validator';
+import { App } from '../domain/app';
+import { Logement } from '../domain/logement/logement';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import {
   LogementAPI,
   UtilisateurUpdateProfileAPI,
 } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
-import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
-import { Injectable } from '@nestjs/common';
-import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { ServiceRepository } from '../infrastructure/repository/service.repository';
-import { ContactUsecase } from './contact.usecase';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { Retryable } from 'typescript-retry-decorator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import validator from 'validator';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
-import { QuestionKYC } from '../domain/kyc/questionKYC';
-import { Logement } from '../domain/logement/logement';
+import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
+import { ServiceRepository } from '../infrastructure/repository/service.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { ContactUsecase } from './contact.usecase';
+import { FranceConnectUsecase } from './franceConnect.usecase';
 
 const FIELD_MAX_LENGTH = 40;
 
@@ -35,6 +34,7 @@ export class ProfileUsecase {
     private contactUsecase: ContactUsecase,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
+    private franceConnectUsecase: FranceConnectUsecase,
   ) {}
 
   @Retryable({
@@ -62,6 +62,9 @@ export class ProfileUsecase {
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
     if (profile.nom) {
+      if (!utilisateur.isNomPrenomModifiable()) {
+        ApplicationError.throwMajNomImpossibleFC();
+      }
       if (!char_regexp.test(profile.nom)) {
         ApplicationError.throwNotAlhpaNom();
       }
@@ -70,7 +73,27 @@ export class ProfileUsecase {
       }
     }
 
+    if (profile.pseudo) {
+      if (!char_regexp.test(profile.pseudo)) {
+        ApplicationError.throwNotAlhpaPseudo();
+      }
+      if (profile.pseudo.length > FIELD_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'pseudo',
+          profile.pseudo,
+          FIELD_MAX_LENGTH,
+        );
+      }
+      const pseudo_valide = await this.utilisateurRepository.isPseudoValide(
+        profile.pseudo,
+      );
+      utilisateur.est_valide_pour_classement = pseudo_valide;
+    }
+
     if (profile.prenom) {
+      if (!utilisateur.isNomPrenomModifiable()) {
+        ApplicationError.throwMajPrenomImpossibleFC();
+      }
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
       }
@@ -81,10 +104,6 @@ export class ProfileUsecase {
           FIELD_MAX_LENGTH,
         );
       }
-      const prenom_valide = await this.utilisateurRepository.isPrenomValide(
-        profile.prenom,
-      );
-      utilisateur.est_valide_pour_classement = prenom_valide;
     }
 
     if (profile.revenu_fiscal) {
@@ -105,17 +124,18 @@ export class ProfileUsecase {
     utilisateur.abonnement_ter_loire = profile.abonnement_ter_loire;
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
+    utilisateur.pseudo = profile.pseudo;
     utilisateur.annee_naissance = profile.annee_naissance;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  async listPrenomsAValider(): Promise<{ id: string; prenom: string }[]> {
-    return await this.utilisateurRepository.listePrenomsAValider();
+  async listPseudosAValider(): Promise<{ id: string; pseudo: string }[]> {
+    return await this.utilisateurRepository.listePseudosAValider();
   }
-  async validerPrenoms(input: { id: string; prenom: string }[]) {
+  async validerPseudos(input: { id: string; pseudo: string }[]) {
     for (const user of input) {
-      await this.utilisateurRepository.validerPrenom(user.id, user.prenom);
+      await this.utilisateurRepository.validerPseudo(user.id, user.pseudo);
     }
   }
 
@@ -278,19 +298,35 @@ export class ProfileUsecase {
     }
     return { couvert, pas_couvert };
   }
-  async deleteUtilisateur(utilisateurId: string) {
+  async deleteUtilisateur(
+    utilisateurId: string,
+  ): Promise<{ fc_logout_url?: URL }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [],
     );
+    const result = {
+      fc_logout_url: undefined,
+    };
+
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      const logout_url =
+        await this.franceConnectUsecase.external_logout_france_connect(
+          utilisateurId,
+        );
+      result.fc_logout_url = logout_url.fc_logout_url;
+    }
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);
-  }
 
+    return result;
+  }
   private async resetUser(utilisateurId: string) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,

@@ -34,7 +34,7 @@ describe('ArticleRepository', () => {
       content_id: '2',
       tag_article: '456',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -51,7 +51,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, {
       content_id: '1',
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -69,7 +69,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -87,7 +87,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       mois: [1, 2],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -104,7 +104,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -122,7 +122,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -140,7 +140,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -158,7 +158,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_postaux: ['A', 'B'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({});
@@ -173,9 +173,9 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
     // WHEN
-    const liste = await articleRepository.searchArticles({ maxNumber: 2 });
+    const liste = await articleRepository.searchArticles({ take: 2 });
 
     // THEN
     expect(liste).toHaveLength(2);
@@ -196,7 +196,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -222,7 +222,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -248,7 +248,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L3,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({});
@@ -262,7 +262,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -278,7 +278,7 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.article, { content_id: '1' });
     await TestUtil.create(DB.article, { content_id: '2' });
     await TestUtil.create(DB.article, { content_id: '3' });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -304,7 +304,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -330,7 +330,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       thematiques: [Thematique.alimentation],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -355,7 +355,7 @@ describe('ArticleRepository', () => {
       content_id: '3',
       difficulty: DifficultyLevel.L1,
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -377,7 +377,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -396,7 +396,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -415,7 +415,7 @@ describe('ArticleRepository', () => {
       codes_region: ['45', '46'],
       codes_postaux: ['91120'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -433,7 +433,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_departement: ['45', '46'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -450,7 +450,7 @@ describe('ArticleRepository', () => {
       content_id: '1',
       codes_departement: ['45', '46'],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -468,7 +468,7 @@ describe('ArticleRepository', () => {
       include_codes_commune: ['45', '46'],
       exclude_codes_commune: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -486,7 +486,7 @@ describe('ArticleRepository', () => {
       include_codes_commune: ['45', '46'],
       exclude_codes_commune: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -504,7 +504,7 @@ describe('ArticleRepository', () => {
       exclude_codes_commune: ['45', '46'],
       include_codes_commune: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
@@ -522,7 +522,7 @@ describe('ArticleRepository', () => {
       exclude_codes_commune: ['45', '46'],
       include_codes_commune: [],
     });
-    await articleRepository.load();
+    await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({

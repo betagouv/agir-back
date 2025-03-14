@@ -18,7 +18,7 @@ describe('Conformite (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.conformite);
     const confo_repo = new ConformiteRepository(TestUtil.prisma);
-    await confo_repo.loadConformite();
+    await confo_repo.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/pages_conformite/code');
