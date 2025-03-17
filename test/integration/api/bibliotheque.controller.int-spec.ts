@@ -3,6 +3,7 @@ import { History_v0 } from '../../../src/domain/object_store/history/history_v0'
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -13,6 +14,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -466,6 +468,15 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   });
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article unique avec ses meta données', async () => {
     // GIVEN
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.loadCache();
+
     await TestUtil.create(DB.utilisateur, {
       history: {
         article_interactions: [
@@ -478,7 +489,11 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         ],
       },
     });
-    await TestUtil.create(DB.article, { content_id: '1', titre: 'titreA' });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      contenu: 'haha {block_123}',
+    });
     await articleRepository.loadCache();
 
     // WHEN
@@ -489,6 +504,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.content_id).toEqual('1');
     expect(response.body.titre).toEqual('titreA');
+    expect(response.body.contenu).toEqual('haha the texte');
     expect(response.body.favoris).toEqual(true);
     expect(response.body.like_level).toEqual(1);
     expect(response.body.read_date).toEqual(new Date(1).toISOString());
@@ -596,6 +612,15 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         aide_interactions: [],
       },
     });
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.loadCache();
+
     await TestUtil.create(DB.partenaire);
     await TestUtil.create(DB.quizz, {
       content_id: '123',
@@ -646,7 +671,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
 
     await TestUtil.create(DB.article, {
       content_id: '1',
-      contenu: 'un très bon article',
+      contenu: 'un très bon article {block_123}',
       sources: [
         {
           label: 'ADEME',
@@ -671,7 +696,9 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.duree).toEqual('pas long');
     expect(response.body.thematique_principale).toEqual(Thematique.climat);
     expect(response.body.difficulty).toEqual(1);
-    expect(response.body.article_contenu).toEqual('un très bon article');
+    expect(response.body.article_contenu).toEqual(
+      'un très bon article the texte',
+    );
     expect(response.body.article_sources).toEqual([
       {
         label: 'ADEME',

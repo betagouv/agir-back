@@ -11,6 +11,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -27,6 +28,7 @@ describe('Actions (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -563,11 +565,20 @@ describe('Actions (API test)', () => {
 
   it(`GET /actions/type/id - consulte le détail d'une action`, async () => {
     // GIVEN
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.loadCache();
     await TestUtil.create(DB.action, {
       code: 'code_fonct',
       type: TypeAction.classique,
       type_code_id: 'classique_code_fonct',
       label_compteur: '{NBR_ACTIONS} haha',
+      pourquoi: 'en quelques mots {block_123}',
     });
     await TestUtil.create(DB.compteurActions, {
       code: 'code_fonct',
@@ -590,7 +601,7 @@ describe('Actions (API test)', () => {
     expect(action.besoins).toEqual([]);
     expect(action.code).toEqual('code_fonct');
     expect(action.comment).toEqual('Astuces');
-    expect(action.pourquoi).toEqual('En quelques mots');
+    expect(action.pourquoi).toEqual('en quelques mots the texte');
     expect(action.titre).toEqual('The titre');
     expect(action.consigne).toEqual('consigne');
     expect(action.label_compteur).toEqual('45 haha');
@@ -756,6 +767,14 @@ describe('Actions (API test)', () => {
 
   it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
     // GIVEN
+    await TestUtil.create(DB.blockText, {
+      code: 'block_123',
+      id_cms: '1',
+      titre: 'haha',
+      texte: 'the texte',
+    });
+
+    await blockTextRepository.loadCache();
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
     await TestUtil.create(DB.action, {
       code: '123',
@@ -763,6 +782,7 @@ describe('Actions (API test)', () => {
       type_code_id: 'classique_123',
       label_compteur: '{NBR_ACTIONS} haha',
       besoins: ['composter'],
+      pourquoi: 'haha {block_123}',
     });
     await TestUtil.create(DB.compteurActions, {
       code: '123',
@@ -796,7 +816,7 @@ describe('Actions (API test)', () => {
       label_compteur: '45 haha',
       nom_commune: 'Dijon',
       nombre_aides_disponibles: 0,
-      pourquoi: 'En quelques mots',
+      pourquoi: 'haha the texte',
       quizz_felicitations: 'bien',
       quizzes: [],
       services: [
