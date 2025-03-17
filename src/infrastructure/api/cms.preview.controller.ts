@@ -7,6 +7,8 @@ import {
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response as Res } from 'express';
+import markdownit from 'markdown-it';
+import { Action } from '../../domain/actions/action';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Article } from '../../domain/contenu/article';
@@ -54,6 +56,40 @@ export class CmsPreviewController extends GenericControler {
       type,
     );
     return PreviewActionAPI.mapToAPI(result);
+  }
+
+  @Get('cms_preview/actions/:type_action/:content_id/html')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @ApiOkResponse({
+    type: PreviewActionAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne la preview CMS d'une action (elle peut encore être en DRAFT côté CMS)`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'content_id',
+    type: String,
+    description: `id CMS de l'action`,
+  })
+  async getActionPreviewHTML(
+    @Param('content_id') content_id: string,
+    @Param('type_action') type_action: string,
+    @Response() res: Res,
+  ) {
+    let type = this.castTypeActionOrException(type_action);
+    const action = await this.cmsPreviewUsecase.getActionPreview(
+      content_id,
+      type,
+    );
+    let result = this.actionHTML(action);
+
+    return res.send(`${result.join('<br/>')}`);
   }
 
   @UseGuards(ThrottlerGuard)
@@ -121,7 +157,7 @@ export class CmsPreviewController extends GenericControler {
     const result = [];
 
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
     );
     if (!aide.thematiques || aide.thematiques.length === 0) {
       result.push(`Au moins une thématique doit être saisie 🔥🔥🔥`);
@@ -192,12 +228,12 @@ export class CmsPreviewController extends GenericControler {
     }
 
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
     );
     result.push(`<h1>${aide.titre}</h1>`);
     result.push(`${aide.contenu}`);
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
     );
 
     return result;
@@ -208,7 +244,7 @@ export class CmsPreviewController extends GenericControler {
     const result = [];
 
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
     );
     if (!article.thematiques || article.thematiques.length === 0) {
       result.push(`Au moins une thématique doit être saisie 🔥🔥🔥`);
@@ -278,7 +314,7 @@ export class CmsPreviewController extends GenericControler {
     }
 
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
     );
     result.push(`<h1>${article.titre}</h1>`);
     if (article.soustitre) {
@@ -286,7 +322,89 @@ export class CmsPreviewController extends GenericControler {
     }
     result.push(`${article.contenu}`);
     result.push(
-      `-------------------------------------------------------------------------------------------------------------------------------------`,
+      `############################################################################################################`,
+    );
+
+    return result;
+  }
+
+  private actionHTML(content: { data: object; action: Action }): string[] {
+    const action = content.action;
+    const result = [];
+
+    const md = markdownit();
+
+    result.push(
+      `############################################################################################################`,
+    );
+    if (!action.thematique) {
+      result.push(`Thematique manquante 🔥🔥🔥`);
+    } else {
+      result.push(`Thematique : ${action.thematique}`);
+    }
+    if (!action.consigne) {
+      result.push(`Consigne manquante 🔥🔥🔥`);
+    } else {
+      result.push(`Consigne : ${action.consigne}`);
+    }
+    if (!action.label_compteur) {
+      result.push(`Label du compteur manquant 🔥🔥🔥`);
+    } else {
+      result.push(`Compteur : ${action.label_compteur}`);
+    }
+    if (action.besoins) {
+      result.push(`Besoins associés: ${action.besoins}`);
+    } else {
+      result.push(`Besoins manquants 🔥🔥🔥`);
+    }
+
+    result.push(`Action exclue à l'utilisateur qui : ${action.tags_excluants}`);
+
+    result.push(
+      `############################################################################################################`,
+    );
+    if (action.titre) {
+      result.push(`<h1>${md.render(action.titre)}</h1>`);
+    } else {
+      result.push(`Titre manquante 🔥🔥🔥`);
+    }
+    if (action.sous_titre) {
+      result.push(`<h2>${md.render(action.sous_titre)}</h2>`);
+    }
+    if (action.pourquoi) {
+      result.push(`${md.render(action.pourquoi)}`);
+    } else {
+      result.push(`Section pourquoi manquante 🔥🔥🔥`);
+    }
+    if (action.pourquoi) {
+      result.push(`${md.render(action.comment)}`);
+    } else {
+      result.push(`Section comment manquante 🔥🔥🔥`);
+    }
+    result.push(
+      `############################################################################################################`,
+    );
+
+    result.push(`<strong>FAQ</strong>`);
+    for (const faq of action.faq_liste) {
+      result.push(`Q: ${faq.question}`);
+      result.push(`R: ${faq.reponse}`);
+      result.push(``);
+    }
+
+    result.push(`<strong>SERVICES</strong>`);
+    for (const service of action.services) {
+      result.push(`${service.recherche_service_id} => ${service.categorie}`);
+    }
+
+    result.push(`<strong>AIDES</strong>`);
+    result.push(`Nombre aides associées: ${action.getListeAides().length}`);
+    for (const aide of action.getListeAides()) {
+      result.push(`> ${aide.titre}`);
+    }
+
+    result.push(
+      `############################################################################################################`,
     );
 
     return result;
