@@ -13,6 +13,10 @@ import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
+import {
   ActionFilter,
   ActionRepository,
 } from '../infrastructure/repository/action.repository';
@@ -26,7 +30,6 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
-import { CMSImportUsecase } from './cms.import.usecase';
 
 @Injectable()
 export class ActionUsecase {
@@ -37,8 +40,8 @@ export class ActionUsecase {
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private bibliothequeUsecase: BibliothequeUsecase,
-    private cMSImportUsecase: CMSImportUsecase,
     private fAQRepository: FAQRepository,
+    private personnalisator: Personnalisator,
   ) {}
 
   async getOpenCatalogue(
@@ -198,7 +201,9 @@ export class ActionUsecase {
       '' + nbr_faites,
     );
 
-    return action;
+    return this.personnalisator.personnaliser(action, undefined, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   async faireAction(
@@ -236,11 +241,13 @@ export class ActionUsecase {
           action_def,
           utilisateur,
         );
-        if (score.nombre_bonnes_reponses >= 4) {
-          utilisateur.gamification.ajoutePoints(points, utilisateur);
-        } else {
+        if (score.nombre_quizz_done !== action_def.quizz_ids.length) {
+          ApplicationError.throwQuizzPasTermine(code);
+        }
+        if (score.nombre_bonnes_reponses / score.nombre_quizz_done < 0.666) {
           ApplicationError.throwQuizzPasTerminable(code);
         }
+        utilisateur.gamification.ajoutePoints(points, utilisateur);
       } else {
         utilisateur.gamification.ajoutePoints(points, utilisateur);
       }
@@ -337,7 +344,9 @@ export class ActionUsecase {
       [Scope.thematique_history],
     );
 
-    return action;
+    return this.personnalisator.personnaliser(action, undefined, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   public async calculeScoreQuizzAction(

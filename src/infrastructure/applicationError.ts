@@ -666,9 +666,15 @@ export class ApplicationError {
       `la preview pour pour l'objet de type [${type}] et d'id [${content_id}] n'est pas disponible`,
     );
   }
-  static throwQuizzPasTerminable(code: string) {
+  static throwQuizzPasTermine(code: string) {
     this.throwAppError(
       '125',
+      `la quizz de code [${code}] n'est pas terminable car pas terminé, il faut répondre à toutes les questions`,
+    );
+  }
+  static throwQuizzPasTerminable(code: string) {
+    this.throwAppError(
+      '126',
       `la quizz de code [${code}] n'est pas terminable car score insuffisant`,
     );
   }
