@@ -61,6 +61,7 @@
     "axios": ">=1.7.9",
     "firebase-admin": "^13.0.2",
     "handlebars": "^4.7.8",
+    "markdown-it": "^14.1.0",
     "publicodes": "^1.8.0",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1",
