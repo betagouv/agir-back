@@ -9,6 +9,7 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response as Res } from 'express';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
+import { Article } from '../../domain/contenu/article';
 import { PartenaireDefinition } from '../../domain/contenu/partenaireDefinition';
 import { CmsPreviewUsecase } from '../../usecase/cmsPreview.usecase';
 import { PartenaireRepository } from '../repository/partenaire.repository';
@@ -96,6 +97,25 @@ export class CmsPreviewController extends GenericControler {
     return PreviewArticleAPI.mapToAPI(article);
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @Get('cms_preview/articles/:content_id/html')
+  @ApiOkResponse({ type: PreviewArticleAPI })
+  @ApiOperation({
+    summary: `Consultation d'un article sans connexion`,
+  })
+  async getArticleNonConnecteHTML(
+    @Param('content_id') content_id: string,
+    @Response() res: Res,
+  ) {
+    const article = await this.cmsPreviewUsecase.getArticlePreviewByIdCMS(
+      content_id,
+    );
+    let result = this.articleHTML(article);
+
+    return res.send(`${result.join('<br/>')}`);
+  }
+
   private aideHTML(content: { data: object; aide: AideDefinition }): string[] {
     const aide = content.aide;
     const result = [];
@@ -108,17 +128,26 @@ export class CmsPreviewController extends GenericControler {
     } else {
       result.push(`Thematiques : ${aide.thematiques}`);
     }
+    if (!aide.echelle) {
+      result.push(`Echelle manquante 🔥🔥🔥`);
+    } else {
+      result.push(`Echelle : ${aide.echelle}`);
+    }
     result.push(`Est gratuit : ${aide.est_gratuit ? 'OUI' : 'NON'}`);
     result.push(
       `Montant max : ${
         aide.montant_max ? aide.montant_max + ' €' : 'non renseigné'
       }`,
     );
-    result.push(
-      `Dernière date de mise à jour : ${aide.derniere_maj?.toLocaleDateString(
-        'fr-FR',
-      )}`,
-    );
+    if (aide.derniere_maj) {
+      result.push(
+        `Dernière date de mise à jour : ${aide.derniere_maj?.toLocaleDateString(
+          'fr-FR',
+        )}`,
+      );
+    } else {
+      result.push(`Dernière date de mise manquante 🔥🔥🔥`);
+    }
     let partenaire: PartenaireDefinition;
     if (aide.partenaire_id) {
       partenaire = PartenaireRepository.getPartenaire(aide.partenaire_id);
@@ -167,6 +196,95 @@ export class CmsPreviewController extends GenericControler {
     );
     result.push(`<h1>${aide.titre}</h1>`);
     result.push(`${aide.contenu}`);
+    result.push(
+      `-------------------------------------------------------------------------------------------------------------------------------------`,
+    );
+
+    return result;
+  }
+
+  private articleHTML(content: { data: object; article: Article }): string[] {
+    const article = content.article;
+    const result = [];
+
+    result.push(
+      `-------------------------------------------------------------------------------------------------------------------------------------`,
+    );
+    if (!article.thematiques || article.thematiques.length === 0) {
+      result.push(`Au moins une thématique doit être saisie 🔥🔥🔥`);
+    } else {
+      result.push(`Thematiques : ${article.thematiques}`);
+    }
+    if (!article.thematique_principale) {
+      result.push(`Une thematique principale doit être saisie 🔥🔥🔥`);
+    } else {
+      result.push(`Thematique principale : ${article.thematique_principale}`);
+    }
+    if (!article.echelle) {
+      result.push(`Echelle manquante 🔥🔥🔥`);
+    } else {
+      result.push(`Echelle : ${article.echelle}`);
+    }
+    if (!article.sources || article.sources.length === 0) {
+      result.push(`Pas de sources pour cet article 🔥🔥🔥`);
+    } else {
+      for (let index = 0; index < article.sources.length; index++) {
+        const source = article.sources[index];
+        let label = `Source N°${index + 1}: `;
+        if (!source.label) {
+          label += 'label manquant 🔥🔥🔥';
+        } else {
+          label += source.label;
+        }
+        label += ' / ';
+        if (!source.url) {
+          label += 'url manquante 🔥🔥🔥';
+        } else {
+          label += `<a href="${source.url}">${source.url}</a>`;
+        }
+        result.push(label);
+      }
+    }
+    if (article.derniere_maj) {
+      result.push(
+        `Dernière date de mise à jour : ${article.derniere_maj?.toLocaleDateString(
+          'fr-FR',
+        )}`,
+      );
+    } else {
+      result.push(`Dernière date de mise manquante 🔥🔥🔥`);
+    }
+    let partenaire: PartenaireDefinition;
+    if (article.partenaire_id) {
+      partenaire = PartenaireRepository.getPartenaire(article.partenaire_id);
+      result.push(`Partenaire nom : ${partenaire.nom}`);
+      if (partenaire.url) {
+        result.push(
+          `Partenaire lien <a href="${partenaire.url}">${partenaire.url}</a>`,
+        );
+      } else {
+        result.push(`Partenaire URL manquante 🔥🔥🔥`);
+      }
+      if (partenaire.image_url) {
+        result.push(`Partenaire image :</br>`);
+        result.push(
+          `<img src= "${partenaire.image_url}" width="200" style="border: 5px solid #555"></br>`,
+        );
+      } else {
+        result.push(`Partenaire image manquante 🔥🔥🔥`);
+      }
+    } else {
+      result.push(`Info partenaire manquantes 🔥🔥🔥`);
+    }
+
+    result.push(
+      `-------------------------------------------------------------------------------------------------------------------------------------`,
+    );
+    result.push(`<h1>${article.titre}</h1>`);
+    if (article.soustitre) {
+      result.push(`<h2>${article.soustitre}</h2>`);
+    }
+    result.push(`${article.contenu}`);
     result.push(
       `-------------------------------------------------------------------------------------------------------------------------------------`,
     );

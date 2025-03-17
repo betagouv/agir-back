@@ -123,8 +123,7 @@ export class BibliothequeUsecase {
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
     }
-
-    return new Article(article_definition);
+    return this.personnalisator.personnaliser(new Article(article_definition));
   }
 
   public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
