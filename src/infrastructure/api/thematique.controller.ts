@@ -23,6 +23,7 @@ import { ThematiqueBoardUsecase } from '../../usecase/thematiqueBoard.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { DetailThematiquesAPI } from './types/thematiques/detailThematiquesAPI';
+import { HomeBoardAPI } from './types/thematiques/HomeBoardAPI';
 import { SyntheseThematiquesAPI } from './types/thematiques/syntheseThematiquesAPI';
 
 @Controller()
@@ -81,6 +82,27 @@ export class ThematiqueController extends GenericControler {
       );
 
     return SyntheseThematiquesAPI.mapToAPI(result);
+  }
+
+  @Get('utilisateurs/:utilisateurId/home_board')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: HomeBoardAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne les infos de la home d'un utilisateur`,
+  })
+  async getHomeBoard(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ): Promise<HomeBoardAPI> {
+    this.checkCallerId(req, utilisateurId);
+
+    const result = await this.thematiqueBoardUsecase.buildHomeBoard(
+      utilisateurId,
+    );
+
+    return HomeBoardAPI.mapToAPI(result);
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques/:code_thematique')

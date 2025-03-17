@@ -151,4 +151,18 @@ describe('Thematique Board (API test)', () => {
       thematique: Thematique.alimentation,
     });
   });
+
+  it(`GET /utilisateurs/id/home_board - data standards`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nom_commune).toEqual('Dijon');
+  });
 });

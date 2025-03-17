@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { HomeBoard } from '../domain/thematique/homeBoard';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -30,6 +31,22 @@ export class ThematiqueBoardUsecase {
     Utilisateur.checkState(utilisateur);
 
     return await this.buildSyntheseFromCodeCommune(utilisateur.code_commune);
+  }
+
+  public async buildHomeBoard(utilisateurId: string): Promise<HomeBoard> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const result = new HomeBoard();
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.code_commune,
+    );
+    result.nom_commune = commune.nom;
+
+    return result;
   }
 
   public async getListeThematiquesPrincipales(
