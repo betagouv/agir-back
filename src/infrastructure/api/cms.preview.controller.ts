@@ -135,7 +135,7 @@ export class CmsPreviewController extends GenericControler {
         result.push(`Partenaire image manquante 🔥🔥🔥`);
       }
     } else {
-      result.push(`<h2>🔥🔥🔥Info partenaire manquantes<h2>`);
+      result.push(`Info partenaire manquantes 🔥🔥🔥`);
     }
     if (aide.besoin) {
       result.push(`Besoin associé: ${aide.besoin_desc}`);
@@ -162,7 +162,7 @@ export class CmsPreviewController extends GenericControler {
       `-------------------------------------------------------------------------------------------------------------------------------------`,
     );
     result.push(`<h1>${aide.titre}</h1>`);
-    result.push(`<h1>${aide.contenu}</h1>`);
+    result.push(`${aide.contenu}`);
     result.push(
       `-------------------------------------------------------------------------------------------------------------------------------------`,
     );
