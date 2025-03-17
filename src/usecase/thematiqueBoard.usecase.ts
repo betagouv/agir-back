@@ -5,6 +5,7 @@ import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
 import { Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
@@ -16,6 +17,7 @@ export class ThematiqueBoardUsecase {
     private aidesUsecase: AidesUsecase,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
+    private compteurActionsRepository: CompteurActionsRepository,
   ) {}
 
   public async getUtilisateurListeThematiquesPrincipales(
@@ -45,6 +47,8 @@ export class ThematiqueBoardUsecase {
       utilisateur.code_commune,
     );
     result.nom_commune = commune.nom;
+    result.total_actions_faites =
+      await this.compteurActionsRepository.getTotalFaites();
 
     return result;
   }
