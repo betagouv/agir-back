@@ -831,7 +831,7 @@ export class CMSImportUsecase {
           ? entry.attributes.thematiques.data.map(
               (elem) => Thematique[elem.attributes.code],
             )
-          : [Thematique.climat],
+          : [],
       is_simulateur: entry.attributes.is_simulation ? true : false,
       montant_max: entry.attributes.montantMaximum
         ? Math.round(parseFloat(entry.attributes.montantMaximum))

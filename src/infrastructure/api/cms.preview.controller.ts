@@ -103,7 +103,11 @@ export class CmsPreviewController extends GenericControler {
     result.push(
       `-------------------------------------------------------------------------------------------------------------------------------------`,
     );
-    result.push(`Thematiques : ${aide.thematiques}`);
+    if (!aide.thematiques || aide.thematiques.length === 0) {
+      result.push(`Au moins une thématique doit être saisie 🔥🔥🔥`);
+    } else {
+      result.push(`Thematiques : ${aide.thematiques}`);
+    }
     result.push(`Est gratuit : ${aide.est_gratuit ? 'OUI' : 'NON'}`);
     result.push(
       `Montant max : ${
