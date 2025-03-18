@@ -190,6 +190,17 @@ describe('Thematique Board (API test)', () => {
       thematique_history: thematique_history as any,
     });
 
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: [],
+      thematiques: [Thematique.logement],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['21000'],
+      thematiques: [Thematique.alimentation],
+    });
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/home_board',
@@ -203,6 +214,7 @@ describe('Thematique Board (API test)', () => {
       total_national_actions_faites: 13,
       total_utilisateur_actions_faites: 1,
       pourcentage_bilan_done: 0,
+      nombre_aides: 2,
     });
   });
   it(`GET /utilisateurs/id/home_board - avancement bilan carbone`, async () => {
@@ -360,6 +372,7 @@ describe('Thematique Board (API test)', () => {
       pourcentage_bilan_done: 17,
       total_national_actions_faites: 0,
       total_utilisateur_actions_faites: 0,
+      nombre_aides: 0,
     });
   });
 });

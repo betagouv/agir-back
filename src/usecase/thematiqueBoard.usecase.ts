@@ -62,6 +62,12 @@ export class ThematiqueBoardUsecase {
     result.pourcentage_bilan_done =
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
 
+    const nombre_aides = await this.aidesUsecase.external_count_aides(
+      undefined,
+      utilisateur.code_commune,
+    );
+    result.nombre_aides = nombre_aides;
+
     return result;
   }
 
