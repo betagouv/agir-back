@@ -32,6 +32,7 @@ const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
   },
 ];
 describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
+  const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
 
@@ -42,10 +43,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('GET /utilisateurs/id/questionsKY_v2/id - mosaic avec de questions du catalogue', async () => {
@@ -315,7 +318,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic', async () => {
     // GIVEN
-
+    process.env.GAIN_CONTENT_POINT = 'true';
     const dbKYC: KYC = {
       id_cms: 1,
       categorie: Categorie.recommandation,

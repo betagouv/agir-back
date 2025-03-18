@@ -15,6 +15,7 @@ import { UtilisateurRepository } from '../../../src/infrastructure/repository/ut
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('EVENT (API test)', () => {
+  const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
 
@@ -86,10 +87,12 @@ describe('EVENT (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('POST /utilisateurs/id/event ok', async () => {
@@ -174,6 +177,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - valide objectif de mission article', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     await TestUtil.create(DB.utilisateur, {
       version: 2,
       missions: missions_article as any,
@@ -205,6 +209,7 @@ describe('EVENT (API test)', () => {
   });
   it('POST /utilisateurs/id/events - valide objectif de mission quizz', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     await TestUtil.create(DB.utilisateur, {
       version: 2,
       missions: missions_quizz as any,
@@ -237,6 +242,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - ajoute points pour article lu v2', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, {
       content_id: '123',
@@ -270,6 +276,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - ajoute points pour article lu par content_id, user v2', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, {
       content_id: '123',
@@ -302,6 +309,7 @@ describe('EVENT (API test)', () => {
 
   it('POST /utilisateurs/id/events - ajoute pas deux fois points pour article lu v2', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     await TestUtil.create(DB.utilisateur, { version: 2 });
     await TestUtil.create(DB.article, {
       content_id: '123',

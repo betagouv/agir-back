@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { App } from '../domain/app';
 import { Article } from '../domain/contenu/article';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../domain/contenu/contentType';
@@ -238,7 +239,8 @@ export class BibliothequeUsecase {
     );
     if (
       !utilisateur.history.sontPointsQuizzEnPoche(content_id) &&
-      pourcent === 100
+      pourcent === 100 &&
+      App.gainContentPoint()
     ) {
       utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
       utilisateur.history.declarePointsQuizzEnPoche(content_id);
@@ -302,7 +304,10 @@ export class BibliothequeUsecase {
       content_id,
     );
 
-    if (!utilisateur.history.sontPointsArticleEnPoche(content_id)) {
+    if (
+      !utilisateur.history.sontPointsArticleEnPoche(content_id) &&
+      App.gainContentPoint()
+    ) {
       utilisateur.gamification.ajoutePoints(
         article_definition.points,
         utilisateur,

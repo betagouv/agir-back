@@ -247,10 +247,8 @@ export class ActionUsecase {
         if (score.nombre_bonnes_reponses / score.nombre_quizz_done < 0.666) {
           ApplicationError.throwQuizzPasTerminable(code);
         }
-        utilisateur.gamification.ajoutePoints(points, utilisateur);
-      } else {
-        utilisateur.gamification.ajoutePoints(points, utilisateur);
       }
+      utilisateur.gamification.ajoutePoints(points, utilisateur);
 
       utilisateur.thematique_history.setActionCommeFaite(action_def);
 

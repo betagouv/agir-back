@@ -132,6 +132,10 @@ export class App {
     return parseInt(process.env.THROTTLE_LIMIT) ?? 2;
   }
 
+  public static gainContentPoint(): boolean {
+    return process.env.GAIN_CONTENT_POINT === 'true';
+  }
+
   public static getBasicLoginPwdBase64(): string {
     const login = this.getBasicLogin();
     const pwd = this.getBasicPassword();

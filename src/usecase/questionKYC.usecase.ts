@@ -4,6 +4,7 @@ import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { App } from '../domain/app';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import {
@@ -327,7 +328,10 @@ export class QuestionKYCUsecase {
       }
     }
 
-    if (!utilisateur.kyc_history.isMosaicAnswered(mosaic.id)) {
+    if (
+      !utilisateur.kyc_history.isMosaicAnswered(mosaic.id) &&
+      App.gainContentPoint()
+    ) {
       utilisateur.gamification.ajoutePoints(mosaic.points, utilisateur);
     }
 
@@ -357,7 +361,11 @@ export class QuestionKYCUsecase {
         code_question,
       );
 
-    if (!question_to_update.is_answered && gain_points) {
+    if (
+      !question_to_update.is_answered &&
+      gain_points &&
+      App.gainContentPoint()
+    ) {
       utilisateur.gamification.ajoutePoints(
         question_to_update.points,
         utilisateur,

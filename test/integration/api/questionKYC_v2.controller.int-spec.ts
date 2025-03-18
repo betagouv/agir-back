@@ -1590,6 +1590,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - crée la reponse à la question 1, empoche les points', async () => {
     // GIVEN
+    process.env.GAIN_CONTENT_POINT = 'true';
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
