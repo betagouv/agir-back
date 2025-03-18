@@ -215,6 +215,7 @@ describe('Thematique Board (API test)', () => {
       total_utilisateur_actions_faites: 1,
       pourcentage_bilan_done: 0,
       nombre_aides: 2,
+      nombre_recettes: 1150,
     });
   });
   it(`GET /utilisateurs/id/home_board - avancement bilan carbone`, async () => {
@@ -373,6 +374,7 @@ describe('Thematique Board (API test)', () => {
       total_national_actions_faites: 0,
       total_utilisateur_actions_faites: 0,
       nombre_aides: 0,
+      nombre_recettes: 1150,
     });
   });
 });

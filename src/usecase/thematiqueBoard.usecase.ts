@@ -67,6 +67,7 @@ export class ThematiqueBoardUsecase {
       utilisateur.code_commune,
     );
     result.nombre_aides = nombre_aides;
+    result.nombre_recettes = 1150;
 
     return result;
   }

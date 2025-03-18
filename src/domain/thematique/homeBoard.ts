@@ -4,4 +4,5 @@ export class HomeBoard {
   total_utilisateur_actions_faites: number;
   pourcentage_bilan_done: number;
   nombre_aides: number;
+  nombre_recettes: number;
 }
