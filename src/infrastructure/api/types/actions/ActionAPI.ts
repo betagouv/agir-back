@@ -85,6 +85,7 @@ export class ActionAPI {
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
+  @ApiProperty() nombre_actions_faites: number;
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ enum: Besoin, isArray: true }) besoins: Besoin[];
   @ApiProperty() comment: string;
@@ -107,6 +108,7 @@ export class ActionAPI {
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
+      nombre_actions_faites: action.nombre_actions_faites,
       nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,

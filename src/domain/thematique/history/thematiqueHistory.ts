@@ -94,6 +94,10 @@ export class ThematiqueHistory {
     return this.indexOfTypeCode(this.liste_actions_faites, action) !== -1;
   }
 
+  public getNombreActionsFaites(): number {
+    return this.liste_actions_faites.length;
+  }
+
   public setActionCommeVue(action: TypeCodeAction) {
     if (this.indexOfTypeCode(this.liste_actions_vues, action) === -1) {
       this.liste_actions_vues.push({ type: action.type, code: action.code });

@@ -264,6 +264,7 @@ describe('Actions (API test)', () => {
     expect(response.body.actions[0]).toEqual({
       code: 'code_fonct',
       nombre_actions_en_cours: 45,
+      nombre_actions_faites: 45,
       nombre_aides_disponibles: 0,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
@@ -332,6 +333,7 @@ describe('Actions (API test)', () => {
       deja_faite: false,
       deja_vue: false,
       nombre_actions_en_cours: 45,
+      nombre_actions_faites: 45,
       nombre_aides_disponibles: 1,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
@@ -809,6 +811,7 @@ describe('Actions (API test)', () => {
       comment: 'Astuces',
       consigne: 'consigne',
       nombre_actions_en_cours: 45,
+      nombre_actions_faites: 45,
       deja_faite: false,
       deja_vue: false,
       faqs: [],

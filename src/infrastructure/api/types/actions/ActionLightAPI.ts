@@ -9,6 +9,7 @@ export class ActionLightAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() points: number;
   @ApiProperty() nombre_actions_en_cours: number;
+  @ApiProperty() nombre_actions_faites: number;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
   @ApiProperty() nombre_aides_disponibles: number;
@@ -18,6 +19,7 @@ export class ActionLightAPI {
   public static mapToAPI(action: Action): ActionLightAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
+      nombre_actions_faites: action.nombre_actions_faites,
       nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,

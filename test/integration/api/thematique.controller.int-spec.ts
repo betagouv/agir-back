@@ -385,6 +385,7 @@ describe('Thematique (API test)', () => {
       deja_faite: false,
       deja_vue: false,
       nombre_actions_en_cours: 0,
+      nombre_actions_faites: 0,
       nombre_aides_disponibles: 1,
       points: 100,
       sous_titre: 'Sous titre',

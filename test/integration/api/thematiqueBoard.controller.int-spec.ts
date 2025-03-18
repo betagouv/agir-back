@@ -1,9 +1,17 @@
+import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { HomeBoardAPI } from '../../../src/infrastructure/api/types/thematiques/HomeBoardAPI';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique Board (API test)', () => {
+  const kycRepository = new KycRepository(TestUtil.prisma);
   beforeAll(async () => {
     await TestUtil.appinit();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -155,6 +163,14 @@ describe('Thematique Board (API test)', () => {
 
   it(`GET /utilisateurs/id/home_board - data standards`, async () => {
     // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_vues: [],
+      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
     await TestUtil.create(DB.compteurActions, {
       code: '1',
       type: TypeAction.classique,
@@ -169,7 +185,10 @@ describe('Thematique Board (API test)', () => {
       type_code_id: 'bilan_2',
       faites: 3,
     });
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -182,6 +201,165 @@ describe('Thematique Board (API test)', () => {
     expect(body).toEqual({
       nom_commune: 'Dijon',
       total_national_actions_faites: 13,
+      total_utilisateur_actions_faites: 1,
+      pourcentage_bilan_done: 0,
+    });
+  });
+  it(`GET /utilisateurs/id/home_board - avancement bilan carbone`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_alimentation_regime,
+      question: `YOP`,
+      reponses: [
+        { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+        { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
+        { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+        { code: 'chaque_jour_viande', label: 'Tous les jours', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          code: 'KYC_saison_frequence',
+          last_update: undefined,
+          id_cms: 21,
+          question: `À quelle fréquence mangez-vous de saison ? `,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: true,
+          a_supprimer: false,
+          categorie: Categorie.mission,
+          points: 10,
+          reponse_complexe: [
+            {
+              label: 'Souvent',
+              code: 'souvent',
+              ngc_code: '"souvent"',
+              value: 'oui',
+              selected: true,
+            },
+            {
+              label: 'Jamais',
+              code: 'jamais',
+              ngc_code: '"bof"',
+              selected: false,
+            },
+            {
+              label: 'Parfois',
+              code: 'parfois',
+              ngc_code: '"burp"',
+              selected: false,
+            },
+          ],
+          tags: [],
+          ngc_key: 'alimentation . de saison . consommation',
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+          reponse_simple: undefined,
+          thematique: Thematique.alimentation,
+        },
+        {
+          code: 'KYC_alimentation_regime',
+          id_cms: 1,
+          last_update: undefined,
+          question: `Votre regime`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.mission,
+          points: 10,
+          reponse_complexe: [
+            {
+              code: 'vegetalien',
+              label: 'Vegetalien',
+              ngc_code: null,
+              selected: true,
+            },
+            {
+              code: 'vegetarien',
+              label: 'Vegetarien',
+              ngc_code: null,
+              selected: false,
+            },
+            {
+              code: 'peu_viande',
+              label: 'Peu de viande',
+              ngc_code: null,
+              selected: false,
+            },
+            {
+              code: 'chaque_jour_viande',
+              label: 'Tous les jours',
+              ngc_code: null,
+              selected: false,
+            },
+          ],
+          tags: [],
+          ngc_key: null,
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+          thematique: Thematique.alimentation,
+          reponse_simple: undefined,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+      ],
+      tags: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: { abreviation: 'kg' },
+      created_at: undefined,
+      is_ngc: true,
+      a_supprimer: false,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    await kycRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      kyc: kyc as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const body: HomeBoardAPI = response.body;
+    expect(body).toEqual({
+      nom_commune: 'Dijon',
+      pourcentage_bilan_done: 17,
+      total_national_actions_faites: 0,
+      total_utilisateur_actions_faites: 0,
     });
   });
 });
