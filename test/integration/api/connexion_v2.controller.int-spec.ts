@@ -119,6 +119,7 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     expect(response.body.utilisateur.nom).toEqual('nom');
     expect(response.body.utilisateur.prenom).toEqual('prenom');
     expect(response.body.utilisateur.pseudo).toEqual('pseudo');
+    expect(response.body.utilisateur.popup_reset_est_vue).toEqual(false);
     expect(response.body.utilisateur.is_nom_prenom_modifiable).toEqual(true);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [

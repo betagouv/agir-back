@@ -1,8 +1,10 @@
 import metadata from './metadata.json';
 
 export class App {
+  static USER_CURRENT_VERSION = 13;
+
   public static currentUserSystemVersion(): number {
-    return Number.parseInt(process.env.USER_CURRENT_VERSION) || 0;
+    return App.USER_CURRENT_VERSION;
   }
   public static defiEnabled(): boolean {
     return process.env.DEFI_ENABLED === 'true';

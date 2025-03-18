@@ -158,6 +158,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.id).toEqual('utilisateur-id');
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
+    expect(response.body.popup_reset_est_vue).toEqual(false);
     expect(response.body.fonctionnalites_debloquees).toEqual([
       'aides',
       'defis',
@@ -181,6 +182,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
     expect(response.body.is_nom_prenom_modifiable).toEqual(true);
+    expect(response.body.popup_reset_est_vue).toEqual(false);
+
     expect(response.body.pseudo).toEqual('pseudo');
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {

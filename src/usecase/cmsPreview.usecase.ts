@@ -8,6 +8,7 @@ import { Article } from '../domain/contenu/article';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { CMSImportUsecase } from './cms.import.usecase';
 
@@ -18,6 +19,7 @@ export class CmsPreviewUsecase {
     private cMSImportUsecase: CMSImportUsecase,
     private fAQRepository: FAQRepository,
     private personnalisator: Personnalisator,
+    private compteurActionsRepository: CompteurActionsRepository,
   ) {}
 
   async getActionPreview(
@@ -65,6 +67,13 @@ export class CmsPreviewUsecase {
 
     action.setListeAides(linked_aides);
     action.services = liste_services;
+
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + nbr_faites,
+    );
 
     return { data: {}, action: action };
   }

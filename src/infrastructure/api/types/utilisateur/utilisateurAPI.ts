@@ -27,6 +27,9 @@ export class UtilisateurAPI {
   @ApiProperty()
   couverture_aides_ok: boolean;
 
+  @ApiProperty()
+  popup_reset_est_vue: boolean;
+
   @ApiProperty({ enum: Feature, enumName: 'Feature', isArray: true })
   fonctionnalites_debloquees: Feature[];
 
@@ -41,6 +44,7 @@ export class UtilisateurAPI {
       couverture_aides_ok: user.couverture_aides_ok,
       is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
       pseudo: user.pseudo,
+      popup_reset_est_vue: user.gamification.popup_reset_vue,
     };
   }
 }

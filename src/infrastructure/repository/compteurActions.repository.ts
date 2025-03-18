@@ -52,6 +52,12 @@ export class CompteurActionsRepository {
     );
     return compteur ? compteur.faites : 0;
   }
+  public async getTotalFaites(): Promise<number> {
+    const agregate = await this.prisma.compteurActions.aggregate({
+      _sum: { faites: true },
+    });
+    return agregate._sum.faites;
+  }
 
   async setCompteur(action: TypeCodeAction, vues: number, faites: number) {
     await this.prisma.compteurActions.upsert({

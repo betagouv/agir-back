@@ -610,6 +610,7 @@ export class TestUtil {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
+      popup_reset_vue: false,
       celebrations: [
         {
           id: 'celebration-id',

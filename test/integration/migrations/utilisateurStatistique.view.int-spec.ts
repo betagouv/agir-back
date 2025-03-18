@@ -54,6 +54,7 @@ describe('UtilisateurView', () => {
       gamification: new Gamification({
         version: 0,
         points: 123,
+        popup_reset_vue: false,
         celebrations: [],
       }) as any,
     });
@@ -73,6 +74,7 @@ describe('UtilisateurView', () => {
       gamification: new Gamification({
         version: 0,
         points: 666,
+        popup_reset_vue: false,
         celebrations: [],
       }) as any,
     });
@@ -88,6 +90,7 @@ describe('UtilisateurView', () => {
       gamification: new Gamification({
         version: 0,
         points: 0,
+        popup_reset_vue: false,
         celebrations: [],
       }) as any,
     });

@@ -1,16 +1,23 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import {
-  ApiTags,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiBearerAuth,
+  ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
-import { AuthGuard } from '../auth/guard';
-import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
-import { GamificationAPI } from './types/gamification/gamificationAPI';
-import { BoardAPI } from './types/gamification/boardAPI';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { GamificationUsecase } from '../../../src/usecase/gamification.usecase';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { BoardAPI } from './types/gamification/boardAPI';
+import { GamificationAPI } from './types/gamification/gamificationAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -78,5 +85,18 @@ export class GamificationController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const board = await this.gamificationUsecase.classementLocal(utilisateurId);
     return BoardAPI.mapToAPI(board, true);
+  }
+
+  @Post('utilisateurs/:utilisateurId/gamification/popup_reset_vue')
+  @ApiOperation({
+    summary: 'indique que la popup de reset a été vue',
+  })
+  @UseGuards(AuthGuard)
+  async popup_reset_vue(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.gamificationUsecase.popupResetVue(utilisateurId);
   }
 }

@@ -1,5 +1,6 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { HomeBoardAPI } from '../../../src/infrastructure/api/types/thematiques/HomeBoardAPI';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique Board (API test)', () => {
@@ -149,6 +150,38 @@ describe('Thematique Board (API test)', () => {
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,
+    });
+  });
+
+  it(`GET /utilisateurs/id/home_board - data standards`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.compteurActions, {
+      code: '1',
+      type: TypeAction.classique,
+      vues: 1,
+      type_code_id: 'classique_1',
+      faites: 10,
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '2',
+      type: TypeAction.bilan,
+      vues: 1,
+      type_code_id: 'bilan_2',
+      faites: 3,
+    });
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const body: HomeBoardAPI = response.body;
+    expect(body).toEqual({
+      nom_commune: 'Dijon',
+      total_national_actions_faites: 13,
     });
   });
 });

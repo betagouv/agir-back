@@ -146,6 +146,7 @@ describe('Thematique (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
+      popup_reset_vue: false,
       celebrations: [],
     };
 
@@ -209,6 +210,7 @@ describe('Thematique (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
+      popup_reset_vue: false,
       celebrations: [],
     };
 

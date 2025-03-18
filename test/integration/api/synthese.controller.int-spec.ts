@@ -31,6 +31,7 @@ describe('Synthese (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
+      popup_reset_vue: false,
       celebrations: [],
     };
 
@@ -61,6 +62,7 @@ describe('Synthese (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
+      popup_reset_vue: false,
       celebrations: [],
     };
     await TestUtil.create(DB.utilisateur, {

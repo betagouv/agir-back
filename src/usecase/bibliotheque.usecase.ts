@@ -7,7 +7,10 @@ import { IncludeArticle } from '../domain/contenu/includeArticle';
 import { Quizz } from '../domain/contenu/quizz';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import {
+  CLE_PERSO,
+  Personnalisator,
+} from '../infrastructure/personnalisation/personnalisator';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
@@ -123,8 +126,7 @@ export class BibliothequeUsecase {
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
     }
-
-    return new Article(article_definition);
+    return this.personnalisator.personnaliser(new Article(article_definition));
   }
 
   public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
@@ -283,7 +285,9 @@ export class BibliothequeUsecase {
       );
     }
 
-    return quizz;
+    return this.personnalisator.personnaliser(quizz, undefined, [
+      CLE_PERSO.espace_insecable,
+    ]);
   }
 
   public async external_read_article(

@@ -1,7 +1,11 @@
 import { Pourcentile } from '../../../src/domain/gamification/board';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Gamification  (API test)', () => {
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+
   beforeAll(async () => {
     await TestUtil.appinit();
   });
@@ -580,5 +584,24 @@ describe('Gamification  (API test)', () => {
         rank: 5,
       },
     ]);
+  });
+
+  it('POST /utilisateurs/id/gamification/popup_reset_vue indique que la popup de reset est vue', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/gamification/popup_reset_vue',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.gamification.popup_reset_vue).toEqual(true);
   });
 });

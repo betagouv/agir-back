@@ -1,4 +1,5 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../src/domain/contenu/contentType';
 import { DefiStatus } from '../../../src/domain/defis/defi';
@@ -62,6 +63,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   emoji: '🔥',
 };
 describe('Admin (API test)', () => {
+  const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const linkyRepository = new LinkyRepository(TestUtil.prisma);
@@ -77,6 +79,7 @@ describe('Admin (API test)', () => {
 
   beforeEach(async () => {
     process.env = { ...OLD_ENV }; // Make a copy
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
 
     await TestUtil.deleteAll();
     await TestUtil.generateAuthorizationToken('utilisateur-id');
@@ -88,6 +91,7 @@ describe('Admin (API test)', () => {
 
   afterAll(async () => {
     process.env = OLD_ENV;
+    App.USER_CURRENT_VERSION = USER_CURRENT_VERSION;
     await TestUtil.appclose();
   });
 
@@ -188,7 +192,7 @@ describe('Admin (API test)', () => {
       version: 2,
       migration_enabled: true,
     });
-    process.env.USER_CURRENT_VERSION = '2';
+    App.USER_CURRENT_VERSION = 2;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -208,7 +212,7 @@ describe('Admin (API test)', () => {
       version: 2,
       migration_enabled: false,
     });
-    process.env.USER_CURRENT_VERSION = '3';
+    App.USER_CURRENT_VERSION = 3;
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
 
@@ -227,7 +231,7 @@ describe('Admin (API test)', () => {
       version: 100,
       migration_enabled: true,
     });
-    process.env.USER_CURRENT_VERSION = '101';
+    App.USER_CURRENT_VERSION = 101;
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
 
@@ -257,7 +261,7 @@ describe('Admin (API test)', () => {
       version: 0,
       migration_enabled: true,
     });
-    process.env.USER_CURRENT_VERSION = '1';
+    App.USER_CURRENT_VERSION = 1;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -287,6 +291,7 @@ describe('Admin (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 620,
+      popup_reset_vue: false,
       celebrations: [
         {
           id: 'celebration-id',
@@ -307,7 +312,7 @@ describe('Admin (API test)', () => {
       migration_enabled: true,
       gamification: gamification as any,
     });
-    process.env.USER_CURRENT_VERSION = '4';
+    App.USER_CURRENT_VERSION = 4;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -368,7 +373,7 @@ describe('Admin (API test)', () => {
       logement: {},
       defis: defis as any,
     });
-    process.env.USER_CURRENT_VERSION = '7';
+    App.USER_CURRENT_VERSION = 7;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -431,7 +436,7 @@ describe('Admin (API test)', () => {
       migration_enabled: true,
       kyc: kyc,
     });
-    process.env.USER_CURRENT_VERSION = '8';
+    App.USER_CURRENT_VERSION = 8;
     await kycRepository.loadCache();
 
     // WHEN
@@ -464,7 +469,7 @@ describe('Admin (API test)', () => {
       version: 9,
       migration_enabled: true,
     });
-    process.env.USER_CURRENT_VERSION = '10';
+    App.USER_CURRENT_VERSION = 10;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -514,7 +519,7 @@ describe('Admin (API test)', () => {
       code_commune: null,
       logement: logement as any,
     });
-    process.env.USER_CURRENT_VERSION = '12';
+    App.USER_CURRENT_VERSION = 12;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -562,7 +567,7 @@ describe('Admin (API test)', () => {
       code_commune: null,
       logement: logement as any,
     });
-    process.env.USER_CURRENT_VERSION = '12';
+    App.USER_CURRENT_VERSION = 12;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
@@ -597,7 +602,7 @@ describe('Admin (API test)', () => {
       prenom: 'yo',
       pseudo: null,
     });
-    process.env.USER_CURRENT_VERSION = '13';
+    App.USER_CURRENT_VERSION = 13;
 
     // WHEN
     const response = await TestUtil.POST('/admin/migrate_users');
