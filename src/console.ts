@@ -7,6 +7,7 @@ import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
+import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
@@ -140,6 +141,17 @@ async function bootstrap() {
         `STOP send_notifications after ${Date.now() - start_time} ms`,
       );
       console.log(result_email);
+      break;
+    case 'send_notifications_mobile':
+      start_time = Date.now();
+      console.log(`START send_notifications_mobile ${start_time}`);
+      const result_mobile = await application
+        .get(NotificationMobileUsecase)
+        .envoyerNotificationsMobileAutomatiques();
+      console.log(
+        `STOP send_notifications_mobile after ${Date.now() - start_time} ms`,
+      );
+      console.log(result_mobile);
       break;
     case 'create_brevo_contacts':
       start_time = Date.now();
