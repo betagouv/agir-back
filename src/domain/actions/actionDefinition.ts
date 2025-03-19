@@ -1,5 +1,6 @@
 import { Besoin } from '../aides/besoin';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
+import { Source } from '../contenu/source';
 import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
@@ -36,6 +37,7 @@ export class ActionDefinitionData {
   type: TypeAction;
   thematique: Thematique;
   tags_excluants: TagExcluant[];
+  sources: Source[];
 }
 
 export class ActionDefinition extends ActionDefinitionData {

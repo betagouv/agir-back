@@ -91,6 +91,7 @@ describe('/api/incoming/cms (API test)', () => {
       action_lvo: 'donner',
       type_action: 'quizz',
       categorie_recettes: 'vegan',
+      sources: [{ libelle: 'haha', lien: 'hoho' }],
       quizzes: [
         {
           id: 1,
@@ -427,6 +428,7 @@ describe('/api/incoming/cms (API test)', () => {
       exclude_codes_commune: '03,04',
       codes_departement: '78',
       codes_region: '25',
+      sources: [{ libelle: 'haha', lien: 'hoho' }],
     } as CMSWebhookEntryAPI,
   };
 
@@ -694,6 +696,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].exclude_codes_commune).toEqual(['03', '04']);
     expect(articles[0].codes_departement).toEqual(['78']);
     expect(articles[0].codes_region).toEqual(['25']);
+    expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
   });
 
   it('POST /api/incoming/cms - create a new partenaire in partenaire table', async () => {
@@ -1024,6 +1027,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
+    expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
     expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
@@ -1305,6 +1309,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].partenaire_id).toEqual('1');
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
+    expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
   });
   it('POST /api/incoming/cms - updates existing quizz in quizz table', async () => {
     // GIVEN

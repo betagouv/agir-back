@@ -512,6 +512,9 @@ export class CMSWebhookUsecase {
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
       tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
+      sources: entry.sources
+        ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
+        : [],
     });
   }
 

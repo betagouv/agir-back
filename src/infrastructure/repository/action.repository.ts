@@ -91,6 +91,7 @@ export class ActionRepository {
       type: action.type,
       type_code_id: action.getTypeCodeId(),
       tags_excluants: action.tags_excluants,
+      sources: action.sources as any,
 
       created_at: undefined,
       updated_at: undefined,
@@ -234,6 +235,7 @@ export class ActionRepository {
       faq_ids: action.faq_ids,
       consigne: action.consigne,
       label_compteur: action.label_compteur,
+      sources: action.sources as any,
     });
   }
 }

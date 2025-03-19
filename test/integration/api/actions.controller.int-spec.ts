@@ -581,6 +581,7 @@ describe('Actions (API test)', () => {
       type_code_id: 'classique_code_fonct',
       label_compteur: '{NBR_ACTIONS} haha',
       pourquoi: 'en quelques mots {block_123}',
+      sources: [{ url: 'haha', label: 'hoho' }],
     });
     await TestUtil.create(DB.compteurActions, {
       code: 'code_fonct',
@@ -600,31 +601,43 @@ describe('Actions (API test)', () => {
 
     const action: ActionAPI = response.body;
 
-    expect(action.besoins).toEqual([]);
-    expect(action.code).toEqual('code_fonct');
-    expect(action.comment).toEqual('Astuces');
-    expect(action.pourquoi).toEqual('en quelques mots the texte');
-    expect(action.titre).toEqual('The titre');
-    expect(action.consigne).toEqual('consigne');
-    expect(action.label_compteur).toEqual('45 haha');
-    expect(action.sous_titre).toEqual('Sous titre');
-    expect(action.quizz_felicitations).toEqual('bien');
-    expect(action.thematique).toEqual(Thematique.consommation);
-    expect(action.type).toEqual(TypeAction.classique);
-    expect(action.services).toHaveLength(2);
-    expect(action.services).toContainEqual({
-      categorie: 'dinde_volaille',
-      recherche_service_id: 'recettes',
+    expect(action).toEqual({
+      aides: [],
+      besoins: [],
+      code: 'code_fonct',
+      comment: 'Astuces',
+      consigne: 'consigne',
+      faqs: [],
+      kycs: [],
+      label_compteur: '45 haha',
+      nombre_actions_en_cours: 45,
+      nombre_actions_faites: 45,
+      nombre_aides_disponibles: 0,
+      points: 100,
+      pourquoi: 'en quelques mots the texte',
+      quizz_felicitations: 'bien',
+      quizzes: [],
+      services: [
+        {
+          categorie: 'dinde_volaille',
+          recherche_service_id: 'recettes',
+        },
+        {
+          categorie: 'emprunter',
+          recherche_service_id: 'longue_vie_objets',
+        },
+      ],
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: 'The titre',
+      type: 'classique',
+      sources: [
+        {
+          label: 'hoho',
+          url: 'haha',
+        },
+      ],
     });
-    expect(action.services).toContainEqual({
-      categorie: 'emprunter',
-      recherche_service_id: 'longue_vie_objets',
-    });
-    expect(action.kycs).toEqual([]);
-    expect(action.quizzes).toEqual([]);
-    expect(action.nombre_actions_en_cours).toEqual(45);
-    expect(action.nombre_aides_disponibles).toBeGreaterThanOrEqual(0);
-    expect(action.nom_commune).toBeUndefined();
   });
 
   it(`GET /actions/id - accorche les aides par le besoin - seulement nationales si pas de code insee de commune en argument`, async () => {
@@ -785,6 +798,7 @@ describe('Actions (API test)', () => {
       label_compteur: '{NBR_ACTIONS} haha',
       besoins: ['composter'],
       pourquoi: 'haha {block_123}',
+      sources: [{ url: 'haha', label: 'hoho' }],
     });
     await TestUtil.create(DB.compteurActions, {
       code: '123',
@@ -837,6 +851,12 @@ describe('Actions (API test)', () => {
       titre: 'The titre',
       type: 'classique',
       points: 100,
+      sources: [
+        {
+          label: 'hoho',
+          url: 'haha',
+        },
+      ],
     });
   });
 

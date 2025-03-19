@@ -72,6 +72,10 @@ export class ScoreActionAPI {
   @ApiProperty() nombre_bonnes_reponses: number;
   @ApiProperty() nombre_quizz_done: number;
 }
+export class SourceActionAPI {
+  @ApiProperty() label: string;
+  @ApiProperty() url: string;
+}
 
 export class ActionAPI {
   @ApiProperty() code: string;
@@ -79,6 +83,7 @@ export class ActionAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() points: number;
   @ApiProperty() consigne: string;
+  @ApiProperty({ type: [SourceActionAPI] }) sources: SourceActionAPI[];
   @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
@@ -130,6 +135,7 @@ export class ActionAPI {
       deja_faite: action.deja_faite,
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
       points: action.getNombrePoints(),
+      sources: action.sources,
     };
   }
 }

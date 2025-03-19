@@ -962,6 +962,12 @@ export class CMSImportUsecase {
       tags_excluants: entry.attributes.tags_excluants.map(
         (t) => TagExcluant[t.valeur],
       ),
+      sources: entry.attributes.sources
+        ? entry.attributes.sources.map((s) => ({
+            label: s.libelle,
+            url: s.lien,
+          }))
+        : [],
     });
   }
 

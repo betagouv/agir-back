@@ -4,18 +4,14 @@ import { Thematique } from '../thematique/thematique';
 import { Categorie } from './categorie';
 import { ContenuLocal } from './contenuLocal';
 import { DifficultyLevel } from './difficultyLevel';
-
-export class SourceArticle {
-  label: string;
-  url: string;
-}
+import { Source } from './source';
 
 export class ArticleDefinition implements ContenuLocal {
   content_id: string;
   titre: string;
   soustitre: string;
   source: string;
-  sources: SourceArticle[];
+  sources: Source[];
   contenu: string;
   image_url: string;
   partenaire_id: string;
