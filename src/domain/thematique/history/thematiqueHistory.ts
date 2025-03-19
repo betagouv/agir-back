@@ -7,16 +7,19 @@ import { Thematique } from '../thematique';
 import { KycTagExcluantTranslator } from './kycTagTranslator';
 import { ThematiqueRecommandation } from './thematiqueRecommandation';
 
+export type ActionUtilisateur = {
+  action: TypeCodeAction;
+  vue_le: Date;
+  faite_le: Date;
+};
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
-  private liste_actions_vues: TypeCodeAction[];
-  private liste_actions_faites: TypeCodeAction[];
+  private liste_actions_utilisateur: ActionUtilisateur[];
   private liste_tags_excluants: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
-    this.liste_actions_vues = [];
-    this.liste_actions_faites = [];
+    this.liste_actions_utilisateur = [];
     this.liste_tags_excluants = [];
     if (data) {
       if (data.liste_thematiques) {
@@ -24,11 +27,8 @@ export class ThematiqueHistory {
           (t) => new ThematiqueRecommandation(t.thematique, t),
         );
       }
-      if (data.liste_actions_vues) {
-        this.liste_actions_vues = data.liste_actions_vues;
-      }
-      if (data.liste_actions_faites) {
-        this.liste_actions_faites = data.liste_actions_faites;
+      if (data.liste_actions_utilisateur) {
+        this.liste_actions_utilisateur = data.liste_actions_utilisateur;
       }
       if (data.liste_tags_excluants) {
         this.liste_tags_excluants = data.liste_tags_excluants;
@@ -80,35 +80,62 @@ export class ThematiqueHistory {
   public getListeTagsExcluants(): TagExcluant[] {
     return this.liste_tags_excluants;
   }
+  public getListeActionsUtilisateur(): ActionUtilisateur[] {
+    return this.liste_actions_utilisateur;
+  }
   public getListeActionsVues(): TypeCodeAction[] {
-    return this.liste_actions_vues;
+    return this.liste_actions_utilisateur
+      .filter((a) => !!a.vue_le)
+      .map((a) => a.action);
   }
   public getListeActionsFaites(): TypeCodeAction[] {
-    return this.liste_actions_faites;
+    return this.liste_actions_utilisateur
+      .filter((a) => !!a.faite_le)
+      .map((a) => a.action);
   }
   public isActionVue(action: TypeCodeAction): boolean {
-    return this.indexOfTypeCode(this.liste_actions_vues, action) !== -1;
+    const found = this.findAction(action);
+    return found ? !!found.vue_le : false;
   }
 
   public isActionFaite(action: TypeCodeAction): boolean {
-    return this.indexOfTypeCode(this.liste_actions_faites, action) !== -1;
+    const found = this.findAction(action);
+    return found ? !!found.faite_le : false;
+  }
+
+  public findAction(action: TypeCodeAction): ActionUtilisateur {
+    return this.liste_actions_utilisateur.find(
+      (a) => a.action.code === action.code && a.action.type === action.type,
+    );
   }
 
   public getNombreActionsFaites(): number {
-    return this.liste_actions_faites.length;
+    return this.getListeActionsFaites().length;
   }
 
   public setActionCommeVue(action: TypeCodeAction) {
-    if (this.indexOfTypeCode(this.liste_actions_vues, action) === -1) {
-      this.liste_actions_vues.push({ type: action.type, code: action.code });
+    const found = this.findAction(action);
+    if (found) {
+      found.vue_le = new Date();
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: action,
+        vue_le: new Date(),
+        faite_le: null,
+      });
     }
   }
-  public setActionCommeFaite(action: TypeCodeAction): boolean {
-    if (this.indexOfTypeCode(this.liste_actions_faites, action) === -1) {
-      this.liste_actions_faites.push({ type: action.type, code: action.code });
-      return true;
+  public setActionCommeFaite(action: TypeCodeAction) {
+    const found = this.findAction(action);
+    if (found) {
+      found.faite_le = new Date();
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: action,
+        vue_le: null,
+        faite_le: new Date(),
+      });
     }
-    return false;
   }
 
   public getRecommandationByThematique(
@@ -184,14 +211,5 @@ export class ThematiqueHistory {
   ) {
     const reco = this.getOrCreateNewThematiqueRecommandation(thematique);
     reco.replaceAction(type_code_old_action, type_code_new_action);
-  }
-
-  private indexOfTypeCode(
-    array: TypeCodeAction[],
-    type_code: TypeCodeAction,
-  ): number {
-    return array.findIndex(
-      (a) => a.code === type_code.code && a.type === type_code.type,
-    );
   }
 }

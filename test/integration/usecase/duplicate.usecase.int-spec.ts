@@ -1,10 +1,13 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { StatistiqueExternalRepository } from '../../../src/infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DuplicateBDDForStatsUsecase } from '../../../src/usecase/stats/new/duplicateBDD.usecase';
@@ -37,10 +40,12 @@ describe('Duplicate Usecase', () => {
     TestUtil.prisma_stats,
   );
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   let duplicateUsecase = new DuplicateBDDForStatsUsecase(
     utilisateurRepository,
     statistiqueExternalRepository,
+    actionRepository,
   );
 
   beforeAll(async () => {
@@ -332,5 +337,54 @@ describe('Duplicate Usecase', () => {
 
     const kycDB = stats_kycs[0];
     expect(kycDB.reponse_texte).toEqual('hello');
+  });
+
+  it('duplicateAction : copy ok action utilisateur', async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(123),
+          vue_le: new Date(456),
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      cms_id: '1',
+      code: '1',
+      thematique: Thematique.alimentation,
+      titre: 'yo',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateAction();
+
+    // THEN
+    const stats_actions = await TestUtil.prisma_stats.actionCopy.findMany();
+
+    expect(stats_actions).toHaveLength(1);
+
+    const actionDB = stats_actions[0];
+    expect(actionDB).toEqual({
+      cms_id: '1',
+      code_action: '1',
+      faite_le: new Date(123),
+      thematique: 'alimentation',
+      titre: 'yo',
+      type_action: 'classique',
+      type_code_id: 'classique_1',
+      user_id: '123',
+      vue_le: new Date(456),
+    });
   });
 });

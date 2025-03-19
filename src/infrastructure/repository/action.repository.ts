@@ -199,7 +199,7 @@ export class ActionRepository {
     };
   }
 
-  async getByCodeAndType(
+  async getByCodeAndTypeFromDB(
     code: string,
     type: string,
   ): Promise<ActionDefinition> {

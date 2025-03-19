@@ -2929,8 +2929,18 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [{ code: '2', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          vue_le: null,
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -2978,19 +2988,31 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
     const thematique_history2: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [
-        { code: '1', type: TypeAction.classique },
-        { code: '2', type: TypeAction.classique },
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
       ],
-      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };

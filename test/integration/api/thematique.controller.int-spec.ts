@@ -87,8 +87,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -130,8 +129,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -194,8 +192,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -294,8 +291,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -340,8 +336,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -399,8 +394,13 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '123', type: TypeAction.classique }],
-      liste_actions_faites: [{ code: '123', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { code: '123', type: TypeAction.classique },
+          vue_le: new Date(),
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -443,8 +443,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -484,8 +483,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [TagExcluant.a_un_velo],
       liste_thematiques: [
         {
@@ -543,8 +541,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -596,8 +593,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -644,8 +640,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -689,8 +684,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -751,8 +745,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
 
       liste_thematiques: [
@@ -826,8 +819,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -901,8 +893,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -961,8 +952,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -1026,8 +1016,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {
@@ -1101,8 +1090,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [
         {

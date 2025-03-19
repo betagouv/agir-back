@@ -455,8 +455,13 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -541,8 +546,13 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
-      liste_actions_faites: [{ type: TypeAction.classique, code: '123' }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '123' },
+          vue_le: new Date(),
+          faite_le: new Date(),
+        },
+      ],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -1399,8 +1409,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -1457,8 +1466,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };

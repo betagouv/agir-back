@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Action } from '../../domain/actions/action';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -15,6 +16,9 @@ export class StatistiqueExternalRepository {
   }
   public async deleteAllKYCData() {
     await this.prismaStats.kYCCopy.deleteMany();
+  }
+  public async deleteAllActionData() {
+    await this.prismaStats.actionCopy.deleteMany();
   }
 
   public async createUserData(utilisateur: Utilisateur) {
@@ -34,6 +38,22 @@ export class StatistiqueExternalRepository {
         source_inscription: utilisateur.source_inscription,
         compte_actif: utilisateur.active_account,
         date_derniere_activite: utilisateur.derniere_activite,
+      },
+    });
+  }
+
+  public async createActionData(user_id: string, action: Action) {
+    await this.prismaStats.actionCopy.create({
+      data: {
+        user_id: user_id,
+        cms_id: action.cms_id,
+        code_action: action.code,
+        type_code_id: action.getTypeCodeId(),
+        thematique: action.thematique,
+        titre: action.titre,
+        type_action: action.type,
+        faite_le: action.faite_le,
+        vue_le: action.vue_le,
       },
     });
   }
