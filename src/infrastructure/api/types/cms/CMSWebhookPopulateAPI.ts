@@ -39,6 +39,7 @@ export type CMSWebhookPopulateAPI = {
     comment: string;
     felicitations: string;
     categorie_recettes: string;
+    categorie_pdcn: string;
     objet_lvo: string;
     action_lvo: string;
     type_action: string;

@@ -939,6 +939,9 @@ export class CMSImportUsecase {
       recette_categorie: entry.attributes.categorie_recettes
         ? CategorieRecherche[entry.attributes.categorie_recettes]
         : null,
+      pdcn_categorie: entry.attributes.categorie_pdcn
+        ? CategorieRecherche[entry.attributes.categorie_pdcn]
+        : null,
       type: type,
       besoins:
         entry.attributes.besoins && entry.attributes.besoins.data.length > 0

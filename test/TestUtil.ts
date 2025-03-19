@@ -425,6 +425,7 @@ export class TestUtil {
       lvo_objet: 'chaussure',
       quizz_ids: [],
       recette_categorie: CategorieRecherche.dinde_volaille,
+      pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
       tags_excluants: [],

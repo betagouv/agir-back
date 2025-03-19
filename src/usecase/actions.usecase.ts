@@ -178,6 +178,12 @@ export class ActionUsecase {
         recherche_service_id: ServiceRechercheID.recettes,
       });
     }
+    if (action_def.pdcn_categorie) {
+      liste_services.push({
+        categorie: action_def.pdcn_categorie,
+        recherche_service_id: ServiceRechercheID.proximite,
+      });
+    }
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
@@ -297,6 +303,12 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.recette_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
+      });
+    }
+    if (action_def.pdcn_categorie) {
+      liste_services.push({
+        categorie: action_def.pdcn_categorie,
+        recherche_service_id: ServiceRechercheID.proximite,
       });
     }
     if (action_def.lvo_action) {

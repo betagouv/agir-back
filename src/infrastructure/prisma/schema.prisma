@@ -243,6 +243,7 @@ model Action {
   kyc_codes           String[] @default([])
   faq_ids             String[] @default([])
   recette_categorie   String?
+  pdcn_categorie      String?
   lvo_action          String?
   lvo_objet           String?
   tags_excluants      String[] @default([])

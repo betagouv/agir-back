@@ -6,6 +6,7 @@ import {
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Echelle } from '../../../../src/domain/aides/echelle';
+import { CategorieRecherche } from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
@@ -91,6 +92,7 @@ describe('/api/incoming/cms (API test)', () => {
       action_lvo: 'donner',
       type_action: 'quizz',
       categorie_recettes: 'vegan',
+      categorie_pdcn: CategorieRecherche.circuit_court,
       sources: [{ libelle: 'haha', lien: 'hoho' }],
       quizzes: [
         {
@@ -1029,6 +1031,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
+    expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
     expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 

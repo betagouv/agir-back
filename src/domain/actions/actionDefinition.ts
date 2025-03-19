@@ -34,6 +34,7 @@ export class ActionDefinitionData {
   lvo_objet: string;
   quizz_ids: string[];
   recette_categorie: CategorieRecherche;
+  pdcn_categorie: CategorieRecherche;
   type: TypeAction;
   thematique: Thematique;
   tags_excluants: TagExcluant[];

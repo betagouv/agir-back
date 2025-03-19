@@ -623,6 +623,10 @@ describe('Actions (API test)', () => {
           recherche_service_id: 'recettes',
         },
         {
+          categorie: 'zero_dechet',
+          recherche_service_id: 'proximite',
+        },
+        {
           categorie: 'emprunter',
           recherche_service_id: 'longue_vie_objets',
         },
@@ -840,6 +844,10 @@ describe('Actions (API test)', () => {
         {
           categorie: 'dinde_volaille',
           recherche_service_id: 'recettes',
+        },
+        {
+          categorie: 'zero_dechet',
+          recherche_service_id: 'proximite',
         },
         {
           categorie: 'emprunter',

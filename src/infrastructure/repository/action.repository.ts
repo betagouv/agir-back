@@ -92,6 +92,7 @@ export class ActionRepository {
       type_code_id: action.getTypeCodeId(),
       tags_excluants: action.tags_excluants,
       sources: action.sources as any,
+      pdcn_categorie: action.pdcn_categorie,
 
       created_at: undefined,
       updated_at: undefined,
@@ -228,6 +229,7 @@ export class ActionRepository {
       lvo_objet: action.lvo_objet,
       quizz_ids: action.quizz_ids,
       recette_categorie: CategorieRecherche[action.recette_categorie],
+      pdcn_categorie: CategorieRecherche[action.pdcn_categorie],
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
       quizz_felicitations: action.quizz_felicitations,
