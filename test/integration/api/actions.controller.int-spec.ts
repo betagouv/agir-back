@@ -16,6 +16,7 @@ import { CompteurActionsRepository } from '../../../src/infrastructure/repositor
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -27,6 +28,7 @@ describe('Actions (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
@@ -1087,6 +1089,9 @@ describe('Actions (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
     });
+
+    await quizzRepository.loadCache();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/actions/quizz/123',

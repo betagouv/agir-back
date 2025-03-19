@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { Aide as AideDB } from '@prisma/client';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Echelle } from '../../domain/aides/echelle';
@@ -19,7 +20,40 @@ export type AideFilter = {
 
 @Injectable()
 export class AideRepository {
-  constructor(private prisma: PrismaService) {}
+  private static catalogue_aides: Map<string, AideDefinition>;
+
+  constructor(private prisma: PrismaService) {
+    AideRepository.catalogue_aides = new Map();
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    try {
+      await this.loadCache();
+    } catch (error) {
+      console.error(
+        `Error loading Aides definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+  }
+
+  @Cron('* * * * *')
+  public async loadCache() {
+    const new_map: Map<string, AideDefinition> = new Map();
+    const liste_aides = await this.prisma.aide.findMany();
+    for (const aide of liste_aides) {
+      new_map.set(aide.content_id, this.buildAideFromDB(aide));
+    }
+    AideRepository.catalogue_aides = new_map;
+  }
+
+  public static resetCache() {
+    // FOR TEST ONLY
+    AideRepository.catalogue_aides = new Map();
+  }
+
+  public getAide(cms_id: string): AideDefinition {
+    return AideRepository.catalogue_aides.get(cms_id);
+  }
 
   async upsert(aide: AideDefinition): Promise<void> {
     const data: AideDB = {
@@ -50,7 +84,7 @@ export class AideRepository {
     return result === 1;
   }
 
-  async getByContentId(content_id: string): Promise<AideDefinition> {
+  async getByContentIdFromDB(content_id: string): Promise<AideDefinition> {
     const result = await this.prisma.aide.findUnique({
       where: { content_id: content_id },
     });

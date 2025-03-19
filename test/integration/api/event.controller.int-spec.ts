@@ -11,6 +11,7 @@ import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFe
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -18,6 +19,7 @@ describe('EVENT (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   const missions_article: MissionsUtilisateur_v1 = {
     version: 1,
@@ -218,6 +220,8 @@ describe('EVENT (API test)', () => {
       content_id: '1',
       points: 5,
     });
+
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(

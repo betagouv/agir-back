@@ -8,6 +8,9 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
   article?: ArticleDefinition;
+  premier_coup_ok?: boolean;
+  date_premier_coup?: Date;
+  like_level?: number;
 
   constructor(data: QuizzDefinition) {
     super();

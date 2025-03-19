@@ -76,7 +76,7 @@ model AideCopy {
   cms_id          String
   user_id         String
   titre           String
-  thematique      String
+  thematiques     String[]
   vue_le          DateTime? @db.Timestamptz(3)
   clicked_infos   Boolean?
   clicked_demande Boolean?

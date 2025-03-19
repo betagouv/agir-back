@@ -37,6 +37,7 @@ import { ArticleRepository } from '../../../src/infrastructure/repository/articl
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -72,6 +73,7 @@ describe('Admin (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -1809,6 +1811,8 @@ describe('Admin (API test)', () => {
       content_id: 'id-quiz-2',
       titre: 'Question quiz 2',
     });
+
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/admin/quiz-statistique');

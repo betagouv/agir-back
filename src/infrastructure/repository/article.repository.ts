@@ -41,7 +41,7 @@ export class ArticleRepository {
       await this.loadCache();
     } catch (error) {
       console.error(
-        `Error loading partenaires definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+        `Error loading article definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
       );
     }
   }

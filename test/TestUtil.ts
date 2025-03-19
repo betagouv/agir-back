@@ -68,6 +68,7 @@ import { CMSModel } from '../src/infrastructure/api/types/cms/CMSModels';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import { PrismaServiceStat } from '../src/infrastructure/prisma/stats/prisma.service.stats';
 import { ActionRepository } from '../src/infrastructure/repository/action.repository';
+import { AideRepository } from '../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../src/infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../src/infrastructure/repository/compteurActions.repository';
@@ -77,6 +78,7 @@ import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
@@ -252,6 +254,8 @@ export class TestUtil {
     PartenaireRepository.resetCache();
     ServiceFavorisStatistiqueRepository.resetCache();
     ThematiqueRepository.resetCache();
+    AideRepository.resetCache();
+    QuizzRepository.resetCache();
   }
 
   static getDate(date: string) {
