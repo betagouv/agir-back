@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { App } from '../../domain/app';
 const url = require('url');
 
-const APP_SCOPES = 'openid email given_name family_name birthdate';
+const APP_SCOPES = 'openid email given_name birthdate';
 const EIDAS_LEVEL = 'eidas1';
 
 export type FCUserInfo = {
