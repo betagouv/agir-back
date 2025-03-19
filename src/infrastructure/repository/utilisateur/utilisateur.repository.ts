@@ -27,6 +27,15 @@ import { DefiRepository } from '../defi.repository';
 import { KycRepository } from '../kyc.repository';
 import { MissionRepository } from '../mission.repository';
 
+export type UserFilter = {
+  created_after?: Date;
+  is_active?: boolean;
+  max_number?: number;
+  code_postal?: string;
+  migration_enabled?: boolean;
+  max_version_excluded?: number;
+  has_mobile_push_notif_token?: boolean;
+};
 const OMIT_ALL_CONFIGURATION_JSON = {
   gamification: true,
   history: true,
@@ -316,10 +325,13 @@ export class UtilisateurRepository {
     skip: number,
     take: number,
     scopes: Scope[],
+    filter: UserFilter,
   ): Promise<Utilisateur[]> {
     if (scopes.includes(Scope.ALL)) {
       scopes = Object.values(Scope);
     }
+    const where = this.buildWhereQuertPart(filter);
+
     const results = await this.prisma.utilisateur.findMany({
       skip: skip,
       take: take,
@@ -327,50 +339,55 @@ export class UtilisateurRepository {
       orderBy: {
         id: 'desc',
       },
+      where: where,
     });
     return results.map((r) => this.buildUtilisateurFromDB(r));
   }
 
-  async listUtilisateurIds(filter: {
-    created_after?: Date;
-    is_active?: boolean;
-    max_number?: number;
-    code_postal?: string;
-    migration_enabled?: boolean;
-    max_version_excluded?: number;
-  }): Promise<string[]> {
+  async listUtilisateurIds(filter: UserFilter): Promise<string[]> {
+    const where = this.buildWhereQuertPart(filter);
     let query = {
       select: {
         id: true,
       },
-      where: {} as any,
+      where: where,
     };
+    const result = await this.prisma.utilisateur.findMany(query);
+
+    return result.map((elem) => elem['id']);
+  }
+
+  private buildWhereQuertPart(filter: UserFilter): any {
+    const result = {} as any;
     if (filter.created_after) {
-      query['where'].created_at = {
+      result.created_at = {
         gte: filter.created_after,
       };
     }
     if (filter.is_active) {
-      query['where'].active_account = true;
+      result.active_account = true;
     }
     if (filter.migration_enabled) {
-      query['where'].migration_enabled = true;
+      result.migration_enabled = true;
     }
     if (filter.max_version_excluded) {
-      query['where'].version = { lt: filter.max_version_excluded };
+      result.version = { lt: filter.max_version_excluded };
     }
     if (filter.max_number) {
-      query['take'] = filter.max_number;
+      result['take'] = filter.max_number;
     }
     if (filter.code_postal) {
-      query['where'].logement = {
+      result.logement = {
         path: ['code_postal'],
         equals: filter.code_postal,
       };
     }
-    const result = await this.prisma.utilisateur.findMany(query);
-
-    return result.map((elem) => elem['id']);
+    if (filter.has_mobile_push_notif_token) {
+      result.mobile_token = {
+        not: null,
+      };
+    }
+    return result;
   }
 
   async listUtilisateurIdsToCreateInBrevo(max?: number): Promise<string[]> {

@@ -482,6 +482,7 @@ export class ActionUsecase {
           index,
           block_size,
           [Scope.thematique_history],
+          {},
         );
 
       for (const user of current_user_list) {

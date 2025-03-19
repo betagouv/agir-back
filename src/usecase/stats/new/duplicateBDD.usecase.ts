@@ -22,6 +22,7 @@ export class DuplicateBDDForStatsUsecase {
           index,
           block_size,
           [Scope.logement, Scope.gamification],
+          {},
         );
 
       for (const user of current_user_list) {
@@ -47,6 +48,7 @@ export class DuplicateBDDForStatsUsecase {
           index,
           block_size,
           [Scope.kyc],
+          {},
         );
 
       for (const user of current_user_list) {

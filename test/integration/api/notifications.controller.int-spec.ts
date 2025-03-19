@@ -69,34 +69,6 @@ describe('Notifications (API test)', () => {
     ]);
   });
 
-  it(`POST /notifications/email/send_notifications n'envoie pas le welcome`, async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
-    await TestUtil.create(DB.utilisateur);
-
-    await TestUtil.prisma.utilisateur.update({
-      where: {
-        id: 'utilisateur-id',
-      },
-      data: {
-        created_at: new Date(Date.now() - 1000 * 60 * 20),
-      },
-    });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/notifications/email/send_notifications',
-    );
-
-    // THEN
-    expect(response.status).toBe(201);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.notification_history.sent_notifications).toHaveLength(0);
-  });
-
   it(`POST /notifications/email/send_notifications ,n'envoie  pas le mail late_onboarding si canal email desactivé`, async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

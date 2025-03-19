@@ -1,4 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
+
+export class MessageAPI {
+  notification: {
+    title: string;
+    body: string;
+    image: string;
+  };
+  data: object;
+  token?: string;
+
+  public static buildMessage(message: PushNotificationMessage): MessageAPI {
+    const res: MessageAPI = {
+      notification: {
+        title: message.title,
+        body: message.body,
+        image: message.image_url,
+      },
+      data: message.data,
+    };
+    if (message.token) {
+      res.token = message.token;
+    }
+    return res;
+  }
+}
 
 @Injectable()
 export class PushNotificator {
@@ -37,41 +63,26 @@ export class PushNotificator {
     this.messaging_service = this.admin_firebase.messaging();
   }
 
-  public async pushMessage(
-    titre: string,
-    body: string,
-    image_url: string,
-    data: object,
-    user_token: string,
-  ) {
+  public async pushMessage(message: PushNotificationMessage): Promise<boolean> {
     if (!this.messaging_service) {
       console.error(
         'Service de push notification non initialisé correctement !',
       );
-      return;
+      return false;
     }
 
-    const message = {
-      notification: {
-        title: titre,
-        body: body,
-        image: image_url,
-      },
-      data: data,
-    };
-
-    if (user_token) {
-      message['token'] = user_token;
-    }
+    const payload = MessageAPI.buildMessage(message);
 
     try {
-      const response = await this.messaging_service.send(message);
+      const response = await this.messaging_service.send(payload);
       console.log(response);
+      return true;
     } catch (error) {
       console.log(
-        `Error sending push notification to token : ${user_token}`,
+        `Error sending push notification to token : ${message.token}`,
         error,
       );
+      return false;
     }
   }
 }

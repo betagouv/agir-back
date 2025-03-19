@@ -4,6 +4,8 @@ import {
   Notification_v0,
 } from '../object_store/notification/NotificationHistory_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { EmailScheduler } from './emailScheduler';
+import { MobileScheduler } from './mobileScheduler';
 
 const minute_10 = 10 * 60 * 1000;
 const jour_1 = 24 * 60 * 60 * 1000;
@@ -12,7 +14,7 @@ const jour_8 = jour_1 * 8;
 const jour_10 = jour_1 * 10;
 const jour_30 = jour_1 * 30;
 
-export enum TypeNotification {
+export enum EmailNotification {
   email_existing_account = 'email_existing_account',
   inscription_code = 'inscription_code',
   change_mot_de_passe_code = 'change_mot_de_passe_code',
@@ -21,6 +23,13 @@ export enum TypeNotification {
   late_onboarding = 'late_onboarding',
   waiting_action = 'waiting_action',
 }
+
+export enum MobileNotification {
+  mobile_inscription_J2 = 'mobile_inscription_J2',
+}
+export const TypeNotification = { ...EmailNotification, ...MobileNotification };
+export type TypeNotification = EmailNotification | MobileNotification;
+
 export enum CanalNotification {
   email = 'email',
   mobile = 'mobile',
@@ -56,6 +65,9 @@ export class NotificationHistory {
   public isCanalEnabled(canal: CanalNotification): boolean {
     return this.enabled_canals.includes(canal);
   }
+  public isCanalDisabled(canal: CanalNotification): boolean {
+    return !this.enabled_canals.includes(canal);
+  }
   public disableCanal(canal: CanalNotification) {
     this.enabled_canals = this.enabled_canals.filter((n) => n != canal);
   }
@@ -82,50 +94,29 @@ export class NotificationHistory {
     );
   }
 
-  public isWelcomeEmailToSend(utilisateur: Utilisateur): boolean {
-    if (!this.isNotificationActive(TypeNotification.welcome)) {
-      return false;
-    }
-
-    if (!this.was_sent(TypeNotification.welcome)) {
-      const age = this.getAgeCreationUtilisateur(utilisateur);
-      return age > minute_10 && age < jour_30 && utilisateur.active_account;
-    }
-    return false;
-  }
-
-  getNouvellesNotificationsAPousser(
-    canal: CanalNotification,
+  public getNouvellesNotificationsMobileAPousser(
     utilisateur: Utilisateur,
-  ): TypeNotification[] {
-    if (canal === CanalNotification.mobile) {
-      return [];
-    }
-
-    const result = [];
-
-    this.addWaitingActionIfEligible(result, utilisateur);
-
-    return result.filter((n) => this.isNotificationActive(n));
-  }
-
-  private addWaitingActionIfEligible(
-    encours: TypeNotification[],
-    utilisateur: Utilisateur,
-  ) {
-    if (!this.was_sent(TypeNotification.waiting_action)) {
-      const plus_vieux_defi_encours =
-        utilisateur.defi_history.getPlusVieuxDefiEnCours();
-
-      if (
-        utilisateur.active_account &&
-        plus_vieux_defi_encours &&
-        Date.now() - plus_vieux_defi_encours.date_acceptation.getTime() >
-          jour_10
-      ) {
-        encours.push(TypeNotification.waiting_action);
+  ): MobileNotification[] {
+    const result: MobileNotification[] = [];
+    for (let notification in MobileNotification) {
+      const notif = MobileNotification[notification];
+      if (MobileScheduler.estNotificationEligible(notif, utilisateur)) {
+        result.push(notif);
       }
     }
+    return result.filter((n) => this.isNotificationActive(n));
+  }
+  public getNouvellesNotificationsEmailAPousser(
+    utilisateur: Utilisateur,
+  ): EmailNotification[] {
+    const result: EmailNotification[] = [];
+    for (let notification in EmailNotification) {
+      const notif = EmailNotification[notification];
+      if (EmailScheduler.estNotificationEligible(notif, utilisateur)) {
+        result.push(notif);
+      }
+    }
+    return result.filter((n) => this.isNotificationActive(n));
   }
 
   private getAgeCreationUtilisateur(utilisateur: Utilisateur): number {

@@ -62,6 +62,7 @@ import { EmailTemplateRepository } from './infrastructure/email/emailTemplate.re
 import { NGCCalculator } from './infrastructure/ngc/NGCCalculator';
 import { Personnalisator } from './infrastructure/personnalisation/personnalisator';
 import { PrismaServiceStat } from './infrastructure/prisma/stats/prisma.service.stats';
+import { PushNotificationTemplateRepository } from './infrastructure/push_notifications/pushNotificationTemplate.repository';
 import { PushNotificator } from './infrastructure/push_notifications/pushNotificator';
 import { ActionRepository } from './infrastructure/repository/action.repository';
 import { AideRepository } from './infrastructure/repository/aide.repository';
@@ -127,6 +128,7 @@ import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MailerUsecase } from './usecase/mailer.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { MissionUsecase } from './usecase/mission.usecase';
+import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
@@ -311,6 +313,8 @@ function getControllers(): any[] {
     StatistiqueExternalRepository,
     CompteurActionsRepository,
     CmsPreviewUsecase,
+    PushNotificationTemplateRepository,
+    NotificationMobileUsecase,
   ],
 })
 export class AppModule {}

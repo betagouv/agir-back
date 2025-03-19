@@ -236,6 +236,10 @@ export class Utilisateur extends UtilisateurData {
     return this.source_inscription === SourceInscription.web_ngc;
   }
 
+  public isMobileNotificationSet(): boolean {
+    return !!this.mobile_token;
+  }
+
   private static generateEmailToken(): string {
     return crypto.randomUUID();
   }
