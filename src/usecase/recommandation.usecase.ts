@@ -36,18 +36,39 @@ export class RecommandationUsecase {
   async listRecommandationsV2(
     utilisateurId: string,
     thematique?: Thematique,
+    nombre: number = 6,
+    types: ContentType[] = [
+      ContentType.article,
+      ContentType.quizz,
+      ContentType.kyc,
+    ],
   ): Promise<Recommandation[]> {
+    let scope = [Scope.history_article_quizz_aides, Scope.logement];
+    if (types.length === 0) {
+      types = [ContentType.article, ContentType.quizz, ContentType.kyc];
+    }
+    if (types.includes(ContentType.kyc)) {
+      scope.push(Scope.kyc);
+    }
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.history_article_quizz_aides, Scope.logement],
+      scope,
     );
     Utilisateur.checkState(utilisateur);
 
-    const articles = await this.getArticles(utilisateur, thematique);
+    let articles: Recommandation[] = [];
+    let quizzes: Recommandation[] = [];
+    let kycs: Recommandation[] = [];
 
-    const quizzes = await this.getQuizzes(utilisateur, 10, thematique);
-
-    let kycs = await this.getKYC(utilisateur, thematique);
+    if (types.includes(ContentType.article)) {
+      articles = await this.getArticles(utilisateur, thematique);
+    }
+    if (types.includes(ContentType.quizz)) {
+      quizzes = await this.getQuizzes(utilisateur, 10, thematique);
+    }
+    if (types.includes(ContentType.kyc)) {
+      kycs = await this.getKYC(utilisateur, thematique);
+    }
 
     if (kycs.length > 0) {
       PonderationApplicativeManager.sortContent(kycs);
@@ -61,7 +82,7 @@ export class RecommandationUsecase {
 
     PonderationApplicativeManager.sortContent(content);
 
-    content = content.slice(0, 6);
+    content = content.slice(0, nombre);
 
     return this.personnalisator.personnaliser(content, utilisateur, [
       CLE_PERSO.block_text_cms,
@@ -106,14 +127,9 @@ export class RecommandationUsecase {
       est_lu: true,
     });
 
-    const code_commune = await this.communeRepository.getCodeCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
-
     const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
-        utilisateur.logement.code_postal,
+      await this.communeRepository.findDepartementRegionByCodeCommune(
+        utilisateur.code_commune,
       );
 
     const filtre: ArticleFilter = {
@@ -121,7 +137,7 @@ export class RecommandationUsecase {
       exclude_ids: articles_lus,
       categorie: Categorie.recommandation,
       date: new Date(),
-      code_commune: code_commune ? code_commune : undefined,
+      code_commune: utilisateur.code_commune,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     };

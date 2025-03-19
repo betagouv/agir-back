@@ -177,7 +177,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      logement: { version: 0, code_postal: '21000', commune: 'DIJON' },
+      logement: {},
+      code_commune: '21231',
     });
     await TestUtil.create(DB.article, {
       content_id: '1',
@@ -697,5 +698,86 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
 
     expect(response.body).toHaveLength(0);
+  });
+
+  it('GET /utilisateurs/id/recommandations_v3 - que des articles si filtre articles seuls', async () => {
+    // GIVEN
+    process.env.DEFI_ENABLED = 'true';
+    process.env.KYC_RECO_ENABLED = 'true';
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._1,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      categorie: Categorie.recommandation,
+      points: 10,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      thematique: Thematique.consommation,
+      reponses: [
+        { label: 'AAA', code: Thematique.climat },
+        { label: 'BBB', code: Thematique.logement },
+        { label: 'CCC', code: Thematique.alimentation },
+        { label: 'DDD', code: Thematique.transport },
+      ],
+      tags: [Tag.R6],
+    });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      question: `question hors recos`,
+      thematique: Thematique.consommation,
+      reponses: [{ label: 'AAA', code: Thematique.climat }],
+      tags: [Tag.R6, Tag.R1],
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '11',
+      codes_postaux: [],
+      rubrique_ids: ['1'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '44',
+      codes_postaux: [],
+      rubrique_ids: ['4'],
+    });
+    await articleRepository.loadCache();
+
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations_v3?type=article',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('44');
+  });
+
+  it('GET /utilisateurs/id/recommandations_v3 - nombre max de résultats', async () => {
+    // GIVEN
+    process.env.KYC_RECO_ENABLED = 'true';
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.article, { content_id: '1' });
+    await TestUtil.create(DB.article, { content_id: '2' });
+    await TestUtil.create(DB.article, { content_id: '3' });
+    await TestUtil.create(DB.article, { content_id: '4' });
+    await TestUtil.create(DB.article, { content_id: '5' });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations_v3?nombre_max=3',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(3);
   });
 });

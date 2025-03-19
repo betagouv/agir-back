@@ -679,6 +679,10 @@ export class ApplicationError {
     );
   }
 
+  static throwContentTypeNotFound(type: string) {
+    this.throwAppError('127', `Content type [${type}] inconnu`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

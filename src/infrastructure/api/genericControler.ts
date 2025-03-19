@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { App } from '../../../src/domain/app';
 import { Consultation } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { ContentType } from '../../domain/contenu/contentType';
 import { IncludeArticle } from '../../domain/contenu/includeArticle';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
@@ -58,6 +59,14 @@ export class GenericControler {
     }
     return thematique;
   }
+  public castContentTypeOrException(code_type: string): ContentType {
+    const type = ContentType[code_type];
+    if (!type) {
+      ApplicationError.throwContentTypeNotFound(code_type);
+    }
+    return type;
+  }
+
   public castTypeActionOrException(type_action: string): TypeAction {
     const type = TypeAction[type_action];
     if (!type) {
