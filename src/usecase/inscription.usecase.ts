@@ -17,7 +17,7 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { MailerUsecase } from './mailer.usecase';
+import { NotificationEmailUsecase } from './notificationEmail.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -31,7 +31,7 @@ export class InscriptionUsecase {
     private securityEmailManager: SecurityEmailManager,
     private codeManager: CodeManager,
     private situationNGCRepository: SituationNGCRepository,
-    private mailerUsecase: MailerUsecase,
+    private mailerUsecase: NotificationEmailUsecase,
     private tokenRepository: TokenRepository,
   ) {}
 

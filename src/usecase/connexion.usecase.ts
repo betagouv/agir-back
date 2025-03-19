@@ -12,7 +12,7 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { FranceConnectUsecase } from './franceConnect.usecase';
-import { MailerUsecase } from './mailer.usecase';
+import { NotificationEmailUsecase } from './notificationEmail.usecase';
 
 @Injectable()
 export class Connexion_v2_Usecase {
@@ -21,7 +21,7 @@ export class Connexion_v2_Usecase {
     private codeManager: CodeManager,
     private securityEmailManager: SecurityEmailManager,
     private passwordManager: PasswordManager,
-    private mailerUsecase: MailerUsecase,
+    private mailerUsecase: NotificationEmailUsecase,
     private franceConnectUsecase: FranceConnectUsecase,
     private tokenRepository: TokenRepository,
   ) {}

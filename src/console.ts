@@ -6,7 +6,7 @@ import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
-import { MailerUsecase } from './usecase/mailer.usecase';
+import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
@@ -134,7 +134,7 @@ async function bootstrap() {
       start_time = Date.now();
       console.log(`START send_notifications ${start_time}`);
       const result_email = await application
-        .get(MailerUsecase)
+        .get(NotificationEmailUsecase)
         .envoyerEmailsAutomatiques();
       console.log(
         `STOP send_notifications after ${Date.now() - start_time} ms`,
@@ -167,7 +167,7 @@ async function bootstrap() {
       start_time = Date.now();
       console.log(`START send_welcomes ${start_time}`);
       const result_send_welcomes = await application
-        .get(MailerUsecase)
+        .get(NotificationEmailUsecase)
         .envoyerEmailsWelcome();
       console.log(`STOP send_welcomes after ${Date.now() - start_time} ms`);
       console.log(result_send_welcomes);

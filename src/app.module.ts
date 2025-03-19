@@ -125,9 +125,9 @@ import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
-import { MailerUsecase } from './usecase/mailer.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { MissionUsecase } from './usecase/mission.usecase';
+import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
@@ -289,7 +289,7 @@ function getControllers(): any[] {
     DistancesRepository,
     Connexion_v2_Usecase,
     EmailTemplateRepository,
-    MailerUsecase,
+    NotificationEmailUsecase,
     LongueVieObjetsRepository,
     NewServiceCatalogue,
     PartenaireRepository,

@@ -31,8 +31,8 @@ import { AidesUsecase } from '../../usecase/aides.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
-import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { MissionUsecase } from '../../usecase/mission.usecase';
+import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
@@ -73,7 +73,7 @@ export class AdminController extends GenericControler {
     private missionStatistiqueUsecase: MissionStatistiqueUsecase,
     private missionUsecase: MissionUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
-    private mailerUsecase: MailerUsecase,
+    private mailerUsecase: NotificationEmailUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {

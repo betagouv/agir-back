@@ -14,7 +14,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 const day_10 = 1000 * 60 * 60 * 24 * 10;
 
 @Injectable()
-export class MailerUsecase {
+export class NotificationEmailUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private emailTemplateRepository: EmailTemplateRepository,
