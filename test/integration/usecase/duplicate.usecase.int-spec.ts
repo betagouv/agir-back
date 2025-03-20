@@ -1,10 +1,17 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { StatistiqueExternalRepository } from '../../../src/infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DuplicateBDDForStatsUsecase } from '../../../src/usecase/stats/new/duplicateBDD.usecase';
@@ -37,10 +44,18 @@ describe('Duplicate Usecase', () => {
     TestUtil.prisma_stats,
   );
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const aideRepository = new AideRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   let duplicateUsecase = new DuplicateBDDForStatsUsecase(
     utilisateurRepository,
     statistiqueExternalRepository,
+    actionRepository,
+    articleRepository,
+    aideRepository,
+    quizzRepository,
   );
 
   beforeAll(async () => {
@@ -332,5 +347,205 @@ describe('Duplicate Usecase', () => {
 
     const kycDB = stats_kycs[0];
     expect(kycDB.reponse_texte).toEqual('hello');
+  });
+
+  it('duplicateAction : copy ok action utilisateur', async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(123),
+          vue_le: new Date(456),
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      cms_id: '1',
+      code: '1',
+      thematique: Thematique.alimentation,
+      titre: 'yo',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateAction();
+
+    // THEN
+    const stats_actions = await TestUtil.prisma_stats.actionCopy.findMany();
+
+    expect(stats_actions).toHaveLength(1);
+
+    const actionDB = stats_actions[0];
+    expect(actionDB).toEqual({
+      cms_id: '1',
+      code_action: '1',
+      faite_le: new Date(123),
+      thematique: 'alimentation',
+      titre: 'yo',
+      type_action: 'classique',
+      type_code_id: 'classique_1',
+      user_id: '123',
+      vue_le: new Date(456),
+    });
+  });
+  it('duplicateArticle : copy ok articles utilisateur', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [],
+      quizz_interactions: [],
+      article_interactions: [
+        {
+          content_id: '1',
+          like_level: 2,
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      soustitre: 'sousTitre',
+      thematique_principale: Thematique.climat,
+      thematiques: [Thematique.climat, Thematique.logement],
+      points: 10,
+      image_url: 'https://',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateArticle();
+
+    // THEN
+    const stats = await TestUtil.prisma_stats.articleCopy.findMany();
+
+    expect(stats).toHaveLength(1);
+
+    const stat = stats[0];
+    expect(stat).toEqual({
+      cms_id: '1',
+      est_favoris: true,
+      like_level: 2,
+      lu_le: new Date(123),
+      thematique: 'climat',
+      titre: 'titreA',
+      user_id: '123',
+    });
+  });
+
+  it('duplicateAide : copy ok aides utilisateur', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [
+        {
+          clicked_demande: true,
+          clicked_infos: false,
+          vue_at: new Date(123),
+          content_id: '1',
+          deroulee_at: null,
+        },
+      ],
+      quizz_interactions: [],
+      article_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      titre: 'titreA',
+      thematiques: [Thematique.climat, Thematique.logement],
+    });
+    await aideRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateAides();
+
+    // THEN
+    const stats = await TestUtil.prisma_stats.aideCopy.findMany();
+
+    expect(stats).toHaveLength(1);
+
+    const stat = stats[0];
+    expect(stat).toEqual({
+      clicked_demande: true,
+      clicked_infos: false,
+      cms_id: '1',
+      thematiques: ['climat', 'logement'],
+      titre: 'titreA',
+      user_id: '123',
+      vue_le: new Date(123),
+    });
+  });
+
+  it('duplicateQuizz : copy ok quizz utilisateur', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [],
+      quizz_interactions: [
+        {
+          content_id: '1',
+          like_level: 2,
+          points_en_poche: true,
+          attempts: [
+            {
+              score: 100,
+              date: new Date(123),
+            },
+          ],
+        },
+      ],
+      article_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.quizz, {
+      content_id: '1',
+      titre: 'titreA',
+      thematique_principale: Thematique.climat,
+    });
+    await quizzRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateQuizz();
+
+    // THEN
+    const stats = await TestUtil.prisma_stats.quizzCopy.findMany();
+
+    expect(stats).toHaveLength(1);
+
+    const stat = stats[0];
+    expect(stat).toEqual({
+      bon_premier_coup: true,
+      cms_id: '1',
+      date_premier_coup: new Date(123),
+      like_level: 2,
+      thematique: 'climat',
+      titre: 'titreA',
+      user_id: '123',
+    });
   });
 });

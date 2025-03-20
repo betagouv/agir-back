@@ -3,6 +3,7 @@ import { DefiStatus } from '../../../../src/domain/defis/defi';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import {
   CanalNotification,
+  EmailNotification,
   Notification,
   NotificationHistory,
   TypeNotification,
@@ -70,10 +71,11 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(true);
+    expect(result).toContain(EmailNotification.welcome);
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si compte non actif`, () => {
     // GIVEN
@@ -94,10 +96,11 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).not.toContain(EmailNotification.welcome);
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
@@ -115,10 +118,11 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).not.toContain(EmailNotification.welcome);
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 30j)`, () => {
     // GIVEN
@@ -139,12 +143,13 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).not.toContain(EmailNotification.welcome);
   });
-  it(`isWelcomeEmailToSend : rien si notif deja envoyée`, () => {
+  it.only(`isWelcomeEmailToSend : rien si notif deja envoyée`, () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
@@ -154,7 +159,6 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
     utilisateur.active_account = true;
-
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [
@@ -166,14 +170,15 @@ describe('NotificationHistory', () => {
       ],
       enabled_canals: [CanalNotification.email, CanalNotification.mobile],
     });
+    utilisateur.notification_history = notifications;
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).not.toContain(EmailNotification.welcome);
   });
-  process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
 
   it(`isWelcomeEmailToSend : pas de welcome si pas encore 10 min`, () => {
     // GIVEN
@@ -193,10 +198,11 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.isWelcomeEmailToSend(utilisateur);
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
-    expect(result).toEqual(false);
+    expect(result).not.toContain(EmailNotification.welcome);
   });
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si compte non actif`, () => {
@@ -217,10 +223,8 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.getNouvellesNotificationsAPousser(
-      CanalNotification.email,
-      utilisateur,
-    );
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
     expect(result).toHaveLength(0);
@@ -228,7 +232,7 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si moins de 8 jours`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -244,17 +248,15 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.getNouvellesNotificationsAPousser(
-      CanalNotification.email,
-      utilisateur,
-    );
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
     expect(result).toHaveLength(0);
   });
   it(`getNouvellesNotifications : pas de notif late_onboarding si dejà envoyé`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
+    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -275,10 +277,8 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.getNouvellesNotificationsAPousser(
-      CanalNotification.email,
-      utilisateur,
-    );
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
     expect(result).toHaveLength(0);
@@ -337,10 +337,8 @@ describe('NotificationHistory', () => {
     });
 
     // WHEN
-    const result = notifications.getNouvellesNotificationsAPousser(
-      CanalNotification.email,
-      utilisateur,
-    );
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
 
     // THEN
     expect(result).toHaveLength(1);

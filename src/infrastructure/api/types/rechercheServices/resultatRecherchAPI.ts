@@ -1,11 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CategorieRechercheManager } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { Day } from '../../../../domain/bibliotheque_services/types/days';
 import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
-import {
-  CategorieRecherche,
-  CategorieRechercheManager,
-} from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 
 export class OpenHourAPI {
   @ApiProperty({ enum: Day }) jour: Day;
@@ -38,6 +35,12 @@ export class ResultatRechercheAPI {
   @ApiProperty() temps_prepa_min: number;
   @ApiProperty() distance_metres: number;
   @ApiProperty() image_url: string;
+  @ApiProperty({
+    description: 'Fallback image url in case the image_url is not available',
+    type: String,
+    required: false,
+  })
+  fallback_image_url: string | undefined;
   @ApiProperty() emoji: string;
   @ApiProperty({ enum: FruitLegume }) type_fruit_legume: FruitLegume;
 
@@ -70,6 +73,7 @@ export class ResultatRechercheAPI {
       temps_prepa_min: res.temps_prepa_min,
       distance_metres: res.distance_metres,
       image_url: res.image_url,
+      fallback_image_url: res.fallback_image_url,
       emoji: res.emoji,
       type_fruit_legume: res.type_fruit_legume,
       commitment: res.commitment,

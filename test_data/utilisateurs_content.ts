@@ -9,7 +9,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -27,7 +26,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -45,7 +43,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -63,7 +60,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -85,7 +81,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -103,7 +98,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -121,7 +115,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -139,7 +132,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -157,7 +149,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -175,7 +166,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },
@@ -193,7 +183,6 @@ const utilisateurs = {
     mot_de_passe: 'haha',
     revenu_fiscal: null,
     parts: null,
-    version: 11,
     gamification: {
       points: 0,
     },

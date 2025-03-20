@@ -19,6 +19,23 @@ import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
+export type EnchainementRecap = {
+  enchainement_mini_bilan: QuestionKYC[];
+  enchainement_transport: QuestionKYC[];
+  enchainement_logement: QuestionKYC[];
+  enchainement_conso: QuestionKYC[];
+  enchainement_alimentation: QuestionKYC[];
+
+  enchainement_transport_progression: { current: number; target: number };
+  enchainement_logement_progression: { current: number; target: number };
+  enchainement_conso_progression: { current: number; target: number };
+  enchainement_alimentation_progression: { current: number; target: number };
+  enchainement_minibilan_progression: { current: number; target: number };
+
+  pourcentage_prog_totale: number;
+  pourcentage_prog_totale_sans_mini_bilan: number;
+};
+
 @Injectable()
 export class BilanCarboneUsecase {
   constructor(
@@ -139,14 +156,14 @@ export class BilanCarboneUsecase {
     ].concat(error_liste);
   }
 
-  private async computeBilanComplet(utilisateur: Utilisateur): Promise<{
-    bilan_complet: BilanCarbone;
-    bilan_synthese: BilanCarboneSynthese;
-  }> {
+  public external_build_enchainement_bilan_recap(
+    utilisateur: Utilisateur,
+  ): EnchainementRecap {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
       );
+
     const enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'],
@@ -164,9 +181,6 @@ export class BilanCarboneUsecase {
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
       );
 
-    const enchainement_minibilan_progression = QuestionKYC.getProgression(
-      enchainement_mini_bilan,
-    );
     const enchainement_transport_progression = QuestionKYC.getProgression(
       enchainement_transport,
     );
@@ -177,6 +191,9 @@ export class BilanCarboneUsecase {
       QuestionKYC.getProgression(enchainement_conso);
     const enchainement_alimentation_progression = QuestionKYC.getProgression(
       enchainement_alimentation,
+    );
+    const enchainement_minibilan_progression = QuestionKYC.getProgression(
+      enchainement_mini_bilan,
     );
 
     const pourcentage_prog_totale = Math.round(
@@ -193,6 +210,40 @@ export class BilanCarboneUsecase {
         100,
     );
 
+    const pourcentage_prog_totale_sans_mini_bilan = Math.round(
+      ((enchainement_transport_progression.current +
+        enchainement_logement_progression.current +
+        enchainement_conso_progression.current +
+        enchainement_alimentation_progression.current) /
+        (enchainement_transport_progression.target +
+          enchainement_logement_progression.target +
+          enchainement_conso_progression.target +
+          enchainement_alimentation_progression.target)) *
+        100,
+    );
+
+    return {
+      enchainement_mini_bilan,
+      enchainement_transport,
+      enchainement_logement,
+      enchainement_conso,
+      enchainement_alimentation,
+      enchainement_transport_progression,
+      enchainement_logement_progression,
+      enchainement_conso_progression,
+      enchainement_alimentation_progression,
+      enchainement_minibilan_progression,
+      pourcentage_prog_totale,
+      pourcentage_prog_totale_sans_mini_bilan,
+    };
+  }
+
+  private async computeBilanComplet(utilisateur: Utilisateur): Promise<{
+    bilan_complet: BilanCarbone;
+    bilan_synthese: BilanCarboneSynthese;
+  }> {
+    const recap = this.external_build_enchainement_bilan_recap(utilisateur);
+
     const bilan_synthese: BilanCarboneSynthese = {
       mini_bilan_dispo: false,
       bilan_complet_dispo: false,
@@ -200,16 +251,17 @@ export class BilanCarboneUsecase {
       impact_logement: this.computeImpactLogement(utilisateur),
       impact_transport: this.computeImpactTransport(utilisateur),
       impact_consommation: this.computeImpactConsommation(utilisateur),
-      pourcentage_completion_totale: pourcentage_prog_totale,
+      pourcentage_completion_totale: recap.pourcentage_prog_totale,
       liens_bilans_thematiques: [
         {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
           thematique: Thematique.transport,
-          nombre_total_question: enchainement_transport_progression.target,
+          nombre_total_question:
+            recap.enchainement_transport_progression.target,
           pourcentage_progression: Math.round(
-            (enchainement_transport_progression.current /
-              enchainement_transport_progression.target) *
+            (recap.enchainement_transport_progression.current /
+              recap.enchainement_transport_progression.target) *
               100,
           ),
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -219,10 +271,11 @@ export class BilanCarboneUsecase {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
           thematique: Thematique.alimentation,
-          nombre_total_question: enchainement_alimentation_progression.target,
+          nombre_total_question:
+            recap.enchainement_alimentation_progression.target,
           pourcentage_progression: Math.round(
-            (enchainement_alimentation_progression.current /
-              enchainement_alimentation_progression.target) *
+            (recap.enchainement_alimentation_progression.current /
+              recap.enchainement_alimentation_progression.target) *
               100,
           ),
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
@@ -232,10 +285,10 @@ export class BilanCarboneUsecase {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
           thematique: Thematique.consommation,
-          nombre_total_question: enchainement_conso_progression.target,
+          nombre_total_question: recap.enchainement_conso_progression.target,
           pourcentage_progression: Math.round(
-            (enchainement_conso_progression.current /
-              enchainement_conso_progression.target) *
+            (recap.enchainement_conso_progression.current /
+              recap.enchainement_conso_progression.target) *
               100,
           ),
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
@@ -245,10 +298,10 @@ export class BilanCarboneUsecase {
           image_url:
             'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
           thematique: Thematique.logement,
-          nombre_total_question: enchainement_logement_progression.target,
+          nombre_total_question: recap.enchainement_logement_progression.target,
           pourcentage_progression: Math.round(
-            (enchainement_logement_progression.current /
-              enchainement_logement_progression.target) *
+            (recap.enchainement_logement_progression.current /
+              recap.enchainement_logement_progression.target) *
               100,
           ),
           id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',

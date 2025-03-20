@@ -24,14 +24,15 @@ import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleSta
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
 import { App } from '../../domain/app';
+import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
-import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { MissionUsecase } from '../../usecase/mission.usecase';
+import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
@@ -72,7 +73,7 @@ export class AdminController extends GenericControler {
     private missionStatistiqueUsecase: MissionStatistiqueUsecase,
     private missionUsecase: MissionUsecase,
     private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
-    private mailerUsecase: MailerUsecase,
+    private mailerUsecase: NotificationEmailUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
@@ -425,16 +426,17 @@ export class AdminController extends GenericControler {
     @Query('token') token?: string,
   ) {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.pushNotificator.pushMessage(
-      titre,
-      'test de test',
-      'https://dummyimage.com/600x400/000/fff',
-      {
+    const message = new PushNotificationMessage({
+      title: titre,
+      body: 'test de test',
+      image_url: 'https://dummyimage.com/600x400/000/fff',
+      data: {
         page_type: 'quiz',
         page_id: '110',
       },
-      token,
-    );
+      token: token,
+    });
+    await this.pushNotificator.pushMessage(message);
   }
 
   @ApiOkResponse({ type: [AideExportAPI] })

@@ -3,6 +3,7 @@ import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
+import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
@@ -263,7 +264,48 @@ export class MigrationUsecase {
   private async migrate_14(
     user_id: string,
     version: number,
+    _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
-    return { ok: false, info: 'to implement' };
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.thematique_history,
+      Scope.core,
+    ]);
+    utilisateur.thematique_history = new ThematiqueHistory();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history, Scope.core],
+    );
+    return {
+      ok: true,
+      info: `personnalisation reset OK`,
+    };
+  }
+  private async migrate_15(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+
+    // DO SOMETHING
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+
+    return {
+      ok: false,
+      info: `to implement`,
+    };
   }
 }

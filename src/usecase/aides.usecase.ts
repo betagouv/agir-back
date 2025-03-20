@@ -62,9 +62,11 @@ export class AidesUsecase {
     const aides_locales: Aide[] = [];
     for (const aide_def of aide_def_liste) {
       if (aide_def.echelle === Echelle.National) {
-        aides_nationales.push(this.setHistoryData(aide_def, utilisateur));
+        aides_nationales.push(
+          this.newAideWithHistoryData(aide_def, utilisateur),
+        );
       } else {
-        aides_locales.push(this.setHistoryData(aide_def, utilisateur));
+        aides_locales.push(this.newAideWithHistoryData(aide_def, utilisateur));
       }
     }
 
@@ -78,13 +80,13 @@ export class AidesUsecase {
   }
 
   async getAideUniqueByIdCMS(cms_id: string): Promise<AideDefinition> {
-    const aide = await this.aideRepository.getByContentId(cms_id);
+    const aide = await this.aideRepository.getAide(cms_id);
 
     if (!aide) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    return this.personnalisator.personnaliser(aide);
+    return this.personnalisator.personnaliser({ ...aide });
   }
 
   async getAideUniqueUtilisateurByIdCMS(
@@ -97,13 +99,13 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_def = await this.aideRepository.getByContentId(cms_id);
+    const aide_def = await this.aideRepository.getAide(cms_id);
 
     if (!aide_def) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    const aide = this.setHistoryData(aide_def, utilisateur);
+    const aide = this.newAideWithHistoryData(aide_def, utilisateur);
 
     utilisateur.history.consulterAide(cms_id);
 
@@ -346,7 +348,7 @@ export class AidesUsecase {
     }
   }
 
-  private setHistoryData(
+  private newAideWithHistoryData(
     aide_def: AideDefinition,
     utilisateur: Utilisateur,
   ): Aide {

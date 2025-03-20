@@ -4,6 +4,7 @@ import { History_v0 } from '../../../src/domain/object_store/history/history_v0'
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { AideAPI } from '../../../src/infrastructure/api/types/aide/AideAPI';
+import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
@@ -16,6 +17,7 @@ describe('Aide (API test)', () => {
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  const aideRepository = new AideRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -128,6 +130,7 @@ describe('Aide (API test)', () => {
       content_id: '45',
       contenu: 'ksqjfhqsjf {block_123} dfjksqmlmfjq',
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.getServer().get('/aides/45');
@@ -567,6 +570,7 @@ describe('Aide (API test)', () => {
       codes_postaux: ['21000'], // metropole
       partenaire_id: '123',
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.getServer().get('/aides/1');
@@ -621,6 +625,7 @@ describe('Aide (API test)', () => {
       codes_postaux: ['21000'], // metropole
       partenaire_id: '123',
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides/1');
@@ -678,6 +683,7 @@ describe('Aide (API test)', () => {
       codes_postaux: ['21000'], // metropole
       partenaire_id: '123',
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/utilisateurs/utilisateur-id/aides/1');

@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { HomeBoard } from '../domain/thematique/homeBoard';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
+import { BilanCarboneUsecase } from './bilanCarbone.usecase';
 
 @Injectable()
 export class ThematiqueBoardUsecase {
   constructor(
     private actionUsecase: ActionUsecase,
     private aidesUsecase: AidesUsecase,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
     private compteurActionsRepository: CompteurActionsRepository,
@@ -38,7 +40,7 @@ export class ThematiqueBoardUsecase {
   public async buildHomeBoard(utilisateurId: string): Promise<HomeBoard> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.thematique_history, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -49,6 +51,23 @@ export class ThematiqueBoardUsecase {
     result.nom_commune = commune.nom;
     result.total_actions_faites =
       await this.compteurActionsRepository.getTotalFaites();
+
+    result.total_utilisateur_actions_faites =
+      utilisateur.thematique_history.getNombreActionsFaites();
+
+    const recap_progression =
+      this.bilanCarboneUsecase.external_build_enchainement_bilan_recap(
+        utilisateur,
+      );
+    result.pourcentage_bilan_done =
+      recap_progression.pourcentage_prog_totale_sans_mini_bilan;
+
+    const nombre_aides = await this.aidesUsecase.external_count_aides(
+      undefined,
+      utilisateur.code_commune,
+    );
+    result.nombre_aides = nombre_aides;
+    result.nombre_recettes = 1150;
 
     return result;
   }

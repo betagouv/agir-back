@@ -1,7 +1,7 @@
 import metadata from './metadata.json';
 
 export class App {
-  static USER_CURRENT_VERSION = 13;
+  static USER_CURRENT_VERSION = 14;
 
   public static currentUserSystemVersion(): number {
     return App.USER_CURRENT_VERSION;
@@ -130,6 +130,10 @@ export class App {
   }
   public static getThrottleLimit(): number {
     return parseInt(process.env.THROTTLE_LIMIT) ?? 2;
+  }
+
+  public static gainContentPoint(): boolean {
+    return process.env.GAIN_CONTENT_POINT === 'true';
   }
 
   public static getBasicLoginPwdBase64(): string {

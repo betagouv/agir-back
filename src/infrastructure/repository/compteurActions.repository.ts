@@ -56,7 +56,7 @@ export class CompteurActionsRepository {
     const agregate = await this.prisma.compteurActions.aggregate({
       _sum: { faites: true },
     });
-    return agregate._sum.faites;
+    return agregate._sum.faites ? agregate._sum.faites : 0;
   }
 
   async setCompteur(action: TypeCodeAction, vues: number, faites: number) {

@@ -1,19 +1,19 @@
-import { v4 as uuidv4 } from 'uuid';
-import { Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
+import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
+import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
+import { App } from '../../domain/app';
+import { Scope } from '../../domain/utilisateur/utilisateur';
+import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { BrevoRepository } from '../contact/brevoRepository';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
-import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
-import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
+import { LinkyRepository } from '../repository/linky.repository';
+import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
+import { GenericControler } from './genericControler';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
-import { LinkyRepository } from '../repository/linky.repository';
-import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
-import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
-import { BrevoRepository } from '../contact/brevoRepository';
-import { GenericControler } from './genericControler';
-import { ProfileUsecase } from '../../usecase/profile.usecase';
-import { Scope } from '../../domain/utilisateur/utilisateur';
 
 @Controller()
 @ApiTags('TestData')
@@ -98,6 +98,7 @@ export class TestDataController extends GenericControler {
     delete clonedData.services;
     delete clonedData.questionsNGC;
     delete clonedData.linky;
+    clonedData.version = App.currentUserSystemVersion();
 
     clonedData.unsubscribe_mail_token = crypto.randomUUID();
 

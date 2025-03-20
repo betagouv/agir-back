@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Action } from '../../domain/actions/action';
+import { Aide } from '../../domain/aides/aide';
+import { Article } from '../../domain/contenu/article';
+import { Quizz } from '../../domain/contenu/quizz';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -15,6 +19,18 @@ export class StatistiqueExternalRepository {
   }
   public async deleteAllKYCData() {
     await this.prismaStats.kYCCopy.deleteMany();
+  }
+  public async deleteAllActionData() {
+    await this.prismaStats.actionCopy.deleteMany();
+  }
+  public async deleteAllArticleData() {
+    await this.prismaStats.articleCopy.deleteMany();
+  }
+  public async deleteAllAideData() {
+    await this.prismaStats.aideCopy.deleteMany();
+  }
+  public async deleteAllQuizzData() {
+    await this.prismaStats.quizzCopy.deleteMany();
   }
 
   public async createUserData(utilisateur: Utilisateur) {
@@ -34,6 +50,61 @@ export class StatistiqueExternalRepository {
         source_inscription: utilisateur.source_inscription,
         compte_actif: utilisateur.active_account,
         date_derniere_activite: utilisateur.derniere_activite,
+      },
+    });
+  }
+
+  public async createActionData(user_id: string, action: Action) {
+    await this.prismaStats.actionCopy.create({
+      data: {
+        user_id: user_id,
+        cms_id: action.cms_id,
+        code_action: action.code,
+        type_code_id: action.getTypeCodeId(),
+        thematique: action.thematique,
+        titre: action.titre,
+        type_action: action.type,
+        faite_le: action.faite_le,
+        vue_le: action.vue_le,
+      },
+    });
+  }
+  public async createArticleData(user_id: string, article: Article) {
+    await this.prismaStats.articleCopy.create({
+      data: {
+        user_id: user_id,
+        cms_id: article.content_id,
+        titre: article.titre,
+        thematique: article.thematique_principale,
+        lu_le: article.read_date,
+        est_favoris: article.favoris,
+        like_level: article.like_level,
+      },
+    });
+  }
+  public async createAideData(user_id: string, aide: Aide) {
+    await this.prismaStats.aideCopy.create({
+      data: {
+        user_id: user_id,
+        cms_id: aide.content_id,
+        titre: aide.titre,
+        thematiques: aide.thematiques,
+        vue_le: aide.vue_at,
+        clicked_infos: aide.clicked_infos,
+        clicked_demande: aide.clicked_demande,
+      },
+    });
+  }
+  public async createQuizzData(user_id: string, quizz: Quizz) {
+    await this.prismaStats.quizzCopy.create({
+      data: {
+        user_id: user_id,
+        cms_id: quizz.content_id,
+        titre: quizz.titre,
+        thematique: quizz.thematique_principale,
+        bon_premier_coup: quizz.premier_coup_ok,
+        date_premier_coup: quizz.date_premier_coup,
+        like_level: quizz.like_level,
       },
     });
   }

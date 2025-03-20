@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { EmailScheduler } from '../domain/notification/emailScheduler';
 import {
   CanalNotification,
+  EmailNotification,
   TypeNotification,
 } from '../domain/notification/notificationHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -12,7 +14,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 const day_10 = 1000 * 60 * 60 * 24 * 10;
 
 @Injectable()
-export class MailerUsecase {
+export class NotificationEmailUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private emailTemplateRepository: EmailTemplateRepository,
@@ -48,7 +50,12 @@ export class MailerUsecase {
         [Scope.notification_history],
       );
 
-      if (utilisateur.notification_history.isWelcomeEmailToSend(utilisateur)) {
+      if (
+        EmailScheduler.estNotificationEligible(
+          EmailNotification.welcome,
+          utilisateur,
+        )
+      ) {
         utilisateur.setUnsubscribeEmailTokenIfMissing();
 
         const is_sent_email = await this.external_send_user_email_of_type(
@@ -65,54 +72,56 @@ export class MailerUsecase {
     return result;
   }
 
-  async envoyerEmailsAutomatiques(): Promise<string[]> {
+  async envoyerEmailsAutomatiques(block_size: number = 50): Promise<string[]> {
     const result: string[] = [];
-    const listeUtilisateursIds =
-      await this.utilisateurRepository.listUtilisateurIds({
-        is_active: true,
-      });
 
-    for (const utilisateurId of listeUtilisateursIds) {
-      const utilisateur = await this.utilisateurRepository.getById(
-        utilisateurId,
-        [Scope.notification_history, Scope.defis],
-      );
+    const total_user_count = await this.utilisateurRepository.countAll();
 
-      if (
-        !utilisateur.notification_history.isCanalEnabled(
-          CanalNotification.email,
-        )
-      ) {
-        continue;
-      }
-
-      const notif_type_liste =
-        utilisateur.notification_history.getNouvellesNotificationsAPousser(
-          CanalNotification.email,
-          utilisateur,
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.notification_history, Scope.defis],
+          { is_active: true },
         );
 
-      const liste_sent_notifs: string[] = [];
-
-      for (const notif_type of notif_type_liste) {
-        utilisateur.setUnsubscribeEmailTokenIfMissing();
-
-        const is_sent_email = await this.external_send_user_email_of_type(
-          notif_type,
-          utilisateur,
-        );
-
-        if (is_sent_email) {
-          liste_sent_notifs.push(notif_type);
+      for (const utilisateur of current_user_list) {
+        if (
+          !utilisateur.notification_history.isCanalEnabled(
+            CanalNotification.email,
+          )
+        ) {
+          continue;
         }
-      }
 
-      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+        const notif_type_liste =
+          utilisateur.notification_history.getNouvellesNotificationsEmailAPousser(
+            utilisateur,
+          );
 
-      if (liste_sent_notifs.length > 0) {
-        result.push(
-          `Sent for [${utilisateur.id}] : [${liste_sent_notifs.toString()}]`,
-        );
+        const liste_sent_notifs: string[] = [];
+
+        for (const notif_type of notif_type_liste) {
+          utilisateur.setUnsubscribeEmailTokenIfMissing();
+
+          const is_sent_email = await this.external_send_user_email_of_type(
+            notif_type,
+            utilisateur,
+          );
+
+          if (is_sent_email) {
+            liste_sent_notifs.push(notif_type);
+          }
+        }
+
+        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+        if (liste_sent_notifs.length > 0) {
+          result.push(
+            `Sent for [${utilisateur.id}] : [${liste_sent_notifs.toString()}]`,
+          );
+        }
       }
     }
 

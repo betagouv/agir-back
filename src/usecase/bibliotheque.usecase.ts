@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { App } from '../domain/app';
 import { Article } from '../domain/contenu/article';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { ContentType } from '../domain/contenu/contentType';
@@ -130,9 +131,7 @@ export class BibliothequeUsecase {
   }
 
   public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -199,8 +198,7 @@ export class BibliothequeUsecase {
       ApplicationError.throwBadQuizzPourcent(pourcent);
     }
 
-    const quizz_definition =
-      await this.quizzRepository.getQuizzDefinitionByContentId(content_id);
+    const quizz_definition = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_definition) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -233,12 +231,11 @@ export class BibliothequeUsecase {
   ) {
     utilisateur.history.quizzAttempt(content_id, pourcent);
 
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
     if (
       !utilisateur.history.sontPointsQuizzEnPoche(content_id) &&
-      pourcent === 100
+      pourcent === 100 &&
+      App.gainContentPoint()
     ) {
       utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
       utilisateur.history.declarePointsQuizzEnPoche(content_id);
@@ -270,9 +267,7 @@ export class BibliothequeUsecase {
   }
 
   public async external_get_quizz(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -302,7 +297,10 @@ export class BibliothequeUsecase {
       content_id,
     );
 
-    if (!utilisateur.history.sontPointsArticleEnPoche(content_id)) {
+    if (
+      !utilisateur.history.sontPointsArticleEnPoche(content_id) &&
+      App.gainContentPoint()
+    ) {
       utilisateur.gamification.ajoutePoints(
         article_definition.points,
         utilisateur,

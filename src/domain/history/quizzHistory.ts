@@ -48,6 +48,10 @@ export class QuizzHistory {
     if (this.attempts.length === 0) return false;
     return this.attempts[0].score === 100;
   }
+  public getDateFirstAttempt(): Date {
+    if (this.attempts.length === 0) return undefined;
+    return this.attempts[0].date;
+  }
   public has100ScoreLastAttempt(): boolean {
     if (this.attempts.length === 0) return false;
     return this.attempts[this.attempts.length - 1].score === 100;

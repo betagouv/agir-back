@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views", "omitApi"]
+  previewFeatures = ["views", "omitApi", "orderByNulls"]
 }
 
 datasource db {
@@ -243,9 +243,11 @@ model Action {
   kyc_codes           String[] @default([])
   faq_ids             String[] @default([])
   recette_categorie   String?
+  pdcn_categorie      String?
   lvo_action          String?
   lvo_objet           String?
   tags_excluants      String[] @default([])
+  sources             Json?    @default("[]")
   created_at          DateTime @default(now()) @db.Timestamptz(3)
   updated_at          DateTime @updatedAt @db.Timestamptz(3)
 

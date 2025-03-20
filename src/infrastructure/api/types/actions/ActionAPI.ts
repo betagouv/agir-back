@@ -72,6 +72,10 @@ export class ScoreActionAPI {
   @ApiProperty() nombre_bonnes_reponses: number;
   @ApiProperty() nombre_quizz_done: number;
 }
+export class SourceActionAPI {
+  @ApiProperty() label: string;
+  @ApiProperty() url: string;
+}
 
 export class ActionAPI {
   @ApiProperty() code: string;
@@ -79,12 +83,14 @@ export class ActionAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() points: number;
   @ApiProperty() consigne: string;
+  @ApiProperty({ type: [SourceActionAPI] }) sources: SourceActionAPI[];
   @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
+  @ApiProperty() nombre_actions_faites: number;
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ enum: Besoin, isArray: true }) besoins: Besoin[];
   @ApiProperty() comment: string;
@@ -107,6 +113,7 @@ export class ActionAPI {
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
+      nombre_actions_faites: action.nombre_actions_faites,
       nombre_aides_disponibles: action.nombre_aides,
       code: action.code,
       titre: action.titre,
@@ -128,6 +135,7 @@ export class ActionAPI {
       deja_faite: action.deja_faite,
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
       points: action.getNombrePoints(),
+      sources: action.sources,
     };
   }
 }

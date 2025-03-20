@@ -101,6 +101,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() code: string;
   @ApiProperty() texte: string;
   @ApiProperty() categorie_recettes: string;
+  @ApiProperty() categorie_pdcn: string;
   @ApiProperty() est_visible: boolean;
   @ApiProperty() est_gratuit: boolean;
   @ApiProperty() is_examen: boolean;

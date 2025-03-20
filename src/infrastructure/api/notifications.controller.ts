@@ -1,4 +1,4 @@
-import { Controller, Param, Request, Post, Get, Body } from '@nestjs/common';
+import { Body, Controller, Post, Request } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -6,15 +6,15 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecase';
 import { GenericControler } from './genericControler';
-import { MailerUsecase } from '../../usecase/mailer.usecase';
 import { DisableEmailAPI } from './types/email/tokenEmailAPI';
 
 @Controller()
 @ApiTags('Notifications')
 @ApiBearerAuth()
 export class NotificationsController extends GenericControler {
-  constructor(private readonly mailerUsecase: MailerUsecase) {
+  constructor(private readonly mailerUsecase: NotificationEmailUsecase) {
     super();
   }
 

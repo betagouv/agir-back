@@ -509,9 +509,15 @@ export class CMSWebhookUsecase {
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
         : null,
+      pdcn_categorie: entry.categorie_pdcn
+        ? CategorieRecherche[entry.categorie_pdcn]
+        : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
       tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
+      sources: entry.sources
+        ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
+        : [],
     });
   }
 

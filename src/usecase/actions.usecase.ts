@@ -136,7 +136,10 @@ export class ActionUsecase {
     type: TypeAction,
     code_commune: string,
   ): Promise<Action> {
-    const action_def = await this.actionRepository.getByCodeAndType(code, type);
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
+      code,
+      type,
+    );
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -176,6 +179,12 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.recette_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
+      });
+    }
+    if (action_def.pdcn_categorie) {
+      liste_services.push({
+        categorie: action_def.pdcn_categorie,
+        recherche_service_id: ServiceRechercheID.proximite,
       });
     }
     if (action_def.lvo_action) {
@@ -247,10 +256,8 @@ export class ActionUsecase {
         if (score.nombre_bonnes_reponses / score.nombre_quizz_done < 0.666) {
           ApplicationError.throwQuizzPasTerminable(code);
         }
-        utilisateur.gamification.ajoutePoints(points, utilisateur);
-      } else {
-        utilisateur.gamification.ajoutePoints(points, utilisateur);
       }
+      utilisateur.gamification.ajoutePoints(points, utilisateur);
 
       utilisateur.thematique_history.setActionCommeFaite(action_def);
 
@@ -272,7 +279,10 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCodeAndType(code, type);
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
+      code,
+      type,
+    );
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -299,6 +309,12 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.recette_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
+      });
+    }
+    if (action_def.pdcn_categorie) {
+      liste_services.push({
+        categorie: action_def.pdcn_categorie,
+        recherche_service_id: ServiceRechercheID.proximite,
       });
     }
     if (action_def.lvo_action) {
@@ -359,7 +375,7 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCodeAndType(
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
       code_action_quizz,
       TypeAction.quizz,
     );
@@ -472,6 +488,7 @@ export class ActionUsecase {
           index,
           block_size,
           [Scope.thematique_history],
+          {},
         );
 
       for (const user of current_user_list) {

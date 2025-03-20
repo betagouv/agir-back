@@ -45,3 +45,53 @@ model KYCCopy {
 
   @@unique([user_id, code_kyc])
 }
+
+model ActionCopy {
+  type_code_id String
+  code_action  String
+  cms_id       String
+  type_action  String
+  user_id      String
+  titre        String
+  thematique   String
+  vue_le       DateTime? @db.Timestamptz(3)
+  faite_le     DateTime? @db.Timestamptz(3)
+
+  @@unique([user_id, type_code_id])
+}
+
+model ArticleCopy {
+  cms_id      String
+  user_id     String
+  titre       String
+  thematique  String
+  lu_le       DateTime? @db.Timestamptz(3)
+  like_level  Int?
+  est_favoris Boolean?
+
+  @@unique([user_id, cms_id])
+}
+
+model AideCopy {
+  cms_id          String
+  user_id         String
+  titre           String
+  thematiques     String[]
+  vue_le          DateTime? @db.Timestamptz(3)
+  clicked_infos   Boolean?
+  clicked_demande Boolean?
+
+  @@unique([user_id, cms_id])
+}
+
+model QuizzCopy {
+  cms_id            String
+  user_id           String
+  titre             String
+  thematique        String
+  bon_premier_coup  Boolean?
+  date_premier_coup DateTime? @db.Timestamptz(3)
+  like_level        Int?
+
+  @@unique([user_id, cms_id])
+}
