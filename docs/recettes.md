@@ -3,8 +3,8 @@
 ## Données
 
 Les recettes proviennet d'un
-[dump](../src/infrastructure/repository/services_recherche/recettes/data/dump-recipes.2024-09-06.json]
-JSON des données de mangerbouger.fr.
+[dump JSON](../src/infrastructure/repository/services_recherche/recettes/data/dump-recipes.2024-09-06.json) 
+des données de mangerbouger.fr.
 
 ## Images
 
