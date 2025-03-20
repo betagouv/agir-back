@@ -107,6 +107,14 @@ export class DuplicateBDDForStatsUsecase {
             this.actionRepository.getActionDefinitionByTypeCode(
               action_utilisateur.action,
             );
+
+          if (!action_def) {
+            console.log(
+              `Skipping missing action for stats - type = [${action_utilisateur.action.type}] code = [${action_utilisateur.action.code}]`,
+            );
+            continue;
+          }
+
           const final_action = new Action(action_def);
           final_action.faite_le = action_utilisateur.faite_le;
           final_action.vue_le = action_utilisateur.vue_le;
@@ -150,6 +158,13 @@ export class DuplicateBDDForStatsUsecase {
           const article_def = this.articleRepository.getArticle(
             article_utilisateur.content_id,
           );
+          if (!article_def) {
+            console.log(
+              `Skipping missing article for stats - cms_id = [${article_utilisateur.content_id}]`,
+            );
+            continue;
+          }
+
           const final_article = new Article(article_def);
           final_article.read_date = article_utilisateur.read_date;
           final_article.like_level = article_utilisateur.like_level;
@@ -194,6 +209,12 @@ export class DuplicateBDDForStatsUsecase {
           const aide_def = this.aideRepository.getAide(
             aide_utilisateur.content_id,
           );
+          if (!aide_def) {
+            console.log(
+              `Skipping missing aide for stats - cms_id = [${aide_utilisateur.content_id}]`,
+            );
+            continue;
+          }
           const final_aide = new Aide(aide_def);
           final_aide.vue_at = aide_utilisateur.vue_at;
           final_aide.clicked_infos = aide_utilisateur.clicked_infos;
@@ -238,6 +259,13 @@ export class DuplicateBDDForStatsUsecase {
           const quizz_def = this.quizzRepository.getQuizz(
             quizz_utilisateur.content_id,
           );
+          if (!quizz_def) {
+            console.log(
+              `Skipping missing quizz for stats - cms_id = [${quizz_utilisateur.content_id}]`,
+            );
+            continue;
+          }
+
           const final_quizz = new Quizz(quizz_def);
           final_quizz.like_level = quizz_utilisateur.like_level;
           final_quizz.premier_coup_ok =
