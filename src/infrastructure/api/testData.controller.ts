@@ -31,11 +31,6 @@ export class TestDataController extends GenericControler {
     super();
   }
 
-  @Get('stats')
-  async test_stats() {
-    return await this.prismaStats.testTable.findMany();
-  }
-
   @Get('testdata/:id')
   @ApiParam({ name: 'id', enum: utilisateurs_liste })
   async GetData(@Param('id') id: string) {

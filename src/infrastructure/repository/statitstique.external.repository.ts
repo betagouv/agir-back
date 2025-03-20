@@ -9,10 +9,14 @@ import {
 } from '../../domain/kyc/questionKYC';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
+import { CommuneRepository } from './commune/commune.repository';
 
 @Injectable()
 export class StatistiqueExternalRepository {
-  constructor(private prismaStats: PrismaServiceStat) {}
+  constructor(
+    private prismaStats: PrismaServiceStat,
+    private communeRepository: CommuneRepository,
+  ) {}
 
   public async deleteAllUserData() {
     await this.prismaStats.utilisateurCopy.deleteMany();
@@ -34,6 +38,10 @@ export class StatistiqueExternalRepository {
   }
 
   public async createUserData(utilisateur: Utilisateur) {
+    const code_depart =
+      this.communeRepository.findDepartementRegionByCodeCommune(
+        utilisateur.code_commune,
+      );
     await this.prismaStats.utilisateurCopy.create({
       data: {
         user_id: utilisateur.external_stat_id,
@@ -50,6 +58,9 @@ export class StatistiqueExternalRepository {
         source_inscription: utilisateur.source_inscription,
         compte_actif: utilisateur.active_account,
         date_derniere_activite: utilisateur.derniere_activite,
+        code_departement: code_depart.code_departement,
+        rang_commune: utilisateur.rank_commune,
+        rang_national: utilisateur.rank,
       },
     });
   }

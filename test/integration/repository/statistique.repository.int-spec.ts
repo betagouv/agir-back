@@ -1,7 +1,7 @@
-import { TestUtil } from '../../TestUtil';
-import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
 import { CodeMission } from '../../../src/domain/mission/codeMission';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { StatistiqueRepository } from '../../../src/infrastructure/repository/statitstique.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('StatistiqueRepository', () => {
   const OLD_ENV = process.env;

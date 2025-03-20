@@ -238,9 +238,12 @@ export class TestUtil {
     await this.prisma.blockText.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
 
-    await this.prisma_stats.testTable.deleteMany();
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
+    await this.prisma_stats.actionCopy.deleteMany();
+    await this.prisma_stats.aideCopy.deleteMany();
+    await this.prisma_stats.articleCopy.deleteMany();
+    await this.prisma_stats.quizzCopy.deleteMany();
 
     ActionRepository.resetCache();
     ArticleRepository.resetCache();

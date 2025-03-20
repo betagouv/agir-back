@@ -11,6 +11,7 @@ import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { StatistiqueExternalRepository } from '../../../src/infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -42,6 +43,7 @@ const KYC_DATA: QuestionKYC_v2 = {
 describe('Duplicate Usecase', () => {
   let statistiqueExternalRepository = new StatistiqueExternalRepository(
     TestUtil.prisma_stats,
+    new CommuneRepository(TestUtil.prisma),
   );
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
@@ -75,8 +77,10 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       external_stat_id: '123',
-      code_commune: '456',
+      code_commune: '21231',
       derniere_activite: new Date(1),
+      rank_commune: 12,
+      rank: 123,
     });
 
     // WHEN
@@ -92,7 +96,7 @@ describe('Duplicate Usecase', () => {
     delete user.nombre_parts_fiscales;
 
     expect(user).toEqual({
-      code_insee_commune: '456',
+      code_insee_commune: '21231',
       code_postal: '91120',
       compte_actif: true,
       date_derniere_activite: new Date(1),
@@ -101,6 +105,9 @@ describe('Duplicate Usecase', () => {
       nombre_points: 10,
       revenu_fiscal: 10000,
       source_inscription: 'web',
+      code_departement: '21',
+      rang_commune: 12,
+      rang_national: 123,
     });
   });
 
