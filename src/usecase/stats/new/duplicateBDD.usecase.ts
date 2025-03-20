@@ -56,8 +56,6 @@ export class DuplicateBDDForStatsUsecase {
 
     const start_date = new Date(Date.now() - TWO_DAYS_MS);
 
-    await this.statistiqueExternalRepository.deleteAllKYCData();
-
     for (let index = 0; index < total_user_count; index = index + block_size) {
       const current_user_list =
         await this.utilisateurRepository.listePaginatedUsers(
