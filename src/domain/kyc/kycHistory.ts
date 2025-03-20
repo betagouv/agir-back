@@ -60,6 +60,14 @@ export class KYCHistory {
   public getRawAnsweredKYCs(): QuestionKYC[] {
     return this.answered_questions;
   }
+  public getRawAnsweredKYCsAfter(after: Date): QuestionKYC[] {
+    return this.answered_questions.filter(
+      (q) =>
+        q.last_update === null ||
+        q.last_update === undefined ||
+        q.last_update.getTime() > after.getTime(),
+    );
+  }
   public getRawAnsweredMosaics(): KYCMosaicID[] {
     return this.answered_mosaics;
   }

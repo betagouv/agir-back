@@ -160,4 +160,60 @@ export class StatistiqueExternalRepository {
       },
     });
   }
+
+  public async upsertKYCData(user_id: string, kyc: QuestionKYC) {
+    const reponse = {
+      reponse_unique_code: undefined,
+      reponse_multiple_code: undefined,
+      reponse_entier: undefined,
+      reponse_decimal: undefined,
+      reponse_texte: undefined,
+    };
+
+    if (kyc.isMosaic()) return;
+
+    if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+      reponse.reponse_unique_code = kyc.getCodeReponseQuestionChoixUnique();
+    }
+    if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
+      reponse.reponse_multiple_code = kyc.getSelectedCodes();
+    }
+    if (kyc.type === TypeReponseQuestionKYC.libre) {
+      reponse.reponse_texte = kyc.getReponseSimpleValue();
+    }
+    if (kyc.type === TypeReponseQuestionKYC.entier) {
+      reponse.reponse_entier = kyc.getReponseSimpleValueAsNumber();
+    }
+    if (kyc.type === TypeReponseQuestionKYC.decimal) {
+      reponse.reponse_decimal = kyc.getReponseSimpleValue();
+    }
+
+    await this.prismaStats.kYCCopy.upsert({
+      where: {
+        user_id_code_kyc: {
+          user_id: user_id,
+          code_kyc: kyc.code,
+        },
+      },
+
+      create: {
+        user_id: user_id,
+        cms_id: kyc.id_cms.toString(),
+        code_kyc: kyc.code,
+        question: kyc.question,
+        thematique: kyc.thematique,
+        derniere_mise_a_jour: kyc.last_update,
+        type_question: kyc.type,
+        ...reponse,
+      },
+      update: {
+        cms_id: kyc.id_cms.toString(),
+        question: kyc.question,
+        thematique: kyc.thematique,
+        derniere_mise_a_jour: kyc.last_update,
+        type_question: kyc.type,
+        ...reponse,
+      },
+    });
+  }
 }
