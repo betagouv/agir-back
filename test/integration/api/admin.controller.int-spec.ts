@@ -28,6 +28,7 @@ import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUt
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -629,6 +630,72 @@ describe('Admin (API test)', () => {
     expect(userDB.pseudo).toEqual('yo');
     expect(userDB.version).toEqual(13);
   });
+
+  it('POST /admin/migrate_users migration V14 OK - reset personnalisation thematique', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(),
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            {
+              action: { type: TypeAction.classique, code: '2' },
+              date: new Date(),
+            },
+          ],
+          codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
+          personnalisation_done: true,
+          personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 13,
+      migration_enabled: true,
+      thematique_history: thematique_history as any,
+    });
+    App.USER_CURRENT_VERSION = 14;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 14,
+            ok: true,
+            info: 'personnalisation reset OK',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history).toEqual({
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    });
+    expect(userDB.version).toEqual(14);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
