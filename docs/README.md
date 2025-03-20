@@ -7,6 +7,7 @@ techniques et processus de développement.
 
 - [Aides vélo](./aides-velo.md)
 - [Bilan carbone](./bilan-carbone-ngc.md)
+- [Recettes](./recettes.md)
 
 ## Architecture
 
