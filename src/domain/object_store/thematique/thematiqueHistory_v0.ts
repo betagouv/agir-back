@@ -4,9 +4,24 @@ import {
   ActionUtilisateur,
   ThematiqueHistory,
 } from '../../thematique/history/thematiqueHistory';
-import { ThematiqueRecommandation } from '../../thematique/history/thematiqueRecommandation';
+import {
+  ActionExclue,
+  ThematiqueRecommandation,
+} from '../../thematique/history/thematiqueRecommandation';
 import { Thematique } from '../../thematique/thematique';
 import { Versioned_v0 } from '../versioned';
+
+export class ActionExclue_v0 {
+  action: TypeCodeAction;
+  date: Date;
+
+  static serialise(domain: ActionExclue): ActionExclue_v0 {
+    return {
+      action: domain.action,
+      date: domain.date,
+    };
+  }
+}
 
 export class ActionUtilisateur_v0 {
   action: TypeCodeAction;
@@ -25,19 +40,23 @@ export class ActionUtilisateur_v0 {
 export class ThematiqueRecommandation_v0 {
   thematique: Thematique;
   codes_actions_proposees: TypeCodeAction[];
-  codes_actions_exclues: TypeCodeAction[];
+  codes_actions_exclues: ActionExclue[];
   personnalisation_done: boolean;
   personnalisation_done_once: boolean;
+  first_personnalisation_date: Date;
 
   static serialise(
     domain: ThematiqueRecommandation,
   ): ThematiqueRecommandation_v0 {
     return {
-      codes_actions_exclues: domain.getActionsExclues(),
+      codes_actions_exclues: domain
+        .getActionsExclues()
+        .map((a) => ActionExclue_v0.serialise(a)),
       codes_actions_proposees: domain.getActionsProposees(),
       personnalisation_done: domain.isPersonnalisationDone(),
       personnalisation_done_once: domain.isPersonnalisationDoneOnce(),
       thematique: domain.thematique,
+      first_personnalisation_date: domain.getFirstPersonnalisationDate(),
     };
   }
 }

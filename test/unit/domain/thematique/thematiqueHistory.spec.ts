@@ -28,6 +28,7 @@ describe('ThematiqueHistory', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     });
@@ -75,6 +76,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_proposees: [],
           personnalisation_done: false,
           personnalisation_done_once: false,
+          first_personnalisation_date: null,
         },
       ],
     });
@@ -100,6 +102,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     });

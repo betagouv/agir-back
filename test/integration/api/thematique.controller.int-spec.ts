@@ -96,6 +96,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -138,6 +139,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: false,
           personnalisation_done_once: false,
+          first_personnalisation_date: null,
         },
       ],
     };
@@ -185,6 +187,11 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(true);
+    expect(
+      user_after.thematique_history
+        .getDatePremierePersonnalisation(Thematique.alimentation)
+        .getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
     expect(user_after.points_classement).toEqual(25);
     expect(user_after.gamification.getPoints()).toEqual(25);
   });
@@ -201,6 +208,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: false,
           personnalisation_done_once: false,
+          first_personnalisation_date: null,
         },
       ],
     };
@@ -296,10 +304,16 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [{ code: '1', type: TypeAction.classique }],
+          codes_actions_exclues: [
+            {
+              action: { code: '1', type: TypeAction.classique },
+              date: new Date(123),
+            },
+          ],
           codes_actions_proposees: [{ code: '2', type: TypeAction.classique }],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -345,6 +359,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -409,6 +424,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -452,6 +468,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -492,6 +509,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -550,6 +568,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -606,6 +625,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -649,6 +669,7 @@ describe('Thematique (API test)', () => {
           codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -700,6 +721,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -739,6 +761,17 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
     ]);
+    expect(
+      user.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toHaveLength(1);
+    expect(
+      user.thematique_history
+        .getActionsExcluesEtDates(Thematique.alimentation)[0]
+        .date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(
+      user.thematique_history.getActionsExclues(Thematique.alimentation)[0],
+    ).toEqual({ type: TypeAction.classique, code: '3' });
   });
 
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle, prends en compte les actions exclues`, async () => {
@@ -752,9 +785,18 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [
-            { type: TypeAction.classique, code: '7' },
-            { type: TypeAction.classique, code: '8' },
-            { type: TypeAction.classique, code: '9' },
+            {
+              action: { type: TypeAction.classique, code: '7' },
+              date: new Date(1),
+            },
+            {
+              action: { type: TypeAction.classique, code: '8' },
+              date: new Date(2),
+            },
+            {
+              action: { type: TypeAction.classique, code: '9' },
+              date: new Date(3),
+            },
           ],
           codes_actions_proposees: [
             { type: TypeAction.classique, code: '1' },
@@ -766,6 +808,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -834,6 +877,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -909,6 +953,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -968,6 +1013,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -1032,6 +1078,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };
@@ -1106,6 +1153,7 @@ describe('Thematique (API test)', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     };

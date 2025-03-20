@@ -33,10 +33,16 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [{ type: TypeAction.classique, code: '2' }],
+          codes_actions_exclues: [
+            {
+              action: { type: TypeAction.classique, code: '2' },
+              date: new Date(),
+            },
+          ],
           codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(),
         },
       ],
     });
@@ -63,10 +69,16 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [{ type: TypeAction.classique, code: '2' }],
+          codes_actions_exclues: [
+            {
+              action: { type: TypeAction.classique, code: '2' },
+              date: new Date(),
+            },
+          ],
           codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(),
         },
       ],
     });

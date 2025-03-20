@@ -3,12 +3,18 @@ import { TypeCodeAction } from '../../actions/actionDefinition';
 import { ThematiqueRecommandation_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../thematique';
 
+export type ActionExclue = {
+  action: TypeCodeAction;
+  date: Date;
+};
+
 export class ThematiqueRecommandation {
   thematique: Thematique;
   private actions_proposees: TypeCodeAction[];
-  private actions_exclues: TypeCodeAction[];
+  private actions_exclues: ActionExclue[];
   private personnalisation_done: boolean;
   private personnalisation_done_once: boolean;
+  private first_personnalisation_date: Date;
 
   constructor(thematique: Thematique, data?: ThematiqueRecommandation_v0) {
     this.thematique = thematique;
@@ -21,11 +27,15 @@ export class ThematiqueRecommandation {
       this.actions_exclues = data.codes_actions_exclues;
       this.personnalisation_done = !!data.personnalisation_done;
       this.personnalisation_done_once = !!data.personnalisation_done_once;
+      this.first_personnalisation_date = data.first_personnalisation_date;
     }
   }
 
   public setPersonnalisationDone() {
     this.personnalisation_done = true;
+    if (!this.personnalisation_done_once) {
+      this.first_personnalisation_date = new Date();
+    }
     this.personnalisation_done_once = true;
   }
   public resetPersonnalisation() {
@@ -34,7 +44,10 @@ export class ThematiqueRecommandation {
     this.actions_exclues = [];
   }
 
-  public getActionsExclues(): TypeCodeAction[] {
+  public getFirstPersonnalisationDate(): Date {
+    return this.first_personnalisation_date;
+  }
+  public getActionsExclues(): ActionExclue[] {
     return this.actions_exclues;
   }
   public getActionsProposees(): TypeCodeAction[] {
@@ -63,7 +76,10 @@ export class ThematiqueRecommandation {
 
   public addActionToExclusionList(action: TypeCodeAction) {
     if (!this.doesActionsExcluesInclude(action)) {
-      this.actions_exclues.push({ type: action.type, code: action.code });
+      this.actions_exclues.push({
+        action: { type: action.type, code: action.code },
+        date: new Date(),
+      });
     }
   }
 
@@ -104,7 +120,10 @@ export class ThematiqueRecommandation {
     return index !== -1;
   }
   public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
-    const index = this.indexOfTypeCode(this.actions_exclues, type_code);
+    const index = this.actions_exclues.findIndex(
+      (a) =>
+        a.action.code === type_code.code && a.action.type === type_code.type,
+    );
     return index !== -1;
   }
 

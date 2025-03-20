@@ -5,7 +5,10 @@ import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHi
 import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
 import { KycTagExcluantTranslator } from './kycTagTranslator';
-import { ThematiqueRecommandation } from './thematiqueRecommandation';
+import {
+  ActionExclue,
+  ThematiqueRecommandation,
+} from './thematiqueRecommandation';
 
 export type ActionUtilisateur = {
   action: TypeCodeAction;
@@ -72,6 +75,11 @@ export class ThematiqueHistory {
   public isPersonnalisationDoneOnce(thematique: Thematique): boolean {
     const reco_existante = this.getRecommandationByThematique(thematique);
     return !!reco_existante && reco_existante.isPersonnalisationDoneOnce();
+  }
+
+  public getDatePremierePersonnalisation(thematique: Thematique): Date {
+    const reco_existante = this.getRecommandationByThematique(thematique);
+    return reco_existante?.getFirstPersonnalisationDate();
   }
 
   public getListeThematiques(): ThematiqueRecommandation[] {
@@ -176,6 +184,10 @@ export class ThematiqueHistory {
   }
 
   public getActionsExclues(thematique: Thematique): TypeCodeAction[] {
+    const reco = this.getRecommandationByThematique(thematique);
+    return reco ? reco.getActionsExclues().map((a) => a.action) : [];
+  }
+  public getActionsExcluesEtDates(thematique: Thematique): ActionExclue[] {
     const reco = this.getRecommandationByThematique(thematique);
     return reco ? reco.getActionsExclues() : [];
   }
