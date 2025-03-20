@@ -45,7 +45,6 @@ import './repository/quizStatistique.repository.int-spec';
 import './repository/quizz.repository.int-spec';
 import './repository/service.repository.int-spec';
 import './repository/services_recherche/presdechevous.repository.int-spec';
-import './repository/statdb_test.int-spec';
 import './repository/statistique.repository.int-spec';
 import './repository/thematiqueStatistique.repository.int-spec';
 import './repository/universStatistique.repository.int-spec';

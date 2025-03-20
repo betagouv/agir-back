@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import _communes from '@etalab/decoupage-administratif/data/communes.json';
+import _departements from '@etalab/decoupage-administratif/data/departements.json';
 import _epci from '@etalab/decoupage-administratif/data/epci.json';
 import _regions from '@etalab/decoupage-administratif/data/regions.json';
-import _departements from '@etalab/decoupage-administratif/data/departements.json';
-import _codes_postaux from './codes_postaux.json';
-import { PrismaService } from '../../prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { CommunesAndEPCI } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
+import _codes_postaux from './codes_postaux.json';
 
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];

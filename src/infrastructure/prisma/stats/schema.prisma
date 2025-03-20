@@ -11,11 +11,6 @@ datasource db {
   url      = env("DATABASE_STATS_URL")
 }
 
-model TestTable {
-  id   String @id
-  type String
-}
-
 model UtilisateurCopy {
   user_id                String    @id
   compte_actif           Boolean
@@ -26,7 +21,10 @@ model UtilisateurCopy {
   code_postal            String?
   nom_commune            String?
   code_insee_commune     String?
+  code_departement       String?
   source_inscription     String?
+  rang_national          Int?
+  rang_commune           Int?
 }
 
 model KYCCopy {
