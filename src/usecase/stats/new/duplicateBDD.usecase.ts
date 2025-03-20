@@ -109,9 +109,6 @@ export class DuplicateBDDForStatsUsecase {
             );
 
           if (!action_def) {
-            console.log(
-              `Skipping missing action for stats - type = [${action_utilisateur.action.type}] code = [${action_utilisateur.action.code}]`,
-            );
             continue;
           }
 
@@ -159,9 +156,6 @@ export class DuplicateBDDForStatsUsecase {
             article_utilisateur.content_id,
           );
           if (!article_def) {
-            console.log(
-              `Skipping missing article for stats - cms_id = [${article_utilisateur.content_id}]`,
-            );
             continue;
           }
 
@@ -210,9 +204,6 @@ export class DuplicateBDDForStatsUsecase {
             aide_utilisateur.content_id,
           );
           if (!aide_def) {
-            console.log(
-              `Skipping missing aide for stats - cms_id = [${aide_utilisateur.content_id}]`,
-            );
             continue;
           }
           const final_aide = new Aide(aide_def);
@@ -260,9 +251,6 @@ export class DuplicateBDDForStatsUsecase {
             quizz_utilisateur.content_id,
           );
           if (!quizz_def) {
-            console.log(
-              `Skipping missing quizz for stats - cms_id = [${quizz_utilisateur.content_id}]`,
-            );
             continue;
           }
 
