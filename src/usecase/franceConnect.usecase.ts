@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
   Scope,
@@ -210,6 +211,15 @@ export class FranceConnectUsecase {
     await this.oIDCStateRepository.deleteByState(state);
 
     return { fc_logout_url: logout_url };
+  }
+
+  async logout_FC_only(state: string): Promise<{ fc_logout_url?: URL }> {
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      const result = await this.external_logout_france_connect_by_state(state);
+      return { fc_logout_url: result.fc_logout_url };
+    }
   }
 
   private getAnnee(date: string): number {

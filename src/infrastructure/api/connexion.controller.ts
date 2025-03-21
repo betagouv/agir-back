@@ -16,7 +16,6 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
@@ -97,21 +96,6 @@ export class ConnexionController extends GenericControler {
     const result = await this.connexion_v2_Usecase.logout_single_user(
       utilisateurId,
     );
-    return {
-      france_connect_logout_url: result.fc_logout_url
-        ? result.fc_logout_url.toString()
-        : undefined,
-    };
-  }
-  @Post('utilisateurs/logout_FC_only/:state')
-  @ApiOperation({
-    summary: `Déconnecte un utilisateur de France Connect seulement : si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
-  })
-  @ApiOkResponse({ type: logoutAPI })
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
-  async disconnect_FC(@Param('state') state: string): Promise<logoutAPI> {
-    const result = await this.connexion_v2_Usecase.logout_FC_only(state);
     return {
       france_connect_logout_url: result.fc_logout_url
         ? result.fc_logout_url.toString()
