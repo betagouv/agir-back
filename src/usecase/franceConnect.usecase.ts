@@ -202,10 +202,10 @@ export class FranceConnectUsecase {
   }
   private getMois(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(4, 6));
+    return parseInt(date.substring(5, 7));
   }
   private getJour(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(6));
+    return parseInt(date.substring(8));
   }
 }
