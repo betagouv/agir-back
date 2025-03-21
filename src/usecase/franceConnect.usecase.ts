@@ -7,7 +7,7 @@ import {
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { OidcService } from '../infrastructure/auth/oidc.service';
+import { FCUserInfo, OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -93,6 +93,11 @@ export class FranceConnectUsecase {
       'full',
     );
     if (fc_user) {
+      this.setFCUserInfoToUser(fc_user, user_info);
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(fc_user, [
+        Scope.core,
+      ]);
+
       return await this.log_ok_fc_user(oidc_state, fc_user);
     }
 
@@ -110,11 +115,7 @@ export class FranceConnectUsecase {
           standard_user.id,
           user_info.sub,
         );
-        standard_user.prenom = user_info.given_name;
-        standard_user.nom = user_info.family_name;
-        standard_user.annee_naissance = this.getAnnee(user_info.birthdate);
-        standard_user.mois_naissance = this.getMois(user_info.birthdate);
-        standard_user.jour_naissance = this.getJour(user_info.birthdate);
+        this.setFCUserInfoToUser(standard_user, user_info);
 
         await this.utilisateurRepository.updateUtilisateurNoConcurency(
           standard_user,
@@ -131,11 +132,7 @@ export class FranceConnectUsecase {
       SourceInscription.france_connect,
     );
 
-    new_utilisateur.prenom = user_info.given_name;
-    new_utilisateur.nom = user_info.family_name;
-    new_utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
-    new_utilisateur.mois_naissance = this.getMois(user_info.birthdate);
-    new_utilisateur.jour_naissance = this.getJour(user_info.birthdate);
+    this.setFCUserInfoToUser(new_utilisateur, user_info);
     new_utilisateur.status = UtilisateurStatus.default;
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
@@ -151,6 +148,14 @@ export class FranceConnectUsecase {
     await this.utilisateurRepository.createUtilisateur(new_utilisateur);
 
     return await this.log_ok_fc_user(oidc_state, new_utilisateur);
+  }
+
+  private setFCUserInfoToUser(utilisateur: Utilisateur, user_info: FCUserInfo) {
+    utilisateur.prenom = user_info.given_name;
+    utilisateur.nom = user_info.family_name;
+    utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
+    utilisateur.mois_naissance = this.getMois(user_info.birthdate);
+    utilisateur.jour_naissance = this.getJour(user_info.birthdate);
   }
 
   private async log_ok_fc_user(
