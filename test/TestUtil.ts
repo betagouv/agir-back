@@ -654,6 +654,8 @@ export class TestUtil {
       nom: 'nom',
       prenom: 'prenom',
       annee_naissance: 1979,
+      mois_naissance: 3,
+      jour_naissance: 24,
       passwordHash: 'hash',
       passwordSalt: 'salt',
       email: 'yo@truc.com',

@@ -366,10 +366,10 @@ export class ApplicationError {
       `Le nombre de parts fiscales doit être un nombre décimal`,
     );
   }
-  static throwBadAnnee() {
+  static throwBadAnnee(data: number) {
     this.throwAppError(
       '075',
-      `L'année de naissance doit être un nombre entier`,
+      `L'année de naissance [${data}] doit être un nombre entier compris entre 1900 et 2100`,
     );
   }
   static throwNbrAdultesEnfants() {
@@ -681,6 +681,19 @@ export class ApplicationError {
 
   static throwContentTypeNotFound(type: string) {
     this.throwAppError('127', `Content type [${type}] inconnu`);
+  }
+
+  static throwBadMonth(data: number) {
+    this.throwAppError(
+      '128',
+      `Le mois de naissance [${data}] doit être un nombre entier compris entre 1 et 12`,
+    );
+  }
+  static throwBadDay(data: number) {
+    this.throwAppError(
+      '129',
+      `Le jou de naissance [${data}] doit être un nombre entier compris entre 1 et 31`,
+    );
   }
 
   private static throwAppError(

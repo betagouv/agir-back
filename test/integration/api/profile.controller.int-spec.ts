@@ -175,6 +175,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.annee_naissance).toEqual(1979);
+    expect(response.body.mois_naissance).toEqual(3);
+    expect(response.body.jour_naissance).toEqual(24);
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
     expect(response.body.commune).toEqual('PALAISEAU');
@@ -232,6 +234,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
       abonnement_ter_loire: true,
+      annee_naissance: 1920,
+      mois_naissance: 5,
+      jour_naissance: 25,
     });
     // THEN
     const dbUser = await TestUtil.prisma.utilisateur.findUnique({
@@ -339,6 +344,71 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('075');
   });
+  it('PATCH /utilisateurs/id/profile - Annee naissance trop petite', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      annee_naissance: '100',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('075');
+  });
+  it('PATCH /utilisateurs/id/profile - mois naissance non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      mois_naissance: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('128');
+  });
+  it('PATCH /utilisateurs/id/profile - mois naissance trop grand', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      mois_naissance: '123',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('128');
+  });
+  it('PATCH /utilisateurs/id/profile - jour naissance non entier => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      jour_naissance: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('129');
+  });
+  it('PATCH /utilisateurs/id/profile - jour naissance trop grand', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      jour_naissance: '123',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('129');
+  });
   it('PATCH /utilisateurs/id/profile - parts fiscal non decimal erreur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -381,7 +451,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       email: 'george@paris.com',
       nom: 'THE NOM',
       prenom: 'THE PRENOM',
-      annee_naissance: 1234,
+      annee_naissance: 1930,
+      mois_naissance: 5,
+      jour_naissance: 23,
       mot_de_passe: '123456789012#aA',
       revenu_fiscal: 12345,
       nombre_de_parts_fiscales: 3,
@@ -399,7 +471,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.nom).toEqual('THE NOM');
     expect(dbUser.pseudo).toEqual('hahah');
     expect(dbUser.prenom).toEqual('THE PRENOM');
-    expect(dbUser.annee_naissance).toEqual(1234);
+    expect(dbUser.annee_naissance).toEqual(1930);
+    expect(dbUser.mois_naissance).toEqual(5);
+    expect(dbUser.jour_naissance).toEqual(23);
     expect(dbUser.revenu_fiscal).toEqual(12345);
     expect(dbUser.parts.toNumber()).toEqual(3);
     expect(dbUser.abonnement_ter_loire).toEqual(true);

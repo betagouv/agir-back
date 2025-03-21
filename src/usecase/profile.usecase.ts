@@ -111,8 +111,28 @@ export class ProfileUsecase {
         ApplicationError.throwRFRNotNumer();
     }
     if (profile.annee_naissance) {
-      if (!validator.isInt('' + profile.annee_naissance))
-        ApplicationError.throwBadAnnee();
+      if (
+        !validator.isInt('' + profile.annee_naissance) ||
+        parseInt('' + profile.annee_naissance) < 1900 ||
+        parseInt('' + profile.annee_naissance) > 2100
+      )
+        ApplicationError.throwBadAnnee(profile.annee_naissance);
+    }
+    if (profile.mois_naissance) {
+      if (
+        !validator.isInt('' + profile.mois_naissance) ||
+        parseInt('' + profile.mois_naissance) < 1 ||
+        parseInt('' + profile.mois_naissance) > 12
+      )
+        ApplicationError.throwBadMonth(profile.mois_naissance);
+    }
+    if (profile.jour_naissance) {
+      if (
+        !validator.isInt('' + profile.jour_naissance) ||
+        parseInt('' + profile.jour_naissance) < 1 ||
+        parseInt('' + profile.jour_naissance) > 31
+      )
+        ApplicationError.throwBadDay(profile.jour_naissance);
     }
     if (profile.nombre_de_parts_fiscales) {
       if (!validator.isDecimal('' + profile.nombre_de_parts_fiscales))
@@ -125,7 +145,15 @@ export class ProfileUsecase {
     utilisateur.nom = profile.nom;
     utilisateur.prenom = profile.prenom;
     utilisateur.pseudo = profile.pseudo;
-    utilisateur.annee_naissance = profile.annee_naissance;
+    utilisateur.annee_naissance = profile.annee_naissance
+      ? parseInt('' + profile.annee_naissance)
+      : undefined;
+    utilisateur.mois_naissance = profile.mois_naissance
+      ? parseInt('' + profile.mois_naissance)
+      : undefined;
+    utilisateur.jour_naissance = profile.jour_naissance
+      ? parseInt('' + profile.jour_naissance)
+      : undefined;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

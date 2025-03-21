@@ -59,6 +59,10 @@ export class UtilisateurUpdateProfileAPI {
   @ApiProperty({ required: false })
   annee_naissance: number;
   @ApiProperty({ required: false })
+  mois_naissance: number;
+  @ApiProperty({ required: false })
+  jour_naissance: number;
+  @ApiProperty({ required: false })
   revenu_fiscal?: number;
   @ApiProperty({ required: false })
   mot_de_passe?: string;
@@ -80,6 +84,12 @@ export class UtilisateurProfileAPI {
 
   @ApiProperty({ required: false })
   annee_naissance: number;
+
+  @ApiProperty({ required: false })
+  mois_naissance: number;
+
+  @ApiProperty({ required: false })
+  jour_naissance: number;
 
   @ApiProperty({ required: true })
   email: string;
@@ -123,6 +133,8 @@ export class UtilisateurProfileAPI {
       abonnement_ter_loire: user.abonnement_ter_loire,
       logement: LogementAPI.mapToAPI(user.logement),
       annee_naissance: user.annee_naissance,
+      mois_naissance: user.mois_naissance,
+      jour_naissance: user.jour_naissance,
       is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
       pseudo: user.pseudo,
       popup_reset_est_vue: user.gamification.popup_reset_vue,
