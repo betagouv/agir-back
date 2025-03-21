@@ -236,6 +236,23 @@ export class Utilisateur extends UtilisateurData {
     }
   }
 
+  public getDateNaissanceString(): string {
+    if (!this.mois_naissance || !this.mois_naissance || !this.jour_naissance) {
+      return 'missing';
+    }
+    let zero_mois = this.mois_naissance < 10 ? '0' : '';
+    let zero_jour = this.jour_naissance < 10 ? '0' : '';
+    return (
+      '' +
+      this.annee_naissance +
+      '-' +
+      zero_mois +
+      this.mois_naissance +
+      '-' +
+      zero_jour +
+      this.jour_naissance
+    );
+  }
   public vientDeNGC() {
     return this.source_inscription === SourceInscription.web_ngc;
   }

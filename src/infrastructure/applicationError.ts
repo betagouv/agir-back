@@ -692,7 +692,13 @@ export class ApplicationError {
   static throwBadDay(data: number) {
     this.throwAppError(
       '129',
-      `Le jou de naissance [${data}] doit être un nombre entier compris entre 1 et 31`,
+      `Le jour de naissance [${data}] doit être un nombre entier compris entre 1 et 31`,
+    );
+  }
+  static throwErreurRapporchementCompte() {
+    this.throwAppError(
+      '130',
+      `Un compte existant dans j'agis n'a pas pu être rapproché, erreur de connexion`,
     );
   }
 

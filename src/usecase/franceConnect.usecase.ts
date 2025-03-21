@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
@@ -95,17 +96,32 @@ export class FranceConnectUsecase {
       return await this.log_ok_fc_user(oidc_state, fc_user);
     }
 
-    // RAPPROCHEMENT avec email d'un utilisateur J'agis
+    // RAPPROCHEMENT avec email + année de naissance d'un utilisateur J'agis
     const standard_user = await this.utilisateurRepository.findByEmail(
       user_info.email,
       'full',
     );
+
     if (standard_user) {
-      await this.utilisateurRepository.setFranceConnectSub(
-        standard_user.id,
-        user_info.sub,
-      );
-      return await this.log_ok_fc_user(oidc_state, standard_user);
+      if (standard_user.getDateNaissanceString() !== user_info.birthdate) {
+        ApplicationError.throwErreurRapporchementCompte();
+      } else {
+        await this.utilisateurRepository.setFranceConnectSub(
+          standard_user.id,
+          user_info.sub,
+        );
+        standard_user.prenom = user_info.given_name;
+        standard_user.nom = user_info.family_name;
+        standard_user.annee_naissance = this.getAnnee(user_info.birthdate);
+        standard_user.mois_naissance = this.getMois(user_info.birthdate);
+        standard_user.jour_naissance = this.getJour(user_info.birthdate);
+
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(
+          standard_user,
+          [Scope.core],
+        );
+        return await this.log_ok_fc_user(oidc_state, standard_user);
+      }
     }
 
     // NEW UTILISATEUR CREATION
@@ -116,6 +132,10 @@ export class FranceConnectUsecase {
     );
 
     new_utilisateur.prenom = user_info.given_name;
+    new_utilisateur.nom = user_info.family_name;
+    new_utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
+    new_utilisateur.mois_naissance = this.getMois(user_info.birthdate);
+    new_utilisateur.jour_naissance = this.getJour(user_info.birthdate);
     new_utilisateur.status = UtilisateurStatus.default;
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
@@ -169,5 +189,18 @@ export class FranceConnectUsecase {
     await this.oIDCStateRepository.delete(utilisateurId);
 
     return { fc_logout_url: logout_url };
+  }
+
+  private getAnnee(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(0, 4));
+  }
+  private getMois(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(4, 6));
+  }
+  private getJour(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(6));
   }
 }
