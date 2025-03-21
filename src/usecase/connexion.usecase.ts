@@ -197,6 +197,17 @@ export class Connexion_v2_Usecase {
       return { fc_logout_url: result.fc_logout_url };
     }
   }
+  async logout_FC_only(state: string): Promise<{ fc_logout_url?: URL }> {
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      const result =
+        await this.franceConnectUsecase.external_logout_france_connect_by_state(
+          state,
+        );
+      return { fc_logout_url: result.fc_logout_url };
+    }
+  }
 
   async logout_all_users() {
     await this.utilisateurRepository.disconnectAll();

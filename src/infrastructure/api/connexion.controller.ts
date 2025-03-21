@@ -7,28 +7,29 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiBody,
-  ApiOkResponse,
-  ApiExtraModels,
-  ApiOperation,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
   ApiProperty,
+  ApiTags,
 } from '@nestjs/swagger';
-import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
-import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
-import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ApplicationError } from '../applicationError';
-import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
+import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
+import { logoutAPI } from './types/utilisateur/logoutAPI';
+import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
-import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
-import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
-import { logoutAPI } from './types/utilisateur/logoutAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })
@@ -96,6 +97,21 @@ export class ConnexionController extends GenericControler {
     const result = await this.connexion_v2_Usecase.logout_single_user(
       utilisateurId,
     );
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
+  }
+  @Post('utilisateurs/:utilisateurId/logout_FC_only/:state')
+  @ApiOperation({
+    summary: `Déconnecte un utilisateur de France Connect seulement : si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
+  })
+  @ApiOkResponse({ type: logoutAPI })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  async disconnect_FC(@Param('state') state: string): Promise<logoutAPI> {
+    const result = await this.connexion_v2_Usecase.logout_FC_only(state);
     return {
       france_connect_logout_url: result.fc_logout_url
         ? result.fc_logout_url.toString()

@@ -11,6 +11,11 @@ export class OIDCStateRepository {
       await this.prisma.oIDC_STATE.deleteMany({ where: { utilisateurId } });
     }
   }
+  async deleteByState(state: string) {
+    if (state) {
+      await this.prisma.oIDC_STATE.deleteMany({ where: { state: state } });
+    }
+  }
 
   async createNewState(
     state_id: string,

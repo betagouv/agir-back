@@ -195,6 +195,22 @@ export class FranceConnectUsecase {
 
     return { fc_logout_url: logout_url };
   }
+  async external_logout_france_connect_by_state(
+    state: string,
+  ): Promise<{ fc_logout_url?: URL }> {
+    const stateDB = await this.oIDCStateRepository.getByState(state);
+
+    if (!stateDB) {
+      // RIEN A FAIRE
+      return {};
+    }
+    const logout_url = this.oidcService.generateLogoutUrl(stateDB.idtoken);
+
+    // REMOVE STATE
+    await this.oIDCStateRepository.deleteByState(state);
+
+    return { fc_logout_url: logout_url };
+  }
 
   private getAnnee(date: string): number {
     if (!date) return null;
