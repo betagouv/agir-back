@@ -103,7 +103,7 @@ export class ConnexionController extends GenericControler {
         : undefined,
     };
   }
-  @Post('utilisateurs/:utilisateurId/logout_FC_only/:state')
+  @Post('utilisateurs/logout_FC_only/:state')
   @ApiOperation({
     summary: `Déconnecte un utilisateur de France Connect seulement : si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
   })
