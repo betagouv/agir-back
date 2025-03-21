@@ -1,31 +1,28 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
-  Post,
-  UseGuards,
-  Request,
-  Delete,
-  Query,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOkResponse,
-  ApiOperation,
   ApiBearerAuth,
   ApiBody,
-  ApiQuery,
-  getSchemaPath,
   ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
-import { AuthGuard } from '../auth/guard';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { ServiceAPI } from './types/service/serviceAPI';
-import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
 import { ApplicationError } from '../applicationError';
+import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { LinkyConfigurationAPI } from './types/service/linkyConfigurationAPI';
+import { ServiceAPI } from './types/service/serviceAPI';
 
 @ApiExtraModels(LinkyConfigurationAPI)
 @Controller()

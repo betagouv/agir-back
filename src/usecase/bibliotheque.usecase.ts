@@ -131,9 +131,7 @@ export class BibliothequeUsecase {
   }
 
   public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -200,8 +198,7 @@ export class BibliothequeUsecase {
       ApplicationError.throwBadQuizzPourcent(pourcent);
     }
 
-    const quizz_definition =
-      await this.quizzRepository.getQuizzDefinitionByContentId(content_id);
+    const quizz_definition = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_definition) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -234,9 +231,7 @@ export class BibliothequeUsecase {
   ) {
     utilisateur.history.quizzAttempt(content_id, pourcent);
 
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
     if (
       !utilisateur.history.sontPointsQuizzEnPoche(content_id) &&
       pourcent === 100 &&
@@ -272,9 +267,7 @@ export class BibliothequeUsecase {
   }
 
   public async external_get_quizz(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizzDefinitionByContentId(
-      content_id,
-    );
+    const quizz_def = await this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);

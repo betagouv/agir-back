@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Cron } from '@nestjs/schedule';
 import { Quizz as QuizzDB } from '@prisma/client';
-import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
-import { Thematique } from '../../domain/thematique/thematique';
-import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { QuizzDefinition } from '../../domain/contenu/quizzDefinition';
+import { Thematique } from '../../domain/thematique/thematique';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type QuizzFilter = {
   maxNumber?: number;
@@ -20,7 +21,40 @@ export type QuizzFilter = {
 
 @Injectable()
 export class QuizzRepository {
-  constructor(private prisma: PrismaService) {}
+  private static catalogue_quizz: Map<string, QuizzDefinition>;
+
+  constructor(private prisma: PrismaService) {
+    QuizzRepository.catalogue_quizz = new Map();
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    try {
+      await this.loadCache();
+    } catch (error) {
+      console.error(
+        `Error loading quizz definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
+      );
+    }
+  }
+
+  @Cron('* * * * *')
+  public async loadCache() {
+    const new_map: Map<string, QuizzDefinition> = new Map();
+    const liste_quizz = await this.prisma.quizz.findMany();
+    for (const quizz of liste_quizz) {
+      new_map.set(quizz.content_id, this.buildQuizzFromDB(quizz));
+    }
+    QuizzRepository.catalogue_quizz = new_map;
+  }
+
+  public static resetCache() {
+    // FOR TEST ONLY
+    QuizzRepository.catalogue_quizz = new Map();
+  }
+
+  public getQuizz(cms_id: string): QuizzDefinition {
+    return QuizzRepository.catalogue_quizz.get(cms_id);
+  }
 
   async upsert(quizz: QuizzDefinition): Promise<void> {
     const quizz_to_save: QuizzDB = {

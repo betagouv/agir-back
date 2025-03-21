@@ -136,7 +136,10 @@ export class ActionUsecase {
     type: TypeAction,
     code_commune: string,
   ): Promise<Action> {
-    const action_def = await this.actionRepository.getByCodeAndType(code, type);
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
+      code,
+      type,
+    );
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -276,7 +279,10 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCodeAndType(code, type);
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
+      code,
+      type,
+    );
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -369,7 +375,7 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCodeAndType(
+    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
       code_action_quizz,
       TypeAction.quizz,
     );

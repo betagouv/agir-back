@@ -47,3 +47,7 @@ DOSSIER D’ARCHITECTURE TECHNIQUE.md
 log.txt
 static/images
 *.txt
+
+# Bruno collections
+
+.bruno/

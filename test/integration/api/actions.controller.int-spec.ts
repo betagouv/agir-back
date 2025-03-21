@@ -16,6 +16,7 @@ import { CompteurActionsRepository } from '../../../src/infrastructure/repositor
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -27,6 +28,7 @@ describe('Actions (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
@@ -455,8 +457,13 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -541,8 +548,13 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [{ type: TypeAction.classique, code: '123' }],
-      liste_actions_faites: [{ type: TypeAction.classique, code: '123' }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '123' },
+          vue_le: new Date(),
+          faite_le: new Date(),
+        },
+      ],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -1077,6 +1089,9 @@ describe('Actions (API test)', () => {
       categorie: Categorie.recommandation,
       mois: [],
     });
+
+    await quizzRepository.loadCache();
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/actions/quizz/123',
@@ -1399,8 +1414,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -1457,8 +1471,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };

@@ -28,6 +28,7 @@ import { Objectif_v0 } from '../../../src/domain/object_store/mission/MissionsUt
 import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -37,6 +38,7 @@ import { ArticleRepository } from '../../../src/infrastructure/repository/articl
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
 import { MissionRepository } from '../../../src/infrastructure/repository/mission.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -72,6 +74,7 @@ describe('Admin (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -627,6 +630,72 @@ describe('Admin (API test)', () => {
     expect(userDB.pseudo).toEqual('yo');
     expect(userDB.version).toEqual(13);
   });
+
+  it('POST /admin/migrate_users migration V14 OK - reset personnalisation thematique', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(),
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            {
+              action: { type: TypeAction.classique, code: '2' },
+              date: new Date(),
+            },
+          ],
+          codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
+          personnalisation_done: true,
+          personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 13,
+      migration_enabled: true,
+      thematique_history: thematique_history as any,
+    });
+    App.USER_CURRENT_VERSION = 14;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 14,
+            ok: true,
+            info: 'personnalisation reset OK',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history).toEqual({
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    });
+    expect(userDB.version).toEqual(14);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1810,6 +1879,8 @@ describe('Admin (API test)', () => {
       titre: 'Question quiz 2',
     });
 
+    await quizzRepository.loadCache();
+
     // WHEN
     const response = await TestUtil.POST('/admin/quiz-statistique');
 
@@ -2929,8 +3000,18 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [{ code: '2', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          vue_le: null,
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
@@ -2978,19 +3059,31 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [{ code: '1', type: TypeAction.classique }],
-      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
     const thematique_history2: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [
-        { code: '1', type: TypeAction.classique },
-        { code: '2', type: TypeAction.classique },
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          vue_le: new Date(),
+          faite_le: null,
+        },
       ],
-      liste_actions_faites: [],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };

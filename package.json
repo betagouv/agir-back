@@ -79,6 +79,7 @@
     "@types/supertest": "^2.0.16",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "cloudinary": "^2.6.0",
     "dotenv-cli": "7.2.1",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",

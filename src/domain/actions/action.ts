@@ -22,6 +22,8 @@ export class Action extends ActionDefinition {
   nom_commune?: string;
   deja_vue?: boolean;
   deja_faite?: boolean;
+  vue_le?: Date;
+  faite_le?: Date;
 
   constructor(data: ActionDefinition) {
     super(data);

@@ -5,6 +5,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -14,6 +15,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const quizzRepository = new QuizzRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -680,8 +682,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       ],
     });
     await articleRepository.loadCache();
-
-    await articleRepository.loadCache();
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -820,6 +821,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       contenu: 'un très bon article',
     });
     await articleRepository.loadCache();
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.getServer().get('/bibliotheque/quizz/123');
@@ -840,6 +842,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       contenu: 'un très bon article',
     });
     await articleRepository.loadCache();
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -877,6 +880,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       contenu: 'un très bon article',
     });
     await articleRepository.loadCache();
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(
@@ -903,6 +907,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       contenu: 'un très bon article',
     });
     await articleRepository.loadCache();
+    await quizzRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.PATCH(

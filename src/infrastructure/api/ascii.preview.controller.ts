@@ -645,10 +645,9 @@ export class AsciiPreviewController extends GenericControler {
           result.push('');
           result.push(`## QUIZZ [${objectif.content_id}]`);
 
-          const quizz =
-            await this.quizzRepository.getQuizzDefinitionByContentId(
-              objectif.content_id,
-            );
+          const quizz = await this.quizzRepository.getQuizz(
+            objectif.content_id,
+          );
           if (!quizz) {
             result.push(``);
             result.push(

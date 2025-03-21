@@ -1,15 +1,15 @@
-import { Versioned, Versioned_v0 } from '../versioned';
-import { ServiceRecherche } from '../../bibliotheque_services/recherche/serviceRecherche';
+import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
-import { ServiceRechercheID } from '../../bibliotheque_services/recherche/serviceRechercheID';
+import { FavorisRecherche } from '../../bibliotheque_services/recherche/favorisRecherche';
 import {
   EtapeRecette,
   IngredientRecette,
   ResultatRecherche,
 } from '../../bibliotheque_services/recherche/resultatRecherche';
-import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import { ServiceRecherche } from '../../bibliotheque_services/recherche/serviceRecherche';
+import { ServiceRechercheID } from '../../bibliotheque_services/recherche/serviceRechercheID';
 import { OpenHour } from '../../bibliotheque_services/types/openHour';
-import { FavorisRecherche } from '../../bibliotheque_services/recherche/favorisRecherche';
+import { Versioned_v0 } from '../versioned';
 
 export class EtapeRecette_v0 {
   ordre: number;
@@ -46,6 +46,7 @@ export class ResultatRecherche_v0 {
   id: string;
   titre: string;
   image_url?: string;
+  fallback_image_url?: string;
 
   adresse_rue?: string;
   adresse_nom_ville?: string;
@@ -94,6 +95,7 @@ export class ResultatRecherche_v0 {
       type_plat: res.type_plat,
       distance_metres: res.distance_metres,
       image_url: res.image_url,
+      fallback_image_url: res.fallback_image_url,
       emoji: res.emoji,
       type_fruit_legume: res.type_fruit_legume,
       commitment: res.commitment,

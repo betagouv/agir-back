@@ -18,8 +18,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -29,6 +28,7 @@ describe('ThematiqueHistory', () => {
           ],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     });
@@ -51,8 +51,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_thematiques: [],
     });
 
@@ -69,8 +68,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -78,6 +76,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_proposees: [],
           personnalisation_done: false,
           personnalisation_done_once: false,
+          first_personnalisation_date: null,
         },
       ],
     });
@@ -95,8 +94,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -104,6 +102,7 @@ describe('ThematiqueHistory', () => {
           codes_actions_proposees: [],
           personnalisation_done: true,
           personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
         },
       ],
     });
@@ -121,8 +120,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_tags_excluants: [],
-      liste_actions_vues: [],
-      liste_actions_faites: [],
+      liste_actions_utilisateur: [],
       liste_thematiques: [],
     });
 

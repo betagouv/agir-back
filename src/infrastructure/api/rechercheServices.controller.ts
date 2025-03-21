@@ -1,4 +1,14 @@
 import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
@@ -6,31 +16,20 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Controller,
-  Param,
-  UseGuards,
-  Request,
-  Post,
-  Body,
-  Get,
-  Delete,
-} from '@nestjs/common';
+import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices.usecase';
+import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
+import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices.usecase';
+import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
 import { RechercheServiceInputAPI } from './types/rechercheServices/rechercheServiceInputAPI';
-import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import {
   ReponseRechecheAPI,
   ResultatRechercheAPI,
 } from './types/rechercheServices/resultatRecherchAPI';
-import { CategoriesRechercheAPI } from './types/rechercheServices/categoriesRechercheAPI';
-import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
-import { ApplicationError } from '../applicationError';
 import { ServiceRechercheAPI } from './types/rechercheServices/serviceRechercheAPI';
-import { Thematique } from '../../domain/thematique/thematique';
 
 @Controller()
 @ApiBearerAuth()

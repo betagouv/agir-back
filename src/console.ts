@@ -232,6 +232,42 @@ async function bootstrap() {
       );
       break;
 
+    case 'dump_action_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_action_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateAction();
+      console.log(
+        `STOP dump_action_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
+    case 'dump_article_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_article_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateArticle();
+      console.log(
+        `STOP dump_article_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
+    case 'dump_aides_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_aides_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateAides();
+      console.log(
+        `STOP dump_aides_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
+    case 'dump_quizz_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_quizz_copy_for_stats ${start_time}`);
+      await application.get(DuplicateBDDForStatsUsecase).duplicateQuizz();
+      console.log(
+        `STOP dump_quizz_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
     case 'refresh_action_stats':
       start_time = Date.now();
       console.log(`START refresh_action_stats ${start_time}`);

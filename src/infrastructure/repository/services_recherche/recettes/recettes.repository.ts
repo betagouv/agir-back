@@ -188,7 +188,10 @@ export class RecettesRepository implements FinderInterface {
           difficulty_plat: r.express === 1 ? 'Facile' : 'Intermédiaire',
           type_plat: this.mapCategoryPlat(r.recipe_category),
           temps_prepa_min: r.preparation_time,
-          image_url: this.getImageUrlFromCategorieRecette(r.recipe_category),
+          image_url: this.getImageUrlFromRecetteSlug(r.slug),
+          fallback_image_url: this.getImageUrlFromCategorieRecette(
+            r.recipe_category,
+          ),
           ingredients: this.getIngredientsRecette(r.id),
           etapes_recette: this.getEtapesRecette(r.id),
         }),
@@ -214,6 +217,11 @@ export class RecettesRepository implements FinderInterface {
       return 'https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/plat_41956db95a.svg';
     return '-';
   }
+
+  private getImageUrlFromRecetteSlug(slug: string): string {
+    return `https://res.cloudinary.com/dq023imd8/image/upload/v1726729974/services/recettes/${slug}.webp`;
+  }
+
   private getIngredientsRecette(recetteId: number): IngredientRecette[] {
     const liste_raw_ingredients = this.readIngredientsRecette(recetteId);
 

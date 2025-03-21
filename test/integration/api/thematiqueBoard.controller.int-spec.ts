@@ -165,8 +165,13 @@ describe('Thematique Board (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_actions_vues: [],
-      liste_actions_faites: [{ code: '1', type: TypeAction.classique }],
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          vue_le: null,
+          faite_le: new Date(),
+        },
+      ],
       liste_tags_excluants: [],
       liste_thematiques: [],
     };
