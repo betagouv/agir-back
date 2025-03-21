@@ -148,7 +148,7 @@ describe('Duplicate Usecase', () => {
     expect(stats_users[0].user_id).toEqual(userDB[0].external_stat_id);
   });
 
-  it('duplicateKYC : copy ok 1 KYC de type choix unique', async () => {
+  it('duplicateKYC : ne copie pas la KYC si répondu il y a plus de 2 jours', async () => {
     // GIVEN
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -187,6 +187,49 @@ describe('Duplicate Usecase', () => {
     // THEN
     const stats_kycs = await TestUtil.prisma_stats.kYCCopy.findMany();
 
+    expect(stats_kycs).toHaveLength(0);
+  });
+
+  it('duplicateKYC : copy ok 1 KYC de type choix unique', async () => {
+    // GIVEN
+    const last_update = new Date(Date.now() - 1000);
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: '1',
+          id_cms: 10,
+          type: TypeReponseQuestionKYC.choix_unique,
+          last_update: last_update,
+          thematique: Thematique.alimentation,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              selected: true,
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: false,
+            },
+          ],
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+      external_stat_id: '123',
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicateKYC(5);
+
+    // THEN
+    const stats_kycs = await TestUtil.prisma_stats.kYCCopy.findMany();
+
     expect(stats_kycs).toHaveLength(1);
 
     const kycDB = stats_kycs[0];
@@ -196,12 +239,13 @@ describe('Duplicate Usecase', () => {
     expect(kycDB.question).toEqual('question');
     expect(kycDB.thematique).toEqual(Thematique.alimentation);
     expect(kycDB.type_question).toEqual(TypeReponseQuestionKYC.choix_unique);
-    expect(kycDB.derniere_mise_a_jour).toEqual(new Date(1));
+    expect(kycDB.derniere_mise_a_jour).toEqual(last_update);
     expect(kycDB.reponse_unique_code).toEqual('climat');
   });
 
   it('duplicateKYC : copy ok 1 KYC de type choix multiple', async () => {
     // GIVEN
+    const last_update = new Date(Date.now() - 1000);
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -211,7 +255,7 @@ describe('Duplicate Usecase', () => {
           code: '1',
           id_cms: 10,
           type: TypeReponseQuestionKYC.choix_multiple,
-          last_update: new Date(1),
+          last_update: last_update,
           thematique: Thematique.alimentation,
           reponse_complexe: [
             {
@@ -252,6 +296,7 @@ describe('Duplicate Usecase', () => {
 
   it('duplicateKYC : copy ok 1 KYC de type entier', async () => {
     // GIVEN
+    const last_update = new Date(Date.now() - 1000);
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -261,7 +306,7 @@ describe('Duplicate Usecase', () => {
           code: '1',
           id_cms: 10,
           type: TypeReponseQuestionKYC.entier,
-          last_update: new Date(1),
+          last_update: last_update,
           thematique: Thematique.alimentation,
           reponse_simple: {
             value: '12',
@@ -287,6 +332,7 @@ describe('Duplicate Usecase', () => {
   });
   it('duplicateKYC : copy ok 1 KYC de type decimal', async () => {
     // GIVEN
+    const last_update = new Date(Date.now() - 1000);
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -296,7 +342,7 @@ describe('Duplicate Usecase', () => {
           code: '1',
           id_cms: 10,
           type: TypeReponseQuestionKYC.decimal,
-          last_update: new Date(1),
+          last_update: last_update,
           thematique: Thematique.alimentation,
           reponse_simple: {
             value: '12.3',
@@ -322,6 +368,7 @@ describe('Duplicate Usecase', () => {
   });
   it('duplicateKYC : copy ok 1 KYC de type texte', async () => {
     // GIVEN
+    const last_update = new Date(Date.now() - 1000);
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -331,7 +378,7 @@ describe('Duplicate Usecase', () => {
           code: '1',
           id_cms: 10,
           type: TypeReponseQuestionKYC.libre,
-          last_update: new Date(1),
+          last_update: last_update,
           thematique: Thematique.alimentation,
           reponse_simple: {
             value: 'hello',

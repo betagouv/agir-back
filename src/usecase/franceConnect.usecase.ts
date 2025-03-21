@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
 } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { OidcService } from '../infrastructure/auth/oidc.service';
+import { FCUserInfo, OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -92,20 +94,36 @@ export class FranceConnectUsecase {
       'full',
     );
     if (fc_user) {
+      this.setFCUserInfoToUser(fc_user, user_info);
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(fc_user, [
+        Scope.core,
+      ]);
+
       return await this.log_ok_fc_user(oidc_state, fc_user);
     }
 
-    // RAPPROCHEMENT avec email d'un utilisateur J'agis
+    // RAPPROCHEMENT avec email + année de naissance d'un utilisateur J'agis
     const standard_user = await this.utilisateurRepository.findByEmail(
       user_info.email,
       'full',
     );
+
     if (standard_user) {
-      await this.utilisateurRepository.setFranceConnectSub(
-        standard_user.id,
-        user_info.sub,
-      );
-      return await this.log_ok_fc_user(oidc_state, standard_user);
+      if (standard_user.getDateNaissanceString() !== user_info.birthdate) {
+        ApplicationError.throwErreurRapporchementCompte();
+      } else {
+        await this.utilisateurRepository.setFranceConnectSub(
+          standard_user.id,
+          user_info.sub,
+        );
+        this.setFCUserInfoToUser(standard_user, user_info);
+
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(
+          standard_user,
+          [Scope.core],
+        );
+        return await this.log_ok_fc_user(oidc_state, standard_user);
+      }
     }
 
     // NEW UTILISATEUR CREATION
@@ -115,7 +133,7 @@ export class FranceConnectUsecase {
       SourceInscription.france_connect,
     );
 
-    new_utilisateur.prenom = user_info.given_name;
+    this.setFCUserInfoToUser(new_utilisateur, user_info);
     new_utilisateur.status = UtilisateurStatus.default;
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
@@ -131,6 +149,14 @@ export class FranceConnectUsecase {
     await this.utilisateurRepository.createUtilisateur(new_utilisateur);
 
     return await this.log_ok_fc_user(oidc_state, new_utilisateur);
+  }
+
+  private setFCUserInfoToUser(utilisateur: Utilisateur, user_info: FCUserInfo) {
+    utilisateur.prenom = user_info.given_name;
+    utilisateur.nom = user_info.family_name;
+    utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
+    utilisateur.mois_naissance = this.getMois(user_info.birthdate);
+    utilisateur.jour_naissance = this.getJour(user_info.birthdate);
   }
 
   private async log_ok_fc_user(
@@ -169,5 +195,43 @@ export class FranceConnectUsecase {
     await this.oIDCStateRepository.delete(utilisateurId);
 
     return { fc_logout_url: logout_url };
+  }
+  async external_logout_france_connect_by_state(
+    state: string,
+  ): Promise<{ fc_logout_url?: URL }> {
+    const stateDB = await this.oIDCStateRepository.getByState(state);
+
+    if (!stateDB) {
+      // RIEN A FAIRE
+      return {};
+    }
+    const logout_url = this.oidcService.generateLogoutUrl(stateDB.idtoken);
+
+    // REMOVE STATE
+    await this.oIDCStateRepository.deleteByState(state);
+
+    return { fc_logout_url: logout_url };
+  }
+
+  async logout_FC_only(state: string): Promise<{ fc_logout_url?: URL }> {
+    if (App.isProd()) {
+      return {}; // PAS de FC encore en PROD
+    } else {
+      const result = await this.external_logout_france_connect_by_state(state);
+      return { fc_logout_url: result.fc_logout_url };
+    }
+  }
+
+  private getAnnee(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(0, 4));
+  }
+  private getMois(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(5, 7));
+  }
+  private getJour(date: string): number {
+    if (!date) return null;
+    return parseInt(date.substring(8));
   }
 }

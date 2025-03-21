@@ -2,11 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Redirect,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -16,22 +14,20 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { FranceConnectUsecase } from '../../usecase/franceConnect.usecase';
-import { AuthGuard } from '../auth/guard';
-import { OidcService } from '../auth/oidc.service';
-import { OIDCStateRepository } from '../repository/oidcState.repository';
 import { GenericControler } from './genericControler';
-import { CodeStateInputAPI } from './types/utilisateur/codeStateInputAPI';
+import {
+  CodeStateInputAPI,
+  StateInputAPI,
+} from './types/utilisateur/codeStateInputAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { logoutAPI } from './types/utilisateur/logoutAPI';
 
 @Controller()
 @ApiTags('France Connect')
 export class FranceConnectController extends GenericControler {
-  constructor(
-    private oIDCStateRepository: OIDCStateRepository,
-    private oidcService: OidcService,
-    private franceConnectUsecase: FranceConnectUsecase,
-  ) {
+  constructor(private franceConnectUsecase: FranceConnectUsecase) {
     super();
   }
 
@@ -81,22 +77,24 @@ export class FranceConnectController extends GenericControler {
     );
   }
 
-  @Get('logout_france_connect/:utilisateurId')
+  @Post('logout')
   @ApiOperation({
-    summary:
-      'Initie une redirection vers France Connect pour processus de dé-connexion (route temporaire de test)',
+    summary: `Déconnecte un utilisateur de France Connect seulement : si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
   })
-  @UseGuards(AuthGuard)
-  @Redirect()
-  async logout(@Param('utilisateurId') utilisateurId: string, @Request() req) {
-    this.checkCallerId(req, utilisateurId);
-
-    const state = await this.oIDCStateRepository.getByUtilisateurId(
-      utilisateurId,
+  @ApiBody({
+    type: StateInputAPI,
+  })
+  @ApiOkResponse({ type: logoutAPI })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  async disconnect_FC(@Body('body') body: StateInputAPI): Promise<logoutAPI> {
+    const result = await this.franceConnectUsecase.logout_FC_only(
+      body.oidc_state,
     );
-    const redirect_url = await this.oidcService.generateLogoutUrl(
-      state.idtoken,
-    );
-    return { url: redirect_url };
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
   }
 }

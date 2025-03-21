@@ -53,6 +53,8 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(user.nom).toEqual(null);
     expect(user.prenom).toEqual(null);
     expect(user.annee_naissance).toEqual(null);
+    expect(user.mois_naissance).toEqual(null);
+    expect(user.jour_naissance).toEqual(null);
     expect(user.email).toEqual('w@w.com');
     expect(user.source_inscription).toEqual('mobile');
     expect(user.passwordHash.length).toBeGreaterThan(20);

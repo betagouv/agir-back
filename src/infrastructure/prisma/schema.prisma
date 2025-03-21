@@ -28,6 +28,8 @@ model Utilisateur {
   nom                        String?   @default("nom")
   prenom                     String?   @default("prenom")
   annee_naissance            Int?
+  mois_naissance             Int?
+  jour_naissance             Int?
   passwordHash               String?   @default("hash")
   passwordSalt               String?   @default("salt")
   revenu_fiscal              Int?

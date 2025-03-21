@@ -7,28 +7,28 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiBody,
-  ApiOkResponse,
-  ApiExtraModels,
-  ApiOperation,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
   ApiProperty,
+  ApiTags,
 } from '@nestjs/swagger';
-import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
-import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
-import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ApplicationError } from '../applicationError';
-import { GenericControler } from './genericControler';
 import { AuthGuard } from '../auth/guard';
+import { GenericControler } from './genericControler';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
+import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { LoginUtilisateurAPI } from './types/utilisateur/loginUtilisateurAPI';
+import { logoutAPI } from './types/utilisateur/logoutAPI';
+import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
 import { OubliMdpAPI } from './types/utilisateur/oubliMdpAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
-import { ModifierMdpAPI } from './types/utilisateur/modifierMdpAPI';
-import { EmailAPI } from './types/utilisateur/EmailAPI';
-import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import { Valider2FAAPI } from './types/utilisateur/valider2FAAPI';
-import { logoutAPI } from './types/utilisateur/logoutAPI';
 
 export class ConfirmationAPI {
   @ApiProperty({ required: true })

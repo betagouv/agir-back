@@ -12,6 +12,8 @@ import { QuizzRepository } from '../../../infrastructure/repository/quizz.reposi
 import { StatistiqueExternalRepository } from '../../../infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../infrastructure/repository/utilisateur/utilisateur.repository';
 
+const TWO_DAYS_MS = 1000 * 60 * 60 * 24 * 2;
+
 @Injectable()
 export class DuplicateBDDForStatsUsecase {
   constructor(
@@ -52,7 +54,7 @@ export class DuplicateBDDForStatsUsecase {
   async duplicateKYC(block_size: number = 100) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
-    await this.statistiqueExternalRepository.deleteAllKYCData();
+    const start_date = new Date(Date.now() - TWO_DAYS_MS);
 
     for (let index = 0; index < total_user_count; index = index + block_size) {
       const current_user_list =
@@ -66,10 +68,10 @@ export class DuplicateBDDForStatsUsecase {
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
 
-        const liste_kyc = user.kyc_history.getRawAnsweredKYCs();
+        const liste_kyc = user.kyc_history.getRawAnsweredKYCsAfter(start_date);
         for (const kyc of liste_kyc) {
           try {
-            await this.statistiqueExternalRepository.createKYCData(
+            await this.statistiqueExternalRepository.upsertKYCData(
               user.external_stat_id,
               kyc,
             );

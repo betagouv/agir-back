@@ -16,6 +16,8 @@ export type FCUserInfo = {
   exp: number; //1740645729
   iat: number; //1740645669
   iss: string; //'https://fcp-low.integ01.dev-franceconnect.fr/api/v2'
+  family_name: string; // DUBOIS
+  birthdate: string; // 1962-08-24
 };
 
 export type ID_TOKEN_FORMAT = {

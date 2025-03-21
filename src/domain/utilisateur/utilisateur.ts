@@ -57,6 +57,8 @@ export class UtilisateurData {
   nom: string;
   prenom: string;
   annee_naissance: number;
+  mois_naissance: number;
+  jour_naissance: number;
   revenu_fiscal: number;
   parts: number;
   abonnement_ter_loire: boolean;
@@ -181,6 +183,8 @@ export class Utilisateur extends UtilisateurData {
       derniere_activite: new Date(),
       missions: new MissionsUtilisateur(),
       annee_naissance: null,
+      mois_naissance: null,
+      jour_naissance: null,
       db_version: 0,
       bilbiotheque_services: new BibliothequeServices(),
       is_magic_link_user: is_magic_link,
@@ -232,6 +236,23 @@ export class Utilisateur extends UtilisateurData {
     }
   }
 
+  public getDateNaissanceString(): string {
+    if (!this.mois_naissance || !this.mois_naissance || !this.jour_naissance) {
+      return 'missing';
+    }
+    let zero_mois = this.mois_naissance < 10 ? '0' : '';
+    let zero_jour = this.jour_naissance < 10 ? '0' : '';
+    return (
+      '' +
+      this.annee_naissance +
+      '-' +
+      zero_mois +
+      this.mois_naissance +
+      '-' +
+      zero_jour +
+      this.jour_naissance
+    );
+  }
   public vientDeNGC() {
     return this.source_inscription === SourceInscription.web_ngc;
   }

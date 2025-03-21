@@ -13,3 +13,11 @@ export class CodeStateInputAPI {
   })
   oidc_state: string;
 }
+
+export class StateInputAPI {
+  @ApiProperty({
+    type: String,
+    description: `state utilisé pour initier la connexion`,
+  })
+  oidc_state: string;
+}
