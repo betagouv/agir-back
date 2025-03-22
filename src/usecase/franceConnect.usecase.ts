@@ -224,14 +224,17 @@ export class FranceConnectUsecase {
 
   private getAnnee(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(0, 4));
+    const parsed = parseInt(date.substring(0, 4));
+    return Number.isNaN(parsed) ? null : parsed;
   }
   private getMois(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(5, 7));
+    const parsed = parseInt(date.substring(5, 7));
+    return Number.isNaN(parsed) ? null : parsed;
   }
   private getJour(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(8));
+    const parsed = parseInt(date.substring(8));
+    return Number.isNaN(parsed) ? null : parsed;
   }
 }
