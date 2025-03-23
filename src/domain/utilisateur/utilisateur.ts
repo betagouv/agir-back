@@ -226,7 +226,7 @@ export class Utilisateur extends UtilisateurData {
     return !!this.france_connect_sub;
   }
 
-  public isNomPrenomModifiable() {
+  public isDataFranceConnectModifiable() {
     return !this.isUtilisateurFranceConnecte();
   }
 

@@ -62,8 +62,8 @@ export class ProfileUsecase {
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
     if (profile.nom) {
-      if (!utilisateur.isNomPrenomModifiable()) {
-        ApplicationError.throwMajNomImpossibleFC();
+      if (!utilisateur.isDataFranceConnectModifiable()) {
+        ApplicationError.throwMajImpossibleFC();
       }
       if (!char_regexp.test(profile.nom)) {
         ApplicationError.throwNotAlhpaNom();
@@ -91,8 +91,8 @@ export class ProfileUsecase {
     }
 
     if (profile.prenom) {
-      if (!utilisateur.isNomPrenomModifiable()) {
-        ApplicationError.throwMajPrenomImpossibleFC();
+      if (!utilisateur.isDataFranceConnectModifiable()) {
+        ApplicationError.throwMajImpossibleFC();
       }
       if (!char_regexp.test(profile.prenom)) {
         ApplicationError.throwNotAlhpaPrenom();
@@ -111,6 +111,9 @@ export class ProfileUsecase {
         ApplicationError.throwRFRNotNumer();
     }
     if (profile.annee_naissance) {
+      if (!utilisateur.isDataFranceConnectModifiable()) {
+        ApplicationError.throwMajImpossibleFC();
+      }
       if (
         !validator.isInt('' + profile.annee_naissance) ||
         parseInt('' + profile.annee_naissance) < 1900 ||
@@ -119,6 +122,9 @@ export class ProfileUsecase {
         ApplicationError.throwBadAnnee(profile.annee_naissance);
     }
     if (profile.mois_naissance) {
+      if (!utilisateur.isDataFranceConnectModifiable()) {
+        ApplicationError.throwMajImpossibleFC();
+      }
       if (
         !validator.isInt('' + profile.mois_naissance) ||
         parseInt('' + profile.mois_naissance) < 1 ||
@@ -127,6 +133,9 @@ export class ProfileUsecase {
         ApplicationError.throwBadMonth(profile.mois_naissance);
     }
     if (profile.jour_naissance) {
+      if (!utilisateur.isDataFranceConnectModifiable()) {
+        ApplicationError.throwMajImpossibleFC();
+      }
       if (
         !validator.isInt('' + profile.jour_naissance) ||
         parseInt('' + profile.jour_naissance) < 1 ||

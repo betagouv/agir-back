@@ -614,16 +614,10 @@ export class ApplicationError {
     );
   }
 
-  static throwMajNomImpossibleFC() {
+  static throwMajImpossibleFC() {
     this.throwAppError(
       '116',
-      `Impossible de mettre à jour le nom d'un utilisatueur France Connecté`,
-    );
-  }
-  static throwMajPrenomImpossibleFC() {
-    this.throwAppError(
-      '117',
-      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+      `Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté`,
     );
   }
 

@@ -137,7 +137,6 @@ export class FranceConnectUsecase {
     new_utilisateur.status = UtilisateurStatus.default;
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
-    new_utilisateur.france_connect_sub = user_info.sub;
 
     if (state.situation_ngc_id) {
       await this.inscriptionUsecase.external_inject_situation_to_user_kycs(
@@ -157,6 +156,7 @@ export class FranceConnectUsecase {
     utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
     utilisateur.mois_naissance = this.getMois(user_info.birthdate);
     utilisateur.jour_naissance = this.getJour(user_info.birthdate);
+    utilisateur.france_connect_sub = user_info.sub;
   }
 
   private async log_ok_fc_user(
