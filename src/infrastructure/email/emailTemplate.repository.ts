@@ -16,6 +16,13 @@ export class EmailTemplateRepository {
   private email_relance_action: HandlebarsTemplateDelegate;
   private email_existing_account: HandlebarsTemplateDelegate;
 
+  // NEW MAILS
+  private email_demande_feedback: HandlebarsTemplateDelegate;
+  private email_relance_onboarding_j8: HandlebarsTemplateDelegate;
+  private email_relance_onboarding_j14: HandlebarsTemplateDelegate;
+  private email_utilisateur_inactif_j30: HandlebarsTemplateDelegate;
+  private email_utilisateur_inactif_j60: HandlebarsTemplateDelegate;
+
   async onApplicationBootstrap(): Promise<void> {
     try {
       this.email_inscription_code = Handlebars.compile(
@@ -38,6 +45,22 @@ export class EmailTemplateRepository {
       );
       this.email_existing_account = Handlebars.compile(
         await this.readTemplate('email_existing_account.hbs'),
+      );
+      // NEW MAILS
+      this.email_demande_feedback = Handlebars.compile(
+        await this.readTemplate('email_demande_feedback.hbs'),
+      );
+      this.email_relance_onboarding_j8 = Handlebars.compile(
+        await this.readTemplate('email_relance_onboarding_j8.hbs'),
+      );
+      this.email_relance_onboarding_j14 = Handlebars.compile(
+        await this.readTemplate('email_relance_onboarding_j14.hbs'),
+      );
+      this.email_utilisateur_inactif_j30 = Handlebars.compile(
+        await this.readTemplate('email_utilisateur_inactif_j30.hbs'),
+      );
+      this.email_utilisateur_inactif_j60 = Handlebars.compile(
+        await this.readTemplate('email_utilisateur_inactif_j60.hbs'),
       );
     } catch (err) {
       console.error(err);
@@ -140,6 +163,57 @@ export class EmailTemplateRepository {
         } else {
           return null;
         }
+      case TypeNotification.email_demande_feedback:
+        return {
+          subject: `Votre avis nous intéresse 🌱`,
+          body: this.email_demande_feedback({
+            PSEUDO: utilisateur.pseudo,
+            UNSUBSCRIBE_URL: unsubscribe_URL,
+            MAIL_CONTACT_JAGIS: App.getEmailContact(),
+          }),
+        };
+      case TypeNotification.email_relance_onboarding_j8:
+        return {
+          subject: `Vos premiers pas avec J’agis 🌱`,
+          body: this.email_relance_onboarding_j8({
+            PSEUDO: utilisateur.pseudo,
+            UNSUBSCRIBE_URL: unsubscribe_URL,
+            HOME_URL: App.getBaseURLFront(),
+          }),
+        };
+      case TypeNotification.email_relance_onboarding_j14:
+        return {
+          subject: `Relevez le défi ! 🌟`,
+          body: this.email_relance_onboarding_j14({
+            PSEUDO: utilisateur.pseudo,
+            UNSUBSCRIBE_URL: unsubscribe_URL,
+            HOME_URL: App.getBaseURLFront(),
+            THEMATIQUE_ALIMENTATION_URL:
+              App.getBaseURLFront() + '/v2/thematique/me-nourrir',
+          }),
+        };
+      case TypeNotification.email_utilisateur_inactif_j30:
+        return {
+          subject: `Une nouvelle action pour vous sur J’agis ! 👕♻️`,
+          body: this.email_utilisateur_inactif_j30({
+            PSEUDO: utilisateur.pseudo,
+            UNSUBSCRIBE_URL: unsubscribe_URL,
+            HOME_URL: App.getBaseURLFront(),
+            BILAN_CONSOMMATION:
+              App.getBaseURLFront() +
+              '/action/bilan/action_bilan_conso/connaitre-les-impacts-lies-a-vos-achats',
+          }),
+        };
+      case TypeNotification.email_utilisateur_inactif_j60:
+        return {
+          subject: `Dites-nous ce qu’on peut améliorer pour vous aider à agir 🌍`,
+          body: this.email_utilisateur_inactif_j60({
+            PSEUDO: utilisateur.pseudo,
+            UNSUBSCRIBE_URL: unsubscribe_URL,
+            HOME_URL: App.getBaseURLFront(),
+            MAIL_CONTACT_JAGIS: App.getEmailContact(),
+          }),
+        };
       default:
         return null;
     }
