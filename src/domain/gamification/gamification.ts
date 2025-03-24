@@ -27,6 +27,8 @@ export class Gamification {
           this.celebrations.push(new Celebration(celeb_data));
         });
       }
+    } else {
+      this.popup_reset_vue = true;
     }
     if (seuils) {
       SEUILS_NIVEAUX = seuils; // for test purpose

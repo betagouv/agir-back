@@ -300,4 +300,28 @@ describe('Gamification', () => {
         .includes(Feature.aides),
     ).toEqual(true);
   });
+
+  it('new Gamification : popup reset pas vue par défaut pour anciens comptes', () => {
+    // GIVEN
+    const gamification = new Gamification({
+      celebrations: [],
+      points: 10,
+      version: 0,
+      popup_reset_vue: undefined,
+    });
+
+    // THEN
+    expect(gamification.popup_reset_vue).toEqual(false);
+  });
+  it('createNewUtilisateur : popup reset vue par défaut ', () => {
+    // GIVEN
+    const user = Utilisateur.createNewUtilisateur(
+      'c',
+      false,
+      SourceInscription.inconnue,
+    );
+
+    // THEN
+    expect(user.gamification.popup_reset_vue).toEqual(true);
+  });
 });
