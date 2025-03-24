@@ -87,7 +87,7 @@ export class FranceConnectController extends GenericControler {
   @ApiOkResponse({ type: logoutAPI })
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 5, ttl: 1000 } })
-  async disconnect_FC(@Body('body') body: StateInputAPI): Promise<logoutAPI> {
+  async disconnect_FC(@Body() body: StateInputAPI): Promise<logoutAPI> {
     const result = await this.franceConnectUsecase.logout_FC_only(
       body.oidc_state,
     );
