@@ -61,6 +61,7 @@ export class StatistiqueExternalRepository {
         code_departement: code_depart.code_departement,
         rang_commune: utilisateur.rank_commune,
         rang_national: utilisateur.rank,
+        date_inscription: utilisateur.created_at,
       },
     });
   }

@@ -81,6 +81,7 @@ describe('Duplicate Usecase', () => {
       derniere_activite: new Date(1),
       rank_commune: 12,
       rank: 123,
+      created_at: new Date(2),
     });
 
     // WHEN
@@ -108,6 +109,7 @@ describe('Duplicate Usecase', () => {
       code_departement: '21',
       rang_commune: 12,
       rang_national: 123,
+      date_inscription: new Date(2),
     });
   });
 

@@ -16,7 +16,7 @@ model UtilisateurCopy {
   compte_actif           Boolean
   revenu_fiscal          Int?
   nombre_parts_fiscales  Decimal?  @db.Decimal(4, 2)
-  date_derniere_activite DateTime?
+  date_derniere_activite DateTime? @db.Timestamptz(3)
   nombre_points          Int?      @default(0)
   code_postal            String?
   nom_commune            String?
@@ -25,6 +25,7 @@ model UtilisateurCopy {
   source_inscription     String?
   rang_national          Int?
   rang_commune           Int?
+  date_inscription       DateTime? @db.Timestamptz(3)
 }
 
 model KYCCopy {
