@@ -210,6 +210,15 @@ export class Utilisateur extends UtilisateurData {
     });
   }
 
+  public resetPourLancementNational() {
+    this.points_classement = 0;
+    this.commune_classement = null;
+    this.code_postal_classement = null;
+    this.tag_ponderation_set = {};
+    this.gamification.reset();
+    this.thematique_history.reset();
+  }
+
   public resetAllHistory() {
     this.points_classement = 0;
     this.commune_classement = null;
@@ -220,6 +229,8 @@ export class Utilisateur extends UtilisateurData {
     this.history.reset();
     this.defi_history.reset();
     this.kyc_history.reset();
+    this.thematique_history.reset();
+    this.notification_history.reset();
   }
 
   public isUtilisateurFranceConnecte() {

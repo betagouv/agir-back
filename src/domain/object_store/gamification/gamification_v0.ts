@@ -61,7 +61,7 @@ export class Gamification_v0 extends Versioned_v0 {
       version: 0,
       points: domain.getPoints(),
       celebrations: domain.celebrations.map((e) => Celebration_v0.map(e)),
-      popup_reset_vue: domain.popup_reset_vue,
+      popup_reset_vue: domain.isPopupResetVue(),
     };
   }
 }

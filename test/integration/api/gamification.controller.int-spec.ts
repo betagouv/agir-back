@@ -651,6 +651,7 @@ describe('Gamification  (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(userDB.gamification.popup_reset_vue).toEqual(true);
+    expect(userDB.gamification.isPopupResetVue()).toEqual(true);
+    expect(userDB.gamification.getPoints()).toEqual(210);
   });
 });

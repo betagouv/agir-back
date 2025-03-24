@@ -32,7 +32,7 @@ export class GamificationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.gamification.popup_reset_vue = true;
+    utilisateur.gamification.setPopupResetVue();
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,

@@ -290,6 +290,31 @@ export class MigrationUsecase {
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
     const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.ALL,
+    ]);
+
+    // DO SOMETHING
+    utilisateur.resetPourLancementNational();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.ALL],
+    );
+
+    return {
+      ok: true,
+      info: `reset national OK`,
+    };
+  }
+  private async migrate_16(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
       Scope.core,
     ]);
 

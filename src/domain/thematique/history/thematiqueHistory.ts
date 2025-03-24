@@ -62,6 +62,12 @@ export class ThematiqueHistory {
     return new_reco;
   }
 
+  public reset() {
+    this.liste_thematiques = [];
+    this.liste_actions_utilisateur = [];
+    this.liste_tags_excluants = [];
+  }
+
   public resetPersonnalisation(thematique: Thematique) {
     const reco_existante =
       this.getOrCreateNewThematiqueRecommandation(thematique);

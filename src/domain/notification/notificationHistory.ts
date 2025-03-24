@@ -84,6 +84,11 @@ export class NotificationHistory {
     return !App.getInactiveNotificationsListe().includes(notif);
   }
 
+  public reset() {
+    this.sent_notifications = [];
+    this.enabled_canals = [CanalNotification.email, CanalNotification.mobile];
+  }
+
   public declareSentNotification(
     type: TypeNotification,
     canal: CanalNotification,

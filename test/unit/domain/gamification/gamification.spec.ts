@@ -311,7 +311,7 @@ describe('Gamification', () => {
     });
 
     // THEN
-    expect(gamification.popup_reset_vue).toEqual(false);
+    expect(gamification.isPopupResetVue()).toEqual(false);
   });
   it('createNewUtilisateur : popup reset vue par défaut ', () => {
     // GIVEN
@@ -322,6 +322,6 @@ describe('Gamification', () => {
     );
 
     // THEN
-    expect(user.gamification.popup_reset_vue).toEqual(true);
+    expect(user.gamification.isPopupResetVue()).toEqual(true);
   });
 });
