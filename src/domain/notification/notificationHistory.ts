@@ -28,6 +28,7 @@ export enum EmailNotification {
 
 export enum MobileNotification {
   mobile_inscription_J2 = 'mobile_inscription_J2',
+  mobile_inscription_J9 = 'mobile_inscription_J9',
 }
 export const TypeNotification = { ...EmailNotification, ...MobileNotification };
 export type TypeNotification = EmailNotification | MobileNotification;

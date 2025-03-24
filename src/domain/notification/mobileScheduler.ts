@@ -14,6 +14,13 @@ export class MobileScheduler extends NotificationScheduler {
         this.not_sent(notif, utilisateur)
       );
     }
+    if (notif === MobileNotification.mobile_inscription_J9) {
+      return (
+        utilisateur.active_account &&
+        this.getAgeCreationUtilisateur(utilisateur) > this.jour_9 &&
+        this.not_sent(notif, utilisateur)
+      );
+    }
 
     return false;
   }

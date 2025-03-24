@@ -7,6 +7,7 @@ export class NotificationScheduler {
   public static jour_2 = this.jour_1 * 2;
   public static jour_7 = this.jour_1 * 7;
   public static jour_8 = this.jour_1 * 8;
+  public static jour_9 = this.jour_1 * 9;
   public static jour_10 = this.jour_1 * 10;
   public static jour_14 = this.jour_1 * 14;
   public static jour_30 = this.jour_1 * 30;
