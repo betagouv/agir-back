@@ -59,6 +59,8 @@ export class GamificationUsecase {
         );
     }
 
+    this.fixTop3Ranks(top_trois_commune);
+
     if (utilisateur.rank_commune === null) {
       return {
         pourcentile: null,
@@ -148,6 +150,8 @@ export class GamificationUsecase {
       utilisateur.id,
     );
 
+    this.fixTop3Ranks(top_trois);
+
     if (utilisateur.rank === null) {
       return {
         pourcentile: null,
@@ -227,6 +231,17 @@ export class GamificationUsecase {
     });
   }
 
+  private fixTop3Ranks(top_3: Classement[]) {
+    if (top_3[0]) {
+      top_3[0].rank = 1;
+    }
+    if (top_3[1]) {
+      top_3[1].rank = 2;
+    }
+    if (top_3[2]) {
+      top_3[2].rank = 3;
+    }
+  }
   private setProperRanksForUsers(
     classements: Classement[],
     user_classement: Classement,

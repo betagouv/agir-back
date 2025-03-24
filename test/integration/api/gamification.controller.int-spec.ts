@@ -115,6 +115,55 @@ describe('Gamification  (API test)', () => {
       id: 'c4ca4238a0b923820dcc509a6f75849b',
     });
   });
+  it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok même si contient un pseudo non valide, celui-ci est proprement exclu`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'yo',
+      email: '1',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'yi',
+      email: '2',
+      points_classement: 20,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      pseudo: 'ya',
+      email: '3',
+      points_classement: 30,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      pseudo: 'hip',
+      email: '4',
+      points_classement: 35,
+      est_valide_pour_classement: false,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/national',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.top_trois).toHaveLength(3);
+    expect(response.body.top_trois[0]).toStrictEqual({
+      points: 30,
+      rank: 1,
+      pseudo: 'ya',
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+    });
+    expect(response.body.top_trois[2]).toStrictEqual({
+      points: 10,
+      rank: 3,
+      pseudo: 'yo',
+      id: 'c4ca4238a0b923820dcc509a6f75849b',
+    });
+  });
   it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok exclu utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -153,7 +202,7 @@ describe('Gamification  (API test)', () => {
     expect(response.body.top_trois).toHaveLength(3);
     expect(response.body.top_trois[0]).toStrictEqual({
       points: 30,
-      rank: 2,
+      rank: 1,
       pseudo: 'ya',
       id: 'ceddc0d114c8db1dc4bde88f1e29231f',
     });
