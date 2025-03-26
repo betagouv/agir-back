@@ -1099,6 +1099,54 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[2].content_id).toEqual('2');
   });
 
+  it('GET /utilisateurs/id/bibliotheque_v2 - include = tout', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?include=tout',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(4);
+  });
   it('GET /utilisateurs/id/bibliotheque_v2 - zap les 2 premiers', async () => {
     // GIVEN
     const history: History_v0 = {
