@@ -57,7 +57,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : mail de welcome si rien`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
@@ -81,7 +80,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si compte non actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
@@ -106,13 +104,14 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = '';
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
+    utilisateur.active_account = true;
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -128,7 +127,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 30j)`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -153,7 +151,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : rien si notif deja envoyée`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -184,7 +181,6 @@ describe('NotificationHistory', () => {
 
   it(`isWelcomeEmailToSend : pas de welcome si pas encore 10 min`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -209,7 +205,6 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si compte non actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,

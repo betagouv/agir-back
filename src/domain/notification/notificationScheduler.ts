@@ -19,6 +19,9 @@ export class NotificationScheduler {
   }
 
   static getAgeDerniereActivite(utilisateur: Utilisateur): number {
+    if (!utilisateur.derniere_activite) {
+      return 0;
+    }
     return Date.now() - utilisateur.derniere_activite.getTime();
   }
 

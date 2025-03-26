@@ -69,10 +69,9 @@ describe('Notifications (API test)', () => {
     ]);
   });
 
-  it(`POST /notifications/email/send_notifications ,n'envoie  pas le mail late_onboarding si canal email desactivé`, async () => {
+  it(`POST /notifications/email/send_notifications ,n'envoie  pas le mail si canal email desactivé`, async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'late_onboarding';
     const notifications: NotificationHistory_v0 = {
       version: 0,
       sent_notifications: [],
@@ -105,10 +104,44 @@ describe('Notifications (API test)', () => {
     expect(userDB.notification_history.sent_notifications).toHaveLength(0);
     expect(response.body).toEqual([]);
   });
+  it(`POST /notifications/email/send_notifications pas d'erreur de base`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const notifications: NotificationHistory_v0 = {
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.mobile, CanalNotification.email],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      notification_history: notifications as any,
+      derniere_activite: new Date(1),
+    });
+
+    await TestUtil.prisma.utilisateur.update({
+      where: {
+        id: 'utilisateur-id',
+      },
+      data: {
+        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10),
+      },
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/notifications/email/send_notifications',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.notification_history.sent_notifications).toHaveLength(4);
+  });
   it('POST /notifications/email/send_welcomes envoie le mail de bienvenu', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.prisma.utilisateur.update({
@@ -134,7 +167,6 @@ describe('Notifications (API test)', () => {
   it('POST /notifications/email/send_welcomes pas de welcome 2 fois de suites ^^', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome';
     await TestUtil.create(DB.utilisateur);
 
     await TestUtil.prisma.utilisateur.update({
