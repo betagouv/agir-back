@@ -646,6 +646,7 @@ export class TestUtil {
           },
         },
       ],
+      badges: [],
     };
 
     const logement: Logement_v0 = {

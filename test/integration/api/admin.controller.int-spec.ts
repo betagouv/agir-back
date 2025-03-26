@@ -309,6 +309,7 @@ describe('Admin (API test)', () => {
           },
         },
       ],
+      badges: [],
     };
     await TestUtil.create(DB.utilisateur, {
       version: 3,

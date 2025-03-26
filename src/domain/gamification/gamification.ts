@@ -3,6 +3,7 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { Celebration, CelebrationType } from './celebrations/celebration';
 import { Reveal } from './celebrations/reveal';
 import { Feature } from './feature';
+import { TypeBadge } from './typeBadge';
 
 let SEUILS_NIVEAUX: number[] = [
   100, 150, 300, 400, 500, 800, 1000, 2000, 4000, 10000,
@@ -11,24 +12,30 @@ let SEUILS_NIVEAUX: number[] = [
 export class Gamification {
   private points: number;
   celebrations: Celebration[];
+  private badges: TypeBadge[];
   private popup_reset_vue: boolean;
 
   constructor(data?: Gamification_v0, seuils?: number[]) {
-    this.reset();
+    this.popup_reset_vue = true;
+    this.points = 0;
+    this.celebrations = [];
+    this.badges = [];
 
     if (data) {
       this.popup_reset_vue = !!data.popup_reset_vue;
 
-      if (data.points) {
+      if (data.points != undefined && data.points != null) {
         this.points = data.points;
       }
+      if (data.badges) {
+        this.badges = data.badges;
+      }
       if (data.celebrations) {
+        this.celebrations = [];
         data.celebrations.forEach((celeb_data) => {
           this.celebrations.push(new Celebration(celeb_data));
         });
       }
-    } else {
-      this.popup_reset_vue = true;
     }
     if (seuils) {
       SEUILS_NIVEAUX = seuils; // for test purpose
@@ -39,8 +46,12 @@ export class Gamification {
     this.points = 0;
     this.celebrations = [];
     this.popup_reset_vue = false;
+    this.badges = [TypeBadge.pionnier];
   }
 
+  public getBadges(): TypeBadge[] {
+    return this.badges;
+  }
   public isPopupResetVue(): boolean {
     return this.popup_reset_vue;
   }

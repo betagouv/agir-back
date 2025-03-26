@@ -45,7 +45,7 @@ export class GamificationUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -72,6 +72,7 @@ export class GamificationUsecase {
           utilisateur.code_postal_classement,
           utilisateur.commune_classement,
         ),
+        badges: utilisateur.gamification.getBadges(),
       };
     }
 
@@ -134,6 +135,7 @@ export class GamificationUsecase {
         utilisateur.code_postal_classement,
         utilisateur.commune_classement,
       ),
+      badges: utilisateur.gamification.getBadges(),
     };
   }
 
@@ -142,7 +144,7 @@ export class GamificationUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -160,6 +162,7 @@ export class GamificationUsecase {
         classement_utilisateur: null,
         code_postal: null,
         commune_label: null,
+        badges: utilisateur.gamification.getBadges(),
       };
     }
 
@@ -216,6 +219,7 @@ export class GamificationUsecase {
       ),
       code_postal: null,
       commune_label: null,
+      badges: utilisateur.gamification.getBadges(),
     };
   }
 

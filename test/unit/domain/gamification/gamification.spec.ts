@@ -34,6 +34,7 @@ describe('Gamification', () => {
         points: 0,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -52,6 +53,7 @@ describe('Gamification', () => {
         points: 5,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -70,6 +72,7 @@ describe('Gamification', () => {
         points: 50,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -88,6 +91,7 @@ describe('Gamification', () => {
         points: 50,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -106,6 +110,7 @@ describe('Gamification', () => {
         points: 7,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -124,6 +129,7 @@ describe('Gamification', () => {
         points: 10,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -142,6 +148,7 @@ describe('Gamification', () => {
         points: 5,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -160,6 +167,7 @@ describe('Gamification', () => {
         points: 7,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 10],
     );
@@ -178,6 +186,7 @@ describe('Gamification', () => {
         points: 7,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 15],
     );
@@ -196,6 +205,7 @@ describe('Gamification', () => {
         points: 3,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 15],
     );
@@ -214,6 +224,7 @@ describe('Gamification', () => {
         points: 20,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       },
       [5, 15],
     );
@@ -253,6 +264,7 @@ describe('Gamification', () => {
         points: 20,
         popup_reset_vue: false,
         celebrations: [celeb_1, celeb_2, celeb_3],
+        badges: [],
       },
       [5, 15],
     );
@@ -282,6 +294,7 @@ describe('Gamification', () => {
         points: 20,
         popup_reset_vue: false,
         celebrations: [celeb],
+        badges: [],
       },
       [5, 15],
     );
@@ -308,6 +321,7 @@ describe('Gamification', () => {
       points: 10,
       version: 0,
       popup_reset_vue: undefined,
+      badges: [],
     });
 
     // THEN

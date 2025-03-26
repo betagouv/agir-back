@@ -1409,6 +1409,7 @@ describe('Actions (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1463,6 +1464,7 @@ describe('Actions (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1517,6 +1519,7 @@ describe('Actions (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1644,6 +1647,7 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       celebrations: [],
+      badges: [],
       popup_reset_vue: false,
     };
 
@@ -1701,6 +1705,7 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       celebrations: [],
+      badges: [],
       popup_reset_vue: false,
     };
 
