@@ -283,6 +283,39 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
+  async duplicatePersonnalisation(block_size: number = 100) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllQuizzData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        try {
+          await this.statistiqueExternalRepository.createPersonnalisationData(
+            user,
+          );
+        } catch (error) {
+          console.error(error);
+          console.error(
+            `Error Creating Personnalisation Data for ${
+              user.id
+            } : ${JSON.stringify(user.thematique_history)}`,
+          );
+        }
+      }
+    }
+  }
+
   async computeBilanTousUtilisateurs(
     block_size: number = 100,
   ): Promise<string[]> {

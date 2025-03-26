@@ -267,6 +267,17 @@ async function bootstrap() {
       );
       break;
 
+    case 'dump_perso_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_perso_copy_for_stats ${start_time}`);
+      await application
+        .get(DuplicateBDDForStatsUsecase)
+        .duplicatePersonnalisation();
+      console.log(
+        `STOP dump_perso_copy_for_stats after ${Date.now() - start_time} ms`,
+      );
+      break;
+
     case 'refresh_action_stats':
       start_time = Date.now();
       console.log(`START refresh_action_stats ${start_time}`);

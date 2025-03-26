@@ -8,6 +8,7 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
@@ -967,5 +968,70 @@ describe('Duplicate Usecase', () => {
 
     const stats = await TestUtil.prisma_stats.bilanCarbone.findMany();
     expect(stats).toHaveLength(1);
+  });
+
+  it('duplicatePersonnalisation : copy les données de perso', async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_tags_excluants: [TagExcluant.a_un_jardin, TagExcluant.a_un_velo],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            {
+              action: { code: 'abc', type: TypeAction.classique },
+              date: new Date(1),
+            },
+          ],
+          codes_actions_proposees: [],
+          first_personnalisation_date: new Date(1),
+          personnalisation_done: false,
+          personnalisation_done_once: true,
+        },
+        {
+          thematique: Thematique.logement,
+          codes_actions_exclues: [
+            {
+              action: { code: 'def', type: TypeAction.bilan },
+              date: new Date(1),
+            },
+          ],
+          codes_actions_proposees: [],
+          first_personnalisation_date: new Date(1),
+          personnalisation_done: false,
+          personnalisation_done_once: false,
+        },
+      ],
+      liste_actions_utilisateur: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+      external_stat_id: '123',
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicatePersonnalisation();
+
+    // THEN
+    const stats = await TestUtil.prisma_stats.personnalisation.findMany();
+
+    expect(stats).toHaveLength(1);
+
+    const stat = stats[0];
+    expect(stat).toEqual({
+      actions_alimentation_rejetees: ['abc'],
+      actions_consommation_rejetees: [],
+      actions_logement_rejetees: ['def'],
+      actions_rejetees_all: ['abc', 'def'],
+      actions_transport_rejetees: [],
+      perso_alimentation_done_once: true,
+      perso_consommation_done_once: false,
+      perso_logement_done_once: false,
+      perso_transport_done_once: false,
+      tags_exclusion: ['a_un_jardin', 'a_un_velo'],
+      user_id: '123',
+    });
   });
 });

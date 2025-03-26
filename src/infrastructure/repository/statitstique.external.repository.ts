@@ -8,6 +8,7 @@ import {
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../domain/kyc/questionKYC';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { CommuneRepository } from './commune/commune.repository';
@@ -118,6 +119,54 @@ export class StatistiqueExternalRepository {
         bon_premier_coup: quizz.premier_coup_ok,
         date_premier_coup: quizz.date_premier_coup,
         like_level: quizz.like_level,
+      },
+    });
+  }
+
+  public async createPersonnalisationData(utilisateur: Utilisateur) {
+    const actions_alimentation_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.alimentation)
+      .map((a) => a.code);
+    const actions_consommation_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.consommation)
+      .map((a) => a.code);
+    const actions_logement_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.logement)
+      .map((a) => a.code);
+    const actions_transport_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.transport)
+      .map((a) => a.code);
+
+    await this.prismaStats.personnalisation.create({
+      data: {
+        user_id: utilisateur.external_stat_id,
+        tags_exclusion: utilisateur.thematique_history.getListeTagsExcluants(),
+        perso_alimentation_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.alimentation,
+          ),
+        perso_consommation_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.consommation,
+          ),
+        perso_logement_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.logement,
+          ),
+        perso_transport_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.transport,
+          ),
+        actions_alimentation_rejetees: actions_alimentation_rejetees,
+        actions_consommation_rejetees: actions_consommation_rejetees,
+        actions_logement_rejetees: actions_logement_rejetees,
+        actions_transport_rejetees: actions_transport_rejetees,
+        actions_rejetees_all: [].concat(
+          actions_alimentation_rejetees,
+          actions_consommation_rejetees,
+          actions_logement_rejetees,
+          actions_transport_rejetees,
+        ),
       },
     });
   }
