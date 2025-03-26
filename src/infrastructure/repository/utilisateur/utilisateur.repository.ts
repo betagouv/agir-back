@@ -785,7 +785,7 @@ export class UtilisateurRepository {
       scopes ? scopes : [Scope.ALL],
     );
 
-    if (!scopes || scopes.includes(Scope.core)) {
+    if (!scopes || scopes.includes(Scope.core) || scopes.includes(Scope.ALL)) {
       return {
         ...this.buildDBUserCoreDataFromUtilisateur(user),
         ...versionned_data,

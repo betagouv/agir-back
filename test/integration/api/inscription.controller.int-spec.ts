@@ -250,8 +250,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
   });
   it('POST /utilisateurs/valider - validate proper code OK, active user as outcome', async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '0';
-
     await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
       email: 'w@w.com',

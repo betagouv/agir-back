@@ -290,7 +290,8 @@ export class MigrationUsecase {
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
     const utilisateur = await _this.utilisateurRepository.getById(user_id, [
-      Scope.ALL,
+      Scope.gamification,
+      Scope.thematique_history,
     ]);
 
     // DO SOMETHING
@@ -301,7 +302,7 @@ export class MigrationUsecase {
 
     await _this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.ALL],
+      [Scope.gamification, Scope.thematique_history, Scope.core],
     );
 
     return {

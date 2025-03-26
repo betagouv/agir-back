@@ -697,6 +697,73 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toEqual(14);
   });
 
+  it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 2000,
+      popup_reset_vue: false,
+      celebrations: [],
+      badges: [],
+    };
+
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(),
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 14,
+      migration_enabled: true,
+      thematique_history: thematique_history as any,
+      points_classement: 100,
+      commune_classement: '1234',
+      code_postal_classement: '45664',
+      gamification: gamification as any,
+    });
+    App.USER_CURRENT_VERSION = 15;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 15,
+            ok: true,
+            info: 'reset national OK',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history).toEqual({
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    });
+    expect(userDB.version).toEqual(15);
+    expect(userDB.gamification.getPoints()).toEqual(0);
+    expect(userDB.points_classement).toEqual(0);
+    expect(userDB.commune_classement).toEqual(null);
+    expect(userDB.code_postal_classement).toEqual(null);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
