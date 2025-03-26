@@ -135,6 +135,8 @@ export class ActionUsecase {
         this.compteurActionsRepository.getNombreFaites(action);
     }
 
+    catalogue.setNombreResultatsDispo(catalogue.actions.length);
+
     return catalogue;
   }
 

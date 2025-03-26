@@ -346,6 +346,9 @@ describe('Actions (API test)', () => {
       type: 'classique',
       points: 100,
     });
+
+    expect(response.body.nombre_resultats).toEqual(1);
+    expect(response.body.nombre_resultats_disponibles).toEqual(1);
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {

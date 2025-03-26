@@ -17,12 +17,17 @@ export class CatalogueActionAPI {
   @ApiProperty({ enum: Consultation }) consultation: Consultation;
   @ApiProperty({ enum: Realisation }) realisation: Realisation;
 
+  @ApiProperty() nombre_resultats: number;
+  @ApiProperty() nombre_resultats_disponibles: number;
+
   public static mapToAPI(catalogue: CatalogueAction): CatalogueActionAPI {
     return {
       actions: catalogue.actions.map((a) => ActionLightAPI.mapToAPI(a)),
       filtres: ThematiqueFiltereAPI.mapToAPI(catalogue.filtre_thematiques),
       consultation: catalogue.consultation,
       realisation: catalogue.realisation,
+      nombre_resultats: catalogue.getNombreResultats(),
+      nombre_resultats_disponibles: catalogue.getNombreResultatsDispo(),
     };
   }
 }
