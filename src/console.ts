@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
-import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
@@ -115,7 +114,7 @@ async function bootstrap() {
       start_time = Date.now();
       console.log(`START all_bilan_carbone ${start_time}`);
       const result_bilan = await application
-        .get(BilanCarboneUsecase)
+        .get(DuplicateBDDForStatsUsecase)
         .computeBilanTousUtilisateurs();
       console.log(`STOP all_bilan_carbone after ${Date.now() - start_time} ms`);
       console.log(result_bilan);

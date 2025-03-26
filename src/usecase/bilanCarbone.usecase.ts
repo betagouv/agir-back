@@ -67,7 +67,7 @@ export class BilanCarboneUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const situation = this.computeSituation(utilisateur);
+    const situation = this.external_compute_situation(utilisateur);
 
     return this.nGCCalculator.computeBilanCarboneThematiqueFromSituation(
       situation,
@@ -92,9 +92,9 @@ export class BilanCarboneUsecase {
       return value / 1000;
     }
 
-    const situation = this.computeSituation(utilisateur);
+    const situation = this.external_compute_situation(utilisateur);
 
-    const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
+    const bilan = this.nGCCalculator.computeBasicBilanFromSituation(situation);
     await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
       utilisateur.id,
       situation,
@@ -104,56 +104,6 @@ export class BilanCarboneUsecase {
     );
 
     return bilan.bilan_carbone_annuel;
-  }
-
-  async computeBilanTousUtilisateurs(): Promise<string[]> {
-    const MAX_USER_TO_COMPUTE = 2000;
-
-    const user_id_liste = await this.utilisateurRepository.listUtilisateurIds(
-      {},
-    );
-
-    const error_liste = [];
-    let computed_ok = 0;
-    let skipped = 0;
-    let errors = 0;
-
-    for (const user_id of user_id_liste) {
-      const utilisateur = await this.utilisateurRepository.getById(user_id, [
-        Scope.kyc,
-      ]);
-
-      const up_to_date = await this.isBilanStatUpToDate(utilisateur);
-      if (up_to_date) {
-        skipped++;
-        continue; // pas besoin de reclalculer
-      }
-
-      const situation = this.computeSituation(utilisateur);
-
-      try {
-        const bilan = this.nGCCalculator.computeBilanFromSituation(situation);
-        await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
-          user_id,
-          situation,
-          bilan.bilan_carbone_annuel * 1000,
-          bilan.details.transport * 1000,
-          bilan.details.alimentation * 1000,
-        );
-        computed_ok++;
-        if (computed_ok > MAX_USER_TO_COMPUTE) {
-          break; // trop de calcul pour un run de batch unique
-        }
-      } catch (error) {
-        errors++;
-        error_liste.push(`BC KO [${user_id}] : ` + JSON.stringify(error));
-      }
-    }
-    return [
-      `Computed OK = [${computed_ok}]`,
-      `Skipped = [${skipped}]`,
-      `Errors = [${errors}]`,
-    ].concat(error_liste);
   }
 
   public external_build_enchainement_bilan_recap(
@@ -332,7 +282,7 @@ export class BilanCarboneUsecase {
       utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail) ||
       utilisateur.vientDeNGC();
 
-    const situation = this.computeSituation(utilisateur);
+    const situation = this.external_compute_situation(utilisateur);
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
@@ -342,7 +292,7 @@ export class BilanCarboneUsecase {
     };
   }
 
-  public computeSituation(utilisateur: Utilisateur): SituationNGC {
+  public external_compute_situation(utilisateur: Utilisateur): SituationNGC {
     const situation = {};
 
     const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);

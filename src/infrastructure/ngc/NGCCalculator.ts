@@ -622,7 +622,7 @@ export class NGCCalculator {
     });
   }
 
-  computeBilanFromSituation(situation: SituationNGC): Bilan_OLD {
+  computeBasicBilanFromSituation(situation: SituationNGC): Bilan_OLD {
     const entryList: RegleNGC[] = [
       'bilan',
       'transport',

@@ -244,6 +244,7 @@ export class TestUtil {
     await this.prisma_stats.aideCopy.deleteMany();
     await this.prisma_stats.articleCopy.deleteMany();
     await this.prisma_stats.quizzCopy.deleteMany();
+    await this.prisma_stats.bilanCarbone.deleteMany();
 
     ActionRepository.resetCache();
     ArticleRepository.resetCache();

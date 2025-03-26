@@ -246,7 +246,7 @@ export class AsciiPreviewController extends GenericControler {
       const situation: any = {};
       const base_line =
         Math.round(
-          this.nGCCalculator.computeBilanFromSituation(situation)
+          this.nGCCalculator.computeBasicBilanFromSituation(situation)
             .bilan_carbone_annuel * 1000,
         ) / 1000;
 
@@ -265,13 +265,13 @@ export class AsciiPreviewController extends GenericControler {
         situation[kyc_def.ngc_key] = 1;
         const value_1 =
           Math.round(
-            this.nGCCalculator.computeBilanFromSituation(situation)
+            this.nGCCalculator.computeBasicBilanFromSituation(situation)
               .bilan_carbone_annuel * 1000,
           ) / 1000;
         situation[kyc_def.ngc_key] = 2;
         const value_2 =
           Math.round(
-            this.nGCCalculator.computeBilanFromSituation(situation)
+            this.nGCCalculator.computeBasicBilanFromSituation(situation)
               .bilan_carbone_annuel * 1000,
           ) / 1000;
 
@@ -286,7 +286,7 @@ export class AsciiPreviewController extends GenericControler {
           situation[kyc_def.ngc_key] = reponse.ngc_code;
           const value =
             Math.round(
-              this.nGCCalculator.computeBilanFromSituation(situation)
+              this.nGCCalculator.computeBasicBilanFromSituation(situation)
                 .bilan_carbone_annuel * 1000,
             ) / 1000;
           DATA[`value_when_${reponse.code}`] =

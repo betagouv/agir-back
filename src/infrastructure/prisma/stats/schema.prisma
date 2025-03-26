@@ -28,6 +28,17 @@ model UtilisateurCopy {
   date_inscription       DateTime? @db.Timestamptz(3)
 }
 
+model BilanCarbone {
+  user_id         String   @id
+  total_kg        Int
+  transport_kg    Int
+  alimentation_kg Int
+  logement_kg     Int
+  consommation_kg Int
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model KYCCopy {
   code_kyc              String
   cms_id                String

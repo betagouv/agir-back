@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../../domain/actions/action';
 import { Aide } from '../../domain/aides/aide';
+import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Article } from '../../domain/contenu/article';
 import { Quizz } from '../../domain/contenu/quizz';
 import {
@@ -216,5 +217,45 @@ export class StatistiqueExternalRepository {
         ...reponse,
       },
     });
+  }
+
+  public async upsertBilanCarbone(user_id: string, bilan: Bilan_OLD) {
+    const data = {
+      total_kg: bilan.bilan_carbone_annuel,
+      alimentation_kg: bilan.details.alimentation,
+      consommation_kg: bilan.details.divers,
+      logement_kg: bilan.details.logement,
+      transport_kg: bilan.details.transport,
+    };
+
+    await this.prismaStats.bilanCarbone.upsert({
+      where: {
+        user_id: user_id,
+      },
+
+      create: {
+        user_id: user_id,
+        ...data,
+      },
+      update: {
+        ...data,
+      },
+    });
+  }
+
+  public async getLastUpdateTime(user_id: string): Promise<Date> {
+    const time = await this.prismaStats.bilanCarbone.findUnique({
+      where: {
+        user_id: user_id,
+      },
+      select: {
+        updated_at: true,
+      },
+    });
+
+    if (time) {
+      return time.updated_at;
+    }
+    return null;
   }
 }
