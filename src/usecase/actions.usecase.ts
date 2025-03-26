@@ -106,6 +106,8 @@ export class ActionUsecase {
     titre: string = undefined,
     consultation: Consultation,
     realisation: Realisation,
+    skip: number = 0,
+    take: number = 1000000,
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -134,8 +136,9 @@ export class ActionUsecase {
       action.nombre_actions_faites =
         this.compteurActionsRepository.getNombreFaites(action);
     }
-
     catalogue.setNombreResultatsDispo(catalogue.actions.length);
+
+    catalogue.actions = catalogue.actions.slice(skip, skip + take);
 
     return catalogue;
   }

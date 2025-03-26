@@ -122,12 +122,26 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
   })
+  @ApiQuery({
+    name: 'skip',
+    type: Number,
+    required: false,
+    description: `Combien de premiers éléments on veut écarter du résultat`,
+  })
+  @ApiQuery({
+    name: 'take',
+    type: Number,
+    required: false,
+    description: `Combien d'élements max on souhaite en retour`,
+  })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
     @Query('realisation') realisation: string,
+    @Query('skip') skip: string,
+    @Query('take') take: string,
     @Request() req,
   ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
@@ -152,6 +166,8 @@ export class ActionsController extends GenericControler {
       titre,
       type_consulation,
       type_realisation,
+      skip ? parseInt(skip) : undefined,
+      take ? parseInt(take) : undefined,
     );
     return CatalogueActionAPI.mapToAPI(catalogue);
   }

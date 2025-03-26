@@ -351,6 +351,81 @@ describe('Actions (API test)', () => {
     expect(response.body.nombre_resultats_disponibles).toEqual(1);
   });
 
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - skip/take absent`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(10);
+
+    expect(response.body.nombre_resultats).toEqual(10);
+    expect(response.body.nombre_resultats_disponibles).toEqual(10);
+  });
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - take`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?take=5',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(5);
+
+    expect(response.body.nombre_resultats).toEqual(5);
+    expect(response.body.nombre_resultats_disponibles).toEqual(10);
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - skip take`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?take=5&skip=7',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(3);
+
+    expect(response.body.nombre_resultats).toEqual(3);
+    expect(response.body.nombre_resultats_disponibles).toEqual(10);
+  });
+
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
