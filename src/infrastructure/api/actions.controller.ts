@@ -16,7 +16,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Consultation } from '../../domain/actions/catalogueAction';
+import {
+  Consultation,
+  Realisation,
+} from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
@@ -113,11 +116,18 @@ export class ActionsController extends GenericControler {
     required: false,
     description: `indique si on veut lister toutes les actions, celles vues, ou celles pas vues`,
   })
+  @ApiQuery({
+    name: 'realisation',
+    enum: Realisation,
+    required: false,
+    description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
+  })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
+    @Query('realisation') realisation: string,
     @Request() req,
   ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
@@ -133,11 +143,15 @@ export class ActionsController extends GenericControler {
     const type_consulation =
       this.castTypeConsultationActionOrException(consultation);
 
+    const type_realisation =
+      this.castTypeRealisationActionOrException(realisation);
+
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
       titre,
       type_consulation,
+      type_realisation,
     );
     return CatalogueActionAPI.mapToAPI(catalogue);
   }

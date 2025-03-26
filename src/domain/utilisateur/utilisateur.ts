@@ -214,7 +214,6 @@ export class Utilisateur extends UtilisateurData {
     this.points_classement = 0;
     this.commune_classement = null;
     this.code_postal_classement = null;
-    this.tag_ponderation_set = {};
     this.gamification.reset();
     this.thematique_history.reset();
   }

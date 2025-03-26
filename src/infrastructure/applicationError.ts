@@ -696,6 +696,10 @@ export class ApplicationError {
     );
   }
 
+  static throwTypeRealisationNotFound(type: string) {
+    this.throwAppError('131', `Type de realisation [${type}] inconnu`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

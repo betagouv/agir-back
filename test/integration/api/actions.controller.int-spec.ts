@@ -1,4 +1,7 @@
-import { Consultation } from '../../../src/domain/actions/catalogueAction';
+import {
+  Consultation,
+  Realisation,
+} from '../../../src/domain/actions/catalogueAction';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -541,6 +544,148 @@ describe('Actions (API test)', () => {
     expect(response.body.message).toEqual(
       'Type de consultation [blablabla] inconnu',
     );
+  });
+
+  it(`GET /utilisateurs/id/actions - filtre realisation`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          faite_le: new Date(),
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?realisation=faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+    expect(response.body.realisation).toEqual(Realisation.faite);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?realisation=pas_faite',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('2');
+    expect(response.body.realisation).toEqual(Realisation.pas_faite);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?realisation=tout',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.realisation).toEqual(Realisation.tout);
+
+    // WHEN
+    response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.consultation).toEqual(Consultation.tout);
+    expect(response.body.realisation).toEqual(Realisation.tout);
+
+    // WHEN
+    response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?realisation=blablabla',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      'Type de realisation [blablabla] inconnu',
+    );
+  });
+
+  it(`GET /utilisateurs/id/actions - filtre realisation+consultation`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '1' },
+          faite_le: new Date(),
+          vue_le: new Date(),
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    let response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?realisation=faite&consultation=vu',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+    expect(response.body.realisation).toEqual(Realisation.faite);
+    expect(response.body.consultation).toEqual(Consultation.vu);
   });
 
   it(`GET /utilisateurs/id/actions - boolean action deja vue / deja faite`, async () => {
