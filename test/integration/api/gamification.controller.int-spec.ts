@@ -304,13 +304,13 @@ describe('Gamification  (API test)', () => {
         },
         {
           points: 20,
-          rank: 3,
+          rank: 2,
           pseudo: 'utilisateur',
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
         {
           points: 19,
-          rank: 4,
+          rank: 3,
           pseudo: 'dijon_11',
           id: '3416a75f4cea9109507cacd8e2f2aefc',
         },

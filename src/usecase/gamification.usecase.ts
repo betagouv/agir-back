@@ -234,12 +234,15 @@ export class GamificationUsecase {
   private fixTop3Ranks(top_3: Classement[]) {
     if (top_3[0]) {
       top_3[0].rank = 1;
+      top_3[0].rank_commune = 1;
     }
     if (top_3[1]) {
       top_3[1].rank = 2;
+      top_3[1].rank_commune = 2;
     }
     if (top_3[2]) {
       top_3[2].rank = 3;
+      top_3[2].rank_commune = 3;
     }
   }
   private setProperRanksForUsers(
