@@ -67,6 +67,9 @@ export class BibliothequeAPI {
   contenu: ContenuBibliothequeAPI[];
   @ApiProperty({ type: [ThematiqueFiltereAPI] })
   filtres: ThematiqueFiltereAPI[];
+  @ApiProperty()
+  nombre_resultats: number;
+  nombre_resultats_disponibles: number;
 
   public static mapToAPI(biblio: Bibliotheque): BibliothequeAPI {
     return {
@@ -74,6 +77,8 @@ export class BibliothequeAPI {
         .getAllContenu()
         .map((content) => ContenuBibliothequeAPI.mapToAPI(content)),
       filtres: ThematiqueFiltereAPI.mapToAPI(biblio.filtre_thematiques),
+      nombre_resultats: biblio.getNombreResultats(),
+      nombre_resultats_disponibles: biblio.getNombreResultatsDispo(),
     };
   }
 }

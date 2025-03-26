@@ -632,7 +632,6 @@ describe('Duplicate Usecase', () => {
 
     // WHEN
     const reponse = await duplicateUsecase.computeBilanTousUtilisateurs();
-    console.log(reponse);
 
     // THEN
     const stats = await TestUtil.prisma_stats.bilanCarbone.findMany();

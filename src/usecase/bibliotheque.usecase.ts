@@ -78,7 +78,7 @@ export class BibliothequeUsecase {
     titre: string,
     include: IncludeArticle,
     skip: number = 0,
-    take: number = 10,
+    take: number = 1000000,
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
@@ -107,6 +107,7 @@ export class BibliothequeUsecase {
       utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
 
     result.addArticles(ordered_articles.slice(skip, skip + take));
+    result.setNombreResultatsDispo(ordered_articles.length);
 
     for (const thematique of ThematiqueRepository.getAllThematiques()) {
       if (thematique !== Thematique.services_societaux)

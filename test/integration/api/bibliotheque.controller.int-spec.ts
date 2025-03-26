@@ -1258,4 +1258,60 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu).toHaveLength(1);
     expect(response.body.contenu[0].content_id).toEqual('2');
   });
+  it('GET /utilisateurs/id/bibliotheque_v2 - juste take', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?take=3',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(3);
+    expect(response.body.nombre_resultats).toEqual(3);
+    expect(response.body.nombre_resultats_disponibles).toEqual(4);
+  });
 });
