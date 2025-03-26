@@ -619,6 +619,7 @@ describe('Duplicate Usecase', () => {
       thematique: 'climat',
       titre: 'titreA',
       user_id: '123',
+      nombre_tentatives: 1,
     });
   });
 

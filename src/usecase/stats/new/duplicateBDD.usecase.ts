@@ -266,6 +266,7 @@ export class DuplicateBDDForStatsUsecase {
             quizz_utilisateur.has100ScoreFirstAttempt();
           final_quizz.date_premier_coup =
             quizz_utilisateur.getDateFirstAttempt();
+          final_quizz.nombre_tentatives = quizz_utilisateur.getNombreEssais();
 
           try {
             await this.statistiqueExternalRepository.createQuizzData(

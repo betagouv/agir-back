@@ -119,6 +119,7 @@ export class StatistiqueExternalRepository {
         bon_premier_coup: quizz.premier_coup_ok,
         date_premier_coup: quizz.date_premier_coup,
         like_level: quizz.like_level,
+        nombre_tentatives: quizz.nombre_tentatives,
       },
     });
   }

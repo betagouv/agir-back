@@ -114,6 +114,7 @@ model QuizzCopy {
   titre             String
   thematique        String
   bon_premier_coup  Boolean?
+  nombre_tentatives Int?
   date_premier_coup DateTime? @db.Timestamptz(3)
   like_level        Int?
 
