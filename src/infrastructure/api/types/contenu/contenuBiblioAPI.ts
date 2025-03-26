@@ -67,9 +67,9 @@ export class BibliothequeAPI {
   contenu: ContenuBibliothequeAPI[];
   @ApiProperty({ type: [ThematiqueFiltereAPI] })
   filtres: ThematiqueFiltereAPI[];
-  @ApiProperty()
-  nombre_resultats: number;
-  nombre_resultats_disponibles: number;
+
+  @ApiProperty() nombre_resultats: number;
+  @ApiProperty() nombre_resultats_disponibles: number;
 
   public static mapToAPI(biblio: Bibliotheque): BibliothequeAPI {
     return {
