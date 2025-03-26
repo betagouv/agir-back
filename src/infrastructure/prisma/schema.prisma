@@ -82,6 +82,7 @@ model Utilisateur {
   code_commune               String?
   france_connect_sub         String?   @unique
   external_stat_id           String?   @unique
+  global_user_version        String    @default("V1")
 }
 
 model Statistique {

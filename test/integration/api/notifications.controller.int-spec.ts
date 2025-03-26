@@ -1,6 +1,9 @@
 import { CanalNotification } from '../../../src/domain/notification/notificationHistory';
 import { NotificationHistory_v0 } from '../../../src/domain/object_store/notification/NotificationHistory_v0';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  GlobalUserVersion,
+  Scope,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -116,6 +119,7 @@ describe('Notifications (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       notification_history: notifications as any,
       derniere_activite: new Date(1),
+      global_user_version: GlobalUserVersion.V2,
     });
 
     await TestUtil.prisma.utilisateur.update({

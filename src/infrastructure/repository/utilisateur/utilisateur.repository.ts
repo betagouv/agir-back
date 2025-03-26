@@ -18,6 +18,7 @@ import {
 } from '../../../domain/object_store/upgrader';
 import { ThematiqueHistory } from '../../../domain/thematique/history/thematiqueHistory';
 import {
+  GlobalUserVersion,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -611,6 +612,7 @@ export class UtilisateurRepository {
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
       cache_bilan_carbone: cache_bilan_carbone,
+      global_user_version: GlobalUserVersion[user.global_user_version],
     });
 
     if (result.kyc_history) {
@@ -693,6 +695,7 @@ export class UtilisateurRepository {
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
+      global_user_version: user.global_user_version,
     };
   }
 

@@ -61,6 +61,7 @@ import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
+  GlobalUserVersion,
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
@@ -721,6 +722,7 @@ export class TestUtil {
       external_stat_id: null,
       pseudo: 'pseudo',
       cache_bilan_carbone: cache_bilan_carbone as any,
+      global_user_version: GlobalUserVersion.V1,
       ...override,
     };
   }

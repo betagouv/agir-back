@@ -13,6 +13,7 @@ export class EmailScheduler extends NotificationScheduler {
 
       return (
         utilisateur.active_account &&
+        utilisateur.isV1User() &&
         this.not_sent(notif, utilisateur) &&
         plus_vieux_defi_encours &&
         Date.now() - plus_vieux_defi_encours.date_acceptation.getTime() >
@@ -33,6 +34,7 @@ export class EmailScheduler extends NotificationScheduler {
       const age_activite = this.getAgeDerniereActivite(utilisateur);
       return (
         utilisateur.active_account &&
+        utilisateur.isV2User() &&
         this.not_sent(notif, utilisateur) &&
         age_user > this.jour_90 &&
         age_activite < this.jour_7 &&
@@ -43,6 +45,7 @@ export class EmailScheduler extends NotificationScheduler {
       const age_user = this.getAgeCreationUtilisateur(utilisateur);
       return (
         utilisateur.active_account &&
+        utilisateur.isV2User() &&
         this.not_sent(notif, utilisateur) &&
         age_user > this.jour_8 &&
         utilisateur.thematique_history.getNombreActionsFaites() === 0
@@ -52,6 +55,7 @@ export class EmailScheduler extends NotificationScheduler {
       const age_user = this.getAgeCreationUtilisateur(utilisateur);
       return (
         utilisateur.active_account &&
+        utilisateur.isV2User() &&
         this.not_sent(notif, utilisateur) &&
         age_user > this.jour_14 &&
         utilisateur.thematique_history.getNombreActionsFaites() === 0
@@ -61,6 +65,7 @@ export class EmailScheduler extends NotificationScheduler {
       const age_activite = this.getAgeDerniereActivite(utilisateur);
       return (
         utilisateur.active_account &&
+        utilisateur.isV2User() &&
         this.not_sent(notif, utilisateur) &&
         age_activite > this.jour_30
       );
@@ -69,6 +74,7 @@ export class EmailScheduler extends NotificationScheduler {
       const age_activite = this.getAgeDerniereActivite(utilisateur);
       return (
         utilisateur.active_account &&
+        utilisateur.isV2User() &&
         this.not_sent(notif, utilisateur) &&
         age_activite > this.jour_60
       );

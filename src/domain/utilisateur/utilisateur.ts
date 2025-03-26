@@ -36,6 +36,10 @@ export enum SourceInscription {
   france_connect = 'france_connect',
   inconnue = 'inconnue',
 }
+export enum GlobalUserVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+}
 export enum Scope {
   ALL = 'ALL',
   core = 'core',
@@ -112,6 +116,7 @@ export class UtilisateurData {
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;
+  global_user_version: GlobalUserVersion;
 
   constructor(data?: UtilisateurData) {
     if (data) {
@@ -211,6 +216,7 @@ export class Utilisateur extends UtilisateurData {
       france_connect_sub: null,
       external_stat_id: uuidv4(),
       cache_bilan_carbone: new CacheBilanCarbone(),
+      global_user_version: GlobalUserVersion.V1,
     });
   }
 
@@ -234,6 +240,13 @@ export class Utilisateur extends UtilisateurData {
     this.kyc_history.reset();
     this.thematique_history.reset();
     this.notification_history.reset();
+  }
+
+  public isV2User(): boolean {
+    return this.global_user_version === GlobalUserVersion.V2;
+  }
+  public isV1User(): boolean {
+    return this.global_user_version === GlobalUserVersion.V1;
   }
 
   public isUtilisateurFranceConnecte() {

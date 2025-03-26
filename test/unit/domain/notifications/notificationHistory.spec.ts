@@ -12,6 +12,7 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
+  GlobalUserVersion,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
@@ -353,6 +354,7 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
@@ -368,6 +370,32 @@ describe('NotificationHistory', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(TypeNotification.email_relance_onboarding_j8);
   });
+  it(`getNouvellesNotifications : email_relance_onboarding_j8 pas de mail si user V1`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V1;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(0);
+  });
   it(`getNouvellesNotifications : email_relance_onboarding_j14`, () => {
     // GIVEN
     process.env.NOTIFICATIONS_MAIL_INACTIVES =
@@ -380,6 +408,7 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 15);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
@@ -408,6 +437,7 @@ describe('NotificationHistory', () => {
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
     utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 31);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
@@ -436,6 +466,7 @@ describe('NotificationHistory', () => {
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
     utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 61);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
@@ -462,6 +493,7 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 3);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
@@ -488,6 +520,7 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 10);
     utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
 
     const notifications = new NotificationHistory({
       version: 0,
