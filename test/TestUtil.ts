@@ -47,6 +47,7 @@ import {
   TypeLogement,
 } from '../src/domain/logement/logement';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
+import { CacheBilanCarbone_v0 } from '../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
@@ -530,6 +531,16 @@ export class TestUtil {
       unlocked_features: [Feature.aides, Feature.defis],
     };
 
+    const cache_bilan_carbone: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: undefined,
+      consommation_kg: undefined,
+      transport_kg: undefined,
+      logement_kg: undefined,
+      total_kg: undefined,
+      updated_at: undefined,
+    };
+
     const defis: DefiHistory_v0 = {
       version: 0,
       defis: [
@@ -709,6 +720,7 @@ export class TestUtil {
       france_connect_sub: null,
       external_stat_id: null,
       pseudo: 'pseudo',
+      cache_bilan_carbone: cache_bilan_carbone as any,
       ...override,
     };
   }

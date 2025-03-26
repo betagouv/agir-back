@@ -7,6 +7,7 @@ import { History } from '../../../../src/domain/history/history';
 import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
+import { CacheBilanCarbone } from '../../../domain/bilan/cacheBilanCarbone';
 import { Gamification } from '../../../domain/gamification/gamification';
 import { KYCHistory } from '../../../domain/kyc/kycHistory';
 import { Logement } from '../../../domain/logement/logement';
@@ -541,6 +542,15 @@ export class UtilisateurRepository {
         )
       : undefined;
 
+    const cache_bilan_carbone = user.cache_bilan_carbone
+      ? new CacheBilanCarbone(
+          Upgrader.upgradeRaw(
+            user.cache_bilan_carbone,
+            SerialisableDomain.CacheBilanCarbone,
+          ),
+        )
+      : undefined;
+
     const result = new Utilisateur({
       id: user.id,
       nom: user.nom,
@@ -600,6 +610,7 @@ export class UtilisateurRepository {
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
+      cache_bilan_carbone: cache_bilan_carbone,
     });
 
     if (result.kyc_history) {
@@ -677,6 +688,7 @@ export class UtilisateurRepository {
       notification_history: undefined,
       thematique_history: undefined,
       defis: undefined,
+      cache_bilan_carbone: undefined,
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
@@ -692,6 +704,12 @@ export class UtilisateurRepository {
       scopes = Object.values(Scope);
     }
     return {
+      cache_bilan_carbone: scopes.includes(Scope.cache_bilan_carbone)
+        ? Upgrader.serialiseToLastVersion(
+            user.cache_bilan_carbone,
+            SerialisableDomain.CacheBilanCarbone,
+          )
+        : undefined,
       gamification: scopes.includes(Scope.gamification)
         ? Upgrader.serialiseToLastVersion(
             user.gamification,
@@ -789,6 +807,7 @@ export class UtilisateurRepository {
       bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
       notification_history: !scopes.includes(Scope.notification_history),
       thematique_history: !scopes.includes(Scope.thematique_history),
+      cache_bilan_carbone: !scopes.includes(Scope.cache_bilan_carbone),
     };
   }
 }

@@ -78,29 +78,37 @@ export class BilanCarboneUsecase {
   async getCurrentBilanValeurTotale(utilisateurId: string): Promise<number> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.logement, Scope.unlocked_features],
+      [
+        Scope.kyc,
+        Scope.logement,
+        Scope.unlocked_features,
+        Scope.cache_bilan_carbone,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
     const up_to_date = await this.isBilanStatUpToDate(utilisateur);
 
     if (up_to_date) {
-      const value =
-        await this.bilanCarboneStatistiqueRepository.getLastTotalValue(
-          utilisateur.id,
-        );
-      return value / 1000;
+      return utilisateur.cache_bilan_carbone.total_kg;
     }
 
     const situation = this.external_compute_situation(utilisateur);
 
     const bilan = this.nGCCalculator.computeBasicBilanFromSituation(situation);
-    await this.bilanCarboneStatistiqueRepository.upsertStatistiques(
-      utilisateur.id,
-      situation,
-      bilan.bilan_carbone_annuel * 1000,
-      bilan.details.transport * 1000,
-      bilan.details.alimentation * 1000,
+
+    const cache_bilan = utilisateur.cache_bilan_carbone;
+
+    cache_bilan.total_kg = bilan.bilan_carbone_annuel;
+    cache_bilan.logement_kg = bilan.details.logement;
+    cache_bilan.transport_kg = bilan.details.transport;
+    cache_bilan.consommation_kg = bilan.details.divers;
+    cache_bilan.alimentation_kg = bilan.details.alimentation;
+    cache_bilan.updated_at = new Date();
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.cache_bilan_carbone],
     );
 
     return bilan.bilan_carbone_annuel;
@@ -353,10 +361,7 @@ export class BilanCarboneUsecase {
   private async isBilanStatUpToDate(
     utilisateur: Utilisateur,
   ): Promise<boolean> {
-    const bilan_last_update_time =
-      await this.bilanCarboneStatistiqueRepository.getLastUpdateTime(
-        utilisateur.id,
-      );
+    const bilan_last_update_time = utilisateur.cache_bilan_carbone.updated_at;
 
     const kyc_last_update = utilisateur.kyc_history.getLastUpdate().getTime();
 

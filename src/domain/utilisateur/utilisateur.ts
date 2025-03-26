@@ -3,6 +3,7 @@ import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { App } from '../app';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
 import { DefiHistory } from '../defis/defiHistory';
 import { Gamification } from '../gamification/gamification';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
@@ -48,6 +49,7 @@ export enum Scope {
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
+  cache_bilan_carbone = 'cache_bilan_carbone',
 }
 
 export class UtilisateurData {
@@ -109,6 +111,7 @@ export class UtilisateurData {
   code_commune: string;
   france_connect_sub: string;
   external_stat_id: string;
+  cache_bilan_carbone: CacheBilanCarbone;
 
   constructor(data?: UtilisateurData) {
     if (data) {
@@ -207,6 +210,7 @@ export class Utilisateur extends UtilisateurData {
       code_commune: null,
       france_connect_sub: null,
       external_stat_id: uuidv4(),
+      cache_bilan_carbone: new CacheBilanCarbone(),
     });
   }
 

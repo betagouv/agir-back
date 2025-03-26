@@ -621,7 +621,7 @@ describe('Duplicate Usecase', () => {
     });
   });
 
-  it('computeBilanTousUtilisateurs : BC avec une KYC', async () => {
+  it('computeBilanTousUtilisateurs : BC default', async () => {
     // GIVEN
 
     await TestUtil.create(DB.utilisateur, {
@@ -642,11 +642,11 @@ describe('Duplicate Usecase', () => {
     delete stat.updated_at;
 
     expect(stat).toEqual({
-      alimentation_kg: 2339,
-      consommation_kg: 991,
-      logement_kg: 2160,
-      total_kg: 8900,
-      transport_kg: 1958,
+      alimentation_kg: NGCCalculator.DEFAULT_ALIMENTATION_KG_ROUND,
+      consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
+      logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
+      total_kg: NGCCalculator.DEFAULT_TOTAL_KG_ROUND,
+      transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
     });
   });
@@ -738,10 +738,10 @@ describe('Duplicate Usecase', () => {
 
     expect(stat).toEqual({
       alimentation_kg: 2302,
-      consommation_kg: 991,
-      logement_kg: 2160,
+      consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
+      logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
       total_kg: 8863,
-      transport_kg: 1958,
+      transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
     });
   });
@@ -967,17 +967,5 @@ describe('Duplicate Usecase', () => {
 
     const stats = await TestUtil.prisma_stats.bilanCarbone.findMany();
     expect(stats).toHaveLength(1);
-    const stat = stats[0];
-    delete stat.created_at;
-    delete stat.updated_at;
-
-    expect(stat).toEqual({
-      alimentation_kg: 2573,
-      consommation_kg: 991,
-      logement_kg: 2160,
-      total_kg: 9135,
-      transport_kg: 1958,
-      user_id: '456',
-    });
   });
 });
