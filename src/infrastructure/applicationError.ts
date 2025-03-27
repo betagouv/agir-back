@@ -700,6 +700,10 @@ export class ApplicationError {
     this.throwAppError('131', `Type de realisation [${type}] inconnu`);
   }
 
+  static throwUserNotFound(id: string) {
+    this.throwAppError('132', `L'utilisateur d'id [${id}] n'existe pas`, 404);
+  }
+
   private static throwAppError(
     code: string,
     message: string,
