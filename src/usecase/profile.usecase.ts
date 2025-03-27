@@ -157,17 +157,13 @@ export class ProfileUsecase {
           '' + profile.nombre_de_parts_fiscales,
         );
       } else {
-        console.log(normal_string);
         const normal_value = parseFloat(normal_string);
-        console.log(normal_value);
         if (normal_value > 99.5 || normal_value < 0.5) {
           ApplicationError.throwPartsFiscalesNotDecimal('' + normal_value);
         }
         profile.nombre_de_parts_fiscales = normal_value;
       }
     }
-
-    console.log(profile.nombre_de_parts_fiscales);
 
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
