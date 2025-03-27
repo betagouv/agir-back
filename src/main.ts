@@ -1,13 +1,13 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
-  SwaggerModule,
   DocumentBuilder,
   SwaggerCustomOptions,
+  SwaggerModule,
 } from '@nestjs/swagger';
-import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
+import { AppModule } from './app.module';
+import { App } from './domain/app';
 import { SentryFilter } from './infrastructure/sentry.filter';
-import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,8 +33,9 @@ async function bootstrap() {
 
   // Activation de Sentry
   Sentry.init({
-    dsn: process.env.SENTRY_DNS,
+    dsn: process.env.SENTRY_DSN,
     tracesSampleRate: 1.0,
+    environment: App.isProd() ? 'PROD' : 'DEV',
   });
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryFilter(httpAdapter));
