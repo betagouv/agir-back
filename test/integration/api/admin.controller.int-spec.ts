@@ -759,6 +759,7 @@ describe('Admin (API test)', () => {
     });
     expect(userDB.version).toEqual(15);
     expect(userDB.gamification.getPoints()).toEqual(0);
+    expect(userDB.gamification.getBadges()).toEqual(['pionnier']);
     expect(userDB.points_classement).toEqual(0);
     expect(userDB.commune_classement).toEqual(null);
     expect(userDB.code_postal_classement).toEqual(null);

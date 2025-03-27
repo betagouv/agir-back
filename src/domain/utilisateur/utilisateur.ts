@@ -224,7 +224,7 @@ export class Utilisateur extends UtilisateurData {
     this.points_classement = 0;
     this.commune_classement = null;
     this.code_postal_classement = null;
-    this.gamification.reset();
+    this.gamification.resetV2();
     this.thematique_history.reset();
   }
 
@@ -303,8 +303,16 @@ export class Utilisateur extends UtilisateurData {
     const ok_code_postal =
       !!this.logement.code_postal && this.logement.code_postal.length === 5;
 
+    const date_naissance_ok =
+      this.isV1User() ||
+      (!!this.annee_naissance &&
+        !!this.mois_naissance &&
+        !!this.jour_naissance);
     return (
-      (ok_pseudo || ok_prenom) && ok_code_postal && KYC_preference_answered
+      (ok_pseudo || ok_prenom) &&
+      ok_code_postal &&
+      KYC_preference_answered &&
+      date_naissance_ok
     );
   }
 

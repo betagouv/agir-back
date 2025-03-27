@@ -42,11 +42,17 @@ export class Gamification {
     }
   }
 
-  public reset() {
+  public resetV2() {
     this.points = 0;
     this.celebrations = [];
     this.popup_reset_vue = false;
     this.badges = [TypeBadge.pionnier];
+  }
+  public reset() {
+    this.points = 0;
+    this.celebrations = [];
+    this.popup_reset_vue = true;
+    this.badges = [];
   }
 
   public getBadges(): TypeBadge[] {
