@@ -13,6 +13,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -47,6 +48,10 @@ import { GenericControler } from './genericControler';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
+
+export class VersionAPI {
+  @ApiProperty() version: string;
+}
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -86,6 +91,12 @@ export class AdminController extends GenericControler {
       ApplicationError.throwDiffrentVersion(version);
     }
     return ['OK'];
+  }
+
+  @Get('version')
+  @ApiOkResponse({ type: VersionAPI })
+  async get_version(): Promise<VersionAPI> {
+    return { version: App.getBackCurrentVersion() };
   }
 
   @Delete('admin/utilisateurs/:utilisateurId')

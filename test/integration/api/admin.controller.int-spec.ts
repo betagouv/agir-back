@@ -167,6 +167,16 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
+  it('GET /version OK', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get('/version');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      version: App.getBackCurrentVersion(),
+    });
+  });
   it('GET /check_version/123 OK', async () => {
     // WHEN
     const response = await TestUtil.getServer().get(
