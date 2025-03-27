@@ -43,6 +43,7 @@ export class ArticleRepository {
       console.error(
         `Error loading article definitions at startup, they will be available in less than a minute by cache refresh mecanism`,
       );
+      console.error(error);
     }
   }
 
