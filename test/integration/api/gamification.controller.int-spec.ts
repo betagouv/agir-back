@@ -164,6 +164,7 @@ describe('Gamification  (API test)', () => {
       },
     ]);
   });
+
   it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok même si contient un pseudo non valide, celui-ci est proprement exclu`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -421,6 +422,116 @@ describe('Gamification  (API test)', () => {
           type: 'pionnier',
         },
       ],
+    });
+  });
+
+  it(`GET /utilisateurs/id/classement/local pas d'erreur si localisation manquante`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'palaiseau_1',
+      email: '1',
+      points_classement: 10,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'palaiseau_2',
+      email: '2',
+      points_classement: 20,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      pseudo: 'palaiseau_3',
+      email: '3',
+      points_classement: 30,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      pseudo: 'dijon_1',
+      email: '4',
+      points_classement: 10,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '41',
+      pseudo: 'dijon_11',
+      email: '41',
+      points_classement: 19,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      pseudo: 'utilisateur',
+      email: '5',
+      points_classement: 20,
+      code_postal_classement: null,
+      commune_classement: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '444',
+      pseudo: 'insulter',
+      email: '444',
+      points_classement: 40,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+      est_valide_pour_classement: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '6',
+      pseudo: 'dijon_6',
+      email: '6',
+      points_classement: 50,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '7',
+      pseudo: 'dijon_7',
+      email: '7',
+      points_classement: 10,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/local',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    console.log(response.body);
+    expect(response.body).toEqual({
+      top_trois: null,
+      utilisateur: {
+        points: 20,
+        rank: 1,
+        pseudo: 'utilisateur',
+        id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+      },
+      classement_utilisateur: [
+        {
+          points: 20,
+          rank: 1,
+          pseudo: 'utilisateur',
+          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        },
+      ],
+      code_postal: null,
+      commune_label: null,
+      pourcentile: null,
+      badges: [],
     });
   });
 

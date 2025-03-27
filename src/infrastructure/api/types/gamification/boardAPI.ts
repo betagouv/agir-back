@@ -39,7 +39,9 @@ export class BoardAPI {
 
   public static mapToAPI(board: Board, local: boolean): BoardAPI {
     return {
-      top_trois: board.top_trois.map((e) => ClassementAPI.mapToAPI(e, local)),
+      top_trois: board.top_trois
+        ? board.top_trois.map((e) => ClassementAPI.mapToAPI(e, local))
+        : null,
       utilisateur: board.utilisateur
         ? ClassementAPI.mapToAPI(board.utilisateur, local)
         : null,
