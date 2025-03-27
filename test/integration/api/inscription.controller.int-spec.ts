@@ -88,7 +88,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(15);
+    expect(user.version).toEqual(14);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {

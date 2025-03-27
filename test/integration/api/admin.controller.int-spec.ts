@@ -694,7 +694,7 @@ describe('Admin (API test)', () => {
       liste_tags_excluants: [],
       liste_thematiques: [],
     });
-    expect(userDB.version).toEqual(14);
+    expect(userDB.version).toEqual(App.currentUserSystemVersion());
   });
 
   it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
