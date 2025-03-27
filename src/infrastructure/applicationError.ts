@@ -360,10 +360,10 @@ export class ApplicationError {
   static throwRFRNotNumer() {
     this.throwAppError('073', `Le revenu fisscal doi être un nombre entier`);
   }
-  static throwPartsFiscalesNotDecimal() {
+  static throwPartsFiscalesNotDecimal(value: string) {
     this.throwAppError(
       '074',
-      `Le nombre de parts fiscales doit être un nombre décimal`,
+      `Le nombre de parts fiscales doit être un nombre décimal compris entre 0,5 et 99,5 - un seul chiffre après la virgule,  reçu : [${value}]`,
     );
   }
   static throwBadAnnee(data: number) {

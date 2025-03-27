@@ -144,9 +144,30 @@ export class ProfileUsecase {
         ApplicationError.throwBadDay(profile.jour_naissance);
     }
     if (profile.nombre_de_parts_fiscales) {
-      if (!validator.isDecimal('' + profile.nombre_de_parts_fiscales))
-        ApplicationError.throwPartsFiscalesNotDecimal();
+      const normal_string = ('' + profile.nombre_de_parts_fiscales).replace(
+        ',',
+        '.',
+      );
+      if (
+        !validator.isDecimal(normal_string, {
+          decimal_digits: '0,1',
+        })
+      ) {
+        ApplicationError.throwPartsFiscalesNotDecimal(
+          '' + profile.nombre_de_parts_fiscales,
+        );
+      } else {
+        console.log(normal_string);
+        const normal_value = parseFloat(normal_string);
+        console.log(normal_value);
+        if (normal_value > 99.5 || normal_value < 0.5) {
+          ApplicationError.throwPartsFiscalesNotDecimal('' + normal_value);
+        }
+        profile.nombre_de_parts_fiscales = normal_value;
+      }
     }
+
+    console.log(profile.nombre_de_parts_fiscales);
 
     utilisateur.revenu_fiscal = profile.revenu_fiscal;
     utilisateur.parts = profile.nombre_de_parts_fiscales;
