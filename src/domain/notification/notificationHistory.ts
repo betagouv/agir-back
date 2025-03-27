@@ -7,25 +7,28 @@ import { Utilisateur } from '../utilisateur/utilisateur';
 import { EmailScheduler } from './emailScheduler';
 import { MobileScheduler } from './mobileScheduler';
 
-const minute_10 = 10 * 60 * 1000;
-const jour_1 = 24 * 60 * 60 * 1000;
-const jour_2 = jour_1 * 2;
-const jour_8 = jour_1 * 8;
-const jour_10 = jour_1 * 10;
-const jour_30 = jour_1 * 30;
-
 export enum EmailNotification {
   email_existing_account = 'email_existing_account',
   inscription_code = 'inscription_code',
   change_mot_de_passe_code = 'change_mot_de_passe_code',
   connexion_code = 'connexion_code',
+
+  //AUTO
   welcome = 'welcome',
   late_onboarding = 'late_onboarding',
   waiting_action = 'waiting_action',
+
+  // NEW
+  email_demande_feedback = 'email_demande_feedback',
+  email_relance_onboarding_j8 = 'email_relance_onboarding_j8',
+  email_relance_onboarding_j14 = 'email_relance_onboarding_j14',
+  email_utilisateur_inactif_j30 = 'email_utilisateur_inactif_j30',
+  email_utilisateur_inactif_j60 = 'email_utilisateur_inactif_j60',
 }
 
 export enum MobileNotification {
   mobile_inscription_J2 = 'mobile_inscription_J2',
+  mobile_inscription_J9 = 'mobile_inscription_J9',
 }
 export const TypeNotification = { ...EmailNotification, ...MobileNotification };
 export type TypeNotification = EmailNotification | MobileNotification;
@@ -78,7 +81,12 @@ export class NotificationHistory {
   }
 
   public isNotificationActive(notif: TypeNotification) {
-    return App.getActiveNotificationsListe().includes(notif);
+    return !App.getInactiveNotificationsListe().includes(notif);
+  }
+
+  public reset() {
+    this.sent_notifications = [];
+    this.enabled_canals = [CanalNotification.email, CanalNotification.mobile];
   }
 
   public declareSentNotification(
@@ -117,13 +125,5 @@ export class NotificationHistory {
       }
     }
     return result.filter((n) => this.isNotificationActive(n));
-  }
-
-  private getAgeCreationUtilisateur(utilisateur: Utilisateur): number {
-    return Date.now() - utilisateur.created_at.getTime();
-  }
-
-  private was_sent(type: TypeNotification): boolean {
-    return this.sent_notifications.findIndex((n) => n.type === type) > -1;
   }
 }

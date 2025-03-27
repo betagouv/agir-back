@@ -360,10 +360,10 @@ export class ApplicationError {
   static throwRFRNotNumer() {
     this.throwAppError('073', `Le revenu fisscal doi être un nombre entier`);
   }
-  static throwPartsFiscalesNotDecimal() {
+  static throwPartsFiscalesNotDecimal(value: string) {
     this.throwAppError(
       '074',
-      `Le nombre de parts fiscales doit être un nombre décimal`,
+      `Le nombre de parts fiscales doit être un nombre décimal compris entre 0,5 et 99,5 - un seul chiffre après la virgule,  reçu : [${value}]`,
     );
   }
   static throwBadAnnee(data: number) {
@@ -614,16 +614,10 @@ export class ApplicationError {
     );
   }
 
-  static throwMajNomImpossibleFC() {
+  static throwMajImpossibleFC() {
     this.throwAppError(
       '116',
-      `Impossible de mettre à jour le nom d'un utilisatueur France Connecté`,
-    );
-  }
-  static throwMajPrenomImpossibleFC() {
-    this.throwAppError(
-      '117',
-      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+      `Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté`,
     );
   }
 
@@ -700,6 +694,14 @@ export class ApplicationError {
       '130',
       `Un compte existant dans j'agis n'a pas pu être rapproché, erreur de connexion`,
     );
+  }
+
+  static throwTypeRealisationNotFound(type: string) {
+    this.throwAppError('131', `Type de realisation [${type}] inconnu`);
+  }
+
+  static throwUserNotFound(id: string) {
+    this.throwAppError('132', `L'utilisateur d'id [${id}] n'existe pas`, 404);
   }
 
   private static throwAppError(

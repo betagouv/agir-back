@@ -10,4 +10,6 @@ npm run execute dump_aides_copy_for_stats
 
 npm run execute dump_quizz_copy_for_stats
 
+npm run execute dump_perso_copy_for_stats
+
 npm run execute refresh_action_stats

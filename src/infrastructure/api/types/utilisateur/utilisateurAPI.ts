@@ -42,9 +42,9 @@ export class UtilisateurAPI {
       fonctionnalites_debloquees: user.unlocked_features.getUnlockedFeatures(),
       is_onboarding_done: user.isOnboardingDone(),
       couverture_aides_ok: user.couverture_aides_ok,
-      is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
+      is_nom_prenom_modifiable: user.isDataFranceConnectModifiable(),
       pseudo: user.pseudo,
-      popup_reset_est_vue: user.gamification.popup_reset_vue,
+      popup_reset_est_vue: user.gamification.isPopupResetVue(),
     };
   }
 }

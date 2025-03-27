@@ -43,6 +43,7 @@ model Utilisateur {
   bilbiotheque_services      Json      @default("{}") // versioné
   notification_history       Json      @default("{}") // versioné
   thematique_history         Json      @default("{}") // versioné
+  cache_bilan_carbone        Json      @default("{}") // versioné
   created_at                 DateTime  @default(now()) @db.Timestamptz(3)
   updated_at                 DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count         Int       @default(0)
@@ -81,6 +82,7 @@ model Utilisateur {
   code_commune               String?
   france_connect_sub         String?   @unique
   external_stat_id           String?   @unique
+  global_user_version        String    @default("V1")
 }
 
 model Statistique {

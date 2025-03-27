@@ -135,9 +135,9 @@ export class UtilisateurProfileAPI {
       annee_naissance: user.annee_naissance,
       mois_naissance: user.mois_naissance,
       jour_naissance: user.jour_naissance,
-      is_nom_prenom_modifiable: user.isNomPrenomModifiable(),
+      is_nom_prenom_modifiable: user.isDataFranceConnectModifiable(),
       pseudo: user.pseudo,
-      popup_reset_est_vue: user.gamification.popup_reset_vue,
+      popup_reset_est_vue: user.gamification.isPopupResetVue(),
     };
   }
 }

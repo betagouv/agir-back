@@ -50,7 +50,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`POST /utilisateurs/send_magic_link - génère un magic_link et l'envoie en email, utilisateur créé dans la foulé`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     process.env.IS_PROD = 'true';
 
     // WHEN
@@ -72,7 +71,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`POST /utilisateurs/send_magic_link - 2 génération de magic link successive conserve le meme code`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     process.env.IS_PROD = 'true';
 
     // WHEN
@@ -105,7 +103,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`POST /utilisateurs/send_magic_link - après une heure code change`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     process.env.IS_PROD = 'true';
 
     // WHEN
@@ -149,7 +146,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
 
   it(`GET /utilisateurs/:email/login -  code manquant`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     process.env.IS_PROD = 'true';
 
     // WHEN
@@ -164,7 +160,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - email inconnu`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
 
     // WHEN
     const response = await TestUtil.getServer().get(
@@ -180,7 +175,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - mauvais code`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
@@ -198,7 +192,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - code OK, login OK`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
@@ -223,7 +216,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
@@ -247,7 +239,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - un mauvais code 3 fois et le code est re-initialisé`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
@@ -282,7 +273,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`GET /utilisateurs/:email/login - code expiré (>1h)`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
@@ -301,7 +291,6 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
   });
   it(`POST /utilisateurs/magic_link - parcours complet : génère un magic_link puis login à l'application avec le magic link`, async () => {
     // GIVEN
-    process.env.USER_CURRENT_VERSION = '9';
     process.env.IS_PROD = 'true';
 
     await TestUtil.getServer().post('/utilisateurs/send_magic_link').send({

@@ -1,4 +1,5 @@
 import { Classement } from './classement';
+import { TypeBadge } from './typeBadge';
 
 export enum Pourcentile {
   pourcent_5 = 'pourcent_5',
@@ -14,4 +15,5 @@ export class Board {
   classement_utilisateur: Classement[];
   code_postal: string;
   commune_label: string;
+  badges: TypeBadge[];
 }

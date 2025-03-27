@@ -1,4 +1,6 @@
 import { Pourcentile } from '../../../src/domain/gamification/board';
+import { TypeBadge } from '../../../src/domain/gamification/typeBadge';
+import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -32,6 +34,36 @@ describe('Gamification  (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.points).toEqual(10);
   });
+  it('GET /utilisateurs/id/gamification retourne les badges ', async () => {
+    // GIVEN
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 10,
+      popup_reset_vue: false,
+      celebrations: [],
+      badges: [TypeBadge.pionnier],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      gamification: gamification as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/gamification',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.badges).toEqual([
+      {
+        description: 'Présent depuis les premiers jours',
+        image_url: '/badge-pionnier.webp',
+        titre: 'Pionnier',
+        type: 'pionnier',
+      },
+    ]);
+  });
+
   it('GET /utilisateurs/id/gamification retourne le bon niveau et les bonnes bornes ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -75,6 +107,14 @@ describe('Gamification  (API test)', () => {
 
   it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok`, async () => {
     // GIVEN
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 10,
+      popup_reset_vue: false,
+      celebrations: [],
+      badges: [TypeBadge.pionnier],
+    };
+
     await TestUtil.create(DB.utilisateur, {
       id: '1',
       pseudo: 'yo',
@@ -92,6 +132,65 @@ describe('Gamification  (API test)', () => {
       pseudo: 'ya',
       email: '3',
       points_classement: 30,
+      gamification: gamification as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/national',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.top_trois).toHaveLength(3);
+    expect(response.body.top_trois[0]).toStrictEqual({
+      points: 30,
+      rank: 1,
+      pseudo: 'ya',
+      id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+    });
+    expect(response.body.top_trois[2]).toStrictEqual({
+      points: 10,
+      rank: 3,
+      pseudo: 'yo',
+      id: 'c4ca4238a0b923820dcc509a6f75849b',
+    });
+    expect(response.body.badges).toEqual([
+      {
+        description: 'Présent depuis les premiers jours',
+        image_url: '/badge-pionnier.webp',
+        titre: 'Pionnier',
+        type: 'pionnier',
+      },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok même si contient un pseudo non valide, celui-ci est proprement exclu`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'yo',
+      email: '1',
+      points_classement: 10,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'yi',
+      email: '2',
+      points_classement: 20,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      pseudo: 'ya',
+      email: '3',
+      points_classement: 30,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      pseudo: 'hip',
+      email: '4',
+      points_classement: 35,
+      est_valide_pour_classement: false,
     });
 
     // WHEN
@@ -153,7 +252,7 @@ describe('Gamification  (API test)', () => {
     expect(response.body.top_trois).toHaveLength(3);
     expect(response.body.top_trois[0]).toStrictEqual({
       points: 30,
-      rank: 2,
+      rank: 1,
       pseudo: 'ya',
       id: 'ceddc0d114c8db1dc4bde88f1e29231f',
     });
@@ -161,6 +260,13 @@ describe('Gamification  (API test)', () => {
 
   it(`GET /utilisateurs/id/classement retourne le top 3 commune utilisateur ok, exclu autre utilisateur`, async () => {
     // GIVEN
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 10,
+      popup_reset_vue: false,
+      celebrations: [],
+      badges: [TypeBadge.pionnier],
+    };
 
     await TestUtil.create(DB.utilisateur, {
       id: '1',
@@ -210,6 +316,7 @@ describe('Gamification  (API test)', () => {
       points_classement: 20,
       code_postal_classement: '21000',
       commune_classement: 'DIJON',
+      gamification: gamification as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '444',
@@ -255,13 +362,13 @@ describe('Gamification  (API test)', () => {
         },
         {
           points: 20,
-          rank: 3,
+          rank: 2,
           pseudo: 'utilisateur',
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
         {
           points: 19,
-          rank: 4,
+          rank: 3,
           pseudo: 'dijon_11',
           id: '3416a75f4cea9109507cacd8e2f2aefc',
         },
@@ -307,6 +414,123 @@ describe('Gamification  (API test)', () => {
       pourcentile: 'pourcent_25',
       code_postal: '21000',
       commune_label: 'Dijon',
+      badges: [
+        {
+          description: 'Présent depuis les premiers jours',
+          image_url: '/badge-pionnier.webp',
+          titre: 'Pionnier',
+          type: 'pionnier',
+        },
+      ],
+    });
+  });
+
+  it(`GET /utilisateurs/id/classement/local pas d'erreur si localisation manquante`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'palaiseau_1',
+      email: '1',
+      points_classement: 10,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'palaiseau_2',
+      email: '2',
+      points_classement: 20,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      pseudo: 'palaiseau_3',
+      email: '3',
+      points_classement: 30,
+      code_postal_classement: '91120',
+      commune_classement: 'PALAISEAU',
+    });
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      pseudo: 'dijon_1',
+      email: '4',
+      points_classement: 10,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '41',
+      pseudo: 'dijon_11',
+      email: '41',
+      points_classement: 19,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id',
+      pseudo: 'utilisateur',
+      email: '5',
+      points_classement: 20,
+      code_postal_classement: null,
+      commune_classement: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '444',
+      pseudo: 'insulter',
+      email: '444',
+      points_classement: 40,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+      est_valide_pour_classement: false,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '6',
+      pseudo: 'dijon_6',
+      email: '6',
+      points_classement: 50,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '7',
+      pseudo: 'dijon_7',
+      email: '7',
+      points_classement: 10,
+      code_postal_classement: '21000',
+      commune_classement: 'DIJON',
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/classement/local',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      top_trois: null,
+      utilisateur: {
+        points: 20,
+        rank: 1,
+        pseudo: 'utilisateur',
+        id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+      },
+      classement_utilisateur: [
+        {
+          points: 20,
+          rank: 1,
+          pseudo: 'utilisateur',
+          id: 'ceddc0d114c8db1dc4bde88f1e29231f',
+        },
+      ],
+      code_postal: null,
+      commune_label: null,
+      pourcentile: null,
+      badges: [],
     });
   });
 
@@ -602,6 +826,8 @@ describe('Gamification  (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(userDB.gamification.popup_reset_vue).toEqual(true);
+    expect(userDB.gamification.isPopupResetVue()).toEqual(true);
+    expect(userDB.gamification.getPoints()).toEqual(210);
+    expect(userDB.points_classement).toEqual(210);
   });
 });

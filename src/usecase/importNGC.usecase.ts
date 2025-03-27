@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
+import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 
 @Injectable()
 export class ImportNGCUsecase {
@@ -16,7 +16,7 @@ export class ImportNGCUsecase {
     let bilan = 8000;
     try {
       bilan =
-        this.ngcCaclulator.computeBilanFromSituation(
+        this.ngcCaclulator.computeBasicBilanFromSituation(
           situation,
         ).bilan_carbone_annuel;
     } catch (error) {

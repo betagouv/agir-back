@@ -1,17 +1,18 @@
+import { CacheBilanCarbone_v0 } from './bilan/cacheBilanCarbone_v0';
 import { DefiHistory_v0 } from './defi/defiHistory_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
-import { KYCHistory_v2 } from './kyc/kycHistory_v2';
 import { KYCHistory_v1 } from './kyc/kycHistory_v1';
+import { KYCHistory_v2 } from './kyc/kycHistory_v2';
 import { Logement_v0 } from './logement/logement_v0';
 import { MissionsUtilisateur_v0 } from './mission/MissionsUtilisateur_v0';
 import { MissionsUtilisateur_v1 } from './mission/MissionsUtilisateur_v1';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
+import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
 import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
 import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
-import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
 
 export enum SerialisableDomain {
   UnlockedFeatures = 'UnlockedFeatures',
@@ -24,6 +25,7 @@ export enum SerialisableDomain {
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
   ThematiqueHistory = 'ThematiqueHistory',
+  CacheBilanCarbone = 'CacheBilanCarbone',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -41,6 +43,7 @@ const CLASS_DICTIONNARY = {
   BibliothequeServices_v0: BibliothequeServices_v0,
   NotificationHistory_v0: NotificationHistory_v0,
   ThematiqueHistory_v0: ThematiqueHistory_v0,
+  CacheBilanCarbone_v0: CacheBilanCarbone_v0,
 };
 
 const DATE_REGEXP =

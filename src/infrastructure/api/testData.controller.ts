@@ -1,14 +1,19 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { App } from '../../domain/app';
 import { Scope } from '../../domain/utilisateur/utilisateur';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
+import { ApplicationError } from '../applicationError';
 import { BrevoRepository } from '../contact/brevoRepository';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { LinkyRepository } from '../repository/linky.repository';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { GenericControler } from './genericControler';
@@ -21,7 +26,6 @@ const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 export class TestDataController extends GenericControler {
   constructor(
     private prisma: PrismaService,
-    private prismaStats: PrismaServiceStat,
     private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
     public contactSynchro: BrevoRepository,
@@ -29,6 +33,26 @@ export class TestDataController extends GenericControler {
     private profileUsecase: ProfileUsecase,
   ) {
     super();
+  }
+
+  @Post('reset_single_user/:id')
+  @ApiOperation({
+    summary: 'Reset un user au sens application V2',
+  })
+  @ApiParam({
+    name: 'id',
+    description: `identifiant technique de l'utilisateur`,
+  })
+  async resetV2(@Param('id') inputId: string) {
+    const user = await this.utilisateurRepository2.getById(inputId, [
+      Scope.ALL,
+    ]);
+    if (!user) {
+      ApplicationError.throwUserNotFound(inputId);
+    }
+    user.resetPourLancementNational();
+
+    await this.utilisateurRepository2.updateUtilisateur(user);
   }
 
   @Get('testdata/:id')

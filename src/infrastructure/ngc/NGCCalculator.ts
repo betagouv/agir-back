@@ -127,6 +127,28 @@ export type ValeursServicesSocietaux = {
 export class NGCCalculator {
   private engine: Engine;
 
+  public static DEFAULT_TOTAL_KG = 8900.305086108707;
+  public static DEFAULT_ALIMENTATION_KG = 2339.1671821;
+  public static DEFAULT_TRANSPORT_KG = 1958.482412224074;
+  public static DEFAULT_CONSOMMATION_KG = 991.5498010903609;
+  public static DEFAULT_LOGEMENT_KG = 2160.200464307907;
+
+  public static DEFAULT_TOTAL_KG_ROUND = Math.floor(
+    NGCCalculator.DEFAULT_TOTAL_KG,
+  );
+  public static DEFAULT_ALIMENTATION_KG_ROUND = Math.floor(
+    NGCCalculator.DEFAULT_ALIMENTATION_KG,
+  );
+  public static DEFAULT_TRANSPORT_KG_ROUND = Math.floor(
+    NGCCalculator.DEFAULT_TRANSPORT_KG,
+  );
+  public static DEFAULT_CONSOMMATION_KG_ROUND = Math.floor(
+    NGCCalculator.DEFAULT_CONSOMMATION_KG,
+  );
+  public static DEFAULT_LOGEMENT_KG_ROUND = Math.floor(
+    NGCCalculator.DEFAULT_LOGEMENT_KG,
+  );
+
   constructor() {
     this.engine = NGCCalculator.createNewNGCPublicodesEngine();
   }
@@ -622,7 +644,7 @@ export class NGCCalculator {
     });
   }
 
-  computeBilanFromSituation(situation: SituationNGC): Bilan_OLD {
+  computeBasicBilanFromSituation(situation: SituationNGC): Bilan_OLD {
     const entryList: RegleNGC[] = [
       'bilan',
       'transport',

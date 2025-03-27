@@ -11,6 +11,7 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
   premier_coup_ok?: boolean;
   date_premier_coup?: Date;
   like_level?: number;
+  nombre_tentatives?: number;
 
   constructor(data: QuizzDefinition) {
     super();

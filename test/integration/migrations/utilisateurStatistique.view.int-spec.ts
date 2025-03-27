@@ -56,6 +56,7 @@ describe('UtilisateurView', () => {
         points: 123,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       }) as any,
     });
     await TestUtil.create(DB.utilisateur, {
@@ -76,6 +77,7 @@ describe('UtilisateurView', () => {
         points: 666,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       }) as any,
     });
     await TestUtil.create(DB.utilisateur, {
@@ -92,6 +94,7 @@ describe('UtilisateurView', () => {
         points: 0,
         popup_reset_vue: false,
         celebrations: [],
+        badges: [],
       }) as any,
     });
 

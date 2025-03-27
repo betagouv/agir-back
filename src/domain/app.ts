@@ -98,11 +98,14 @@ export class App {
   public static getEmailReplyTo(): string {
     return process.env.EMAIL_REPLY_TO;
   }
+  public static getEmailContact(): string {
+    return process.env.EMAIL_CONTACT;
+  }
   public static getCurrentPonderationRubriqueSetName(): string {
     return process.env.PONDERATION_RUBRIQUES;
   }
-  public static getActiveNotificationsListe(): string {
-    return process.env.NOTIFICATIONS_MAIL_ACTIVES || '';
+  public static getInactiveNotificationsListe(): string {
+    return process.env.NOTIFICATIONS_MAIL_INACTIVES || '';
   }
   public static getBasicLogin(): string {
     return process.env.BASIC_LOGIN || '';

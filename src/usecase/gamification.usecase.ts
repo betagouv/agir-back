@@ -32,11 +32,11 @@ export class GamificationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.gamification.popup_reset_vue = true;
+    utilisateur.gamification.setPopupResetVue(utilisateur);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.gamification],
+      [Scope.gamification, Scope.core],
     );
   }
 
@@ -45,7 +45,7 @@ export class GamificationUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -57,6 +57,7 @@ export class GamificationUsecase {
           utilisateur.commune_classement,
           utilisateur.id,
         );
+      this.fixTop3Ranks(top_trois_commune);
     }
 
     if (utilisateur.rank_commune === null) {
@@ -70,6 +71,7 @@ export class GamificationUsecase {
           utilisateur.code_postal_classement,
           utilisateur.commune_classement,
         ),
+        badges: utilisateur.gamification.getBadges(),
       };
     }
 
@@ -132,6 +134,7 @@ export class GamificationUsecase {
         utilisateur.code_postal_classement,
         utilisateur.commune_classement,
       ),
+      badges: utilisateur.gamification.getBadges(),
     };
   }
 
@@ -140,13 +143,15 @@ export class GamificationUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
     const top_trois = await this.utilisateurBoardRepository.top_trois_user(
       utilisateur.id,
     );
+
+    this.fixTop3Ranks(top_trois);
 
     if (utilisateur.rank === null) {
       return {
@@ -156,6 +161,7 @@ export class GamificationUsecase {
         classement_utilisateur: null,
         code_postal: null,
         commune_label: null,
+        badges: utilisateur.gamification.getBadges(),
       };
     }
 
@@ -212,6 +218,7 @@ export class GamificationUsecase {
       ),
       code_postal: null,
       commune_label: null,
+      badges: utilisateur.gamification.getBadges(),
     };
   }
 
@@ -227,6 +234,20 @@ export class GamificationUsecase {
     });
   }
 
+  private fixTop3Ranks(top_3: Classement[]) {
+    if (top_3[0]) {
+      top_3[0].rank = 1;
+      top_3[0].rank_commune = 1;
+    }
+    if (top_3[1]) {
+      top_3[1].rank = 2;
+      top_3[1].rank_commune = 2;
+    }
+    if (top_3[2]) {
+      top_3[2].rank = 3;
+      top_3[2].rank_commune = 3;
+    }
+  }
   private setProperRanksForUsers(
     classements: Classement[],
     user_classement: Classement,

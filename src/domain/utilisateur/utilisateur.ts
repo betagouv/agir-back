@@ -3,6 +3,7 @@ import validator from 'validator';
 import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { App } from '../app';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
+import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
 import { DefiHistory } from '../defis/defiHistory';
 import { Gamification } from '../gamification/gamification';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
@@ -35,6 +36,10 @@ export enum SourceInscription {
   france_connect = 'france_connect',
   inconnue = 'inconnue',
 }
+export enum GlobalUserVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+}
 export enum Scope {
   ALL = 'ALL',
   core = 'core',
@@ -48,6 +53,7 @@ export enum Scope {
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
+  cache_bilan_carbone = 'cache_bilan_carbone',
 }
 
 export class UtilisateurData {
@@ -109,6 +115,8 @@ export class UtilisateurData {
   code_commune: string;
   france_connect_sub: string;
   external_stat_id: string;
+  cache_bilan_carbone: CacheBilanCarbone;
+  global_user_version: GlobalUserVersion;
 
   constructor(data?: UtilisateurData) {
     if (data) {
@@ -207,7 +215,16 @@ export class Utilisateur extends UtilisateurData {
       code_commune: null,
       france_connect_sub: null,
       external_stat_id: uuidv4(),
+      cache_bilan_carbone: new CacheBilanCarbone(),
+      global_user_version: GlobalUserVersion.V1,
     });
+  }
+
+  public resetPourLancementNational() {
+    this.points_classement = 0;
+    this.force_connexion = true;
+    this.gamification.resetV2();
+    this.thematique_history.reset();
   }
 
   public resetAllHistory() {
@@ -220,13 +237,22 @@ export class Utilisateur extends UtilisateurData {
     this.history.reset();
     this.defi_history.reset();
     this.kyc_history.reset();
+    this.thematique_history.reset();
+    this.notification_history.reset();
+  }
+
+  public isV2User(): boolean {
+    return this.global_user_version === GlobalUserVersion.V2;
+  }
+  public isV1User(): boolean {
+    return this.global_user_version === GlobalUserVersion.V1;
   }
 
   public isUtilisateurFranceConnecte() {
     return !!this.france_connect_sub;
   }
 
-  public isNomPrenomModifiable() {
+  public isDataFranceConnectModifiable() {
     return !this.isUtilisateurFranceConnecte();
   }
 
@@ -276,8 +302,16 @@ export class Utilisateur extends UtilisateurData {
     const ok_code_postal =
       !!this.logement.code_postal && this.logement.code_postal.length === 5;
 
+    const date_naissance_ok =
+      this.isV1User() ||
+      (!!this.annee_naissance &&
+        !!this.mois_naissance &&
+        !!this.jour_naissance);
     return (
-      (ok_pseudo || ok_prenom) && ok_code_postal && KYC_preference_answered
+      (ok_pseudo || ok_prenom) &&
+      ok_code_postal &&
+      KYC_preference_answered &&
+      date_naissance_ok
     );
   }
 
