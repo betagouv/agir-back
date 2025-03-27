@@ -32,11 +32,11 @@ export class GamificationUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    utilisateur.gamification.setPopupResetVue();
+    utilisateur.gamification.setPopupResetVue(utilisateur);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.gamification],
+      [Scope.gamification, Scope.core],
     );
   }
 

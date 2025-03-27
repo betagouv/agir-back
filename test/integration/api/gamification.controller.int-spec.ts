@@ -829,5 +829,6 @@ describe('Gamification  (API test)', () => {
 
     expect(userDB.gamification.isPopupResetVue()).toEqual(true);
     expect(userDB.gamification.getPoints()).toEqual(210);
+    expect(userDB.points_classement).toEqual(210);
   });
 });

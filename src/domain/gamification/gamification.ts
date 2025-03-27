@@ -62,9 +62,9 @@ export class Gamification {
     return this.popup_reset_vue;
   }
 
-  public setPopupResetVue() {
+  public setPopupResetVue(utilisateur: Utilisateur) {
     if (!this.popup_reset_vue) {
-      this.points = this.points + 200;
+      this.ajoutePoints(200, utilisateur);
     }
     this.popup_reset_vue = true;
   }
