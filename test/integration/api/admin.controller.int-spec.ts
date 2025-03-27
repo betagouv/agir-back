@@ -167,6 +167,22 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
+  it('GET /check_version/123 OK', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/check_version/' + App.getBackCurrentVersion(),
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+  });
+  it('GET /check_version/123 KO', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get('/check_version/bad');
+
+    // THEN
+    expect(response.status).toBe(400);
+  });
   it('POST /admin/lock_user_migration retourne une 200 si API CRON', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { App } from '../domain/app';
 
 export class ApplicationError {
   @ApiProperty()
@@ -702,6 +703,13 @@ export class ApplicationError {
 
   static throwUserNotFound(id: string) {
     this.throwAppError('132', `L'utilisateur d'id [${id}] n'existe pas`, 404);
+  }
+
+  static throwDiffrentVersion(version: string) {
+    this.throwAppError(
+      '133',
+      `Le back n'est pas à la même version [${App.getBackCurrentVersion()}] que celle présentée [${version}]`,
+    );
   }
 
   private static throwAppError(
