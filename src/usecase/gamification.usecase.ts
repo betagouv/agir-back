@@ -57,9 +57,8 @@ export class GamificationUsecase {
           utilisateur.commune_classement,
           utilisateur.id,
         );
+      this.fixTop3Ranks(top_trois_commune);
     }
-
-    this.fixTop3Ranks(top_trois_commune);
 
     if (utilisateur.rank_commune === null) {
       return {

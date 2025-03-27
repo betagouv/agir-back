@@ -762,8 +762,8 @@ describe('Admin (API test)', () => {
     expect(userDB.gamification.getPoints()).toEqual(0);
     expect(userDB.gamification.getBadges()).toEqual(['pionnier']);
     expect(userDB.points_classement).toEqual(0);
-    expect(userDB.commune_classement).toEqual(null);
-    expect(userDB.code_postal_classement).toEqual(null);
+    expect(userDB.commune_classement).toEqual('1234');
+    expect(userDB.code_postal_classement).toEqual('45664');
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {

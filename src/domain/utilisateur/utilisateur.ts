@@ -222,8 +222,6 @@ export class Utilisateur extends UtilisateurData {
 
   public resetPourLancementNational() {
     this.points_classement = 0;
-    this.commune_classement = null;
-    this.code_postal_classement = null;
     this.force_connexion = true;
     this.gamification.resetV2();
     this.thematique_history.reset();
