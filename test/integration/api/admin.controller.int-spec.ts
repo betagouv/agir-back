@@ -758,6 +758,7 @@ describe('Admin (API test)', () => {
       liste_thematiques: [],
     });
     expect(userDB.version).toEqual(15);
+    expect(userDB.force_connexion).toEqual(true);
     expect(userDB.gamification.getPoints()).toEqual(0);
     expect(userDB.gamification.getBadges()).toEqual(['pionnier']);
     expect(userDB.points_classement).toEqual(0);
