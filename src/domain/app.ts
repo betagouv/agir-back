@@ -1,7 +1,7 @@
 import metadata from './metadata.json';
 
 export class App {
-  static USER_CURRENT_VERSION = 15;
+  static USER_CURRENT_VERSION = 14;
 
   public static currentUserSystemVersion(): number {
     return App.USER_CURRENT_VERSION;
