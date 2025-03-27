@@ -5,7 +5,7 @@
       "size": "M"
     },
     {
-      "command": "0 4 * * * ./scripts/nightly_stats.sh",
+      "command": "0 * * * * ./scripts/nightly_stats.sh",
       "size": "L"
     },
     {
@@ -13,7 +13,7 @@
       "size": "L"
     },
     {
-      "command": "0 2 * * * ./scripts/nightly_bilan_carbone.sh",
+      "command": "20 * * * * ./scripts/nightly_bilan_carbone.sh",
       "size": "L"
     }
   ]
