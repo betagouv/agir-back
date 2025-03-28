@@ -926,6 +926,10 @@ export class CMSImportUsecase {
         entry.attributes.quizzes && entry.attributes.quizzes.data.length > 0
           ? entry.attributes.quizzes.data.map((elem) => elem.id.toString())
           : [],
+      article_ids:
+        entry.attributes.articles && entry.attributes.articles.data.length > 0
+          ? entry.attributes.articles.data.map((elem) => elem.id.toString())
+          : [],
       faq_ids:
         entry.attributes.faqs && entry.attributes.faqs.data.length > 0
           ? entry.attributes.faqs.data.map((elem) => elem.id.toString())

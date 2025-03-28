@@ -245,6 +245,7 @@ model Action {
   thematique          String
   besoins             String[] @default([])
   quizz_ids           String[] @default([])
+  articles_ids        String[] @default([])
   kyc_codes           String[] @default([])
   faq_ids             String[] @default([])
   recette_categorie   String?

@@ -102,6 +102,14 @@ describe('/api/incoming/cms (API test)', () => {
           id: 2,
         },
       ],
+      articles: [
+        {
+          id: 9,
+        },
+        {
+          id: 10,
+        },
+      ],
       faqs: [
         {
           id: 5,
@@ -1025,6 +1033,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.articles_ids).toEqual(['9', '10']);
     expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
@@ -1138,6 +1147,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
     expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.articles_ids).toEqual(['9', '10']);
     expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');

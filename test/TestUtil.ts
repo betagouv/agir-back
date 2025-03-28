@@ -435,6 +435,7 @@ export class TestUtil {
       lvo_action: CategorieRecherche.emprunter,
       lvo_objet: 'chaussure',
       quizz_ids: [],
+      articles_ids: [],
       recette_categorie: CategorieRecherche.dinde_volaille,
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,

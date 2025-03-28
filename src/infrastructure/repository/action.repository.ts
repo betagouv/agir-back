@@ -85,6 +85,7 @@ export class ActionRepository {
       lvo_objet: action.lvo_objet,
       pourquoi: action.pourquoi,
       quizz_ids: action.quizz_ids,
+      articles_ids: action.article_ids,
       faq_ids: action.faq_ids,
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
@@ -238,6 +239,7 @@ export class ActionRepository {
       consigne: action.consigne,
       label_compteur: action.label_compteur,
       sources: action.sources as any,
+      article_ids: action.articles_ids,
     });
   }
 }
