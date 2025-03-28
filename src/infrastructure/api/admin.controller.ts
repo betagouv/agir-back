@@ -41,7 +41,6 @@ import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecas
 import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
-import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -51,6 +50,9 @@ import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
 
 export class VersionAPI {
   @ApiProperty() version: string;
+}
+export class CheckVersionAPI {
+  @ApiProperty() compatible: boolean;
 }
 
 @Controller()
@@ -86,11 +88,11 @@ export class AdminController extends GenericControler {
   }
 
   @Get('check_version/:version')
-  async check_version(@Param('version') version: string) {
-    if (version !== App.getBackCurrentVersion()) {
-      ApplicationError.throwDiffrentVersion(version);
-    }
-    return ['OK'];
+  @ApiOkResponse({ type: CheckVersionAPI })
+  async check_version(
+    @Param('version') version: string,
+  ): Promise<CheckVersionAPI> {
+    return { compatible: version === App.getBackCurrentVersion() };
   }
 
   @Get('version')
