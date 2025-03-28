@@ -38,6 +38,9 @@ export class StatistiqueExternalRepository {
   public async deleteAllQuizzData() {
     await this.prismaStats.quizzCopy.deleteMany();
   }
+  public async deleteAllPersoData() {
+    await this.prismaStats.personnalisation.deleteMany();
+  }
 
   public async createUserData(utilisateur: Utilisateur) {
     const code_depart =

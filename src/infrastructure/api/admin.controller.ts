@@ -13,6 +13,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -48,6 +49,10 @@ import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
 
+export class VersionAPI {
+  @ApiProperty() version: string;
+}
+
 @Controller()
 @ApiTags('Z - Admin')
 @ApiBearerAuth()
@@ -80,17 +85,18 @@ export class AdminController extends GenericControler {
     super();
   }
 
-  @Get('error_410_get')
-  async error410Get() {
-    ApplicationError.throwThatURLIsGone(
-      `${App.getBaseURLBack()}/error_410_get`,
-    );
+  @Get('check_version/:version')
+  async check_version(@Param('version') version: string) {
+    if (version !== App.getBackCurrentVersion()) {
+      ApplicationError.throwDiffrentVersion(version);
+    }
+    return ['OK'];
   }
-  @Post('error_410_post')
-  async error410Post() {
-    ApplicationError.throwThatURLIsGone(
-      `${App.getBaseURLBack()}/error_410_post`,
-    );
+
+  @Get('version')
+  @ApiOkResponse({ type: VersionAPI })
+  async get_version(): Promise<VersionAPI> {
+    return { version: App.getBackCurrentVersion() };
   }
 
   @Delete('admin/utilisateurs/:utilisateurId')
