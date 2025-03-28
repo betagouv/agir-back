@@ -533,51 +533,23 @@ export class CMSImportUsecase {
     type: CMSPluralAPIEndpoint,
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
-    const page_1 = '&pagination[start]=0&pagination[limit]=100';
-    const page_2 = '&pagination[start]=100&pagination[limit]=100';
-    const page_3 = '&pagination[start]=200&pagination[limit]=100';
-    const page_4 = '&pagination[start]=300&pagination[limit]=100';
-    const page_5 = '&pagination[start]=400&pagination[limit]=100';
-    const page_6 = '&pagination[start]=500&pagination[limit]=100';
-    const page_7 = '&pagination[start]=600&pagination[limit]=100';
-    const page_8 = '&pagination[start]=700&pagination[limit]=100';
     let response = null;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${App.getCmsApiKey()}`,
     };
 
-    let URL = this.buildPopulateURL(page_1, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_2, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_3, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_4, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_5, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_6, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_7, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_8, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
+    for (let index = 0; index < 1000; index = index + 100) {
+      let URL = this.buildPopulateURL(
+        `&pagination[start]=${index}&pagination[limit]=100`,
+        type,
+      );
+      response = await axios.get(URL, { headers: headers });
+      result = result.concat(response.data.data);
+      if (response.data.data.length === 0) {
+        break;
+      }
+    }
 
     return result;
   }
@@ -648,10 +620,12 @@ export class CMSImportUsecase {
       id_cms: entry.id.toString(),
       nom: entry.attributes.nom,
       url: entry.attributes.lien,
-      image_url: this.getFirstImageUrlFromPopulate(
-        entry.attributes.logo.data[0],
-      ),
+      image_url: entry.attributes.logo.data
+        ? this.getFirstImageUrlFromPopulate(entry.attributes.logo.data[0])
+        : null,
       echelle: Echelle[entry.attributes.echelle],
+      code_commune: entry.attributes.code_commune,
+      code_epci: entry.attributes.code_epci,
     };
   }
 
@@ -826,6 +800,7 @@ export class CMSImportUsecase {
       partenaire_id: entry.attributes.partenaire.data
         ? '' + entry.attributes.partenaire.data.id
         : null,
+      partenaires_supp_ids: [],
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(

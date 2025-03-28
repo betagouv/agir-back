@@ -451,6 +451,7 @@ export class CMSWebhookUsecase {
         : null,
       derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
+      partenaires_supp_ids: [],
       codes_postaux: this.split(entry.codes_postaux),
       thematiques: entry.thematiques
         ? entry.thematiques.map((elem) => Thematique[elem.code])
@@ -558,6 +559,8 @@ export class CMSWebhookUsecase {
       url: entry.lien,
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
       echelle: Echelle[entry.echelle],
+      code_commune: entry.code_commune,
+      code_epci: entry.code_epci,
     };
   }
 

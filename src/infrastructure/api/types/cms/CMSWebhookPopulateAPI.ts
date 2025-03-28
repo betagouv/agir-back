@@ -95,6 +95,8 @@ export type CMSWebhookPopulateAPI = {
     ];
 
     codes_postaux: string;
+    code_commune: string;
+    code_epci: string;
     mois: string;
     include_codes_commune: string;
     exclude_codes_commune: string;
@@ -230,6 +232,7 @@ export type CMSWebhookPopulateAPI = {
         };
       };
     };
+
     besoin: {
       data: {
         attributes: {

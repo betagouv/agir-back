@@ -441,6 +441,8 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       nom: 'part',
       lien: 'the lien',
+      code_commune: '456',
+      code_epci: '789',
       echelle: Echelle.Département,
       logo: [
         {
@@ -716,6 +718,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire).toHaveLength(1);
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
+    expect(partenaire[0].code_commune).toEqual('456');
+    expect(partenaire[0].code_epci).toEqual('789');
     expect(partenaire[0].url).toEqual('the lien');
     expect(partenaire[0].echelle).toEqual(Echelle.Département);
     expect(partenaire[0].image_url).toEqual('https://haha');
