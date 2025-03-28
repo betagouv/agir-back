@@ -287,7 +287,7 @@ export class DuplicateBDDForStatsUsecase {
   async duplicatePersonnalisation(block_size: number = 100) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
-    await this.statistiqueExternalRepository.deleteAllQuizzData();
+    await this.statistiqueExternalRepository.deleteAllPersoData();
 
     for (let index = 0; index < total_user_count; index = index + block_size) {
       const current_user_list =

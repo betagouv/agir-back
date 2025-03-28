@@ -5,11 +5,11 @@
       "size": "M"
     },
     {
-      "command": "0 4 * * * ./scripts/nightly_stats.sh",
+      "command": "15 * * * * ./scripts/nightly_stats.sh",
       "size": "L"
     },
     {
-      "command": "0 3 * * * ./scripts/nightly_processing.sh",
+      "command": "30 * * * * ./scripts/nightly_processing.sh",
       "size": "L"
     },
     {
