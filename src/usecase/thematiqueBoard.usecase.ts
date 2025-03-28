@@ -48,7 +48,8 @@ export class ThematiqueBoardUsecase {
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.code_commune,
     );
-    result.nom_commune = commune.nom;
+    result.nom_commune = commune?.nom;
+
     result.total_actions_faites =
       await this.compteurActionsRepository.getTotalFaites();
 
