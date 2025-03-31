@@ -3,7 +3,6 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
-import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
@@ -297,7 +296,7 @@ export class CMSWebhookUsecase {
     );
   }
   async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null && App.isProd()) return;
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
 
     await this.actionRepository.upsert(
       this.buildActionFromCMSData(cmsWebhookAPI.entry),
@@ -353,7 +352,6 @@ export class CMSWebhookUsecase {
   }
 
   private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
-    console.log(JSON.stringify(hook.entry.partenaire));
     return {
       contenu: hook.entry.contenu,
       sources: hook.entry.sources

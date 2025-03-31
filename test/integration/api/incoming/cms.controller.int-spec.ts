@@ -25,6 +25,87 @@ import { KycRepository } from '../../../../src/infrastructure/repository/kyc.rep
 import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
+  const DELETE_SIMU = {
+    event: 'entry.unpublish',
+    createdAt: '2025-03-31T09:31:00.185Z',
+    model: 'action-simulateur',
+    entry: {
+      id: 1,
+      titre: 'The simulateur !!',
+      sous_titre: 'De test ce simulateur ha',
+      code: 'simu_action_test',
+      createdAt: '2025-02-14T14:31:44.913Z',
+      updatedAt: '2025-03-31T09:31:00.115Z',
+      publishedAt: null,
+      pourquoi: null,
+      kycs: [
+        {
+          id: 168,
+          question: "Allez-vous à l'hôtel ?",
+          code: 'KYC_consommation_logement_vacances_hotel',
+          type: 'choix_unique',
+          categorie: 'recommandation',
+          points: 5,
+          is_ngc: true,
+          createdAt: '2024-10-12T16:35:30.239Z',
+          updatedAt: '2024-10-21T15:33:27.992Z',
+          publishedAt: '2024-10-12T16:35:31.061Z',
+          ngc_key: 'logement . vacances . hotel . présent',
+          short_question: 'Hôtel',
+          unite: null,
+          emoji: '🏨',
+          A_SUPPRIMER: null,
+        },
+        {
+          id: 26,
+          question: 'À quelle fréquence consommez-vous des produits locaux ?',
+          code: 'KYC_local_frequence',
+          type: 'choix_unique',
+          categorie: 'mission',
+          points: 5,
+          is_ngc: true,
+          createdAt: '2024-06-09T18:05:13.672Z',
+          updatedAt: '2025-03-12T10:56:05.217Z',
+          publishedAt: '2024-06-09T18:05:19.621Z',
+          ngc_key: 'alimentation . local . consommation',
+          short_question: null,
+          unite: null,
+          emoji: null,
+          A_SUPPRIMER: null,
+        },
+        {
+          id: 60,
+          question: 'Avez-vous un jardin ou un espace vert à disposition ?',
+          code: 'KYC_jardin',
+          type: 'choix_unique',
+          categorie: 'mission',
+          points: 5,
+          is_ngc: false,
+          createdAt: '2024-08-08T13:30:51.489Z',
+          updatedAt: '2024-10-14T13:23:50.935Z',
+          publishedAt: '2024-08-08T13:55:33.617Z',
+          ngc_key: 'logement . extérieur',
+          short_question: null,
+          unite: null,
+          emoji: null,
+          A_SUPPRIMER: null,
+        },
+      ],
+      thematique: {
+        id: 2,
+        titre: '☀️ Environnement',
+        createdAt: '2023-09-20T12:17:09.385Z',
+        updatedAt: '2024-11-04T22:34:59.727Z',
+        publishedAt: '2023-12-05T20:38:49.216Z',
+        code: 'climat',
+        label: 'La planète',
+        emoji: '☀️',
+      },
+      besoins: [],
+      tags_excluants: [],
+    },
+  };
+
   const CMS_DATA_DEFI = {
     model: CMSModel.defi,
     event: CMSEvent['entry.publish'],
@@ -1070,6 +1151,23 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
     expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
+  });
+
+  it.only('POST /api/incoming/cms - delete when unpublish simulateur action', async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      cms_id: '1',
+      type: TypeAction.simulateur,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(DELETE_SIMU);
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(0);
   });
 
   it('POST /api/incoming/cms - gestion tag inconnu', async () => {
