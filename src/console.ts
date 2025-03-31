@@ -288,10 +288,16 @@ async function bootstrap() {
       );
       break;
 
-    case 'cms_migrate_partenaire':
+    case 'cms_migrate_sources_article':
       await application
         .get(CMSDataHelperUsecase)
-        .injecterPartenaireUniqueDansMultiPartenaires(process.argv[3]);
+        .migrateSourceVersListeSourcesSurArticles(process.argv[3]);
+      break;
+
+    case 'cms_migrate_aides_partenaires':
+      await application
+        .get(CMSDataHelperUsecase)
+        .migrateMultiPartenairesAides(process.argv[3]);
       break;
 
     default:
