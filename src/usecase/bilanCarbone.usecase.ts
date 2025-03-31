@@ -78,15 +78,14 @@ export class BilanCarboneUsecase {
   async getCurrentBilanValeurTotale(utilisateurId: string): Promise<number> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.kyc,
-        Scope.logement,
-        Scope.unlocked_features,
-        Scope.cache_bilan_carbone,
-      ],
+      [Scope.kyc, Scope.cache_bilan_carbone],
     );
     Utilisateur.checkState(utilisateur);
 
+    return await this.external_bilan_valeur_total(utilisateur);
+  }
+
+  async external_bilan_valeur_total(utilisateur: Utilisateur): Promise<number> {
     const up_to_date = await this.isBilanStatUpToDate(utilisateur);
 
     if (up_to_date) {

@@ -40,7 +40,7 @@ export class ThematiqueBoardUsecase {
   public async buildHomeBoard(utilisateurId: string): Promise<HomeBoard> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc],
+      [Scope.thematique_history, Scope.kyc, Scope.cache_bilan_carbone],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -56,10 +56,15 @@ export class ThematiqueBoardUsecase {
     result.total_utilisateur_actions_faites =
       utilisateur.thematique_history.getNombreActionsFaites();
 
+    const total_CO2_kg =
+      await this.bilanCarboneUsecase.external_bilan_valeur_total(utilisateur);
+    result.bilan_carbone_total_kg = total_CO2_kg;
+
     const recap_progression =
       this.bilanCarboneUsecase.external_build_enchainement_bilan_recap(
         utilisateur,
       );
+
     result.pourcentage_bilan_done =
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
 
