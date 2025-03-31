@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Header,
   Param,
   Post,
   Query,
@@ -90,6 +91,7 @@ export class ActionsController extends GenericControler {
   }
 
   @Get('compteur_actions')
+  @Header('Cache-Control', 'max-age=20')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 20, ttl: 1000 } })
   @ApiOkResponse({
@@ -100,7 +102,6 @@ export class ActionsController extends GenericControler {
   })
   async getCompteurAction(): Promise<CompteutActionAPI> {
     const total = await this.actionUsecase.getCompteurActions();
-
     return CompteutActionAPI.map(total);
   }
 
