@@ -183,12 +183,12 @@ function getControllers(): any[] {
     ActionsController,
     SimulateurVoitureController,
     AidesVeloController,
-    CmsPreviewController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
+    controllers.push(CmsPreviewController);
   }
   return controllers;
 }
