@@ -51,3 +51,6 @@ static/images
 # Bruno collections
 
 .bruno/
+output.json
+test.json
+test2.json

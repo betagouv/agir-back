@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AidesUsecase } from './usecase/aides.usecase';
+import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
@@ -285,6 +286,12 @@ async function bootstrap() {
       console.log(
         `STOP refresh_action_stats after ${Date.now() - start_time} ms`,
       );
+      break;
+
+    case 'cms_migrate_partenaire':
+      await application
+        .get(CMSDataHelperUsecase)
+        .injecterPartenaireUniqueDansMultiPartenaires(process.argv[3]);
       break;
 
     default:
