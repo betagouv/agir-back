@@ -14,6 +14,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
@@ -31,6 +32,7 @@ describe('Actions (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
@@ -844,6 +846,7 @@ describe('Actions (API test)', () => {
       consigne: 'consigne',
       faqs: [],
       kycs: [],
+      articles: [],
       label_compteur: '45 haha',
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
@@ -985,6 +988,42 @@ describe('Actions (API test)', () => {
       },
     ]);
   });
+  it(`GET /actions/id - les articles miés`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', articles_ids: ['1', '2'] });
+    await TestUtil.create(DB.article, { content_id: '1', image_url: 'a' });
+    await TestUtil.create(DB.article, { content_id: '2', image_url: 'b' });
+    await TestUtil.create(DB.article, { content_id: '3', image_url: 'c' });
+
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/classique/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.articles).toEqual([
+      {
+        content_id: '1',
+        image_url: 'a',
+        soustitre: 'Sous titre de mon article',
+        thematique_principale: 'logement',
+        thematiques: ['logement'],
+        titre: 'Titre de mon article',
+      },
+      {
+        content_id: '2',
+        image_url: 'b',
+        soustitre: 'Sous titre de mon article',
+        thematique_principale: 'logement',
+        thematiques: ['logement'],
+        titre: 'Titre de mon article',
+      },
+    ]);
+  });
 
   it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
     // GIVEN
@@ -1038,6 +1077,7 @@ describe('Actions (API test)', () => {
       besoins: ['composter'],
       pourquoi: 'haha {block_123}',
       sources: [{ url: 'haha', label: 'hoho' }],
+      articles_ids: ['1'],
     });
     await TestUtil.create(DB.compteurActions, {
       code: '123',
@@ -1046,8 +1086,11 @@ describe('Actions (API test)', () => {
       faites: 45,
       vues: 154,
     });
+    await TestUtil.create(DB.article, { content_id: '1', image_url: 'a' });
+
     await actionRepository.onApplicationBootstrap();
     await compteurActionsRepository.loadCache();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1063,6 +1106,16 @@ describe('Actions (API test)', () => {
       code: '123',
       comment: 'Astuces',
       consigne: 'consigne',
+      articles: [
+        {
+          content_id: '1',
+          image_url: 'a',
+          soustitre: 'Sous titre de mon article',
+          thematique_principale: 'logement',
+          thematiques: ['logement'],
+          titre: 'Titre de mon article',
+        },
+      ],
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
       deja_faite: false,

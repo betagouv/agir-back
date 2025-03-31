@@ -10,6 +10,7 @@ import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefin
 import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
+import { ArticleLightAPI } from '../contenu/articleLightAPI';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
 import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 
@@ -99,6 +100,8 @@ export class ActionAPI {
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty({ type: [QuizzBibliothequeAPI] })
   quizzes: QuizzBibliothequeAPI[];
+  @ApiProperty({ type: [ArticleLightAPI] })
+  articles: ArticleLightAPI[];
   @ApiProperty({ type: [QuestionKYCAPI_v2] }) kycs: QuestionKYCAPI_v2[];
 
   @ApiProperty({ type: [ActionAideAPI] })
@@ -136,6 +139,7 @@ export class ActionAPI {
       faqs: action.faq_liste.map((f) => FAQActionAPI.mapToAPI(f)),
       points: action.getNombrePoints(),
       sources: action.sources,
+      articles: action.article_liste.map((a) => ArticleLightAPI.mapToAPI(a)),
     };
   }
 }
