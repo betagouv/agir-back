@@ -27,6 +27,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
+import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -86,6 +87,21 @@ export class ActionsController extends GenericControler {
     );
 
     return CatalogueActionAPI.mapToAPI(catalogue);
+  }
+
+  @Get('compteur_actions')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 1000 } })
+  @ApiOkResponse({
+    type: CompteutActionAPI,
+  })
+  @ApiOperation({
+    summary: `Retourne les compteurs clés autour des actions`,
+  })
+  async getCompteurAction(): Promise<CompteutActionAPI> {
+    const total = await this.actionUsecase.getCompteurActions();
+
+    return CompteutActionAPI.map(total);
   }
 
   @Get('utilisateurs/:utilisateurId/actions')

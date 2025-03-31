@@ -48,6 +48,10 @@ export class ActionUsecase {
     private personnalisator: Personnalisator,
   ) {}
 
+  async getCompteurActions(): Promise<number> {
+    return await this.compteurActionsRepository.getTotalFaites();
+  }
+
   async getOpenCatalogue(
     filtre_thematiques: Thematique[],
     code_commune: string = null,

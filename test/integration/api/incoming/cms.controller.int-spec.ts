@@ -1153,7 +1153,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.tags_excluants).toEqual([TagExcluant.a_un_velo]);
   });
 
-  it.only('POST /api/incoming/cms - delete when unpublish simulateur action', async () => {
+  it('POST /api/incoming/cms - delete when unpublish simulateur action', async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
       cms_id: '1',

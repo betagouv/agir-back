@@ -1058,6 +1058,32 @@ describe('Actions (API test)', () => {
     expect(action.nom_commune).toEqual('Dijon');
   });
 
+  it(`GET /compteur_actions - total des actions faites`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '456',
+      type: TypeAction.classique,
+      type_code_id: 'classique_456',
+      faites: 10,
+      vues: 0,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/compteur_actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({ nombre_total_actions_faites: 55 });
+  });
+
   it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.blockText, {
