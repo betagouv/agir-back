@@ -171,8 +171,13 @@ export class CMSWebhookEntryAPI {
   tags: CMSTagAPI[];
   @ApiProperty({ type: [CMSWebhookRubriqueAPI] })
   rubriques: CMSWebhookRubriqueAPI[];
+
   @ApiProperty({ type: CMSWebhookPartenaireAPI })
   partenaire: CMSWebhookPartenaireAPI;
+
+  @ApiProperty({ type: [IDAPI] })
+  partenaires: IDAPI[];
+
   @ApiProperty({ type: CMSWebhookBesoinAPI })
   besoin: CMSWebhookBesoinAPI;
   @ApiProperty() duree: string;

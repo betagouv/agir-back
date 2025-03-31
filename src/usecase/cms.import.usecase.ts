@@ -51,7 +51,7 @@ const FULL_POPULATE_URL =
   '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
-  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants';
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
@@ -491,7 +491,7 @@ export class CMSImportUsecase {
         loading_result.push(`loaded aide : ${aide.content_id}`);
       } catch (error) {
         loading_result.push(
-          `Could not load article ${element.id} : ${error.message}`,
+          `Could not load aide ${element.id} : ${error.message}`,
         );
         loading_result.push(JSON.stringify(element));
       }
@@ -800,7 +800,9 @@ export class CMSImportUsecase {
       partenaire_id: entry.attributes.partenaire.data
         ? '' + entry.attributes.partenaire.data.id
         : null,
-      partenaires_supp_ids: [],
+      partenaires_supp_ids: entry.attributes.partenaires.data
+        ? entry.attributes.partenaires.data.map((p) => p.id.toString())
+        : [],
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(

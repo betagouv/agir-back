@@ -233,6 +233,14 @@ export type CMSWebhookPopulateAPI = {
       };
     };
 
+    partenaires: {
+      data: [
+        {
+          id: number;
+        },
+      ];
+    };
+
     besoin: {
       data: {
         attributes: {
