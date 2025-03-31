@@ -236,6 +236,7 @@ model Action {
   cms_id              String
   type                String   @default("classique")
   titre               String
+  titre_recherche     String?
   sous_titre          String?
   consigne            String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
   label_compteur      String   @default("**453 actions** réalisées par la communauté")

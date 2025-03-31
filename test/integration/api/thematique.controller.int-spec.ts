@@ -402,7 +402,7 @@ describe('Thematique (API test)', () => {
       points: 100,
       sous_titre: 'Sous titre',
       thematique: 'alimentation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
     });
   });

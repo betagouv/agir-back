@@ -104,7 +104,7 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('code_fonct');
-    expect(action.titre).toEqual('The titre');
+    expect(action.titre).toEqual('**The titre**');
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
@@ -149,7 +149,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.alimentation,
-      titre: 'Une belle action',
+      titre_recherche: 'Une belle action',
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -157,7 +157,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
-      titre: 'Une action toute nulle',
+      titre_recherche: 'Une action toute nulle',
     });
 
     await actionRepository.onApplicationBootstrap();
@@ -172,6 +172,27 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('2');
+  });
+  it(`GET /actions - liste le catalogue recherche texte titre malgré markdown`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une **belle** action',
+      titre_recherche: 'Une belle action',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?titre=belle action');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
   });
   it(`GET /actions - liste le catalogue d'action avec filtre thematique multiple`, async () => {
     // GIVEN
@@ -275,7 +296,7 @@ describe('Actions (API test)', () => {
       nombre_aides_disponibles: 0,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
     });
@@ -344,7 +365,7 @@ describe('Actions (API test)', () => {
       nombre_aides_disponibles: 1,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
     });
@@ -512,7 +533,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.alimentation,
-      titre: 'Une belle action',
+      titre_recherche: 'Une belle action',
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -520,7 +541,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
-      titre: 'Une action toute nulle',
+      titre_recherche: 'Une action toute nulle',
     });
 
     await actionRepository.onApplicationBootstrap();
@@ -871,7 +892,7 @@ describe('Actions (API test)', () => {
       ],
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       sources: [
         {
@@ -1170,7 +1191,7 @@ describe('Actions (API test)', () => {
       ],
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
       sources: [

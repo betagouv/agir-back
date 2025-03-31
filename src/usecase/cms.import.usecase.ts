@@ -897,6 +897,9 @@ export class CMSImportUsecase {
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       titre: entry.attributes.titre,
+      titre_recherche: entry.attributes.titre
+        ? entry.attributes.titre.replaceAll('*', '')
+        : '',
       sous_titre: entry.attributes.sous_titre,
       consigne:
         entry.attributes.consigne ||

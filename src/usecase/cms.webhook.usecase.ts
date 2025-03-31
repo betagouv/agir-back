@@ -488,6 +488,7 @@ export class CMSWebhookUsecase {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
       titre: entry.titre,
+      titre_recherche: entry.titre ? entry.titre.replaceAll('*', '') : '',
       sous_titre: entry.sous_titre,
       consigne: entry.consigne,
       label_compteur: entry.label_compteur,

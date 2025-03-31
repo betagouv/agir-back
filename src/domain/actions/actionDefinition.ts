@@ -21,6 +21,7 @@ export class ActionDefinitionData {
   cms_id: string;
   code: string;
   titre: string;
+  titre_recherche: string;
   sous_titre: string;
   consigne: string;
   label_compteur: string;

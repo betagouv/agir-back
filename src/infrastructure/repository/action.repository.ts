@@ -74,6 +74,7 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      titre_recherche: action.titre_recherche,
       consigne: action.consigne,
       label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
@@ -153,7 +154,7 @@ export class ActionRepository {
     }
     if (filtre.titre_fragment) {
       main_filter.push({
-        titre: {
+        titre_recherche: {
           contains: filtre.titre_fragment,
           mode: 'insensitive',
         },
@@ -220,6 +221,7 @@ export class ActionRepository {
     return new ActionDefinition({
       cms_id: action.cms_id,
       titre: action.titre,
+      titre_recherche: action.titre_recherche,
       code: action.code,
       thematique: Thematique[action.thematique],
       comment: action.comment,

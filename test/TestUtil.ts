@@ -421,7 +421,8 @@ export class TestUtil {
     return {
       type_code_id: 'classique_code_fonct',
       cms_id: '111',
-      titre: 'The titre',
+      titre: '**The titre**',
+      titre_recherche: 'The titre',
       sous_titre: 'Sous titre',
       consigne: 'consigne',
       label_compteur: 'label_compteur',

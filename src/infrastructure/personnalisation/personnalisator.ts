@@ -80,7 +80,7 @@ export class Personnalisator {
     key: CLE_PERSO,
     utilisateur: Utilisateur,
   ): string {
-    return source.replace(key, this.formatCle(key, utilisateur));
+    return source.replaceAll(key, this.formatCle(key, utilisateur));
   }
 
   private replaceCmsBlockText(source: string): string {
