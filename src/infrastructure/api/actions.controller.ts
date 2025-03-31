@@ -41,6 +41,7 @@ export class ActionsController extends GenericControler {
   @Get('actions')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 10, ttl: 1000 } })
+  @Header('Cache-Control', 'max-age=60')
   @ApiOkResponse({
     type: CatalogueActionAPI,
   })

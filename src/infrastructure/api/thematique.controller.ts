@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Query,
@@ -40,6 +41,7 @@ export class ThematiqueController extends GenericControler {
   @Get('thematiques')
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Header('Cache-Control', 'max-age=600')
   @ApiOkResponse({
     type: SyntheseThematiquesAPI,
   })
@@ -63,6 +65,7 @@ export class ThematiqueController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/thematiques')
+  @Header('Cache-Control', 'max-age=20')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: SyntheseThematiquesAPI,
@@ -85,6 +88,7 @@ export class ThematiqueController extends GenericControler {
   }
 
   @Get('utilisateurs/:utilisateurId/home_board')
+  @Header('Cache-Control', 'max-age=5')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: HomeBoardAPI,
