@@ -295,6 +295,22 @@ export class AdminController extends GenericControler {
     return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
   }
 
+  @Post('/admin/send_one_email_as_test/:utilisateurId/:type')
+  @ApiOperation({
+    summary: `Tente d'envoyer un template de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
+  })
+  async send_one_email_as_test(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('type') type: string,
+  ): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.mailerUsecase.sendOneMailToUserAsTest(
+      utilisateurId,
+      type,
+    );
+  }
+
   @Post('/admin/create_brevo_contacts')
   @ApiOperation({
     summary: `crée les contacts manquants dans Brevo`,
