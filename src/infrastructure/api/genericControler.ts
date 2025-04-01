@@ -7,7 +7,10 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { App } from '../../../src/domain/app';
-import { Consultation } from '../../domain/actions/catalogueAction';
+import {
+  Consultation,
+  Realisation,
+} from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { ContentType } from '../../domain/contenu/contentType';
 import { IncludeArticle } from '../../domain/contenu/includeArticle';
@@ -91,6 +94,17 @@ export class GenericControler {
     const type = Consultation[consultation];
     if (!type) {
       ApplicationError.throwTypeConsultationNotFound(consultation);
+    }
+    return type;
+  }
+
+  public castTypeRealisationActionOrException(
+    realisation: string,
+  ): Realisation {
+    if (!realisation) return Realisation.tout;
+    const type = Realisation[realisation];
+    if (!type) {
+      ApplicationError.throwTypeRealisationNotFound(realisation);
     }
     return type;
   }

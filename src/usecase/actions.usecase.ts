@@ -4,11 +4,13 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
   Consultation,
+  Realisation,
 } from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { Article } from '../domain/contenu/article';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -21,6 +23,7 @@ import {
   ActionRepository,
 } from '../infrastructure/repository/action.repository';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import {
   Commune,
   CommuneRepository,
@@ -35,6 +38,7 @@ import { BibliothequeUsecase } from './bibliotheque.usecase';
 export class ActionUsecase {
   constructor(
     private actionRepository: ActionRepository,
+    private articleRepository: ArticleRepository,
     private compteurActionsRepository: CompteurActionsRepository,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
@@ -43,6 +47,10 @@ export class ActionUsecase {
     private fAQRepository: FAQRepository,
     private personnalisator: Personnalisator,
   ) {}
+
+  async getCompteurActions(): Promise<number> {
+    return await this.compteurActionsRepository.getTotalFaites();
+  }
 
   async getOpenCatalogue(
     filtre_thematiques: Thematique[],
@@ -103,7 +111,10 @@ export class ActionUsecase {
     utilisateurId: string,
     filtre_thematiques: Thematique[],
     titre: string = undefined,
-    consultation: Consultation = Consultation.tout,
+    consultation: Consultation,
+    realisation: Realisation,
+    skip: number = 0,
+    take: number = 1000000,
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -121,12 +132,20 @@ export class ActionUsecase {
 
     this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
-    this.filtreParConsultation(catalogue, consultation, utilisateur);
+    this.filtreParConsultationRealisation(
+      catalogue,
+      consultation,
+      realisation,
+      utilisateur,
+    );
 
     for (const action of catalogue.actions) {
       action.nombre_actions_faites =
         this.compteurActionsRepository.getNombreFaites(action);
     }
+    catalogue.setNombreResultatsDispo(catalogue.actions.length);
+
+    catalogue.actions = catalogue.actions.slice(skip, skip + take);
 
     return catalogue;
   }
@@ -197,6 +216,12 @@ export class ActionUsecase {
     action.faq_liste = [];
     for (const faq_id of action_def.faq_ids) {
       action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
+    }
+    action.article_liste = [];
+    for (const article_id of action_def.article_ids) {
+      action.article_liste.push(
+        new Article(this.articleRepository.getArticle(article_id)),
+      );
     }
 
     action.setListeAides(linked_aides);
@@ -337,7 +362,12 @@ export class ActionUsecase {
     for (const faq_id of action_def.faq_ids) {
       action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
     }
-
+    action.article_liste = [];
+    for (const article_id of action_def.article_ids) {
+      action.article_liste.push(
+        new Article(this.articleRepository.getArticle(article_id)),
+      );
+    }
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
       action_def.kyc_codes,
     );
@@ -453,24 +483,37 @@ export class ActionUsecase {
     }
   }
 
-  private filtreParConsultation(
+  private filtreParConsultationRealisation(
     catalogue: CatalogueAction,
     type_consulation: Consultation,
+    type_realisation: Realisation,
     utilisateur: Utilisateur,
   ) {
-    if (!type_consulation || type_consulation === Consultation.tout) {
-      catalogue.consultation = Consultation.tout;
-      return;
-    }
     catalogue.consultation = type_consulation;
+    catalogue.realisation = type_realisation;
 
     const new_action_list: Action[] = [];
 
-    const target_vue = type_consulation === Consultation.vu;
+    const prendre_vues = type_consulation === Consultation.vu;
+    const prendre_faites = type_realisation === Realisation.faite;
 
     for (const action of catalogue.actions) {
       const est_vue = utilisateur.thematique_history.isActionVue(action);
-      if ((est_vue && target_vue) || (!est_vue && !target_vue)) {
+      const est_faite = utilisateur.thematique_history.isActionFaite(action);
+
+      const critere_vue =
+        !type_consulation ||
+        type_consulation === Consultation.tout ||
+        (est_vue && prendre_vues) ||
+        (!est_vue && !prendre_vues);
+
+      const critere_fait =
+        !type_realisation ||
+        type_realisation === Realisation.tout ||
+        (est_faite && prendre_faites) ||
+        (!est_faite && !prendre_faites);
+
+      if (critere_fait && critere_vue) {
         new_action_list.push(action);
       }
     }

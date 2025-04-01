@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BadgeCatalogue } from '../../../../domain/gamification/badgeCatalogue';
 import { Board, Pourcentile } from '../../../../domain/gamification/board';
 import { Classement } from '../../../../domain/gamification/classement';
+import { BadgeAPI } from './gamificationAPI';
 var crypto = require('crypto');
 
 export class ClassementAPI {
@@ -33,10 +35,13 @@ export class BoardAPI {
   classement_utilisateur: ClassementAPI[];
   @ApiProperty() code_postal: string;
   @ApiProperty() commune_label: string;
+  @ApiProperty({ type: [BadgeAPI] }) badges: BadgeAPI[];
 
   public static mapToAPI(board: Board, local: boolean): BoardAPI {
     return {
-      top_trois: board.top_trois.map((e) => ClassementAPI.mapToAPI(e, local)),
+      top_trois: board.top_trois
+        ? board.top_trois.map((e) => ClassementAPI.mapToAPI(e, local))
+        : null,
       utilisateur: board.utilisateur
         ? ClassementAPI.mapToAPI(board.utilisateur, local)
         : null,
@@ -48,6 +53,9 @@ export class BoardAPI {
       pourcentile: board.pourcentile,
       code_postal: board.code_postal,
       commune_label: board.commune_label,
+      badges: board.badges.map((b) =>
+        BadgeAPI.mapToApi(BadgeCatalogue.getBadge(b)),
+      ),
     };
   }
 }

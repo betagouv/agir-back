@@ -15,7 +15,7 @@ export class UtilisateurBoardRepository {
       where: {
         OR: [
           {
-            est_valide_pour_classement: true,
+            est_valide_pour_classement: true, // FIXME : supprimer contrainte et générer un pseudo bidon ?
           },
           {
             id: utilisateurId,

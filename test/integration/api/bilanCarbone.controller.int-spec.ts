@@ -5,14 +5,18 @@ import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
+import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -56,13 +60,9 @@ const KYC_DATA: QuestionKYC_v2 = {
   thematique: Thematique.alimentation,
 };
 
-const DEFAULT_TOTAL_KG = 8900.305086108707;
-const DEFAULT_TOTAL_G = 8900305;
-const DEFAULT_TRANSPORT_G = 1958482;
-const DEFAULT_ALIMENTATION_G = 2339167;
-
 describe('/bilan (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const uilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   const OLD_ENV = process.env;
   beforeAll(async () => {
@@ -133,7 +133,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: DEFAULT_TOTAL_KG,
+      impact_kg_annee: NGCCalculator.DEFAULT_TOTAL_KG,
       top_3: [
         {
           label: 'Voiture',
@@ -1003,7 +1003,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      DEFAULT_TOTAL_KG,
+      NGCCalculator.DEFAULT_TOTAL_KG,
     );
   });
 
@@ -1098,357 +1098,6 @@ describe('/bilan (API test)', () => {
     );
   });
 
-  it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur sans aucune reponse NGC`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0]).toEqual('Computed OK = [1]');
-    expect(response.body[1]).toEqual('Skipped = [0]');
-    expect(response.body[2]).toEqual('Errors = [0]');
-
-    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: {
-        utilisateurId: 'utilisateur-id',
-      },
-    });
-
-    expect(stats.situation).toEqual({});
-    expect(stats.total_g).toEqual(DEFAULT_TOTAL_G);
-    expect(stats.transport_g).toEqual(DEFAULT_TRANSPORT_G);
-    expect(stats.alimenation_g).toEqual(DEFAULT_ALIMENTATION_G);
-  });
-  it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur avec une reponse alimentationNGC`, async () => {
-    // GIVEN
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: 'KYC_saison_frequence',
-          id_cms: 21,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: true,
-          reponse_complexe: [
-            {
-              label: 'Souvent',
-              code: 'souvent',
-              ngc_code: '"souvent"',
-              selected: true,
-            },
-            {
-              label: 'Jamais',
-              code: 'jamais',
-              ngc_code: '"bof"',
-              selected: false,
-            },
-            {
-              label: 'Parfois',
-              code: 'parfois',
-              ngc_code: '"burp"',
-              selected: false,
-            },
-          ],
-          tags: [],
-          ngc_key: 'alimentation . de saison . consommation',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      code: 'KYC_saison_frequence',
-      id_cms: 21,
-      question: `À quelle fréquence mangez-vous de saison ? `,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.mission,
-      points: 10,
-      reponses: [
-        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
-        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
-      ],
-      tags: [],
-      ngc_key: 'alimentation . de saison . consommation',
-      image_url: '111',
-      short_question: 'short',
-      conditions: [],
-      unite: { abreviation: 'kg' },
-      created_at: undefined,
-      is_ngc: true,
-      a_supprimer: false,
-      thematique: 'alimentation',
-      updated_at: undefined,
-      emoji: '🔥',
-    } as KYC);
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    TestUtil.token = process.env.CRON_API_KEY;
-    await kycRepository.loadCache();
-    // WHEN
-    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0]).toEqual('Computed OK = [1]');
-    expect(response.body[1]).toEqual('Skipped = [0]');
-    expect(response.body[2]).toEqual('Errors = [0]');
-
-    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: {
-        utilisateurId: 'utilisateur-id',
-      },
-    });
-
-    expect(stats.situation).toEqual({
-      'alimentation . de saison . consommation': '"souvent"',
-    });
-    expect(stats.total_g).toEqual(8863759);
-    expect(stats.transport_g).toEqual(1958482);
-    expect(stats.alimenation_g).toEqual(2302621);
-  });
-
-  it(`POST /utlilisateurs/compute_bilan_carbone bilan pas de calcul si le dernier calcul succède la dernière question maj`, async () => {
-    // GIVEN
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: 'KYC_saison_frequence',
-          id_cms: 21,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: true,
-          last_update: new Date(1000),
-          reponse_complexe: [
-            {
-              label: 'Souvent',
-              code: 'souvent',
-              ngc_code: '"souvent"',
-              selected: true,
-            },
-            {
-              label: 'Jamais',
-              code: 'jamais',
-              ngc_code: '"bof"',
-              selected: false,
-            },
-            {
-              label: 'Parfois',
-              code: 'parfois',
-              ngc_code: '"burp"',
-              selected: false,
-            },
-          ],
-          tags: [],
-          ngc_key: 'alimentation . de saison . consommation',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      code: 'KYC_saison_frequence',
-      id_cms: 21,
-      question: `À quelle fréquence mangez-vous de saison ? `,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.mission,
-      points: 10,
-      reponses: [
-        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
-        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
-      ],
-      tags: [],
-      ngc_key: 'alimentation . de saison . consommation',
-      image_url: '111',
-      short_question: 'short',
-      conditions: [],
-      unite: { abreviation: 'kg' },
-      created_at: undefined,
-      is_ngc: true,
-      a_supprimer: false,
-      thematique: 'alimentation',
-      updated_at: undefined,
-      emoji: '🔥',
-    } as KYC);
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-
-    await TestUtil.prisma.bilanCarboneStatistique.create({
-      data: {
-        utilisateurId: 'utilisateur-id',
-        alimenation_g: 0,
-        transport_g: 0,
-        total_g: 0,
-        situation: {},
-        created_at: new Date(100),
-        updated_at: new Date(2000),
-      },
-    });
-
-    TestUtil.token = process.env.CRON_API_KEY;
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0]).toEqual('Computed OK = [0]');
-    expect(response.body[1]).toEqual('Skipped = [1]');
-    expect(response.body[2]).toEqual('Errors = [0]');
-
-    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: {
-        utilisateurId: 'utilisateur-id',
-      },
-    });
-
-    expect(stats.situation).toEqual({});
-    expect(stats.total_g).toEqual(0);
-    expect(stats.transport_g).toEqual(0);
-    expect(stats.alimenation_g).toEqual(0);
-    expect(stats.updated_at).toEqual(new Date(2000));
-  });
-
-  it(`POST /utlilisateurs/compute_bilan_carbone bilan carbon utilisteur une erreur pour un des utilisateurs`, async () => {
-    // GIVEN
-    const kyc_bad: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: 'KYC alcool_bad',
-          id_cms: 1,
-          type: TypeReponseQuestionKYC.entier,
-          is_NGC: true,
-          reponse_simple: {
-            value: '10',
-          },
-          reponse_complexe: undefined,
-          tags: [],
-          ngc_key: 'alimentation . boisson . alcool . litres',
-        },
-      ],
-    };
-    const kyc_ok: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: 'KYC alcool_good',
-          id_cms: 2,
-          type: TypeReponseQuestionKYC.entier,
-          is_NGC: true,
-          reponse_simple: {
-            value: '5',
-          },
-          reponse_complexe: undefined,
-          tags: [],
-          ngc_key: 'alimentation . boisson . alcool . litres',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      code: 'KYC alcool_bad',
-      id_cms: 1,
-      question: `Combien de litres ^^`,
-      type: TypeReponseQuestionKYC.entier,
-      categorie: Categorie.mission,
-      points: 10,
-      reponses: [],
-      tags: [],
-      ngc_key: 'very bad key',
-      image_url: '111',
-      short_question: 'short',
-      conditions: [],
-      unite: { abreviation: 'kg' },
-      created_at: undefined,
-      is_ngc: true,
-      a_supprimer: false,
-      thematique: 'alimentation',
-      updated_at: undefined,
-      emoji: '🔥',
-    } as KYC);
-
-    await TestUtil.create(DB.kYC, {
-      code: 'KYC alcool_good',
-      id_cms: 2,
-      question: `Combien de litres ^^`,
-      type: TypeReponseQuestionKYC.entier,
-      categorie: Categorie.mission,
-      points: 10,
-      reponses: [],
-      tags: [],
-      ngc_key: 'alimentation . boisson . alcool . litres',
-      image_url: '111',
-      short_question: 'short',
-      conditions: [],
-      unite: { abreviation: 'kg' },
-      created_at: undefined,
-      is_ngc: true,
-      a_supprimer: false,
-      thematique: 'alimentation',
-      updated_at: undefined,
-      emoji: '🔥',
-    } as KYC);
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc_bad as any });
-    await TestUtil.create(DB.utilisateur, {
-      id: '2',
-      email: '2',
-      kyc: kyc_ok as any,
-    });
-
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.POST('/utilisateurs/compute_bilan_carbone');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(4);
-    expect(response.body[0]).toEqual('Computed OK = [1]');
-    expect(response.body[1]).toEqual('Skipped = [0]');
-    expect(response.body[2]).toEqual('Errors = [1]');
-
-    expect(response.body[3]).toEqual(
-      'BC KO [utilisateur-id] : {"name":"SituationError","info":{"dottedName":"very bad key"}}',
-    );
-
-    const stats = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: {
-        utilisateurId: '2',
-      },
-    });
-
-    expect(stats.situation).toEqual({
-      'alimentation . boisson . alcool . litres': 5,
-    });
-    expect(stats.total_g).toEqual(9135085);
-
-    const stats2 = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: {
-        utilisateurId: 'utilisateur-id',
-      },
-    });
-    expect(stats2).toBeNull();
-  });
-
   it('GET /utilisateurs/id/bilans/total - renvoie le total et écrit dans la base de stats', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1460,28 +1109,49 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(DEFAULT_TOTAL_KG);
+    expect(response.body.impact_kg_annee).toEqual(
+      NGCCalculator.DEFAULT_TOTAL_KG,
+    );
 
-    const statsDB = await TestUtil.prisma.bilanCarboneStatistique.findUnique({
-      where: { utilisateurId: 'utilisateur-id' },
-    });
+    const userDB = await uilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
 
-    expect(statsDB.total_g).toEqual(8900305);
+    expect(userDB.cache_bilan_carbone.total_kg).toEqual(
+      NGCCalculator.DEFAULT_TOTAL_KG,
+    );
+    expect(userDB.cache_bilan_carbone.alimentation_kg).toEqual(
+      NGCCalculator.DEFAULT_ALIMENTATION_KG,
+    );
+    expect(userDB.cache_bilan_carbone.transport_kg).toEqual(
+      NGCCalculator.DEFAULT_TRANSPORT_KG,
+    );
+    expect(userDB.cache_bilan_carbone.logement_kg).toEqual(
+      NGCCalculator.DEFAULT_LOGEMENT_KG,
+    );
+    expect(userDB.cache_bilan_carbone.consommation_kg).toEqual(
+      NGCCalculator.DEFAULT_CONSOMMATION_KG,
+    );
+
+    expect(userDB.cache_bilan_carbone.updated_at.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
   });
   it('GET /utilisateurs/id/bilans/total - ne recalcul pas et utilise la dernière valeur dans la table de stats', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    await TestUtil.prisma.bilanCarboneStatistique.create({
-      data: {
-        total_g: 123,
-        utilisateurId: 'utilisateur-id',
-        situation: {},
-        transport_g: 0,
-        alimenation_g: 0,
-        updated_at: new Date(),
-      },
+    const cache_bilan_carbone: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: 1,
+      consommation_kg: 2,
+      logement_kg: 3,
+      total_kg: 6,
+      transport_kg: 7,
+      updated_at: new Date(),
+    };
+    await TestUtil.create(DB.utilisateur, {
+      cache_bilan_carbone: cache_bilan_carbone as any,
     });
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bilans/total',
@@ -1489,23 +1159,24 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(0.123);
+    expect(response.body.impact_kg_annee).toEqual(6);
   });
 
   it('GET /utilisateurs/id/bilans/total - recalcul car la valeur de stats est trop vieille', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    await TestUtil.prisma.bilanCarboneStatistique.create({
-      data: {
-        total_g: 123,
-        utilisateurId: 'utilisateur-id',
-        situation: {},
-        transport_g: 0,
-        alimenation_g: 0,
-        updated_at: new Date(-1),
-      },
+    const cache_bilan_carbone: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: 1,
+      consommation_kg: 2,
+      logement_kg: 3,
+      total_kg: 6,
+      transport_kg: 7,
+      updated_at: new Date(-1),
+    };
+    await TestUtil.create(DB.utilisateur, {
+      cache_bilan_carbone: cache_bilan_carbone as any,
     });
+
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/bilans/total',
@@ -1513,7 +1184,9 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.impact_kg_annee).toEqual(DEFAULT_TOTAL_KG);
+    expect(response.body.impact_kg_annee).toEqual(
+      NGCCalculator.DEFAULT_TOTAL_KG,
+    );
   });
 
   it('GET /utilisateurs/id/bilans/last_v3/code_thematique - bilan par thematique, data OK', async () => {

@@ -13,6 +13,7 @@ import {
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
@@ -25,6 +26,7 @@ export class BibliothequeUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
+    private communeRepository: CommuneRepository,
   ) {}
 
   async rechercheBiblio(
@@ -78,7 +80,7 @@ export class BibliothequeUsecase {
     titre: string,
     include: IncludeArticle,
     skip: number = 0,
-    take: number = 10,
+    take: number = 1000000,
   ): Promise<Bibliotheque> {
     let result = new Bibliotheque();
 
@@ -95,18 +97,27 @@ export class BibliothequeUsecase {
         est_favoris: include === 'favoris',
       });
     }
+    const dept_region =
+      this.communeRepository.findDepartementRegionByCodeCommune(
+        utilisateur.code_commune,
+      );
 
     const articles = await this.articleRepository.searchArticles({
       include_ids: articles_candidats_ids,
       thematiques:
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
+      code_postal: utilisateur.logement.code_postal,
+      code_commune: utilisateur.code_commune,
+      code_departement: dept_region ? dept_region.code_departement : undefined,
+      code_region: dept_region ? dept_region.code_region : undefined,
     });
 
     const ordered_articles =
       utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
 
     result.addArticles(ordered_articles.slice(skip, skip + take));
+    result.setNombreResultatsDispo(ordered_articles.length);
 
     for (const thematique of ThematiqueRepository.getAllThematiques()) {
       if (thematique !== Thematique.services_societaux)

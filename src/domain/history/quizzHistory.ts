@@ -41,6 +41,10 @@ export class QuizzHistory {
     );
   }
 
+  public getNombreEssais(): number {
+    return this.attempts ? this.attempts.length : 0;
+  }
+
   public has100ScoreAmongAttempts(): boolean {
     return this.attempts.findIndex((attempt) => attempt.score === 100) >= 0;
   }

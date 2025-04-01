@@ -12,9 +12,12 @@ import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
+  GlobalUserVersion,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
+
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 describe('NotificationHistory', () => {
   const OLD_ENV = process.env;
@@ -55,7 +58,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : mail de welcome si rien`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
@@ -79,7 +81,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si compte non actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
@@ -104,13 +105,14 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si type pas actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = '';
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
       SourceInscription.mobile,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
+    utilisateur.active_account = true;
     const notifications = new NotificationHistory({
       version: 0,
       sent_notifications: [],
@@ -126,7 +128,6 @@ describe('NotificationHistory', () => {
   });
   it(`isWelcomeEmailToSend : pas de mail de welcome si rien mais que utilisateur trop vieux (plus de 30j)`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -149,9 +150,8 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).not.toContain(EmailNotification.welcome);
   });
-  it.only(`isWelcomeEmailToSend : rien si notif deja envoyée`, () => {
+  it(`isWelcomeEmailToSend : rien si notif deja envoyée`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -182,7 +182,6 @@ describe('NotificationHistory', () => {
 
   it(`isWelcomeEmailToSend : pas de welcome si pas encore 10 min`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -207,7 +206,6 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si compte non actif`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'welcome,late_onboarding';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -232,7 +230,7 @@ describe('NotificationHistory', () => {
 
   it(`getNouvellesNotifications : pas de notif late_onboarding si moins de 8 jours`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'late_onboarding';
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -256,7 +254,8 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : pas de notif late_onboarding si dejà envoyé`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'late_onboarding';
+    process.env.NOTIFICATIONS_MAIL_INACTIVES =
+      'welcome,email_relance_onboarding_j8';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -285,9 +284,8 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : vieux defis`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_ACTIVES = 'waiting_action';
-
-    const DAY_IN_MS = 1000 * 60 * 60 * 24;
+    process.env.NOTIFICATIONS_MAIL_INACTIVES =
+      'welcome,email_relance_onboarding_j8';
 
     const DEFI_1: Defi_v0 = {
       id: '1',
@@ -343,5 +341,199 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(TypeNotification.waiting_action);
+  });
+
+  it(`getNouvellesNotifications : email_relance_onboarding_j8`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.email_relance_onboarding_j8);
+  });
+  it(`getNouvellesNotifications : email_relance_onboarding_j8 pas de mail si user V1`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V1;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(0);
+  });
+  it(`getNouvellesNotifications : email_relance_onboarding_j14`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES =
+      'welcome,email_relance_onboarding_j8';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 15);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.email_relance_onboarding_j14);
+  });
+  it(`getNouvellesNotifications : email_utilisateur_inactif_j30`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES =
+      'welcome,email_relance_onboarding_j8,email_relance_onboarding_j14';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
+    utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 31);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.email_utilisateur_inactif_j30);
+  });
+  it(`getNouvellesNotifications : email_utilisateur_inactif_j60`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES =
+      'welcome,email_relance_onboarding_j8,email_relance_onboarding_j14,email_utilisateur_inactif_j30';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
+    utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 61);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.email_utilisateur_inactif_j60);
+  });
+  it(`getNouvellesNotifications : mobile_inscription_J2`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = '';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 3);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsMobileAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.mobile_inscription_J2);
+  });
+  it(`getNouvellesNotifications : mobile_inscription_J9`, () => {
+    // GIVEN
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'mobile_inscription_J2';
+
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'toto@dev.com',
+      false,
+      SourceInscription.mobile,
+    );
+    utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 10);
+    utilisateur.active_account = true;
+    utilisateur.global_user_version = GlobalUserVersion.V2;
+
+    const notifications = new NotificationHistory({
+      version: 0,
+      sent_notifications: [],
+      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    });
+
+    // WHEN
+    const result =
+      notifications.getNouvellesNotificationsMobileAPousser(utilisateur);
+
+    // THEN
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(TypeNotification.mobile_inscription_J9);
   });
 });

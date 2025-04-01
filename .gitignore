@@ -51,3 +51,4 @@ static/images
 # Bruno collections
 
 .bruno/
+*.json

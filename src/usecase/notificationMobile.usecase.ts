@@ -19,7 +19,7 @@ export class NotificationMobileUsecase {
   ) {}
 
   async envoyerNotificationsMobileAutomatiques(
-    block_size: number = 50,
+    block_size: number = 100,
   ): Promise<string[]> {
     const result: string[] = [];
 
@@ -61,7 +61,10 @@ export class NotificationMobileUsecase {
           }
         }
 
-        await this.utilisateurRepository.updateUtilisateur(utilisateur);
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(
+          utilisateur,
+          [Scope.notification_history],
+        );
 
         if (liste_sent_notifs.length > 0) {
           result.push(

@@ -5,6 +5,7 @@ import {
 import { Reveal } from '../../../../src/domain/gamification/celebrations/reveal';
 import { Feature } from '../../../../src/domain/gamification/feature';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
+import { TypeBadge } from '../../gamification/typeBadge';
 import { Versioned_v0 } from '../versioned';
 
 export class Reveal_v0 {
@@ -49,11 +50,14 @@ export class Gamification_v0 extends Versioned_v0 {
   points: number;
   celebrations: Celebration_v0[];
   popup_reset_vue: boolean;
+  badges: TypeBadge[];
 
   constructor() {
     super();
     this.points = 0;
     this.celebrations = [];
+    this.popup_reset_vue = true;
+    this.badges = [];
   }
 
   static serialise(domain: Gamification): Gamification_v0 {
@@ -61,7 +65,8 @@ export class Gamification_v0 extends Versioned_v0 {
       version: 0,
       points: domain.getPoints(),
       celebrations: domain.celebrations.map((e) => Celebration_v0.map(e)),
-      popup_reset_vue: domain.popup_reset_vue,
+      popup_reset_vue: domain.isPopupResetVue(),
+      badges: domain.getBadges(),
     };
   }
 }

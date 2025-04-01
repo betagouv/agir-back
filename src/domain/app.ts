@@ -2,9 +2,13 @@ import metadata from './metadata.json';
 
 export class App {
   static USER_CURRENT_VERSION = 14;
+  static BACK_CURRENT_VERSION = '1';
 
   public static currentUserSystemVersion(): number {
     return App.USER_CURRENT_VERSION;
+  }
+  public static getBackCurrentVersion(): string {
+    return App.BACK_CURRENT_VERSION;
   }
   public static defiEnabled(): boolean {
     return process.env.DEFI_ENABLED === 'true';
@@ -98,11 +102,14 @@ export class App {
   public static getEmailReplyTo(): string {
     return process.env.EMAIL_REPLY_TO;
   }
+  public static getEmailContact(): string {
+    return process.env.EMAIL_CONTACT;
+  }
   public static getCurrentPonderationRubriqueSetName(): string {
     return process.env.PONDERATION_RUBRIQUES;
   }
-  public static getActiveNotificationsListe(): string {
-    return process.env.NOTIFICATIONS_MAIL_ACTIVES || '';
+  public static getInactiveNotificationsListe(): string {
+    return process.env.NOTIFICATIONS_MAIL_INACTIVES || '';
   }
   public static getBasicLogin(): string {
     return process.env.BASIC_LOGIN || '';

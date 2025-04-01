@@ -13,6 +13,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -40,13 +41,19 @@ import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecas
 import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
-import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
 import { AideExportAPI } from './types/aide/AideExportAPI';
 import { UserMigrationReportAPI } from './types/userMigrationReportAPI';
 import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
+
+export class VersionAPI {
+  @ApiProperty() version: string;
+}
+export class CheckVersionAPI {
+  @ApiProperty() compatible: boolean;
+}
 
 @Controller()
 @ApiTags('Z - Admin')
@@ -80,17 +87,18 @@ export class AdminController extends GenericControler {
     super();
   }
 
-  @Get('error_410_get')
-  async error410Get() {
-    ApplicationError.throwThatURLIsGone(
-      `${App.getBaseURLBack()}/error_410_get`,
-    );
+  @Get('check_version/:version')
+  @ApiOkResponse({ type: CheckVersionAPI })
+  async check_version(
+    @Param('version') version: string,
+  ): Promise<CheckVersionAPI> {
+    return { compatible: version === App.getBackCurrentVersion() };
   }
-  @Post('error_410_post')
-  async error410Post() {
-    ApplicationError.throwThatURLIsGone(
-      `${App.getBaseURLBack()}/error_410_post`,
-    );
+
+  @Get('version')
+  @ApiOkResponse({ type: VersionAPI })
+  async get_version(): Promise<VersionAPI> {
+    return { version: App.getBackCurrentVersion() };
   }
 
   @Delete('admin/utilisateurs/:utilisateurId')

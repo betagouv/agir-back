@@ -47,6 +47,7 @@ import {
   TypeLogement,
 } from '../src/domain/logement/logement';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
+import { CacheBilanCarbone_v0 } from '../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
@@ -60,6 +61,7 @@ import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
+  GlobalUserVersion,
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
@@ -244,6 +246,7 @@ export class TestUtil {
     await this.prisma_stats.aideCopy.deleteMany();
     await this.prisma_stats.articleCopy.deleteMany();
     await this.prisma_stats.quizzCopy.deleteMany();
+    await this.prisma_stats.bilanCarbone.deleteMany();
 
     ActionRepository.resetCache();
     ArticleRepository.resetCache();
@@ -362,6 +365,7 @@ export class TestUtil {
       date_expiration: null,
       derniere_maj: null,
       partenaire_id: undefined,
+      partenaires_supp_ids: [],
       codes_postaux: ['91120'],
       thematiques: [Thematique.climat, Thematique.logement],
       contenu: "Contenu de l'aide",
@@ -417,7 +421,8 @@ export class TestUtil {
     return {
       type_code_id: 'classique_code_fonct',
       cms_id: '111',
-      titre: 'The titre',
+      titre: '**The titre**',
+      titre_recherche: 'The titre',
       sous_titre: 'Sous titre',
       consigne: 'consigne',
       label_compteur: 'label_compteur',
@@ -431,6 +436,7 @@ export class TestUtil {
       lvo_action: CategorieRecherche.emprunter,
       lvo_objet: 'chaussure',
       quizz_ids: [],
+      articles_ids: [],
       recette_categorie: CategorieRecherche.dinde_volaille,
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
@@ -527,6 +533,16 @@ export class TestUtil {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
       unlocked_features: [Feature.aides, Feature.defis],
+    };
+
+    const cache_bilan_carbone: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: undefined,
+      consommation_kg: undefined,
+      transport_kg: undefined,
+      logement_kg: undefined,
+      total_kg: undefined,
+      updated_at: undefined,
     };
 
     const defis: DefiHistory_v0 = {
@@ -633,6 +649,7 @@ export class TestUtil {
           },
         },
       ],
+      badges: [],
     };
 
     const logement: Logement_v0 = {
@@ -708,6 +725,8 @@ export class TestUtil {
       france_connect_sub: null,
       external_stat_id: null,
       pseudo: 'pseudo',
+      cache_bilan_carbone: cache_bilan_carbone as any,
+      global_user_version: GlobalUserVersion.V1,
       ...override,
     };
   }
@@ -730,6 +749,8 @@ export class TestUtil {
       image_url: 'logo_url',
       nom: 'ADEME',
       url: 'https://ademe.fr',
+      code_commune: '001',
+      code_epci: '002',
       echelle: Echelle.National,
       created_at: undefined,
       updated_at: undefined,

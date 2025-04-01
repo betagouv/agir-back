@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { App } from '../domain/app';
 
 export class ApplicationError {
   @ApiProperty()
@@ -360,10 +361,10 @@ export class ApplicationError {
   static throwRFRNotNumer() {
     this.throwAppError('073', `Le revenu fisscal doi être un nombre entier`);
   }
-  static throwPartsFiscalesNotDecimal() {
+  static throwPartsFiscalesNotDecimal(value: string) {
     this.throwAppError(
       '074',
-      `Le nombre de parts fiscales doit être un nombre décimal`,
+      `Le nombre de parts fiscales doit être un nombre décimal compris entre 0,5 et 99,5 - un seul chiffre après la virgule,  reçu : [${value}]`,
     );
   }
   static throwBadAnnee(data: number) {
@@ -614,16 +615,10 @@ export class ApplicationError {
     );
   }
 
-  static throwMajNomImpossibleFC() {
+  static throwMajImpossibleFC() {
     this.throwAppError(
       '116',
-      `Impossible de mettre à jour le nom d'un utilisatueur France Connecté`,
-    );
-  }
-  static throwMajPrenomImpossibleFC() {
-    this.throwAppError(
-      '117',
-      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+      `Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté`,
     );
   }
 
@@ -699,6 +694,21 @@ export class ApplicationError {
     this.throwAppError(
       '130',
       `Un compte existant dans j'agis n'a pas pu être rapproché, erreur de connexion`,
+    );
+  }
+
+  static throwTypeRealisationNotFound(type: string) {
+    this.throwAppError('131', `Type de realisation [${type}] inconnu`);
+  }
+
+  static throwUserNotFound(id: string) {
+    this.throwAppError('132', `L'utilisateur d'id [${id}] n'existe pas`, 404);
+  }
+
+  static throwDiffrentVersion(version: string) {
+    this.throwAppError(
+      '133',
+      `Le back n'est pas à la même version [${App.getBackCurrentVersion()}] que celle présentée [${version}]`,
     );
   }
 

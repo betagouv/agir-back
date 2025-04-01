@@ -5,12 +5,14 @@ import { Aide } from '../../../domain/aides/aide';
 import { Article } from '../../../domain/contenu/article';
 import { Quizz } from '../../../domain/contenu/quizz';
 import { Scope, Utilisateur } from '../../../domain/utilisateur/utilisateur';
+import { NGCCalculator } from '../../../infrastructure/ngc/NGCCalculator';
 import { ActionRepository } from '../../../infrastructure/repository/action.repository';
 import { AideRepository } from '../../../infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../../infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../../infrastructure/repository/quizz.repository';
 import { StatistiqueExternalRepository } from '../../../infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../infrastructure/repository/utilisateur/utilisateur.repository';
+import { BilanCarboneUsecase } from '../../bilanCarbone.usecase';
 
 const TWO_DAYS_MS = 1000 * 60 * 60 * 24 * 2;
 
@@ -23,6 +25,8 @@ export class DuplicateBDDForStatsUsecase {
     private articleRepository: ArticleRepository,
     private aideRepository: AideRepository,
     private quizzRepository: QuizzRepository,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
+    private nGCCalculator: NGCCalculator,
   ) {}
 
   async duplicateUtilisateur(block_size: number = 100) {
@@ -262,6 +266,7 @@ export class DuplicateBDDForStatsUsecase {
             quizz_utilisateur.has100ScoreFirstAttempt();
           final_quizz.date_premier_coup =
             quizz_utilisateur.getDateFirstAttempt();
+          final_quizz.nombre_tentatives = quizz_utilisateur.getNombreEssais();
 
           try {
             await this.statistiqueExternalRepository.createQuizzData(
@@ -279,6 +284,97 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
+  async duplicatePersonnalisation(block_size: number = 100) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllPersoData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        try {
+          await this.statistiqueExternalRepository.createPersonnalisationData(
+            user,
+          );
+        } catch (error) {
+          console.error(error);
+          console.error(
+            `Error Creating Personnalisation Data for ${
+              user.id
+            } : ${JSON.stringify(user.thematique_history)}`,
+          );
+        }
+      }
+    }
+  }
+
+  async computeBilanTousUtilisateurs(
+    block_size: number = 100,
+  ): Promise<string[]> {
+    const MAX_USER_TO_COMPUTE = 2000;
+
+    const error_liste = [];
+    let computed_ok = 0;
+    let skipped = 0;
+    let errors = 0;
+
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.kyc],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        const a_jour = await this.estBilanAJour(user);
+        if (a_jour) {
+          skipped++;
+          continue; // pas besoin de reclalculer
+        }
+
+        const situation =
+          this.bilanCarboneUsecase.external_compute_situation(user);
+
+        try {
+          const bilan =
+            this.nGCCalculator.computeBasicBilanFromSituation(situation);
+
+          await this.statistiqueExternalRepository.upsertBilanCarbone(
+            user.external_stat_id,
+            bilan,
+          );
+
+          computed_ok++;
+          if (computed_ok > MAX_USER_TO_COMPUTE) {
+            break; // trop de calcul pour un run de batch unique
+          }
+        } catch (error) {
+          errors++;
+          error_liste.push(`BC KO [${user.id}] : ` + JSON.stringify(error));
+        }
+      }
+    }
+
+    return [
+      `Computed OK = [${computed_ok}]`,
+      `Skipped = [${skipped}]`,
+      `Errors = [${errors}]`,
+    ].concat(error_liste);
+  }
+
   private async updateExternalStatIdIfNeeded(utilisateur: Utilisateur) {
     if (!utilisateur.external_stat_id) {
       utilisateur.external_stat_id = uuidv4();
@@ -287,5 +383,19 @@ export class DuplicateBDDForStatsUsecase {
         utilisateur.external_stat_id,
       );
     }
+  }
+
+  private async estBilanAJour(utilisateur: Utilisateur): Promise<boolean> {
+    const bilan_last_update_time =
+      await this.statistiqueExternalRepository.getLastUpdateTime(
+        utilisateur.external_stat_id,
+      );
+
+    const kyc_last_update = utilisateur.kyc_history.getLastUpdate().getTime();
+
+    return (
+      bilan_last_update_time &&
+      bilan_last_update_time.getTime() > kyc_last_update
+    );
   }
 }

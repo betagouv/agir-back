@@ -43,6 +43,7 @@ model Utilisateur {
   bilbiotheque_services      Json      @default("{}") // versioné
   notification_history       Json      @default("{}") // versioné
   thematique_history         Json      @default("{}") // versioné
+  cache_bilan_carbone        Json      @default("{}") // versioné
   created_at                 DateTime  @default(now()) @db.Timestamptz(3)
   updated_at                 DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count         Int       @default(0)
@@ -81,6 +82,7 @@ model Utilisateur {
   code_commune               String?
   france_connect_sub         String?   @unique
   external_stat_id           String?   @unique
+  global_user_version        String    @default("V1")
 }
 
 model Statistique {
@@ -210,6 +212,7 @@ model Aide {
   url_demande           String?
   is_simulateur         Boolean?
   partenaire_id         String?
+  partenaires_supp_ids  String[]  @default([])
   codes_postaux         String[]  @default([])
   thematiques           String[]  @default([])
   montant_max           Int?
@@ -233,6 +236,7 @@ model Action {
   cms_id              String
   type                String   @default("classique")
   titre               String
+  titre_recherche     String?
   sous_titre          String?
   consigne            String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
   label_compteur      String   @default("**453 actions** réalisées par la communauté")
@@ -242,6 +246,7 @@ model Action {
   thematique          String
   besoins             String[] @default([])
   quizz_ids           String[] @default([])
+  articles_ids        String[] @default([])
   kyc_codes           String[] @default([])
   faq_ids             String[] @default([])
   recette_categorie   String?
@@ -319,13 +324,15 @@ model Article {
 }
 
 model Partenaire {
-  content_id String   @id
-  nom        String?
-  url        String?
-  image_url  String?
-  echelle    String?
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  content_id   String   @id
+  nom          String?
+  url          String?
+  image_url    String?
+  echelle      String?
+  code_epci    String?
+  code_commune String?
+  created_at   DateTime @default(now()) @db.Timestamptz(3)
+  updated_at   DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model AideExpirationWarning {

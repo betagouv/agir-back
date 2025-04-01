@@ -492,7 +492,7 @@ export class KYCHistory {
   }
 
   public isQuestionAnsweredByCode(code: string): boolean {
-    return !!this.getUpToDateAnsweredQuestionByCode(code);
+    return !!this.getAnsweredQuestionByCode(code);
   }
 
   public updateQuestionInHistory(question: QuestionKYC) {

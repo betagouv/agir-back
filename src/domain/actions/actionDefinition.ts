@@ -21,6 +21,7 @@ export class ActionDefinitionData {
   cms_id: string;
   code: string;
   titre: string;
+  titre_recherche: string;
   sous_titre: string;
   consigne: string;
   label_compteur: string;
@@ -32,6 +33,7 @@ export class ActionDefinitionData {
   faq_ids: string[];
   lvo_action: CategorieRecherche;
   lvo_objet: string;
+  article_ids: string[];
   quizz_ids: string[];
   recette_categorie: CategorieRecherche;
   pdcn_categorie: CategorieRecherche;

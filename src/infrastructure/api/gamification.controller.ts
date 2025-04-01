@@ -56,7 +56,7 @@ export class GamificationController extends GenericControler {
   })
   @UseGuards(AuthGuard)
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 2000 } })
   async classementNational(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
@@ -77,7 +77,7 @@ export class GamificationController extends GenericControler {
   })
   @UseGuards(AuthGuard)
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 1000 } })
+  @Throttle({ default: { limit: 10, ttl: 2000 } })
   async classementLocal(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,

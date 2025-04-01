@@ -167,6 +167,32 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(403);
   });
+  it('GET /version OK', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get('/version');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      version: App.getBackCurrentVersion(),
+    });
+  });
+  it('GET /check_version/123 OK', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/check_version/' + App.getBackCurrentVersion(),
+    );
+
+    // THEN
+    expect(response.body).toEqual({ compatible: true });
+  });
+  it('GET /check_version/123 KO', async () => {
+    // WHEN
+    const response = await TestUtil.getServer().get('/check_version/bad');
+
+    // THEN
+    expect(response.body).toEqual({ compatible: false });
+  });
   it('POST /admin/lock_user_migration retourne une 200 si API CRON', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -309,6 +335,7 @@ describe('Admin (API test)', () => {
           },
         },
       ],
+      badges: [],
     };
     await TestUtil.create(DB.utilisateur, {
       version: 3,
@@ -693,7 +720,76 @@ describe('Admin (API test)', () => {
       liste_tags_excluants: [],
       liste_thematiques: [],
     });
-    expect(userDB.version).toEqual(14);
+    expect(userDB.version).toEqual(App.currentUserSystemVersion());
+  });
+
+  it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const gamification: Gamification_v0 = {
+      version: 0,
+      points: 2000,
+      popup_reset_vue: false,
+      celebrations: [],
+      badges: [],
+    };
+
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(),
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 14,
+      migration_enabled: true,
+      thematique_history: thematique_history as any,
+      points_classement: 100,
+      commune_classement: '1234',
+      code_postal_classement: '45664',
+      gamification: gamification as any,
+    });
+    App.USER_CURRENT_VERSION = 15;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 15,
+            ok: true,
+            info: 'reset national OK',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history).toEqual({
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    });
+    expect(userDB.version).toEqual(15);
+    expect(userDB.force_connexion).toEqual(true);
+    expect(userDB.gamification.getPoints()).toEqual(0);
+    expect(userDB.gamification.getBadges()).toEqual(['pionnier']);
+    expect(userDB.points_classement).toEqual(0);
+    expect(userDB.commune_classement).toEqual('1234');
+    expect(userDB.code_postal_classement).toEqual('45664');
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {

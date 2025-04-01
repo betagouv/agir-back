@@ -43,6 +43,8 @@ export class PartenaireRepository {
         url: partenaire.url,
         image_url: partenaire.image_url,
         echelle: Echelle[partenaire.echelle],
+        code_commune: partenaire.code_commune,
+        code_epci: partenaire.code_epci,
       });
     }
     PartenaireRepository.catalogue_partenaires = new_map;
@@ -59,6 +61,8 @@ export class PartenaireRepository {
       nom: partenaire.nom,
       url: partenaire.url,
       echelle: partenaire.echelle,
+      code_commune: partenaire.code_commune,
+      code_epci: partenaire.code_epci,
       created_at: undefined,
       updated_at: undefined,
     };

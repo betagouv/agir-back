@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../../domain/actions/action';
 import { Aide } from '../../domain/aides/aide';
+import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Article } from '../../domain/contenu/article';
 import { Quizz } from '../../domain/contenu/quizz';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../domain/kyc/questionKYC';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
 import { CommuneRepository } from './commune/commune.repository';
@@ -36,6 +38,9 @@ export class StatistiqueExternalRepository {
   public async deleteAllQuizzData() {
     await this.prismaStats.quizzCopy.deleteMany();
   }
+  public async deleteAllPersoData() {
+    await this.prismaStats.personnalisation.deleteMany();
+  }
 
   public async createUserData(utilisateur: Utilisateur) {
     const code_depart =
@@ -61,6 +66,7 @@ export class StatistiqueExternalRepository {
         code_departement: code_depart.code_departement,
         rang_commune: utilisateur.rank_commune,
         rang_national: utilisateur.rank,
+        date_inscription: utilisateur.created_at,
       },
     });
   }
@@ -116,6 +122,55 @@ export class StatistiqueExternalRepository {
         bon_premier_coup: quizz.premier_coup_ok,
         date_premier_coup: quizz.date_premier_coup,
         like_level: quizz.like_level,
+        nombre_tentatives: quizz.nombre_tentatives,
+      },
+    });
+  }
+
+  public async createPersonnalisationData(utilisateur: Utilisateur) {
+    const actions_alimentation_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.alimentation)
+      .map((a) => a.code);
+    const actions_consommation_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.consommation)
+      .map((a) => a.code);
+    const actions_logement_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.logement)
+      .map((a) => a.code);
+    const actions_transport_rejetees = utilisateur.thematique_history
+      .getActionsExclues(Thematique.transport)
+      .map((a) => a.code);
+
+    await this.prismaStats.personnalisation.create({
+      data: {
+        user_id: utilisateur.external_stat_id,
+        tags_exclusion: utilisateur.thematique_history.getListeTagsExcluants(),
+        perso_alimentation_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.alimentation,
+          ),
+        perso_consommation_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.consommation,
+          ),
+        perso_logement_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.logement,
+          ),
+        perso_transport_done_once:
+          utilisateur.thematique_history.isPersonnalisationDoneOnce(
+            Thematique.transport,
+          ),
+        actions_alimentation_rejetees: actions_alimentation_rejetees,
+        actions_consommation_rejetees: actions_consommation_rejetees,
+        actions_logement_rejetees: actions_logement_rejetees,
+        actions_transport_rejetees: actions_transport_rejetees,
+        actions_rejetees_all: [].concat(
+          actions_alimentation_rejetees,
+          actions_consommation_rejetees,
+          actions_logement_rejetees,
+          actions_transport_rejetees,
+        ),
       },
     });
   }
@@ -215,5 +270,45 @@ export class StatistiqueExternalRepository {
         ...reponse,
       },
     });
+  }
+
+  public async upsertBilanCarbone(user_id: string, bilan: Bilan_OLD) {
+    const data = {
+      total_kg: bilan.bilan_carbone_annuel,
+      alimentation_kg: bilan.details.alimentation,
+      consommation_kg: bilan.details.divers,
+      logement_kg: bilan.details.logement,
+      transport_kg: bilan.details.transport,
+    };
+
+    await this.prismaStats.bilanCarbone.upsert({
+      where: {
+        user_id: user_id,
+      },
+
+      create: {
+        user_id: user_id,
+        ...data,
+      },
+      update: {
+        ...data,
+      },
+    });
+  }
+
+  public async getLastUpdateTime(user_id: string): Promise<Date> {
+    const time = await this.prismaStats.bilanCarbone.findUnique({
+      where: {
+        user_id: user_id,
+      },
+      select: {
+        updated_at: true,
+      },
+    });
+
+    if (time) {
+      return time.updated_at;
+    }
+    return null;
   }
 }

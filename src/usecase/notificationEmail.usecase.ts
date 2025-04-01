@@ -47,7 +47,7 @@ export class NotificationEmailUsecase {
     for (const utilisateurId of listeUtilisateursIds) {
       const utilisateur = await this.utilisateurRepository.getById(
         utilisateurId,
-        [Scope.notification_history],
+        [Scope.notification_history, Scope.thematique_history],
       );
 
       if (
@@ -72,7 +72,7 @@ export class NotificationEmailUsecase {
     return result;
   }
 
-  async envoyerEmailsAutomatiques(block_size: number = 50): Promise<string[]> {
+  async envoyerEmailsAutomatiques(block_size: number = 100): Promise<string[]> {
     const result: string[] = [];
 
     const total_user_count = await this.utilisateurRepository.countAll();
@@ -82,7 +82,7 @@ export class NotificationEmailUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.notification_history, Scope.defis],
+          [Scope.notification_history, Scope.defis, Scope.thematique_history],
           { is_active: true },
         );
 

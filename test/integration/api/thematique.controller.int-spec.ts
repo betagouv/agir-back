@@ -148,6 +148,7 @@ describe('Thematique (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -217,6 +218,7 @@ describe('Thematique (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -400,7 +402,7 @@ describe('Thematique (API test)', () => {
       points: 100,
       sous_titre: 'Sous titre',
       thematique: 'alimentation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
     });
   });

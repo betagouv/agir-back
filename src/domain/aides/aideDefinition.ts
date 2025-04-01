@@ -11,6 +11,7 @@ export class AideDefinition implements ContenuLocal {
   titre: string;
   contenu: string;
   partenaire_id: string;
+  partenaires_supp_ids: string[];
   url_simulateur: string;
   url_source: string;
   url_demande: string;

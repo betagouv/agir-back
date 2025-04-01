@@ -7,16 +7,34 @@ export enum Consultation {
   pas_vu = 'pas_vu',
   tout = 'tout',
 }
+export enum Realisation {
+  faite = 'faite',
+  pas_faite = 'pas_faite',
+  tout = 'tout',
+}
 
 export class CatalogueAction {
   actions: Action[];
   filtre_thematiques: Map<Thematique, ThematiqueFilter>;
   consultation: Consultation;
+  realisation: Realisation;
+  nombre_resultats_disponibles: number;
 
   constructor() {
     this.actions = [];
     this.filtre_thematiques = new Map();
     this.consultation = Consultation.tout;
+    this.realisation = Realisation.tout;
+    this.nombre_resultats_disponibles = 0;
+  }
+  public getNombreResultats(): number {
+    return this.actions.length;
+  }
+  public getNombreResultatsDispo(): number {
+    return this.nombre_resultats_disponibles;
+  }
+  public setNombreResultatsDispo(total: number) {
+    this.nombre_resultats_disponibles = total;
   }
 
   public addSelectedThematique(thematique: Thematique, selected: boolean) {

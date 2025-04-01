@@ -1,5 +1,12 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
@@ -536,17 +543,32 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.content_id).toEqual('1');
-    expect(response.body.titre).toEqual('titreA');
-    expect(response.body.contenu).toEqual('un long article');
-    expect(response.body.favoris).toEqual(false);
-    expect(response.body.like_level).toEqual(null);
-    expect(response.body.read_date).toEqual(null);
-    expect(response.body.partenaire_nom).toEqual('ADEME');
-    expect(response.body.partenaire_url).toEqual('https://ademe.fr');
-    expect(response.body.partenaire_logo_url).toEqual('logo_url');
-    expect(response.body.sources).toEqual([{ label: 'label', url: 'url' }]);
+    expect(response.body).toEqual({
+      content_id: '1',
+      contenu: 'un long article',
+      derniere_maj: null,
+      favoris: false,
+      image_url: null,
+      like_level: null,
+      partenaire_logo_url: 'logo_url',
+      partenaire_nom: 'ADEME',
+      partenaire_url: 'https://ademe.fr',
+      points: 10,
+      read_date: null,
+      sources: [
+        {
+          label: 'label',
+          url: 'url',
+        },
+      ],
+      soustitre: 'Sous titre de mon article',
+      thematique_principale: 'logement',
+      thematique_principale_label: 'logement',
+      thematiques: ['logement'],
+      titre: 'titreA',
+    });
   });
+
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, celui-ci devient alors lu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -985,6 +1007,66 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[3].content_id).toEqual('4');
   });
 
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code postal', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [],
+    };
+
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      commune: 'DIJON',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      logement: logement as any,
+      code_commune: '21231',
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_postaux: ['21000'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      codes_postaux: ['21000'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      codes_postaux: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+      codes_postaux: ['91120'],
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu[0].content_id).not.toEqual('3');
+    expect(response.body.contenu[0].content_id).not.toEqual('4');
+    expect(response.body.contenu[1].content_id).not.toEqual('3');
+    expect(response.body.contenu[1].content_id).not.toEqual('4');
+  });
+
   it('GET /utilisateurs/id/bibliotheque_v2 - que les favoris', async () => {
     // GIVEN
     const history: History_v0 = {
@@ -1099,6 +1181,54 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[2].content_id).toEqual('2');
   });
 
+  it('GET /utilisateurs/id/bibliotheque_v2 - include = tout', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?include=tout',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(4);
+  });
   it('GET /utilisateurs/id/bibliotheque_v2 - zap les 2 premiers', async () => {
     // GIVEN
     const history: History_v0 = {
@@ -1209,5 +1339,61 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.contenu).toHaveLength(1);
     expect(response.body.contenu[0].content_id).toEqual('2');
+  });
+  it('GET /utilisateurs/id/bibliotheque_v2 - juste take', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: new Date(789),
+          favoris: false,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?take=3',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(3);
+    expect(response.body.nombre_resultats).toEqual(3);
+    expect(response.body.nombre_resultats_disponibles).toEqual(4);
   });
 });

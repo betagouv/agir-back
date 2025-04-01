@@ -433,13 +433,69 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     // THEN
     expect(response.status).toBe(200);
+
+    let userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.parts).toEqual(2.5);
+
     const response2 = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/profile',
     ).send({
-      parts_fiscales: '2,5',
+      nombre_de_parts_fiscales: '2,5',
     });
     // THEN
     expect(response2.status).toBe(200);
+    userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
+    expect(userDB.parts).toEqual(2.5);
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal trop petite ou tros grande', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '0',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+
+    const response2 = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '123',
+    });
+    // THEN
+    expect(response2.status).toBe(400);
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal trop de chiffres apres la virgule', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '2.45',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+  });
+  it('PATCH /utilisateurs/id/profile - parts fiscal valeur entière OK', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      nombre_de_parts_fiscales: '2',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.parts).toEqual(2);
   });
   it('PATCH /utilisateurs/id/profile - update basic profile datas', async () => {
     // GIVEN
@@ -511,7 +567,79 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
-      "Impossible de mettre à jour le nom d'un utilisatueur France Connecté",
+      "Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update prenom si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      prenom: 'THE PRENOM',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update annee naissance si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      annee_naissance: 1979,
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update mois naissance si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      mois_naissance: 5,
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté",
+    );
+  });
+  it('PATCH /utilisateurs/id/profile - bloque update jour naissance si FC', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      france_connect_sub: '123',
+    });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      jour_naissance: 23,
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté",
     );
   });
   it('PATCH /utilisateurs/id/profile - bloque update nom si FC', async () => {
@@ -529,7 +657,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
-      `Impossible de mettre à jour le prénom d'un utilisatueur France Connecté`,
+      `Impossible de mettre à jour nom/prenom/date de naissance d'un utilisatueur France Connecté`,
     );
   });
   it('PATCH /utilisateurs/id/profile - le pseudo est valide si un autre utilisateur avec même pseudo valide existe', async () => {

@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { Thematique } from '../../domain/thematique/thematique';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
+import { DuplicateBDDForStatsUsecase } from '../../usecase/stats/new/duplicateBDD.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { BilanCarboneDashboardAPI_v3 } from './types/ngc/bilanAPI_v3';
@@ -27,7 +28,10 @@ import { BilanTotalAPI } from './types/ngc/bilanTotalAPI';
 @ApiBearerAuth()
 @ApiTags('Bilan Carbone')
 export class BilanCarboneController extends GenericControler {
-  constructor(private readonly bilanCarboneUsecase: BilanCarboneUsecase) {
+  constructor(
+    private readonly bilanCarboneUsecase: BilanCarboneUsecase,
+    private duplicateUsecase: DuplicateBDDForStatsUsecase,
+  ) {
     super();
   }
 
@@ -113,6 +117,6 @@ export class BilanCarboneController extends GenericControler {
   @Post('utilisateurs/compute_bilan_carbone')
   async computeBilanTousUtilisateurs(@Request() req): Promise<any> {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.bilanCarboneUsecase.computeBilanTousUtilisateurs();
+    return await this.duplicateUsecase.computeBilanTousUtilisateurs();
   }
 }

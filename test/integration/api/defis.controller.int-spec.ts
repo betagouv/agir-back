@@ -879,6 +879,7 @@ describe('/utilisateurs/id/defis (API test)', () => {
       points: 0,
       popup_reset_vue: false,
       celebrations: [],
+      badges: [],
     };
 
     await TestUtil.create(DB.utilisateur, {

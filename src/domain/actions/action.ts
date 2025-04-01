@@ -1,6 +1,7 @@
 import { AideDefinition } from '../aides/aideDefinition';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../bibliotheque_services/recherche/serviceRechercheID';
+import { Article } from '../contenu/article';
 import { Quizz } from '../contenu/quizz';
 import { FAQDefinition } from '../faq/FAQDefinition';
 import { QuestionKYC } from '../kyc/questionKYC';
@@ -18,6 +19,7 @@ export class Action extends ActionDefinition {
   services: ActionService[];
   quizz_liste: Quizz[];
   faq_liste: FAQDefinition[];
+  article_liste: Article[];
   kycs: QuestionKYC[] | undefined;
   nom_commune?: string;
   deja_vue?: boolean;
@@ -31,6 +33,7 @@ export class Action extends ActionDefinition {
     this.services = [];
     this.quizz_liste = [];
     this.faq_liste = [];
+    this.article_liste = [];
     this.nombre_aides = 0;
     this.nombre_actions_faites = 0;
   }

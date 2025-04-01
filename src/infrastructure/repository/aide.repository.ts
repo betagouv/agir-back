@@ -224,6 +224,7 @@ export class AideRepository {
       date_expiration: aideDB.date_expiration,
       derniere_maj: aideDB.derniere_maj,
       est_gratuit: aideDB.est_gratuit,
+      partenaires_supp_ids: aideDB.partenaires_supp_ids,
     };
   }
 }

@@ -74,6 +74,7 @@ export class ActionRepository {
       cms_id: action.cms_id,
       code: action.code,
       titre: action.titre,
+      titre_recherche: action.titre_recherche,
       consigne: action.consigne,
       label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
@@ -85,6 +86,7 @@ export class ActionRepository {
       lvo_objet: action.lvo_objet,
       pourquoi: action.pourquoi,
       quizz_ids: action.quizz_ids,
+      articles_ids: action.article_ids,
       faq_ids: action.faq_ids,
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
@@ -152,7 +154,7 @@ export class ActionRepository {
     }
     if (filtre.titre_fragment) {
       main_filter.push({
-        titre: {
+        titre_recherche: {
           contains: filtre.titre_fragment,
           mode: 'insensitive',
         },
@@ -219,6 +221,7 @@ export class ActionRepository {
     return new ActionDefinition({
       cms_id: action.cms_id,
       titre: action.titre,
+      titre_recherche: action.titre_recherche,
       code: action.code,
       thematique: Thematique[action.thematique],
       comment: action.comment,
@@ -238,6 +241,7 @@ export class ActionRepository {
       consigne: action.consigne,
       label_compteur: action.label_compteur,
       sources: action.sources as any,
+      article_ids: action.articles_ids,
     });
   }
 }

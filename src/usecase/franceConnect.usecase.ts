@@ -137,7 +137,6 @@ export class FranceConnectUsecase {
     new_utilisateur.status = UtilisateurStatus.default;
     new_utilisateur.active_account = true;
     new_utilisateur.est_valide_pour_classement = true;
-    new_utilisateur.france_connect_sub = user_info.sub;
 
     if (state.situation_ngc_id) {
       await this.inscriptionUsecase.external_inject_situation_to_user_kycs(
@@ -157,6 +156,7 @@ export class FranceConnectUsecase {
     utilisateur.annee_naissance = this.getAnnee(user_info.birthdate);
     utilisateur.mois_naissance = this.getMois(user_info.birthdate);
     utilisateur.jour_naissance = this.getJour(user_info.birthdate);
+    utilisateur.france_connect_sub = user_info.sub;
   }
 
   private async log_ok_fc_user(
@@ -171,7 +171,7 @@ export class FranceConnectUsecase {
       utilisateur.id,
     );
 
-    this.passwordManager.initLoginState(utilisateur);
+    this.passwordManager.initLoginStateAfterSuccess(utilisateur);
 
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
@@ -224,14 +224,17 @@ export class FranceConnectUsecase {
 
   private getAnnee(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(0, 4));
+    const parsed = parseInt(date.substring(0, 4));
+    return Number.isNaN(parsed) ? null : parsed;
   }
   private getMois(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(5, 7));
+    const parsed = parseInt(date.substring(5, 7));
+    return Number.isNaN(parsed) ? null : parsed;
   }
   private getJour(date: string): number {
     if (!date) return null;
-    return parseInt(date.substring(8));
+    const parsed = parseInt(date.substring(8));
+    return Number.isNaN(parsed) ? null : parsed;
   }
 }

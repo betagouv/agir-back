@@ -219,6 +219,7 @@ describe('Thematique Board (API test)', () => {
       total_national_actions_faites: 13,
       total_utilisateur_actions_faites: 1,
       pourcentage_bilan_done: 0,
+      bilan_carbone_total_kg: 8900.305086108707,
       nombre_aides: 2,
       nombre_recettes: 1150,
     });
@@ -376,6 +377,7 @@ describe('Thematique Board (API test)', () => {
     expect(body).toEqual({
       nom_commune: 'Dijon',
       pourcentage_bilan_done: 17,
+      bilan_carbone_total_kg: 8863.759021558264,
       total_national_actions_faites: 0,
       total_utilisateur_actions_faites: 0,
       nombre_aides: 0,
