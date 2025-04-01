@@ -171,7 +171,7 @@ export class FranceConnectUsecase {
       utilisateur.id,
     );
 
-    this.passwordManager.initLoginState(utilisateur);
+    this.passwordManager.initLoginStateAfterSuccess(utilisateur);
 
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 

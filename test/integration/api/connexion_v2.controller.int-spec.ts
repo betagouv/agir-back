@@ -526,6 +526,36 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
       new Date().getTime(),
     );
   });
+
+  it('POST /utilisateurs/login_v2 - compte bloqué après 24h se débloque automatiquement', async () => {
+    // GIVEN
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      failed_login_count: 5,
+      prevent_login_before: new Date(Date.now() - 1000 * 60 * 60 * 25),
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login_v2')
+      .send({
+        mot_de_passe: 'bad',
+        email: 'yo@truc.com',
+      });
+
+    // THEN
+    expect(response.status).toEqual(400);
+    const dbUser = await TestUtil.prisma.utilisateur.findUnique({
+      where: { id: 'utilisateur-id' },
+    });
+    expect(dbUser.failed_login_count).toEqual(1);
+    expect(dbUser.prevent_login_before.getTime()).toBeLessThan(Date.now());
+  });
+
   it('POST /utilisateurs/login_v2 - bad email', async () => {
     // GIVEN
     const utilisateur = getFakeUtilisteur();
