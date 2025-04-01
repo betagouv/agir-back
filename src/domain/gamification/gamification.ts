@@ -67,6 +67,7 @@ export class Gamification {
       this.ajoutePoints(200, utilisateur);
     }
     this.popup_reset_vue = true;
+    this.badges = [TypeBadge.pionnier];
   }
 
   public terminerCelebration(id: string, utilisateur: Utilisateur) {
