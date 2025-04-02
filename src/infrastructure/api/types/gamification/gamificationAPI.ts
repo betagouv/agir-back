@@ -8,7 +8,6 @@ import {
 } from '../../../../domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../../domain/gamification/gamification';
 import { TypeBadge } from '../../../../domain/gamification/typeBadge';
-import { MissionRepository } from '../../../repository/mission.repository';
 
 export class BadgeAPI {
   @ApiProperty({ enum: TypeBadge }) type: TypeBadge;
@@ -48,9 +47,7 @@ export class CelebrationAPI {
       titre: celeb.titre,
       new_niveau: celeb.new_niveau,
       reveal: celeb.reveal,
-      thematique_univers_label: celeb.thematique_univers
-        ? MissionRepository.getTitreByCode(celeb.thematique_univers)
-        : undefined,
+      thematique_univers_label: undefined,
     };
   }
 }

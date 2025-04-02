@@ -3,7 +3,6 @@ import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { App } from '../domain/app';
 import { Article } from '../domain/contenu/article';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
-import { ContentType } from '../domain/contenu/contentType';
 import { IncludeArticle } from '../domain/contenu/includeArticle';
 import { Quizz } from '../domain/contenu/quizz';
 import { Thematique } from '../domain/thematique/thematique';
@@ -14,7 +13,6 @@ import {
 } from '../infrastructure/personnalisation/personnalisator';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
-import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -176,7 +174,6 @@ export class BibliothequeUsecase {
       [
         Scope.history_article_quizz_aides,
         Scope.gamification,
-        Scope.missions,
         Scope.kyc,
         Scope.logement,
       ],
@@ -217,12 +214,7 @@ export class BibliothequeUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.history_article_quizz_aides,
-        Scope.gamification,
-        Scope.missions,
-        Scope.kyc,
-      ],
+      [Scope.history_article_quizz_aides, Scope.gamification, Scope.kyc],
     );
 
     Utilisateur.checkState(utilisateur);
@@ -251,17 +243,6 @@ export class BibliothequeUsecase {
       utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
       utilisateur.history.declarePointsQuizzEnPoche(content_id);
     }
-
-    utilisateur.missions.validateArticleOrQuizzDone(
-      content_id,
-      ContentType.quizz,
-      pourcent,
-    );
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
   }
 
   public async getQuizz(
@@ -318,15 +299,5 @@ export class BibliothequeUsecase {
       );
       utilisateur.history.declarePointsArticleEnPoche(content_id);
     }
-
-    utilisateur.missions.validateArticleOrQuizzDone(
-      content_id,
-      ContentType.article,
-    );
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
   }
 }

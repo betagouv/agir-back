@@ -15,9 +15,7 @@ import { ContentType } from '../../domain/contenu/contentType';
 import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
-import { MissionDefinition } from '../../domain/mission/missionDefinition';
 import { Thematique } from '../../domain/thematique/thematique';
-import { MissionUsecase } from '../../usecase/mission.usecase';
 import { NGCCalculator } from '../ngc/NGCCalculator';
 import {
   ArticleFilter,
@@ -25,7 +23,6 @@ import {
 } from '../repository/article.repository';
 import { DefiRepository } from '../repository/defi.repository';
 import { KycRepository } from '../repository/kyc.repository';
-import { MissionRepository } from '../repository/mission.repository';
 import { QuizzRepository } from '../repository/quizz.repository';
 import { ThematiqueRepository } from '../repository/thematique.repository';
 import { GenericControler } from './genericControler';
@@ -41,9 +38,7 @@ export class AsciiPreviewController extends GenericControler {
   constructor(
     private kycRepository: KycRepository,
     private nGCCalculator: NGCCalculator,
-    private missionRepository: MissionRepository,
     private articleRepository: ArticleRepository,
-    private missionUsecase: MissionUsecase,
     private quizzRepository: QuizzRepository,
     private defiRepository: DefiRepository,
   ) {
@@ -311,7 +306,6 @@ export class AsciiPreviewController extends GenericControler {
       return this.returnBadOreMissingLoginError(res);
     }
     let all_kyc_defs = KycRepository.getCatalogue();
-    let all_mission_defs = MissionRepository.getCatalogue();
     let result = [];
 
     const kyc_fire_map: Map<number, boolean> = new Map();

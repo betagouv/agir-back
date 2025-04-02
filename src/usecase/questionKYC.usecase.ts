@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import validator from 'validator';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
@@ -207,22 +206,11 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.kyc,
-        Scope.gamification,
-        Scope.missions,
-        Scope.gamification,
-        Scope.logement,
-      ],
+      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -261,13 +249,7 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.kyc,
-        Scope.gamification,
-        Scope.missions,
-        Scope.gamification,
-        Scope.logement,
-      ],
+      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -336,12 +318,6 @@ export class QuestionKYCUsecase {
     }
 
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
-    utilisateur.missions.answerMosaic(mosaic.id);
-
-    utilisateur.missions.recomputeRecoDefi(
-      utilisateur,
-      DefiRepository.getCatalogue(),
-    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -390,8 +366,6 @@ export class QuestionKYCUsecase {
       question_to_update,
       utilisateur,
     );
-
-    utilisateur.missions.answerKyc(code_question);
 
     this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 

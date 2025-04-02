@@ -40,7 +40,7 @@ export class DefisUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.defis, Scope.logement, Scope.missions],
+      [Scope.defis, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -54,10 +54,7 @@ export class DefisUsecase {
     }
 
     for (const thematique of filtre_thematiques) {
-      const defis_univers = await this.getDefisOfThematiqueAndUtilisateur(
-        utilisateur,
-        thematique,
-      );
+      const defis_univers = null;
       result = result.concat(
         defis_univers.filter((d) => filtre_status.includes(d.getStatus())),
       );
@@ -88,12 +85,7 @@ export class DefisUsecase {
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.defis,
-        Scope.missions,
-        Scope.unlocked_features,
-        Scope.gamification,
-      ],
+      [Scope.defis, Scope.unlocked_features, Scope.gamification],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -103,26 +95,8 @@ export class DefisUsecase {
       if (!utilisateur.unlocked_features.isUnlocked(Feature.defis)) {
         utilisateur.unlocked_features.add(Feature.defis);
       }
-      utilisateur.missions.validateDefiObjectif(defiId);
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  private async getDefisOfThematiqueAndUtilisateur(
-    utilisateur: Utilisateur,
-    thematique: Thematique,
-  ): Promise<Defi[]> {
-    const list_defi_ids =
-      utilisateur.missions.getAllUnlockedDefisIdsByThematique(thematique);
-
-    const result: Defi[] = [];
-
-    for (const id_defi of list_defi_ids) {
-      result.push(utilisateur.defi_history.getDefiOrException(id_defi));
-    }
-    return this.personnalisator.personnaliser(result, utilisateur, [
-      CLE_PERSO.block_text_cms,
-    ]);
   }
 }

@@ -1,14 +1,10 @@
 import { EventType } from '../../../src/domain/appEvent';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import {
   Celebration,
   CelebrationType,
 } from '../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../src/domain/gamification/gamification';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
@@ -20,67 +16,6 @@ describe('EVENT (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
-
-  const missions_article: MissionsUtilisateur_v1 = {
-    version: 1,
-    missions: [
-      {
-        id: '1',
-        done_at: new Date(1),
-        code: CodeMission.cereales,
-        image_url: 'image',
-        thematique: Thematique.alimentation,
-        titre: 'titre',
-        introduction: 'intro',
-        is_first: false,
-        est_examen: false,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '1',
-            type: ContentType.article,
-            titre: 'Un article à lire',
-            points: 20,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-        ],
-        est_visible: true,
-      },
-    ],
-  };
-  const missions_quizz: MissionsUtilisateur_v1 = {
-    version: 1,
-    missions: [
-      {
-        id: '1',
-        done_at: new Date(1),
-        code: CodeMission.cereales,
-        image_url: 'image',
-        thematique: Thematique.alimentation,
-        titre: 'titre',
-        introduction: 'intro',
-        is_first: false,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '1',
-            type: ContentType.quizz,
-            titre: 'Un quizz à faire',
-            points: 25,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-        ],
-        est_visible: true,
-        est_examen: false,
-      },
-    ],
-  };
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -175,73 +110,6 @@ describe('EVENT (API test)', () => {
     expect(
       dbUtilisateur.history.getQuizzHistoryById('123').attempts[0].score,
     ).toEqual(100);
-  });
-
-  it('POST /utilisateurs/id/events - valide objectif de mission article', async () => {
-    // GIVEN
-    process.env.GAIN_CONTENT_POINT = 'true';
-    await TestUtil.create(DB.utilisateur, {
-      version: 2,
-      missions: missions_article as any,
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      points: 5,
-    });
-    await articleRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/events',
-    ).send({
-      type: EventType.article_lu,
-      content_id: '1',
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const dbUtilisateur = await utilisateurRepository.getById(
-      'utilisateur-id',
-      [Scope.ALL],
-    );
-    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(15);
-    expect(
-      dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
-    ).toBeLessThan(Date.now());
-  });
-  it('POST /utilisateurs/id/events - valide objectif de mission quizz', async () => {
-    // GIVEN
-    process.env.GAIN_CONTENT_POINT = 'true';
-    await TestUtil.create(DB.utilisateur, {
-      version: 2,
-      missions: missions_quizz as any,
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '1',
-      points: 5,
-    });
-
-    await quizzRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/events',
-    ).send({
-      type: EventType.quizz_score,
-      number_value: 100,
-      content_id: '1',
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const dbUtilisateur = await utilisateurRepository.getById(
-      'utilisateur-id',
-      [Scope.ALL],
-    );
-    expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(15);
-    expect(
-      dbUtilisateur.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
-    ).toBeLessThan(Date.now());
   });
 
   it('POST /utilisateurs/id/events - ajoute points pour article lu v2', async () => {

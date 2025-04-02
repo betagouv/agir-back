@@ -85,15 +85,6 @@ export class LoadCMSController extends GenericControler {
     return await this.cmsUsecase.loadConformiteFromCMS();
   }
 
-  @Post('/admin/load_missions_from_cms')
-  @ApiOperation({
-    summary: 'Upsert toutes les missions publiées du CMS',
-  })
-  @ApiOkResponse({ type: [String] })
-  async upsertAllCMSMissions(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.cmsUsecase.loadMissionsFromCMS();
-  }
   @Post('/admin/load_kycs_from_cms')
   @ApiOperation({
     summary: 'Upsert toutes les KYCs publiées du CMS',

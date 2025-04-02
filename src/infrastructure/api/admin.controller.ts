@@ -23,7 +23,6 @@ import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
-import { StatistiqueUsecase } from '../../../src/usecase/stats/statistique.usecase';
 import { App } from '../../domain/app';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
@@ -32,15 +31,12 @@ import { AidesUsecase } from '../../usecase/aides.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
-import { MissionUsecase } from '../../usecase/mission.usecase';
 import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
-import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -72,14 +68,10 @@ export class AdminController extends GenericControler {
     private actionUsecase: ActionUsecase,
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
-    private statistiqueUsecase: StatistiqueUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
     private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
-    private missionStatistiqueUsecase: MissionStatistiqueUsecase,
-    private missionUsecase: MissionUsecase,
-    private thematiqueStatistiqueUsecase: ThematiqueStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
@@ -198,15 +190,6 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
-  @Post('/admin/statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des utilisateurs`,
-  })
-  async calcul_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.statistiqueUsecase.calculStatistiqueDefis();
-  }
-
   @Post('/admin/article-statistique')
   @ApiOperation({
     summary: `Calcul des statistiques de l'ensemble des articles`,
@@ -243,23 +226,6 @@ export class AdminController extends GenericControler {
     return await this.kycStatistiqueUsecase.calculStatistique();
   }
 
-  @Post('/admin/thematique-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des thématiques`,
-  })
-  async calcul_thematique_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.missionStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/univers-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des univers`,
-  })
-  async calcul_univers_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.thematiqueStatistiqueUsecase.calculStatistique();
-  }
   @Get('/admin/prenoms_a_valider')
   @ApiOperation({
     summary: `Liste les utilisateurs ayant un prenom à valider`,
@@ -318,26 +284,6 @@ export class AdminController extends GenericControler {
   async create_brevo_contacts(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.contactUsecase.createMissingContacts();
-  }
-
-  @Get('/admin/liste_user_with_mission_done')
-  @ApiOperation({
-    summary: `liste tous les utilisateurs ayant terminés une certaine mission`,
-  })
-  @ApiQuery({
-    name: 'code_mission',
-    type: String,
-    required: true,
-    description: `Code de la mission`,
-  })
-  async listeUserMissionDone(
-    @Request() req,
-    @Query('code_mission') code_mission: string,
-  ): Promise<any> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.missionUsecase.listUsersWithMissionDoneByCode(
-      code_mission,
-    );
   }
 
   @Get('/admin/:utilisateurId/raw_sql_user')

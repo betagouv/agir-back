@@ -1,6 +1,5 @@
 import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { ContentType } from '../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
@@ -18,13 +17,11 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
-import { CodeMission } from '../../../src/domain/mission/codeMission';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
-import { MissionsUtilisateur_v1 } from '../../../src/domain/object_store/mission/MissionsUtilisateur_v1';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -104,37 +101,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const defiRepository = new DefiRepository(TestUtil.prisma);
   const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
-
-  const missions_with_kyc: MissionsUtilisateur_v1 = {
-    version: 1,
-    missions: [
-      {
-        id: '1',
-        done_at: new Date(1),
-        code: CodeMission.cereales,
-        image_url: 'img',
-        thematique: Thematique.alimentation,
-        titre: 'titre',
-        introduction: 'intro',
-        is_first: false,
-        objectifs: [
-          {
-            id: '0',
-            content_id: '_1',
-            type: ContentType.kyc,
-            titre: '1 question pour vous',
-            points: 10,
-            is_locked: false,
-            done_at: null,
-            sont_points_en_poche: false,
-            est_reco: true,
-          },
-        ],
-        est_visible: true,
-        est_examen: false,
-      },
-    ],
-  };
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -1595,58 +1561,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     });
   });
 
-  it('PUT /utilisateurs/id/questionsKYC_v2/1 - crée la reponse à la question 1, empoche les points', async () => {
-    // GIVEN
-    process.env.GAIN_CONTENT_POINT = 'true';
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc as any,
-      kyc: kyc as any,
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.libre,
-      points: 10,
-      question: 'Comment avez vous connu le service ?',
-      reponses: [],
-    });
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC_v2/_1',
-    ).send([{ value: 'YO' }]);
-
-    // THEN
-    expect(response.status).toBe(200);
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
-    expect(
-      user.kyc_history
-        .getUpToDateQuestionByCodeOrException('_1')
-        .getReponseSimpleValue(),
-    ).toStrictEqual('YO');
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.gamification.getPoints()).toEqual(20);
-    expect(
-      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
-    ).toBeLessThan(Date.now());
-    expect(
-      userDB.missions.getRAWMissions()[0].objectifs[0].done_at.getTime(),
-    ).toBeGreaterThan(Date.now() - 200);
-  });
-
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - champ libre de max 140 char', async () => {
     // GIVEN
     const kyc: KYCHistory_v2 = {
@@ -1655,7 +1569,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc as any,
       kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
@@ -1694,7 +1607,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc as any,
       kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
@@ -1731,7 +1643,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      missions: missions_with_kyc as any,
       kyc: kyc as any,
     });
     await TestUtil.create(DB.kYC, {
@@ -1802,147 +1713,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
     expect(response.body.message).toBe(
       `L'attribut 'value' doit être de type decimal, reçu : [hoho]`,
-    );
-  });
-
-  it(`PUT /utilisateurs/id/questionsKYC_v2/1 - un defi deviens non recommandé suite à maj de KYC`, async () => {
-    // GIVEN
-    const missions_article_plus_defi: MissionsUtilisateur_v1 = {
-      version: 1,
-      missions: [
-        {
-          id: '1',
-          done_at: new Date(1),
-          code: CodeMission.cereales,
-          image_url: 'img',
-          thematique: Thematique.alimentation,
-          titre: 'titre',
-          introduction: 'intro',
-          is_first: false,
-          est_examen: false,
-          objectifs: [
-            {
-              id: '0',
-              content_id: '1',
-              type: ContentType.article,
-              titre: '1 article',
-              points: 10,
-              is_locked: false,
-              done_at: new Date(),
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-            {
-              id: '1',
-              content_id: '1',
-              type: ContentType.defi,
-              titre: '1 défi',
-              points: 10,
-              is_locked: false,
-              done_at: null,
-              sont_points_en_poche: false,
-              est_reco: true,
-            },
-          ],
-          est_visible: true,
-        },
-      ],
-    };
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: '1',
-          id_cms: 1,
-          question: `question`,
-          type: TypeReponseQuestionKYC.choix_unique,
-          thematique: Thematique.climat,
-          reponse_complexe: [
-            { label: 'YI', code: 'yi', selected: true },
-            { label: 'YO', code: 'yos', selected: false },
-          ],
-          tags: [],
-          short_question: 'short',
-          image_url: 'AAA',
-          conditions: [],
-          unite: { abreviation: 'kg' },
-          emoji: '🔥',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      missions: missions_article_plus_defi as any,
-      kyc: kyc as any,
-    });
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: '1',
-      question: `question`,
-      type: TypeReponseQuestionKYC.choix_unique,
-      reponses: [
-        { label: 'YI', code: 'yi' },
-        { label: 'YO', code: 'yos' },
-      ],
-    });
-
-    await TestUtil.create(DB.article, { content_id: '1' });
-    await articleRepository.loadCache();
-
-    await TestUtil.create(DB.defi, {
-      content_id: '1',
-      conditions: [[{ id_kyc: 1, code_reponse: 'yi' }]],
-    });
-    await TestUtil.create(DB.thematique, {
-      code: Thematique.alimentation,
-      label: 'Faut manger !',
-    });
-
-    await thematiqueRepository.onApplicationBootstrap();
-    await kycRepository.loadCache();
-    await defiRepository.loadCache();
-
-    // WHEN
-    let response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
-    ).send([
-      { code: 'yos', selected: true },
-      { code: 'yi', selected: false },
-    ]);
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    let userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.missions.getRAWMissions()[0].objectifs[1].is_locked).toEqual(
-      false,
-    );
-    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
-      '1',
-    );
-    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
-      false,
-    );
-    // WHEN
-    response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
-    ).send([
-      { code: 'yi', selected: true },
-      { code: 'yos', selected: false },
-    ]);
-
-    // THEN
-    expect(response.status).toBe(200);
-    userDB = await utilisateurRepository.getById('utilisateur-id', [Scope.ALL]);
-    expect(userDB.missions.getRAWMissions()[0].objectifs[1].content_id).toEqual(
-      '1',
-    );
-    expect(userDB.missions.getRAWMissions()[0].objectifs[1].est_reco).toEqual(
-      true,
     );
   });
 
