@@ -643,7 +643,6 @@ export class TestUtil {
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: null,
-      missions: {},
       bilbiotheque_services: {},
       db_version: 0,
       is_magic_link_user: false,

@@ -38,7 +38,6 @@ model Utilisateur {
   kyc                        Json      @default("{}") // versioné
   unlocked_features          Json      @default("{}") // versioné 
   logement                   Json      @default("{}") // versioné 
-  missions                   Json      @default("{}") // versioné
   bilbiotheque_services      Json      @default("{}") // versioné
   notification_history       Json      @default("{}") // versioné
   thematique_history         Json      @default("{}") // versioné

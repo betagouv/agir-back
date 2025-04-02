@@ -658,7 +658,6 @@ export class UtilisateurRepository {
       history: undefined,
       logement: undefined,
       kyc: undefined,
-      missions: undefined,
       bilbiotheque_services: undefined,
       notification_history: undefined,
       thematique_history: undefined,
