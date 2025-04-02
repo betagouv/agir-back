@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Utilisateur as UtilisateurDB } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../../../src/domain/history/history';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
@@ -24,7 +23,6 @@ import {
   UtilisateurStatus,
 } from '../../../domain/utilisateur/utilisateur';
 import { PrismaService } from '../../prisma/prisma.service';
-import { DefiRepository } from '../defi.repository';
 import { KycRepository } from '../kyc.repository';
 
 export type UserFilter = {
@@ -42,7 +40,6 @@ const OMIT_ALL_CONFIGURATION_JSON = {
   kyc: true,
   unlocked_features: true,
   logement: true,
-  defis: true,
   bilbiotheque_services: true,
   thematique_history: true,
 };
@@ -504,11 +501,6 @@ export class UtilisateurRepository {
           Upgrader.upgradeRaw(user.kyc, SerialisableDomain.KYCHistory),
         )
       : undefined;
-    const defis = user.defis
-      ? new DefiHistory(
-          Upgrader.upgradeRaw(user.defis, SerialisableDomain.DefiHistory),
-        )
-      : undefined;
     const logement = user.logement
       ? new Logement(
           Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
@@ -570,7 +562,6 @@ export class UtilisateurRepository {
       migration_enabled: user.migration_enabled,
       logement: logement,
       tag_ponderation_set: user.tag_ponderation_set as any,
-      defi_history: defis,
       force_connexion: user.force_connexion,
       derniere_activite: user.derniere_activite,
       annee_naissance: user.annee_naissance,
@@ -605,9 +596,6 @@ export class UtilisateurRepository {
 
     if (result.kyc_history) {
       result.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    }
-    if (result.defi_history) {
-      result.defi_history.setCatalogue(DefiRepository.getCatalogue());
     }
     return result;
   }
@@ -674,7 +662,6 @@ export class UtilisateurRepository {
       bilbiotheque_services: undefined,
       notification_history: undefined,
       thematique_history: undefined,
-      defis: undefined,
       cache_bilan_carbone: undefined,
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
@@ -746,12 +733,6 @@ export class UtilisateurRepository {
             SerialisableDomain.ThematiqueHistory,
           )
         : undefined,
-      defis: scopes.includes(Scope.defis)
-        ? Upgrader.serialiseToLastVersion(
-            user.defi_history,
-            SerialisableDomain.DefiHistory,
-          )
-        : undefined,
     };
   }
 
@@ -784,7 +765,6 @@ export class UtilisateurRepository {
       kyc: !scopes.includes(Scope.kyc),
       unlocked_features: !scopes.includes(Scope.unlocked_features),
       logement: !scopes.includes(Scope.logement),
-      defis: !scopes.includes(Scope.defis),
       bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
       notification_history: !scopes.includes(Scope.notification_history),
       thematique_history: !scopes.includes(Scope.thematique_history),

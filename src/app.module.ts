@@ -34,7 +34,6 @@ import { CmsPreviewController } from './infrastructure/api/cms.preview.controlle
 import { CommunesController } from './infrastructure/api/communes.controller';
 import { ConformiteController } from './infrastructure/api/conformite.controller';
 import { ConnexionController } from './infrastructure/api/connexion.controller';
-import { DefisController } from './infrastructure/api/defis.controller';
 import { EventController } from './infrastructure/api/event.controller';
 import { GamificationController } from './infrastructure/api/gamification.controller';
 import { GoneController } from './infrastructure/api/gone.controller';
@@ -72,8 +71,6 @@ import { BlockTextRepository } from './infrastructure/repository/blockText.repos
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from './infrastructure/repository/compteurActions.repository';
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
-import { DefiRepository } from './infrastructure/repository/defi.repository';
-import { DefiStatistiqueRepository } from './infrastructure/repository/defiStatistique.repository';
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
@@ -93,7 +90,6 @@ import { PresDeChezNousRepository } from './infrastructure/repository/services_r
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
 import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
-import { StatistiqueRepository } from './infrastructure/repository/statitstique.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { TokenRepository } from './infrastructure/repository/token.repository';
@@ -116,7 +112,6 @@ import { CommunesUsecase } from './usecase/communes.usecase';
 import { ConformiteUsecase } from './usecase/conformite.usecase';
 import { Connexion_v2_Usecase } from './usecase/connexion.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { DefisUsecase } from './usecase/defis.usecase';
 import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
@@ -135,7 +130,6 @@ import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
@@ -162,7 +156,6 @@ function getControllers(): any[] {
     RecommandationsController,
     BibliothequeController,
     InscriptionController,
-    DefisController,
     ThematiqueController,
     RechecheServicesController,
     BilanCarboneController,
@@ -245,14 +238,9 @@ function getControllers(): any[] {
     LinkyEmailer,
     InscriptionUsecase,
     AideRepository,
-    DefiRepository,
-    DefisUsecase,
     LinkyConsentRepository,
-    StatistiqueRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
-    DefiStatistiqueUsecase,
-    DefiStatistiqueRepository,
     QuizStatistiqueUsecase,
     QuizStatistiqueRepository,
     KycStatistiqueUsecase,

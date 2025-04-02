@@ -30,7 +30,7 @@ export class NotificationMobileUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.notification_history, Scope.defis],
+          [Scope.notification_history],
           { is_active: true, has_mobile_push_notif_token: true },
         );
 

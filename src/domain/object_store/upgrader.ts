@@ -1,5 +1,4 @@
 import { CacheBilanCarbone_v0 } from './bilan/cacheBilanCarbone_v0';
-import { DefiHistory_v0 } from './defi/defiHistory_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
@@ -17,7 +16,6 @@ export enum SerialisableDomain {
   History = 'History',
   Gamification = 'Gamification',
   KYCHistory = 'KYCHistory',
-  DefiHistory = 'DefiHistory',
   Logement = 'Logement',
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
@@ -34,7 +32,6 @@ const CLASS_DICTIONNARY = {
   KYCHistory_v1: KYCHistory_v1,
   KYCHistory_v2: KYCHistory_v2,
   Logement_v0: Logement_v0,
-  DefiHistory_v0: DefiHistory_v0,
   BibliothequeServices_v0: BibliothequeServices_v0,
   NotificationHistory_v0: NotificationHistory_v0,
   ThematiqueHistory_v0: ThematiqueHistory_v0,

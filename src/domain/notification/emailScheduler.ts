@@ -7,19 +7,6 @@ export class EmailScheduler extends NotificationScheduler {
     notif: EmailNotification,
     utilisateur: Utilisateur,
   ): boolean {
-    if (notif === EmailNotification.waiting_action) {
-      const plus_vieux_defi_encours =
-        utilisateur.defi_history.getPlusVieuxDefiEnCours();
-
-      return (
-        utilisateur.active_account &&
-        utilisateur.isV1User() &&
-        this.not_sent(notif, utilisateur) &&
-        plus_vieux_defi_encours &&
-        Date.now() - plus_vieux_defi_encours.date_acceptation.getTime() >
-          this.jour_10
-      );
-    }
     if (notif === EmailNotification.welcome) {
       const age = this.getAgeCreationUtilisateur(utilisateur);
       return (

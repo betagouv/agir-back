@@ -1,12 +1,12 @@
-import { DB, TestUtil } from '../../TestUtil';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { Feature } from '../../../src/domain/gamification/feature';
+import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import {
   Scope,
   SourceInscription,
   Utilisateur,
 } from '../../../src/domain/utilisateur/utilisateur';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { Feature } from '../../../src/domain/gamification/feature';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -366,7 +366,6 @@ describe('UtilisateurRepository', () => {
       version: 1,
       unlocked_features: [
         Feature.aides,
-        Feature.defis,
         Feature.bibliotheque,
         Feature.bilan_carbone,
       ],
@@ -384,7 +383,7 @@ describe('UtilisateurRepository', () => {
     ]);
     expect(userDB_2.prenom).toEqual('YOYOYO');
     expect(userDB_2.unlocked_features).toEqual({
-      unlocked_features: ['aides', 'defis'],
+      unlocked_features: ['aides'],
     });
   });
   it(`updateUtilisateurNoConcurency : maj sous donnée versionnée seulement`, async () => {
@@ -396,7 +395,6 @@ describe('UtilisateurRepository', () => {
       version: 1,
       unlocked_features: [
         Feature.aides,
-        Feature.defis,
         Feature.bibliotheque,
         Feature.bilan_carbone,
       ],
@@ -414,7 +412,7 @@ describe('UtilisateurRepository', () => {
     ]);
     expect(userDB_2.prenom).toEqual('prenom');
     expect(userDB_2.unlocked_features).toEqual({
-      unlocked_features: ['aides', 'defis', 'bibliotheque', 'bilan_carbone'],
+      unlocked_features: ['aides', 'bibliotheque', 'bilan_carbone'],
     });
   });
   it(`countByCodeCommune : count correct`, async () => {

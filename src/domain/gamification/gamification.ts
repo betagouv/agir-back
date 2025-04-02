@@ -88,18 +88,6 @@ export class Gamification {
     return this.points;
   }
 
-  public revealDefis() {
-    this.celebrations.push(
-      new Celebration({
-        id: undefined,
-        titre: 'NOUVELLE FONCTIONNALITÉ',
-        type: CelebrationType.reveal,
-        new_niveau: undefined,
-        reveal: Reveal.newRevealFromFeature(Feature.defis),
-      }),
-    );
-  }
-
   public celebrerFinMission(thematique_univers: string) {
     this.celebrations.push(
       new Celebration({
@@ -147,8 +135,6 @@ export class Gamification {
         return Reveal.newRevealFromFeature(Feature.recommandations);
       case 5:
         return Reveal.newRevealFromFeature(Feature.bibliotheque);
-      case 6:
-        return Reveal.newRevealFromFeature(Feature.defis);
     }
     return null;
   }

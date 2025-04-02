@@ -4,7 +4,6 @@ import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { App } from '../app';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
-import { DefiHistory } from '../defis/defiHistory';
 import { Gamification } from '../gamification/gamification';
 import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
@@ -47,7 +46,6 @@ export enum Scope {
   kyc = 'kyc',
   unlocked_features = 'unlocked_features',
   logement = 'logement',
-  defis = 'defis',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
@@ -87,7 +85,6 @@ export class UtilisateurData {
   kyc_history: KYCHistory;
   logement?: Logement;
   tag_ponderation_set: TagPonderationSet;
-  defi_history: DefiHistory;
   force_connexion: boolean;
   derniere_activite: Date;
   db_version: number;
@@ -168,7 +165,6 @@ export class Utilisateur extends UtilisateurData {
       unlocked_features: new UnlockedFeatures(),
       history: new History(),
       kyc_history: new KYCHistory(),
-      defi_history: new DefiHistory(),
       version: App.currentUserSystemVersion(),
       logement: new Logement({
         version: 0,
@@ -231,7 +227,6 @@ export class Utilisateur extends UtilisateurData {
     this.gamification.reset();
     this.unlocked_features.reset();
     this.history.reset();
-    this.defi_history.reset();
     this.kyc_history.reset();
     this.thematique_history.reset();
     this.notification_history.reset();

@@ -16,7 +16,6 @@ export enum EmailNotification {
   //AUTO
   welcome = 'welcome',
   late_onboarding = 'late_onboarding',
-  waiting_action = 'waiting_action',
 
   // NEW
   email_demande_feedback = 'email_demande_feedback',

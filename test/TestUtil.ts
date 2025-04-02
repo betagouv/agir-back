@@ -18,8 +18,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   Aide,
   Article,
-  Defi,
-  DefiStatistique,
   Linky,
   Quizz,
   Service,
@@ -35,7 +33,6 @@ import { Echelle } from '../src/domain/aides/echelle';
 import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
-import { DefiStatus } from '../src/domain/defis/defi';
 import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
 import { Feature } from '../src/domain/gamification/feature';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -48,7 +45,6 @@ import {
 } from '../src/domain/logement/logement';
 import { CanalNotification } from '../src/domain/notification/notificationHistory';
 import { CacheBilanCarbone_v0 } from '../src/domain/object_store/bilan/cacheBilanCarbone_v0';
-import { DefiHistory_v0 } from '../src/domain/object_store/defi/defiHistory_v0';
 import { Gamification_v0 } from '../src/domain/object_store/gamification/gamification_v0';
 import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
@@ -57,7 +53,6 @@ import { NotificationHistory_v0 } from '../src/domain/object_store/notification/
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Tag } from '../src/domain/scoring/tag';
-import { TagUtilisateur } from '../src/domain/scoring/tagUtilisateur';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
@@ -75,7 +70,6 @@ import { ArticleRepository } from '../src/infrastructure/repository/article.repo
 import { BlockTextRepository } from '../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../src/infrastructure/repository/compteurActions.repository';
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
-import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
@@ -91,7 +85,6 @@ export enum DB {
   fAQ = 'fAQ',
   blockText = 'blockText',
   conformite = 'conformite',
-  defi = 'defi',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
@@ -101,7 +94,6 @@ export enum DB {
   aideExpirationWarning = 'aideExpirationWarning',
   quizz = 'quizz',
   compteurActions = 'compteurActions',
-  defiStatistique = 'defiStatistique',
   mission = 'mission',
   kYC = 'kYC',
   universStatistique = 'universStatistique',
@@ -116,7 +108,6 @@ export class TestUtil {
     utilisateur: TestUtil.utilisateurData,
     aide: TestUtil.aideData,
     conformite: TestUtil.conformiteData,
-    defi: TestUtil.defiData,
     action: TestUtil.actionData,
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
@@ -129,7 +120,6 @@ export class TestUtil {
     blockText: TestUtil.blockTextData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
-    defiStatistique: TestUtil.defiStatistiqueData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
     universStatistique: TestUtil.universStatistiqueData,
@@ -220,7 +210,6 @@ export class TestUtil {
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.statistique.deleteMany();
     await this.prisma.articleStatistique.deleteMany();
-    await this.prisma.defiStatistique.deleteMany();
     await this.prisma.quizStatistique.deleteMany();
     await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
@@ -252,7 +241,6 @@ export class TestUtil {
     BlockTextRepository.resetCache();
     CompteurActionsRepository.resetCache();
     ConformiteRepository.resetCache();
-    DefiRepository.resetCache();
     FAQRepository.resetCache();
     KycRepository.resetCache();
     PartenaireRepository.resetCache();
@@ -396,25 +384,7 @@ export class TestUtil {
       ...override,
     };
   }
-  static defiData(override?: Partial<Defi>): Defi {
-    return {
-      content_id: '123',
-      titre: 'titreA',
-      astuces: 'astucesss',
-      pourquoi: 'pfpaf',
-      points: 5,
-      sous_titre: 'ssss',
-      tags: [TagUtilisateur.appetence_cafe],
-      thematique: Thematique.consommation,
-      created_at: undefined,
-      updated_at: undefined,
-      categorie: Categorie.recommandation,
-      mois: [],
-      conditions: [],
-      impact_kg_co2: 5,
-      ...override,
-    };
-  }
+
   static actionData(override?: Partial<Action>): Action {
     return {
       type_code_id: 'classique_code_fonct',
@@ -530,7 +500,7 @@ export class TestUtil {
   static utilisateurData(override?: Partial<Utilisateur>): Utilisateur {
     const unlocked: UnlockedFeatures_v1 = {
       version: 1,
-      unlocked_features: [Feature.aides, Feature.defis],
+      unlocked_features: [Feature.aides],
     };
 
     const cache_bilan_carbone: CacheBilanCarbone_v0 = {
@@ -541,31 +511,6 @@ export class TestUtil {
       logement_kg: undefined,
       total_kg: undefined,
       updated_at: undefined,
-    };
-
-    const defis: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          id: '001',
-          points: 10,
-          tags: [],
-          titre: 'titre',
-          thematique: Thematique.transport,
-          astuces: 'ASTUCE',
-          date_acceptation: null,
-          pourquoi: 'POURQUOI',
-          sous_titre: 'SOUS TITRE',
-          status: DefiStatus.todo,
-          accessible: false,
-          motif: 'bidon',
-          categorie: Categorie.recommandation,
-          mois: [],
-          conditions: [],
-          sont_points_en_poche: false,
-          impact_kg_co2: 5,
-        },
-      ],
     };
 
     const kyc: KYCHistory_v2 = {
@@ -694,7 +639,6 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       kyc: kyc as any,
-      defis: defis as any,
       logement: logement as any,
       tag_ponderation_set: {},
       force_connexion: false,
@@ -896,23 +840,6 @@ export class TestUtil {
       tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
-      ...override,
-    };
-  }
-  static defiStatistiqueData(
-    override?: Partial<DefiStatistique>,
-  ): DefiStatistique {
-    return {
-      content_id: 'contentId',
-      titre: 'Titre de mon article',
-      nombre_defis_abandonnes: 0,
-      nombre_defis_en_cours: 0,
-      nombre_defis_pas_envie: 0,
-      nombre_defis_realises: 0,
-      raisons_defi_pas_envie: [],
-      raisons_defi_abandonne: [],
-      created_at: new Date(),
-      updated_at: new Date(),
       ...override,
     };
   }

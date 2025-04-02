@@ -9,13 +9,11 @@ import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { TagExcluant } from '../../../../src/domain/scoring/tagExcluant';
-import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
 import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 import { ArticleRepository } from '../../../../src/infrastructure/repository/article.repository';
-import { DefiRepository } from '../../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../../TestUtil';
 
@@ -98,56 +96,6 @@ describe('/api/incoming/cms (API test)', () => {
       },
       besoins: [],
       tags_excluants: [],
-    },
-  };
-
-  const CMS_DATA_DEFI = {
-    model: CMSModel.defi,
-    event: CMSEvent['entry.publish'],
-    entry: {
-      id: 123,
-      titre: 'titre',
-      sousTitre: 'sous titre',
-      astuces: 'facile',
-      pourquoi: 'parce que !!',
-      points: 10,
-      impact_kg_co2: 10,
-      thematique: {
-        id: 1,
-        titre: 'Alimentation',
-        code: Thematique.alimentation,
-      },
-      tags: [
-        { id: 1, code: 'capacite_physique' },
-        { id: 2, code: 'possede_velo' },
-      ],
-      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-      univers: [
-        {
-          id: 1,
-          code: Thematique.climat,
-        },
-      ],
-      thematique_univers: [
-        {
-          id: 1,
-          code: 'dechets_compost',
-        },
-      ],
-      mois: '0,1',
-      OR_Conditions: [
-        {
-          AND_Conditions: [
-            {
-              code_reponse: 'oui',
-              kyc: {
-                code: '123',
-                id: 1,
-              },
-            },
-          ],
-        },
-      ],
     },
   };
 
@@ -262,54 +210,6 @@ describe('/api/incoming/cms (API test)', () => {
         titre: 'Alimentation',
         code: Thematique.alimentation,
       },
-    } as CMSWebhookEntryAPI,
-  };
-
-  const CMS_DATA_DEFI_bad_tag: CMSWebhookAPI = {
-    model: CMSModel.defi,
-    event: CMSEvent['entry.publish'],
-    entry: {
-      id: 123,
-      titre: 'titre',
-      sousTitre: 'sous titre',
-      astuces: 'facile',
-      pourquoi: 'parce que !!',
-      points: 10,
-      thematique: {
-        id: 1,
-        titre: 'Alimentation',
-        code: Thematique.alimentation,
-      },
-      tags: [{ id: 1, code: 'VERY_BAD' }],
-      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-      univers: [
-        {
-          id: 1,
-          code: Thematique.climat,
-        },
-      ],
-      thematique_univers: [
-        {
-          id: 1,
-          code: 'dechets_compost',
-        },
-      ],
-      mois: '0,1',
-      OR_Conditions: [
-        {
-          AND_Conditions: [
-            {
-              code_reponse: 'oui',
-              kyc: {
-                code: 'KYC05',
-                id: 1,
-                ngc_code: '',
-                reponse: '',
-              },
-            },
-          ],
-        },
-      ],
     } as CMSWebhookEntryAPI,
   };
 
@@ -627,7 +527,6 @@ describe('/api/incoming/cms (API test)', () => {
   };
 
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const defiRepository = new DefiRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -933,35 +832,6 @@ describe('/api/incoming/cms (API test)', () => {
     ]);
   });
 
-  it('POST /api/incoming/cms - create a new defi', async () => {
-    // GIVEN
-
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(
-      CMS_DATA_DEFI,
-    );
-
-    // THEN
-    const defis = await TestUtil.prisma.defi.findMany({});
-
-    expect(response.status).toBe(201);
-    expect(defis).toHaveLength(1);
-    const defi = defis[0];
-    expect(defi.titre).toEqual('titre');
-    expect(defi.sous_titre).toEqual('sous titre');
-    expect(defi.content_id).toEqual('123');
-    expect(defi.astuces).toEqual('facile');
-    expect(defi.pourquoi).toEqual('parce que !!');
-    expect(defi.points).toEqual(10);
-    expect(defi.impact_kg_co2).toEqual(10);
-    expect(defi.thematique).toEqual('alimentation');
-    expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.mois).toStrictEqual([0, 1]);
-    expect(defi.conditions).toStrictEqual([
-      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
-    ]);
-  });
-
   it('POST /api/incoming/cms - create a new action', async () => {
     // GIVEN
 
@@ -1040,54 +910,6 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(response.status).toBe(201);
     expect(actions).toHaveLength(0);
-  });
-
-  it('POST /api/incoming/cms - gestion tag inconnu', async () => {
-    // GIVEN
-
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(
-      CMS_DATA_DEFI_bad_tag,
-    );
-
-    // THEN
-    const defis = await TestUtil.prisma.defi.findMany({});
-
-    expect(response.status).toBe(201);
-    expect(defis).toHaveLength(1);
-    const defi = defis[0];
-    expect(defi.tags).toEqual([TagUtilisateur.UNKNOWN]);
-  });
-
-  it('POST /api/incoming/cms - updates a  defi', async () => {
-    // GIVEN
-    await TestUtil.create(DB.defi);
-    await defiRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(
-      CMS_DATA_DEFI,
-    );
-
-    // THEN
-    const defis = await TestUtil.prisma.defi.findMany({});
-
-    expect(response.status).toBe(201);
-    expect(defis).toHaveLength(1);
-    const defi = defis[0];
-    expect(defi.titre).toEqual('titre');
-    expect(defi.sous_titre).toEqual('sous titre');
-    expect(defi.content_id).toEqual('123');
-    expect(defi.astuces).toEqual('facile');
-    expect(defi.pourquoi).toEqual('parce que !!');
-    expect(defi.points).toEqual(10);
-    expect(defi.impact_kg_co2).toEqual(10);
-    expect(defi.thematique).toEqual('alimentation');
-    expect(defi.tags).toEqual(['capacite_physique', 'possede_velo']);
-    expect(defi.mois).toStrictEqual([0, 1]);
-    expect(defi.conditions).toStrictEqual([
-      [{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }],
-    ]);
   });
 
   it('POST /api/incoming/cms - updates an action', async () => {

@@ -1,12 +1,6 @@
-import { Defi } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { DefiStatus } from '../../../src/domain/defis/defi';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
-import {
-  DefiHistory_v0,
-  Defi_v0,
-} from '../../../src/domain/object_store/defi/defiHistory_v0';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import {
   ApplicativePonderationSetName,
@@ -15,50 +9,12 @@ import {
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-const DEFI_1: Defi_v0 = {
-  id: '1',
-  points: 5,
-  tags: [Tag.utilise_moto_ou_voiture],
-  titre: 'titre',
-  thematique: Thematique.alimentation,
-  astuces: 'astuce',
-  date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-  pourquoi: 'pourquoi',
-  sous_titre: 'sous_titre',
-  status: DefiStatus.en_cours,
-  accessible: true,
-  motif: 'truc',
-  categorie: Categorie.recommandation,
-  mois: [],
-  conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-  sont_points_en_poche: true,
-  impact_kg_co2: 5,
-};
-const DEFI_1_DEF: Defi = {
-  content_id: '1',
-  points: 5,
-  tags: [Tag.utilise_moto_ou_voiture],
-  titre: 'titre',
-  thematique: Thematique.alimentation,
-  astuces: 'astuce',
-  pourquoi: 'pourquoi',
-  sous_titre: 'sous_titre',
-  created_at: undefined,
-  updated_at: undefined,
-  categorie: Categorie.recommandation,
-  mois: [],
-  conditions: [[{ id_kyc: 1, code_kyc: '123', code_reponse: 'oui' }]],
-  impact_kg_co2: 5,
-};
-
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const defiRepository = new DefiRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
@@ -414,133 +370,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(Math.round(response.body[0].score)).toEqual(350);
   });
 
-  it('GET /utilisateurs/id/recommandations v2 - mix KYC ARTICLE ET QUIZZ sans défis', async () => {
-    // GIVEN
-    process.env.DEFI_ENABLED = 'true';
-    process.env.KYC_RECO_ENABLED = 'true';
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: Categorie.recommandation,
-      points: 10,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      thematique: Thematique.consommation,
-      reponses: [
-        { label: 'AAA', code: Thematique.climat },
-        { label: 'BBB', code: Thematique.logement },
-        { label: 'CCC', code: Thematique.alimentation },
-        { label: 'DDD', code: Thematique.transport },
-      ],
-      tags: [Tag.R6],
-    });
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.mission,
-      points: 10,
-      question: `question hors recos`,
-      thematique: Thematique.consommation,
-      reponses: [{ label: 'AAA', code: Thematique.climat }],
-      tags: [Tag.R6, Tag.R1],
-    });
-
-    const defis: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          ...DEFI_1,
-          id: '001',
-          status: DefiStatus.en_cours,
-        },
-        {
-          ...DEFI_1,
-          id: '003',
-          status: DefiStatus.pas_envie,
-        },
-      ],
-    };
-    await TestUtil.create(DB.defi, {
-      ...DEFI_1_DEF,
-      content_id: '1',
-      tags: [Tag.R1],
-    });
-    await TestUtil.create(DB.defi, {
-      ...DEFI_1_DEF,
-      content_id: '2',
-      tags: [Tag.R2],
-    });
-    await TestUtil.create(DB.defi, {
-      ...DEFI_1_DEF,
-      content_id: '3',
-      tags: [Tag.R3],
-    });
-    await TestUtil.create(DB.defi, {
-      ...DEFI_1_DEF,
-      content_id: '4',
-      tags: [Tag.R4],
-    });
-    await TestUtil.create(DB.defi, {
-      ...DEFI_1_DEF,
-      content_id: '5',
-      tags: [Tag.R5],
-    });
-
-    await TestUtil.create(DB.utilisateur, {
-      defis: defis as any,
-      tag_ponderation_set: { R1: 5, R2: 4, R3: 3, R4: 2, R5: 1, R6: 6 },
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '11',
-      codes_postaux: [],
-      rubrique_ids: ['1'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '22',
-      codes_postaux: [],
-      rubrique_ids: ['2'],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '33',
-      codes_postaux: [],
-      rubrique_ids: ['3'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '44',
-      codes_postaux: [],
-      rubrique_ids: ['4'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '55',
-      codes_postaux: [],
-      rubrique_ids: ['5'],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '66',
-      codes_postaux: [],
-      rubrique_ids: ['6', '5'],
-    });
-    await articleRepository.loadCache();
-
-    await kycRepository.loadCache();
-    await defiRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/recommandations_v3',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(6);
-    expect(response.body[0].content_id).toEqual('66');
-    expect(response.body[1].content_id).toEqual('_1');
-    expect(response.body[2].content_id).toEqual('11');
-    expect(response.body[3].content_id).toEqual('22');
-    expect(response.body[4].content_id).toEqual('33');
-    expect(response.body[5].content_id).toEqual('44');
-  });
   it('GET /utilisateurs/id/recommandations v2 - filtrage par univers (anciennement thémaiques)', async () => {
     // GIVEN
     process.env.DEFI_ENABLED = 'true';

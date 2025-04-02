@@ -22,7 +22,6 @@ import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { App } from '../../domain/app';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
@@ -69,7 +68,6 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
-    private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
@@ -197,15 +195,6 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/defi-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des défis`,
-  })
-  async calcul_defi_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.defiStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/quiz-statistique')

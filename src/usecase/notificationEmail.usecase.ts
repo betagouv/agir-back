@@ -82,7 +82,7 @@ export class NotificationEmailUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.notification_history, Scope.defis, Scope.thematique_history],
+          [Scope.notification_history, Scope.thematique_history],
           { is_active: true },
         );
 
