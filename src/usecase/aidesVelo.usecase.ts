@@ -26,6 +26,7 @@ export class AidesVeloUsecase {
     utilisateurId: string,
     prix_velo: number,
     etat_velo: 'neuf' | 'occasion' = 'neuf',
+    situation_handicap: boolean = false,
   ): Promise<AidesVeloParType> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -59,6 +60,7 @@ export class AidesVeloUsecase {
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
       'vélo . état': etat_velo,
+      'demandeur . en situation de handicap': situation_handicap,
     });
   }
 
@@ -107,6 +109,7 @@ export class AidesVeloUsecase {
         : 40000,
       'revenu fiscal de référence par part . nombre de parts': parts,
       'vélo . état': etat_velo,
+      'demandeur . en situation de handicap': false,
     });
   }
 
