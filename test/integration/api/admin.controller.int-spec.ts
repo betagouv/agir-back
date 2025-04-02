@@ -184,14 +184,14 @@ describe('Admin (API test)', () => {
     );
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ compatible: true });
   });
   it('GET /check_version/123 KO', async () => {
     // WHEN
     const response = await TestUtil.getServer().get('/check_version/bad');
 
     // THEN
-    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ compatible: false });
   });
   it('POST /admin/lock_user_migration retourne une 200 si API CRON', async () => {
     // GIVEN

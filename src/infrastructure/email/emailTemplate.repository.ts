@@ -128,7 +128,6 @@ export class EmailTemplateRepository {
         return {
           subject: `Bienvenue dans J'agis !`,
           body: this.email_welcome({
-            PRENOM: utilisateur.pseudo,
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
             SERVICE_URL: `${App.getBaseURLFront()}/agir`,

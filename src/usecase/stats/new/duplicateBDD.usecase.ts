@@ -348,6 +348,11 @@ export class DuplicateBDDForStatsUsecase {
         const situation =
           this.bilanCarboneUsecase.external_compute_situation(user);
 
+        const progression =
+          this.bilanCarboneUsecase.external_build_enchainement_bilan_recap(
+            user,
+          );
+
         try {
           const bilan =
             this.nGCCalculator.computeBasicBilanFromSituation(situation);
@@ -355,6 +360,29 @@ export class DuplicateBDDForStatsUsecase {
           await this.statistiqueExternalRepository.upsertBilanCarbone(
             user.external_stat_id,
             bilan,
+            {
+              total: progression.pourcentage_prog_totale,
+              alimentation: Math.round(
+                (progression.enchainement_alimentation_progression.current /
+                  progression.enchainement_alimentation_progression.target) *
+                  100,
+              ),
+              transport: Math.round(
+                (progression.enchainement_transport_progression.current /
+                  progression.enchainement_transport_progression.target) *
+                  100,
+              ),
+              logement: Math.round(
+                (progression.enchainement_logement_progression.current /
+                  progression.enchainement_logement_progression.target) *
+                  100,
+              ),
+              consommation: Math.round(
+                (progression.enchainement_conso_progression.current /
+                  progression.enchainement_conso_progression.target) *
+                  100,
+              ),
+            },
           );
 
           computed_ok++;
@@ -362,6 +390,7 @@ export class DuplicateBDDForStatsUsecase {
             break; // trop de calcul pour un run de batch unique
           }
         } catch (error) {
+          console.log(error);
           errors++;
           error_liste.push(`BC KO [${user.id}] : ` + JSON.stringify(error));
         }

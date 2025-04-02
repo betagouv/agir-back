@@ -216,7 +216,7 @@ export class Utilisateur extends UtilisateurData {
       france_connect_sub: null,
       external_stat_id: uuidv4(),
       cache_bilan_carbone: new CacheBilanCarbone(),
-      global_user_version: GlobalUserVersion.V1,
+      global_user_version: GlobalUserVersion.V2,
     });
   }
 

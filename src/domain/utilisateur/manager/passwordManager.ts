@@ -4,6 +4,8 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { PasswordAwareUtilisateur } from './passwordAwareUtilisateur';
 
+const ONE_DAY_ms = 1000 * 60 * 60 * 24;
+
 @Injectable()
 export class PasswordManager {
   constructor(private securityRepository: UtilisateurSecurityRepository) {}
@@ -16,6 +18,8 @@ export class PasswordManager {
     password: string,
     okAction: Function,
   ): Promise<any> {
+    await this.initLoginAttemptsAfter1Day(utilisateur);
+
     PasswordManager.checkLoginLocked(utilisateur);
 
     const login_ok = await this.checkUserPasswordOKAndUpdateState(
@@ -63,11 +67,26 @@ export class PasswordManager {
       .toString(`hex`);
   }
 
-  public async initLoginState(utilisateur: PasswordAwareUtilisateur) {
+  public async initLoginStateAfterSuccess(
+    utilisateur: PasswordAwareUtilisateur,
+  ) {
     utilisateur.failed_login_count = 0;
     utilisateur.prevent_login_before = new Date();
     utilisateur.force_connexion = false;
     await this.securityRepository.updateLoginAttemptData(utilisateur);
+  }
+
+  public async initLoginAttemptsAfter1Day(
+    utilisateur: PasswordAwareUtilisateur,
+  ) {
+    if (
+      utilisateur.prevent_login_before &&
+      Date.now() - utilisateur.prevent_login_before.getTime() > ONE_DAY_ms
+    ) {
+      utilisateur.failed_login_count = 0;
+      utilisateur.prevent_login_before = new Date();
+      await this.securityRepository.updateLoginAttemptData(utilisateur);
+    }
   }
 
   private static checkLoginLocked(utilisateur: PasswordAwareUtilisateur) {
@@ -91,7 +110,7 @@ export class PasswordManager {
           .toString(`hex`);
     }
     if (ok) {
-      await this.initLoginState(utilisateur);
+      await this.initLoginStateAfterSuccess(utilisateur);
     } else {
       await this.failLogin(utilisateur);
     }

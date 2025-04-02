@@ -9,6 +9,7 @@ import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwor
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { App } from '../../domain/app';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Scope } from '../../domain/utilisateur/utilisateur';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { ApplicationError } from '../applicationError';
@@ -53,6 +54,59 @@ export class TestDataController extends GenericControler {
     user.resetPourLancementNational();
 
     await this.utilisateurRepository2.updateUtilisateur(user);
+  }
+
+  @Get('user_reco_profile/:utilisateurId')
+  async getRecoProfile(@Param('utilisateurId') utilisateurId: string) {
+    const user = await this.utilisateurRepository2.getById(utilisateurId, [
+      Scope.ALL,
+    ]);
+    if (!user) {
+      ApplicationError.throwUserNotFound(utilisateurId);
+    }
+    return {
+      prenom: user.prenom,
+      nom: user.nom,
+      pseudo: user.pseudo,
+      date_naissance: user.annee_naissance
+        ? '' +
+          user.jour_naissance +
+          '-' +
+          user.mois_naissance +
+          '-' +
+          user.annee_naissance
+        : null,
+      tags_ponderation: user.tag_ponderation_set,
+      tags_exlusion: user.thematique_history.getListeTagsExcluants(),
+      personnalisations_dones: {
+        alimentation: user.thematique_history.isPersonnalisationDone(
+          Thematique.alimentation,
+        ),
+        transport: user.thematique_history.isPersonnalisationDone(
+          Thematique.transport,
+        ),
+        logement: user.thematique_history.isPersonnalisationDone(
+          Thematique.logement,
+        ),
+        consommation: user.thematique_history.isPersonnalisationDone(
+          Thematique.consommation,
+        ),
+      },
+      action_rejetees: {
+        alimentation: user.thematique_history
+          .getActionsExclues(Thematique.alimentation)
+          .map((a) => a.type + '_' + a.code),
+        transport: user.thematique_history
+          .getActionsExclues(Thematique.transport)
+          .map((a) => a.type + '_' + a.code),
+        Logement: user.thematique_history
+          .getActionsExclues(Thematique.logement)
+          .map((a) => a.type + '_' + a.code),
+        consommation: user.thematique_history
+          .getActionsExclues(Thematique.consommation)
+          .map((a) => a.type + '_' + a.code),
+      },
+    };
   }
 
   @Get('testdata/:id')

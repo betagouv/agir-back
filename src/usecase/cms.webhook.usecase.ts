@@ -3,7 +3,6 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
-import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
@@ -297,7 +296,7 @@ export class CMSWebhookUsecase {
     );
   }
   async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null && App.isProd()) return;
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
 
     await this.actionRepository.upsert(
       this.buildActionFromCMSData(cmsWebhookAPI.entry),
@@ -353,7 +352,6 @@ export class CMSWebhookUsecase {
   }
 
   private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
-    console.log(JSON.stringify(hook.entry.partenaire));
     return {
       contenu: hook.entry.contenu,
       sources: hook.entry.sources
@@ -451,6 +449,9 @@ export class CMSWebhookUsecase {
         : null,
       derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
+      partenaires_supp_ids: entry.partenaires
+        ? entry.partenaires.map((p) => p.id.toString())
+        : [],
       codes_postaux: this.split(entry.codes_postaux),
       thematiques: entry.thematiques
         ? entry.thematiques.map((elem) => Thematique[elem.code])
@@ -489,6 +490,7 @@ export class CMSWebhookUsecase {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
       titre: entry.titre,
+      titre_recherche: entry.titre ? entry.titre.replaceAll('*', '') : '',
       sous_titre: entry.sous_titre,
       consigne: entry.consigne,
       label_compteur: entry.label_compteur,
@@ -503,6 +505,9 @@ export class CMSWebhookUsecase {
       besoins: entry.besoins ? entry.besoins.map((elem) => elem.code) : [],
       quizz_ids: entry.quizzes
         ? entry.quizzes.map((elem) => elem.id.toString())
+        : [],
+      article_ids: entry.articles
+        ? entry.articles.map((elem) => elem.id.toString())
         : [],
       faq_ids: entry.faqs ? entry.faqs.map((elem) => elem.id.toString()) : [],
       kyc_codes: entry.kycs ? entry.kycs.map((elem) => elem.code) : [],
@@ -558,6 +563,8 @@ export class CMSWebhookUsecase {
       url: entry.lien,
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
       echelle: Echelle[entry.echelle],
+      code_commune: entry.code_commune,
+      code_epci: entry.code_epci,
     };
   }
 

@@ -4,6 +4,8 @@ export class PartenaireDefinition {
   id_cms: string;
   nom: string;
   url: string;
+  code_commune: string;
+  code_epci: string;
   image_url: string;
   echelle: Echelle;
 }

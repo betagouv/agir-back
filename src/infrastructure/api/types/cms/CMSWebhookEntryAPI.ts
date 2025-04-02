@@ -99,6 +99,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
+  @ApiProperty() code_commune: string;
+  @ApiProperty() code_epci: string;
   @ApiProperty() texte: string;
   @ApiProperty() categorie_recettes: string;
   @ApiProperty() categorie_pdcn: string;
@@ -169,8 +171,13 @@ export class CMSWebhookEntryAPI {
   tags: CMSTagAPI[];
   @ApiProperty({ type: [CMSWebhookRubriqueAPI] })
   rubriques: CMSWebhookRubriqueAPI[];
+
   @ApiProperty({ type: CMSWebhookPartenaireAPI })
   partenaire: CMSWebhookPartenaireAPI;
+
+  @ApiProperty({ type: [IDAPI] })
+  partenaires: IDAPI[];
+
   @ApiProperty({ type: CMSWebhookBesoinAPI })
   besoin: CMSWebhookBesoinAPI;
   @ApiProperty() duree: string;

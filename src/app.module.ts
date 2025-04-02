@@ -113,6 +113,7 @@ import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
+import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CmsPreviewUsecase } from './usecase/cmsPreview.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ConformiteUsecase } from './usecase/conformite.usecase';
@@ -183,12 +184,12 @@ function getControllers(): any[] {
     ActionsController,
     SimulateurVoitureController,
     AidesVeloController,
-    CmsPreviewController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
+    controllers.push(CmsPreviewController);
   }
   return controllers;
 }
@@ -315,6 +316,7 @@ function getControllers(): any[] {
     CmsPreviewUsecase,
     PushNotificationTemplateRepository,
     NotificationMobileUsecase,
+    CMSDataHelperUsecase,
   ],
 })
 export class AppModule {}

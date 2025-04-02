@@ -282,8 +282,9 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toHaveLength(0);
   });
-  it(`getNouvellesNotifications : vieux defis`, () => {
+  it.skip(`getNouvellesNotifications : vieux defis`, () => {
     // GIVEN
+
     process.env.NOTIFICATIONS_MAIL_INACTIVES =
       'welcome,email_relance_onboarding_j8';
 

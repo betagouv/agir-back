@@ -14,7 +14,6 @@ import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { BilanCarboneStatistiqueRepository } from '../../../src/infrastructure/repository/bilanCarboneStatistique.repository';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
@@ -58,12 +57,9 @@ describe('Duplicate Usecase', () => {
   const aideRepository = new AideRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const nGCCalculator = new NGCCalculator();
-  const bilanCarboneStatistiqueRepository =
-    new BilanCarboneStatistiqueRepository(TestUtil.prisma);
   const bilanCarboneUsecase = new BilanCarboneUsecase(
     nGCCalculator,
     utilisateurRepository,
-    bilanCarboneStatistiqueRepository,
   );
 
   let duplicateUsecase = new DuplicateBDDForStatsUsecase(
@@ -649,6 +645,11 @@ describe('Duplicate Usecase', () => {
       total_kg: NGCCalculator.DEFAULT_TOTAL_KG_ROUND,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
+      pourcentage_progression_alimentation: 0,
+      pourcentage_progression_consommation: 0,
+      pourcentage_progression_logement: 0,
+      pourcentage_progression_total: 0,
+      pourcentage_progression_transport: 0,
     });
   });
 
@@ -744,6 +745,11 @@ describe('Duplicate Usecase', () => {
       total_kg: 8863,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
+      pourcentage_progression_alimentation: 50,
+      pourcentage_progression_consommation: 0,
+      pourcentage_progression_logement: 0,
+      pourcentage_progression_total: 8,
+      pourcentage_progression_transport: 0,
     });
   });
 
@@ -853,6 +859,11 @@ describe('Duplicate Usecase', () => {
       total_kg: 1,
       transport_kg: 1,
       user_id: '123',
+      pourcentage_progression_alimentation: 0,
+      pourcentage_progression_consommation: 0,
+      pourcentage_progression_logement: 0,
+      pourcentage_progression_total: 0,
+      pourcentage_progression_transport: 0,
     });
   });
 

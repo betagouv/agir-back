@@ -160,7 +160,7 @@ export class Connexion_v2_Usecase {
       const user = await _this.utilisateurRepository.findByEmail(email);
 
       await _this.securityEmailManager.resetEmailSendingState(user);
-      await _this.passwordManager.initLoginState(user);
+      await _this.passwordManager.initLoginStateAfterSuccess(user);
 
       user.setPassword(mot_de_passe);
       user.status = UtilisateurStatus.default;

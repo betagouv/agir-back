@@ -51,7 +51,7 @@ const FULL_POPULATE_URL =
   '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
-  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants';
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
@@ -491,7 +491,7 @@ export class CMSImportUsecase {
         loading_result.push(`loaded aide : ${aide.content_id}`);
       } catch (error) {
         loading_result.push(
-          `Could not load article ${element.id} : ${error.message}`,
+          `Could not load aide ${element.id} : ${error.message}`,
         );
         loading_result.push(JSON.stringify(element));
       }
@@ -533,51 +533,23 @@ export class CMSImportUsecase {
     type: CMSPluralAPIEndpoint,
   ): Promise<CMSWebhookPopulateAPI[]> {
     let result = [];
-    const page_1 = '&pagination[start]=0&pagination[limit]=100';
-    const page_2 = '&pagination[start]=100&pagination[limit]=100';
-    const page_3 = '&pagination[start]=200&pagination[limit]=100';
-    const page_4 = '&pagination[start]=300&pagination[limit]=100';
-    const page_5 = '&pagination[start]=400&pagination[limit]=100';
-    const page_6 = '&pagination[start]=500&pagination[limit]=100';
-    const page_7 = '&pagination[start]=600&pagination[limit]=100';
-    const page_8 = '&pagination[start]=700&pagination[limit]=100';
     let response = null;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${App.getCmsApiKey()}`,
     };
 
-    let URL = this.buildPopulateURL(page_1, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_2, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_3, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_4, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_5, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_6, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_7, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
-
-    URL = this.buildPopulateURL(page_8, type);
-    response = await axios.get(URL, { headers: headers });
-    result = result.concat(response.data.data);
+    for (let index = 0; index < 1000; index = index + 100) {
+      let URL = this.buildPopulateURL(
+        `&pagination[start]=${index}&pagination[limit]=100`,
+        type,
+      );
+      response = await axios.get(URL, { headers: headers });
+      result = result.concat(response.data.data);
+      if (response.data.data.length === 0) {
+        break;
+      }
+    }
 
     return result;
   }
@@ -648,10 +620,12 @@ export class CMSImportUsecase {
       id_cms: entry.id.toString(),
       nom: entry.attributes.nom,
       url: entry.attributes.lien,
-      image_url: this.getFirstImageUrlFromPopulate(
-        entry.attributes.logo.data[0],
-      ),
+      image_url: entry.attributes.logo.data
+        ? this.getFirstImageUrlFromPopulate(entry.attributes.logo.data[0])
+        : null,
       echelle: Echelle[entry.attributes.echelle],
+      code_commune: entry.attributes.code_commune,
+      code_epci: entry.attributes.code_epci,
     };
   }
 
@@ -826,6 +800,9 @@ export class CMSImportUsecase {
       partenaire_id: entry.attributes.partenaire.data
         ? '' + entry.attributes.partenaire.data.id
         : null,
+      partenaires_supp_ids: entry.attributes.partenaires.data
+        ? entry.attributes.partenaires.data.map((p) => p.id.toString())
+        : [],
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(
@@ -922,6 +899,9 @@ export class CMSImportUsecase {
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       titre: entry.attributes.titre,
+      titre_recherche: entry.attributes.titre
+        ? entry.attributes.titre.replaceAll('*', '')
+        : '',
       sous_titre: entry.attributes.sous_titre,
       consigne:
         entry.attributes.consigne ||
@@ -950,6 +930,10 @@ export class CMSImportUsecase {
       quizz_ids:
         entry.attributes.quizzes && entry.attributes.quizzes.data.length > 0
           ? entry.attributes.quizzes.data.map((elem) => elem.id.toString())
+          : [],
+      article_ids:
+        entry.attributes.articles && entry.attributes.articles.data.length > 0
+          ? entry.attributes.articles.data.map((elem) => elem.id.toString())
           : [],
       faq_ids:
         entry.attributes.faqs && entry.attributes.faqs.data.length > 0

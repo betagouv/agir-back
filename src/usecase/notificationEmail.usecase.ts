@@ -131,17 +131,32 @@ export class NotificationEmailUsecase {
   public async sendAllMailsToUserAsTest(
     utilisateurId: string,
   ): Promise<string[]> {
-    const result = [];
+    let result = [];
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.ALL],
     );
 
     for (const type of Object.values(TypeNotification)) {
-      await this.sendTestEmailOfType(type, utilisateur, result);
+      await this.sendTestEmailOfType(type, utilisateur);
+      result.push(type);
     }
 
     return result;
+  }
+
+  public async sendOneMailToUserAsTest(
+    utilisateurId: string,
+    type: string,
+  ): Promise<string[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.ALL],
+    );
+
+    await this.sendTestEmailOfType(TypeNotification[type], utilisateur);
+
+    return [type];
   }
 
   public async external_send_user_email_of_type(
@@ -195,10 +210,7 @@ export class NotificationEmailUsecase {
   private async sendTestEmailOfType(
     type: TypeNotification,
     utilisateur: Utilisateur,
-    log: string[],
   ) {
-    if (await this.external_send_user_email_of_type(type, utilisateur, false)) {
-      log.push(type);
-    }
+    await this.external_send_user_email_of_type(type, utilisateur, false);
   }
 }

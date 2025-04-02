@@ -31,6 +31,9 @@ const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     thematique: Thematique.alimentation,
   },
 ];
+
+const backup = MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE;
+
 describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -42,6 +45,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
   });
 
   beforeEach(async () => {
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
   });
@@ -49,6 +53,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
   afterAll(async () => {
     await TestUtil.appclose();
     process.env = OLD_ENV;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
   });
 
   it('GET /utilisateurs/id/questionsKY_v2/id - mosaic avec de questions du catalogue', async () => {

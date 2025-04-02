@@ -14,6 +14,7 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
@@ -31,6 +32,7 @@ describe('Actions (API test)', () => {
   const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
@@ -102,7 +104,7 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('code_fonct');
-    expect(action.titre).toEqual('The titre');
+    expect(action.titre).toEqual('**The titre**');
     expect(action.sous_titre).toEqual('Sous titre');
     expect(action.thematique).toEqual(Thematique.consommation);
     expect(action.type).toEqual(TypeAction.classique);
@@ -147,7 +149,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.alimentation,
-      titre: 'Une belle action',
+      titre_recherche: 'Une belle action',
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -155,7 +157,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
-      titre: 'Une action toute nulle',
+      titre_recherche: 'Une action toute nulle',
     });
 
     await actionRepository.onApplicationBootstrap();
@@ -170,6 +172,27 @@ describe('Actions (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.code).toEqual('2');
+  });
+  it(`GET /actions - liste le catalogue recherche texte titre malgré markdown`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre: 'Une **belle** action',
+      titre_recherche: 'Une belle action',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?titre=belle action');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
   });
   it(`GET /actions - liste le catalogue d'action avec filtre thematique multiple`, async () => {
     // GIVEN
@@ -273,7 +296,7 @@ describe('Actions (API test)', () => {
       nombre_aides_disponibles: 0,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
     });
@@ -342,7 +365,7 @@ describe('Actions (API test)', () => {
       nombre_aides_disponibles: 1,
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
     });
@@ -510,7 +533,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.alimentation,
-      titre: 'Une belle action',
+      titre_recherche: 'Une belle action',
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -518,7 +541,7 @@ describe('Actions (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
-      titre: 'Une action toute nulle',
+      titre_recherche: 'Une action toute nulle',
     });
 
     await actionRepository.onApplicationBootstrap();
@@ -844,6 +867,7 @@ describe('Actions (API test)', () => {
       consigne: 'consigne',
       faqs: [],
       kycs: [],
+      articles: [],
       label_compteur: '45 haha',
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
@@ -868,7 +892,7 @@ describe('Actions (API test)', () => {
       ],
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       sources: [
         {
@@ -985,6 +1009,42 @@ describe('Actions (API test)', () => {
       },
     ]);
   });
+  it(`GET /actions/id - les articles miés`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', articles_ids: ['1', '2'] });
+    await TestUtil.create(DB.article, { content_id: '1', image_url: 'a' });
+    await TestUtil.create(DB.article, { content_id: '2', image_url: 'b' });
+    await TestUtil.create(DB.article, { content_id: '3', image_url: 'c' });
+
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions/classique/123');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.articles).toEqual([
+      {
+        content_id: '1',
+        image_url: 'a',
+        soustitre: 'Sous titre de mon article',
+        thematique_principale: 'logement',
+        thematiques: ['logement'],
+        titre: 'Titre de mon article',
+      },
+      {
+        content_id: '2',
+        image_url: 'b',
+        soustitre: 'Sous titre de mon article',
+        thematique_principale: 'logement',
+        thematiques: ['logement'],
+        titre: 'Titre de mon article',
+      },
+    ]);
+  });
 
   it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
     // GIVEN
@@ -1019,6 +1079,32 @@ describe('Actions (API test)', () => {
     expect(action.nom_commune).toEqual('Dijon');
   });
 
+  it(`GET /compteur_actions - total des actions faites`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '456',
+      type: TypeAction.classique,
+      type_code_id: 'classique_456',
+      faites: 10,
+      vues: 0,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET('/compteur_actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({ nombre_total_actions_faites: 55 });
+  });
+
   it(`GET /utilisateurs/id/actions/id - detail standard d'une action utilisateur`, async () => {
     // GIVEN
     await TestUtil.create(DB.blockText, {
@@ -1038,6 +1124,7 @@ describe('Actions (API test)', () => {
       besoins: ['composter'],
       pourquoi: 'haha {block_123}',
       sources: [{ url: 'haha', label: 'hoho' }],
+      articles_ids: ['1'],
     });
     await TestUtil.create(DB.compteurActions, {
       code: '123',
@@ -1046,8 +1133,11 @@ describe('Actions (API test)', () => {
       faites: 45,
       vues: 154,
     });
+    await TestUtil.create(DB.article, { content_id: '1', image_url: 'a' });
+
     await actionRepository.onApplicationBootstrap();
     await compteurActionsRepository.loadCache();
+    await articleRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -1063,6 +1153,16 @@ describe('Actions (API test)', () => {
       code: '123',
       comment: 'Astuces',
       consigne: 'consigne',
+      articles: [
+        {
+          content_id: '1',
+          image_url: 'a',
+          soustitre: 'Sous titre de mon article',
+          thematique_principale: 'logement',
+          thematiques: ['logement'],
+          titre: 'Titre de mon article',
+        },
+      ],
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
       deja_faite: false,
@@ -1091,7 +1191,7 @@ describe('Actions (API test)', () => {
       ],
       sous_titre: 'Sous titre',
       thematique: 'consommation',
-      titre: 'The titre',
+      titre: '**The titre**',
       type: 'classique',
       points: 100,
       sources: [

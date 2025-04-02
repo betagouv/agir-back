@@ -10,6 +10,7 @@ import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { Article } from '../domain/contenu/article';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -22,6 +23,7 @@ import {
   ActionRepository,
 } from '../infrastructure/repository/action.repository';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import {
   Commune,
   CommuneRepository,
@@ -36,6 +38,7 @@ import { BibliothequeUsecase } from './bibliotheque.usecase';
 export class ActionUsecase {
   constructor(
     private actionRepository: ActionRepository,
+    private articleRepository: ArticleRepository,
     private compteurActionsRepository: CompteurActionsRepository,
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
@@ -44,6 +47,10 @@ export class ActionUsecase {
     private fAQRepository: FAQRepository,
     private personnalisator: Personnalisator,
   ) {}
+
+  async getCompteurActions(): Promise<number> {
+    return await this.compteurActionsRepository.getTotalFaites();
+  }
 
   async getOpenCatalogue(
     filtre_thematiques: Thematique[],
@@ -210,6 +217,12 @@ export class ActionUsecase {
     for (const faq_id of action_def.faq_ids) {
       action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
     }
+    action.article_liste = [];
+    for (const article_id of action_def.article_ids) {
+      action.article_liste.push(
+        new Article(this.articleRepository.getArticle(article_id)),
+      );
+    }
 
     action.setListeAides(linked_aides);
     action.services = liste_services;
@@ -349,7 +362,12 @@ export class ActionUsecase {
     for (const faq_id of action_def.faq_ids) {
       action.faq_liste.push(this.fAQRepository.getFaqByCmsId(faq_id));
     }
-
+    action.article_liste = [];
+    for (const article_id of action_def.article_ids) {
+      action.article_liste.push(
+        new Article(this.articleRepository.getArticle(article_id)),
+      );
+    }
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
       action_def.kyc_codes,
     );

@@ -41,7 +41,6 @@ import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecas
 import { MissionStatistiqueUsecase } from '../../usecase/stats/missionStatistique.usecase';
 import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
 import { ThematiqueStatistiqueUsecase } from '../../usecase/stats/thematiqueStatistique.usecase';
-import { ApplicationError } from '../applicationError';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -51,6 +50,9 @@ import { ValiderPseudoAPI } from './types/utilisateur/validerPrenomsAPI';
 
 export class VersionAPI {
   @ApiProperty() version: string;
+}
+export class CheckVersionAPI {
+  @ApiProperty() compatible: boolean;
 }
 
 @Controller()
@@ -86,11 +88,11 @@ export class AdminController extends GenericControler {
   }
 
   @Get('check_version/:version')
-  async check_version(@Param('version') version: string) {
-    if (version !== App.getBackCurrentVersion()) {
-      ApplicationError.throwDiffrentVersion(version);
-    }
-    return ['OK'];
+  @ApiOkResponse({ type: CheckVersionAPI })
+  async check_version(
+    @Param('version') version: string,
+  ): Promise<CheckVersionAPI> {
+    return { compatible: version === App.getBackCurrentVersion() };
   }
 
   @Get('version')
@@ -291,6 +293,22 @@ export class AdminController extends GenericControler {
   ): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.mailerUsecase.sendAllMailsToUserAsTest(utilisateurId);
+  }
+
+  @Post('/admin/send_one_email_as_test/:utilisateurId/:type')
+  @ApiOperation({
+    summary: `Tente d'envoyer un template de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
+  })
+  async send_one_email_as_test(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('type') type: string,
+  ): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.mailerUsecase.sendOneMailToUserAsTest(
+      utilisateurId,
+      type,
+    );
   }
 
   @Post('/admin/create_brevo_contacts')
