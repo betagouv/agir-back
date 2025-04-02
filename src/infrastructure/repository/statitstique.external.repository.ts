@@ -272,13 +272,34 @@ export class StatistiqueExternalRepository {
     });
   }
 
-  public async upsertBilanCarbone(user_id: string, bilan: Bilan_OLD) {
+  public async upsertBilanCarbone(
+    user_id: string,
+    bilan: Bilan_OLD,
+    pourcentages: {
+      total: number;
+      alimentation: number;
+      transport: number;
+      logement: number;
+      consommation: number;
+    },
+  ) {
+    const conso = pourcentages.consommation;
+    const alim = pourcentages.alimentation;
+    const trans = pourcentages.transport;
+    const loge = pourcentages.logement;
+    const total = pourcentages.total;
+
     const data = {
       total_kg: bilan.bilan_carbone_annuel,
       alimentation_kg: bilan.details.alimentation,
       consommation_kg: bilan.details.divers,
       logement_kg: bilan.details.logement,
       transport_kg: bilan.details.transport,
+      pourcentage_progression_consommation: Number.isNaN(conso) ? 0 : conso,
+      pourcentage_progression_logement: Number.isNaN(loge) ? 0 : loge,
+      pourcentage_progression_alimentation: Number.isNaN(alim) ? 0 : alim,
+      pourcentage_progression_transport: Number.isNaN(trans) ? 0 : trans,
+      pourcentage_progression_total: Number.isNaN(total) ? 0 : total,
     };
 
     await this.prismaStats.bilanCarbone.upsert({

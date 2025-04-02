@@ -95,6 +95,7 @@ const KYC_DB_DATA: KYC = {
   created_at: undefined,
   updated_at: undefined,
 };
+const backup = MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE;
 
 describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
@@ -141,6 +142,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   });
 
   beforeEach(async () => {
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
   });
@@ -148,6 +150,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   afterAll(async () => {
     await TestUtil.appclose();
     process.env = OLD_ENV;
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
   });
 
   it('GET /utilisateurs/id/questionsKYC_v2 - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
@@ -1285,6 +1288,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
   it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de quesitions', async () => {
     // GIVEN
+    const backup = QuestionKYCUsecase.ENCHAINEMENTS;
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
     };
@@ -1421,10 +1425,12 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         thematique: 'alimentation',
       },
     ]);
+    QuestionKYCUsecase.ENCHAINEMENTS = backup;
   });
 
   it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - enchainement qui existe pas', async () => {
     // GIVEN
+    const backup = QuestionKYCUsecase.ENCHAINEMENTS;
     QuestionKYCUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
     };
@@ -1441,6 +1447,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body.message).toEqual(
       "L'enchainement d'id [BAD] n'existe pas",
     );
+    QuestionKYCUsecase.ENCHAINEMENTS = backup;
   });
 
   it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie la quesition avec la réponse depuis l'historique , maj avec la definition`, async () => {

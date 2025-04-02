@@ -13,7 +13,6 @@ import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
-import { BilanCarboneStatistiqueRepository } from '../infrastructure/repository/bilanCarboneStatistique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuestionKYCUsecase } from './questionKYC.usecase';
 
@@ -41,7 +40,6 @@ export class BilanCarboneUsecase {
   constructor(
     private nGCCalculator: NGCCalculator,
     private utilisateurRepository: UtilisateurRepository,
-    private bilanCarboneStatistiqueRepository: BilanCarboneStatistiqueRepository,
   ) {}
 
   async getCurrentBilanByUtilisateurId(utilisateurId: string): Promise<{
@@ -121,22 +119,30 @@ export class BilanCarboneUsecase {
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
       );
 
-    const enchainement_transport =
+    let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'],
       );
-    const enchainement_logement =
+    let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_logement'],
       );
-    const enchainement_conso =
+    let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_consommation'],
       );
-    const enchainement_alimentation =
+    let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
       );
+
+    // CLEAN
+    enchainement_transport = enchainement_transport.filter((q) => q !== null);
+    enchainement_logement = enchainement_logement.filter((q) => q !== null);
+    enchainement_conso = enchainement_conso.filter((q) => q !== null);
+    enchainement_alimentation = enchainement_alimentation.filter(
+      (q) => q !== null,
+    );
 
     const enchainement_transport_progression = QuestionKYC.getProgression(
       enchainement_transport,
