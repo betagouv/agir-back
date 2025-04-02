@@ -3,19 +3,13 @@ import axios from 'axios';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
 import { App } from '../../src/domain/app';
 import { Categorie } from '../../src/domain/contenu/categorie';
-import { ContentType } from '../../src/domain/contenu/contentType';
 import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
-import {
-  MissionDefinition,
-  ObjectifDefinition,
-} from '../../src/domain/mission/missionDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
 import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
-import { MissionRepository } from '../../src/infrastructure/repository/mission.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
@@ -61,7 +55,6 @@ const enum CMSPluralAPIEndpoint {
   kycs = 'kycs',
   faqs = 'faqs',
   texts = 'texts',
-  missions = 'missions',
   thematiques = 'thematiques',
   partenaires = 'partenaires',
   conformites = 'conformites',
@@ -83,7 +76,6 @@ export class CMSImportUsecase {
     private aideRepository: AideRepository,
     private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
-    private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
@@ -387,33 +379,6 @@ export class CMSImportUsecase {
       await this.kycRepository.upsert(liste_kyc[index]);
     }
 
-    return loading_result;
-  }
-
-  async loadMissionsFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste_missionsDef: MissionDefinition[] = [];
-    const CMS_MISSION_DATA = await this.loadDataFromCMS(
-      CMSPluralAPIEndpoint.missions,
-    );
-
-    for (let index = 0; index < CMS_MISSION_DATA.length; index++) {
-      const element: CMSWebhookPopulateAPI = CMS_MISSION_DATA[index];
-      let mission_def: MissionDefinition;
-      try {
-        mission_def = this.buildMissionFromCMSPopulateData(element);
-        liste_missionsDef.push(mission_def);
-        loading_result.push(`loaded missions : ${mission_def.id_cms}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load mission ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (let index = 0; index < liste_missionsDef.length; index++) {
-      await this.missionRepository.upsert(liste_missionsDef[index]);
-    }
     return loading_result;
   }
 
@@ -999,67 +964,6 @@ export class CMSImportUsecase {
             })),
           )
         : [],
-    };
-  }
-
-  private buildMissionFromCMSPopulateData(
-    entry: CMSWebhookPopulateAPI,
-  ): MissionDefinition {
-    return {
-      id_cms: entry.id,
-      est_visible: entry.attributes.est_visible,
-      thematique: entry.attributes.thematique.data
-        ? Thematique[entry.attributes.thematique.data.attributes.code]
-        : Thematique.climat,
-      code: entry.attributes.code,
-      is_first: entry.attributes.is_first,
-      titre: entry.attributes.titre,
-      introduction: entry.attributes.introduction,
-      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
-      est_examen: !!entry.attributes.is_examen,
-      objectifs:
-        entry.attributes.objectifs.length > 0
-          ? entry.attributes.objectifs.map((obj) => {
-              const result = new ObjectifDefinition({
-                titre: obj.titre,
-                content_id: null,
-                points: obj.points,
-                type: null,
-                tag_article: null,
-                id_cms: null,
-              });
-              if (obj.article.data) {
-                result.type = ContentType.article;
-                result.content_id = obj.article.data.id.toString();
-                result.id_cms = obj.article.data.id;
-              }
-              if (obj.tag_article.data) {
-                result.type = ContentType.article;
-                result.tag_article = obj.tag_article.data.attributes.code;
-              }
-              if (obj.defi.data) {
-                result.type = ContentType.defi;
-                result.content_id = obj.defi.data.id.toString();
-                result.id_cms = obj.defi.data.id;
-              }
-              if (obj.quizz.data) {
-                result.type = ContentType.quizz;
-                result.content_id = obj.quizz.data.id.toString();
-                result.id_cms = obj.quizz.data.id;
-              }
-              if (obj.kyc.data) {
-                result.type = ContentType.kyc;
-                result.content_id = obj.kyc.data.attributes.code;
-                result.id_cms = obj.kyc.data.id;
-              }
-              if (obj.mosaic.data) {
-                result.type = ContentType.mosaic;
-                result.content_id = obj.mosaic.data.attributes.code;
-                result.id_cms = obj.mosaic.data.id;
-              }
-              return result;
-            })
-          : [],
     };
   }
 

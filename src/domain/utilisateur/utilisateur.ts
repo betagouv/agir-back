@@ -12,7 +12,6 @@ import { KYCID } from '../kyc/KYCID';
 import { KYCHistory } from '../kyc/kycHistory';
 import { QuestionKYC } from '../kyc/questionKYC';
 import { Logement } from '../logement/logement';
-import { MissionsUtilisateur } from '../mission/missionsUtilisateur';
 import { NotificationHistory } from '../notification/notificationHistory';
 import { Tag } from '../scoring/tag';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
@@ -49,7 +48,6 @@ export enum Scope {
   unlocked_features = 'unlocked_features',
   logement = 'logement',
   defis = 'defis',
-  missions = 'missions',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
@@ -82,7 +80,6 @@ export class UtilisateurData {
   sent_email_count: number;
   prevent_sendemail_before: Date;
   gamification: Gamification;
-  missions: MissionsUtilisateur;
   history: History;
   unlocked_features: UnlockedFeatures;
   version: number;
@@ -189,7 +186,6 @@ export class Utilisateur extends UtilisateurData {
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
-      missions: new MissionsUtilisateur(),
       annee_naissance: null,
       mois_naissance: null,
       jour_naissance: null,

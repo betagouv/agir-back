@@ -170,4 +170,64 @@ export class GoneController extends GenericControler {
   async updateResponse(@Request() req): Promise<void> {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
+
+  @Get('utilisateurs/:utilisateurId/tuiles_missions_v2')
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async getMissionsRecommandees_v2(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/tuiles_missions')
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async getMissionsRecommandees(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions_v2',
+  )
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async getTuilesMissions_v2(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/tuiles_missions',
+  )
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async getTuilesMissions(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/missions/:code_mission')
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async getMissionByCode(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/:utilisateurId/missions/:code_mission/terminer')
+  @ApiOperation({
+    summary: `Plus de missions sur le service V2`,
+  })
+  async terminerMissionByCode(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @ApiOperation({
+    summary: 'Plus de missions sur le service V2',
+  })
+  @Post('utilisateurs/:utilisateurId/objectifs/:objectifId/gagner_points')
+  async gagnerPoints(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 }

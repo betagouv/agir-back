@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../../../src/domain/history/history';
-import { MissionsUtilisateur } from '../../../../src/domain/mission/missionsUtilisateur';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
 import { CacheBilanCarbone } from '../../../domain/bilan/cacheBilanCarbone';
@@ -27,7 +26,6 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { DefiRepository } from '../defi.repository';
 import { KycRepository } from '../kyc.repository';
-import { MissionRepository } from '../mission.repository';
 
 export type UserFilter = {
   created_after?: Date;
@@ -45,7 +43,6 @@ const OMIT_ALL_CONFIGURATION_JSON = {
   unlocked_features: true,
   logement: true,
   defis: true,
-  missions: true,
   bilbiotheque_services: true,
   thematique_history: true,
 };
@@ -517,14 +514,6 @@ export class UtilisateurRepository {
           Upgrader.upgradeRaw(user.logement, SerialisableDomain.Logement),
         )
       : undefined;
-    const missions = user.missions
-      ? new MissionsUtilisateur(
-          Upgrader.upgradeRaw(
-            user.missions,
-            SerialisableDomain.MissionsUtilisateur,
-          ),
-        )
-      : undefined;
     const notification_history = user.notification_history
       ? new NotificationHistory(
           Upgrader.upgradeRaw(
@@ -584,7 +573,6 @@ export class UtilisateurRepository {
       defi_history: defis,
       force_connexion: user.force_connexion,
       derniere_activite: user.derniere_activite,
-      missions: missions,
       annee_naissance: user.annee_naissance,
       mois_naissance: user.mois_naissance,
       jour_naissance: user.jour_naissance,
@@ -617,9 +605,6 @@ export class UtilisateurRepository {
 
     if (result.kyc_history) {
       result.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    }
-    if (result.missions) {
-      result.missions.setCatalogue(MissionRepository.getCatalogue());
     }
     if (result.defi_history) {
       result.defi_history.setCatalogue(DefiRepository.getCatalogue());
@@ -743,12 +728,6 @@ export class UtilisateurRepository {
             SerialisableDomain.KYCHistory,
           )
         : undefined,
-      missions: scopes.includes(Scope.missions)
-        ? Upgrader.serialiseToLastVersion(
-            user.missions,
-            SerialisableDomain.MissionsUtilisateur,
-          )
-        : undefined,
       bilbiotheque_services: scopes.includes(Scope.bilbiotheque_services)
         ? Upgrader.serialiseToLastVersion(
             user.bilbiotheque_services,
@@ -806,7 +785,6 @@ export class UtilisateurRepository {
       unlocked_features: !scopes.includes(Scope.unlocked_features),
       logement: !scopes.includes(Scope.logement),
       defis: !scopes.includes(Scope.defis),
-      missions: !scopes.includes(Scope.missions),
       bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
       notification_history: !scopes.includes(Scope.notification_history),
       thematique_history: !scopes.includes(Scope.thematique_history),

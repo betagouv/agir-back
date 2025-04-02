@@ -4,8 +4,6 @@
 
 ## npm run execute unsubscribe_oprhan_prms
 
-## npm run execute all_defi_statistique
-
 ## npm run execute article_statistique
 
 ## npm run execute quizz_statistique
@@ -13,12 +11,6 @@
 ## npm run execute kyc_statistique
 
 ## npm run execute defi_statistique
-
-## npm run execute univers_statistique
-
-## npm run execute thematique_statistique
-
-## npm run execute univers_statistique
 
 ## npm run execute service_statistique
 

@@ -15,11 +15,8 @@ import { ServiceUsecase } from './usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
-import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
-import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -50,14 +47,6 @@ async function bootstrap() {
         `STOP unsubscribe_oprhan_prms after ${Date.now() - start_time}  ms`,
       );
       break;
-    case 'all_defi_statistique':
-      start_time = Date.now();
-      console.log(`START all_defi_statistique ${start_time}`);
-      await application.get(StatistiqueUsecase).calculStatistiqueDefis();
-      console.log(
-        `STOP all_defi_statistique after ${Date.now() - start_time} ms`,
-      );
-      break;
     case 'article_statistique':
       start_time = Date.now();
       console.log(`START article_statistique ${start_time}`);
@@ -83,22 +72,6 @@ async function bootstrap() {
       console.log(`START kyc_statistique ${start_time}`);
       await application.get(KycStatistiqueUsecase).calculStatistique();
       console.log(`STOP kyc_statistique after ${Date.now() - start_time} ms`);
-      break;
-    case 'thematique_statistique':
-      start_time = Date.now();
-      console.log(`START thematique_statistique ${start_time}`);
-      await application.get(MissionStatistiqueUsecase).calculStatistique();
-      console.log(
-        `STOP thematique_statistique after ${Date.now() - start_time} ms`,
-      );
-      break;
-    case 'univers_statistique':
-      start_time = Date.now();
-      console.log(`START univers_statistique ${start_time}`);
-      await application.get(ThematiqueStatistiqueUsecase).calculStatistique();
-      console.log(
-        `STOP univers_statistique after ${Date.now() - start_time} ms`,
-      );
       break;
     case 'service_statistique':
       start_time = Date.now();

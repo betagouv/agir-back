@@ -78,7 +78,6 @@ import { ConformiteRepository } from '../src/infrastructure/repository/conformit
 import { DefiRepository } from '../src/infrastructure/repository/defi.repository';
 import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
-import { MissionRepository } from '../src/infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
@@ -256,7 +255,6 @@ export class TestUtil {
     DefiRepository.resetCache();
     FAQRepository.resetCache();
     KycRepository.resetCache();
-    MissionRepository.resetCache();
     PartenaireRepository.resetCache();
     ServiceFavorisStatistiqueRepository.resetCache();
     ThematiqueRepository.resetCache();

@@ -8,17 +8,12 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { ContentType } from '../domain/contenu/contentType';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { DefiDefinition } from '../domain/defis/defiDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import {
-  MissionDefinition,
-  ObjectifDefinition,
-} from '../domain/mission/missionDefinition';
 import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
@@ -38,7 +33,6 @@ import { ConformiteRepository } from '../infrastructure/repository/conformite.re
 import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { MissionRepository } from '../infrastructure/repository/mission.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
@@ -54,7 +48,6 @@ export class CMSWebhookUsecase {
     private conformiteRepository: ConformiteRepository,
     private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
-    private missionRepository: MissionRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
@@ -79,18 +72,6 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateKyc(cmsWebhookAPI);
         case CMSEvent['entry.update']:
           return this.createOrUpdateKyc(cmsWebhookAPI);
-      }
-    }
-    if (cmsWebhookAPI.model === CMSModel.mission) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteMission(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteMission(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateMission(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateMission(cmsWebhookAPI);
       }
     }
 
@@ -288,13 +269,6 @@ export class CMSWebhookUsecase {
     );
   }
 
-  async createOrUpdateMission(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.missionRepository.upsert(
-      this.buildMissionFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
   async createOrUpdateAction(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
@@ -305,9 +279,6 @@ export class CMSWebhookUsecase {
 
   async deleteKyc(cmsWebhookAPI: CMSWebhookAPI) {
     await this.kycRepository.delete(cmsWebhookAPI.entry.id);
-  }
-  async deleteMission(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.missionRepository.delete(cmsWebhookAPI.entry.id);
   }
   async deleteAction(cmsWebhookAPI: CMSWebhookAPI) {
     await this.actionRepository.delete(
@@ -630,67 +601,6 @@ export class CMSWebhookUsecase {
             })),
           )
         : [],
-    };
-  }
-
-  private buildMissionFromCMSData(
-    entry: CMSWebhookEntryAPI,
-  ): MissionDefinition {
-    return {
-      id_cms: entry.id,
-      est_visible: entry.est_visible,
-      est_examen: !!entry.is_examen,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
-      titre: entry.titre,
-      introduction: entry.introduction,
-      code: entry.code,
-      image_url: this.getImageUrlFromImageField(entry.imageUrl),
-      is_first: entry.is_first,
-      objectifs:
-        entry.objectifs.length > 0
-          ? entry.objectifs.map((obj) => {
-              const result = new ObjectifDefinition({
-                titre: obj.titre,
-                content_id: null,
-                points: obj.points,
-                type: null,
-                tag_article: null,
-                id_cms: null,
-              });
-              if (obj.article) {
-                result.type = ContentType.article;
-                result.content_id = obj.article.id.toString();
-                result.id_cms = obj.article.id;
-              }
-              if (obj.tag_article) {
-                result.type = ContentType.article;
-                result.tag_article = obj.tag_article.code;
-              }
-              if (obj.defi) {
-                result.type = ContentType.defi;
-                result.content_id = obj.defi.id.toString();
-                result.id_cms = obj.defi.id;
-              }
-              if (obj.quizz) {
-                result.type = ContentType.quizz;
-                result.content_id = obj.quizz.id.toString();
-                result.id_cms = obj.quizz.id;
-              }
-              if (obj.kyc) {
-                result.type = ContentType.kyc;
-                result.content_id = obj.kyc.code;
-                result.id_cms = obj.kyc.id;
-              }
-              if (obj.mosaic) {
-                result.type = ContentType.mosaic;
-                result.content_id = obj.mosaic.code;
-                result.id_cms = obj.mosaic.id;
-              }
-              return result;
-            })
-          : [],
     };
   }
 

@@ -28,7 +28,6 @@ import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmail
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
 import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
-import { AsciiPreviewController } from './infrastructure/api/ascii.preview.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
 import { CmsPreviewController } from './infrastructure/api/cms.preview.controller';
@@ -44,7 +43,6 @@ import { InscriptionController } from './infrastructure/api/inscription.controll
 import { LinkyController } from './infrastructure/api/linky.controller';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
-import { MissionController } from './infrastructure/api/mission.controller';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
@@ -81,7 +79,6 @@ import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { LinkyRepository } from './infrastructure/repository/linky.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
-import { MissionRepository } from './infrastructure/repository/mission.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -127,7 +124,6 @@ import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { LinkyUsecase } from './usecase/linky.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
-import { MissionUsecase } from './usecase/mission.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
@@ -141,11 +137,8 @@ import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DefiStatistiqueUsecase } from './usecase/stats/defiStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
-import { MissionStatistiqueUsecase } from './usecase/stats/missionStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
-import { StatistiqueUsecase } from './usecase/stats/statistique.usecase';
-import { ThematiqueStatistiqueUsecase } from './usecase/stats/thematiqueStatistique.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
 
@@ -171,10 +164,8 @@ function getControllers(): any[] {
     InscriptionController,
     DefisController,
     ThematiqueController,
-    MissionController,
     RechecheServicesController,
     BilanCarboneController,
-    AsciiPreviewController,
     NotificationsController,
     LoadCMSController,
     SyntheseController,
@@ -257,22 +248,17 @@ function getControllers(): any[] {
     DefiRepository,
     DefisUsecase,
     LinkyConsentRepository,
-    StatistiqueUsecase,
     StatistiqueRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
     DefiStatistiqueUsecase,
     DefiStatistiqueRepository,
-    MissionUsecase,
     QuizStatistiqueUsecase,
     QuizStatistiqueRepository,
     KycStatistiqueUsecase,
     KycStatistiqueRepository,
-    MissionRepository,
     KycRepository,
-    MissionStatistiqueUsecase,
     MissionStatistiqueRepository,
-    ThematiqueStatistiqueUsecase,
     ThematiqueStatistiqueRepository,
     Personnalisator,
     RechercheServicesUsecase,

@@ -113,12 +113,7 @@ export class EventUsecase {
   private async processLectureArticle(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.history_article_quizz_aides,
-        Scope.gamification,
-        Scope.missions,
-        Scope.kyc,
-      ],
+      [Scope.history_article_quizz_aides, Scope.gamification, Scope.kyc],
     );
 
     await this.bibliothequeUsecase.external_read_article(
@@ -132,12 +127,7 @@ export class EventUsecase {
   private async processQuizzScore(utilisateurId: string, event: AppEvent) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [
-        Scope.history_article_quizz_aides,
-        Scope.gamification,
-        Scope.missions,
-        Scope.kyc,
-      ],
+      [Scope.history_article_quizz_aides, Scope.gamification, Scope.kyc],
     );
 
     await this.bibliothequeUsecase.setQuizzResult(

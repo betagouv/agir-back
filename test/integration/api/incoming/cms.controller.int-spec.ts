@@ -1,17 +1,12 @@
-import { KYC, Mission } from '.prisma/client';
-import {
-  CMSWebhookEntryAPI,
-  CMSWebhookObjectifAPI,
-} from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
+import { KYC } from '.prisma/client';
+import { CMSWebhookEntryAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Echelle } from '../../../../src/domain/aides/echelle';
 import { CategorieRecherche } from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { ContentType } from '../../../../src/domain/contenu/contentType';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
-import { CodeMission } from '../../../../src/domain/mission/codeMission';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { TagExcluant } from '../../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../../src/domain/scoring/tagUtilisateur';
@@ -136,7 +131,7 @@ describe('/api/incoming/cms (API test)', () => {
       thematique_univers: [
         {
           id: 1,
-          code: CodeMission.dechets_compost,
+          code: 'dechets_compost',
         },
       ],
       mois: '0,1',
@@ -296,7 +291,7 @@ describe('/api/incoming/cms (API test)', () => {
       thematique_univers: [
         {
           id: 1,
-          code: CodeMission.dechets_compost,
+          code: 'dechets_compost',
         },
       ],
       mois: '0,1',
@@ -378,63 +373,6 @@ describe('/api/incoming/cms (API test)', () => {
             },
           ],
         },
-      ],
-    } as CMSWebhookEntryAPI,
-  };
-
-  const CMS_DATA_MISSION: CMSWebhookAPI = {
-    model: CMSModel.mission,
-    event: CMSEvent['entry.publish'],
-    entry: {
-      id: 123,
-      publishedAt: new Date('2023-09-20T14:42:12.941Z'),
-      est_visible: true,
-      is_examen: true,
-      titre: 'YOO',
-      introduction: 'The intro',
-      code: CodeMission.cereales,
-      imageUrl: {
-        formats: {
-          thumbnail: { url: 'https://' },
-        },
-        url: '',
-      },
-      thematique: {
-        id: 1,
-        titre: 'Alimentation',
-        code: Thematique.alimentation,
-      },
-      objectifs: [
-        {
-          id: 1,
-          titre: 'do it article',
-          points: 5,
-          article: { id: 11 },
-        } as CMSWebhookObjectifAPI,
-        {
-          id: 2,
-          titre: 'do it defi',
-          points: 10,
-          defi: { id: 12 },
-        } as CMSWebhookObjectifAPI,
-        {
-          id: 3,
-          titre: 'do it kyc',
-          points: 15,
-          kyc: { code: KYCID.KYC001, id: 100 },
-        } as CMSWebhookObjectifAPI,
-        {
-          id: 4,
-          titre: 'do it quizz',
-          points: 20,
-          quizz: { id: 13 },
-        } as CMSWebhookObjectifAPI,
-        {
-          id: 5,
-          titre: 'do it article generique',
-          points: 5,
-          tag_article: { code: '111' },
-        } as CMSWebhookObjectifAPI,
       ],
     } as CMSWebhookEntryAPI,
   };
@@ -994,73 +932,7 @@ describe('/api/incoming/cms (API test)', () => {
       [{ id_kyc: 8888, code_kyc: 'KYC06', code_reponse: 'yop' }],
     ]);
   });
-  it('POST /api/incoming/cms - create a new mission', async () => {
-    // GIVEN
 
-    // WHEN
-    const response = await TestUtil.POST('/api/incoming/cms').send(
-      CMS_DATA_MISSION,
-    );
-
-    // THEN
-    const missions = await TestUtil.prisma.mission.findMany({});
-
-    expect(response.status).toBe(201);
-    expect(missions).toHaveLength(1);
-
-    const item: Mission = missions[0];
-
-    expect(item.est_visible).toEqual(true);
-    expect(item.est_examen).toEqual(true);
-    expect(item.id_cms).toEqual(123);
-    expect(item.code).toEqual(CodeMission.cereales);
-    expect(item.thematique).toEqual(Thematique.alimentation);
-    expect(item.titre).toEqual('YOO');
-    expect(item.introduction).toEqual('The intro');
-    expect(item.image_url).toEqual('https://');
-    expect(item.objectifs).toEqual([
-      {
-        titre: 'do it article',
-        content_id: '11',
-        type: ContentType.article,
-        points: 5,
-        tag_article: null,
-        id_cms: 11,
-      },
-      {
-        titre: 'do it defi',
-        content_id: '12',
-        type: ContentType.defi,
-        points: 10,
-        tag_article: null,
-        id_cms: 12,
-      },
-      {
-        titre: 'do it kyc',
-        content_id: KYCID.KYC001,
-        type: ContentType.kyc,
-        points: 15,
-        tag_article: null,
-        id_cms: 100,
-      },
-      {
-        titre: 'do it quizz',
-        content_id: '13',
-        type: ContentType.quizz,
-        points: 20,
-        tag_article: null,
-        id_cms: 13,
-      },
-      {
-        titre: 'do it article generique',
-        content_id: null,
-        type: ContentType.article,
-        points: 5,
-        tag_article: '111',
-        id_cms: null,
-      },
-    ]);
-  });
   it('POST /api/incoming/cms - create a new defi', async () => {
     // GIVEN
 
