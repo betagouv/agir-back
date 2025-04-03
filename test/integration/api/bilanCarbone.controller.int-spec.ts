@@ -1,7 +1,6 @@
 import { KYC } from '@prisma/client';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
@@ -10,7 +9,6 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
@@ -85,12 +83,18 @@ describe('/bilan (API test)', () => {
     // GIVEN
     const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
 
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [Feature.bilan_carbone_detail],
+    const cache: CacheBilanCarbone_v0 = {
+      est_bilan_complet: true,
+      version: 0,
+      alimentation_kg: 0,
+      consommation_kg: 0,
+      logement_kg: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      updated_at: new Date(),
     };
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked as any,
+      cache_bilan_carbone: cache as any,
     });
 
     await TestUtil.create(DB.thematique, {
@@ -552,12 +556,18 @@ describe('/bilan (API test)', () => {
       emoji: '🔥',
     } as KYC);
 
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [Feature.bilan_carbone_detail],
+    const cache: CacheBilanCarbone_v0 = {
+      est_bilan_complet: true,
+      version: 0,
+      alimentation_kg: 0,
+      consommation_kg: 0,
+      logement_kg: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      updated_at: new Date(),
     };
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked as any,
+      cache_bilan_carbone: cache as any,
       kyc: kyc as any,
     });
 
@@ -928,12 +938,18 @@ describe('/bilan (API test)', () => {
 
   it('GET /utilisateurs/id/bilans/last_v3 - mettre à jour le profil utilisateur change le bilan', async () => {
     // GIVEN
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [Feature.bilan_carbone_detail],
+    const cache: CacheBilanCarbone_v0 = {
+      est_bilan_complet: true,
+      version: 0,
+      alimentation_kg: 0,
+      consommation_kg: 0,
+      logement_kg: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      updated_at: new Date(),
     };
     await TestUtil.create(DB.utilisateur, {
-      unlocked_features: unlocked as any,
+      cache_bilan_carbone: cache as any,
     });
     await TestUtil.create(DB.kYC, {
       id_cms: 4,
@@ -969,9 +985,15 @@ describe('/bilan (API test)', () => {
 
   it('GET /utilisateur/id/bilans/last - une réponse vide ne fait pas crasher le bilan carbone', async () => {
     // GIVEN
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [Feature.bilan_carbone_detail],
+    const cache: CacheBilanCarbone_v0 = {
+      est_bilan_complet: true,
+      version: 0,
+      alimentation_kg: 0,
+      consommation_kg: 0,
+      logement_kg: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      updated_at: new Date(),
     };
 
     const kyc: KYCHistory_v2 = {
@@ -992,7 +1014,7 @@ describe('/bilan (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
-      unlocked_features: unlocked as any,
+      cache_bilan_carbone: cache as any,
     });
 
     // WHEN
@@ -1147,6 +1169,7 @@ describe('/bilan (API test)', () => {
       total_kg: 6,
       transport_kg: 7,
       updated_at: new Date(),
+      est_bilan_complet: true,
     };
     await TestUtil.create(DB.utilisateur, {
       cache_bilan_carbone: cache_bilan_carbone as any,
@@ -1172,6 +1195,7 @@ describe('/bilan (API test)', () => {
       total_kg: 6,
       transport_kg: 7,
       updated_at: new Date(-1),
+      est_bilan_complet: true,
     };
     await TestUtil.create(DB.utilisateur, {
       cache_bilan_carbone: cache_bilan_carbone as any,

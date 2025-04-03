@@ -40,7 +40,6 @@ describe('Gamification  (API test)', () => {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [TypeBadge.pionnier],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -64,54 +63,12 @@ describe('Gamification  (API test)', () => {
     ]);
   });
 
-  it('GET /utilisateurs/id/gamification retourne le bon niveau et les bonnes bornes ', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/gamification',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.niveau).toEqual(1);
-    expect(response.body.current_points_in_niveau).toEqual(10);
-    expect(response.body.point_target_in_niveau).toEqual(100);
-  });
-  it('GET /utilisateurs/id/gamification retourne la liste de celebrations ', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/gamification',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.celebrations).toHaveLength(1);
-    expect(response.body.celebrations[0]).toEqual({
-      id: 'celebration-id',
-      type: 'niveau',
-      new_niveau: 2,
-      titre: 'the titre',
-      reveal: {
-        id: 'reveal-id',
-        feature: 'aides',
-        titre: 'Les aides !',
-        description: 'bla',
-      },
-    });
-  });
-
   it(`GET /utilisateurs/id/classement/national retourne le top 3 France ok`, async () => {
     // GIVEN
     const gamification: Gamification_v0 = {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [TypeBadge.pionnier],
     };
 
@@ -264,7 +221,6 @@ describe('Gamification  (API test)', () => {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [TypeBadge.pionnier],
     };
 

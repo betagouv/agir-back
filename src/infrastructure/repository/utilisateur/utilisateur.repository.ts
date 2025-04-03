@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Utilisateur as UtilisateurDB } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
 import { History } from '../../../../src/domain/history/history';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { BibliothequeServices } from '../../../domain/bibliotheque_services/bibliothequeServices';
@@ -38,7 +37,6 @@ const OMIT_ALL_CONFIGURATION_JSON = {
   gamification: true,
   history: true,
   kyc: true,
-  unlocked_features: true,
   logement: true,
   bilbiotheque_services: true,
   thematique_history: true,
@@ -467,14 +465,6 @@ export class UtilisateurRepository {
     if (!user) {
       return null;
     }
-    const unlocked_features = user.unlocked_features
-      ? new UnlockedFeatures(
-          Upgrader.upgradeRaw(
-            user.unlocked_features,
-            SerialisableDomain.UnlockedFeatures,
-          ),
-        )
-      : undefined;
     const bibliotheque_services = user.bilbiotheque_services
       ? new BibliothequeServices(
           Upgrader.upgradeRaw(
@@ -557,7 +547,6 @@ export class UtilisateurRepository {
       gamification: gamification,
       history: history,
       kyc_history: kyc,
-      unlocked_features: unlocked_features,
       version: user.version,
       migration_enabled: user.migration_enabled,
       logement: logement,
@@ -654,7 +643,6 @@ export class UtilisateurRepository {
       created_at: undefined,
       updated_at: undefined,
       gamification: undefined,
-      unlocked_features: undefined,
       history: undefined,
       logement: undefined,
       kyc: undefined,
@@ -688,12 +676,6 @@ export class UtilisateurRepository {
         ? Upgrader.serialiseToLastVersion(
             user.gamification,
             SerialisableDomain.Gamification,
-          )
-        : undefined,
-      unlocked_features: scopes.includes(Scope.unlocked_features)
-        ? Upgrader.serialiseToLastVersion(
-            user.unlocked_features,
-            SerialisableDomain.UnlockedFeatures,
           )
         : undefined,
       history: scopes.includes(Scope.history_article_quizz_aides)
@@ -762,7 +744,6 @@ export class UtilisateurRepository {
       gamification: !scopes.includes(Scope.gamification),
       history: !scopes.includes(Scope.history_article_quizz_aides),
       kyc: !scopes.includes(Scope.kyc),
-      unlocked_features: !scopes.includes(Scope.unlocked_features),
       logement: !scopes.includes(Scope.logement),
       bilbiotheque_services: !scopes.includes(Scope.bilbiotheque_services),
       notification_history: !scopes.includes(Scope.notification_history),

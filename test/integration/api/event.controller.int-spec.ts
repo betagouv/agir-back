@@ -1,13 +1,6 @@
 import { EventType } from '../../../src/domain/appEvent';
-import {
-  Celebration,
-  CelebrationType,
-} from '../../../src/domain/gamification/celebrations/celebration';
-import { Gamification } from '../../../src/domain/gamification/gamification';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -15,7 +8,6 @@ describe('EVENT (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
-  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -209,63 +201,6 @@ describe('EVENT (API test)', () => {
     );
     expect(dbUtilisateur.gamification.getPoints()).toStrictEqual(30);
   });
-  it('POST /utilisateurs/id/events - supprime une celebration', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/events',
-    ).send({
-      type: EventType.celebration,
-      celebration_id: 'celebration-id',
-    });
-    // THEN
-    expect(response.status).toBe(201);
-    const dbUtilisateur = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(dbUtilisateur.gamification['celebrations']).toHaveLength(0);
-  });
-  it('POST /utilisateurs/id/events - celebration consommée ajoute une fonctionnalité débloquée', async () => {
-    // GIVEN
-    const celeb = new Celebration({
-      id: '1',
-      titre: 'yo',
-      type: CelebrationType.niveau,
-      new_niveau: 2,
-      reveal: Gamification.getRevealByNiveau(2),
-    });
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      gamification: { points: 10, celebrations: [celeb] } as any,
-      unlocked_features: unlocked as any,
-    });
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/events',
-    ).send({
-      type: EventType.celebration,
-      celebration_id: celeb.id,
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    const dbUtilisateur = await utilisateurRepository.getById(
-      'utilisateur-id',
-      [Scope.ALL],
-    );
-    expect(dbUtilisateur.gamification.celebrations).toHaveLength(0);
-    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()).toHaveLength(
-      1,
-    );
-    expect(dbUtilisateur.unlocked_features.getUnlockedFeatures()[0]).toEqual(
-      'aides',
-    );
-  });
-
   it('POST /utilisateurs/id/events - like event set la valeur du like sur une interaction v2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { version: 2 });

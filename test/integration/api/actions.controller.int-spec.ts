@@ -1508,7 +1508,6 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -1563,7 +1562,6 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -1618,7 +1616,6 @@ describe('Actions (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -1746,7 +1743,6 @@ describe('Actions (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
-      celebrations: [],
       badges: [],
       popup_reset_vue: false,
     };
@@ -1804,7 +1800,6 @@ describe('Actions (API test)', () => {
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
-      celebrations: [],
       badges: [],
       popup_reset_vue: false,
     };

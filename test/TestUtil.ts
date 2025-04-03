@@ -33,8 +33,6 @@ import { Echelle } from '../src/domain/aides/echelle';
 import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
-import { CelebrationType } from '../src/domain/gamification/celebrations/celebration';
-import { Feature } from '../src/domain/gamification/feature';
 import { KYCID } from '../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../src/domain/kyc/questionKYC';
 import {
@@ -51,7 +49,6 @@ import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { UnlockedFeatures_v1 } from '../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
@@ -498,11 +495,6 @@ export class TestUtil {
   }
 
   static utilisateurData(override?: Partial<Utilisateur>): Utilisateur {
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [Feature.aides],
-    };
-
     const cache_bilan_carbone: CacheBilanCarbone_v0 = {
       version: 0,
       alimentation_kg: undefined,
@@ -511,6 +503,7 @@ export class TestUtil {
       logement_kg: undefined,
       total_kg: undefined,
       updated_at: undefined,
+      est_bilan_complet: false,
     };
 
     const kyc: KYCHistory_v2 = {
@@ -578,20 +571,6 @@ export class TestUtil {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [
-        {
-          id: 'celebration-id',
-          type: CelebrationType.niveau,
-          new_niveau: 2,
-          titre: 'the titre',
-          reveal: {
-            id: 'reveal-id',
-            feature: Feature.aides,
-            titre: 'Les aides !',
-            description: 'bla',
-          },
-        },
-      ],
       badges: [],
     };
 
@@ -634,7 +613,6 @@ export class TestUtil {
       version: 0,
       migration_enabled: false,
       gamification: gamification as any,
-      unlocked_features: unlocked as any,
       history: history as any,
       created_at: undefined,
       updated_at: undefined,

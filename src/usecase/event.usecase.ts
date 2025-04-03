@@ -18,8 +18,6 @@ export class EventUsecase {
         return await this.processQuizzScore(utilisateurId, event);
       case EventType.article_lu:
         return await this.processLectureArticle(utilisateurId, event);
-      case EventType.celebration:
-        return await this.processCelebration(utilisateurId, event);
       case EventType.service_installed:
         return await this.processServiceInstalled(utilisateurId, event);
       case EventType.access_catalogue_aides:
@@ -96,18 +94,6 @@ export class EventUsecase {
     event: AppEvent,
   ) {
     //  FIXME : à supprimer PLUS D'IMPACT TODO
-  }
-
-  private async processCelebration(utilisateurId: string, event: AppEvent) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.gamification, Scope.unlocked_features],
-    );
-    utilisateur.gamification.terminerCelebration(
-      event.celebration_id,
-      utilisateur,
-    );
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async processLectureArticle(utilisateurId: string, event: AppEvent) {

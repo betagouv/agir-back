@@ -5,7 +5,6 @@ import { App } from '../app';
 import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServices';
 import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
 import { Gamification } from '../gamification/gamification';
-import { UnlockedFeatures } from '../gamification/unlockedFeatures';
 import { History } from '../history/history';
 import { KYCID } from '../kyc/KYCID';
 import { KYCHistory } from '../kyc/kycHistory';
@@ -44,7 +43,6 @@ export enum Scope {
   gamification = 'gamification',
   history_article_quizz_aides = 'history_article_quizz_aides',
   kyc = 'kyc',
-  unlocked_features = 'unlocked_features',
   logement = 'logement',
   bilbiotheque_services = 'bilbiotheque_services',
   notification_history = 'notification_history',
@@ -79,7 +77,6 @@ export class UtilisateurData {
   prevent_sendemail_before: Date;
   gamification: Gamification;
   history: History;
-  unlocked_features: UnlockedFeatures;
   version: number;
   migration_enabled: boolean;
   kyc_history: KYCHistory;
@@ -162,7 +159,6 @@ export class Utilisateur extends UtilisateurData {
       sent_email_count: 1,
       prevent_sendemail_before: new Date(),
       gamification: new Gamification(),
-      unlocked_features: new UnlockedFeatures(),
       history: new History(),
       kyc_history: new KYCHistory(),
       version: App.currentUserSystemVersion(),
@@ -225,7 +221,6 @@ export class Utilisateur extends UtilisateurData {
     this.code_postal_classement = null;
     this.tag_ponderation_set = {};
     this.gamification.reset();
-    this.unlocked_features.reset();
     this.history.reset();
     this.kyc_history.reset();
     this.thematique_history.reset();

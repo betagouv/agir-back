@@ -6,7 +6,6 @@ import {
   NiveauImpact,
   SituationNGC,
 } from '../domain/bilan/bilanCarbone';
-import { Feature } from '../domain/gamification/feature';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -48,7 +47,7 @@ export class BilanCarboneUsecase {
   }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.logement, Scope.unlocked_features],
+      [Scope.kyc, Scope.logement, Scope.cache_bilan_carbone],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -61,7 +60,7 @@ export class BilanCarboneUsecase {
   ): Promise<ImpactThematiqueStandalone> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.logement, Scope.unlocked_features],
+      [Scope.kyc, Scope.logement, Scope.cache_bilan_carbone],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -282,17 +281,18 @@ export class BilanCarboneUsecase {
 
     if (
       bilan_synthese.pourcentage_completion_totale >
-      SEUIL_POURCENTAGE_BILAN_COMPLET
+        SEUIL_POURCENTAGE_BILAN_COMPLET &&
+      !utilisateur.cache_bilan_carbone.est_bilan_complet
     ) {
-      utilisateur.unlocked_features.add(Feature.bilan_carbone_detail);
+      utilisateur.cache_bilan_carbone.est_bilan_complet = true;
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
-        [Scope.unlocked_features],
+        [Scope.cache_bilan_carbone],
       );
     }
 
     bilan_synthese.bilan_complet_dispo =
-      utilisateur.unlocked_features.isUnlocked(Feature.bilan_carbone_detail) ||
+      utilisateur.cache_bilan_carbone.est_bilan_complet ||
       utilisateur.vientDeNGC();
 
     const situation = this.external_compute_situation(utilisateur);

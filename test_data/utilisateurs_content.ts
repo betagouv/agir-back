@@ -1,5 +1,3 @@
-import { Feature } from '../src/domain/gamification/feature';
-
 const utilisateurs = {
   recette_livio: {
     nom: 'RECETTEUR',
@@ -11,10 +9,6 @@ const utilisateurs = {
     parts: null,
     gamification: {
       points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -29,10 +23,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   abdellah: {
@@ -46,10 +36,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   wojtek: {
@@ -62,10 +48,6 @@ const utilisateurs = {
     parts: null,
     gamification: {
       points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
     },
     services: [],
     linky: {
@@ -84,10 +66,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   nina: {
@@ -100,10 +78,6 @@ const utilisateurs = {
     parts: null,
     gamification: {
       points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -118,10 +92,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   jeremie: {
@@ -134,10 +104,6 @@ const utilisateurs = {
     parts: null,
     gamification: {
       points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
     },
     services: [],
   },
@@ -152,10 +118,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   guillaume: {
@@ -169,10 +131,6 @@ const utilisateurs = {
     gamification: {
       points: 0,
     },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
-    },
     services: [],
   },
   claire: {
@@ -185,10 +143,6 @@ const utilisateurs = {
     parts: null,
     gamification: {
       points: 0,
-    },
-    unlocked_features: {
-      version: 1,
-      unlocked_features: [Feature.services],
     },
     services: [],
   },

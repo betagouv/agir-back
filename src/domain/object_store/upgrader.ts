@@ -8,11 +8,8 @@ import { Logement_v0 } from './logement/logement_v0';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
-import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
-import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
 
 export enum SerialisableDomain {
-  UnlockedFeatures = 'UnlockedFeatures',
   History = 'History',
   Gamification = 'Gamification',
   KYCHistory = 'KYCHistory',
@@ -24,8 +21,6 @@ export enum SerialisableDomain {
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
-  UnlockedFeatures_v0: UnlockedFeatures_v0,
-  UnlockedFeatures_v1: UnlockedFeatures_v1,
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,

@@ -147,7 +147,6 @@ describe('Thematique (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -217,7 +216,6 @@ describe('Thematique (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 

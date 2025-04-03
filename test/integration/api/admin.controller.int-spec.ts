@@ -1,8 +1,6 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
@@ -298,61 +296,6 @@ describe('Admin (API test)', () => {
             version: 1,
             ok: true,
             info: 'dummy migration',
-          },
-        ],
-      },
-    ]);
-  });
-  it.skip('POST /admin/migrate_users migration V4 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const gamification: Gamification_v0 = {
-      version: 0,
-      points: 620,
-      popup_reset_vue: false,
-      celebrations: [
-        {
-          id: 'celebration-id',
-          type: CelebrationType.niveau,
-          new_niveau: 2,
-          titre: 'the titre',
-          reveal: {
-            id: 'reveal-id',
-            feature: Feature.aides,
-            titre: 'Les aides !',
-            description: 'bla',
-          },
-        },
-      ],
-      badges: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      version: 3,
-      migration_enabled: true,
-      gamification: gamification as any,
-    });
-    App.USER_CURRENT_VERSION = 4;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.version).toBe(4);
-    expect(userDB.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
-      true,
-    );
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 4,
-            ok: true,
-            info: `revealed bilbio for user utilisateur-id of 620 points : true`,
           },
         ],
       },
@@ -660,7 +603,6 @@ describe('Admin (API test)', () => {
       version: 0,
       points: 2000,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 

@@ -1,7 +1,6 @@
-import { UnlockedFeatures } from '../../../../src/domain/gamification/unlockedFeatures';
-import { Feature } from '../../../../src/domain/gamification/feature';
-import { UnlockedFeatures_v0 } from '../../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v0';
-import { UnlockedFeatures_v1 } from '../../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
+import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
+import { KYCHistory_v0 } from '../../../../src/domain/object_store/kyc/kycHistory_v0';
+import { KYCHistory_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
 import {
   SerialisableDomain,
   Upgrader,
@@ -10,68 +9,77 @@ import {
 describe('Upgrader ', () => {
   it('upgrade au max partant de data sans version', () => {
     // GIVEN
-    const input = { unlocked_feature_list: [Feature.aides] };
+    const input = {
+      answered_mosaics: [],
+      answered_questions: [],
+    };
 
     // WHEN
-    const result = Upgrader.upgradeRaw(
-      input,
-      SerialisableDomain.UnlockedFeatures,
-    );
+    const result = Upgrader.upgradeRaw(input, SerialisableDomain.KYCHistory);
 
     // THEN
-    expect(result['unlocked_features']).toEqual([Feature.aides]);
-    expect(result['version']).toEqual(1);
+    expect(result).toEqual({
+      answered_mosaics: [],
+      answered_questions: [],
+      version: 2,
+    });
+    expect(result['version']).toEqual(2);
   });
   it('upgrade au max partant de data avec version 0', () => {
     // GIVEN
-    const input: UnlockedFeatures_v0 = {
-      unlocked_feature_list: [Feature.aides],
+    const input: KYCHistory_v0 = {
       version: 0,
+      answered_mosaics: [],
+      answered_questions: [],
     };
 
     // WHEN
-    const result = Upgrader.upgradeRaw(
-      input,
-      SerialisableDomain.UnlockedFeatures,
-    );
+    const result = Upgrader.upgradeRaw(input, SerialisableDomain.KYCHistory);
 
     // THEN
-    expect(result['unlocked_features']).toEqual([Feature.aides]);
-    expect(result['version']).toEqual(1);
+    expect(result).toEqual({
+      answered_mosaics: [],
+      answered_questions: [],
+      version: 2,
+    });
+    expect(result['version']).toEqual(2);
   });
   it('upgrade de version 1 à version 1', () => {
     // GIVEN
-    const input: UnlockedFeatures_v1 = {
-      unlocked_features: [Feature.aides],
-      version: 1,
+    const input: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
     };
 
     // WHEN
-    const result = Upgrader.upgradeRaw(
-      input,
-      SerialisableDomain.UnlockedFeatures,
-    );
+    const result = Upgrader.upgradeRaw(input, SerialisableDomain.KYCHistory);
 
     // THEN
-    expect(result['unlocked_features']).toEqual([Feature.aides]);
-    expect(result['version']).toEqual(1);
+    expect(result).toEqual({
+      answered_mosaics: [],
+      answered_questions: [],
+      version: 2,
+    });
+    expect(result['version']).toEqual(2);
   });
   it('serialise to last version', () => {
     // GIVEN
-    const input = new UnlockedFeatures();
-    input.add(Feature.bibliotheque);
+    const input = new KYCHistory();
 
     // WHEN
     const result = Upgrader.serialiseToLastVersion(
       input,
-      SerialisableDomain.UnlockedFeatures,
+      SerialisableDomain.KYCHistory,
     );
 
     // THEN
-    expect(result['unlocked_features'].includes(Feature.bibliotheque)).toEqual(
-      true,
-    );
-    expect(result['version']).toEqual(1);
+    expect(result).toEqual({
+      answered_mosaics: [],
+      answered_questions: [],
+      version: 2,
+    });
+    expect(result['version']).toEqual(2);
   });
   it('convertAllDateAttributes converts date OK', () => {
     // GIVEN
