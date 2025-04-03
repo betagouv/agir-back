@@ -43,6 +43,7 @@ import { InscriptionController } from './infrastructure/api/inscription.controll
 import { LinkyController } from './infrastructure/api/linky.controller';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
+import { MesAidesRenoController } from './infrastructure/api/mesAidesReno.controller';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
@@ -169,6 +170,7 @@ function getControllers(): any[] {
     ActionsController,
     SimulateurVoitureController,
     AidesVeloController,
+    MesAidesRenoController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
