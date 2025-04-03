@@ -24,10 +24,12 @@ describe('MesAidesRenoRepository', () => {
     await TestUtil.appclose();
   });
 
-  describe('getInputSearchParams', () => {
-    test("should return an empty string if the user doesn't exist", async () => {
-      const result = await usecase.getInputSearchParamsFor('non_existant_id');
-      expect(result).toBe('');
+  describe('getIframeUrl', () => {
+    test("should return the url without params if the user doesn't exist", async () => {
+      const result = await usecase.getIframeUrl('non_existant_id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
+      );
     });
 
     test('should correctly parse informations', async () => {
@@ -44,9 +46,9 @@ describe('MesAidesRenoRepository', () => {
         revenu_fiscal: 20000,
       });
 
-      const result = await usecase.getInputSearchParamsFor('utilisateur-id');
+      const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(
-        'vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&logement.type=%22appartement%22&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%2231555%22&logement.commune=31555',
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&logement.type=%22appartement%22&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%2231555%22&logement.commune=31555',
       );
     });
 
@@ -60,9 +62,9 @@ describe('MesAidesRenoRepository', () => {
         revenu_fiscal: 20000,
       });
 
-      const result = await usecase.getInputSearchParamsFor('utilisateur-id');
+      const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(
-        'vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
       );
     });
   });
