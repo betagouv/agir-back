@@ -1,6 +1,3 @@
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { DefiStatus } from '../../../../src/domain/defis/defi';
-import { DefiHistory } from '../../../../src/domain/defis/defiHistory';
 import {
   CanalNotification,
   EmailNotification,
@@ -8,9 +5,6 @@ import {
   NotificationHistory,
   TypeNotification,
 } from '../../../../src/domain/notification/notificationHistory';
-import { Defi_v0 } from '../../../../src/domain/object_store/defi/defiHistory_v0';
-import { Tag } from '../../../../src/domain/scoring/tag';
-import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
   SourceInscription,
@@ -281,67 +275,6 @@ describe('NotificationHistory', () => {
 
     // THEN
     expect(result).toHaveLength(0);
-  });
-  it.skip(`getNouvellesNotifications : vieux defis`, () => {
-    // GIVEN
-
-    process.env.NOTIFICATIONS_MAIL_INACTIVES =
-      'welcome,email_relance_onboarding_j8';
-
-    const DEFI_1: Defi_v0 = {
-      id: '1',
-      points: 5,
-      tags: [Tag.transport],
-      titre: 'titre',
-      thematique: Thematique.alimentation,
-      astuces: 'astuce',
-      date_acceptation: new Date(Date.now() - 3 * DAY_IN_MS),
-      pourquoi: 'pourquoi',
-      sous_titre: 'sous_titre',
-      status: DefiStatus.todo,
-      accessible: true,
-      motif: 'truc',
-      categorie: Categorie.recommandation,
-      mois: [1],
-      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-      sont_points_en_poche: true,
-      impact_kg_co2: 5,
-    };
-
-    const defiHistory = new DefiHistory({
-      version: 0,
-      defis: [
-        {
-          ...DEFI_1,
-          id: '1',
-          status: DefiStatus.en_cours,
-          date_acceptation: new Date(100),
-        },
-      ],
-    });
-
-    const utilisateur = Utilisateur.createNewUtilisateur(
-      'toto@dev.com',
-      false,
-      SourceInscription.mobile,
-    );
-    utilisateur.defi_history = defiHistory;
-    utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
-    utilisateur.active_account = true;
-
-    const notifications = new NotificationHistory({
-      version: 0,
-      sent_notifications: [],
-      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
-    });
-
-    // WHEN
-    const result =
-      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
-
-    // THEN
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(TypeNotification.waiting_action);
   });
 
   it(`getNouvellesNotifications : email_relance_onboarding_j8`, () => {

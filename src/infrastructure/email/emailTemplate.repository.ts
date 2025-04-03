@@ -145,23 +145,6 @@ export class EmailTemplateRepository {
             HOME_URL: App.getBaseURLFront(),
           }),
         };
-      case TypeNotification.waiting_action:
-        const defi = utilisateur.defi_history.getPlusVieuxDefiEnCours();
-        if (defi) {
-          return {
-            subject: `Avez-vous relevé le défi ? Validez votre progression sur J'agis !`,
-            body: this.email_relance_action({
-              PRENOM: utilisateur.pseudo,
-              CONTACT_EMAIL: utilisateur.email,
-              UNSUBSCRIBE_URL: unsubscribe_URL,
-              TITRE_ACTION: defi.titre,
-              ACTIONS_URL: `${App.getBaseURLFront()}/compte/mes-actions`,
-              HOME_URL: App.getBaseURLFront(),
-            }),
-          };
-        } else {
-          return null;
-        }
       case TypeNotification.email_demande_feedback:
         return {
           subject: `Votre avis nous intéresse 🌱`,

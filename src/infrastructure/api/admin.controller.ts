@@ -22,12 +22,12 @@ import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
-import { DefiStatistiqueUsecase } from '../../../src/usecase/stats/defiStatistique.usecase';
 import { App } from '../../domain/app';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
+import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
@@ -69,14 +69,20 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
-    private defiStatistiqueUsecase: DefiStatistiqueUsecase,
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
     super();
+  }
+
+  @Post('admin/forcer_calcul_stats_carbone')
+  async forceCalculStatsCarbone(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.bilanCarboneUsecase.flagToutUtilisateurForcerCaclculStatsBilan();
   }
 
   @Get('check_version/:version')
@@ -197,15 +203,6 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/defi-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des défis`,
-  })
-  async calcul_defi_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.defiStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/quiz-statistique')

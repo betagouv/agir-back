@@ -76,7 +76,7 @@ export class BibliothequeUsecase {
     utilisateurId: string,
     filtre_thematiques: Thematique[],
     titre: string,
-    include: IncludeArticle,
+    includes: IncludeArticle[] = [IncludeArticle.tout],
     skip: number = 0,
     take: number = 1000000,
   ): Promise<Bibliotheque> {
@@ -89,10 +89,10 @@ export class BibliothequeUsecase {
     Utilisateur.checkState(utilisateur);
 
     let articles_candidats_ids: string[];
-    if (include !== 'tout') {
+    if (!(includes.includes(IncludeArticle.tout) || includes.length === 0)) {
       articles_candidats_ids = utilisateur.history.searchArticlesIds({
-        est_lu: include === 'lu',
-        est_favoris: include === 'favoris',
+        est_lu: includes.includes(IncludeArticle.lu),
+        est_favoris: includes.includes(IncludeArticle.favoris),
       });
     }
     const dept_region =

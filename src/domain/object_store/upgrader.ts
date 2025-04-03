@@ -1,5 +1,4 @@
 import { CacheBilanCarbone_v0 } from './bilan/cacheBilanCarbone_v0';
-import { DefiHistory_v0 } from './defi/defiHistory_v0';
 import { Gamification_v0 } from './gamification/gamification_v0';
 import { History_v0 } from './history/history_v0';
 import { KYCHistory_v0 } from './kyc/kycHistory_v0';
@@ -9,15 +8,11 @@ import { Logement_v0 } from './logement/logement_v0';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
-import { UnlockedFeatures_v0 } from './unlockedFeatures/unlockedFeatures_v0';
-import { UnlockedFeatures_v1 } from './unlockedFeatures/unlockedFeatures_v1';
 
 export enum SerialisableDomain {
-  UnlockedFeatures = 'UnlockedFeatures',
   History = 'History',
   Gamification = 'Gamification',
   KYCHistory = 'KYCHistory',
-  DefiHistory = 'DefiHistory',
   Logement = 'Logement',
   BibliothequeServices = 'BibliothequeServices',
   NotificationHistory = 'NotificationHistory',
@@ -26,15 +21,12 @@ export enum SerialisableDomain {
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
-  UnlockedFeatures_v0: UnlockedFeatures_v0,
-  UnlockedFeatures_v1: UnlockedFeatures_v1,
   History_v0: History_v0,
   Gamification_v0: Gamification_v0,
   KYCHistory_v0: KYCHistory_v0,
   KYCHistory_v1: KYCHistory_v1,
   KYCHistory_v2: KYCHistory_v2,
   Logement_v0: Logement_v0,
-  DefiHistory_v0: DefiHistory_v0,
   BibliothequeServices_v0: BibliothequeServices_v0,
   NotificationHistory_v0: NotificationHistory_v0,
   ThematiqueHistory_v0: ThematiqueHistory_v0,

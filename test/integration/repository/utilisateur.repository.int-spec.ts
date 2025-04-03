@@ -1,12 +1,7 @@
-import { DB, TestUtil } from '../../TestUtil';
+import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import {
-  Scope,
-  SourceInscription,
-  Utilisateur,
-} from '../../../src/domain/utilisateur/utilisateur';
-import { UnlockedFeatures_v1 } from '../../../src/domain/object_store/unlockedFeatures/unlockedFeatures_v1';
-import { Feature } from '../../../src/domain/gamification/feature';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('UtilisateurRepository', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -149,24 +144,6 @@ describe('UtilisateurRepository', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     // THEN
     expect(userDB.parts).toEqual(null);
-  });
-  it('creation et lecture , versionning des donnes json ', async () => {
-    // GIVEN
-    const user = Utilisateur.createNewUtilisateur(
-      'w@w.com',
-      false,
-      SourceInscription.inconnue,
-    );
-    user.id = 'utilisateur-id';
-
-    // WHEN
-    await utilisateurRepository.createUtilisateur(user);
-
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    // THEN
-    expect(userDB.unlocked_features['version']).toEqual(1);
   });
   it('checkState throws error', async () => {
     // GIVEN
@@ -362,16 +339,18 @@ describe('UtilisateurRepository', () => {
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     userDB.prenom = 'YOYOYO';
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [
-        Feature.aides,
-        Feature.defis,
-        Feature.bibliotheque,
-        Feature.bilan_carbone,
-      ],
+    const cache: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: 1,
+      consommation_kg: 2,
+      est_bilan_complet: true,
+      forcer_calcul_stats: false,
+      logement_kg: 3,
+      total_kg: 4,
+      transport_kg: 5,
+      updated_at: new Date(),
     };
-    userDB.unlocked_features = unlocked;
+    userDB.cache_bilan_carbone = cache;
 
     // WHEN
     await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
@@ -383,8 +362,15 @@ describe('UtilisateurRepository', () => {
       Scope.ALL,
     ]);
     expect(userDB_2.prenom).toEqual('YOYOYO');
-    expect(userDB_2.unlocked_features).toEqual({
-      unlocked_features: ['aides', 'defis'],
+    expect(userDB_2.cache_bilan_carbone).toEqual({
+      alimentation_kg: undefined,
+      consommation_kg: undefined,
+      est_bilan_complet: false,
+      logement_kg: undefined,
+      total_kg: undefined,
+      transport_kg: undefined,
+      updated_at: undefined,
+      forcer_calcul_stats: false,
     });
   });
   it(`updateUtilisateurNoConcurency : maj sous donnée versionnée seulement`, async () => {
@@ -392,20 +378,22 @@ describe('UtilisateurRepository', () => {
     await TestUtil.create(DB.utilisateur);
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     userDB.prenom = 'YOYOYO';
-    const unlocked: UnlockedFeatures_v1 = {
-      version: 1,
-      unlocked_features: [
-        Feature.aides,
-        Feature.defis,
-        Feature.bibliotheque,
-        Feature.bilan_carbone,
-      ],
+    const cache: CacheBilanCarbone_v0 = {
+      version: 0,
+      alimentation_kg: 1,
+      consommation_kg: 2,
+      est_bilan_complet: true,
+      forcer_calcul_stats: false,
+      logement_kg: 3,
+      total_kg: 4,
+      transport_kg: 5,
+      updated_at: new Date(1),
     };
-    userDB.unlocked_features = unlocked;
+    userDB.cache_bilan_carbone = cache;
 
     // WHEN
     await utilisateurRepository.updateUtilisateurNoConcurency(userDB, [
-      Scope.unlocked_features,
+      Scope.cache_bilan_carbone,
     ]);
 
     // THEN
@@ -413,8 +401,15 @@ describe('UtilisateurRepository', () => {
       Scope.ALL,
     ]);
     expect(userDB_2.prenom).toEqual('prenom');
-    expect(userDB_2.unlocked_features).toEqual({
-      unlocked_features: ['aides', 'defis', 'bibliotheque', 'bilan_carbone'],
+    expect(userDB_2.cache_bilan_carbone).toEqual({
+      alimentation_kg: 1,
+      consommation_kg: 2,
+      est_bilan_complet: true,
+      forcer_calcul_stats: false,
+      logement_kg: 3,
+      total_kg: 4,
+      transport_kg: 5,
+      updated_at: new Date(1),
     });
   });
   it(`countByCodeCommune : count correct`, async () => {

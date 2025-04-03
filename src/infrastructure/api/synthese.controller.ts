@@ -55,8 +55,6 @@ export class SyntheseAPI {
   @ApiProperty() result_PDCN_epicerie_superette: number;
   @ApiProperty() result_PDCN_marche_local: number;
   @ApiProperty() result_PDCN_zero_dechet: number;
-  @ApiProperty() nombre_defis_encours: number;
-  @ApiProperty() nombre_defis_realises: number;
   @ApiProperty() nombre_articles_locaux: number;
   @ApiProperty() nombre_articles_total: number;
   @ApiProperty({ type: [String] }) liste_communes: string[];
@@ -150,17 +148,12 @@ export class SyntheseController extends GenericControler {
     */
 
     let nombre_points_moyen = 0;
-    let nombre_defis_encours = 0;
-    let nombre_defis_realises = 0;
 
     for (const userid of user_ids_code_postal) {
       const user = await this.userRepository.getById(userid, [
         Scope.gamification,
-        Scope.defis,
       ]);
       nombre_points_moyen += user.gamification.getPoints();
-      nombre_defis_encours += user.defi_history.getNombreDefisEnCours();
-      nombre_defis_realises += user.defi_history.getNombreDefisRealises();
     }
     if (user_ids_code_postal.length > 0) {
       nombre_points_moyen = nombre_points_moyen / user_ids_code_postal.length;
@@ -383,8 +376,6 @@ export class SyntheseController extends GenericControler {
       count_aide_transport: count_aide_transport,
       count_aide_dechet: count_aide_dechet,
       count_aide_loisir: count_aide_loisir,
-      nombre_defis_encours: nombre_defis_encours,
-      nombre_defis_realises: nombre_defis_realises,
       nombre_articles_locaux: nombre_articles_locaux,
       nombre_articles_total: articles.length,
       liste_id_articles_locaux: articles_locaux.map((a) => ({

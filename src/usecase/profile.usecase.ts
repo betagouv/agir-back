@@ -267,7 +267,6 @@ export class ProfileUsecase {
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
     const utilisateur = await this.utilisateurRepository.getById(id, [
-      Scope.unlocked_features,
       Scope.logement,
       Scope.kyc,
       Scope.gamification,

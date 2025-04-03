@@ -1,6 +1,5 @@
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
@@ -73,7 +72,6 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(user.logement.code_postal).toEqual(null);
     expect(user.logement.commune).toEqual(null);
-    expect(user.unlocked_features.unlocked_features).toHaveLength(0);
   });
   it('POST /utilisateurs_v2 - no user version defaults to App version', async () => {
     // GIVEN
@@ -543,9 +541,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
-    expect(user.unlocked_features.isUnlocked(Feature.bilan_carbone)).toEqual(
-      true,
-    );
+    expect(user.cache_bilan_carbone.est_bilan_complet).toEqual(true);
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => maj logement`, async () => {

@@ -3,12 +3,10 @@ import axios from 'axios';
 import { ThematiqueDefinition } from 'src/domain/thematique/thematiqueDefinition';
 import { App } from '../../src/domain/app';
 import { Categorie } from '../../src/domain/contenu/categorie';
-import { DefiDefinition } from '../../src/domain/defis/defiDefinition';
 import { KycDefinition } from '../../src/domain/kyc/kycDefinition';
 import { TagUtilisateur } from '../../src/domain/scoring/tagUtilisateur';
 import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../src/infrastructure/repository/article.repository';
-import { DefiRepository } from '../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { QuizzRepository } from '../../src/infrastructure/repository/quizz.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
@@ -51,7 +49,6 @@ const enum CMSPluralAPIEndpoint {
   articles = 'articles',
   quizzes = 'quizzes',
   aides = 'aides',
-  defis = 'defis',
   kycs = 'kycs',
   faqs = 'faqs',
   texts = 'texts',
@@ -74,7 +71,6 @@ export class CMSImportUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private conformiteRepository: ConformiteRepository,
     private aideRepository: AideRepository,
-    private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
@@ -105,33 +101,6 @@ export class CMSImportUsecase {
     }
     for (let index = 0; index < liste_articles.length; index++) {
       await this.articleRepository.upsert(liste_articles[index]);
-    }
-    return loading_result;
-  }
-
-  async loadDefisFromCMS(): Promise<string[]> {
-    const loading_result: string[] = [];
-    const liste_defis: DefiDefinition[] = [];
-    const CMS_DEFI_DATA = await this.loadDataFromCMS(
-      CMSPluralAPIEndpoint.defis,
-    );
-
-    for (let index = 0; index < CMS_DEFI_DATA.length; index++) {
-      const element: CMSWebhookPopulateAPI = CMS_DEFI_DATA[index];
-      let defi: DefiDefinition;
-      try {
-        defi = this.buildDefiFromCMSPopulateData(element);
-        liste_defis.push(defi);
-        loading_result.push(`loaded defi : ${defi.content_id}`);
-      } catch (error) {
-        loading_result.push(
-          `Could not load defi ${element.id} : ${error.message}`,
-        );
-        loading_result.push(JSON.stringify(element));
-      }
-    }
-    for (let index = 0; index < liste_defis.length; index++) {
-      await this.defiRepository.upsert(liste_defis[index]);
     }
     return loading_result;
   }
@@ -762,9 +731,6 @@ export class CMSImportUsecase {
       date_expiration: entry.attributes.date_expiration
         ? new Date(entry.attributes.date_expiration)
         : null,
-      partenaire_id: entry.attributes.partenaire.data
-        ? '' + entry.attributes.partenaire.data.id
-        : null,
       partenaires_supp_ids: entry.attributes.partenaires.data
         ? entry.attributes.partenaires.data.map((p) => p.id.toString())
         : [],
@@ -825,37 +791,6 @@ export class CMSImportUsecase {
     };
   }
 
-  private buildDefiFromCMSPopulateData(
-    entry: CMSWebhookPopulateAPI,
-  ): DefiDefinition {
-    return {
-      content_id: entry.id.toString(),
-      titre: entry.attributes.titre,
-      sous_titre: entry.attributes.sousTitre,
-      astuces: entry.attributes.astuces,
-      pourquoi: entry.attributes.pourquoi,
-      points: entry.attributes.points,
-      impact_kg_co2: entry.attributes.impact_kg_co2,
-      thematique: entry.attributes.thematique.data
-        ? Thematique[entry.attributes.thematique.data.attributes.code]
-        : Thematique.climat,
-      tags: entry.attributes.tags.data.map(
-        (elem) =>
-          TagUtilisateur[elem.attributes.code] || TagUtilisateur.UNKNOWN,
-      ),
-      categorie: Categorie[entry.attributes.categorie],
-      mois: entry.attributes.mois
-        ? entry.attributes.mois.split(',').map((m) => parseInt(m))
-        : [],
-      conditions: entry.attributes.OR_Conditions.map((or) =>
-        or.AND_Conditions.map((and) => ({
-          id_kyc: and.kyc.data.id,
-          code_kyc: and.kyc.data.attributes.code,
-          code_reponse: and.code_reponse,
-        })),
-      ),
-    };
-  }
   private buildActionFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
     type: TypeAction,

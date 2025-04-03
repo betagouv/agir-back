@@ -24,6 +24,8 @@ describe('CacheBilanCarbone_vN ', () => {
       transport_kg: 4,
       total_kg: 5,
       updated_at: new Date(),
+      est_bilan_complet: true,
+      forcer_calcul_stats: false,
     });
 
     // WHEN
@@ -44,6 +46,8 @@ describe('CacheBilanCarbone_vN ', () => {
       transport_kg: 4,
       total_kg: 5,
       updated_at: new Date(),
+      est_bilan_complet: true,
+      forcer_calcul_stats: false,
     });
 
     // WHEN

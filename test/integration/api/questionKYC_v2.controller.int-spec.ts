@@ -26,10 +26,7 @@ import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { DefiRepository } from '../../../src/infrastructure/repository/defi.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { DB, TestUtil } from '../../TestUtil';
@@ -98,9 +95,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const defiRepository = new DefiRepository(TestUtil.prisma);
-  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
-  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();

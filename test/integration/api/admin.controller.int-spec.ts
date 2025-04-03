@@ -1,9 +1,6 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
-import { DefiStatus } from '../../../src/domain/defis/defi';
-import { CelebrationType } from '../../../src/domain/gamification/celebrations/celebration';
-import { Feature } from '../../../src/domain/gamification/feature';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
@@ -12,10 +9,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
-import {
-  DefiHistory_v0,
-  Defi_v0,
-} from '../../../src/domain/object_store/defi/defiHistory_v0';
+import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
@@ -308,121 +302,7 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
-  it.skip('POST /admin/migrate_users migration V4 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const gamification: Gamification_v0 = {
-      version: 0,
-      points: 620,
-      popup_reset_vue: false,
-      celebrations: [
-        {
-          id: 'celebration-id',
-          type: CelebrationType.niveau,
-          new_niveau: 2,
-          titre: 'the titre',
-          reveal: {
-            id: 'reveal-id',
-            feature: Feature.aides,
-            titre: 'Les aides !',
-            description: 'bla',
-          },
-        },
-      ],
-      badges: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      version: 3,
-      migration_enabled: true,
-      gamification: gamification as any,
-    });
-    App.USER_CURRENT_VERSION = 4;
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.version).toBe(4);
-    expect(userDB.unlocked_features.isUnlocked(Feature.bibliotheque)).toEqual(
-      true,
-    );
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 4,
-            ok: true,
-            info: `revealed bilbio for user utilisateur-id of 620 points : true`,
-          },
-        ],
-      },
-    ]);
-  });
-
-  it.skip('POST /admin/migrate_users migration V7 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const defis: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          points: 5,
-          tags: [],
-          titre: 'titre',
-          thematique: Thematique.alimentation,
-          astuces: 'astuce',
-          date_acceptation: new Date(),
-          pourquoi: 'pourquoi',
-          sous_titre: 'sous_titre',
-          accessible: true,
-          motif: 'truc',
-          id: '001',
-          status: DefiStatus.fait,
-          categorie: Categorie.recommandation,
-          mois: [],
-          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-          sont_points_en_poche: true,
-          impact_kg_co2: 5,
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      version: 6,
-      migration_enabled: true,
-      logement: {},
-      defis: defis as any,
-    });
-    App.USER_CURRENT_VERSION = 7;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 7,
-            ok: true,
-            info: `user : utilisateur-id switched 1 status deja_fait => fait`,
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.defi_history.getRAWDefiListe()[0].getStatus()).toEqual(
-      DefiStatus.fait,
-    );
-  });
   it.skip('POST /admin/migrate_users migration V8 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -724,7 +604,6 @@ describe('Admin (API test)', () => {
       version: 0,
       points: 2000,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -1478,220 +1357,6 @@ describe('Admin (API test)', () => {
     expect(article1.titre).toBe(`Article [article-id-1] supprimé`);
   });
 
-  it("POST /admin/defi-statistique - calcul des statistiques de l'ensemble des défis", async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    const DEFI: Defi_v0 = {
-      id: '1',
-      points: 10,
-      tags: [],
-      titre: 'titre',
-      thematique: Thematique.transport,
-      astuces: 'ASTUCE',
-      date_acceptation: null,
-      pourquoi: 'POURQUOI',
-      sous_titre: 'SOUS TITRE',
-      status: DefiStatus.todo,
-      accessible: true,
-      motif: '',
-      categorie: Categorie.recommandation,
-      mois: [],
-      conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
-      sont_points_en_poche: false,
-      impact_kg_co2: 5,
-    };
-
-    const defi1 = {
-      ...DEFI,
-      id: '1',
-      titre: 'A',
-    };
-    const defi2 = {
-      ...DEFI,
-      id: '2',
-      titre: 'B',
-    };
-    const defi3 = {
-      ...DEFI,
-      id: '3',
-      titre: 'C',
-    };
-    const defi4 = {
-      ...DEFI,
-      id: '4',
-      titre: 'D',
-    };
-
-    const defis_user_1: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        { ...defi1, status: DefiStatus.pas_envie },
-        { ...defi2, status: DefiStatus.pas_envie },
-        { ...defi3, status: DefiStatus.pas_envie },
-        { ...defi4, status: DefiStatus.pas_envie, motif: 'pas envie user1' },
-      ],
-    };
-    const defis_user_2: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        { ...defi1, status: DefiStatus.en_cours },
-        {
-          ...defi2,
-          status: DefiStatus.abondon,
-          motif: 'Top dur à mettre en place',
-        },
-        { ...defi3, status: DefiStatus.fait },
-        { ...defi4, status: DefiStatus.pas_envie },
-      ],
-    };
-
-    const defis_user_3: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        { ...defi1, status: DefiStatus.fait },
-        {
-          ...defi2,
-          status: DefiStatus.pas_envie,
-          motif: 'pas envie defi2 user3',
-        },
-        { ...defi3, status: DefiStatus.fait },
-        {
-          ...defi4,
-          status: DefiStatus.pas_envie,
-          motif: 'pas envie defi4 user3',
-        },
-      ],
-    };
-
-    const defis_user_4: DefiHistory_v0 = {
-      version: 0,
-      defis: [
-        {
-          ...defi1,
-          status: DefiStatus.abondon,
-          motif: 'motif abandon defi1 user4',
-        },
-        {
-          ...defi2,
-          status: DefiStatus.abondon,
-          motif: 'motif abandon defi2 user4',
-        },
-        {
-          ...defi3,
-          status: DefiStatus.pas_envie,
-          motif: 'motif pas envie defi3 user4',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      id: '1',
-      email: '1',
-      defis: defis_user_1 as any,
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '2',
-      email: '2',
-      defis: defis_user_2 as any,
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '3',
-      email: '3',
-      defis: defis_user_3 as any,
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '4',
-      email: '4',
-      defis: defis_user_4 as any,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/defi-statistique');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(4);
-
-    const defi_1_stat = await TestUtil.prisma.defiStatistique.findUnique({
-      where: { content_id: '1' },
-    });
-    const defi_2_stat = await TestUtil.prisma.defiStatistique.findUnique({
-      where: { content_id: '2' },
-    });
-    const defi_3_stat = await TestUtil.prisma.defiStatistique.findUnique({
-      where: { content_id: '3' },
-    });
-    const defi_4_stat = await TestUtil.prisma.defiStatistique.findUnique({
-      where: { content_id: '4' },
-    });
-
-    delete defi_1_stat.created_at;
-    delete defi_1_stat.updated_at;
-    delete defi_2_stat.created_at;
-    delete defi_2_stat.updated_at;
-    delete defi_3_stat.created_at;
-    delete defi_3_stat.updated_at;
-    delete defi_4_stat.created_at;
-    delete defi_4_stat.updated_at;
-
-    expect(defi_1_stat).toEqual({
-      content_id: '1',
-      titre: 'A',
-      nombre_defis_pas_envie: 1,
-      nombre_defis_abandonnes: 1,
-      nombre_defis_en_cours: 1,
-      nombre_defis_realises: 1,
-      raisons_defi_pas_envie: [],
-      raisons_defi_abandonne: ['motif abandon defi1 user4'],
-    });
-
-    expect(
-      defi_2_stat.raisons_defi_abandonne.includes('Top dur à mettre en place'),
-    ).toEqual(true);
-    expect(
-      defi_2_stat.raisons_defi_abandonne.includes('motif abandon defi2 user4'),
-    ).toEqual(true);
-    delete defi_2_stat.raisons_defi_abandonne;
-    expect(defi_2_stat).toEqual({
-      content_id: '2',
-      titre: 'B',
-      nombre_defis_pas_envie: 2,
-      nombre_defis_abandonnes: 2,
-      nombre_defis_en_cours: 0,
-      nombre_defis_realises: 0,
-      raisons_defi_pas_envie: ['pas envie defi2 user3'],
-    });
-
-    expect(defi_3_stat).toEqual({
-      content_id: '3',
-      titre: 'C',
-      nombre_defis_pas_envie: 2,
-      nombre_defis_abandonnes: 0,
-      nombre_defis_en_cours: 0,
-      nombre_defis_realises: 2,
-      raisons_defi_pas_envie: ['motif pas envie defi3 user4'],
-      raisons_defi_abandonne: [],
-    });
-
-    expect(
-      defi_4_stat.raisons_defi_pas_envie.includes('pas envie user1'),
-    ).toEqual(true);
-    expect(
-      defi_4_stat.raisons_defi_pas_envie.includes('pas envie defi4 user3'),
-    ).toEqual(true);
-    delete defi_4_stat.raisons_defi_pas_envie;
-    expect(defi_4_stat).toEqual({
-      content_id: '4',
-      titre: 'D',
-      nombre_defis_pas_envie: 3,
-      nombre_defis_abandonnes: 0,
-      nombre_defis_en_cours: 0,
-      nombre_defis_realises: 0,
-      raisons_defi_abandonne: [],
-    });
-  });
-
   it("POST /admin/quiz-statistique - calcul des statistiques de l'ensemble des quiz", async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -2014,6 +1679,51 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
+
+  it('POST /admin/forcer_calcul_stats_carbone', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const cache: CacheBilanCarbone_v0 = {
+      version: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      alimentation_kg: 0,
+      logement_kg: 0,
+      consommation_kg: 0,
+      updated_at: new Date(1),
+      est_bilan_complet: false,
+      forcer_calcul_stats: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      cache_bilan_carbone: cache as any,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+      cache_bilan_carbone: cache as any,
+    });
+    // WHEN
+    const response = await TestUtil.POST('/admin/forcer_calcul_stats_carbone');
+
+    // THEN
+    expect(response.status).toBe(201);
+    const listeUsers = await TestUtil.prisma.utilisateur.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    expect(listeUsers[0].cache_bilan_carbone['forcer_calcul_stats']).toEqual(
+      true,
+    );
+    expect(listeUsers[1].cache_bilan_carbone['forcer_calcul_stats']).toEqual(
+      true,
+    );
+  });
+
   it('POST /admin/create_brevo_contacts', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

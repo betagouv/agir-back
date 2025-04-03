@@ -159,10 +159,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.nom).toEqual('nom');
     expect(response.body.prenom).toEqual('prenom');
     expect(response.body.popup_reset_est_vue).toEqual(false);
-    expect(response.body.fonctionnalites_debloquees).toEqual([
-      'aides',
-      'defis',
-    ]);
   });
 
   it('GET /utilisateurs/id/profile - read basic profile datas', async () => {
@@ -1244,7 +1240,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(0);
     expect(servicesDB).toHaveLength(0);
     expect(servicesDefDB).toHaveLength(1);
   });
@@ -1264,7 +1259,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(userDB1.unlocked_features.unlocked_features).toHaveLength(0);
   });
   it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
     // GIVEN
@@ -1282,7 +1276,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
   it(`POST /utilisateurs/id/reset erreur si pas de payload`, async () => {
     // GIVEN
@@ -1296,7 +1289,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.unlocked_features.unlocked_features).toHaveLength(2);
   });
   it(`POST /utilisateurs/update_user_couverture`, async () => {
     // GIVEN

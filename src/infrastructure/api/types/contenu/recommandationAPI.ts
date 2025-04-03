@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommandation } from '../../../../../src/domain/contenu/recommandation';
-import { Thematique } from '../../../../domain/thematique/thematique';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
-import { DefiStatus } from '../../../../../src/domain/defis/defi';
+import { Thematique } from '../../../../domain/thematique/thematique';
 
 export class RecommandationAPI {
   @ApiProperty() type: string;
@@ -16,7 +15,6 @@ export class RecommandationAPI {
   @ApiProperty() points: number;
   @ApiProperty() score: number;
   @ApiProperty() content_id: string;
-  @ApiProperty({ enum: DefiStatus }) status_defi: DefiStatus;
   @ApiProperty() jours_restants: number;
 
   public static mapToAPI(recommandation: Recommandation): RecommandationAPI {
@@ -37,7 +35,6 @@ export class RecommandationAPI {
       points: recommandation.points,
       score: recommandation.score,
       jours_restants: recommandation.jours_restants,
-      status_defi: recommandation.status_defi,
     };
   }
 }

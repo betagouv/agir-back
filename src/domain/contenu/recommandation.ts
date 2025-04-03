@@ -1,6 +1,5 @@
 import { Thematique } from '../thematique/thematique';
 import { ContentType } from './contentType';
-import { DefiStatus } from '../defis/defi';
 
 export type Recommandation = {
   content_id: string;
@@ -12,7 +11,6 @@ export type Recommandation = {
   score: number;
 
   jours_restants?: number;
-  status_defi?: DefiStatus;
   soustitre?: string;
   duree?: string;
 };

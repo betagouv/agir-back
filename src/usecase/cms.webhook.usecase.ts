@@ -10,7 +10,6 @@ import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
-import { DefiDefinition } from '../domain/defis/defiDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -30,7 +29,6 @@ import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
-import { DefiRepository } from '../infrastructure/repository/defi.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
@@ -46,7 +44,6 @@ export class CMSWebhookUsecase {
     private thematiqueRepository: ThematiqueRepository,
     private aideRepository: AideRepository,
     private conformiteRepository: ConformiteRepository,
-    private defiRepository: DefiRepository,
     private partenaireRepository: PartenaireRepository,
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
@@ -159,18 +156,6 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateConformite(cmsWebhookAPI);
       }
     }
-    if (cmsWebhookAPI.model === CMSModel.defi) {
-      switch (cmsWebhookAPI.event) {
-        case CMSEvent['entry.unpublish']:
-          return this.deleteDefi(cmsWebhookAPI);
-        case CMSEvent['entry.delete']:
-          return this.deleteDefi(cmsWebhookAPI);
-        case CMSEvent['entry.publish']:
-          return this.createOrUpdateDefi(cmsWebhookAPI);
-        case CMSEvent['entry.update']:
-          return this.createOrUpdateDefi(cmsWebhookAPI);
-      }
-    }
     if (cmsWebhookAPI.model === CMSModel.partenaire) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -196,9 +181,6 @@ export class CMSWebhookUsecase {
   }
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
-  }
-  async deleteDefi(cmsWebhookAPI: CMSWebhookAPI) {
-    await this.defiRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
   async deletePartenaire(cmsWebhookAPI: CMSWebhookAPI) {
     await this.partenaireRepository.delete(cmsWebhookAPI.entry.id.toString());
@@ -230,13 +212,6 @@ export class CMSWebhookUsecase {
 
     await this.conformiteRepository.upsert(
       this.buildConformiteFromCMSData(cmsWebhookAPI.entry),
-    );
-  }
-  async createOrUpdateDefi(cmsWebhookAPI: CMSWebhookAPI) {
-    if (cmsWebhookAPI.entry.publishedAt === null) return;
-
-    await this.defiRepository.upsert(
-      this.buildDefiFromCMSData(cmsWebhookAPI.entry),
     );
   }
 
@@ -371,7 +346,7 @@ export class CMSWebhookUsecase {
       content_id: hook.entry.id.toString(),
       article_id: hook.entry.articles[0]
         ? '' + hook.entry.articles[0].id
-        : undefined,
+        : null,
       questions: {
         liste_questions: hook.entry.questions.map((q) => ({
           libelle: q.libelle,
@@ -419,7 +394,6 @@ export class CMSWebhookUsecase {
         ? new Date(entry.date_expiration)
         : null,
       derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
-      partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       partenaires_supp_ids: entry.partenaires
         ? entry.partenaires.map((p) => p.id.toString())
         : [],
@@ -497,34 +471,6 @@ export class CMSWebhookUsecase {
     });
   }
 
-  private buildDefiFromCMSData(entry: CMSWebhookEntryAPI): DefiDefinition {
-    return {
-      content_id: entry.id.toString(),
-      titre: entry.titre,
-      thematique: entry.thematique
-        ? Thematique[entry.thematique.code]
-        : Thematique.climat,
-      astuces: entry.astuces,
-      points: entry.points,
-      pourquoi: entry.pourquoi,
-      sous_titre: entry.sousTitre,
-      tags: entry.tags
-        ? entry.tags.map(
-            (elem) => TagUtilisateur[elem.code] || TagUtilisateur.UNKNOWN,
-          )
-        : [],
-      categorie: Categorie[entry.categorie],
-      mois: entry.mois ? entry.mois.split(',').map((m) => parseInt(m)) : [],
-      conditions: entry.OR_Conditions.map((or) =>
-        or.AND_Conditions.map((and) => ({
-          code_kyc: and.kyc.code,
-          id_kyc: and.kyc.id,
-          code_reponse: and.code_reponse,
-        })),
-      ),
-      impact_kg_co2: entry.impact_kg_co2,
-    };
-  }
   private buildPartenaireFromCMSData(
     entry: CMSWebhookEntryAPI,
   ): PartenaireDefinition {

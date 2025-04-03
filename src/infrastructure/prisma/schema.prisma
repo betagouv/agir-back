@@ -36,10 +36,7 @@ model Utilisateur {
   gamification               Json      @default("{}") // versioné 
   history                    Json      @default("{}") // versioné 
   kyc                        Json      @default("{}") // versioné
-  unlocked_features          Json      @default("{}") // versioné 
   logement                   Json      @default("{}") // versioné 
-  defis                      Json      @default("{}") // versioné
-  missions                   Json      @default("{}") // versioné
   bilbiotheque_services      Json      @default("{}") // versioné
   notification_history       Json      @default("{}") // versioné
   thematique_history         Json      @default("{}") // versioné
@@ -211,7 +208,6 @@ model Aide {
   url_source            String?
   url_demande           String?
   is_simulateur         Boolean?
-  partenaire_id         String?
   partenaires_supp_ids  String[]  @default([])
   codes_postaux         String[]  @default([])
   thematiques           String[]  @default([])

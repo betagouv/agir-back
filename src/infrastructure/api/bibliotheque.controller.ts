@@ -117,24 +117,28 @@ export class BibliothequeController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Query('filtre_thematiques') filtre_thematiques?: string,
     @Query('titre') titre?: string,
-    @Query('include') include?: string,
+    @Query('include') include?: string[] | string,
     @Query('skip') skip?: string,
     @Query('take') take?: string,
   ): Promise<BibliothequeAPI> {
     this.checkCallerId(req, utilisateurId);
 
+    const includes = this.getStringListFromStringArrayAPIInput(include);
+    let final_includes: IncludeArticle[] = [];
+    for (const one_include of includes) {
+      final_includes.push(this.castIncludeArticleOrException(one_include));
+    }
     let thematiques = [];
     if (filtre_thematiques) {
       const thematiques_strings = filtre_thematiques.split(',');
       thematiques = thematiques_strings.map((them) => Thematique[them]);
     }
-    const include_value = this.castIncludeArticleOrException(include);
 
     const biblio = await this.bibliothequeUsecase.rechercheBiblio_v2(
       utilisateurId,
       thematiques,
       titre,
-      include_value,
+      final_includes,
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
     );

@@ -147,7 +147,6 @@ describe('Thematique (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -217,7 +216,6 @@ describe('Thematique (API test)', () => {
       version: 0,
       points: 0,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -377,7 +375,7 @@ describe('Thematique (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });

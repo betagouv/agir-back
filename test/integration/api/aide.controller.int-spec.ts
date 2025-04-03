@@ -58,7 +58,7 @@ describe('Aide (API test)', () => {
     });
     await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.aide, { partenaire_id: '123' });
+    await TestUtil.create(DB.aide, { partenaires_supp_ids: ['123'] });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -126,7 +126,7 @@ describe('Aide (API test)', () => {
     await thematiqueRepository.loadCache();
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       content_id: '45',
       contenu: 'ksqjfhqsjf {block_123} dfjksqmlmfjq',
     });
@@ -176,7 +176,7 @@ describe('Aide (API test)', () => {
 
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       contenu: 'ksqjfhqsjf {block_123} dfjksqmlmfjq',
     });
 
@@ -568,7 +568,7 @@ describe('Aide (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['21000'], // metropole
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
     });
     await aideRepository.loadCache();
 
@@ -623,7 +623,7 @@ describe('Aide (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['21000'], // metropole
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
     });
     await aideRepository.loadCache();
 
@@ -681,7 +681,7 @@ describe('Aide (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['21000'], // metropole
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
     });
     await aideRepository.loadCache();
 

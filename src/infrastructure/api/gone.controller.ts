@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApplicationError } from '../applicationError';
 import { GenericControler } from './genericControler';
@@ -228,6 +228,30 @@ export class GoneController extends GenericControler {
   })
   @Post('utilisateurs/:utilisateurId/objectifs/:objectifId/gagner_points')
   async gagnerPoints(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/defis/:defiId')
+  @ApiOperation({
+    summary: 'Plus de défis sur le service V2',
+  })
+  async getById(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Patch('utilisateurs/:utilisateurId/defis/:defiId')
+  @ApiOperation({
+    summary: 'Plus de défis sur le service V2',
+  })
+  async patchStatus(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/defis_v2')
+  @ApiOperation({
+    summary: 'Plus de défis sur le service V2',
+  })
+  async getAllUserDefi_2(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 }

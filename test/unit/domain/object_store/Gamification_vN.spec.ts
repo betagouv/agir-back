@@ -1,4 +1,3 @@
-import { CelebrationType } from '../../../../src/domain/gamification/celebrations/celebration';
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import { TypeBadge } from '../../../../src/domain/gamification/typeBadge';
 import { Gamification_v0 } from '../../../../src/domain/object_store/gamification/gamification_v0';
@@ -21,7 +20,6 @@ describe('Gamification vN ', () => {
     const domain = new Gamification(raw);
     // THEN
 
-    expect(domain.celebrations).toHaveLength(0);
     expect(domain.getPoints()).toEqual(0);
   });
   it('serialise <=> deserialise v0 OK', () => {
@@ -33,9 +31,6 @@ describe('Gamification vN ', () => {
     );
     let domain_start = new Gamification({
       badges: [TypeBadge.pionnier],
-      celebrations: [
-        { id: '1', titre: 'ha', type: CelebrationType.fin_mission },
-      ],
       points: 123,
       popup_reset_vue: true,
       version: 0,
@@ -57,9 +52,6 @@ describe('Gamification vN ', () => {
     );
     let domain_start = new Gamification({
       badges: [TypeBadge.pionnier],
-      celebrations: [
-        { id: '1', titre: 'ha', type: CelebrationType.fin_mission },
-      ],
       points: 123,
       popup_reset_vue: true,
       version: 0,

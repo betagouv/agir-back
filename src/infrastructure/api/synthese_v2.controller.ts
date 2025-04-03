@@ -66,8 +66,6 @@ export class SyntheseAPI {
   @ApiProperty() nombre_inscrits_total: number;
   @ApiProperty() nombre_inscrits_local: number;
   @ApiProperty() nombre_points_moyen: number;
-  @ApiProperty() nombre_defis_encours: number;
-  @ApiProperty() nombre_defis_realises: number;
 }
 
 @ApiTags('Previews')
@@ -179,17 +177,12 @@ export class Synthese_v2Controller extends GenericControler {
     );
 
     let nombre_points_moyen = 0;
-    let nombre_defis_encours = 0;
-    let nombre_defis_realises = 0;
 
     for (const userid of local_users) {
       const user = await this.userRepository.getById(userid, [
         Scope.gamification,
-        Scope.defis,
       ]);
       nombre_points_moyen += user.gamification.getPoints();
-      nombre_defis_encours += user.defi_history.getNombreDefisEnCours();
-      nombre_defis_realises += user.defi_history.getNombreDefisRealises();
     }
 
     // ###########################################################################
@@ -211,8 +204,6 @@ export class Synthese_v2Controller extends GenericControler {
     result.nombre_inscrits_total = total_users;
     result.nombre_inscrits_local = local_users.length;
     result.nombre_points_moyen = nombre_points_moyen;
-    result.nombre_defis_encours = nombre_defis_encours;
-    result.nombre_defis_realises = nombre_defis_realises;
 
     result.liste_aides_region = categorisation_aides.regional;
     result.liste_aides_departement = categorisation_aides.departemental;

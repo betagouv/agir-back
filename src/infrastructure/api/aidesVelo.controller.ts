@@ -48,6 +48,7 @@ export class AidesVeloController extends GenericControler {
       utilisateurId,
       body.prix_du_velo,
       body.etat_du_velo,
+      body.situation_handicap,
     );
     return AidesVeloParTypeAPI.mapToAPI(result);
   }
@@ -58,6 +59,8 @@ export class AidesVeloController extends GenericControler {
   @Post('aides/simulerAideVelo')
   @ApiBody({
     type: InputAideVeloOpenAPI,
+    description:
+      'DEPRECATED: Utiliser /utilisateurs/:utilisateurId/simulerAideVelo ou /aides/recupererAideVeloParCodeCommuneOuEPCI',
   })
   async simulerAideVelo(
     @Body() body: InputAideVeloOpenAPI,

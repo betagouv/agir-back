@@ -2,6 +2,7 @@ import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import {
   KYCHistory_v2,
@@ -10,6 +11,7 @@ import {
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
@@ -42,6 +44,69 @@ const KYC_DATA: QuestionKYC_v2 = {
   image_url: 'AAA',
   conditions: [],
   unite: { abreviation: 'kg' },
+  emoji: '🔥',
+};
+
+const kyc_histo: KYCHistory_v2 = {
+  version: 2,
+  answered_mosaics: [],
+  answered_questions: [
+    {
+      ...KYC_DATA,
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_NGC: true,
+      last_update: new Date(1000),
+      reponse_complexe: [
+        {
+          label: 'Souvent',
+          code: 'souvent',
+          ngc_code: '"souvent"',
+          selected: true,
+        },
+        {
+          label: 'Jamais',
+          code: 'jamais',
+          ngc_code: '"bof"',
+          selected: false,
+        },
+        {
+          label: 'Parfois',
+          code: 'parfois',
+          ngc_code: '"burp"',
+          selected: false,
+        },
+      ],
+      tags: [],
+      ngc_key: 'alimentation . de saison . consommation',
+    },
+  ],
+};
+
+const kyc_part_of_histo: KYC = {
+  code: 'KYC_saison_frequence',
+  id_cms: 21,
+  question: `À quelle fréquence mangez-vous de saison ? `,
+  type: TypeReponseQuestionKYC.choix_unique,
+  categorie: Categorie.mission,
+  points: 10,
+  reponses: [
+    { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+    { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+    { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+  ],
+  tags: [],
+  ngc_key: 'alimentation . de saison . consommation',
+  image_url: '111',
+  short_question: 'short',
+  conditions: [],
+  unite: { abreviation: 'kg' },
+  created_at: undefined,
+  is_ngc: true,
+  a_supprimer: false,
+  thematique: 'alimentation',
+  updated_at: undefined,
   emoji: '🔥',
 };
 
@@ -755,71 +820,10 @@ describe('Duplicate Usecase', () => {
 
   it('computeBilanTousUtilisateurs : pas de reclalcul si pas besoin', async () => {
     // GIVEN
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: 'KYC_saison_frequence',
-          id_cms: 21,
-          type: TypeReponseQuestionKYC.choix_unique,
-          is_NGC: true,
-          last_update: new Date(1000),
-          reponse_complexe: [
-            {
-              label: 'Souvent',
-              code: 'souvent',
-              ngc_code: '"souvent"',
-              selected: true,
-            },
-            {
-              label: 'Jamais',
-              code: 'jamais',
-              ngc_code: '"bof"',
-              selected: false,
-            },
-            {
-              label: 'Parfois',
-              code: 'parfois',
-              ngc_code: '"burp"',
-              selected: false,
-            },
-          ],
-          tags: [],
-          ngc_key: 'alimentation . de saison . consommation',
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      code: 'KYC_saison_frequence',
-      id_cms: 21,
-      question: `À quelle fréquence mangez-vous de saison ? `,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.mission,
-      points: 10,
-      reponses: [
-        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
-        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
-        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
-      ],
-      tags: [],
-      ngc_key: 'alimentation . de saison . consommation',
-      image_url: '111',
-      short_question: 'short',
-      conditions: [],
-      unite: { abreviation: 'kg' },
-      created_at: undefined,
-      is_ngc: true,
-      a_supprimer: false,
-      thematique: 'alimentation',
-      updated_at: undefined,
-      emoji: '🔥',
-    } as KYC);
+    await TestUtil.create(DB.kYC, kyc_part_of_histo);
 
     await TestUtil.create(DB.utilisateur, {
-      kyc: kyc as any,
+      kyc: kyc_histo as any,
       external_stat_id: '123',
     });
 
@@ -864,6 +868,88 @@ describe('Duplicate Usecase', () => {
       pourcentage_progression_logement: 0,
       pourcentage_progression_total: 0,
       pourcentage_progression_transport: 0,
+    });
+  });
+
+  it('computeBilanTousUtilisateurs : pas de reclalcul si pas besoin => forcage de calcul', async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.kYC, kyc_part_of_histo);
+
+    const cache: CacheBilanCarbone_v0 = {
+      version: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      alimentation_kg: 0,
+      logement_kg: 0,
+      consommation_kg: 0,
+      updated_at: new Date(1),
+      est_bilan_complet: false,
+      forcer_calcul_stats: true,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc_histo as any,
+      cache_bilan_carbone: cache as any,
+      external_stat_id: '123',
+    });
+
+    await TestUtil.prisma_stats.bilanCarbone.create({
+      data: {
+        user_id: '123',
+        alimentation_kg: 1,
+        consommation_kg: 1,
+        logement_kg: 1,
+        transport_kg: 1,
+        total_kg: 1,
+        created_at: new Date(100),
+        updated_at: new Date(2000),
+      },
+    });
+
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await duplicateUsecase.computeBilanTousUtilisateurs();
+
+    // THEN
+    expect(response).toHaveLength(3);
+    expect(response[0]).toEqual('Computed OK = [1]');
+    expect(response[1]).toEqual('Skipped = [0]');
+    expect(response[2]).toEqual('Errors = [0]');
+
+    const stats = await TestUtil.prisma_stats.bilanCarbone.findMany();
+    const stat = stats[0];
+    delete stat.created_at;
+    delete stat.updated_at;
+
+    expect(stat).toEqual({
+      alimentation_kg: 2302,
+      consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
+      logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
+      total_kg: 8863,
+      transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
+      user_id: '123',
+      pourcentage_progression_alimentation: 50,
+      pourcentage_progression_consommation: 0,
+      pourcentage_progression_logement: 0,
+      pourcentage_progression_total: 8,
+      pourcentage_progression_transport: 0,
+    });
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.cache_bilan_carbone).toEqual({
+      alimentation_kg: 0,
+      consommation_kg: 0,
+      est_bilan_complet: false,
+      forcer_calcul_stats: false,
+      logement_kg: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      updated_at: new Date(1),
     });
   });
 

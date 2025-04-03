@@ -196,7 +196,8 @@ describe('Aide Velo (API test)', () => {
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].montant).toEqual(300);
   });
-  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, au dela tranche 2, pas d'aide`, async () => {
+
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, au dela tranche 2, pas d'aide sauf si situation de handicap`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       revenu_fiscal: 20000,
@@ -212,7 +213,24 @@ describe('Aide Velo (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
+    expect(response.body['électrique']).toHaveLength(1);
     expect(response.body['électrique'][0].libelle).toEqual(
+      'Île-de-France Mobilités',
+    );
+
+    // WHEN
+    const response2 = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 100000,
+      situation_handicap: true,
+    });
+
+    // THEN
+    expect(response2.status).toBe(201);
+    expect(response2.body['électrique']).toHaveLength(2);
+    expect(response2.body['électrique'][0].libelle).toEqual('Bonus vélo');
+    expect(response2.body['électrique'][1].libelle).toEqual(
       'Île-de-France Mobilités',
     );
   });

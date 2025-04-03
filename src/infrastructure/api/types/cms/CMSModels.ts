@@ -8,7 +8,6 @@ export enum CMSModel {
   thematique = 'thematique',
   univers = 'univers',
   'thematique-univers' = 'thematique-univers',
-  defi = 'defi',
   partenaire = 'partenaire',
   kyc = 'kyc',
   mission = 'mission',

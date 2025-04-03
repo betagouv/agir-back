@@ -1083,8 +1083,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         {
           content_id: '2',
           points_en_poche: true,
-          read_date: new Date(456),
-          favoris: false,
+          read_date: null,
+          favoris: true,
         },
         {
           content_id: '3',
@@ -1119,8 +1119,62 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 -  favoris et lus', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [
+        {
+          content_id: '1',
+          points_en_poche: true,
+          read_date: new Date(123),
+          favoris: true,
+        },
+        {
+          content_id: '2',
+          points_en_poche: true,
+          read_date: new Date(456),
+          favoris: false,
+        },
+        {
+          content_id: '3',
+          points_en_poche: true,
+          read_date: null,
+          favoris: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2?include=favoris&include=lu',
+    );
+    // THEN
+    expect(response.status).toBe(200);
     expect(response.body.contenu).toHaveLength(1);
-    expect(response.body.contenu[0].content_id).toEqual('1');
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - que les lus', async () => {
@@ -1145,7 +1199,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
         {
           content_id: '3',
           points_en_poche: true,
-          read_date: new Date(789),
+          read_date: null,
           favoris: false,
         },
       ],
@@ -1175,10 +1229,9 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(3);
+    expect(response.body.contenu).toHaveLength(2);
     expect(response.body.contenu[0].content_id).toEqual('1');
-    expect(response.body.contenu[1].content_id).toEqual('3');
-    expect(response.body.contenu[2].content_id).toEqual('2');
+    expect(response.body.contenu[1].content_id).toEqual('2');
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - include = tout', async () => {

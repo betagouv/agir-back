@@ -32,7 +32,6 @@ describe('Synthese (API test)', () => {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
 
@@ -64,7 +63,6 @@ describe('Synthese (API test)', () => {
       version: 0,
       points: 10,
       popup_reset_vue: false,
-      celebrations: [],
       badges: [],
     };
     await TestUtil.create(DB.utilisateur, {

@@ -55,7 +55,6 @@ describe('UtilisateurView', () => {
         version: 0,
         points: 123,
         popup_reset_vue: false,
-        celebrations: [],
         badges: [],
       }) as any,
     });
@@ -76,7 +75,6 @@ describe('UtilisateurView', () => {
         version: 0,
         points: 666,
         popup_reset_vue: false,
-        celebrations: [],
         badges: [],
       }) as any,
     });
@@ -93,7 +91,6 @@ describe('UtilisateurView', () => {
         version: 0,
         points: 0,
         popup_reset_vue: false,
-        celebrations: [],
         badges: [],
       }) as any,
     });

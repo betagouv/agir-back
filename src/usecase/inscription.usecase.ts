@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Feature } from '../domain/gamification/feature';
 import { KYCID } from '../domain/kyc/KYCID';
 import { BooleanKYC } from '../domain/kyc/questionKYC';
 import { TypeNotification } from '../domain/notification/notificationHistory';
@@ -133,7 +132,7 @@ export class InscriptionUsecase {
   ) {
     utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
-    utilisateurToCreate.unlocked_features.add(Feature.bilan_carbone);
+    utilisateurToCreate.cache_bilan_carbone.est_bilan_complet = true;
 
     const situation = await this.situationNGCRepository.getSituationNGCbyId(
       situation_ngc_id,

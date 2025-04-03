@@ -220,7 +220,6 @@ export class AideRepository {
       echelle: Echelle[aideDB.echelle],
       url_source: aideDB.url_source,
       url_demande: aideDB.url_demande,
-      partenaire_id: aideDB.partenaire_id,
       date_expiration: aideDB.date_expiration,
       derniere_maj: aideDB.derniere_maj,
       est_gratuit: aideDB.est_gratuit,
