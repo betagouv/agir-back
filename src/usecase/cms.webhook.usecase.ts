@@ -346,7 +346,7 @@ export class CMSWebhookUsecase {
       content_id: hook.entry.id.toString(),
       article_id: hook.entry.articles[0]
         ? '' + hook.entry.articles[0].id
-        : undefined,
+        : null,
       questions: {
         liste_questions: hook.entry.questions.map((q) => ({
           libelle: q.libelle,
