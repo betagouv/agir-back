@@ -347,7 +347,6 @@ export class TestUtil {
       titre: 'titreA',
       date_expiration: null,
       derniere_maj: null,
-      partenaire_id: undefined,
       partenaires_supp_ids: [],
       codes_postaux: ['91120'],
       thematiques: [Thematique.climat, Thematique.logement],

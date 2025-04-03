@@ -394,7 +394,6 @@ export class CMSWebhookUsecase {
         ? new Date(entry.date_expiration)
         : null,
       derniere_maj: entry.derniere_maj ? new Date(entry.derniere_maj) : null,
-      partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       partenaires_supp_ids: entry.partenaires
         ? entry.partenaires.map((p) => p.id.toString())
         : [],

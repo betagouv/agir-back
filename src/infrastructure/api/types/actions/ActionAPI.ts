@@ -41,8 +41,10 @@ export class ActionAideAPI {
 
   public static mapToAPI(aide: AideDefinition): ActionAideAPI {
     let partenaire: PartenaireDefinition;
-    if (aide.partenaire_id) {
-      partenaire = PartenaireRepository.getPartenaire(aide.partenaire_id);
+    if (aide.partenaires_supp_ids && aide.partenaires_supp_ids.length > 0) {
+      partenaire = PartenaireRepository.getPartenaire(
+        aide.partenaires_supp_ids[0],
+      );
     }
     return {
       content_id: aide.content_id,

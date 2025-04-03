@@ -185,8 +185,10 @@ export class CmsPreviewController extends GenericControler {
       result.push(`Dernière date de mise manquante 🔥🔥🔥`);
     }
     let partenaire: PartenaireDefinition;
-    if (aide.partenaire_id) {
-      partenaire = PartenaireRepository.getPartenaire(aide.partenaire_id);
+    if (aide.partenaires_supp_ids.length > 0) {
+      partenaire = PartenaireRepository.getPartenaire(
+        aide.partenaires_supp_ids[0],
+      );
       result.push(`Partenaire nom : ${partenaire.nom}`);
       if (partenaire.url) {
         result.push(

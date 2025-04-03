@@ -731,9 +731,6 @@ export class CMSImportUsecase {
       date_expiration: entry.attributes.date_expiration
         ? new Date(entry.attributes.date_expiration)
         : null,
-      partenaire_id: entry.attributes.partenaire.data
-        ? '' + entry.attributes.partenaire.data.id
-        : null,
       partenaires_supp_ids: entry.attributes.partenaires.data
         ? entry.attributes.partenaires.data.map((p) => p.id.toString())
         : [],

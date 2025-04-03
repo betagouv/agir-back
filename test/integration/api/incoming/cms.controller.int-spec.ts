@@ -710,7 +710,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.url_demande).toEqual('hihi');
     expect(aide.date_expiration).toEqual(new Date(123));
     expect(aide.derniere_maj).toEqual(new Date(123));
-    expect(aide.partenaire_id).toEqual('1');
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.montant_max).toEqual(123);
     expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
@@ -973,7 +972,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide.is_simulateur).toEqual(true);
     expect(aide.url_source).toEqual('haha');
     expect(aide.url_demande).toEqual('hihi');
-    expect(aide.partenaire_id).toEqual('1');
     expect(aide.date_expiration).toEqual(new Date(123));
     expect(aide.derniere_maj).toEqual(new Date(123));
     expect(aide.montant_max).toEqual(123);

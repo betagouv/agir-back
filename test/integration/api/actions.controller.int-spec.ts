@@ -307,7 +307,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
@@ -332,7 +332,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
@@ -909,13 +909,13 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.National,
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.National,
       est_gratuit: true,
     });
@@ -951,7 +951,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.National,
       date_expiration: new Date(1),
     });
@@ -973,7 +973,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Département,
     });
 
@@ -1052,14 +1052,14 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
@@ -1210,14 +1210,14 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Département,
       codes_departement: ['21'],
       codes_postaux: [],
@@ -1663,7 +1663,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
-      partenaire_id: '123',
+      partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
       codes_postaux: ['21000'],
       date_expiration: new Date(1),
