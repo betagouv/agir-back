@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DPE, TypeLogement } from '../domain/logement/logement';
-import { Scope } from '../domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+
+const MES_AIDES_RENO_IFRAME_SIMULATION_URL =
+  'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true';
 
 @Injectable()
 export class MesAidesRenoUsecase {
@@ -11,21 +14,25 @@ export class MesAidesRenoUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
-  /**
-   * Returns the search parameters to be used to prefill the questions in the
-   * iframe with the already known values from the user.
-   */
-  async getInputSearchParamsFor(userId: string): Promise<string> {
+  async getIframeUrl(userId: string): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
       Scope.logement,
     ]);
     if (!utilisateur) {
-      return '';
+      return MES_AIDES_RENO_IFRAME_SIMULATION_URL;
     }
 
-    console.log('utilisateur', utilisateur);
+    const params = this.getInputSearchParamsFor(utilisateur);
 
+    return `${MES_AIDES_RENO_IFRAME_SIMULATION_URL}&${params.toString()}`;
+  }
+
+  /**
+   * Returns the search parameters to be used to prefill the questions in the
+   * iframe with the already known values from the user.
+   */
+  private getInputSearchParamsFor(utilisateur: Utilisateur): URLSearchParams {
     const situation = {};
 
     if (utilisateur.logement?.proprietaire != null) {
@@ -113,7 +120,7 @@ export class MesAidesRenoUsecase {
       }
     }
 
-    return getParamsFromSituation(situation).toString();
+    return getParamsFromSituation(situation);
   }
 }
 
