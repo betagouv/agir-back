@@ -9,6 +9,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
@@ -1678,6 +1679,51 @@ describe('Admin (API test)', () => {
       },
     ]);
   });
+
+  it('POST /admin/forcer_calcul_stats_carbone', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const cache: CacheBilanCarbone_v0 = {
+      version: 0,
+      total_kg: 0,
+      transport_kg: 0,
+      alimentation_kg: 0,
+      logement_kg: 0,
+      consommation_kg: 0,
+      updated_at: new Date(1),
+      est_bilan_complet: false,
+      forcer_calcul_stats: false,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      pseudo: 'A',
+      email: '1',
+      cache_bilan_carbone: cache as any,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      pseudo: 'B',
+      email: '2',
+      cache_bilan_carbone: cache as any,
+    });
+    // WHEN
+    const response = await TestUtil.POST('/admin/forcer_calcul_stats_carbone');
+
+    // THEN
+    expect(response.status).toBe(201);
+    const listeUsers = await TestUtil.prisma.utilisateur.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    expect(listeUsers[0].cache_bilan_carbone['forcer_calcul_stats']).toEqual(
+      true,
+    );
+    expect(listeUsers[1].cache_bilan_carbone['forcer_calcul_stats']).toEqual(
+      true,
+    );
+  });
+
   it('POST /admin/create_brevo_contacts', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

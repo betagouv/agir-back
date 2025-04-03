@@ -8,6 +8,7 @@ export class CacheBilanCarbone {
   consommation_kg: number;
   updated_at: Date;
   est_bilan_complet: boolean;
+  forcer_calcul_stats: boolean;
 
   constructor(data?: CacheBilanCarbone_v0) {
     if (data) {
@@ -18,8 +19,10 @@ export class CacheBilanCarbone {
       this.transport_kg = data.transport_kg;
       this.updated_at = data.updated_at;
       this.est_bilan_complet = !!data.est_bilan_complet;
+      this.forcer_calcul_stats = !!data.forcer_calcul_stats;
     } else {
       this.est_bilan_complet = false;
+      this.forcer_calcul_stats = false;
     }
   }
 }

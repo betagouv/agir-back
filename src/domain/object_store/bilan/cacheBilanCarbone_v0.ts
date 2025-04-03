@@ -9,6 +9,7 @@ export class CacheBilanCarbone_v0 extends Versioned_v0 {
   consommation_kg: number;
   updated_at: Date;
   est_bilan_complet: boolean;
+  forcer_calcul_stats: boolean;
 
   static serialise(domain: CacheBilanCarbone): CacheBilanCarbone_v0 {
     return {
@@ -20,6 +21,7 @@ export class CacheBilanCarbone_v0 extends Versioned_v0 {
       consommation_kg: domain.consommation_kg,
       updated_at: domain.updated_at,
       est_bilan_complet: !!domain.est_bilan_complet,
+      forcer_calcul_stats: !!domain.forcer_calcul_stats,
     };
   }
 }

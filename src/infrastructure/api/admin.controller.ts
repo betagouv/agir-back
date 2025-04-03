@@ -27,6 +27,7 @@ import { PushNotificationMessage } from '../../domain/notification/pushNotificat
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
+import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { ContactUsecase } from '../../usecase/contact.usecase';
@@ -71,10 +72,17 @@ export class AdminController extends GenericControler {
     private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
     super();
+  }
+
+  @Post('admin/forcer_calcul_stats_carbone')
+  async forceCalculStatsCarbone(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.bilanCarboneUsecase.flagToutUtilisateurForcerCaclculStatsBilan();
   }
 
   @Get('check_version/:version')

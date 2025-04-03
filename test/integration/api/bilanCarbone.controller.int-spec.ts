@@ -85,6 +85,7 @@ describe('/bilan (API test)', () => {
 
     const cache: CacheBilanCarbone_v0 = {
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       version: 0,
       alimentation_kg: 0,
       consommation_kg: 0,
@@ -558,6 +559,7 @@ describe('/bilan (API test)', () => {
 
     const cache: CacheBilanCarbone_v0 = {
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       version: 0,
       alimentation_kg: 0,
       consommation_kg: 0,
@@ -940,6 +942,7 @@ describe('/bilan (API test)', () => {
     // GIVEN
     const cache: CacheBilanCarbone_v0 = {
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       version: 0,
       alimentation_kg: 0,
       consommation_kg: 0,
@@ -987,6 +990,7 @@ describe('/bilan (API test)', () => {
     // GIVEN
     const cache: CacheBilanCarbone_v0 = {
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       version: 0,
       alimentation_kg: 0,
       consommation_kg: 0,
@@ -1170,6 +1174,7 @@ describe('/bilan (API test)', () => {
       transport_kg: 7,
       updated_at: new Date(),
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
     };
     await TestUtil.create(DB.utilisateur, {
       cache_bilan_carbone: cache_bilan_carbone as any,
@@ -1196,6 +1201,7 @@ describe('/bilan (API test)', () => {
       transport_kg: 7,
       updated_at: new Date(-1),
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
     };
     await TestUtil.create(DB.utilisateur, {
       cache_bilan_carbone: cache_bilan_carbone as any,

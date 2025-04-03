@@ -41,6 +41,27 @@ export class BilanCarboneUsecase {
     private utilisateurRepository: UtilisateurRepository,
   ) {}
 
+  async flagToutUtilisateurForcerCaclculStatsBilan(block_size = 200) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.cache_bilan_carbone],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        user.cache_bilan_carbone.forcer_calcul_stats = true;
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+          Scope.cache_bilan_carbone,
+        ]);
+      }
+    }
+  }
+
   async getCurrentBilanByUtilisateurId(utilisateurId: string): Promise<{
     bilan_complet: BilanCarbone;
     bilan_synthese: BilanCarboneSynthese;

@@ -344,6 +344,7 @@ describe('UtilisateurRepository', () => {
       alimentation_kg: 1,
       consommation_kg: 2,
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       logement_kg: 3,
       total_kg: 4,
       transport_kg: 5,
@@ -369,6 +370,7 @@ describe('UtilisateurRepository', () => {
       total_kg: undefined,
       transport_kg: undefined,
       updated_at: undefined,
+      forcer_calcul_stats: false,
     });
   });
   it(`updateUtilisateurNoConcurency : maj sous donnée versionnée seulement`, async () => {
@@ -381,6 +383,7 @@ describe('UtilisateurRepository', () => {
       alimentation_kg: 1,
       consommation_kg: 2,
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       logement_kg: 3,
       total_kg: 4,
       transport_kg: 5,
@@ -402,6 +405,7 @@ describe('UtilisateurRepository', () => {
       alimentation_kg: 1,
       consommation_kg: 2,
       est_bilan_complet: true,
+      forcer_calcul_stats: false,
       logement_kg: 3,
       total_kg: 4,
       transport_kg: 5,

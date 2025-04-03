@@ -504,6 +504,7 @@ export class TestUtil {
       total_kg: undefined,
       updated_at: undefined,
       est_bilan_complet: false,
+      forcer_calcul_stats: false,
     };
 
     const kyc: KYCHistory_v2 = {
