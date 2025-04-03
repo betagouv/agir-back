@@ -171,7 +171,7 @@ export class SyntheseController extends GenericControler {
 
     filtre.nombre_max_resultats = 2000;
 
-    const code_commune = await this.communeRepository.getCodeCommune(
+    const code_commune = await this.communeRepository.getCommuneCodeInsee(
       filtre.code_postal,
       filtre.commune,
     );

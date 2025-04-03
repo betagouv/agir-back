@@ -42,7 +42,7 @@ export class AidesVeloUsecase {
         ? false
         : utilisateur.abonnement_ter_loire;
 
-    const code_insee = this.communeRepository.getCodeCommune(
+    const code_insee = this.communeRepository.getCommuneCodeInsee(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );

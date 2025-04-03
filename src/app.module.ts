@@ -8,6 +8,7 @@ import { TestDataController } from './infrastructure/api/testData.controller';
 import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSWebhookUsecase } from './usecase/cms.webhook.usecase';
 import { ImportNGCUsecase } from './usecase/importNGC.usecase';
+import { MesAidesRenoUsecase } from './usecase/mesAidesReno.usecase';
 
 import { SituationNGCRepository } from './infrastructure/repository/situationNGC.repository';
 import { UtilisateurRepository } from './infrastructure/repository/utilisateur/utilisateur.repository';
@@ -295,6 +296,7 @@ function getControllers(): any[] {
     NotificationMobileUsecase,
     CMSDataHelperUsecase,
     QuestionKYCEnchainementUsecase,
+    MesAidesRenoUsecase,
   ],
 })
 export class AppModule {}
