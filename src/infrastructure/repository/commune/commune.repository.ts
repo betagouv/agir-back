@@ -262,23 +262,25 @@ export class CommuneRepository {
     return null;
   }
 
-  getCodeCommune(code_postal: string, nom_commune: string): string {
+  getCommuneCodeInsee(code_postal: string, nom_commune: string): string | null {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (!liste) {
       return null;
     }
+
     for (const commune of liste) {
       if (commune.commune === nom_commune) {
         return commune.INSEE;
       }
     }
+
     return null;
   }
 
   formatCommune(code_postal: string, commune: string): string {
     if (code_postal === null) return null;
 
-    const code_insee = this.getCodeCommune(code_postal, commune);
+    const code_insee = this.getCommuneCodeInsee(code_postal, commune);
     const libelle = this.getLibelleCommuneLowerCase(code_insee);
     return libelle || commune;
   }
