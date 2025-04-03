@@ -38,7 +38,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = this.communeRepository.getCodeCommune(
+    const code_commune = this.communeRepository.getCommuneCodeInsee(
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
