@@ -334,7 +334,7 @@ export class DuplicateBDDForStatsUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.kyc],
+          [Scope.kyc, Scope.cache_bilan_carbone],
           {},
         );
 
@@ -343,6 +343,13 @@ export class DuplicateBDDForStatsUsecase {
         if (a_jour) {
           skipped++;
           continue; // pas besoin de reclalculer
+        }
+
+        if (user.cache_bilan_carbone.forcer_calcul_stats) {
+          user.cache_bilan_carbone.forcer_calcul_stats = false;
+          await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+            Scope.cache_bilan_carbone,
+          ]);
         }
 
         const situation =
@@ -424,7 +431,8 @@ export class DuplicateBDDForStatsUsecase {
 
     return (
       bilan_last_update_time &&
-      bilan_last_update_time.getTime() > kyc_last_update
+      bilan_last_update_time.getTime() > kyc_last_update &&
+      !utilisateur.cache_bilan_carbone.forcer_calcul_stats
     );
   }
 }
