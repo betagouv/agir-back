@@ -369,7 +369,7 @@ describe('/api/incoming/cms (API test)', () => {
       nom: 'part',
       lien: 'the lien',
       code_commune: '456',
-      code_epci: '789',
+      code_epci: '242100410',
       echelle: Echelle.Département,
       logo: [
         {
@@ -645,10 +645,35 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].code_commune).toEqual('456');
-    expect(partenaire[0].code_epci).toEqual('789');
+    expect(partenaire[0].code_epci).toEqual('242100410');
     expect(partenaire[0].url).toEqual('the lien');
     expect(partenaire[0].echelle).toEqual(Echelle.Département);
     expect(partenaire[0].image_url).toEqual('https://haha');
+    expect(partenaire[0].liste_communes_calculees).toEqual([
+      '21231',
+      '21166',
+      '21617',
+      '21171',
+      '21515',
+      '21278',
+      '21355',
+      '21540',
+      '21390',
+      '21452',
+      '21485',
+      '21481',
+      '21605',
+      '21263',
+      '21473',
+      '21003',
+      '21223',
+      '21315',
+      '21105',
+      '21106',
+      '21370',
+      '21192',
+      '21270',
+    ]);
   });
 
   it('POST /api/incoming/cms - create a new FAQ', async () => {

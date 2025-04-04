@@ -8,4 +8,5 @@ export class PartenaireDefinition {
   code_epci: string;
   image_url: string;
   echelle: Echelle;
+  liste_codes_commune_from_EPCI: string[];
 }

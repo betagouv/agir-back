@@ -320,15 +320,16 @@ model Article {
 }
 
 model Partenaire {
-  content_id   String   @id
-  nom          String?
-  url          String?
-  image_url    String?
-  echelle      String?
-  code_epci    String?
-  code_commune String?
-  created_at   DateTime @default(now()) @db.Timestamptz(3)
-  updated_at   DateTime @updatedAt @db.Timestamptz(3)
+  content_id               String   @id
+  nom                      String?
+  url                      String?
+  image_url                String?
+  echelle                  String?
+  code_epci                String?
+  code_commune             String?
+  liste_communes_calculees String[] @default([])
+  created_at               DateTime @default(now()) @db.Timestamptz(3)
+  updated_at               DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model AideExpirationWarning {

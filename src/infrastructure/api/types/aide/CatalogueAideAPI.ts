@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Aide } from '../../../../domain/aides/aide';
 import { Utilisateur } from '../../../../domain/utilisateur/utilisateur';
 import { AideAPI } from './AideAPI';
 
@@ -8,7 +8,7 @@ export class CatalogueAideAPI {
   @ApiProperty({ type: [AideAPI] }) liste_aides: AideAPI[];
 
   public static mapToAPI(
-    aides: AideDefinition[],
+    aides: Aide[],
     utilisateur: Utilisateur,
   ): CatalogueAideAPI {
     return {

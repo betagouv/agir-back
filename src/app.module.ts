@@ -132,7 +132,6 @@ import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
-import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
 
@@ -241,7 +240,6 @@ function getControllers(): any[] {
     LinkyConsentRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
-    QuizStatistiqueUsecase,
     QuizStatistiqueRepository,
     KycStatistiqueUsecase,
     KycStatistiqueRepository,

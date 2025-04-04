@@ -30,6 +30,7 @@ import {
 } from '../infrastructure/api/types/cms/CMSWebhookPopulateAPI';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { BlockTextRepository } from '../infrastructure/repository/blockText.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
@@ -75,6 +76,7 @@ export class CMSImportUsecase {
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
+    private communeRepository: CommuneRepository,
   ) {}
 
   async loadArticlesFromCMS(): Promise<string[]> {
@@ -560,6 +562,9 @@ export class CMSImportUsecase {
       echelle: Echelle[entry.attributes.echelle],
       code_commune: entry.attributes.code_commune,
       code_epci: entry.attributes.code_epci,
+      liste_codes_commune_from_EPCI: this.compute_communes_from_epci(
+        entry.attributes.code_epci,
+      ),
     };
   }
 
@@ -904,5 +909,12 @@ export class CMSImportUsecase {
 
   private static split(list: string) {
     return list ? list.split(',').map((c) => c.trim()) : [];
+  }
+
+  public compute_communes_from_epci(code_EPCI: string): string[] {
+    if (!code_EPCI) {
+      return [];
+    }
+    return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
   }
 }

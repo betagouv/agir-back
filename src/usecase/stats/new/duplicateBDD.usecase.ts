@@ -15,6 +15,7 @@ import { UtilisateurRepository } from '../../../infrastructure/repository/utilis
 import { BilanCarboneUsecase } from '../../bilanCarbone.usecase';
 
 const TWO_DAYS_MS = 1000 * 60 * 60 * 24 * 2;
+const MAX_USER_TO_COMPUTE_BILAN_CARBONE = 3000;
 
 @Injectable()
 export class DuplicateBDDForStatsUsecase {
@@ -320,8 +321,6 @@ export class DuplicateBDDForStatsUsecase {
   async computeBilanTousUtilisateurs(
     block_size: number = 100,
   ): Promise<string[]> {
-    const MAX_USER_TO_COMPUTE = 2000;
-
     const error_liste = [];
     let computed_ok = 0;
     let skipped = 0;
@@ -393,7 +392,7 @@ export class DuplicateBDDForStatsUsecase {
           );
 
           computed_ok++;
-          if (computed_ok > MAX_USER_TO_COMPUTE) {
+          if (computed_ok > MAX_USER_TO_COMPUTE_BILAN_CARBONE) {
             break; // trop de calcul pour un run de batch unique
           }
         } catch (error) {

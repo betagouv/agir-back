@@ -16,6 +16,7 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 
 @Injectable()
 export class AidesUsecase {
@@ -31,22 +32,17 @@ export class AidesUsecase {
   async getCatalogueAidesUtilisateur(
     utilisateurId: string,
     filtre_thematiques: Thematique[],
-  ): Promise<{ aides: AideDefinition[]; utilisateur: Utilisateur }> {
+  ): Promise<{ aides: Aide[]; utilisateur: Utilisateur }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.logement, Scope.history_article_quizz_aides],
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = this.communeRepository.getCodeCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
+    const code_commune = utilisateur.code_commune;
 
     const dept_region =
-      this.communeRepository.findDepartementRegionByCodePostal(
-        utilisateur.logement.code_postal,
-      );
+      this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
 
     const aide_def_liste = await this.aideRepository.search({
       code_postal: utilisateur.logement.code_postal,
@@ -62,11 +58,13 @@ export class AidesUsecase {
     const aides_locales: Aide[] = [];
     for (const aide_def of aide_def_liste) {
       if (aide_def.echelle === Echelle.National) {
-        aides_nationales.push(
-          this.newAideWithHistoryData(aide_def, utilisateur),
-        );
+        const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+        this.setPartenaire(aide, code_commune);
+        aides_nationales.push(aide);
       } else {
-        aides_locales.push(this.newAideWithHistoryData(aide_def, utilisateur));
+        const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+        this.setPartenaire(aide, code_commune);
+        aides_locales.push(aide);
       }
     }
 
@@ -79,14 +77,17 @@ export class AidesUsecase {
     };
   }
 
-  async getAideUniqueByIdCMS(cms_id: string): Promise<AideDefinition> {
-    const aide = await this.aideRepository.getAide(cms_id);
+  async getAideUniqueByIdCMS(cms_id: string): Promise<Aide> {
+    const aide_def = this.aideRepository.getAide(cms_id);
 
-    if (!aide) {
+    if (!aide_def) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    return this.personnalisator.personnaliser({ ...aide });
+    const aide = new Aide(aide_def);
+    this.setPartenaire(aide, null);
+
+    return this.personnalisator.personnaliser(aide);
   }
 
   async getAideUniqueUtilisateurByIdCMS(
@@ -99,13 +100,15 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_def = await this.aideRepository.getAide(cms_id);
+    const aide_def = this.aideRepository.getAide(cms_id);
 
     if (!aide_def) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
     const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+
+    this.setPartenaire(aide, utilisateur.code_commune);
 
     utilisateur.history.consulterAide(cms_id);
 
@@ -277,6 +280,13 @@ export class AidesUsecase {
     }
 
     return await this.aideRepository.count(filtre);
+  }
+
+  private setPartenaire(aide: Aide, code_commune: string) {
+    const liste_part = PartenaireRepository.getPartenaires(
+      aide.partenaires_supp_ids,
+    );
+    aide.setPartenairePourUtilisateur(code_commune, liste_part);
   }
 
   private async sent_aide_expiration_emails(

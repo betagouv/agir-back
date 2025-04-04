@@ -3,9 +3,7 @@ import { Besoin } from '../../../../../src/domain/aides/besoin';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { Aide } from '../../../../domain/aides/aide';
 import { Echelle } from '../../../../domain/aides/echelle';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { Thematique } from '../../../../domain/thematique/thematique';
-import { PartenaireRepository } from '../../../repository/partenaire.repository';
 
 export class AideAPI {
   @ApiProperty() content_id: string;
@@ -34,12 +32,6 @@ export class AideAPI {
   @ApiProperty() est_gratuit: boolean;
 
   public static mapToAPI(aide: Aide): AideAPI {
-    let partenaire: PartenaireDefinition;
-    if (aide.partenaires_supp_ids && aide.partenaires_supp_ids.length > 0) {
-      partenaire = PartenaireRepository.getPartenaire(
-        aide.partenaires_supp_ids[0],
-      );
-    }
     return {
       content_id: aide.content_id,
       titre: aide.titre,
@@ -59,9 +51,9 @@ export class AideAPI {
       besoin: aide.besoin,
       clicked_demande: aide.clicked_demande,
       clicked_infos: aide.clicked_infos,
-      partenaire_nom: partenaire ? partenaire.nom : null,
-      partenaire_url: partenaire ? partenaire.url : null,
-      partenaire_logo_url: partenaire ? partenaire.image_url : null,
+      partenaire_nom: aide.partenaire_nom,
+      partenaire_url: aide.partenaire_url,
+      partenaire_logo_url: aide.partenaire_logo_url,
       echelle: Echelle[aide.echelle],
       est_gratuit: aide.est_gratuit,
       deja_vue_le: aide.vue_at,

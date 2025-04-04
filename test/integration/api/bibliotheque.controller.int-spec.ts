@@ -116,7 +116,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           {
             content_id: '1',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(123).toISOString(),
           },
         ],
@@ -199,19 +198,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           {
             content_id: '1',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(123).toISOString(),
           },
           {
             content_id: '2',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(123).toISOString(),
           },
           {
             content_id: '3',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(123).toISOString(),
           },
         ],
@@ -255,19 +251,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           {
             content_id: '1',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(123).toISOString(),
           },
           {
             content_id: '2',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(456).toISOString(),
           },
           {
             content_id: '3',
             like_level: 2,
-            points_en_poche: true,
             read_date: new Date(0).toISOString(),
           },
         ],
@@ -957,19 +950,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: new Date(789),
           favoris: false,
         },
@@ -1076,19 +1066,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: null,
           favoris: true,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: new Date(789),
           favoris: false,
         },
@@ -1131,19 +1118,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: null,
           favoris: true,
         },
@@ -1186,19 +1170,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: null,
           favoris: false,
         },
@@ -1243,13 +1224,11 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
@@ -1291,19 +1270,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: new Date(789),
           favoris: false,
         },
@@ -1347,19 +1323,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: new Date(789),
           favoris: false,
         },
@@ -1402,19 +1375,16 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       article_interactions: [
         {
           content_id: '1',
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
         {
           content_id: '2',
-          points_en_poche: true,
           read_date: new Date(456),
           favoris: false,
         },
         {
           content_id: '3',
-          points_en_poche: true,
           read_date: new Date(789),
           favoris: false,
         },

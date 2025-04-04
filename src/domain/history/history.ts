@@ -178,6 +178,7 @@ export class History {
     return this.quizz_interactions.length;
   }
   public lireArticle(content_id: string, date?: Date) {
+    if (!content_id) return;
     let article = this.findOrCreateArticleById(content_id);
     article.read_date = date || new Date();
   }
@@ -199,22 +200,6 @@ export class History {
       return quizz.has100ScoreAmongAttempts();
     }
     return false;
-  }
-  public sontPointsArticleEnPoche(content_id: string): boolean {
-    let article = this.getArticleHistoryById(content_id);
-    return article && article.points_en_poche;
-  }
-  public sontPointsQuizzEnPoche(content_id: string): boolean {
-    let quizz = this.getQuizzHistoryById(content_id);
-    return quizz && quizz.points_en_poche;
-  }
-  public declarePointsArticleEnPoche(content_id: string) {
-    let article = this.findOrCreateArticleById(content_id);
-    article.points_en_poche = true;
-  }
-  public declarePointsQuizzEnPoche(content_id: string) {
-    let quizz = this.findQuizzByIdOrCreate(content_id);
-    quizz.points_en_poche = true;
   }
 
   public likerArticle(content_id: string, level: number) {
@@ -245,7 +230,6 @@ export class History {
       result = new ArticleHistory({
         content_id: content_id,
         favoris: false,
-        points_en_poche: false,
       });
       this.article_interactions.push(result);
     }
@@ -270,7 +254,6 @@ export class History {
       result = new QuizzHistory({
         content_id: content_id,
         attempts: [],
-        points_en_poche: false,
       });
       this.quizz_interactions.push(result);
     }

@@ -34,6 +34,7 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { CMSImportUsecase } from './cms.import.usecase';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -48,6 +49,7 @@ export class CMSWebhookUsecase {
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
+    private cMSImportUsecase: CMSImportUsecase,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -482,6 +484,8 @@ export class CMSWebhookUsecase {
       echelle: Echelle[entry.echelle],
       code_commune: entry.code_commune,
       code_epci: entry.code_epci,
+      liste_codes_commune_from_EPCI:
+        this.cMSImportUsecase.compute_communes_from_epci(entry.code_epci),
     };
   }
 

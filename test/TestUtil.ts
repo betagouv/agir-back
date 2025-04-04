@@ -671,6 +671,7 @@ export class TestUtil {
       code_commune: '001',
       code_epci: '002',
       echelle: Echelle.National,
+      liste_communes_calculees: [],
       created_at: undefined,
       updated_at: undefined,
       ...override,

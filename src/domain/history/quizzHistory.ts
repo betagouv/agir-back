@@ -17,16 +17,12 @@ export class QuizzHistory {
   content_id: string;
   attempts?: QuizzAttempt[];
   like_level?: number;
-  points_en_poche: boolean;
 
   constructor(data?: QuizzHistory_v0) {
     this.attempts = [];
     if (data) {
       this.content_id = data.content_id;
       this.like_level = data.like_level;
-      this.points_en_poche = data.points_en_poche
-        ? data.points_en_poche
-        : false;
       if (data.attempts) {
         data.attempts.forEach((attempt) => {
           this.attempts.push(new QuizzAttempt(attempt));

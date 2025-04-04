@@ -32,7 +32,6 @@ describe('History', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: true,
           attempts: [{ date: new Date(), score: 34 }],
         },
       ],
@@ -40,7 +39,6 @@ describe('History', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
@@ -62,7 +60,6 @@ describe('History', () => {
     // THEN
     expect(article.content_id).toEqual('1');
     expect(article.like_level).toEqual(2);
-    expect(article.points_en_poche).toEqual(true);
     expect(article.read_date.getTime()).toEqual(123);
   });
   it('cree un historique ok avec favoris et point en poche undefined', () => {
@@ -73,7 +70,6 @@ describe('History', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: true,
           attempts: [{ date: new Date(), score: 34 }],
         },
       ],
@@ -81,7 +77,6 @@ describe('History', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: undefined,
           read_date: new Date(123),
           favoris: undefined,
         },
@@ -98,7 +93,6 @@ describe('History', () => {
     });
 
     // THEN
-    expect(history.sontPointsArticleEnPoche('1')).toStrictEqual(false);
     expect(history.getArticleHistoryById('1').favoris).toStrictEqual(false);
   });
   it('lire un nouveau article insert un nouveau aricle', () => {
@@ -160,42 +154,6 @@ describe('History', () => {
     const article = history.getArticleHistoryById('1');
     expect(article.read_date.getTime()).toBeGreaterThan(Date.now() - 100);
   });
-  it('dire qu on a empoché les points d un article', () => {
-    // GIVEN
-    const history = new History();
-    history.lireArticle('1');
-
-    // THEN
-    expect(history.getArticleHistoryById('1').points_en_poche).toStrictEqual(
-      false,
-    );
-
-    // WHEN
-    history.declarePointsArticleEnPoche('1');
-
-    // THEN
-    const article = history.getArticleHistoryById('1');
-    expect(article.points_en_poche).toStrictEqual(true);
-    expect(history.sontPointsArticleEnPoche('1')).toStrictEqual(true);
-  });
-  it('dire qu on a empoché les points d un quizz', () => {
-    // GIVEN
-    const history = new History();
-    history.quizzAttempt('1', 100);
-
-    // THEN
-    expect(history.getQuizzHistoryById('1').points_en_poche).toStrictEqual(
-      false,
-    );
-
-    // WHEN
-    history.declarePointsQuizzEnPoche('1');
-
-    // THEN
-    const quizz = history.getQuizzHistoryById('1');
-    expect(quizz.points_en_poche).toStrictEqual(true);
-    expect(history.sontPointsQuizzEnPoche('1')).toStrictEqual(true);
-  });
   it('liste articles lus', () => {
     // GIVEN
     const history = new History({
@@ -205,22 +163,19 @@ describe('History', () => {
         {
           content_id: '1',
           read_date: new Date(),
-          points_en_poche: true,
           favoris: false,
         },
         {
           content_id: '2',
           read_date: null,
-          points_en_poche: true,
           favoris: false,
         },
         {
           content_id: '3',
           read_date: new Date(),
-          points_en_poche: true,
           favoris: false,
         },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        { content_id: '4', favoris: false },
       ],
       aide_interactions: [],
     });
@@ -240,10 +195,10 @@ describe('History', () => {
       quizz_interactions: [],
       aide_interactions: [],
       article_interactions: [
-        { content_id: '1', favoris: true, points_en_poche: true },
-        { content_id: '2', favoris: null, points_en_poche: true },
-        { content_id: '3', favoris: false, points_en_poche: true },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        { content_id: '1', favoris: true },
+        { content_id: '2', favoris: null },
+        { content_id: '3', favoris: false },
+        { content_id: '4', favoris: false },
       ],
     });
 
@@ -264,12 +219,10 @@ describe('History', () => {
         {
           content_id: '1',
           attempts: [{ date: new Date(), score: 40 }],
-          points_en_poche: false,
         },
         {
           content_id: '2',
           attempts: [{ date: new Date(), score: 100 }],
-          points_en_poche: false,
         },
         {
           content_id: '3',
@@ -277,7 +230,6 @@ describe('History', () => {
             { date: new Date(), score: 10 },
             { date: new Date(), score: 100 },
           ],
-          points_en_poche: false,
         },
       ],
     });
@@ -300,14 +252,12 @@ describe('History', () => {
         {
           content_id: '1',
           attempts: [{ date: new Date(), score: 40 }],
-          points_en_poche: false,
         },
         {
           content_id: '2',
           attempts: [{ date: new Date(), score: 100 }],
-          points_en_poche: false,
         },
-        { content_id: '3', attempts: [], points_en_poche: false },
+        { content_id: '3', attempts: [] },
       ],
     });
 
@@ -329,26 +279,22 @@ describe('History', () => {
         {
           content_id: '1',
           read_date: new Date(1),
-          points_en_poche: true,
           favoris: false,
         },
         {
           content_id: '2',
           read_date: null,
-          points_en_poche: true,
           favoris: false,
         },
         {
           content_id: '3',
           read_date: new Date(2),
-          points_en_poche: true,
           favoris: false,
         },
-        { content_id: '4', points_en_poche: true, favoris: false },
+        { content_id: '4', favoris: false },
         {
           content_id: '5',
           read_date: new Date(0),
-          points_en_poche: true,
           favoris: false,
         },
       ],
@@ -378,25 +324,21 @@ describe('History', () => {
         {
           content_id: '1',
           read_date: new Date(1),
-          points_en_poche: true,
           favoris: true,
         },
         {
           content_id: '2',
           read_date: new Date(2),
-          points_en_poche: true,
           favoris: true,
         },
         {
           content_id: '3',
           read_date: new Date(3),
-          points_en_poche: true,
           favoris: false,
         },
         {
           content_id: '4',
           read_date: new Date(4),
-          points_en_poche: true,
           favoris: false,
         },
       ],
@@ -429,14 +371,12 @@ describe('History', () => {
           content_id: '1',
           read_date: new Date(1),
           favoris: false,
-          points_en_poche: true,
           like_level: 1,
         },
         {
           content_id: '2',
           read_date: new Date(2),
           favoris: true,
-          points_en_poche: true,
           like_level: 2,
         },
       ],
