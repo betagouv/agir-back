@@ -416,7 +416,7 @@ export class CMSWebhookUsecase {
       echelle: Echelle[entry.echelle],
       url_source: entry.url_source,
       url_demande: entry.url_demande,
-      est_gratuit: entry.est_gratuit,
+      est_gratuit: !!entry.est_gratuit,
     };
   }
 
