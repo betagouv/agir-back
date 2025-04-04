@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { App } from '../domain/app';
 import { Article } from '../domain/contenu/article';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { IncludeArticle } from '../domain/contenu/includeArticle';
@@ -183,7 +182,7 @@ export class BibliothequeUsecase {
     const result =
       utilisateur.history.getArticleFromBibliotheque(article_definition);
 
-    await this.external_read_article(content_id, utilisateur);
+    utilisateur.history.lireArticle(content_id);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
@@ -219,30 +218,11 @@ export class BibliothequeUsecase {
 
     Utilisateur.checkState(utilisateur);
 
-    await this.setQuizzResult(content_id, rounded_pourcent, utilisateur);
-
-    await this.external_read_article(quizz_definition.article_id, utilisateur);
-
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-  }
-
-  // FIXME : should be private
-  public async setQuizzResult(
-    content_id: string,
-    pourcent: number,
-    utilisateur: Utilisateur,
-  ) {
     utilisateur.history.quizzAttempt(content_id, pourcent);
 
-    const quizz_def = await this.quizzRepository.getQuizz(content_id);
-    if (
-      !utilisateur.history.sontPointsQuizzEnPoche(content_id) &&
-      pourcent === 100 &&
-      App.gainContentPoint()
-    ) {
-      utilisateur.gamification.ajoutePoints(quizz_def.points, utilisateur);
-      utilisateur.history.declarePointsQuizzEnPoche(content_id);
-    }
+    utilisateur.history.lireArticle(quizz_definition.article_id);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public async getQuizz(
@@ -284,20 +264,5 @@ export class BibliothequeUsecase {
     if (!content_id) return;
 
     utilisateur.history.lireArticle(content_id);
-
-    const article_definition = await this.articleRepository.getArticle(
-      content_id,
-    );
-
-    if (
-      !utilisateur.history.sontPointsArticleEnPoche(content_id) &&
-      App.gainContentPoint()
-    ) {
-      utilisateur.gamification.ajoutePoints(
-        article_definition.points,
-        utilisateur,
-      );
-      utilisateur.history.declarePointsArticleEnPoche(content_id);
-    }
   }
 }

@@ -36,7 +36,6 @@ import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
-import { QuizStatistiqueUsecase } from '../../usecase/stats/quizStatistique.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -69,7 +68,6 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
-    private quizStatistiqueUsecase: QuizStatistiqueUsecase,
     private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
@@ -203,15 +201,6 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/quiz-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des quiz`,
-  })
-  async calcul_quiz_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.quizStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/kyc-statistique')

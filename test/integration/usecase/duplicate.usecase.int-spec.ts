@@ -541,7 +541,6 @@ describe('Duplicate Usecase', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: true,
           read_date: new Date(123),
           favoris: true,
         },
@@ -640,7 +639,6 @@ describe('Duplicate Usecase', () => {
         {
           content_id: '1',
           like_level: 2,
-          points_en_poche: true,
           attempts: [
             {
               score: 100,

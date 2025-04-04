@@ -15,7 +15,6 @@ import { ServiceUsecase } from './usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
-import { QuizStatistiqueUsecase } from './usecase/stats/quizStatistique.usecase';
 
 async function bootstrap() {
   const application = await NestFactory.createApplicationContext(AppModule);
@@ -53,12 +52,6 @@ async function bootstrap() {
       console.log(
         `STOP article_statistique after ${Date.now() - start_time} ms`,
       );
-      break;
-    case 'quizz_statistique':
-      start_time = Date.now();
-      console.log(`START quizz_statistique ${start_time}`);
-      await application.get(QuizStatistiqueUsecase).calculStatistique();
-      console.log(`STOP quizz_statistique after ${Date.now() - start_time} ms`);
       break;
     case 'kyc_statistique':
       start_time = Date.now();

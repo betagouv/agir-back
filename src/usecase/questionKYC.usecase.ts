@@ -3,7 +3,6 @@ import validator from 'validator';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { App } from '../domain/app';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
 import {
@@ -210,7 +209,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    this.updateQuestionOfCode_v2(code_question, reponse, utilisateur, true);
+    this.updateQuestionOfCode_v2(code_question, reponse, utilisateur);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -285,7 +284,6 @@ export class QuestionKYCUsecase {
               code_selected.code,
               [{ value: code_selected.selected ? '1' : '0' }],
               utilisateur,
-              false,
             );
             //kyc.setReponseSimpleValue(code_selected.selected ? '1' : '0');
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
@@ -300,7 +298,6 @@ export class QuestionKYCUsecase {
                 },
               ],
               utilisateur,
-              false,
             );
             //kyc.selectChoixUniqueByCode(code_selected.selected ? BooleanKYC.oui : BooleanKYC.non);
           } else {
@@ -308,13 +305,6 @@ export class QuestionKYCUsecase {
           }
         }
       }
-    }
-
-    if (
-      !utilisateur.kyc_history.isMosaicAnswered(mosaic.id) &&
-      App.gainContentPoint()
-    ) {
-      utilisateur.gamification.ajoutePoints(mosaic.points, utilisateur);
     }
 
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
@@ -330,23 +320,11 @@ export class QuestionKYCUsecase {
       selected?: boolean;
     }[],
     utilisateur: Utilisateur,
-    gain_points: boolean,
   ) {
     const question_to_update =
       utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
         code_question,
       );
-
-    if (
-      !question_to_update.is_answered &&
-      gain_points &&
-      App.gainContentPoint()
-    ) {
-      utilisateur.gamification.ajoutePoints(
-        question_to_update.points,
-        utilisateur,
-      );
-    }
 
     if (question_to_update.isSimpleQuestion()) {
       this.updateSimpleQuestion(question_to_update, input_reponse_payload);
