@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AideDefinition } from '../../../../domain/aides/aideDefinition';
+import { Aide } from '../../../../domain/aides/aide';
 import { AideAPI } from '../aide/AideAPI';
 
 export class PreviewAideAPI {
@@ -7,7 +7,7 @@ export class PreviewAideAPI {
   @ApiProperty({ type: Object }) metadata: object;
 
   public static mapToAPI(preview: {
-    aide: AideDefinition;
+    aide: Aide;
     data: object;
   }): PreviewAideAPI {
     return {

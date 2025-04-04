@@ -560,6 +560,7 @@ export class CMSImportUsecase {
       echelle: Echelle[entry.attributes.echelle],
       code_commune: entry.attributes.code_commune,
       code_epci: entry.attributes.code_epci,
+      liste_codes_commune_from_EPCI: [],
     };
   }
 

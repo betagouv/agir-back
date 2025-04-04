@@ -26,6 +26,16 @@ export class PartenaireRepository {
   public static getPartenaire(cms_id: string): PartenaireDefinition {
     return PartenaireRepository.catalogue_partenaires.get(cms_id);
   }
+  public static getPartenaires(list_cms_id: string[]): PartenaireDefinition[] {
+    const result = [];
+    for (const cms_id of list_cms_id) {
+      const part = this.getPartenaire(cms_id);
+      if (part) {
+        result.push(part);
+      }
+    }
+    return result;
+  }
 
   public static resetCache() {
     // FOR TEST ONLY
@@ -45,6 +55,7 @@ export class PartenaireRepository {
         echelle: Echelle[partenaire.echelle],
         code_commune: partenaire.code_commune,
         code_epci: partenaire.code_epci,
+        liste_codes_commune_from_EPCI: partenaire.liste_communes_calculees,
       });
     }
     PartenaireRepository.catalogue_partenaires = new_map;
@@ -63,6 +74,7 @@ export class PartenaireRepository {
       echelle: partenaire.echelle,
       code_commune: partenaire.code_commune,
       code_epci: partenaire.code_epci,
+      liste_communes_calculees: partenaire.liste_codes_commune_from_EPCI,
       created_at: undefined,
       updated_at: undefined,
     };

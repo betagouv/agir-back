@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
 import { TypeAction } from '../domain/actions/typeAction';
-import { AideDefinition } from '../domain/aides/aideDefinition';
+import { Aide } from '../domain/aides/aide';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
@@ -10,6 +10,7 @@ import { Personnalisator } from '../infrastructure/personnalisation/personnalisa
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { CMSImportUsecase } from './cms.import.usecase';
 
 @Injectable()
@@ -80,14 +81,20 @@ export class CmsPreviewUsecase {
 
   async getAidePreviewByIdCMS(
     cms_id: string,
-  ): Promise<{ data: object; aide: AideDefinition }> {
+  ): Promise<{ data: object; aide: Aide }> {
     const aide_def = await this.cMSImportUsecase.getAideFromCMS(cms_id);
 
     if (!aide_def) {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    return { data: {}, aide: this.personnalisator.personnaliser(aide_def) };
+    const aide = new Aide(aide_def);
+    const liste_part = PartenaireRepository.getPartenaires(
+      aide.partenaires_supp_ids,
+    );
+    aide.setPartenairePourUtilisateur(null, liste_part);
+
+    return { data: {}, aide: this.personnalisator.personnaliser(aide) };
   }
 
   public async getArticlePreviewByIdCMS(
