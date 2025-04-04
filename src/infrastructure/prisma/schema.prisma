@@ -210,6 +210,7 @@ model Aide {
   is_simulateur         Boolean?
   partenaires_supp_ids  String[]  @default([])
   codes_postaux         String[]  @default([])
+  codes_commune         String[]  @default([])
   thematiques           String[]  @default([])
   montant_max           Int?
   echelle               String?

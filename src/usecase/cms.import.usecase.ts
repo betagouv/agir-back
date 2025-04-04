@@ -725,7 +725,7 @@ export class CMSImportUsecase {
   private buildAideFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): AideDefinition {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
       codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
@@ -739,6 +739,7 @@ export class CMSImportUsecase {
       partenaires_supp_ids: entry.attributes.partenaires.data
         ? entry.attributes.partenaires.data.map((p) => p.id.toString())
         : [],
+      codes_commune: [],
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(
@@ -771,6 +772,12 @@ export class CMSImportUsecase {
       url_demande: entry.attributes.url_demande,
       est_gratuit: !!entry.attributes.est_gratuit,
     };
+
+    result.codes_commune = this.compute_codes_communes_from_liste_partenaires(
+      result.partenaires_supp_ids,
+    );
+
+    return result;
   }
 
   private buildThematiqueFromCMSPopulateData(
@@ -916,5 +923,29 @@ export class CMSImportUsecase {
       return [];
     }
     return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
+  }
+
+  public compute_codes_communes_from_liste_partenaires(
+    part_ids: string[],
+  ): string[] {
+    if (!part_ids || part_ids.length === 0) {
+      return [];
+    }
+    const result = new Set<string>();
+    for (const partenare_id of part_ids) {
+      const partenaire = PartenaireRepository.getPartenaire(partenare_id);
+      if (partenaire.code_commune) {
+        result.add(partenaire.code_commune);
+      }
+      if (partenaire.code_epci) {
+        const liste_codes_communes = this.compute_communes_from_epci(
+          partenaire.code_epci,
+        );
+        for (const commune of liste_codes_communes) {
+          result.add(commune);
+        }
+      }
+    }
+    return Array.from(result);
   }
 }

@@ -16,6 +16,7 @@ export class AideDefinition implements ContenuLocal {
   url_demande: string;
   is_simulateur: boolean;
   codes_postaux: string[];
+  codes_commune: string[];
   thematiques: Thematique[];
   montant_max: number;
   echelle: Echelle;

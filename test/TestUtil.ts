@@ -365,6 +365,7 @@ export class TestUtil {
       echelle: Echelle.National,
       url_source: 'https://hello',
       url_demande: 'https://demande',
+      codes_commune: [],
       est_gratuit: false,
       ...override,
     };

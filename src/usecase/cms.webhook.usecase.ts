@@ -389,7 +389,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildAideFromCMSData(entry: CMSWebhookEntryAPI): AideDefinition {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       titre: entry.titre,
       date_expiration: entry.date_expiration
@@ -419,7 +419,15 @@ export class CMSWebhookUsecase {
       url_source: entry.url_source,
       url_demande: entry.url_demande,
       est_gratuit: !!entry.est_gratuit,
+      codes_commune: [],
     };
+
+    result.codes_commune =
+      this.cMSImportUsecase.compute_codes_communes_from_liste_partenaires(
+        result.partenaires_supp_ids,
+      );
+
+    return result;
   }
 
   private buildConformiteFromCMSData(
