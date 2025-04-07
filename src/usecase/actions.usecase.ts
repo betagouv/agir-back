@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from 'src/domain/actions/actionBilanMappingEnchainements';
 import { Action, ActionService } from '../domain/actions/action';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
@@ -6,7 +7,7 @@ import {
   Consultation,
   Realisation,
 } from '../domain/actions/catalogueAction';
-import { TypeAction } from '../domain/actions/typeAction';
+import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
@@ -369,7 +370,10 @@ export class ActionUsecase {
       );
     }
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      action_def.kyc_codes,
+      action.type === TypeAction.bilan
+        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action.code]] ??
+            action_def.kyc_codes
+        : action_def.kyc_codes,
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);
