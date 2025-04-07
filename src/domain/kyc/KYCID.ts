@@ -4,19 +4,19 @@ export enum KYCID {
   _3 = '_3',
   _4 = '_4',
   _5 = '_5',
-  KYC001 = 'KYC001',
-  KYC002 = 'KYC002',
-  KYC003 = 'KYC003',
-  KYC004 = 'KYC004',
-  KYC005 = 'KYC005',
-  KYC006 = 'KYC006',
-  KYC007 = 'KYC007',
+  KYC001 = 'KYC001', //Sur quels sujets souhaitez-vous en savoir plus concernant votre impact environnemental ?
+  KYC002 = 'KYC002', //Quel(s) moyen(s)de transport excluez-vous pour vos trajets du quotidien (travail, courses…) ?
+  KYC003 = 'KYC003', //Êtes-vous équipé(e) d’un vélo ?
+  KYC004 = 'KYC004', //Comment trouvez-vous les pistes cyclables sur vos trajets du quotidien (trajet effectué plus de 2 fois par semaine)  ?
+  KYC005 = 'KYC005', //Quelle est votre situation professionnelle ?
+  KYC006 = 'KYC006', //Quel est l’âge de votre logement ?
+  KYC007 = 'KYC007', // Quelle(s) boisson(s) chaude(s) consommez-vous quotidiennement ?
   KYC008 = 'KYC008', // Comment réalisez-vous vos trajet en voiture ?
-  KYC009 = 'KYC009',
-  KYC010 = 'KYC010',
-  KYC011 = 'KYC011',
-  KYC012 = 'KYC012',
-  KYC013 = 'KYC013',
+  KYC009 = 'KYC009', // Comment réalisez-vous vos trajets en voiture ?
+  KYC010 = 'KYC010', //Votre maison donne-t-elle accès à un jardin ?
+  KYC011 = 'KYC011', //Effectuez-vous quotidiennement des trajets de moins de 10 min en voiture ?
+  KYC012 = 'KYC012', //Effectuez-vous quotidiennement des trajets de moins de 10 min en voiture ?
+  KYC013 = 'KYC013', //Qu'est-ce qui vous intéresse sur le sujet des transports ?
   KYC_menage = 'KYC_menage',
   KYC_changer_voiture = 'KYC_changer_voiture',
   KYC_logement_reno_second_oeuvre = 'KYC_logement_reno_second_oeuvre',
@@ -144,4 +144,5 @@ export enum KYCID {
   KYC_transport_voiture_couts_assurance = 'KYC_transport_voiture_couts_assurance',
   KYC_transport_voiture_couts_stationnement = 'KYC_transport_voiture_couts_stationnement',
   KYC_transport_voiture_couts_peage = 'KYC_transport_voiture_couts_peage',
+  KYC_possede_voiture_oui_non = 'KYC_possede_voiture_oui_non',
 }

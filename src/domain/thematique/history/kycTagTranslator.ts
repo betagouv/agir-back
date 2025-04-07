@@ -13,12 +13,7 @@ export class KycTagExcluantTranslator {
     if (this.est_oui(this.getKYC(hist, KYCID.KYC003))) {
       result_set.add(TagExcluant.a_un_velo);
     }
-    if (
-      this.code_l(this.getKYC(hist, KYCID.KYC_transport_type_utilisateur), [
-        'pas_la_mienne',
-        'change_souvent',
-      ])
-    ) {
+    if (this.est_non(this.getKYC(hist, KYCID.KYC_possede_voiture_oui_non))) {
       result_set.add(TagExcluant.na_pas_de_voiture);
     }
     if (
