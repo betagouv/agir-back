@@ -4,7 +4,6 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
   MosaicKYC_CATALOGUE,
-  MosaicKYCDef,
   TypeMosaic,
 } from '../../../src/domain/kyc/mosaicKYC';
 import {
@@ -28,7 +27,6 @@ import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -1244,170 +1242,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_nbr_plats_viande_rouge)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(0);
-  });
-
-  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de quesitions', async () => {
-    // GIVEN
-    const backup = QuestionKYCUsecase.ENCHAINEMENTS;
-    QuestionKYCUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
-    };
-
-    const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
-      {
-        id: KYCMosaicID.TEST_MOSAIC_ID,
-        categorie: Categorie.test,
-        points: 10,
-        titre: 'Titre test',
-        type: TypeMosaic.mosaic_boolean,
-        question_kyc_codes: [KYCID.KYC002, KYCID.KYC003],
-        thematique: Thematique.alimentation,
-      },
-    ];
-
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
-
-    const dbKYC: KYC = {
-      id_cms: 1,
-      categorie: Categorie.recommandation,
-      code: '1',
-      is_ngc: true,
-      a_supprimer: false,
-      points: 20,
-      question: 'The question !',
-      tags: [Tag.possede_voiture],
-      thematique: Thematique.alimentation,
-      type: TypeReponseQuestionKYC.choix_unique,
-      ngc_key: 'a . b . c',
-      reponses: [
-        { label: 'Oui', code: 'oui' },
-        { label: 'Non', code: 'non' },
-        { label: 'Je sais pas', code: 'sais_pas' },
-      ],
-      short_question: 'short',
-      image_url: 'AAA',
-      conditions: [],
-      created_at: undefined,
-      updated_at: undefined,
-      unite: { abreviation: 'kg' },
-      emoji: '🔥',
-    };
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 1,
-      question: 'quest 1',
-      short_question: 'short 1',
-      image_url: 'AAA',
-      code: KYCID.KYC001,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 2,
-      question: 'quest 2',
-      short_question: 'short 2',
-      image_url: 'BBB',
-      code: KYCID.KYC002,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 3,
-      question: 'quest 3',
-      short_question: 'short 3',
-      image_url: 'CCC',
-      code: KYCID.KYC003,
-    });
-
-    await TestUtil.create(DB.utilisateur);
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toEqual(2);
-    expect(response.body).toEqual([
-      {
-        code: 'KYC001',
-        question: 'quest 1',
-        is_answered: false,
-        reponse_multiple: [
-          {
-            code: 'oui',
-            label: 'Oui',
-            selected: false,
-          },
-          {
-            code: 'non',
-            label: 'Non',
-            selected: false,
-          },
-          {
-            code: 'sais_pas',
-            label: 'Je sais pas',
-            selected: false,
-          },
-        ],
-        categorie: 'recommandation',
-        points: 20,
-        type: 'choix_unique',
-        is_NGC: true,
-        thematique: 'alimentation',
-      },
-      {
-        code: 'TEST_MOSAIC_ID',
-        question: 'Titre test',
-        is_NGC: false,
-        reponse_multiple: [
-          {
-            code: 'KYC002',
-            image_url: 'BBB',
-            label: 'short 2',
-            emoji: '🔥',
-            unite: { abreviation: 'kg' },
-            selected: false,
-          },
-          {
-            code: 'KYC003',
-            image_url: 'CCC',
-            label: 'short 3',
-            emoji: '🔥',
-            unite: { abreviation: 'kg' },
-            selected: false,
-          },
-        ],
-        categorie: 'test',
-        points: 10,
-        type: 'mosaic_boolean',
-        is_answered: false,
-        thematique: 'alimentation',
-      },
-    ]);
-    QuestionKYCUsecase.ENCHAINEMENTS = backup;
-  });
-
-  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - enchainement qui existe pas', async () => {
-    // GIVEN
-    const backup = QuestionKYCUsecase.ENCHAINEMENTS;
-    QuestionKYCUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
-    };
-
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/BAD',
-    );
-
-    // THEN
-    expect(response.status).toBe(400);
-    expect(response.body.message).toEqual(
-      "L'enchainement d'id [BAD] n'existe pas",
-    );
-    QuestionKYCUsecase.ENCHAINEMENTS = backup;
   });
 
   it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie la quesition avec la réponse depuis l'historique , maj avec la definition`, async () => {

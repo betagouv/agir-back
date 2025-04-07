@@ -34,7 +34,6 @@ export class MosaicKYC_CATALOGUE {
   categorie: Categorie;
   points: number;
   reponses: KYCMosaicReponse[];
-  is_answered?: boolean;
 
   static MOSAIC_CATALOGUE: MosaicKYCDef[] = [
     {

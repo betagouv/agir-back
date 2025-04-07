@@ -10,7 +10,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
-import { Enchainement } from './questionKYC.usecase';
+import { Enchainement } from './questionKYCEnchainement.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =

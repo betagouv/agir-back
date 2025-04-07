@@ -45,6 +45,7 @@ import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { NotificationsController } from './infrastructure/api/notifications.controller';
 import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
+import { QuestionsKYCEnchainementController } from './infrastructure/api/questionKYCEnchainement.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
@@ -123,6 +124,7 @@ import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
+import { QuestionKYCEnchainementUsecase } from './usecase/questionKYCEnchainement.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
@@ -167,6 +169,7 @@ function getControllers(): any[] {
     ActionsController,
     SimulateurVoitureController,
     AidesVeloController,
+    QuestionsKYCEnchainementController,
   );
   if (!App.isProd()) {
     controllers.push(FranceConnectController);
@@ -289,6 +292,7 @@ function getControllers(): any[] {
     PushNotificationTemplateRepository,
     NotificationMobileUsecase,
     CMSDataHelperUsecase,
+    QuestionKYCEnchainementUsecase,
   ],
 })
 export class AppModule {}

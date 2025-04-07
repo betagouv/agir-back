@@ -706,6 +706,10 @@ export class ApplicationError {
     );
   }
 
+  static throwQuestionNotFound() {
+    this.throwAppError('134', `La question n'a pas pu être identifiée`, 404);
+  }
+
   private static throwAppError(
     code: string,
     message: string,
