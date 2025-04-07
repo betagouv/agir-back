@@ -223,6 +223,24 @@ export class CMSWebhookUsecase {
     await this.partenaireRepository.upsert(
       this.buildPartenaireFromCMSData(cmsWebhookAPI.entry),
     );
+
+    const liste_aides = await this.aideRepository.findAidesByPartenaireId(
+      '' + cmsWebhookAPI.entry.id,
+    );
+
+    for (const aide of liste_aides) {
+      const computed =
+        this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+          aide.partenaires_supp_ids,
+        );
+
+      await this.aideRepository.updateAideCodesFromPartenaire(
+        aide.content_id,
+        computed.codes_commune,
+        computed.codes_departement,
+        computed.codes_region,
+      );
+    }
   }
 
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
@@ -490,7 +508,7 @@ export class CMSWebhookUsecase {
   private buildPartenaireFromCMSData(
     entry: CMSWebhookEntryAPI,
   ): PartenaireDefinition {
-    return {
+    const result = {
       id_cms: entry.id.toString(),
       nom: entry.nom,
       url: entry.lien,
@@ -501,6 +519,8 @@ export class CMSWebhookUsecase {
       liste_codes_commune_from_EPCI:
         this.aidesUsecase.external_compute_communes_from_epci(entry.code_epci),
     };
+
+    return result;
   }
 
   private buildFAQFromCMSData(entry: CMSWebhookEntryAPI): FAQDefinition {

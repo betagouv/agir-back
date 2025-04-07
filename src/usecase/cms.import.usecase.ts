@@ -262,6 +262,27 @@ export class CMSImportUsecase {
         partenaire_def = this.buildPartenaireFromCMSPopulateData(element);
         liste_partenaires.push(partenaire_def);
         loading_result.push(`loaded partenaire : ${partenaire_def.id_cms}`);
+
+        const liste_aides = await this.aideRepository.findAidesByPartenaireId(
+          partenaire_def.id_cms,
+        );
+
+        for (const aide of liste_aides) {
+          const computed =
+            this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+              aide.partenaires_supp_ids,
+            );
+
+          await this.aideRepository.updateAideCodesFromPartenaire(
+            aide.content_id,
+            computed.codes_commune,
+            computed.codes_departement,
+            computed.codes_region,
+          );
+          loading_result.push(
+            `loaded_partenaire updating_aide: ${aide.content_id}`,
+          );
+        }
       } catch (error) {
         loading_result.push(
           `Could not load partenaire ${element.id} : ${error.message}`,
