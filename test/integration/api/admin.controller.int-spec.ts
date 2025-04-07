@@ -2046,7 +2046,7 @@ describe('Admin (API test)', () => {
     expect(action2.vues).toEqual(1);
   });
 
-  it.only('POST /admin/compute_all_aides_communes_from_partenaires', async () => {
+  it('POST /admin/compute_all_aides_communes_from_partenaires', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
