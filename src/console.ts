@@ -259,6 +259,18 @@ async function bootstrap() {
         .migrateMultiPartenairesAides(process.argv[3]);
       break;
 
+    case 'compute_all_aides_communes_from_partenaires':
+      console.log(
+        `START compute_all_aides_communes_from_partenaires ${start_time}`,
+      );
+      await application.get(AidesUsecase).updatesAllAidesCommunes();
+      console.log(
+        `STOP compute_all_aides_communes_from_partenaires after ${
+          Date.now() - start_time
+        } ms`,
+      );
+      break;
+
     default:
       console.log('Command not found');
       process.exit(1);

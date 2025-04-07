@@ -46,6 +46,26 @@ export class AideRepository {
     AideRepository.catalogue_aides = new_map;
   }
 
+  public async findAidesByPartenaireId(part_id: string) {
+    const result = await this.prisma.aide.findMany({
+      where: {
+        partenaires_supp_ids: {
+          has: part_id,
+        },
+      },
+    });
+    return result.map((r) => this.buildAideFromDB(r));
+  }
+
+  public async updateAideCodesCommune(cms_id: string, codes_commune: string[]) {
+    await this.prisma.aide.update({
+      where: { content_id: cms_id },
+      data: {
+        codes_commune: codes_commune,
+      },
+    });
+  }
+
   public static resetCache() {
     // FOR TEST ONLY
     AideRepository.catalogue_aides = new Map();
@@ -96,6 +116,21 @@ export class AideRepository {
     return result.map((a) => this.buildAideFromDB(a));
   }
 
+  async countAll(): Promise<number> {
+    const count = await this.prisma.aide.count();
+    return Number(count);
+  }
+
+  async listePaginated(skip: number, take: number): Promise<AideDefinition[]> {
+    const results = await this.prisma.aide.findMany({
+      skip: skip,
+      take: take,
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildAideFromDB(r));
+  }
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
     const count = await this.prisma.aide.count({
       where: { codes_postaux: { has: code_postal } },

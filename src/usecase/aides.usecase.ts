@@ -24,6 +24,7 @@ export class AidesUsecase {
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private emailSender: EmailSender,
     private aideRepository: AideRepository,
+    private partenaireRepository: PartenaireRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
@@ -256,6 +257,27 @@ export class AidesUsecase {
     return result;
   }
 
+  public async updatesAllAidesCommunes(block_size = 100) {
+    await this.partenaireRepository.loadCache();
+
+    const total_aide_count = await this.aideRepository.countAll();
+    for (let index = 0; index < total_aide_count; index = index + block_size) {
+      const current_aide_list = await this.aideRepository.listePaginated(
+        index,
+        block_size,
+      );
+
+      for (const aide of current_aide_list) {
+        await this.aideRepository.updateAideCodesCommune(
+          aide.content_id,
+          this.compute_codes_communes_from_liste_partenaires(
+            aide.partenaires_supp_ids,
+          ),
+        );
+      }
+    }
+  }
+
   async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
@@ -372,5 +394,37 @@ export class AidesUsecase {
       aide.vue_at = aide_hist.vue_at;
     }
     return aide;
+  }
+
+  public compute_codes_communes_from_liste_partenaires(
+    part_ids: string[],
+  ): string[] {
+    if (!part_ids || part_ids.length === 0) {
+      return [];
+    }
+    const result = new Set<string>();
+
+    for (const partenare_id of part_ids) {
+      const partenaire = PartenaireRepository.getPartenaire(partenare_id);
+      if (partenaire.code_commune) {
+        result.add(partenaire.code_commune);
+      }
+      if (partenaire.code_epci) {
+        const liste_codes_communes = this.compute_communes_from_epci(
+          partenaire.code_epci,
+        );
+        for (const commune of liste_codes_communes) {
+          result.add(commune);
+        }
+      }
+    }
+    return Array.from(result);
+  }
+
+  public compute_communes_from_epci(code_EPCI: string): string[] {
+    if (!code_EPCI) {
+      return [];
+    }
+    return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
   }
 }

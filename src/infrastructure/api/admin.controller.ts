@@ -212,6 +212,15 @@ export class AdminController extends GenericControler {
     return await this.kycStatistiqueUsecase.calculStatistique();
   }
 
+  @Post('/admin/compute_all_aides_communes_from_partenaires')
+  @ApiOperation({
+    summary: `Calcul les codes communes de chaque aide fonction des partenaires associés`,
+  })
+  async compute_all_aides_communes_from_partenaires(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.aidesUsecase.updatesAllAidesCommunes();
+  }
+
   @Get('/admin/prenoms_a_valider')
   @ApiOperation({
     summary: `Liste les utilisateurs ayant un prenom à valider`,
