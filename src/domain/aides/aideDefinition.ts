@@ -16,7 +16,6 @@ export class AideDefinition implements ContenuLocal {
   url_demande: string;
   is_simulateur: boolean;
   codes_postaux: string[];
-  codes_commune: string[];
   thematiques: Thematique[];
   montant_max: number;
   echelle: Echelle;
@@ -29,4 +28,7 @@ export class AideDefinition implements ContenuLocal {
   date_expiration: Date;
   derniere_maj: Date;
   est_gratuit: boolean;
+  codes_commune_from_partenaire: string[];
+  codes_departement_from_partenaire: string[];
+  codes_region_from_partenaire: string[];
 }

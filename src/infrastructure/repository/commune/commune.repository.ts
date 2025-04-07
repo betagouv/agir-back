@@ -363,10 +363,7 @@ export class CommuneRepository {
         code_region: commune.region,
       };
     } else {
-      return {
-        code_departement: undefined,
-        code_region: undefined,
-      };
+      return undefined;
     }
   }
 

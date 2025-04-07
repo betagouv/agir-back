@@ -563,7 +563,7 @@ export class CMSImportUsecase {
       code_commune: entry.attributes.code_commune,
       code_epci: entry.attributes.code_epci,
       liste_codes_commune_from_EPCI:
-        this.aidesUsecase.compute_communes_from_epci(
+        this.aidesUsecase.external_compute_communes_from_epci(
           entry.attributes.code_epci,
         ),
     };
@@ -740,7 +740,9 @@ export class CMSImportUsecase {
       partenaires_supp_ids: entry.attributes.partenaires.data
         ? entry.attributes.partenaires.data.map((p) => p.id.toString())
         : [],
-      codes_commune: [],
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
       thematiques:
         entry.attributes.thematiques.data.length > 0
           ? entry.attributes.thematiques.data.map(
@@ -774,10 +776,14 @@ export class CMSImportUsecase {
       est_gratuit: !!entry.attributes.est_gratuit,
     };
 
-    result.codes_commune =
-      this.aidesUsecase.compute_codes_communes_from_liste_partenaires(
+    const computed =
+      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
         result.partenaires_supp_ids,
       );
+
+    result.codes_commune_from_partenaire = computed.codes_commune;
+    result.codes_departement_from_partenaire = computed.codes_departement;
+    result.codes_region_from_partenaire = computed.codes_region;
 
     return result;
   }

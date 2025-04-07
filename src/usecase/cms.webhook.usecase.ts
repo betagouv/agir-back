@@ -419,13 +419,19 @@ export class CMSWebhookUsecase {
       url_source: entry.url_source,
       url_demande: entry.url_demande,
       est_gratuit: !!entry.est_gratuit,
-      codes_commune: [],
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     };
 
-    result.codes_commune =
-      this.aidesUsecase.compute_codes_communes_from_liste_partenaires(
+    const computed =
+      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
         result.partenaires_supp_ids,
       );
+
+    result.codes_commune_from_partenaire = computed.codes_commune;
+    result.codes_departement_from_partenaire = computed.codes_departement;
+    result.codes_region_from_partenaire = computed.codes_region;
 
     return result;
   }
@@ -493,7 +499,7 @@ export class CMSWebhookUsecase {
       code_commune: entry.code_commune,
       code_epci: entry.code_epci,
       liste_codes_commune_from_EPCI:
-        this.aidesUsecase.compute_communes_from_epci(entry.code_epci),
+        this.aidesUsecase.external_compute_communes_from_epci(entry.code_epci),
     };
   }
 

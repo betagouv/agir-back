@@ -57,11 +57,18 @@ export class AideRepository {
     return result.map((r) => this.buildAideFromDB(r));
   }
 
-  public async updateAideCodesCommune(cms_id: string, codes_commune: string[]) {
+  public async updateAideCodesFromPartenaire(
+    cms_id: string,
+    codes_commune: string[],
+    codes_departement_from_partenaire: string[],
+    codes_region_from_partenaire: string[],
+  ) {
     await this.prisma.aide.update({
       where: { content_id: cms_id },
       data: {
-        codes_commune: codes_commune,
+        codes_commune_from_partenaire: codes_commune,
+        codes_departement_from_partenaire: codes_departement_from_partenaire,
+        codes_region_from_partenaire: codes_region_from_partenaire,
       },
     });
   }
@@ -259,7 +266,10 @@ export class AideRepository {
       derniere_maj: aideDB.derniere_maj,
       est_gratuit: aideDB.est_gratuit,
       partenaires_supp_ids: aideDB.partenaires_supp_ids,
-      codes_commune: aideDB.codes_commune,
+      codes_commune_from_partenaire: aideDB.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        aideDB.codes_departement_from_partenaire,
+      codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
     };
   }
 }

@@ -2072,7 +2072,9 @@ describe('Admin (API test)', () => {
       date_expiration: new Date(),
       derniere_maj: new Date(),
       est_gratuit: false,
-      codes_commune: [],
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     });
 
     await TestUtil.create(DB.partenaire, {
@@ -2097,7 +2099,7 @@ describe('Admin (API test)', () => {
     expect(aideDB).toEqual({
       besoin: 'acheter_velo',
       besoin_desc: 'hihi',
-      codes_commune: [
+      codes_commune_from_partenaire: [
         '91477',
         '21231',
         '21166',
@@ -2123,6 +2125,8 @@ describe('Admin (API test)', () => {
         '21192',
         '21270',
       ],
+      codes_region_from_partenaire: ['11', '27'],
+      codes_departement_from_partenaire: ['91', '21'],
       codes_departement: [],
       codes_postaux: [],
       codes_region: [],

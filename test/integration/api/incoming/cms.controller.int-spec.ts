@@ -1,7 +1,6 @@
 import { KYC } from '.prisma/client';
 import { CMSWebhookEntryAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
-import { Besoin } from '../../../../src/domain/aides/besoin';
 import { Echelle } from '../../../../src/domain/aides/echelle';
 import { CategorieRecherche } from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
@@ -15,6 +14,7 @@ import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels
 import { CMSWebhookAPI } from '../../../../src/infrastructure/api/types/cms/CMSWebhookAPI';
 import { ArticleRepository } from '../../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../../src/infrastructure/repository/kyc.repository';
+import { PartenaireRepository } from '../../../../src/infrastructure/repository/partenaire.repository';
 import { DB, TestUtil } from '../../../TestUtil';
 
 describe('/api/incoming/cms (API test)', () => {
@@ -293,9 +293,11 @@ describe('/api/incoming/cms (API test)', () => {
         { id: 1, titre: 'Alimentation', code: Thematique.alimentation },
         { id: 2, titre: 'Climat', code: Thematique.climat },
       ],
-      partenaire: {
-        id: 1,
-      },
+      partenaires: [
+        {
+          id: 1,
+        },
+      ],
       date_expiration: new Date(123),
       derniere_maj: new Date(123),
       codes_postaux: '91120 , 75002',
@@ -528,6 +530,7 @@ describe('/api/incoming/cms (API test)', () => {
 
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -716,6 +719,12 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
     // GIVEN
+    await TestUtil.create(DB.partenaire, {
+      content_id: '1',
+      code_epci: '242100410',
+      code_commune: '91477',
+    });
+    await partenaireRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -728,26 +737,60 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(aides).toHaveLength(1);
     const aide = aides[0];
-    expect(aide.titre).toEqual('titre');
-    expect(aide.contenu).toEqual("Contenu de l'aide");
-    expect(aide.url_simulateur).toEqual('/aide/velo');
-    expect(aide.url_source).toEqual('haha');
-    expect(aide.url_demande).toEqual('hihi');
-    expect(aide.date_expiration).toEqual(new Date(123));
-    expect(aide.derniere_maj).toEqual(new Date(123));
-    expect(aide.is_simulateur).toEqual(true);
-    expect(aide.montant_max).toEqual(123);
-    expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
-    expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
-    expect(aide.content_id).toEqual('123');
-    expect(aide.besoin).toEqual(Besoin.broyer_vege);
-    expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
+    delete aide.created_at;
+    delete aide.updated_at;
 
-    expect(aide.include_codes_commune).toEqual(['01', '02']);
-    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
-    expect(aide.codes_departement).toEqual(['78']);
-    expect(aide.codes_region).toEqual(['25']);
-    expect(aide.est_gratuit).toEqual(true);
+    expect(aide).toEqual({
+      besoin: 'broyer_vege',
+      besoin_desc: 'Broyer ses végétaux',
+      codes_commune_from_partenaire: [
+        '91477',
+        '21231',
+        '21166',
+        '21617',
+        '21171',
+        '21515',
+        '21278',
+        '21355',
+        '21540',
+        '21390',
+        '21452',
+        '21485',
+        '21481',
+        '21605',
+        '21263',
+        '21473',
+        '21003',
+        '21223',
+        '21315',
+        '21105',
+        '21106',
+        '21370',
+        '21192',
+        '21270',
+      ],
+      codes_departement: ['78'],
+      codes_departement_from_partenaire: ['91', '21'],
+      codes_postaux: ['91120', '75002'],
+      codes_region: ['25'],
+      codes_region_from_partenaire: ['11', '27'],
+      content_id: '123',
+      contenu: "Contenu de l'aide",
+      date_expiration: new Date(123),
+      derniere_maj: new Date(123),
+      echelle: null,
+      est_gratuit: true,
+      exclude_codes_commune: ['03', '04'],
+      include_codes_commune: ['01', '02'],
+      is_simulateur: true,
+      montant_max: 123,
+      partenaires_supp_ids: ['1'],
+      thematiques: ['alimentation', 'climat'],
+      titre: 'titre',
+      url_demande: 'hihi',
+      url_simulateur: '/aide/velo',
+      url_source: 'haha',
+    });
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
     // GIVEN
@@ -979,6 +1022,12 @@ describe('/api/incoming/cms (API test)', () => {
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {
     // GIVEN
     await TestUtil.create(DB.aide, { content_id: '123' });
+    await TestUtil.create(DB.partenaire, {
+      content_id: '1',
+      code_epci: '242100410',
+      code_commune: '91477',
+    });
+    await partenaireRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -991,25 +1040,60 @@ describe('/api/incoming/cms (API test)', () => {
     expect(response.status).toBe(201);
     expect(aides).toHaveLength(1);
     const aide = aides[0];
-    expect(aide.titre).toEqual('titre');
-    expect(aide.contenu).toEqual("Contenu de l'aide");
-    expect(aide.url_simulateur).toEqual('/aide/velo');
-    expect(aide.is_simulateur).toEqual(true);
-    expect(aide.url_source).toEqual('haha');
-    expect(aide.url_demande).toEqual('hihi');
-    expect(aide.date_expiration).toEqual(new Date(123));
-    expect(aide.derniere_maj).toEqual(new Date(123));
-    expect(aide.montant_max).toEqual(123);
-    expect(aide.thematiques).toStrictEqual(['alimentation', 'climat']);
-    expect(aide.codes_postaux).toStrictEqual(['91120', '75002']);
-    expect(aide.content_id).toEqual('123');
-    expect(aide.besoin).toEqual(Besoin.broyer_vege);
-    expect(aide.besoin_desc).toEqual('Broyer ses végétaux');
-    expect(aide.include_codes_commune).toEqual(['01', '02']);
-    expect(aide.exclude_codes_commune).toEqual(['03', '04']);
-    expect(aide.codes_departement).toEqual(['78']);
-    expect(aide.codes_region).toEqual(['25']);
-    expect(aide.est_gratuit).toEqual(true);
+    delete aide.updated_at;
+    delete aide.created_at;
+
+    expect(aide).toEqual({
+      besoin: 'broyer_vege',
+      besoin_desc: 'Broyer ses végétaux',
+      codes_commune_from_partenaire: [
+        '91477',
+        '21231',
+        '21166',
+        '21617',
+        '21171',
+        '21515',
+        '21278',
+        '21355',
+        '21540',
+        '21390',
+        '21452',
+        '21485',
+        '21481',
+        '21605',
+        '21263',
+        '21473',
+        '21003',
+        '21223',
+        '21315',
+        '21105',
+        '21106',
+        '21370',
+        '21192',
+        '21270',
+      ],
+      codes_departement: ['78'],
+      codes_departement_from_partenaire: ['91', '21'],
+      codes_postaux: ['91120', '75002'],
+      codes_region: ['25'],
+      codes_region_from_partenaire: ['11', '27'],
+      content_id: '123',
+      contenu: "Contenu de l'aide",
+      date_expiration: new Date(123),
+      derniere_maj: new Date(123),
+      echelle: 'National',
+      est_gratuit: true,
+      exclude_codes_commune: ['03', '04'],
+      include_codes_commune: ['01', '02'],
+      is_simulateur: true,
+      montant_max: 123,
+      partenaires_supp_ids: ['1'],
+      thematiques: ['alimentation', 'climat'],
+      titre: 'titre',
+      url_demande: 'hihi',
+      url_simulateur: '/aide/velo',
+      url_source: 'haha',
+    });
   });
 
   it('POST /api/incoming/cms - removes existing aide when unpublish', async () => {
