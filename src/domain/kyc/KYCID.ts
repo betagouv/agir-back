@@ -19,6 +19,8 @@ export enum KYCID {
   KYC013 = 'KYC013', //Qu'est-ce qui vous intéresse sur le sujet des transports ?
   KYC_menage = 'KYC_menage',
   KYC_changer_voiture = 'KYC_changer_voiture',
+  KYC_conso_elec = 'KYC_conso_elec',
+  KYC_temperature = 'KYC_temperature',
   KYC_logement_reno_second_oeuvre = 'KYC_logement_reno_second_oeuvre',
   KYC_logement_reno_isolation = 'KYC_logement_reno_isolation',
   KYC_logement_reno_chauffage = 'KYC_logement_reno_chauffage',
@@ -37,6 +39,7 @@ export enum KYCID {
   KYC_achat_sweat = 'KYC_achat_sweat',
   KYC_achat_tshirt = 'KYC_achat_tshirt',
   KYC_alimentation_regime = 'KYC_alimentation_regime',
+  KYC_petitdej = 'KYC_petitdej',
   KYC_bilan = 'KYC_bilan',
   KYC_chauffage_bois = 'KYC_chauffage_bois',
   KYC_chauffage_elec = 'KYC_chauffage_elec',

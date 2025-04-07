@@ -1,4 +1,4 @@
-import { Enchainement } from 'src/usecase/questionKYC.usecase';
+import { Enchainement } from '../../usecase/questionKYC.usecase';
 import { ActionBilanID } from './typeAction';
 
 export const ACTION_BILAN_MAPPING_ENCHAINEMENTS: {

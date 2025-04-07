@@ -56,11 +56,13 @@ export class QuestionKYCUsecase {
       KYCID.KYC_2roue_km,
     ],
     ENCHAINEMENT_KYC_bilan_logement: [
-      KYCMosaicID.MOSAIC_CHAUFFAGE,
-      KYCID.KYC_superficie,
-      KYCID.KYC_menage,
       KYCID.KYC_type_logement,
+      KYCID.KYC_menage,
+      KYCID.KYC_superficie,
       KYCID.KYC_logement_age,
+      KYCMosaicID.MOSAIC_CHAUFFAGE,
+      KYCID.KYC_temperature,
+      // TODO: KYCID.KYC_conso_elec,
       KYCMosaicID.MOSAIC_RENO,
       KYCID.KYC_photovoltaiques,
       KYCMosaicID.MOSAIC_EXTERIEUR,
@@ -77,6 +79,7 @@ export class QuestionKYCUsecase {
     ],
     ENCHAINEMENT_KYC_bilan_alimentation: [
       KYCID.KYC_alimentation_regime, // manque quand import NGC Full
+      KYCID.KYC_petitdej,
       KYCID.KYC_local_frequence,
       KYCID.KYC_saison_frequence,
       KYCID.KYC_alimentation_litres_alcool,

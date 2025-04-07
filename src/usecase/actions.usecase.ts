@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from 'src/domain/actions/actionBilanMappingEnchainements';
 import { Action, ActionService } from '../domain/actions/action';
+import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBilanMappingEnchainements';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
