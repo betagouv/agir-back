@@ -205,11 +205,21 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
+      [
+        Scope.kyc,
+        Scope.gamification,
+        Scope.gamification,
+        Scope.logement,
+        Scope.thematique_history,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur);
+
+    utilisateur.thematique_history.recomputeTagExcluant(
+      utilisateur.kyc_history,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -248,7 +258,13 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
+      [
+        Scope.kyc,
+        Scope.gamification,
+        Scope.gamification,
+        Scope.logement,
+        Scope.thematique_history,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -308,6 +324,10 @@ export class QuestionKYCUsecase {
     }
 
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
+
+    utilisateur.thematique_history.recomputeTagExcluant(
+      utilisateur.kyc_history,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

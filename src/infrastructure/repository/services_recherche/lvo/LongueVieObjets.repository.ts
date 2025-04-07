@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { App } from '../../../../domain/app';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { ApplicationError } from '../../../applicationError';
-import { LongueVieObjetsCategorieMapping } from './LongueVieObjetsCategorieMapping';
 import { AddressesRepository } from '../addresses.repository';
-import { App } from '../../../../domain/app';
+import { LongueVieObjetsCategorieMapping } from './LongueVieObjetsCategorieMapping';
 
 export type LVOResponse = {
   items: [
