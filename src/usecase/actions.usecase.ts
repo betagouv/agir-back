@@ -34,6 +34,7 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
+import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 @Injectable()
 export class ActionUsecase {
@@ -369,10 +370,15 @@ export class ActionUsecase {
         new Article(this.articleRepository.getArticle(article_id)),
       );
     }
-    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+
+    const enchainementName =
       action.type === TypeAction.bilan
-        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action.code]] ??
-            action_def.kyc_codes
+        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action.code]]
+        : undefined;
+
+    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      enchainementName
+        ? QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainementName]
         : action_def.kyc_codes,
     );
 
