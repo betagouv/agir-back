@@ -16,6 +16,7 @@ export type AideFilter = {
   code_commune?: string;
   echelle?: Echelle;
   date_expiration?: Date;
+  commune_pour_partenaire?: string;
 };
 
 @Injectable()
@@ -209,6 +210,23 @@ export class AideRepository {
         OR: [
           { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
           { exclude_codes_commune: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.commune_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          { codes_departement: { isEmpty: false } },
+          { codes_region: { isEmpty: false } },
+          {
+            AND: [
+              { codes_departement: { isEmpty: true } },
+              { codes_region: { isEmpty: true } },
+              { codes_postaux: { isEmpty: true } },
+            ],
+          },
+          { codes_commune_from_partenaire: { has: filter.code_commune } },
         ],
       });
     }

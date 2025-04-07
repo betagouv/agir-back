@@ -45,7 +45,7 @@ export class AidesUsecase {
     const dept_region =
       this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
 
-    const aide_def_liste = await this.aideRepository.search({
+    const filtre: AideFilter = {
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
       code_departement: dept_region?.code_departement,
@@ -53,7 +53,12 @@ export class AidesUsecase {
       date_expiration: new Date(),
       thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
-    });
+    };
+    if (utilisateur.isAdmin()) {
+      delete filtre.code_postal;
+      filtre.commune_pour_partenaire = utilisateur.code_commune;
+    }
+    const aide_def_liste = await this.aideRepository.search(filtre);
 
     const aides_nationales: Aide[] = [];
     const aides_locales: Aide[] = [];
