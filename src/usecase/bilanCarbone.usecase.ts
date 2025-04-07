@@ -30,7 +30,6 @@ export type EnchainementRecap = {
   enchainement_alimentation_progression: { current: number; target: number };
   enchainement_minibilan_progression: { current: number; target: number };
 
-  pourcentage_prog_totale: number;
   pourcentage_prog_totale_sans_mini_bilan: number;
 };
 
@@ -179,20 +178,6 @@ export class BilanCarboneUsecase {
       enchainement_mini_bilan,
     );
 
-    const pourcentage_prog_totale = Math.round(
-      ((enchainement_minibilan_progression.current +
-        enchainement_transport_progression.current +
-        enchainement_logement_progression.current +
-        enchainement_conso_progression.current +
-        enchainement_alimentation_progression.current) /
-        (enchainement_transport_progression.target +
-          enchainement_logement_progression.target +
-          enchainement_conso_progression.target +
-          enchainement_alimentation_progression.target +
-          enchainement_minibilan_progression.target)) *
-        100,
-    );
-
     const pourcentage_prog_totale_sans_mini_bilan = Math.round(
       ((enchainement_transport_progression.current +
         enchainement_logement_progression.current +
@@ -216,7 +201,6 @@ export class BilanCarboneUsecase {
       enchainement_conso_progression,
       enchainement_alimentation_progression,
       enchainement_minibilan_progression,
-      pourcentage_prog_totale,
       pourcentage_prog_totale_sans_mini_bilan,
     };
   }
@@ -234,7 +218,8 @@ export class BilanCarboneUsecase {
       impact_logement: this.computeImpactLogement(utilisateur),
       impact_transport: this.computeImpactTransport(utilisateur),
       impact_consommation: this.computeImpactConsommation(utilisateur),
-      pourcentage_completion_totale: recap.pourcentage_prog_totale,
+      pourcentage_completion_totale:
+        recap.pourcentage_prog_totale_sans_mini_bilan,
       liens_bilans_thematiques: [
         {
           image_url:
