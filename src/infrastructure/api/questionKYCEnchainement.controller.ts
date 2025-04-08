@@ -11,6 +11,7 @@ import {
   ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { QuestionKYCEnchainementUsecase } from '../../usecase/questionKYCEnchainement.usecase';
@@ -71,6 +72,13 @@ export class QuestionsKYCEnchainementController extends GenericControler {
   @Get(
     'utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId/first',
   )
+  @ApiQuery({
+    name: 'exclude',
+    enum: EnchainementKYCExclude,
+    required: false,
+    isArray: true,
+    description: `paramètres d'exclusion : repondu / non_eligible`,
+  })
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: EnchainementKYCAPI })
   async getFirst(
@@ -96,7 +104,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement);
+      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
     } else {
       ApplicationError.throwQuestionNotFound();
     }
@@ -109,6 +117,13 @@ export class QuestionsKYCEnchainementController extends GenericControler {
   @Get(
     'utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId/following/:kyc_code',
   )
+  @ApiQuery({
+    name: 'exclude',
+    enum: EnchainementKYCExclude,
+    required: false,
+    isArray: true,
+    description: `paramètres d'exclusion : repondu / non_eligible`,
+  })
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: EnchainementKYCAPI })
   async getNextEligible(
@@ -136,7 +151,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement);
+      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
     } else {
       ApplicationError.throwQuestionNotFound();
     }
@@ -149,6 +164,13 @@ export class QuestionsKYCEnchainementController extends GenericControler {
   @Get(
     'utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId/preceding/:kyc_code',
   )
+  @ApiQuery({
+    name: 'exclude',
+    enum: EnchainementKYCExclude,
+    required: false,
+    isArray: true,
+    description: `paramètres d'exclusion : repondu / non_eligible`,
+  })
   @UseGuards(AuthGuard)
   @ApiOkResponse({ type: EnchainementKYCAPI })
   async getpreviousEligible(
@@ -176,7 +198,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement);
+      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
     } else {
       ApplicationError.throwQuestionNotFound();
     }

@@ -24,6 +24,37 @@ export class EnchainementKYC {
     return total;
   }
 
+  public getNombreTotalQuestionseffectives(
+    excludes: EnchainementKYCExclude[],
+  ): number {
+    let total = 0;
+    for (const kyc of this.liste_kyc) {
+      if (excludes.length === 0) {
+        total++;
+      } else {
+        if (excludes.length === 1) {
+          if (excludes.includes(EnchainementKYCExclude.repondu)) {
+            if (kyc.is_answered) {
+              continue; // on zap cette question, elle est répondu
+            }
+          }
+          if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+            if (!this.history.isKYCEligible(kyc)) {
+              continue; // on zap cette question, elle est pas pas eligible
+            }
+          }
+          total++;
+        } else {
+          if (!this.history.isKYCEligible(kyc) || kyc.is_answered) {
+            continue;
+          }
+          total++;
+        }
+      }
+    }
+    return total;
+  }
+
   public isCouranteEligible(): boolean {
     if (!this.current_kyc) {
       return false;
@@ -37,19 +68,34 @@ export class EnchainementKYC {
     if (!this.current_kyc) {
       return NaN;
     }
-    if (!this.history.isKYCEligible(this.current_kyc)) {
-      return NaN;
-    }
-    let index_result = 0;
+    let position = 1;
     for (const kyc of this.liste_kyc) {
       if (kyc.code === this.current_kyc.code) {
-        return index_result;
+        return position;
       }
-      if (this.history.isKYCEligible(kyc)) {
-        index_result++;
+      if (excludes.length === 0) {
+        position++;
+      } else {
+        if (excludes.length === 1) {
+          if (excludes.includes(EnchainementKYCExclude.repondu)) {
+            if (kyc.is_answered) {
+              continue; // on zap cette question, elle est répondu
+            }
+          }
+          if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+            if (!this.history.isKYCEligible(kyc)) {
+              continue; // on zap cette question, elle est pas pas eligible
+            }
+          }
+          position++;
+        } else {
+          if (!this.history.isKYCEligible(kyc) || kyc.is_answered) {
+            continue;
+          }
+          position++;
+        }
       }
     }
-    return NaN;
   }
 
   public getPositionCouranteDansEligibles(): number {
