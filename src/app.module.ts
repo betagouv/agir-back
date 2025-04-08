@@ -170,9 +170,9 @@ function getControllers(): any[] {
     SimulateurVoitureController,
     AidesVeloController,
     QuestionsKYCEnchainementController,
+    FranceConnectController,
   );
   if (!App.isProd()) {
-    controllers.push(FranceConnectController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
     controllers.push(CmsPreviewController);
