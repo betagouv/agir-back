@@ -710,6 +710,13 @@ export class ApplicationError {
     this.throwAppError('134', `La question n'a pas pu être identifiée`, 404);
   }
 
+  static throwTypeExcludeNotFound(value: string) {
+    this.throwAppError(
+      '135',
+      `Valeur 'exclude' incorrecte [${value}], sont acceptés = repondu / non_eligible`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

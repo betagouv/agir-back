@@ -2,6 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { EnchainementKYC } from '../../../../domain/kyc/enchainementKYC';
 import { QuestionKYCAPI_v2 } from './questionsKYCAPI_v2';
 
+export enum EnchainementKYCExclude {
+  repondu = 'repondu',
+  non_eligible = 'non_eligible',
+  rien = 'rien',
+}
 export class EnchainementKYCAPI {
   @ApiProperty() nombre_total_questions: number;
   @ApiProperty() nombre_total_questions_eligibles: number;

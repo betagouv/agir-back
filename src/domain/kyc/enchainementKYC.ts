@@ -1,3 +1,4 @@
+import { EnchainementKYCExclude } from '../../infrastructure/api/types/kyc/enchainementKYCAPI';
 import { KYCHistory } from './kycHistory';
 import { QuestionKYC } from './questionKYC';
 
@@ -28,6 +29,27 @@ export class EnchainementKYC {
       return false;
     }
     return this.history.isKYCEligible(this.current_kyc);
+  }
+
+  public getPositionCouranteWithExcludes(
+    excludes: EnchainementKYCExclude[],
+  ): number {
+    if (!this.current_kyc) {
+      return NaN;
+    }
+    if (!this.history.isKYCEligible(this.current_kyc)) {
+      return NaN;
+    }
+    let index_result = 0;
+    for (const kyc of this.liste_kyc) {
+      if (kyc.code === this.current_kyc.code) {
+        return index_result;
+      }
+      if (this.history.isKYCEligible(kyc)) {
+        index_result++;
+      }
+    }
+    return NaN;
   }
 
   public getPositionCouranteDansEligibles(): number {
@@ -163,6 +185,28 @@ export class EnchainementKYC {
     return undefined;
   }
 
+  public setNextKycEligibleNonRepondu(
+    current_kyc_code: string,
+  ): QuestionKYC | undefined {
+    const foundIndex = this.liste_kyc.findIndex(
+      (k) => k.code === current_kyc_code,
+    );
+    if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
+      this.current_kyc = undefined;
+      return undefined;
+    }
+    for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
+      const current_kyc = this.liste_kyc[index];
+
+      if (this.history.isKYCEligible(current_kyc) && !current_kyc.is_answered) {
+        this.current_kyc = current_kyc;
+        return current_kyc;
+      }
+    }
+    this.current_kyc = undefined;
+    return undefined;
+  }
+
   public setNextKyc(current_kyc_code: string): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
@@ -176,6 +220,28 @@ export class EnchainementKYC {
     return result;
   }
 
+  public setNextKycNonRepondu(
+    current_kyc_code: string,
+  ): QuestionKYC | undefined {
+    const foundIndex = this.liste_kyc.findIndex(
+      (k) => k.code === current_kyc_code,
+    );
+    if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
+      this.current_kyc = undefined;
+      return undefined;
+    }
+    for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
+      const current_kyc = this.liste_kyc[index];
+
+      if (!current_kyc.is_answered) {
+        this.current_kyc = current_kyc;
+        return current_kyc;
+      }
+    }
+    this.current_kyc = undefined;
+    return undefined;
+  }
+
   public setPreviousKyc(current_kyc_code: string): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
@@ -187,6 +253,26 @@ export class EnchainementKYC {
     const result = this.liste_kyc[foundIndex - 1];
     this.current_kyc = result;
     return result;
+  }
+  public setPreviousKycNonRepondu(
+    current_kyc_code: string,
+  ): QuestionKYC | undefined {
+    const foundIndex = this.liste_kyc.findIndex(
+      (k) => k.code === current_kyc_code,
+    );
+    if (foundIndex === 0 || foundIndex === -1) {
+      this.current_kyc = undefined;
+      return undefined;
+    }
+    for (let index = foundIndex - 1; index >= 0; index--) {
+      const kyc = this.liste_kyc[index];
+      if (!kyc.is_answered) {
+        this.current_kyc = kyc;
+        return kyc;
+      }
+    }
+    this.current_kyc = undefined;
+    return undefined;
   }
 
   public setPreviousKycEligible(
@@ -202,6 +288,27 @@ export class EnchainementKYC {
     for (let index = foundIndex - 1; index >= 0; index--) {
       const kyc = this.liste_kyc[index];
       if (this.history.isKYCEligible(kyc)) {
+        this.current_kyc = kyc;
+        return kyc;
+      }
+    }
+    this.current_kyc = undefined;
+    return undefined;
+  }
+
+  public setPreviousKycEligibleNonRepondu(
+    current_kyc_code: string,
+  ): QuestionKYC | undefined {
+    const foundIndex = this.liste_kyc.findIndex(
+      (k) => k.code === current_kyc_code,
+    );
+    if (foundIndex === 0 || foundIndex === -1) {
+      this.current_kyc = undefined;
+      return undefined;
+    }
+    for (let index = foundIndex - 1; index >= 0; index--) {
+      const kyc = this.liste_kyc[index];
+      if (this.history.isKYCEligible(kyc) && !kyc.is_answered) {
         this.current_kyc = kyc;
         return kyc;
       }

@@ -5,6 +5,7 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { EnchainementKYC } from '../domain/kyc/enchainementKYC';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { EnchainementKYCExclude } from '../infrastructure/api/types/kyc/enchainementKYCAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -129,9 +130,10 @@ export class QuestionKYCEnchainementUsecase {
       CLE_PERSO.block_text_cms,
     ]);
   }
-  async getFirstOfEnchainementQuestions(
+  async getFirstOfEnchainementQuestionsWithExcludes(
     utilisateurId: string,
     enchainementId: string,
+    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -150,7 +152,20 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    enchainement.setFirst();
+    if (excludes.length === 0) {
+      enchainement.setFirst();
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          enchainement.setFirstToAnswer();
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          enchainement.setFirstEligible();
+        }
+      } else {
+        enchainement.setFirstToAnswerEligible();
+      }
+    }
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -158,96 +173,11 @@ export class QuestionKYCEnchainementUsecase {
     ]);
   }
 
-  async getFirstOfEnchainementQuestionsEligible(
-    utilisateurId: string,
-    enchainementId: string,
-  ): Promise<EnchainementKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kyc = this.getListKycFromEnchainementId(
-      enchainementId,
-      utilisateur,
-      false,
-    );
-
-    const enchainement = new EnchainementKYC(
-      liste_kyc,
-      utilisateur.kyc_history,
-    );
-
-    enchainement.setFirstEligible();
-
-    return this.personnalisator.personnaliser(enchainement, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-
-  async getFirstOfEnchainementQuestionsToAnswer(
-    utilisateurId: string,
-    enchainementId: string,
-  ): Promise<EnchainementKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kyc = this.getListKycFromEnchainementId(
-      enchainementId,
-      utilisateur,
-      false,
-    );
-
-    const enchainement = new EnchainementKYC(
-      liste_kyc,
-      utilisateur.kyc_history,
-    );
-
-    enchainement.setFirstToAnswer();
-
-    return this.personnalisator.personnaliser(enchainement, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-
-  async getFirstOfEnchainementQuestionsToAnswerEligible(
-    utilisateurId: string,
-    enchainementId: string,
-  ): Promise<EnchainementKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kyc = this.getListKycFromEnchainementId(
-      enchainementId,
-      utilisateur,
-      false,
-    );
-
-    const enchainement = new EnchainementKYC(
-      liste_kyc,
-      utilisateur.kyc_history,
-    );
-
-    enchainement.setFirstToAnswerEligible();
-
-    return this.personnalisator.personnaliser(enchainement, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-  async getNextEligibleInEnchainement(
+  async getNextWithExcludes(
     utilisateurId: string,
     enchainementId: string,
     current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -266,7 +196,20 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    enchainement.setNextKycEligible(current_kyc_code);
+    if (excludes.length === 0) {
+      enchainement.setNextKyc(current_kyc_code);
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          enchainement.setNextKycNonRepondu(current_kyc_code);
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          enchainement.setNextKycEligible(current_kyc_code);
+        }
+      } else {
+        enchainement.setNextKycEligibleNonRepondu(current_kyc_code);
+      }
+    }
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -274,10 +217,11 @@ export class QuestionKYCEnchainementUsecase {
     ]);
   }
 
-  async getNextInEnchainement(
+  async getPreviousWithExcludes(
     utilisateurId: string,
     enchainementId: string,
     current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -296,67 +240,20 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    enchainement.setNextKyc(current_kyc_code);
-
-    return this.personnalisator.personnaliser(enchainement, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-
-  async getPreviousEligibleInEnchainement(
-    utilisateurId: string,
-    enchainementId: string,
-    current_kyc_code: string,
-  ): Promise<EnchainementKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kyc = this.getListKycFromEnchainementId(
-      enchainementId,
-      utilisateur,
-      false,
-    );
-
-    const enchainement = new EnchainementKYC(
-      liste_kyc,
-      utilisateur.kyc_history,
-    );
-
-    enchainement.setPreviousKycEligible(current_kyc_code);
-
-    return this.personnalisator.personnaliser(enchainement, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-
-  async getPreviousInEnchainement(
-    utilisateurId: string,
-    enchainementId: string,
-    current_kyc_code: string,
-  ): Promise<EnchainementKYC> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kyc = this.getListKycFromEnchainementId(
-      enchainementId,
-      utilisateur,
-      false,
-    );
-
-    const enchainement = new EnchainementKYC(
-      liste_kyc,
-      utilisateur.kyc_history,
-    );
-
-    enchainement.setPreviousKyc(current_kyc_code);
+    if (excludes.length === 0) {
+      enchainement.setPreviousKyc(current_kyc_code);
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          enchainement.setPreviousKycNonRepondu(current_kyc_code);
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          enchainement.setPreviousKycEligible(current_kyc_code);
+        }
+      } else {
+        enchainement.setPreviousKycEligibleNonRepondu(current_kyc_code);
+      }
+    }
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
