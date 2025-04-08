@@ -26,6 +26,9 @@ const aide_def: AideDefinition = {
   date_expiration: new Date(),
   derniere_maj: new Date(),
   est_gratuit: false,
+  codes_commune_from_partenaire: [],
+  codes_departement_from_partenaire: [],
+  codes_region_from_partenaire: [],
 };
 
 const part_def = {

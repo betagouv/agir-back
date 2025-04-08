@@ -63,7 +63,7 @@ export class StatistiqueExternalRepository {
         source_inscription: utilisateur.source_inscription,
         compte_actif: utilisateur.active_account,
         date_derniere_activite: utilisateur.derniere_activite,
-        code_departement: code_depart.code_departement,
+        code_departement: code_depart ? code_depart.code_departement : null,
         rang_commune: utilisateur.rank_commune,
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,

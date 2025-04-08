@@ -24,6 +24,7 @@ export class AidesUsecase {
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private emailSender: EmailSender,
     private aideRepository: AideRepository,
+    private partenaireRepository: PartenaireRepository,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
@@ -44,15 +45,20 @@ export class AidesUsecase {
     const dept_region =
       this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
 
-    const aide_def_liste = await this.aideRepository.search({
+    const filtre: AideFilter = {
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
-      code_departement: dept_region ? dept_region.code_departement : undefined,
-      code_region: dept_region ? dept_region.code_region : undefined,
+      code_departement: dept_region?.code_departement,
+      code_region: dept_region?.code_region,
       date_expiration: new Date(),
       thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
-    });
+    };
+    if (utilisateur.isAdmin()) {
+      delete filtre.code_postal;
+      filtre.commune_pour_partenaire = utilisateur.code_commune;
+    }
+    const aide_def_liste = await this.aideRepository.search(filtre);
 
     const aides_nationales: Aide[] = [];
     const aides_locales: Aide[] = [];
@@ -256,6 +262,32 @@ export class AidesUsecase {
     return result;
   }
 
+  public async updatesAllAidesCommunes(block_size = 100) {
+    await this.partenaireRepository.loadCache();
+
+    const total_aide_count = await this.aideRepository.countAll();
+    for (let index = 0; index < total_aide_count; index = index + block_size) {
+      const current_aide_list = await this.aideRepository.listePaginated(
+        index,
+        block_size,
+      );
+
+      for (const aide of current_aide_list) {
+        const computed =
+          this.external_compute_communes_departement_regions_from_liste_partenaires(
+            aide.partenaires_supp_ids,
+          );
+
+        await this.aideRepository.updateAideCodesFromPartenaire(
+          aide.content_id,
+          computed.codes_commune,
+          computed.codes_departement,
+          computed.codes_region,
+        );
+      }
+    }
+  }
+
   async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
@@ -270,8 +302,8 @@ export class AidesUsecase {
 
       filtre.code_postal = codes_postaux[0];
       filtre.code_commune = code_commune;
-      filtre.code_departement = dept_region.code_departement;
-      filtre.code_region = dept_region.code_region;
+      filtre.code_departement = dept_region?.code_departement;
+      filtre.code_region = dept_region?.code_region;
     }
 
     filtre.date_expiration = new Date();
@@ -372,5 +404,88 @@ export class AidesUsecase {
       aide.vue_at = aide_hist.vue_at;
     }
     return aide;
+  }
+
+  public external_compute_codes_communes_from_liste_partenaires(
+    part_ids: string[],
+  ): string[] {
+    if (!part_ids || part_ids.length === 0) {
+      return [];
+    }
+    const result = new Set<string>();
+
+    for (const partenare_id of part_ids) {
+      const partenaire = PartenaireRepository.getPartenaire(partenare_id);
+      if (partenaire.code_commune) {
+        result.add(partenaire.code_commune);
+      }
+      if (partenaire.code_epci) {
+        const liste_codes_communes = this.external_compute_communes_from_epci(
+          partenaire.code_epci,
+        );
+        for (const commune of liste_codes_communes) {
+          result.add(commune);
+        }
+      }
+    }
+    return Array.from(result);
+  }
+
+  public external_compute_communes_departement_regions_from_liste_partenaires(
+    part_ids: string[],
+  ): {
+    codes_commune: string[];
+    codes_region: string[];
+    codes_departement: string[];
+  } {
+    const result = {
+      codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
+    };
+    if (!part_ids || part_ids.length === 0) {
+      return result;
+    }
+    const all_codes_communes = new Set<string>();
+    const codes_departement = new Set<string>();
+    const codes_region = new Set<string>();
+
+    for (const partenare_id of part_ids) {
+      const partenaire = PartenaireRepository.getPartenaire(partenare_id);
+      if (partenaire) {
+        if (partenaire.code_commune) {
+          all_codes_communes.add(partenaire.code_commune);
+        }
+        if (partenaire.code_epci) {
+          const liste_codes_communes = this.external_compute_communes_from_epci(
+            partenaire.code_epci,
+          );
+          for (const commune of liste_codes_communes) {
+            all_codes_communes.add(commune);
+          }
+        }
+      }
+    }
+
+    for (const code_commune of all_codes_communes) {
+      const found =
+        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
+      if (found) {
+        codes_departement.add(found.code_departement);
+        codes_region.add(found.code_region);
+      }
+    }
+    result.codes_commune = Array.from(all_codes_communes);
+    result.codes_departement = Array.from(codes_departement);
+    result.codes_region = Array.from(codes_region);
+
+    return result;
+  }
+
+  public external_compute_communes_from_epci(code_EPCI: string): string[] {
+    if (!code_EPCI) {
+      return [];
+    }
+    return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
   }
 }

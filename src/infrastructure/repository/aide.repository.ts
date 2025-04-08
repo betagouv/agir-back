@@ -16,6 +16,7 @@ export type AideFilter = {
   code_commune?: string;
   echelle?: Echelle;
   date_expiration?: Date;
+  commune_pour_partenaire?: string;
 };
 
 @Injectable()
@@ -44,6 +45,33 @@ export class AideRepository {
       new_map.set(aide.content_id, this.buildAideFromDB(aide));
     }
     AideRepository.catalogue_aides = new_map;
+  }
+
+  public async findAidesByPartenaireId(part_id: string) {
+    const result = await this.prisma.aide.findMany({
+      where: {
+        partenaires_supp_ids: {
+          has: part_id,
+        },
+      },
+    });
+    return result.map((r) => this.buildAideFromDB(r));
+  }
+
+  public async updateAideCodesFromPartenaire(
+    cms_id: string,
+    codes_commune: string[],
+    codes_departement_from_partenaire: string[],
+    codes_region_from_partenaire: string[],
+  ) {
+    await this.prisma.aide.update({
+      where: { content_id: cms_id },
+      data: {
+        codes_commune_from_partenaire: codes_commune,
+        codes_departement_from_partenaire: codes_departement_from_partenaire,
+        codes_region_from_partenaire: codes_region_from_partenaire,
+      },
+    });
   }
 
   public static resetCache() {
@@ -96,6 +124,21 @@ export class AideRepository {
     return result.map((a) => this.buildAideFromDB(a));
   }
 
+  async countAll(): Promise<number> {
+    const count = await this.prisma.aide.count();
+    return Number(count);
+  }
+
+  async listePaginated(skip: number, take: number): Promise<AideDefinition[]> {
+    const results = await this.prisma.aide.findMany({
+      skip: skip,
+      take: take,
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildAideFromDB(r));
+  }
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
     const count = await this.prisma.aide.count({
       where: { codes_postaux: { has: code_postal } },
@@ -171,6 +214,23 @@ export class AideRepository {
       });
     }
 
+    if (filter.commune_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          { codes_departement: { isEmpty: false } },
+          { codes_region: { isEmpty: false } },
+          {
+            AND: [
+              { codes_departement: { isEmpty: true } },
+              { codes_region: { isEmpty: true } },
+              { codes_postaux: { isEmpty: true } },
+            ],
+          },
+          { codes_commune_from_partenaire: { has: filter.code_commune } },
+        ],
+      });
+    }
+
     if (filter.thematiques) {
       main_filter.push({
         thematiques: {
@@ -224,6 +284,10 @@ export class AideRepository {
       derniere_maj: aideDB.derniere_maj,
       est_gratuit: aideDB.est_gratuit,
       partenaires_supp_ids: aideDB.partenaires_supp_ids,
+      codes_commune_from_partenaire: aideDB.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        aideDB.codes_departement_from_partenaire,
+      codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
     };
   }
 }

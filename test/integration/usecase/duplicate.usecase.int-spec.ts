@@ -811,7 +811,7 @@ describe('Duplicate Usecase', () => {
       pourcentage_progression_alimentation: 50,
       pourcentage_progression_consommation: 0,
       pourcentage_progression_logement: 0,
-      pourcentage_progression_total: 8,
+      pourcentage_progression_total: 9,
       pourcentage_progression_transport: 0,
     });
   });
@@ -931,7 +931,7 @@ describe('Duplicate Usecase', () => {
       pourcentage_progression_alimentation: 50,
       pourcentage_progression_consommation: 0,
       pourcentage_progression_logement: 0,
-      pourcentage_progression_total: 8,
+      pourcentage_progression_total: 9,
       pourcentage_progression_transport: 0,
     });
 

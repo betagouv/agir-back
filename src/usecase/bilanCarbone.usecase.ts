@@ -13,7 +13,7 @@ import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
+import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
@@ -30,7 +30,6 @@ export type EnchainementRecap = {
   enchainement_alimentation_progression: { current: number; target: number };
   enchainement_minibilan_progression: { current: number; target: number };
 
-  pourcentage_prog_totale: number;
   pourcentage_prog_totale_sans_mini_bilan: number;
 };
 
@@ -136,24 +135,34 @@ export class BilanCarboneUsecase {
   ): EnchainementRecap {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_mini_bilan_carbone'],
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          'ENCHAINEMENT_KYC_mini_bilan_carbone'
+        ],
       );
 
     let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_transport'],
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          'ENCHAINEMENT_KYC_bilan_transport'
+        ],
       );
     let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_logement'],
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          'ENCHAINEMENT_KYC_bilan_logement'
+        ],
       );
     let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_consommation'],
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          'ENCHAINEMENT_KYC_bilan_consommation'
+        ],
       );
     let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCUsecase.ENCHAINEMENTS['ENCHAINEMENT_KYC_bilan_alimentation'],
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          'ENCHAINEMENT_KYC_bilan_alimentation'
+        ],
       );
 
     // CLEAN
@@ -179,20 +188,6 @@ export class BilanCarboneUsecase {
       enchainement_mini_bilan,
     );
 
-    const pourcentage_prog_totale = Math.round(
-      ((enchainement_minibilan_progression.current +
-        enchainement_transport_progression.current +
-        enchainement_logement_progression.current +
-        enchainement_conso_progression.current +
-        enchainement_alimentation_progression.current) /
-        (enchainement_transport_progression.target +
-          enchainement_logement_progression.target +
-          enchainement_conso_progression.target +
-          enchainement_alimentation_progression.target +
-          enchainement_minibilan_progression.target)) *
-        100,
-    );
-
     const pourcentage_prog_totale_sans_mini_bilan = Math.round(
       ((enchainement_transport_progression.current +
         enchainement_logement_progression.current +
@@ -216,7 +211,6 @@ export class BilanCarboneUsecase {
       enchainement_conso_progression,
       enchainement_alimentation_progression,
       enchainement_minibilan_progression,
-      pourcentage_prog_totale,
       pourcentage_prog_totale_sans_mini_bilan,
     };
   }
@@ -234,7 +228,8 @@ export class BilanCarboneUsecase {
       impact_logement: this.computeImpactLogement(utilisateur),
       impact_transport: this.computeImpactTransport(utilisateur),
       impact_consommation: this.computeImpactConsommation(utilisateur),
-      pourcentage_completion_totale: recap.pourcentage_prog_totale,
+      pourcentage_completion_totale:
+        recap.pourcentage_prog_totale_sans_mini_bilan,
       liens_bilans_thematiques: [
         {
           image_url:

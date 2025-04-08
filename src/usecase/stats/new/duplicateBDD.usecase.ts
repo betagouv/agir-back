@@ -367,7 +367,7 @@ export class DuplicateBDDForStatsUsecase {
             user.external_stat_id,
             bilan,
             {
-              total: progression.pourcentage_prog_totale,
+              total: progression.pourcentage_prog_totale_sans_mini_bilan,
               alimentation: Math.round(
                 (progression.enchainement_alimentation_progression.current /
                   progression.enchainement_alimentation_progression.target) *

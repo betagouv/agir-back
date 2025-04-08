@@ -1,4 +1,4 @@
-import { Enchainement } from '../../../usecase/questionKYC.usecase';
+import { Enchainement } from '../../../usecase/questionKYCEnchainement.usecase';
 import { Action } from '../../actions/action';
 import { Thematique } from '../thematique';
 

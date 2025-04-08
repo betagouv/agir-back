@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
+import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBilanMappingEnchainements';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
   Consultation,
   Realisation,
 } from '../domain/actions/catalogueAction';
-import { TypeAction } from '../domain/actions/typeAction';
+import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
@@ -33,6 +34,7 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
+import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 @Injectable()
 export class ActionUsecase {
@@ -368,8 +370,16 @@ export class ActionUsecase {
         new Article(this.articleRepository.getArticle(article_id)),
       );
     }
+
+    const enchainementName =
+      action.type === TypeAction.bilan
+        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action.code]]
+        : undefined;
+
     action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      action_def.kyc_codes,
+      enchainementName
+        ? QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainementName]
+        : action_def.kyc_codes,
     );
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);

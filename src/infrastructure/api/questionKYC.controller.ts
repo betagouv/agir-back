@@ -80,27 +80,6 @@ export class QuestionsKYCController extends GenericControler {
   }
 
   @ApiOperation({
-    summary: 'Retourne une liste de questions à enchainer',
-  })
-  @Get(
-    'utilisateurs/:utilisateurId/enchainementQuestionsKYC_v2/:enchainementId',
-  )
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({ type: [QuestionKYCAPI_v2] })
-  async getEnchainementQuestions_v2(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('enchainementId') enchainementId: string,
-  ): Promise<QuestionKYCAPI_v2[]> {
-    this.checkCallerId(req, utilisateurId);
-    const result = await this.questionKYCUsecase.getEnchainementQuestions(
-      utilisateurId,
-      enchainementId,
-    );
-    return result.map((q) => QuestionKYCAPI_v2.mapToAPI(q));
-  }
-
-  @ApiOperation({
     summary: "Met à jour la réponse de la question d'id donné",
   })
   @ApiBody({

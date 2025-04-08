@@ -613,7 +613,7 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.pourcentage_completion_totale).toEqual(21);
+    expect(response.body.pourcentage_completion_totale).toEqual(17);
     expect(response.body.liens_bilans_thematique).toEqual([
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',

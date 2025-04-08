@@ -1,4 +1,6 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { Besoin } from '../../../src/domain/aides/besoin';
+import { Echelle } from '../../../src/domain/aides/echelle';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -2042,5 +2044,106 @@ describe('Admin (API test)', () => {
     expect(action1.vues).toEqual(2);
     expect(action2.faites).toEqual(0);
     expect(action2.vues).toEqual(1);
+  });
+
+  it('POST /admin/compute_all_aides_communes_from_partenaires', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      titre: 'titre',
+      contenu: 'haha',
+      partenaires_supp_ids: ['1'],
+      url_simulateur: 'a',
+      url_source: 'b',
+      url_demande: 'c',
+      is_simulateur: false,
+      codes_postaux: [],
+      thematiques: [],
+      montant_max: 1000,
+      echelle: Echelle.Commune,
+      besoin: Besoin.acheter_velo,
+      besoin_desc: 'hihi',
+      include_codes_commune: [],
+      exclude_codes_commune: [],
+      codes_departement: [],
+      codes_region: [],
+      date_expiration: new Date(),
+      derniere_maj: new Date(),
+      est_gratuit: false,
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
+    });
+
+    await TestUtil.create(DB.partenaire, {
+      content_id: '1',
+      code_epci: '242100410',
+      code_commune: '91477',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/admin/compute_all_aides_communes_from_partenaires',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+    const aideDB = (await TestUtil.prisma.aide.findMany())[0];
+    delete aideDB.date_expiration;
+    delete aideDB.updated_at;
+    delete aideDB.created_at;
+    delete aideDB.derniere_maj;
+
+    expect(aideDB).toEqual({
+      besoin: 'acheter_velo',
+      besoin_desc: 'hihi',
+      codes_commune_from_partenaire: [
+        '91477',
+        '21231',
+        '21166',
+        '21617',
+        '21171',
+        '21515',
+        '21278',
+        '21355',
+        '21540',
+        '21390',
+        '21452',
+        '21485',
+        '21481',
+        '21605',
+        '21263',
+        '21473',
+        '21003',
+        '21223',
+        '21315',
+        '21105',
+        '21106',
+        '21370',
+        '21192',
+        '21270',
+      ],
+      codes_region_from_partenaire: ['11', '27'],
+      codes_departement_from_partenaire: ['91', '21'],
+      codes_departement: [],
+      codes_postaux: [],
+      codes_region: [],
+      content_id: '1',
+      contenu: 'haha',
+      echelle: 'Commune',
+      est_gratuit: false,
+      exclude_codes_commune: [],
+      include_codes_commune: [],
+      is_simulateur: false,
+      montant_max: 1000,
+      partenaires_supp_ids: ['1'],
+      thematiques: [],
+      titre: 'titre',
+      url_demande: 'c',
+      url_simulateur: 'a',
+      url_source: 'b',
+    });
   });
 });

@@ -19,6 +19,7 @@ import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { ControllerExceptionFilter } from './controllerException.filter';
+import { EnchainementKYCExclude } from './types/kyc/enchainementKYCAPI';
 
 @UseFilters(new ControllerExceptionFilter())
 @Injectable()
@@ -76,6 +77,16 @@ export class GenericControler {
       ApplicationError.throwTypeActionNotFound(type_action);
     }
     return type;
+  }
+
+  public castExcludeEnchainementKYCOrException(
+    exclude: string,
+  ): EnchainementKYCExclude {
+    const value = EnchainementKYCExclude[exclude];
+    if (!value) {
+      ApplicationError.throwTypeExcludeNotFound(exclude);
+    }
+    return value;
   }
 
   public castIncludeArticleOrException(include: string): IncludeArticle {

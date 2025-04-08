@@ -99,9 +99,11 @@ export class KYCHistory {
     return false;
   }
 
-  public getEnchainementKYCsEligibles(liste_kycs_ids: string[]): QuestionKYC[] {
+  public getEnchainementKYCsEligibles(
+    liste_kycs_codes: string[],
+  ): QuestionKYC[] {
     const result: QuestionKYC[] = [];
-    for (const kyc_id of liste_kycs_ids) {
+    for (const kyc_id of liste_kycs_codes) {
       if (MosaicKYC_CATALOGUE.isMosaicID(kyc_id)) {
         const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_id]);
         if (mosaic) {
@@ -110,6 +112,24 @@ export class KYCHistory {
       } else {
         const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_id);
         if (kyc && this.isKYCEligible(kyc)) {
+          result.push(kyc);
+        }
+      }
+    }
+    return result;
+  }
+
+  public getListeKycsFromCodes(liste_kycs_codes: string[]): QuestionKYC[] {
+    const result: QuestionKYC[] = [];
+    for (const kyc_code of liste_kycs_codes) {
+      if (MosaicKYC_CATALOGUE.isMosaicID(kyc_code)) {
+        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_code]);
+        if (mosaic) {
+          result.push(mosaic);
+        }
+      } else {
+        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+        if (kyc) {
           result.push(kyc);
         }
       }

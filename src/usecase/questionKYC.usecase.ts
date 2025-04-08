@@ -18,102 +18,12 @@ import {
 
 const FIELD_MAX_LENGTH = 280;
 
-export enum Enchainement {
-  ENCHAINEMENT_KYC_1 = 'ENCHAINEMENT_KYC_1',
-  ENCHAINEMENT_KYC_mini_bilan_carbone = 'ENCHAINEMENT_KYC_mini_bilan_carbone',
-  ENCHAINEMENT_KYC_bilan_transport = 'ENCHAINEMENT_KYC_bilan_transport',
-  ENCHAINEMENT_KYC_bilan_logement = 'ENCHAINEMENT_KYC_bilan_logement',
-  ENCHAINEMENT_KYC_bilan_consommation = 'ENCHAINEMENT_KYC_bilan_consommation',
-  ENCHAINEMENT_KYC_bilan_alimentation = 'ENCHAINEMENT_KYC_bilan_alimentation',
-  ENCHAINEMENT_KYC_personnalisation_alimentation = 'ENCHAINEMENT_KYC_personnalisation_alimentation',
-  ENCHAINEMENT_KYC_personnalisation_logement = 'ENCHAINEMENT_KYC_personnalisation_logement',
-  ENCHAINEMENT_KYC_personnalisation_transport = 'ENCHAINEMENT_KYC_personnalisation_transport',
-  ENCHAINEMENT_KYC_personnalisation_consommation = 'ENCHAINEMENT_KYC_personnalisation_consommation',
-}
-
 @Injectable()
 export class QuestionKYCUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private personnalisator: Personnalisator,
   ) {}
-
-  static ENCHAINEMENTS: { [key in Enchainement]?: (KYCID | KYCMosaicID)[] } = {
-    ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
-    ENCHAINEMENT_KYC_mini_bilan_carbone: [
-      KYCID.KYC_transport_voiture_km,
-      KYCID.KYC_transport_avion_3_annees,
-      KYCMosaicID.MOSAIC_CHAUFFAGE,
-      KYCID.KYC_superficie,
-      KYCID.KYC_menage,
-      KYCID.KYC_alimentation_regime,
-      KYCID.KYC_consommation_type_consommateur,
-    ],
-    ENCHAINEMENT_KYC_bilan_transport: [
-      KYCID.KYC_transport_type_utilisateur,
-      KYCID.KYC_transport_voiture_km,
-      KYCID.KYC_transport_voiture_nbr_voyageurs,
-      KYCID.KYC_transport_voiture_motorisation,
-      KYCID.KYC_transport_avion_3_annees,
-      KYCID.KYC_transport_heures_avion_court,
-      KYCID.KYC_transport_heures_avion_moyen,
-      KYCID.KYC_transport_heures_avion_long,
-      KYCID.KYC_transport_2roues_usager,
-      KYCID.KYC_2roue_motorisation_type,
-      KYCID.KYC_2roue_km,
-    ],
-    ENCHAINEMENT_KYC_bilan_logement: [
-      KYCMosaicID.MOSAIC_CHAUFFAGE,
-      KYCID.KYC_superficie,
-      KYCID.KYC_menage,
-      KYCID.KYC_type_logement,
-      KYCID.KYC_logement_age,
-      KYCMosaicID.MOSAIC_RENO,
-      KYCID.KYC_photovoltaiques,
-      KYCMosaicID.MOSAIC_EXTERIEUR,
-    ],
-    ENCHAINEMENT_KYC_bilan_consommation: [
-      KYCID.KYC_consommation_type_consommateur, // manque quand import NGC Full
-      KYCMosaicID.MOSAIC_LOGEMENT_VACANCES,
-      KYCID.KYC_consommation_relation_objets,
-      KYCMosaicID.MOSAIC_ELECTROMENAGER,
-      KYCMosaicID.MOSAIC_ANIMAUX,
-      KYCMosaicID.MOSAIC_APPAREIL_NUM,
-      KYCMosaicID.MOSAIC_MEUBLES,
-      KYCMosaicID.MOSAIC_VETEMENTS,
-    ],
-    ENCHAINEMENT_KYC_bilan_alimentation: [
-      KYCID.KYC_alimentation_regime, // manque quand import NGC Full
-      KYCID.KYC_local_frequence,
-      KYCID.KYC_saison_frequence,
-      KYCID.KYC_alimentation_litres_alcool,
-      KYCID.KYC_gaspillage_alimentaire_frequence,
-      KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
-    ],
-    ENCHAINEMENT_KYC_personnalisation_alimentation: [
-      KYCID.KYC_alimentation_regime,
-      KYCID.KYC_saison_frequence,
-      KYCMosaicID.MOSAIC_REDUCTION_DECHETS,
-      KYCID.KYC_local_frequence,
-    ],
-    ENCHAINEMENT_KYC_personnalisation_transport: [
-      KYCID.KYC_transport_avion_3_annees,
-      KYCID.KYC003,
-      KYCID.KYC_transport_type_utilisateur,
-      KYCID.KYC_transport_voiture_motorisation,
-    ],
-    ENCHAINEMENT_KYC_personnalisation_logement: [
-      KYCID.KYC_type_logement,
-      KYCID.KYC_proprietaire,
-      KYCID.KYC_jardin,
-      KYCMosaicID.MOSAIC_CHAUFFAGE,
-      KYCMosaicID.MOSAIC_RENO,
-    ],
-    ENCHAINEMENT_KYC_personnalisation_consommation: [
-      KYCID.KYC_consommation_relation_objets,
-      KYCID.KYC_consommation_type_consommateur,
-    ],
-  };
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
     const utilisateur = await this.utilisateurRepository.getById(
@@ -127,31 +37,6 @@ export class QuestionKYCUsecase {
       utilisateur,
       [Scope.kyc],
     );
-
-    return this.personnalisator.personnaliser(result, utilisateur, [
-      CLE_PERSO.espace_insecable,
-      CLE_PERSO.block_text_cms,
-    ]);
-  }
-
-  async getEnchainementQuestions(
-    utilisateurId: string,
-    enchainementId: string,
-  ): Promise<QuestionKYC[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.kyc, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const liste_kycs_ids = QuestionKYCUsecase.ENCHAINEMENTS[enchainementId];
-
-    if (!liste_kycs_ids) {
-      ApplicationError.throwUnkownEnchainement(enchainementId);
-    }
-
-    const result =
-      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_ids);
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -205,11 +90,21 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
+      [
+        Scope.kyc,
+        Scope.gamification,
+        Scope.gamification,
+        Scope.logement,
+        Scope.thematique_history,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur);
+
+    utilisateur.thematique_history.recomputeTagExcluant(
+      utilisateur.kyc_history,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -248,7 +143,13 @@ export class QuestionKYCUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.kyc, Scope.gamification, Scope.gamification, Scope.logement],
+      [
+        Scope.kyc,
+        Scope.gamification,
+        Scope.gamification,
+        Scope.logement,
+        Scope.thematique_history,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -308,6 +209,10 @@ export class QuestionKYCUsecase {
     }
 
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
+
+    utilisateur.thematique_history.recomputeTagExcluant(
+      utilisateur.kyc_history,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

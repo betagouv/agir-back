@@ -34,7 +34,7 @@ import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { CMSImportUsecase } from './cms.import.usecase';
+import { AidesUsecase } from './aides.usecase';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -49,7 +49,7 @@ export class CMSWebhookUsecase {
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
-    private cMSImportUsecase: CMSImportUsecase,
+    private aidesUsecase: AidesUsecase,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -223,6 +223,24 @@ export class CMSWebhookUsecase {
     await this.partenaireRepository.upsert(
       this.buildPartenaireFromCMSData(cmsWebhookAPI.entry),
     );
+
+    const liste_aides = await this.aideRepository.findAidesByPartenaireId(
+      '' + cmsWebhookAPI.entry.id,
+    );
+
+    for (const aide of liste_aides) {
+      const computed =
+        this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+          aide.partenaires_supp_ids,
+        );
+
+      await this.aideRepository.updateAideCodesFromPartenaire(
+        aide.content_id,
+        computed.codes_commune,
+        computed.codes_departement,
+        computed.codes_region,
+      );
+    }
   }
 
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
@@ -389,7 +407,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildAideFromCMSData(entry: CMSWebhookEntryAPI): AideDefinition {
-    return {
+    const result = {
       content_id: entry.id.toString(),
       titre: entry.titre,
       date_expiration: entry.date_expiration
@@ -419,7 +437,21 @@ export class CMSWebhookUsecase {
       url_source: entry.url_source,
       url_demande: entry.url_demande,
       est_gratuit: !!entry.est_gratuit,
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     };
+
+    const computed =
+      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+        result.partenaires_supp_ids,
+      );
+
+    result.codes_commune_from_partenaire = computed.codes_commune;
+    result.codes_departement_from_partenaire = computed.codes_departement;
+    result.codes_region_from_partenaire = computed.codes_region;
+
+    return result;
   }
 
   private buildConformiteFromCMSData(
@@ -476,7 +508,7 @@ export class CMSWebhookUsecase {
   private buildPartenaireFromCMSData(
     entry: CMSWebhookEntryAPI,
   ): PartenaireDefinition {
-    return {
+    const result = {
       id_cms: entry.id.toString(),
       nom: entry.nom,
       url: entry.lien,
@@ -485,8 +517,10 @@ export class CMSWebhookUsecase {
       code_commune: entry.code_commune,
       code_epci: entry.code_epci,
       liste_codes_commune_from_EPCI:
-        this.cMSImportUsecase.compute_communes_from_epci(entry.code_epci),
+        this.aidesUsecase.external_compute_communes_from_epci(entry.code_epci),
     };
+
+    return result;
   }
 
   private buildFAQFromCMSData(entry: CMSWebhookEntryAPI): FAQDefinition {
