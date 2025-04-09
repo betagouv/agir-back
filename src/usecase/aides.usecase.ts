@@ -7,7 +7,6 @@ import {
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Aide } from '../domain/aides/aide';
-import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideFeedback } from '../domain/aides/aideFeedback';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
@@ -70,11 +69,11 @@ export class AidesUsecase {
     const aides_locales: Aide[] = [];
     for (const aide_def of aide_def_liste) {
       if (aide_def.echelle === Echelle.National) {
-        const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+        const aide = Aide.newAide(aide_def, utilisateur);
         this.setPartenaire(aide, code_commune);
         aides_nationales.push(aide);
       } else {
-        const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+        const aide = Aide.newAide(aide_def, utilisateur);
         this.setPartenaire(aide, code_commune);
         aides_locales.push(aide);
       }
@@ -118,7 +117,7 @@ export class AidesUsecase {
       ApplicationError.throwAideNotFound(cms_id);
     }
 
-    const aide = this.newAideWithHistoryData(aide_def, utilisateur);
+    const aide = Aide.newAide(aide_def, utilisateur);
 
     this.setPartenaire(aide, utilisateur.code_commune);
 
@@ -440,23 +439,6 @@ export class AidesUsecase {
         }
       }
     }
-  }
-
-  private newAideWithHistoryData(
-    aide_def: AideDefinition,
-    utilisateur: Utilisateur,
-  ): Aide {
-    const aide = new Aide(aide_def);
-    const aide_hist = utilisateur.history.getAideInteractionByIdCms(
-      aide_def.content_id,
-    );
-    if (aide_hist) {
-      aide.clicked_demande = aide_hist.clicked_demande;
-      aide.clicked_infos = aide_hist.clicked_infos;
-      aide.vue_at = aide_hist.vue_at;
-      aide.like_level = aide_hist.like_level;
-    }
-    return aide;
   }
 
   public external_compute_codes_communes_from_liste_partenaires(

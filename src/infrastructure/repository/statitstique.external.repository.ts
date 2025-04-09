@@ -109,6 +109,10 @@ export class StatistiqueExternalRepository {
         vue_le: aide.vue_at,
         clicked_infos: aide.clicked_infos,
         clicked_demande: aide.clicked_demande,
+        est_connue_utilisateur: aide.est_connue_utilisateur,
+        sera_sollicitee_utilisateur: aide.sera_sollicitee_utilisateur,
+        feedback: aide.feedback,
+        like_level: aide.like_level,
       },
     });
   }

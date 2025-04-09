@@ -213,10 +213,10 @@ export class DuplicateBDDForStatsUsecase {
           if (!aide_def) {
             continue;
           }
-          const final_aide = new Aide(aide_def);
-          final_aide.vue_at = aide_utilisateur.vue_at;
-          final_aide.clicked_infos = aide_utilisateur.clicked_infos;
-          final_aide.clicked_demande = aide_utilisateur.clicked_demande;
+          const final_aide = Aide.newAideFromHistory(
+            aide_def,
+            aide_utilisateur,
+          );
 
           try {
             await this.statistiqueExternalRepository.createAideData(

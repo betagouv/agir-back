@@ -632,6 +632,10 @@ describe('Duplicate Usecase', () => {
       titre: 'titreA',
       user_id: '123',
       vue_le: new Date(123),
+      est_connue_utilisateur: true,
+      feedback: 'good',
+      like_level: 3,
+      sera_sollicitee_utilisateur: false,
     });
   });
 

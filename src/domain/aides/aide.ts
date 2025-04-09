@@ -1,5 +1,7 @@
 import { ContenuLocal } from '../contenu/contenuLocal';
 import { PartenaireDefinition } from '../contenu/partenaireDefinition';
+import { AideHistory } from '../history/aideHistory';
+import { Utilisateur } from '../utilisateur/utilisateur';
 import { AideDefinition } from './aideDefinition';
 
 export class Aide extends AideDefinition implements ContenuLocal {
@@ -14,9 +16,39 @@ export class Aide extends AideDefinition implements ContenuLocal {
   clicked_demande?: boolean;
   clicked_infos?: boolean;
   like_level?: number;
+  feedback?: string;
+  est_connue_utilisateur?: boolean;
+  sera_sollicitee_utilisateur?: boolean;
   partenaire_nom?: string;
   partenaire_url?: string;
   partenaire_logo_url?: string;
+
+  public static newAide(
+    aide_def: AideDefinition,
+    utilisateur: Utilisateur,
+  ): Aide {
+    const aide_hist = utilisateur.history.getAideInteractionByIdCms(
+      aide_def.content_id,
+    );
+    return this.newAideFromHistory(aide_def, aide_hist);
+  }
+
+  public static newAideFromHistory(
+    aide_def: AideDefinition,
+    aide_hist: AideHistory,
+  ): Aide {
+    const aide = new Aide(aide_def);
+    if (aide_hist) {
+      aide.clicked_demande = aide_hist.clicked_demande;
+      aide.clicked_infos = aide_hist.clicked_infos;
+      aide.vue_at = aide_hist.vue_at;
+      aide.like_level = aide_hist.like_level;
+      aide.est_connue_utilisateur = aide_hist.est_connue_utilisateur;
+      aide.sera_sollicitee_utilisateur = aide_hist.sera_sollicitee_utilisateur;
+      aide.feedback = aide_hist.feedback;
+    }
+    return aide;
+  }
 
   public setPartenairePourUtilisateur(
     code_commune: string,

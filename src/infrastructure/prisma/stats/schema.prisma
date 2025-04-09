@@ -102,13 +102,17 @@ model ArticleCopy {
 }
 
 model AideCopy {
-  cms_id          String
-  user_id         String
-  titre           String
-  thematiques     String[]
-  vue_le          DateTime? @db.Timestamptz(3)
-  clicked_infos   Boolean?
-  clicked_demande Boolean?
+  cms_id                      String
+  user_id                     String
+  titre                       String
+  thematiques                 String[]
+  vue_le                      DateTime? @db.Timestamptz(3)
+  clicked_infos               Boolean?
+  clicked_demande             Boolean?
+  sera_sollicitee_utilisateur Boolean?
+  est_connue_utilisateur      Boolean?
+  feedback                    String?
+  like_level                  Int?
 
   @@unique([user_id, cms_id])
 }
