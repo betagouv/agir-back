@@ -58,20 +58,6 @@ export class AidesController extends GenericControler {
     await this.aidesUsecase.consulterAide(utilisateurId, aideId);
   }
 
-  @Post('utilisateurs/:utilisateurId/aides/:aideId/derouler')
-  @ApiOperation({
-    summary: `Indique que l'utilisateur a déroulé cette aide dans le catalogue`,
-  })
-  @UseGuards(AuthGuard)
-  async deroulerAide(
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('aideId') aideId: string,
-    @Request() req,
-  ): Promise<void> {
-    this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.deroulerAide(utilisateurId, aideId);
-  }
-
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')
   @ApiOperation({
     summary: `Indique que l'utilisateur est allé voir la page source de demande de l'aide`,

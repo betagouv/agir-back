@@ -37,7 +37,6 @@ export class QuizzAttempt_v0 {
 export class AideHistory_v0 {
   content_id: string;
   vue_at: Date;
-  deroulee_at: Date;
   clicked_infos: boolean;
   clicked_demande: boolean;
 
@@ -47,7 +46,6 @@ export class AideHistory_v0 {
       clicked_infos: elem.clicked_infos,
       clicked_demande: elem.clicked_demande,
       vue_at: elem.vue_at,
-      deroulee_at: elem.deroulee_at,
     };
   }
 }

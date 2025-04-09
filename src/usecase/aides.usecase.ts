@@ -145,25 +145,6 @@ export class AidesUsecase {
       [Scope.history_article_quizz_aides],
     );
   }
-  async deroulerAide(utilisateurId: string, id_cms: string) {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.history_article_quizz_aides],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const aide_exist = await this.aideRepository.exists(id_cms);
-    if (!aide_exist) {
-      ApplicationError.throwAideNotFound(id_cms);
-    }
-
-    utilisateur.history.deroulerAide(id_cms);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.history_article_quizz_aides],
-    );
-  }
 
   async consulterAideInfosLink(utilisateurId: string, id_cms: string) {
     const utilisateur = await this.utilisateurRepository.getById(

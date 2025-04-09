@@ -58,19 +58,6 @@ export class History {
     }
   }
 
-  public deroulerAide(id_cms: string) {
-    const interaction = this.getAideInteractionByIdCms(id_cms);
-    if (interaction) {
-      interaction.deroulee_at = new Date();
-    } else {
-      const new_interaction = new AideHistory({
-        content_id: id_cms,
-        deroulee_at: new Date(),
-      });
-      this.aide_interactions.push(new_interaction);
-    }
-  }
-
   public clickAideInfosLink(id_cms: string) {
     const interaction = this.getAideInteractionByIdCms(id_cms);
     if (interaction) {

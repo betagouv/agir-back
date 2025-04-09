@@ -3,7 +3,6 @@ import { AideHistory_v0 } from '../object_store/history/history_v0';
 export class AideHistory {
   content_id: string;
   vue_at: Date;
-  deroulee_at: Date;
   clicked_infos: boolean;
   clicked_demande: boolean;
 
@@ -13,7 +12,6 @@ export class AideHistory {
       this.clicked_infos = !!data.clicked_infos;
       this.clicked_demande = !!data.clicked_demande;
       this.vue_at = data.vue_at;
-      this.deroulee_at = data.deroulee_at;
     }
   }
 }

@@ -310,14 +310,12 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
-          deroulee_at: undefined,
         },
         {
           content_id: '2',
           clicked_demande: false,
           clicked_infos: true,
           vue_at: new Date(2),
-          deroulee_at: undefined,
         },
       ],
     };
@@ -411,40 +409,6 @@ describe('Aide (API test)', () => {
     expect(
       userDB.history.aide_interactions[0].vue_at.getTime(),
     ).toBeGreaterThan(Date.now() - 100);
-  });
-  it(`POST /utilisateurs/:utilisateurId/aides/id/derouler marque l'aide comme déroulée`, async () => {
-    // GIVEN
-    process.env.CRON_API_KEY = TestUtil.token;
-    const history: History_v0 = {
-      version: 0,
-      article_interactions: [],
-      quizz_interactions: [],
-      aide_interactions: [],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      history: history as any,
-    });
-    await TestUtil.create(DB.aide, {
-      content_id: '1',
-      codes_postaux: undefined,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/aides/1/derouler',
-    );
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.history.aide_interactions).toHaveLength(1);
-    expect(
-      userDB.history.aide_interactions[0].deroulee_at.getTime(),
-    ).toBeGreaterThan(Date.now() - 100);
-    expect(userDB.history.aide_interactions[0].vue_at).toBeUndefined();
   });
   it(`POST /utilisateurs/:utilisateurId/aides/id/vu_demande marque l'aide comme cliqué sur le lien demande `, async () => {
     // GIVEN
@@ -612,7 +576,6 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
-          deroulee_at: undefined,
         },
       ],
     };
@@ -670,7 +633,6 @@ describe('Aide (API test)', () => {
           clicked_demande: false,
           clicked_infos: false,
           vue_at: undefined,
-          deroulee_at: undefined,
         },
       ],
     };

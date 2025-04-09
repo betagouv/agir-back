@@ -594,7 +594,6 @@ describe('Duplicate Usecase', () => {
           clicked_infos: false,
           vue_at: new Date(123),
           content_id: '1',
-          deroulee_at: null,
         },
       ],
       quizz_interactions: [],
