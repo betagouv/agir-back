@@ -730,6 +730,13 @@ export class ApplicationError {
     );
   }
 
+  static throwNotBoolean(attribute: string, bool: any) {
+    this.throwAppError(
+      '138',
+      `L'attribut [${attribute}] n'est pas de type boolean, reçu [${bool}]`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

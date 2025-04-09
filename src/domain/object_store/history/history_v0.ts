@@ -39,6 +39,10 @@ export class AideHistory_v0 {
   vue_at: Date;
   clicked_infos: boolean;
   clicked_demande: boolean;
+  est_connue_utilisateur: boolean;
+  sera_sollicitee_utilisateur: boolean;
+  feedback: string;
+  like_level: number;
 
   static map(elem: AideHistory): AideHistory_v0 {
     return {
@@ -46,6 +50,10 @@ export class AideHistory_v0 {
       clicked_infos: elem.clicked_infos,
       clicked_demande: elem.clicked_demande,
       vue_at: elem.vue_at,
+      est_connue_utilisateur: elem.est_connue_utilisateur,
+      sera_sollicitee_utilisateur: elem.sera_sollicitee_utilisateur,
+      feedback: elem.feedback,
+      like_level: elem.like_level,
     };
   }
 }

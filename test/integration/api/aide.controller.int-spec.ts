@@ -310,12 +310,20 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
+          est_connue_utilisateur: false,
+          sera_sollicitee_utilisateur: false,
+          feedback: null,
+          like_level: null,
         },
         {
           content_id: '2',
           clicked_demande: false,
           clicked_infos: true,
           vue_at: new Date(2),
+          est_connue_utilisateur: false,
+          sera_sollicitee_utilisateur: false,
+          feedback: null,
+          like_level: null,
         },
       ],
     };
@@ -576,6 +584,10 @@ describe('Aide (API test)', () => {
           clicked_demande: true,
           clicked_infos: false,
           vue_at: new Date(1),
+          est_connue_utilisateur: true,
+          sera_sollicitee_utilisateur: false,
+          feedback: 'good',
+          like_level: 3,
         },
       ],
     };
@@ -617,6 +629,7 @@ describe('Aide (API test)', () => {
       est_gratuit: false,
       clicked_demande: true,
       clicked_infos: false,
+      like_level: 3,
       deja_vue_le: '1970-01-01T00:00:00.001Z',
     });
   });
@@ -633,6 +646,10 @@ describe('Aide (API test)', () => {
           clicked_demande: false,
           clicked_infos: false,
           vue_at: undefined,
+          est_connue_utilisateur: false,
+          sera_sollicitee_utilisateur: false,
+          feedback: null,
+          like_level: null,
         },
       ],
     };
@@ -664,6 +681,195 @@ describe('Aide (API test)', () => {
     expect(response_2.body.deja_vue_le).not.toBeNull();
     expect(new Date(response_2.body.deja_vue_le).getTime()).toBeGreaterThan(
       Date.now() - 200,
+    );
+  });
+
+  it(`POST /utilisateurs/:utilisateurId/aides/:aideId/feedback - pousse un feedback pour une aide jamais vue`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [],
+      article_interactions: [],
+      quizz_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+    });
+    await aideRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/feedback',
+    ).send({
+      like_level: 2,
+      feedback: 'pas si mal',
+      est_connue_utilisateur: false,
+      sera_sollicitee_utilisateur: true,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const aideDB = userDB.history.getAideInteractionByIdCms('1');
+    expect(aideDB).toEqual({
+      clicked_demande: false,
+      clicked_infos: false,
+      content_id: '1',
+      est_connue_utilisateur: false,
+      feedback: 'pas si mal',
+      sera_sollicitee_utilisateur: true,
+      vue_at: undefined,
+      like_level: 2,
+    });
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/:aideId/feedback - pousse un feedback pour une aide deja vue`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [
+        {
+          content_id: '1',
+          clicked_demande: true,
+          clicked_infos: true,
+          est_connue_utilisateur: null,
+          sera_sollicitee_utilisateur: null,
+          feedback: null,
+          like_level: null,
+          vue_at: new Date(1),
+        },
+      ],
+      article_interactions: [],
+      quizz_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+    });
+    await aideRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/feedback',
+    ).send({
+      like_level: 2,
+      feedback: 'pas si mal',
+      est_connue_utilisateur: true,
+      sera_sollicitee_utilisateur: true,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const aideDB = userDB.history.getAideInteractionByIdCms('1');
+    expect(aideDB).toEqual({
+      clicked_demande: true,
+      clicked_infos: true,
+      content_id: '1',
+      est_connue_utilisateur: true,
+      feedback: 'pas si mal',
+      sera_sollicitee_utilisateur: true,
+      vue_at: new Date(1),
+      like_level: 2,
+    });
+  });
+
+  it(`POST /utilisateurs/:utilisateurId/aides/:aideId/feedback - pousse juste le like`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [
+        {
+          content_id: '1',
+          clicked_demande: true,
+          clicked_infos: true,
+          est_connue_utilisateur: null,
+          sera_sollicitee_utilisateur: null,
+          feedback: null,
+          like_level: null,
+          vue_at: new Date(1),
+        },
+      ],
+      article_interactions: [],
+      quizz_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+    });
+    await aideRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/feedback',
+    ).send({
+      like_level: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const aideDB = userDB.history.getAideInteractionByIdCms('1');
+    expect(aideDB).toEqual({
+      content_id: '1',
+      vue_at: new Date(1),
+      clicked_demande: true,
+      clicked_infos: true,
+      est_connue_utilisateur: null,
+      feedback: null,
+      like_level: 3,
+      sera_sollicitee_utilisateur: null,
+    });
+  });
+  it(`POST /utilisateurs/:utilisateurId/aides/:aideId/feedback - bad boolean`, async () => {
+    // GIVEN
+    const history: History_v0 = {
+      version: 0,
+      aide_interactions: [],
+      article_interactions: [],
+      quizz_interactions: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+    });
+    await aideRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/aides/1/feedback',
+    ).send({
+      est_connue_utilisateur: 'bad',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `L'attribut [est_connue_utilisateur] n'est pas de type boolean, reçu [bad]`,
     );
   });
 });

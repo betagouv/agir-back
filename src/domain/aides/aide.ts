@@ -13,6 +13,7 @@ export class Aide extends AideDefinition implements ContenuLocal {
   vue_at?: Date;
   clicked_demande?: boolean;
   clicked_infos?: boolean;
+  like_level?: number;
   partenaire_nom?: string;
   partenaire_url?: string;
   partenaire_logo_url?: string;

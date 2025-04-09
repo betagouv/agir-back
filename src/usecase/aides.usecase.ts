@@ -8,6 +8,7 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Aide } from '../domain/aides/aide';
 import { AideDefinition } from '../domain/aides/aideDefinition';
+import { AideFeedback } from '../domain/aides/aideFeedback';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
 import { Thematique } from '../domain/thematique/thematique';
@@ -17,6 +18,11 @@ import { EmailSender } from '../infrastructure/email/emailSender';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+
+const MAX_FEEDBACK_LENGTH = 500;
+
+const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
+const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
 
 @Injectable()
 export class AidesUsecase {
@@ -124,6 +130,71 @@ export class AidesUsecase {
     );
 
     return this.personnalisator.personnaliser(aide);
+  }
+
+  async feedbackAide(
+    utilisateurId: string,
+    id_cms: string,
+    feedback: AideFeedback,
+  ) {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const aide_exist = await this.aideRepository.exists(id_cms);
+    if (!aide_exist) {
+      ApplicationError.throwAideNotFound(id_cms);
+    }
+
+    if (feedback.like_level) {
+      if (![1, 2, 3, 4].includes(feedback.like_level)) {
+        ApplicationError.throwBadLikeLevel(feedback.like_level);
+      }
+    }
+    if (feedback.feedback) {
+      if (feedback.feedback.length > 500) {
+        ApplicationError.throwTooBigData(
+          'feedback',
+          feedback.feedback,
+          MAX_FEEDBACK_LENGTH,
+        );
+      }
+      if (!BAD_CHAR_REGEXP.test(feedback.feedback)) {
+        ApplicationError.throwBadChar(BAD_CHAR_LISTE);
+      }
+    }
+
+    if (
+      feedback.est_connue_utilisateur !== null &&
+      feedback.est_connue_utilisateur !== undefined
+    ) {
+      if ('boolean' !== typeof feedback.est_connue_utilisateur) {
+        ApplicationError.throwNotBoolean(
+          'est_connue_utilisateur',
+          feedback.est_connue_utilisateur,
+        );
+      }
+    }
+    if (
+      feedback.sera_sollicitee_utilisateur !== null &&
+      feedback.sera_sollicitee_utilisateur !== undefined
+    ) {
+      if ('boolean' !== typeof feedback.sera_sollicitee_utilisateur) {
+        ApplicationError.throwNotBoolean(
+          'sera_sollicitee_utilisateur',
+          feedback.sera_sollicitee_utilisateur,
+        );
+      }
+    }
+
+    utilisateur.history.feedbackAide(id_cms, feedback);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
   }
 
   async consulterAide(utilisateurId: string, id_cms: string) {
@@ -383,6 +454,7 @@ export class AidesUsecase {
       aide.clicked_demande = aide_hist.clicked_demande;
       aide.clicked_infos = aide_hist.clicked_infos;
       aide.vue_at = aide_hist.vue_at;
+      aide.like_level = aide_hist.like_level;
     }
     return aide;
   }
