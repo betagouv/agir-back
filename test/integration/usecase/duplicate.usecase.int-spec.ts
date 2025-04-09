@@ -492,8 +492,8 @@ describe('Duplicate Usecase', () => {
           action: { code: '1', type: TypeAction.classique },
           faite_le: new Date(123),
           vue_le: new Date(456),
-          feedback: null,
-          like_level: null,
+          feedback: 'good',
+          like_level: 3,
         },
       ],
       liste_tags_excluants: [],
@@ -531,6 +531,8 @@ describe('Duplicate Usecase', () => {
       type_code_id: 'classique_1',
       user_id: '123',
       vue_le: new Date(456),
+      feedback: 'good',
+      like_level: 3,
     });
   });
   it('duplicateArticle : copy ok articles utilisateur', async () => {

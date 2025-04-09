@@ -371,7 +371,7 @@ export class ActionUsecase {
       ApplicationError.throwActionNotFound(code, type);
     }
 
-    const action = new Action(action_def);
+    const action = Action.newActionFromUser(action_def, utilisateur);
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.code_commune,
@@ -438,9 +438,6 @@ export class ActionUsecase {
         : action_def.kyc_codes,
     );
 
-    action.deja_vue = utilisateur.thematique_history.isActionVue(action);
-    action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
-    action.like_level = utilisateur.thematique_history.getLikeLevel(action);
     const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
     action.nombre_actions_faites = nbr_faites;
     action.label_compteur = action.label_compteur.replace(

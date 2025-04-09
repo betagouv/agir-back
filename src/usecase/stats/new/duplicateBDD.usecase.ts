@@ -119,9 +119,7 @@ export class DuplicateBDDForStatsUsecase {
             continue;
           }
 
-          const final_action = new Action(action_def);
-          final_action.faite_le = action_utilisateur.faite_le;
-          final_action.vue_le = action_utilisateur.vue_le;
+          const final_action = Action.newAction(action_def, action_utilisateur);
 
           try {
             await this.statistiqueExternalRepository.createActionData(

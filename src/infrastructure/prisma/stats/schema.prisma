@@ -85,6 +85,8 @@ model ActionCopy {
   thematique   String
   vue_le       DateTime? @db.Timestamptz(3)
   faite_le     DateTime? @db.Timestamptz(3)
+  feedback     String?
+  like_level   Int?
 
   @@unique([user_id, type_code_id])
 }

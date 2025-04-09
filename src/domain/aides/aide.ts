@@ -46,6 +46,14 @@ export class Aide extends AideDefinition implements ContenuLocal {
       aide.est_connue_utilisateur = aide_hist.est_connue_utilisateur;
       aide.sera_sollicitee_utilisateur = aide_hist.sera_sollicitee_utilisateur;
       aide.feedback = aide_hist.feedback;
+    } else {
+      aide.clicked_demande = false;
+      aide.clicked_infos = false;
+      aide.vue_at = null;
+      aide.like_level = null;
+      aide.est_connue_utilisateur = null;
+      aide.sera_sollicitee_utilisateur = null;
+      aide.feedback = null;
     }
     return aide;
   }

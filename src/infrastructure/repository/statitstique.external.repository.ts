@@ -83,6 +83,8 @@ export class StatistiqueExternalRepository {
         type_action: action.type,
         faite_le: action.faite_le,
         vue_le: action.vue_le,
+        feedback: action.feedback,
+        like_level: action.like_level,
       },
     });
   }
