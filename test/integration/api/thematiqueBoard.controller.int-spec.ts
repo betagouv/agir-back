@@ -170,6 +170,8 @@ describe('Thematique Board (API test)', () => {
           action: { code: '1', type: TypeAction.classique },
           vue_le: null,
           faite_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],

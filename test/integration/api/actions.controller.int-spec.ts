@@ -566,6 +566,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           vue_le: new Date(),
           faite_le: null,
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -656,6 +658,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           faite_le: new Date(),
           vue_le: null,
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -747,6 +751,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           faite_le: new Date(),
           vue_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -799,6 +805,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '123' },
           vue_le: new Date(),
           faite_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_thematiques: [],
@@ -1115,7 +1123,26 @@ describe('Actions (API test)', () => {
     });
 
     await blockTextRepository.loadCache();
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_tags_excluants: [],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '123' },
+          vue_le: null,
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: 2,
+        },
+      ],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+
     await TestUtil.create(DB.action, {
       code: '123',
       type: TypeAction.classique,
@@ -1165,8 +1192,9 @@ describe('Actions (API test)', () => {
       ],
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
-      deja_faite: false,
+      deja_faite: true,
       deja_vue: false,
+      like_level: 2,
       faqs: [],
       kycs: [],
       label_compteur: '45 haha',

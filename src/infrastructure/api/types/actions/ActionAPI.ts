@@ -90,6 +90,7 @@ export class ActionAPI {
   @ApiProperty() label_compteur: string;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
+  @ApiProperty() like_level: number;
   @ApiProperty() quizz_felicitations: string;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_actions_en_cours: number;
@@ -142,6 +143,7 @@ export class ActionAPI {
       points: action.getNombrePoints(),
       sources: action.sources,
       articles: action.article_liste.map((a) => ArticleLightAPI.mapToAPI(a)),
+      like_level: action.like_level,
     };
   }
 }

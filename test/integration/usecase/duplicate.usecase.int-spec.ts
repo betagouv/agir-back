@@ -492,6 +492,8 @@ describe('Duplicate Usecase', () => {
           action: { code: '1', type: TypeAction.classique },
           faite_le: new Date(123),
           vue_le: new Date(456),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],

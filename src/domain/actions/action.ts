@@ -26,6 +26,7 @@ export class Action extends ActionDefinition {
   deja_faite?: boolean;
   vue_le?: Date;
   faite_le?: Date;
+  like_level: number;
 
   constructor(data: ActionDefinition) {
     super(data);

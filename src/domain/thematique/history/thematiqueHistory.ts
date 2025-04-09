@@ -14,6 +14,8 @@ export type ActionUtilisateur = {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
+  like_level: number;
+  feedback: string;
 };
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
@@ -117,6 +119,11 @@ export class ThematiqueHistory {
     return found ? !!found.faite_le : false;
   }
 
+  public getLikeLevel(action: TypeCodeAction): number {
+    const found = this.findAction(action);
+    return found ? found.like_level : null;
+  }
+
   public findAction(action: TypeCodeAction): ActionUtilisateur {
     return this.liste_actions_utilisateur.find(
       (a) => a.action.code === action.code && a.action.type === action.type,
@@ -136,6 +143,8 @@ export class ThematiqueHistory {
         action: action,
         vue_le: new Date(),
         faite_le: null,
+        like_level: null,
+        feedback: null,
       });
     }
   }
@@ -148,6 +157,8 @@ export class ThematiqueHistory {
         action: action,
         vue_le: null,
         faite_le: new Date(),
+        like_level: null,
+        feedback: null,
       });
     }
   }

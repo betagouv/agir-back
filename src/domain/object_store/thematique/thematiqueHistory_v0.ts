@@ -27,12 +27,16 @@ export class ActionUtilisateur_v0 {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
+  like_level: number;
+  feedback: string;
 
   static serialise(domain: ActionUtilisateur): ActionUtilisateur_v0 {
     return {
       action: domain.action,
       vue_le: domain.vue_le,
       faite_le: domain.faite_le,
+      like_level: domain.like_level,
+      feedback: domain.feedback,
     };
   }
 }
@@ -63,7 +67,7 @@ export class ThematiqueRecommandation_v0 {
 
 export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
-  liste_actions_utilisateur: ActionUtilisateur[];
+  liste_actions_utilisateur: ActionUtilisateur_v0[];
   liste_tags_excluants: TagExcluant[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {

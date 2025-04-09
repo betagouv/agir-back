@@ -384,6 +384,7 @@ export class ActionUsecase {
 
     action.deja_vue = utilisateur.thematique_history.isActionVue(action);
     action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
+    action.like_level = utilisateur.thematique_history.getLikeLevel(action);
     const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
     action.nombre_actions_faites = nbr_faites;
     action.label_compteur = action.label_compteur.replace(
