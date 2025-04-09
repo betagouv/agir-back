@@ -1,5 +1,8 @@
 import { Action } from '../../actions/action';
-import { TypeCodeAction } from '../../actions/actionDefinition';
+import {
+  ActionDefinition,
+  TypeCodeAction,
+} from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
 import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
@@ -140,7 +143,7 @@ export class ThematiqueHistory {
       found.vue_le = new Date();
     } else {
       this.liste_actions_utilisateur.push({
-        action: action,
+        action: ActionDefinition.extractTypeCodeFrom(action),
         vue_le: new Date(),
         faite_le: null,
         like_level: null,
@@ -159,6 +162,25 @@ export class ThematiqueHistory {
         faite_le: new Date(),
         like_level: null,
         feedback: null,
+      });
+    }
+  }
+  public setActionFeedback(
+    action: TypeCodeAction,
+    like_level: number,
+    feedback: string,
+  ) {
+    const found = this.findAction(action);
+    if (found) {
+      found.like_level = like_level;
+      found.feedback = feedback;
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: like_level ? like_level : null,
+        feedback: feedback ? feedback : null,
       });
     }
   }
