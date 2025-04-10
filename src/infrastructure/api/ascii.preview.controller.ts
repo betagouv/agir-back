@@ -245,7 +245,10 @@ export class AsciiPreviewController extends GenericControler {
         return result;
       }
 
-      if (kyc_def.type === TypeReponseQuestionKYC.entier) {
+      if (
+        kyc_def.type === TypeReponseQuestionKYC.entier ||
+        kyc_def.type === TypeReponseQuestionKYC.decimal
+      ) {
         situation[kyc_def.ngc_key] = 1;
         const value_1 =
           Math.round(
