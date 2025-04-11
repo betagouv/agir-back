@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from 'src/domain/kyc/KYCID';
+import { QuestionKYC } from 'src/domain/kyc/questionKYC';
 import { DPE, TypeLogement } from '../domain/logement/logement';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
@@ -41,72 +42,19 @@ export class MesAidesRenoUsecase {
     ]);
 
     for (const [ruleName, value] of Object.entries(situation)) {
-      const jsValue = parsePublicodesValue(value);
+      const updated_kyc = MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC[
+        ruleName
+      ]?.getUpdatedKyc(utilisateur, parsePublicodesValue(value));
 
-      switch (ruleName) {
-        case MesAidesRenoRuleNames.dpeActuel: {
-          if (jsValue === 1) {
-            utilisateur.logement.dpe = DPE.A;
-          } else if (jsValue === 2) {
-            utilisateur.logement.dpe = DPE.B;
-          } else if (jsValue === 3) {
-            utilisateur.logement.dpe = DPE.C;
-          } else if (jsValue === 4) {
-            utilisateur.logement.dpe = DPE.D;
-          } else if (jsValue === 5) {
-            utilisateur.logement.dpe = DPE.E;
-          } else if (jsValue === 6) {
-            utilisateur.logement.dpe = DPE.F;
-          } else if (jsValue === 7) {
-            utilisateur.logement.dpe = DPE.G;
-          }
-
-          // await this.utilisateurRepository.updateUtilisateur(utilisateur);
-          break;
-        }
-
-        case MesAidesRenoRuleNames.logementCodePostal: {
-          const codePostal = jsValue as string;
-          // const nomCommune =  situation[MesAidesRenoRuleNames.loge&];
-          break;
-        }
-
-        case MesAidesRenoRuleNames.logementProprietaire: {
-          if (jsValue === 'propriétaire' || jsValue === 'non propriétaire') {
-            const estProprietaire = jsValue === 'propriétaire';
-
-            await this.kycUsecase.updateResponseKYC_v2(
-              userId,
-              KYCID.KYC_proprietaire,
-              [
-                { code: 'oui', value: 'Oui', selected: estProprietaire },
-                { code: 'non', value: 'Non', selected: !estProprietaire },
-              ],
-            );
-          }
-          break;
-        }
-
-        // logementCommuneCodeInsee = 'logement . commune code insee',
-        // logementCommuneDepartement = 'logement . commune département',
-        // logementCommune = 'logement . commune',
-        // logementCommuneRegion = 'logement . commune région',
-        // logement = 'logement',
-        // logementPeriodeDeConstruction = 'logement . période de construction',
-        // logementProprietaireOccupant = 'logement . propriétaire occupant',
-        // logementProprietaire = 'vous . propriétaire . statut',
-        // logementResidencePrincipaleLocataire = 'logement . résidence principale locataire',
-        // logementResidencePrincipaleProprietaire = 'logement . résidence principale propriétaire',
-        // logementSurface = 'logement . surface',
-        // logementType = 'logement . type',
-        // menageCodeDepartement = 'ménage . code département',
-        // menageCodeEPCI = 'ménage . EPCI',
-        // menageCodeRegion = 'ménage . code région',
-        // menageCommune = 'ménage . commune',
-        // menagePersonnes = 'ménage . personnes',
-        // menageRevenu = 'ménage . revenu',
+      if (updated_kyc) {
+        utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
+          updated_kyc,
+          utilisateur,
+        );
       }
     }
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   /**
@@ -252,6 +200,109 @@ enum MesAidesRenoRuleNames {
   menageRevenu = 'ménage . revenu',
 }
 
+const MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC: Record<
+  MesAidesRenoRuleNames,
+  {
+    kyc: KYCID;
+    getUpdatedKyc: (
+      utilisateur: Utilisateur,
+      value: string | number | boolean | null,
+    ) => QuestionKYC | undefined;
+  }
+> = {
+  [MesAidesRenoRuleNames.dpeActuel]: {
+    kyc: KYCID.KYC_DPE,
+    getUpdatedKyc: (utilisateur, value) => {
+      if (Number.isSafeInteger(value)) {
+        return utilisateur.kyc_history.selectChoixUniqueByCode(
+          KYCID.KYC_DPE,
+          getDPEFromValue(value as number),
+        );
+      }
+    },
+  },
+  [MesAidesRenoRuleNames.logementCodePostal]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementCommuneCodeInsee]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementCommuneDepartement]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementCommuneNom]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementCommuneRegion]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementProprietaireOccupant]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementProprietaire]: {
+    kyc: KYCID.KYC_proprietaire,
+    getUpdatedKyc: (utilisateur, value) => {
+      if (value === 'propriétaire' || value === 'non propriétaire') {
+        const estProprietaire = value === 'propriétaire';
+        return utilisateur.kyc_history.selectChoixUniqueByCode(
+          KYCID.KYC_proprietaire,
+          estProprietaire ? 'oui' : 'non',
+        );
+      }
+    },
+  },
+  [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementSurface]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.logementType]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menageCodeDepartement]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menageCodeEPCI]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menageCodeRegion]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menageCommune]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menagePersonnes]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+  [MesAidesRenoRuleNames.menageRevenu]: {
+    kyc: KYCID._1,
+    getUpdatedKyc: (utilisateur, value) => undefined,
+  },
+};
+
 function getParamsFromSituation(
   situation: Record<string, string>,
 ): URLSearchParams {
@@ -293,4 +344,33 @@ function parsePublicodesValue(
     return Number(value);
   }
   return value;
+}
+
+/**
+ * Converts a DPE value (1-7) (the format from Mes Aides Reno) to the
+ * corresponding DPE enum value.
+ *
+ * @param value - The DPE value (1-7).
+ * @returns The corresponding DPE enum value.
+ * @throws Error if the value is not in the range of 1-7.
+ */
+function getDPEFromValue(value: number): DPE {
+  switch (value) {
+    case 1:
+      return DPE.A;
+    case 2:
+      return DPE.B;
+    case 3:
+      return DPE.C;
+    case 4:
+      return DPE.D;
+    case 5:
+      return DPE.E;
+    case 6:
+      return DPE.F;
+    case 7:
+      return DPE.G;
+    default:
+      throw new Error(`Unknown DPE value: ${value}`);
+  }
 }
