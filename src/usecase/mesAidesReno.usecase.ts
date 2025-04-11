@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { KYCID } from 'src/domain/kyc/KYCID';
-import { QuestionKYC } from 'src/domain/kyc/questionKYC';
+import { KYCID } from '../domain/kyc/KYCID';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { DPE, Superficie, TypeLogement } from '../domain/logement/logement';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
@@ -89,8 +89,8 @@ export class MesAidesRenoUsecase {
     Object.values(MesAidesRenoRuleNames).forEach((ruleName) => {
       const value =
         this.mappingKYCToMesAidesRenoSituation[ruleName](utilisateur);
+
       if (value != undefined) {
-        console.log({ ruleName, value });
         situation[ruleName] = getPublicodesValue(value);
       }
     });

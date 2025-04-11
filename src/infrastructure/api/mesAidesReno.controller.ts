@@ -45,7 +45,7 @@ export class MesAidesRenoController extends GenericControler {
     return await this.mesAidesRenoUsecase.getIframeUrl(utilisateurId);
   }
 
-  @Post('utilisateurs/:utilisateurId/mes_aides_reno/nouvelles_situation')
+  @Post('utilisateurs/:utilisateurId/mes_aides_reno/nouvelle_situation')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary:
@@ -53,7 +53,7 @@ export class MesAidesRenoController extends GenericControler {
   })
   @ApiBody({
     type: [Object],
-    description: 'La nouvelle situation de l utilisateurice',
+    description: "La nouvelle situation de l'utilisateurice",
   })
   async setSituation(
     @Param('utilisateurId') utilisateurId: string,

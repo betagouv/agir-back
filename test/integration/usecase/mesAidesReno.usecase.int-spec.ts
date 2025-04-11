@@ -1,5 +1,4 @@
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
   DPE,
@@ -52,7 +51,7 @@ describe('Mes Aides Réno', () => {
           proprietaire: false,
         },
       });
-      await createKYCs();
+      await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
 
       await usecase.updateUtilisateurWith('utilisateur-id', {
@@ -62,7 +61,6 @@ describe('Mes Aides Réno', () => {
         'logement . type': '"maison"',
         'logement . surface': '30',
         'logement . période de construction': '"au moins 15 ans"',
-        // TODO: what should we do with this one ?
         'ménage . personnes': '2',
         'ménage . code région': '"76"',
         'ménage . code département': '"31"',
@@ -145,7 +143,7 @@ describe('Mes Aides Réno', () => {
           proprietaire: false,
         },
       });
-      await createKYCs();
+      await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
 
       await usecase.updateUtilisateurWith('utilisateur-id', {
@@ -155,7 +153,6 @@ describe('Mes Aides Réno', () => {
         'logement . type': '"maison"',
         'logement . surface': '30',
         'logement . période de construction': '"au moins 15 ans"',
-        // TODO: what should we do with this one ?
         'ménage . personnes': '2',
         'ménage . code région': '"76"',
         'ménage . code département': '"31"',
@@ -244,64 +241,3 @@ describe('Mes Aides Réno', () => {
     });
   });
 });
-
-function createKYCs(): Promise<void[]> {
-  return Promise.all([
-    TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC_proprietaire,
-      type: TypeReponseQuestionKYC.choix_unique,
-      reponses: [
-        { code: 'oui', label: 'Oui' },
-        { code: 'non', label: 'Non' },
-      ],
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID.KYC_DPE,
-      type: TypeReponseQuestionKYC.choix_unique,
-      reponses: [
-        { code: 'A', label: 'A' },
-        { code: 'B', label: 'B' },
-        { code: 'C', label: 'C' },
-        { code: 'D', label: 'D' },
-        { code: 'E', label: 'E' },
-        { code: 'F', label: 'F' },
-        { code: 'G', label: 'G' },
-      ],
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 3,
-      code: KYCID.KYC_logement_age,
-      type: TypeReponseQuestionKYC.entier,
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 4,
-      code: KYCID.KYC006,
-      type: TypeReponseQuestionKYC.choix_unique,
-      reponses: [
-        { code: 'moins_15', label: 'Moins de 15 ans (neuf ou récent)' },
-        { code: 'plus_15', label: 'Plus de 15 ans' },
-      ],
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 5,
-      code: KYCID.KYC_menage,
-      type: TypeReponseQuestionKYC.entier,
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 6,
-      code: KYCID.KYC_type_logement,
-      type: TypeReponseQuestionKYC.choix_unique,
-      reponses: [
-        { code: TypeLogement.appartement, label: 'Appartement' },
-        { code: TypeLogement.maison, label: 'Maison' },
-      ],
-    }),
-    TestUtil.create(DB.kYC, {
-      id_cms: 7,
-      code: KYCID.KYC_superficie,
-      type: TypeReponseQuestionKYC.entier,
-    }),
-  ]);
-}
