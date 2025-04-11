@@ -34,7 +34,7 @@ describe('Mes Aides Réno', () => {
     await TestUtil.appclose();
   });
 
-  describe.only('updateUtilisateurWith', () => {
+  describe('updateUtilisateurWith', () => {
     test("propriétaire d'une maison principale à Toulouse", async () => {
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
@@ -216,13 +216,14 @@ describe('Mes Aides Réno', () => {
           nombre_adultes: 2,
           commune: 'TOULOUSE',
           code_postal: '31500',
+          superficie: Superficie.superficie_150,
         },
         revenu_fiscal: 20000,
       });
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&logement.type=%22appartement%22&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%2231555%22&logement.commune=31555',
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
       );
     });
 
@@ -238,7 +239,7 @@ describe('Mes Aides Réno', () => {
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.propri%C3%A9taire+occupant=oui&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&DPE.actuel=2&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
       );
     });
   });
