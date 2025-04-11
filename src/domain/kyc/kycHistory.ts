@@ -557,6 +557,7 @@ export class KYCHistory {
       return question_catalogue;
     }
   }
+
   public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
     let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {

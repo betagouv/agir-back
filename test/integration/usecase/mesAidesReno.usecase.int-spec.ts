@@ -57,15 +57,7 @@ describe('Mes Aides Réno', () => {
           proprietaire: false,
         },
       });
-      await TestUtil.create(DB.kYC, {
-        id_cms: 1,
-        code: KYCID.KYC_proprietaire,
-        type: TypeReponseQuestionKYC.choix_unique,
-        reponses: [
-          { code: 'oui', label: 'Oui' },
-          { code: 'non', label: 'Non' },
-        ],
-      });
+      await createKYCs();
       await kycRepository.loadCache();
 
       await usecase.updateUtilisateurWith('utilisateur-id', {
@@ -74,7 +66,7 @@ describe('Mes Aides Réno', () => {
         'logement . résidence principale propriétaire': 'oui',
         'logement . type': '"maison"',
         'logement . surface': '30',
-        'logement . période de construction': '"de 2 à 10 ans"',
+        'logement . période de construction': '"au moins 15 ans"',
         'ménage . personnes': '2',
         'ménage . code région': '"76"',
         'ménage . code département': '"31"',
@@ -102,6 +94,7 @@ describe('Mes Aides Réno', () => {
 
       expect(utilisateur.logement.dpe).toEqual(DPE.C);
       expect(utilisateur.logement.proprietaire).toBeTruthy();
+      expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
     });
   });
 
@@ -150,3 +143,31 @@ describe('Mes Aides Réno', () => {
     });
   });
 });
+
+function createKYCs(): Promise<[void, void]> {
+  return Promise.all([
+    TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_proprietaire,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { code: 'oui', label: 'Oui' },
+        { code: 'non', label: 'Non' },
+      ],
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_DPE,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { code: 'A', label: 'A' },
+        { code: 'B', label: 'B' },
+        { code: 'C', label: 'C' },
+        { code: 'D', label: 'D' },
+        { code: 'E', label: 'E' },
+        { code: 'F', label: 'F' },
+        { code: 'G', label: 'G' },
+      ],
+    }),
+  ]);
+}
