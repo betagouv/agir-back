@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from 'src/domain/kyc/KYCID';
 import { QuestionKYC } from 'src/domain/kyc/questionKYC';
-import { DPE, TypeLogement } from '../domain/logement/logement';
+import { DPE, Superficie, TypeLogement } from '../domain/logement/logement';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -16,6 +16,10 @@ export class MesAidesRenoUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
+  /**
+   * Returns the URL of the Mes Aides Reno iframe with the user's information
+   * prefilled based on the user's information and KYC history.
+   */
   async getIframeUrl(userId: string): Promise<string> {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
@@ -30,6 +34,10 @@ export class MesAidesRenoUsecase {
     return `${MES_AIDES_RENO_IFRAME_SIMULATION_URL}&${params.toString()}`;
   }
 
+  /**
+   * Updates the user's information and KYC history based on the situation
+   * provided by the Mes Aides Reno iframe.
+   */
   async updateUtilisateurWith(
     userId: string,
     situation: Record<string, string>,
@@ -70,6 +78,117 @@ export class MesAidesRenoUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
+  /**
+   * Returns the search parameters to be used to prefill the questions in the
+   * iframe with the already known values from the user.
+   */
+  private getInputSearchParamsFor(utilisateur: Utilisateur): URLSearchParams {
+    const situation = {};
+
+    // Automatically map the user information to the Mes Aides Reno rules.
+    Object.values(MesAidesRenoRuleNames).forEach((ruleName) => {
+      const value =
+        this.mappingKYCToMesAidesRenoSituation[ruleName](utilisateur);
+      if (value != undefined) {
+        console.log({ ruleName, value });
+        situation[ruleName] = getPublicodesValue(value);
+      }
+    });
+
+    // Handle the commune and EPCI information separately, to avoid redundant
+    // calls to the commune repository.
+    if (utilisateur.logement?.code_postal && utilisateur.logement?.commune) {
+      const code_insee = this.communeRepository.getCommuneCodeInsee(
+        utilisateur.logement.code_postal,
+        utilisateur.logement.commune,
+      );
+      const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
+      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+
+      if (commune) {
+        situation[MesAidesRenoRuleNames.menageCommune] = `"${commune.code}"`;
+        situation[
+          MesAidesRenoRuleNames.menageCodeRegion
+        ] = `"${commune.region}"`;
+        situation[
+          MesAidesRenoRuleNames.menageCodeDepartement
+        ] = `"${commune.departement}"`;
+        situation[MesAidesRenoRuleNames.menageCodeEPCI] = `"${epci.code}"`;
+        // NOTE: we assume that in the context of J'agis, the user is considered
+        // as 'occupant' if he is 'proprietaire' and 'locataire'.
+        situation[
+          MesAidesRenoRuleNames.logementCommuneCodeInsee
+        ] = `"${commune.code}"`;
+        situation[
+          MesAidesRenoRuleNames.logementCommuneDepartement
+        ] = `"${commune.departement}"`;
+        situation[
+          MesAidesRenoRuleNames.logementCommuneRegion
+        ] = `"${commune.region}"`;
+        situation[
+          MesAidesRenoRuleNames.logementCommuneNom
+        ] = `"${commune.nom}"`;
+        situation[
+          MesAidesRenoRuleNames.logementCodePostal
+        ] = `"${utilisateur.logement.code_postal}"`;
+      }
+    }
+
+    return getParamsFromSituation(situation);
+  }
+
+  private mappingKYCToMesAidesRenoSituation: Record<
+    MesAidesRenoRuleNames,
+    GetMesAidesRenoSituationCallback
+  > = {
+    [MesAidesRenoRuleNames.dpeActuel]: ({ logement }) =>
+      logement?.dpe && logement.dpe !== DPE.ne_sais_pas
+        ? dpeToNumber(logement.dpe)
+        : undefined,
+    [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: ({ logement }) =>
+      logement?.plus_de_15_ans ? 'au moins 15 ans' : undefined,
+    [MesAidesRenoRuleNames.logementProprietaire]: ({ logement }) =>
+      // NOTE: missing the case 'acquéreur'
+      logement?.proprietaire != null
+        ? logement.proprietaire
+          ? 'propriétaire'
+          : 'non propriétaire'
+        : undefined,
+    // NOTE: we assume that if the user is 'proprietaire', he is also
+    // 'occupant' in the context of J'agis.
+    [MesAidesRenoRuleNames.logementProprietaireOccupant]: ({ logement }) =>
+      logement?.proprietaire != null ? logement.proprietaire : undefined,
+    [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: ({
+      logement,
+    }) => (logement?.proprietaire != null ? logement.proprietaire : undefined),
+    [MesAidesRenoRuleNames.logementSurface]: ({ logement }) =>
+      logement?.superficie != null
+        ? superficieToNumber(logement.superficie)
+        : undefined,
+    [MesAidesRenoRuleNames.logementType]: ({ logement }) =>
+      logement?.type != null
+        ? logement.type === TypeLogement.maison
+          ? 'maison'
+          : 'appartement'
+        : undefined,
+    [MesAidesRenoRuleNames.menagePersonnes]: (utilisateur) =>
+      utilisateur.getNombrePersonnesDansLogement(),
+    [MesAidesRenoRuleNames.menageRevenu]: ({ revenu_fiscal }) => revenu_fiscal,
+    [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: (_) =>
+      undefined,
+
+    // NOTE: the values are set all in one
+    [MesAidesRenoRuleNames.menageCommune]: (_) => undefined,
+    [MesAidesRenoRuleNames.menageCodeDepartement]: (_) => undefined,
+    [MesAidesRenoRuleNames.menageCodeEPCI]: (_) => undefined,
+    [MesAidesRenoRuleNames.menageCodeRegion]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCommuneCodeInsee]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCodePostal]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCommuneDepartement]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCommuneNom]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCommuneRegion]: (_) => undefined,
+  };
+
   private mappingMesAidesRenoToUpdatedKYC: Record<
     MesAidesRenoRuleNames,
     UpdateQuestionKYCCallback[]
@@ -79,7 +198,7 @@ export class MesAidesRenoUsecase {
         if (estLogementPrincipal && Number.isSafeInteger(value)) {
           return utilisateur.kyc_history.selectChoixUniqueByCode(
             KYCID.KYC_DPE,
-            getDPEFromValue(value as number),
+            numberToDpe(value as number),
           );
         }
       },
@@ -206,10 +325,11 @@ export class MesAidesRenoUsecase {
         return undefined;
       },
     ],
-    // Cas : l'utilisateur est propriétaire du logement et le loue à une autre personne.
+    // The user is not the occupant of the logement.
     [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: [],
 
-    // Nous avons juste besoin du code INSEE de la commune
+    // We only need to get the Insee code of the commune to update the
+    // utilisateur's information.
     [MesAidesRenoRuleNames.menageCodeDepartement]: [],
     [MesAidesRenoRuleNames.menageCodeEPCI]: [],
     [MesAidesRenoRuleNames.menageCodeRegion]: [],
@@ -218,126 +338,6 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.logementCommuneNom]: [],
     [MesAidesRenoRuleNames.logementCommuneRegion]: [],
   };
-
-  /**
-   * Returns the search parameters to be used to prefill the questions in the
-   * iframe with the already known values from the user.
-   */
-  private getInputSearchParamsFor(utilisateur: Utilisateur): URLSearchParams {
-    const situation = {};
-
-    if (utilisateur.logement?.proprietaire != null) {
-      situation[MesAidesRenoRuleNames.logementProprietaire] =
-        // NOTE: missing the case 'acquéreur'
-        utilisateur.logement.proprietaire
-          ? '"propriétaire"'
-          : '"non propriétaire"';
-
-      // NOTE: we assume that in the context of J'agis, the user is considered
-      // as 'occupant' if he is 'proprietaire' and 'locataire'.
-      if (utilisateur.logement.proprietaire) {
-        situation[MesAidesRenoRuleNames.logementProprietaireOccupant] = 'oui';
-        situation[
-          MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire
-        ] = 'oui';
-      }
-    }
-
-    if (utilisateur.logement?.plus_de_15_ans) {
-      situation[MesAidesRenoRuleNames.logementPeriodeDeConstruction] =
-        '"au moins 15 ans"';
-    }
-
-    if (
-      utilisateur.logement?.dpe &&
-      utilisateur.logement.dpe !== DPE.ne_sais_pas
-    ) {
-      switch (utilisateur.logement.dpe) {
-        case DPE.A:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '1';
-          break;
-        case DPE.B:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '2';
-          break;
-        case DPE.C:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '3';
-          break;
-        case DPE.D:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '4';
-          break;
-        case DPE.E:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '5';
-          break;
-        case DPE.F:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '6';
-          break;
-        case DPE.G:
-          situation[MesAidesRenoRuleNames.dpeActuel] = '7';
-          break;
-      }
-    }
-
-    const nb_personnes = utilisateur.getNombrePersonnesDansLogement();
-    if (nb_personnes > 0) {
-      situation[MesAidesRenoRuleNames.menagePersonnes] =
-        nb_personnes.toString();
-    }
-
-    if (utilisateur.revenu_fiscal != null) {
-      situation[MesAidesRenoRuleNames.menageRevenu] =
-        utilisateur.revenu_fiscal.toString();
-    }
-
-    if (utilisateur.logement?.type) {
-      switch (utilisateur.logement.type) {
-        case TypeLogement.maison:
-          situation[MesAidesRenoRuleNames.logementType] = '"maison"';
-          break;
-        case TypeLogement.appartement:
-          situation[MesAidesRenoRuleNames.logementType] = '"appartement"';
-          break;
-      }
-    }
-
-    if (utilisateur.logement?.code_postal && utilisateur.logement?.commune) {
-      const code_insee = this.communeRepository.getCommuneCodeInsee(
-        utilisateur.logement.code_postal,
-        utilisateur.logement.commune,
-      );
-      const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
-      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
-
-      if (commune) {
-        situation[MesAidesRenoRuleNames.menageCommune] = `"${commune.code}"`;
-        situation[
-          MesAidesRenoRuleNames.menageCodeRegion
-        ] = `"${commune.region}"`;
-        situation[
-          MesAidesRenoRuleNames.menageCodeDepartement
-        ] = `"${commune.departement}"`;
-        situation[MesAidesRenoRuleNames.menageCodeEPCI] = `"${epci.code}"`;
-        // NOTE: we assume that in the context of J'agis, the user is considered
-        // as 'occupant' if he is 'proprietaire' and 'locataire'.
-        situation[
-          MesAidesRenoRuleNames.logementCommuneCodeInsee
-        ] = `"${commune.code}"`;
-        situation[
-          MesAidesRenoRuleNames.logementCommuneDepartement
-        ] = `"${commune.departement}"`;
-        situation[
-          MesAidesRenoRuleNames.logementCommuneRegion
-        ] = `"${commune.region}"`;
-        situation[
-          MesAidesRenoRuleNames.logementCommuneNom
-        ] = `"${commune.nom}"`;
-        situation[
-          MesAidesRenoRuleNames.logementCodePostal
-        ] = `"${utilisateur.logement.code_postal}"`;
-      }
-    }
-
-    return getParamsFromSituation(situation);
-  }
 }
 
 enum MesAidesRenoRuleNames {
@@ -362,13 +362,24 @@ enum MesAidesRenoRuleNames {
   menageRevenu = 'ménage . revenu',
 }
 
+type PublicodesJsValue = string | number | boolean | null;
+
 interface UpdateQuestionKYCCallback {
   (
     utilisateur: Utilisateur,
-    value: string | number | boolean | null,
+    value: PublicodesJsValue,
     estLogementPrincipal: boolean,
   ): QuestionKYC | undefined;
 }
+
+interface GetMesAidesRenoSituationCallback {
+  (utilisateur: Utilisateur): PublicodesJsValue | undefined;
+}
+
+// Copied from https://github.com/betagouv/reno/blob/bea6cc74bd776a477141b77d78d37c330f7191f0/components/publicodes/situationUtils.ts#L3
+// NOTE: why not using the publicodes utils.encodeRuleName function?
+export const encodeDottedName = (decoded: string) =>
+  decoded.replace(/\s\.\s/g, '.');
 
 function getParamsFromSituation(
   situation: Record<string, string>,
@@ -382,13 +393,21 @@ function getParamsFromSituation(
   return params;
 }
 
-// Copied from https://github.com/betagouv/reno/blob/bea6cc74bd776a477141b77d78d37c330f7191f0/components/publicodes/situationUtils.ts#L3
-// NOTE: why not using the publicodes utils.encodeRuleName function?
-export const encodeDottedName = (decoded) => decoded.replace(/\s\.\s/g, '.');
-
-function parsePublicodesValue(
-  value: string | null,
-): string | number | boolean | null {
+/**
+ * Parses a value from the Publicodes engine into JavaScript ones.
+ *
+ * @example
+ * ```ts
+ * parsePublicodesValue('"Hello"') // "Hello"
+ * parsePublicodesValue("'Hello'") // "Hello"
+ * parsePublicodesValue('42') // 42
+ * parsePublicodesValue('oui') // true
+ * parsePublicodesValue('non') // false
+ * parsePublicodesValue('null') // null
+ * parsePublicodesValue(null) // null
+ * ```
+ */
+function parsePublicodesValue(value: string | null): PublicodesJsValue | null {
   if (!value) {
     return null;
   }
@@ -413,6 +432,22 @@ function parsePublicodesValue(
   return value;
 }
 
+function getPublicodesValue(value: PublicodesJsValue): string {
+  if (value === null) {
+    return 'null';
+  }
+  if (typeof value === 'boolean') {
+    return value ? 'oui' : 'non';
+  }
+  if (typeof value === 'number') {
+    return value.toString();
+  }
+  if (typeof value === 'string') {
+    return `"${value}"`;
+  }
+  throw new Error(`Unknown type of value: ${typeof value}`);
+}
+
 /**
  * Converts a DPE value (1-7) (the format from Mes Aides Reno) to the
  * corresponding DPE enum value.
@@ -421,7 +456,7 @@ function parsePublicodesValue(
  * @returns The corresponding DPE enum value.
  * @throws Error if the value is not in the range of 1-7.
  */
-function getDPEFromValue(value: number): DPE {
+function numberToDpe(value: number): DPE {
   switch (value) {
     case 1:
       return DPE.A;
@@ -439,5 +474,42 @@ function getDPEFromValue(value: number): DPE {
       return DPE.G;
     default:
       throw new Error(`Unknown DPE value: ${value}`);
+  }
+}
+
+function dpeToNumber(dpe: DPE): number {
+  switch (dpe) {
+    case DPE.A:
+      return 1;
+    case DPE.B:
+      return 2;
+    case DPE.C:
+      return 3;
+    case DPE.D:
+      return 4;
+    case DPE.E:
+      return 5;
+    case DPE.F:
+      return 6;
+    case DPE.G:
+      return 7;
+    default:
+      throw new Error(`Unknown DPE value: ${dpe}`);
+  }
+}
+
+// FIXME: this mapping is completely arbitrary and should be confirmed
+function superficieToNumber(superficie: Superficie): number {
+  switch (superficie) {
+    case Superficie.superficie_35:
+      return 25;
+    case Superficie.superficie_70:
+      return 50;
+    case Superficie.superficie_100:
+      return 80;
+    case Superficie.superficie_150:
+      return 125;
+    case Superficie.superficie_150_et_plus:
+      return 200;
   }
 }
