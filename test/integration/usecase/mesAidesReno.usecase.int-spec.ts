@@ -7,12 +7,10 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { MesAidesRenoUsecase } from '../../../src/usecase/mesAidesReno.usecase';
-import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Mes Aides Réno', () => {
@@ -22,10 +20,6 @@ describe('Mes Aides Réno', () => {
   const usecase = new MesAidesRenoUsecase(
     utilisateurRepository,
     communeRepository,
-    new QuestionKYCUsecase(
-      utilisateurRepository,
-      new Personnalisator(communeRepository),
-    ),
   );
 
   beforeAll(async () => {
@@ -40,9 +34,10 @@ describe('Mes Aides Réno', () => {
     await TestUtil.appclose();
   });
 
-  describe('updateUtilisateurWith', () => {
-    test.only("propriétaire d'une maison principale à Toulouse", async () => {
+  describe.only('updateUtilisateurWith', () => {
+    test("propriétaire d'une maison principale à Toulouse", async () => {
       await TestUtil.create(DB.utilisateur, {
+        revenu_fiscal: 20000,
         logement: {
           version: 0,
           superficie: Superficie.superficie_150,
@@ -67,6 +62,7 @@ describe('Mes Aides Réno', () => {
         'logement . type': '"maison"',
         'logement . surface': '30',
         'logement . période de construction': '"au moins 15 ans"',
+        // TODO: what should we do with this one ?
         'ménage . personnes': '2',
         'ménage . code région': '"76"',
         'ménage . code département': '"31"',
@@ -90,18 +86,115 @@ describe('Mes Aides Réno', () => {
           .getAnsweredQuestionByCode(KYCID.KYC_DPE)
           .getReponseComplexeByCode(DPE.C).selected,
       ).toBeTruthy();
+
       expect(utilisateur.logement.proprietaire).toBeTruthy();
       expect(
         utilisateur.kyc_history
           .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
           .getReponseComplexeByCode('oui').selected,
       ).toBeTruthy();
+
       expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
       expect(
         utilisateur.kyc_history
           .getAnsweredQuestionByCode(KYCID.KYC006)
           .getReponseComplexeByCode('plus_15').selected,
       ).toBeTruthy();
+      expect(utilisateur.revenu_fiscal).toEqual(32197);
+
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(2);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(2);
+
+      expect(utilisateur.logement.type).toBe(TypeLogement.maison);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_type_logement)
+          .getReponseComplexeByCode(TypeLogement.maison).selected,
+      ).toBeTruthy();
+
+      expect(utilisateur.logement.superficie).toBe(Superficie.superficie_35);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_superficie)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(30);
+
+      expect(utilisateur.code_commune).toEqual('31555');
+      expect(utilisateur.logement.commune).toEqual('TOULOUSE');
+      expect(utilisateur.logement.code_postal).toEqual('31000');
+    });
+
+    test("le logement n'est pas la résidence principale", async () => {
+      await TestUtil.create(DB.utilisateur, {
+        revenu_fiscal: 20000,
+        logement: {
+          version: 0,
+          superficie: Superficie.superficie_150,
+          type: TypeLogement.appartement,
+          code_postal: '91120',
+          chauffage: Chauffage.bois,
+          commune: 'PALAISEAU',
+          dpe: DPE.B,
+          nombre_adultes: 2,
+          nombre_enfants: 2,
+          plus_de_15_ans: false,
+          proprietaire: false,
+        },
+      });
+      await createKYCs();
+      await kycRepository.loadCache();
+
+      await usecase.updateUtilisateurWith('utilisateur-id', {
+        'vous . propriétaire . statut': '"propriétaire"',
+        'logement . propriétaire occupant': 'non',
+        'logement . résidence principale propriétaire': 'non',
+        'logement . type': '"maison"',
+        'logement . surface': '30',
+        'logement . période de construction': '"au moins 15 ans"',
+        // TODO: what should we do with this one ?
+        'ménage . personnes': '2',
+        'ménage . code région': '"76"',
+        'ménage . code département': '"31"',
+        'ménage . EPCI': '"243100518"',
+        'ménage . commune': '"31555"',
+        'ménage . commune . nom': '"Toulouse"',
+        'taxe foncière . commune . éligible . ménage': 'non',
+        'logement . commune . denormandie': 'non',
+        'ménage . revenu': '32197',
+        'DPE . actuel': '3',
+      });
+
+      const utilisateur = await utilisateurRepository.getById(
+        'utilisateur-id',
+        [Scope.logement, Scope.kyc],
+      );
+
+      // Ces informations devraient être modifiées car elles concernent le
+      // ménage et non le logement.
+      expect(utilisateur.code_commune).toEqual('31555');
+      expect(utilisateur.revenu_fiscal).toEqual(32197);
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(2);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(2);
+
+      // Ces informations ne devraient pas être modifiées car elles concernent
+      // le logement qui n'est pas la résidence principale de l'utilisateurice.
+      expect(utilisateur.logement.dpe).toEqual(DPE.B);
+      expect(utilisateur.logement.proprietaire).toBeFalsy();
+      expect(utilisateur.logement.plus_de_15_ans).toBeFalsy();
+      expect(utilisateur.logement.type).toBe(TypeLogement.appartement);
+      expect(utilisateur.logement.superficie).toBe(Superficie.superficie_150);
+
+      // FIXME: Ces informations devraient-elles être modifiées ?
+      expect(utilisateur.logement.commune).toEqual('PALAISEAU');
+      expect(utilisateur.logement.code_postal).toEqual('91120');
     });
   });
 
@@ -189,6 +282,25 @@ function createKYCs(): Promise<void[]> {
         { code: 'moins_15', label: 'Moins de 15 ans (neuf ou récent)' },
         { code: 'plus_15', label: 'Plus de 15 ans' },
       ],
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 5,
+      code: KYCID.KYC_menage,
+      type: TypeReponseQuestionKYC.entier,
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 6,
+      code: KYCID.KYC_type_logement,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { code: TypeLogement.appartement, label: 'Appartement' },
+        { code: TypeLogement.maison, label: 'Maison' },
+      ],
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 7,
+      code: KYCID.KYC_superficie,
+      type: TypeReponseQuestionKYC.entier,
     }),
   ]);
 }

@@ -5,7 +5,6 @@ import { DPE, TypeLogement } from '../domain/logement/logement';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuestionKYCUsecase } from './questionKYC.usecase';
 
 const MES_AIDES_RENO_IFRAME_SIMULATION_URL =
   'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true';
@@ -15,7 +14,6 @@ export class MesAidesRenoUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
-    private kycUsecase: QuestionKYCUsecase,
   ) {}
 
   async getIframeUrl(userId: string): Promise<string> {
@@ -41,12 +39,22 @@ export class MesAidesRenoUsecase {
       Scope.logement,
     ]);
 
+    const estLogementPrincipal =
+      // C'est-à-dire que l'utilisateur est locataire
+      situation[MesAidesRenoRuleNames.logementProprietaire] ===
+        'non propriétaire' ||
+      situation[
+        MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire
+      ] === 'oui' ||
+      situation[MesAidesRenoRuleNames.logementProprietaireOccupant] === 'oui';
+
     for (const [ruleName, value] of Object.entries(situation)) {
-      MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC[ruleName]?.forEach(
+      this.mappingMesAidesRenoToUpdatedKYC[ruleName]?.forEach(
         (getUpdatedKyc: UpdateQuestionKYCCallback) => {
           const updated_kyc = getUpdatedKyc(
             utilisateur,
             parsePublicodesValue(value),
+            estLogementPrincipal,
           );
 
           if (updated_kyc) {
@@ -61,6 +69,155 @@ export class MesAidesRenoUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
+
+  private mappingMesAidesRenoToUpdatedKYC: Record<
+    MesAidesRenoRuleNames,
+    UpdateQuestionKYCCallback[]
+  > = {
+    [MesAidesRenoRuleNames.dpeActuel]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal && Number.isSafeInteger(value)) {
+          return utilisateur.kyc_history.selectChoixUniqueByCode(
+            KYCID.KYC_DPE,
+            getDPEFromValue(value as number),
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.logementCommuneCodeInsee]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal && typeof value === 'string') {
+          const commune = this.communeRepository.getCommuneByCodeINSEE(value);
+          if (commune) {
+            utilisateur.logement.code_postal = commune.codesPostaux[0];
+            utilisateur.logement.commune = commune.nom.toUpperCase();
+          }
+        }
+        return undefined;
+      },
+    ],
+    [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal && value === 'au moins 15 ans') {
+          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+            KYCID.KYC_logement_age,
+            ['15'],
+          );
+        }
+      },
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal) {
+          return utilisateur.kyc_history.selectChoixUniqueByCode(
+            KYCID.KYC006,
+            value === 'au moins 15 ans' ? 'plus_15' : 'moins_15',
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.logementProprietaireOccupant]: [],
+    [MesAidesRenoRuleNames.logementProprietaire]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (
+          estLogementPrincipal &&
+          (value === 'propriétaire' || value === 'non propriétaire')
+        ) {
+          const estProprietaire = value === 'propriétaire';
+          return utilisateur.kyc_history.selectChoixUniqueByCode(
+            KYCID.KYC_proprietaire,
+            estProprietaire ? 'oui' : 'non',
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: [
+      (utilisateur, value) => {
+        if (value === 'oui') {
+          return utilisateur.kyc_history.selectChoixUniqueByCode(
+            KYCID.KYC_proprietaire,
+            'oui',
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.logementSurface]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal && typeof value === 'number') {
+          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+            KYCID.KYC_superficie,
+            [value.toString()],
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.logementType]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (estLogementPrincipal && typeof value === 'string') {
+          switch (value) {
+            case 'maison': {
+              return utilisateur.kyc_history.selectChoixUniqueByCode(
+                KYCID.KYC_type_logement,
+                TypeLogement.maison,
+              );
+            }
+            case 'appartement': {
+              return utilisateur.kyc_history.selectChoixUniqueByCode(
+                KYCID.KYC_type_logement,
+                TypeLogement.appartement,
+              );
+            }
+            default: {
+              throw new Error(`Unknown type of logement: ${value}`);
+            }
+          }
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.menageCommune]: [
+      (utilisateur, value, estLogementPrincipal) => {
+        if (typeof value === 'string') {
+          const commune = this.communeRepository.getCommuneByCodeINSEE(value);
+          if (commune) {
+            utilisateur.code_commune = commune.code;
+            if (estLogementPrincipal) {
+              utilisateur.logement.commune = commune.nom.toUpperCase();
+              utilisateur.logement.commune = commune.nom.toUpperCase();
+              utilisateur.logement.code_postal = commune.codesPostaux[0];
+            }
+          }
+        }
+        return undefined;
+      },
+    ],
+    [MesAidesRenoRuleNames.menagePersonnes]: [
+      (utilisateur, value) => {
+        if (typeof value === 'number') {
+          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+            KYCID.KYC_menage,
+            [value.toString()],
+          );
+        }
+      },
+    ],
+    [MesAidesRenoRuleNames.menageRevenu]: [
+      (utilisateur, value) => {
+        if (typeof value === 'number') {
+          utilisateur.revenu_fiscal = value;
+        }
+        return undefined;
+      },
+    ],
+    // Cas : l'utilisateur est propriétaire du logement et le loue à une autre personne.
+    [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: [],
+
+    // Nous avons juste besoin du code INSEE de la commune
+    [MesAidesRenoRuleNames.menageCodeDepartement]: [],
+    [MesAidesRenoRuleNames.menageCodeEPCI]: [],
+    [MesAidesRenoRuleNames.menageCodeRegion]: [],
+    [MesAidesRenoRuleNames.logementCodePostal]: [],
+    [MesAidesRenoRuleNames.logementCommuneDepartement]: [],
+    [MesAidesRenoRuleNames.logementCommuneNom]: [],
+    [MesAidesRenoRuleNames.logementCommuneRegion]: [],
+  };
 
   /**
    * Returns the search parameters to be used to prefill the questions in the
@@ -206,68 +363,12 @@ enum MesAidesRenoRuleNames {
 }
 
 interface UpdateQuestionKYCCallback {
-  (utilisateur: Utilisateur, value: string | number | boolean | null):
-    | QuestionKYC
-    | undefined;
+  (
+    utilisateur: Utilisateur,
+    value: string | number | boolean | null,
+    estLogementPrincipal: boolean,
+  ): QuestionKYC | undefined;
 }
-
-const MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC: Record<
-  MesAidesRenoRuleNames,
-  UpdateQuestionKYCCallback[]
-> = {
-  [MesAidesRenoRuleNames.dpeActuel]: [
-    (utilisateur, value) => {
-      if (Number.isSafeInteger(value)) {
-        return utilisateur.kyc_history.selectChoixUniqueByCode(
-          KYCID.KYC_DPE,
-          getDPEFromValue(value as number),
-        );
-      }
-    },
-  ],
-  [MesAidesRenoRuleNames.logementCodePostal]: [],
-  [MesAidesRenoRuleNames.logementCommuneCodeInsee]: [],
-  [MesAidesRenoRuleNames.logementCommuneDepartement]: [],
-  [MesAidesRenoRuleNames.logementCommuneNom]: [],
-  [MesAidesRenoRuleNames.logementCommuneRegion]: [],
-  [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: [
-    (utilisateur, value) => {
-      if (value === 'au moins 15 ans') {
-        return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-          KYCID.KYC_logement_age,
-          ['15'],
-        );
-      }
-    },
-    (utilisateur, value) =>
-      utilisateur.kyc_history.selectChoixUniqueByCode(
-        KYCID.KYC006,
-        value === 'au moins 15 ans' ? 'plus_15' : 'moins_15',
-      ),
-  ],
-  [MesAidesRenoRuleNames.logementProprietaireOccupant]: [],
-  [MesAidesRenoRuleNames.logementProprietaire]: [
-    (utilisateur, value) => {
-      if (value === 'propriétaire' || value === 'non propriétaire') {
-        const estProprietaire = value === 'propriétaire';
-        return utilisateur.kyc_history.selectChoixUniqueByCode(
-          KYCID.KYC_proprietaire,
-          estProprietaire ? 'oui' : 'non',
-        );
-      }
-    },
-  ],
-  [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: [],
-  [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: [],
-  [MesAidesRenoRuleNames.logementSurface]: [],
-  [MesAidesRenoRuleNames.logementType]: [],
-  [MesAidesRenoRuleNames.menageCodeDepartement]: [],
-  [MesAidesRenoRuleNames.menageCodeEPCI]: [],
-  [MesAidesRenoRuleNames.menageCodeRegion]: [],
-  [MesAidesRenoRuleNames.menageCommune]: [],
-  [MesAidesRenoRuleNames.menagePersonnes]: [],
-  [MesAidesRenoRuleNames.menageRevenu]: [],
-};
 
 function getParamsFromSituation(
   situation: Record<string, string>,
