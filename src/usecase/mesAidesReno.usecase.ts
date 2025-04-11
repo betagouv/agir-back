@@ -42,16 +42,21 @@ export class MesAidesRenoUsecase {
     ]);
 
     for (const [ruleName, value] of Object.entries(situation)) {
-      const updated_kyc = MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC[
-        ruleName
-      ]?.getUpdatedKyc(utilisateur, parsePublicodesValue(value));
+      MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC[ruleName]?.forEach(
+        (getUpdatedKyc: UpdateQuestionKYCCallback) => {
+          const updated_kyc = getUpdatedKyc(
+            utilisateur,
+            parsePublicodesValue(value),
+          );
 
-      if (updated_kyc) {
-        utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
-          updated_kyc,
-          utilisateur,
-        );
-      }
+          if (updated_kyc) {
+            utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
+              updated_kyc,
+              utilisateur,
+            );
+          }
+        },
+      );
     }
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -200,19 +205,18 @@ enum MesAidesRenoRuleNames {
   menageRevenu = 'ménage . revenu',
 }
 
+interface UpdateQuestionKYCCallback {
+  (utilisateur: Utilisateur, value: string | number | boolean | null):
+    | QuestionKYC
+    | undefined;
+}
+
 const MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC: Record<
   MesAidesRenoRuleNames,
-  {
-    kyc: KYCID;
-    getUpdatedKyc: (
-      utilisateur: Utilisateur,
-      value: string | number | boolean | null,
-    ) => QuestionKYC | undefined;
-  }
+  UpdateQuestionKYCCallback[]
 > = {
-  [MesAidesRenoRuleNames.dpeActuel]: {
-    kyc: KYCID.KYC_DPE,
-    getUpdatedKyc: (utilisateur, value) => {
+  [MesAidesRenoRuleNames.dpeActuel]: [
+    (utilisateur, value) => {
       if (Number.isSafeInteger(value)) {
         return utilisateur.kyc_history.selectChoixUniqueByCode(
           KYCID.KYC_DPE,
@@ -220,38 +224,30 @@ const MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC: Record<
         );
       }
     },
-  },
-  [MesAidesRenoRuleNames.logementCodePostal]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementCommuneCodeInsee]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementCommuneDepartement]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementCommuneNom]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementCommuneRegion]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementProprietaireOccupant]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementProprietaire]: {
-    kyc: KYCID.KYC_proprietaire,
-    getUpdatedKyc: (utilisateur, value) => {
+  ],
+  [MesAidesRenoRuleNames.logementCodePostal]: [],
+  [MesAidesRenoRuleNames.logementCommuneCodeInsee]: [],
+  [MesAidesRenoRuleNames.logementCommuneDepartement]: [],
+  [MesAidesRenoRuleNames.logementCommuneNom]: [],
+  [MesAidesRenoRuleNames.logementCommuneRegion]: [],
+  [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: [
+    (utilisateur, value) => {
+      if (value === 'au moins 15 ans') {
+        return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+          KYCID.KYC_logement_age,
+          ['15'],
+        );
+      }
+    },
+    (utilisateur, value) =>
+      utilisateur.kyc_history.selectChoixUniqueByCode(
+        KYCID.KYC006,
+        value === 'au moins 15 ans' ? 'plus_15' : 'moins_15',
+      ),
+  ],
+  [MesAidesRenoRuleNames.logementProprietaireOccupant]: [],
+  [MesAidesRenoRuleNames.logementProprietaire]: [
+    (utilisateur, value) => {
       if (value === 'propriétaire' || value === 'non propriétaire') {
         const estProprietaire = value === 'propriétaire';
         return utilisateur.kyc_history.selectChoixUniqueByCode(
@@ -260,47 +256,17 @@ const MAPPING_MES_AIDES_RENO_TO_UPDATED_KYC: Record<
         );
       }
     },
-  },
-  [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementSurface]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.logementType]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menageCodeDepartement]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menageCodeEPCI]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menageCodeRegion]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menageCommune]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menagePersonnes]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
-  [MesAidesRenoRuleNames.menageRevenu]: {
-    kyc: KYCID._1,
-    getUpdatedKyc: (utilisateur, value) => undefined,
-  },
+  ],
+  [MesAidesRenoRuleNames.logementResidencePrincipaleLocataire]: [],
+  [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: [],
+  [MesAidesRenoRuleNames.logementSurface]: [],
+  [MesAidesRenoRuleNames.logementType]: [],
+  [MesAidesRenoRuleNames.menageCodeDepartement]: [],
+  [MesAidesRenoRuleNames.menageCodeEPCI]: [],
+  [MesAidesRenoRuleNames.menageCodeRegion]: [],
+  [MesAidesRenoRuleNames.menageCommune]: [],
+  [MesAidesRenoRuleNames.menagePersonnes]: [],
+  [MesAidesRenoRuleNames.menageRevenu]: [],
 };
 
 function getParamsFromSituation(

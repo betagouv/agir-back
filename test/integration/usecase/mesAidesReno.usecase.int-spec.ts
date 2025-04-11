@@ -83,18 +83,25 @@ describe('Mes Aides Réno', () => {
         'utilisateur-id',
         [Scope.logement, Scope.kyc],
       );
-      console.log('utilisateur:', {
-        id: utilisateur.id,
-        email: utilisateur.email,
-      });
-      console.log('logement:', utilisateur.logement);
-      console.log('revenu_fiscal:', utilisateur.revenu_fiscal);
-      console.log('code_commune:', utilisateur.code_commune);
-      console.log('nbPerssones:', utilisateur.getNombrePersonnesDansLogement());
 
       expect(utilisateur.logement.dpe).toEqual(DPE.C);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_DPE)
+          .getReponseComplexeByCode(DPE.C).selected,
+      ).toBeTruthy();
       expect(utilisateur.logement.proprietaire).toBeTruthy();
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
+          .getReponseComplexeByCode('oui').selected,
+      ).toBeTruthy();
       expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC006)
+          .getReponseComplexeByCode('plus_15').selected,
+      ).toBeTruthy();
     });
   });
 
@@ -144,7 +151,7 @@ describe('Mes Aides Réno', () => {
   });
 });
 
-function createKYCs(): Promise<[void, void]> {
+function createKYCs(): Promise<void[]> {
   return Promise.all([
     TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -167,6 +174,20 @@ function createKYCs(): Promise<[void, void]> {
         { code: 'E', label: 'E' },
         { code: 'F', label: 'F' },
         { code: 'G', label: 'G' },
+      ],
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 3,
+      code: KYCID.KYC_logement_age,
+      type: TypeReponseQuestionKYC.entier,
+    }),
+    TestUtil.create(DB.kYC, {
+      id_cms: 4,
+      code: KYCID.KYC006,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { code: 'moins_15', label: 'Moins de 15 ans (neuf ou récent)' },
+        { code: 'plus_15', label: 'Plus de 15 ans' },
       ],
     }),
   ]);
