@@ -1,5 +1,8 @@
 import { Action } from '../../actions/action';
-import { TypeCodeAction } from '../../actions/actionDefinition';
+import {
+  ActionDefinition,
+  TypeCodeAction,
+} from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
 import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
@@ -14,6 +17,8 @@ export type ActionUtilisateur = {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
+  like_level: number;
+  feedback: string;
 };
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
@@ -117,6 +122,11 @@ export class ThematiqueHistory {
     return found ? !!found.faite_le : false;
   }
 
+  public getLikeLevel(action: TypeCodeAction): number {
+    const found = this.findAction(action);
+    return found ? found.like_level : null;
+  }
+
   public findAction(action: TypeCodeAction): ActionUtilisateur {
     return this.liste_actions_utilisateur.find(
       (a) => a.action.code === action.code && a.action.type === action.type,
@@ -133,9 +143,11 @@ export class ThematiqueHistory {
       found.vue_le = new Date();
     } else {
       this.liste_actions_utilisateur.push({
-        action: action,
+        action: ActionDefinition.extractTypeCodeFrom(action),
         vue_le: new Date(),
         faite_le: null,
+        like_level: null,
+        feedback: null,
       });
     }
   }
@@ -148,6 +160,27 @@ export class ThematiqueHistory {
         action: action,
         vue_le: null,
         faite_le: new Date(),
+        like_level: null,
+        feedback: null,
+      });
+    }
+  }
+  public setActionFeedback(
+    action: TypeCodeAction,
+    like_level: number,
+    feedback: string,
+  ) {
+    const found = this.findAction(action);
+    if (found) {
+      found.like_level = like_level;
+      found.feedback = feedback;
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: like_level ? like_level : null,
+        feedback: feedback ? feedback : null,
       });
     }
   }

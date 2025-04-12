@@ -68,6 +68,10 @@ export class ActionDefinition extends ActionDefinitionData {
     return { code: this.code, type: this.type };
   }
 
+  public static extractTypeCodeFrom(type_code: TypeCodeAction): TypeCodeAction {
+    return { code: type_code.code, type: type_code.type };
+  }
+
   public equals(type_code: TypeCodeAction): boolean {
     return this.code === type_code.code && this.type === type_code.type;
   }

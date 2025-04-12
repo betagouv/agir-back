@@ -11,19 +11,11 @@ import axios from 'axios';
 import { Response as Res } from 'express';
 import { App } from '../../domain/app';
 import { Categorie } from '../../domain/contenu/categorie';
-import { ContentType } from '../../domain/contenu/contentType';
-import { DefiDefinition } from '../../domain/defis/defiDefinition';
 import { KycDefinition } from '../../domain/kyc/kycDefinition';
 import { TypeReponseQuestionKYC } from '../../domain/kyc/questionKYC';
 import { Thematique } from '../../domain/thematique/thematique';
 import { NGCCalculator } from '../ngc/NGCCalculator';
-import {
-  ArticleFilter,
-  ArticleRepository,
-} from '../repository/article.repository';
-import { DefiRepository } from '../repository/defi.repository';
 import { KycRepository } from '../repository/kyc.repository';
-import { QuizzRepository } from '../repository/quizz.repository';
 import { ThematiqueRepository } from '../repository/thematique.repository';
 import { GenericControler } from './genericControler';
 import { CMSWebhookPopulateAPI } from './types/cms/CMSWebhookPopulateAPI';
@@ -38,9 +30,6 @@ export class AsciiPreviewController extends GenericControler {
   constructor(
     private kycRepository: KycRepository,
     private nGCCalculator: NGCCalculator,
-    private articleRepository: ArticleRepository,
-    private quizzRepository: QuizzRepository,
-    private defiRepository: DefiRepository,
   ) {
     super();
   }
@@ -256,7 +245,10 @@ export class AsciiPreviewController extends GenericControler {
         return result;
       }
 
-      if (kyc_def.type === TypeReponseQuestionKYC.entier) {
+      if (
+        kyc_def.type === TypeReponseQuestionKYC.entier ||
+        kyc_def.type === TypeReponseQuestionKYC.decimal
+      ) {
         situation[kyc_def.ngc_key] = 1;
         const value_1 =
           Math.round(
@@ -358,7 +350,6 @@ export class AsciiPreviewController extends GenericControler {
       result.push(
         this.dumpKycInfoToSingleLine(
           kyc_def,
-          all_mission_defs,
           false,
           kyc_fire_map.get(kyc_def.id_cms),
         ),
@@ -380,9 +371,7 @@ export class AsciiPreviewController extends GenericControler {
     );
 
     for (const kyc_def of all_kyc_defs_reco) {
-      result.push(
-        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, false, false),
-      );
+      result.push(this.dumpKycInfoToSingleLine(kyc_def, false, false));
     }
 
     result.push(``);
@@ -400,9 +389,7 @@ export class AsciiPreviewController extends GenericControler {
     );
 
     for (const kyc_def of all_kyc_defs_mission) {
-      result.push(
-        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, false, false),
-      );
+      result.push(this.dumpKycInfoToSingleLine(kyc_def, false, false));
     }
 
     result.push(``);
@@ -420,9 +407,7 @@ export class AsciiPreviewController extends GenericControler {
     );
 
     for (const kyc_def of all_kyc_defs_test) {
-      result.push(
-        this.dumpKycInfoToSingleLine(kyc_def, all_mission_defs, true, false),
-      );
+      result.push(this.dumpKycInfoToSingleLine(kyc_def, true, false));
     }
 
     return res.send(`<pre>${result.join('\n')}</pre>`);
@@ -442,260 +427,16 @@ export class AsciiPreviewController extends GenericControler {
 
   private dumpKycInfoToSingleLine(
     kyc_def: KycDefinition,
-    all_mission_defs: MissionDefinition[],
     display_NGC: boolean,
     on_fire: boolean,
   ): string {
-    const list_mission_with_kyc = this.getListeMissionFromKYCID(
-      kyc_def.id_cms,
-      all_mission_defs,
-    );
     let line = `KYC ${display_NGC ? (kyc_def.is_ngc ? 'NGC ' : 'STD ') : ''}${
       on_fire ? '🔥🔥🔥 ' : ''
     }<a href="/kyc_preview/${kyc_def.id_cms}">[${kyc_def.id_cms}]</a> => ${
       kyc_def.question
     }`;
     let index = 0;
-    const last = list_mission_with_kyc.length - 1;
-    for (const mission_def of list_mission_with_kyc) {
-      line += ` <a href="/mission_preview/${mission_def.id_cms}">${mission_def.code}</a>`;
-      if (index !== last) {
-        line += ' |';
-      }
-      index++;
-    }
     return line;
-  }
-
-  @Get('mission_preview/:id')
-  async mission_preview(
-    @Param('id') id: string,
-    @Headers('Authorization') authorization: string,
-    @Response() res: Res,
-  ): Promise<any> {
-    if (!this.checkAuthHeaderOK(authorization)) {
-      return this.returnBadOreMissingLoginError(res);
-    }
-
-    const mission_def = await this.missionRepository.getByCMS_ID(parseInt(id));
-
-    if (!mission_def) {
-      return res.send(
-        '<pre>Publiez la mission avant de faire la preview !!! </pre>',
-      );
-    }
-    let result = [];
-
-    result.push(`
-
-███╗░░░███╗██╗░██████╗░██████╗██╗░█████╗░███╗░░██╗
-████╗░████║██║██╔════╝██╔════╝██║██╔══██╗████╗░██║
-██╔████╔██║██║╚█████╗░╚█████╗░██║██║░░██║██╔██╗██║
-██║╚██╔╝██║██║░╚═══██╗░╚═══██╗██║██║░░██║██║╚████║
-██║░╚═╝░██║██║██████╔╝██████╔╝██║╚█████╔╝██║░╚███║
-╚═╝░░░░░╚═╝╚═╝╚═════╝░╚═════╝░╚═╝░╚════╝░╚═╝░░╚══╝
-
-`);
-
-    result.push(`### MISSION ID_CMS : ${mission_def.id_cms}`);
-    result.push('##################################################');
-    result.push(``);
-    result.push(
-      `Titre : ${MissionRepository.getTitreByCode(mission_def.code)}`,
-    );
-    result.push(
-      `Univers : <a href="/univers_preview/${
-        mission_def.thematique
-      }">${ThematiqueRepository.getTitreThematique(
-        mission_def.thematique,
-      )}</a>`,
-    );
-    result.push(`Est visible                : ${mission_def.est_visible}`);
-    result.push(`Est première dans la liste : ${mission_def.est_visible}`);
-
-    await this.dump_mission(result, mission_def);
-
-    result.push('');
-    result.push('##################################################');
-    result.push('# Liste Défis');
-    result.push('##################################################');
-
-    await this.dump_defis_of_mission(mission_def, result);
-
-    return res.send(`<pre>${result.join('\n')}</pre>`);
-  }
-
-  private async dump_mission(result: any[], mission_def: MissionDefinition) {
-    try {
-      result.push('');
-      result.push('##################################################');
-      result.push('# Liste KYCs');
-      result.push('##################################################');
-
-      for (const objectif of mission_def.objectifs) {
-        if (objectif.type === ContentType.kyc) {
-          const kyc_def = await this.kycRepository.getByCMS_ID(objectif.id_cms);
-          if (!kyc_def) {
-            result.push(``);
-            result.push(
-              `🔥🔥🔥 KYC [${objectif.id_cms}] MANQUANTE en base, sans doute pas publié ?`,
-            );
-            result.push(``);
-          } else {
-            result.push(``);
-            result.push(
-              `## <a href="/kyc_preview/${kyc_def.id_cms}">KYC</a> [${
-                kyc_def.id_cms
-              }] ${kyc_def.a_supprimer ? '[🔥🔥🔥 FLAG A SUPPRIMER]' : ''}`,
-            );
-
-            const DATA: any = {};
-            DATA.CODE = objectif.content_id;
-            DATA.objectif_titre = objectif.titre;
-            DATA.objectif_points = objectif.points;
-            DATA.kyc_type = kyc_def.type;
-            DATA.kyc_question = kyc_def.question;
-            DATA.kyc_points = kyc_def.points;
-            if (kyc_def.reponses) {
-              DATA.reponses = kyc_def.reponses.map((k) => k.code);
-            }
-            result.push(JSON.stringify(DATA, null, 2));
-          }
-        }
-      }
-
-      result.push('');
-      result.push('##################################################');
-      result.push('# Liste Articles et Quizz');
-      result.push('##################################################');
-      result.push('');
-
-      for (const objectif of mission_def.objectifs) {
-        if (objectif.type === ContentType.article) {
-          result.push('');
-          if (objectif.tag_article) {
-            result.push(`## ARTICLES DYNAMIQUES TAG [${objectif.tag_article}]`);
-            const DATA: any = {};
-            DATA.objectif_titre = objectif.titre;
-            DATA.objectif_points = objectif.points;
-            const filtre: ArticleFilter = {
-              categorie: Categorie.mission,
-              tag_article: objectif.tag_article,
-            };
-            const article_candidat_liste =
-              await this.articleRepository.searchArticles(filtre);
-
-            const liste_article_preview = [];
-
-            for (const article of article_candidat_liste) {
-              const DATA_ARTICLE: any = {};
-              DATA_ARTICLE.ARTICLE_ID = article.content_id;
-              DATA_ARTICLE.article_titre = article.titre;
-              DATA_ARTICLE.article_points = article.points;
-              if (article.codes_postaux.length) {
-                DATA_ARTICLE.codes_postaux = article.codes_postaux.join(',');
-              }
-              if (article.codes_region.length) {
-                DATA_ARTICLE.codes_region = article.codes_region.join(',');
-              }
-              if (article.codes_departement.length) {
-                DATA_ARTICLE.codes_departement =
-                  article.codes_departement.join(',');
-              }
-              if (article.include_codes_commune.length) {
-                DATA_ARTICLE.include_codes_commune =
-                  article.include_codes_commune.join(',');
-              }
-              if (article.exclude_codes_commune.length) {
-                DATA_ARTICLE.exclude_codes_commune =
-                  article.exclude_codes_commune.join(',');
-              }
-              liste_article_preview.push(DATA_ARTICLE);
-            }
-            DATA.ARTICLES_CANDIDATS = liste_article_preview;
-            result.push(JSON.stringify(DATA, null, 2));
-          } else {
-            const article = await this.articleRepository.getArticle(
-              objectif.content_id,
-            );
-            if (!article) {
-              result.push(``);
-              result.push(
-                `🔥🔥🔥 ARTICLE FIXE [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
-              );
-              result.push(``);
-              continue;
-            }
-
-            const DATA: any = {};
-            result.push(`## ARTICLE FIXE [${objectif.content_id}]`);
-            DATA.objectif_titre = objectif.titre;
-            DATA.objectif_points = objectif.points;
-            DATA.article_titre = article.titre;
-            DATA.article_points = article.points;
-            result.push(JSON.stringify(DATA, null, 2));
-          }
-        } else if (objectif.type === ContentType.quizz) {
-          result.push('');
-          result.push(`## QUIZZ [${objectif.content_id}]`);
-
-          const quizz = await this.quizzRepository.getQuizz(
-            objectif.content_id,
-          );
-          if (!quizz) {
-            result.push(``);
-            result.push(
-              `🔥🔥🔥 QUIZZ  [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
-            );
-            result.push(``);
-            continue;
-          }
-
-          const DATA: any = {};
-          DATA.objectif_titre = objectif.titre;
-          DATA.objectif_points = objectif.points;
-          DATA.quizz_titre = quizz.titre;
-          DATA.quizz_points = quizz.points;
-          result.push(JSON.stringify(DATA, null, 2));
-        }
-      }
-    } catch (error) {
-      result.push('🔥🔥🔥 UNKNOWN ERROR');
-      result.push(error.message);
-    }
-  }
-
-  private async dump_defis_of_mission(
-    mission_def: MissionDefinition,
-    result: any[],
-  ) {
-    for (const objectif of mission_def.objectifs) {
-      if (objectif.type === ContentType.defi) {
-        result.push('');
-        result.push(
-          `######## <a href="/defi_preview/${objectif.content_id}">DEFI</a> [${objectif.content_id}] ########`,
-        );
-        const defi = await this.defiRepository.getByContentId(
-          objectif.content_id,
-        );
-        if (!defi) {
-          result.push(``);
-          result.push(
-            `🔥🔥🔥 DEFI  [${objectif.content_id}] MANQUANT en base, sans doute pas publié ?`,
-          );
-          result.push(``);
-          continue;
-        }
-        const DATA: any = {};
-        DATA.objectif_titre = objectif.titre;
-        DATA.objectif_points = objectif.points;
-        DATA.defi_titre = defi.titre;
-        DATA.defi_points = defi.points;
-        result.push(JSON.stringify(DATA, null, 2));
-
-        await this.dump_defi_conditions(result, defi);
-      }
-    }
   }
 
   @Get('all_preview')
@@ -878,144 +619,10 @@ export class AsciiPreviewController extends GenericControler {
     result.push(`# Liste Missions UNIVERS [${input_thematique}]`);
     result.push('###############################');
 
-    let missions = this.missionRepository.getByThematique(input_thematique);
-
-    missions = this.missionUsecase.ordonneTuilesMission(missions);
-
-    for (const mission of missions) {
-      const mission_def = MissionRepository.getByCode(mission.code);
-      if (mission_def) {
-        result.push('');
-        const prefix = `#### <a href="/mission_preview/${mission_def.id_cms}">MISSION [${mission_def.id_cms}]</a>`;
-        result.push(
-          `${prefix} ${this.getSpaceString(65, prefix.length)}> ${
-            mission.titre
-          }`,
-        );
-        result.push(`Est visible  : ${mission_def.est_visible}`);
-        result.push(`Est première : ${mission_def.is_first}`);
-
-        const result2 = [];
-        await this.dump_defis_of_mission(mission_def, result2);
-
-        const result3 = [];
-        await this.dump_mission(result3, mission_def);
-
-        const ouput2 = result2.join('');
-        const ouput3 = result3.join('');
-        result.push(
-          `Paramétrage défis : ${
-            ouput2.includes('🔥🔥🔥 MISSING') ? 'KO 🔥🔥🔥' : 'OK 👍'
-          }`,
-        );
-        result.push(
-          `Contenu disponible : ${
-            ouput3.includes('MANQUANT') || ouput2.includes('MISSING KYC')
-              ? 'KO 🔥🔥🔥'
-              : 'OK 👍'
-          }`,
-        );
-        if (ouput3.includes('UNKNOWN ERROR'))
-          result.push(
-            `🔥🔥🔥 ERREUR Inconnue, allez voir le détail de la mission`,
-          );
-        if (ouput3.includes('🔥🔥🔥 FLAG A SUPPRIMER'))
-          result.push(
-            `🔥🔥🔥 La mission contient au moins une KYC 'à supprimer', c-à-d à ne plus utiliser`,
-          );
-      } else {
-        result.push('');
-        result.push(
-          `🔥🔥🔥 Thematique sans mission [${mission.code}] - ${mission.titre}`,
-        );
-        result.push('');
-      }
-    }
     if (prevent_send) {
       return `<pre>${result.join('\n')}</pre>`;
     }
     return res.send(`<pre>${result.join('\n')}</pre>`);
-  }
-
-  @Get('defi_preview/:id')
-  async defi_preview(
-    @Param('id') id: string,
-    @Headers('Authorization') authorization: string,
-    @Response() res: Res,
-  ): Promise<any> {
-    if (!this.checkAuthHeaderOK(authorization)) {
-      return this.returnBadOreMissingLoginError(res);
-    }
-    let result = [];
-
-    const defi_def = await this.defiRepository.getByContentId(id);
-    if (!defi_def) {
-      return res.send(
-        `<pre>Publiez le defi [${id}] avant de faire la preview !!! </pre>`,
-      );
-    }
-
-    result.push(`
-
-██████╗░███████╗███████╗██╗
-██╔══██╗██╔════╝██╔════╝██║
-██║░░██║█████╗░░█████╗░░██║
-██║░░██║██╔══╝░░██╔══╝░░██║
-██████╔╝███████╗██║░░░░░██║
-╚═════╝░╚══════╝╚═╝░░░░░╚═╝
-
-`);
-    result.push(`### DEFI ID_CMS [${id}] - ${defi_def.titre}`);
-    result.push(`#######################`);
-
-    const DATA: any = {};
-    DATA.defi_points = defi_def.points;
-    DATA.mois = defi_def.mois;
-    DATA.tags = defi_def.tags;
-    DATA.thematique = defi_def.thematique;
-    DATA.categorie = defi_def.categorie;
-    result.push(JSON.stringify(DATA, null, 2));
-
-    await this.dump_defi_conditions(result, defi_def);
-
-    return res.send(`<pre>${result.join('\n')}</pre>`);
-  }
-
-  private async dump_defi_conditions(result: any[], defi: DefiDefinition) {
-    if (defi.conditions.length > 0) {
-      result.push('');
-      result.push(`## Conditions`);
-      result.push('');
-      for (const OU_C of defi.conditions) {
-        result.push('|---- OU -----');
-        for (const ET_C of OU_C) {
-          const target_kyc = await this.kycRepository.getByCMS_ID(ET_C.id_kyc);
-          let qualif;
-          if (target_kyc) {
-            const reponse = target_kyc.reponses.find(
-              (r) => r.code === ET_C.code_reponse,
-            );
-            if (reponse) {
-              qualif = ' 👍';
-            } else {
-              qualif = `  🔥🔥🔥 MISSING REPONSE of code [${ET_C.code_reponse}]`;
-            }
-          } else {
-            qualif = ` 🔥🔥🔥 MISSING KYC of id [${ET_C.id_kyc}]`;
-          }
-          result.push(
-            `| [<a href="/kyc_preview/${ET_C.id_kyc}">KYC</a> ` +
-              ET_C.id_kyc +
-              '] -> [' +
-              ET_C.code_reponse +
-              '] ' +
-              qualif +
-              `  (${target_kyc ? target_kyc.question : ''})`,
-          );
-        }
-      }
-      result.push('|-------------');
-    }
   }
 
   private getSpaceString(length: number, prefix_length: number) {
@@ -1023,17 +630,6 @@ export class AsciiPreviewController extends GenericControler {
     return '-----------------------------------------------------------------------------------------'.substr(
       0,
       length - prefix_length,
-    );
-  }
-  private getListeMissionFromKYCID(
-    kyc_id: number,
-    liste_mission_defs: MissionDefinition[],
-  ): MissionDefinition[] {
-    return liste_mission_defs.filter(
-      (m) =>
-        m.objectifs.findIndex(
-          (o) => o.id_cms === kyc_id && o.type === ContentType.kyc,
-        ) > -1,
     );
   }
 

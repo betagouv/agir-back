@@ -49,7 +49,10 @@ describe('History', () => {
           clicked_infos: false,
           content_id: '1',
           vue_at: new Date(),
-          deroulee_at: undefined,
+          est_connue_utilisateur: true,
+          sera_sollicitee_utilisateur: false,
+          feedback: 'good',
+          like_level: 3,
         },
       ],
     });
@@ -87,7 +90,10 @@ describe('History', () => {
           clicked_infos: false,
           content_id: '1',
           vue_at: new Date(),
-          deroulee_at: undefined,
+          est_connue_utilisateur: true,
+          sera_sollicitee_utilisateur: false,
+          feedback: 'good',
+          like_level: 3,
         },
       ],
     });

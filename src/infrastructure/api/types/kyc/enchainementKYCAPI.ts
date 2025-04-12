@@ -9,9 +9,8 @@ export enum EnchainementKYCExclude {
 }
 export class EnchainementKYCAPI {
   @ApiProperty() nombre_total_questions: number;
-  @ApiProperty() nombre_total_questions_eligibles: number;
+  @ApiProperty() nombre_total_questions_effectives: number;
   @ApiProperty() position_courante: number;
-  @ApiProperty() position_courante_parmi_eligibles: number;
   @ApiProperty() is_first: boolean;
   @ApiProperty() is_last: boolean;
   @ApiProperty() is_out_of_range: boolean;
@@ -19,23 +18,20 @@ export class EnchainementKYCAPI {
   @ApiProperty({ type: QuestionKYCAPI_v2 })
   question_courante: QuestionKYCAPI_v2;
 
-  public static mapToAPI(enchainement: EnchainementKYC): EnchainementKYCAPI {
-    const position_courante = enchainement.getPositionCourante();
-    const position_courante_parmi_eligibles =
-      enchainement.getPositionCouranteDansEligibles();
+  public static mapToAPI(
+    enchainement: EnchainementKYC,
+    excludes: EnchainementKYCExclude[],
+  ): EnchainementKYCAPI {
+    const position_courante =
+      enchainement.getPositionCouranteWithExcludes(excludes);
 
     return {
       nombre_total_questions: enchainement.getNombreTotalQuestions(),
-      nombre_total_questions_eligibles:
-        enchainement.getNombreTotalQuestionsEligibles(),
+      nombre_total_questions_effectives:
+        enchainement.getNombreTotalQuestionseffectives(excludes),
       position_courante: Number.isNaN(position_courante)
         ? -1
-        : position_courante + 1,
-      position_courante_parmi_eligibles: Number.isNaN(
-        position_courante_parmi_eligibles,
-      )
-        ? -1
-        : position_courante_parmi_eligibles + 1,
+        : position_courante,
       question_courante: enchainement.getKycCourante()
         ? QuestionKYCAPI_v2.mapToAPI(enchainement.getKycCourante())
         : undefined,

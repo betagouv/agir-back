@@ -716,6 +716,26 @@ export class ApplicationError {
       `Valeur 'exclude' incorrecte [${value}], sont acceptés = repondu / non_eligible`,
     );
   }
+  static throwBadLikeLevel(like_level: number) {
+    this.throwAppError(
+      '136',
+      `Les niveaux de like autorisés sont 1 - 2 - 3 - 4 , ou null, reçu [${like_level}]`,
+    );
+  }
+
+  static throwBadChar(forbiden_chars: string) {
+    this.throwAppError(
+      '137',
+      `le texte de feedback ne peut pas contenir de caractères spéciaux comme [${forbiden_chars}]`,
+    );
+  }
+
+  static throwNotBoolean(attribute: string, bool: any) {
+    this.throwAppError(
+      '138',
+      `L'attribut [${attribute}] n'est pas de type boolean, reçu [${bool}]`,
+    );
+  }
 
   private static throwAppError(
     code: string,

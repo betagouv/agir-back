@@ -28,6 +28,7 @@ import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmail
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
 import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
+import { AsciiPreviewController } from './infrastructure/api/ascii.preview.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
 import { BilanCarboneController } from './infrastructure/api/bilanCarbone.controller';
 import { CmsPreviewController } from './infrastructure/api/cms.preview.controller';
@@ -173,6 +174,7 @@ function getControllers(): any[] {
     FranceConnectController,
   );
   if (!App.isProd()) {
+    controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(MagicLinkController);
     controllers.push(CmsPreviewController);

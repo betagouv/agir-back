@@ -414,6 +414,8 @@ describe('Thematique (API test)', () => {
           action: { code: '123', type: TypeAction.classique },
           vue_le: new Date(),
           faite_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],

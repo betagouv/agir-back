@@ -36,6 +36,11 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
+const MAX_FEEDBACK_LENGTH = 500;
+
+const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
+const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
+
 @Injectable()
 export class ActionUsecase {
   constructor(
@@ -45,9 +50,9 @@ export class ActionUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
-    private bibliothequeUsecase: BibliothequeUsecase,
     private fAQRepository: FAQRepository,
     private personnalisator: Personnalisator,
+    private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
 
   async getCompteurActions(): Promise<number> {
@@ -242,6 +247,57 @@ export class ActionUsecase {
     ]);
   }
 
+  async feedbackAction(
+    code: string,
+    type: TypeAction,
+    utilisateurId: string,
+    like_level: number,
+    feedback: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      type: type,
+      code: code,
+    });
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code, type);
+    }
+    if (like_level) {
+      if (![1, 2, 3, 4].includes(like_level)) {
+        ApplicationError.throwBadLikeLevel(like_level);
+      }
+    }
+    if (feedback) {
+      if (feedback.length > 500) {
+        ApplicationError.throwTooBigData(
+          'feedback',
+          feedback,
+          MAX_FEEDBACK_LENGTH,
+        );
+      }
+      if (!BAD_CHAR_REGEXP.test(feedback)) {
+        ApplicationError.throwBadChar(BAD_CHAR_LISTE);
+      }
+    }
+
+    utilisateur.thematique_history.setActionFeedback(
+      action_def,
+      like_level,
+      feedback,
+    );
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+
   async faireAction(
     code: string,
     type: TypeAction,
@@ -315,7 +371,7 @@ export class ActionUsecase {
       ApplicationError.throwActionNotFound(code, type);
     }
 
-    const action = new Action(action_def);
+    const action = Action.newActionFromUser(action_def, utilisateur);
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.code_commune,
@@ -382,8 +438,6 @@ export class ActionUsecase {
         : action_def.kyc_codes,
     );
 
-    action.deja_vue = utilisateur.thematique_history.isActionVue(action);
-    action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
     const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
     action.nombre_actions_faites = nbr_faites;
     action.label_compteur = action.label_compteur.replace(

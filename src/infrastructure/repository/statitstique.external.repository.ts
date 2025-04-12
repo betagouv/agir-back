@@ -83,6 +83,8 @@ export class StatistiqueExternalRepository {
         type_action: action.type,
         faite_le: action.faite_le,
         vue_le: action.vue_le,
+        feedback: action.feedback,
+        like_level: action.like_level,
       },
     });
   }
@@ -109,6 +111,10 @@ export class StatistiqueExternalRepository {
         vue_le: aide.vue_at,
         clicked_infos: aide.clicked_infos,
         clicked_demande: aide.clicked_demande,
+        est_connue_utilisateur: aide.est_connue_utilisateur,
+        sera_sollicitee_utilisateur: aide.sera_sollicitee_utilisateur,
+        feedback: aide.feedback,
+        like_level: aide.like_level,
       },
     });
   }

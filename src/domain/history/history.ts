@@ -1,3 +1,4 @@
+import { AideFeedback } from '../aides/aideFeedback';
 import { Article } from '../contenu/article';
 import { ArticleDefinition } from '../contenu/articleDefinition';
 import { Categorie } from '../contenu/categorie';
@@ -58,14 +59,35 @@ export class History {
     }
   }
 
-  public deroulerAide(id_cms: string) {
+  public feedbackAide(id_cms: string, feedback: AideFeedback) {
     const interaction = this.getAideInteractionByIdCms(id_cms);
     if (interaction) {
-      interaction.deroulee_at = new Date();
+      if (feedback.like_level) {
+        interaction.like_level = feedback.like_level;
+      }
+      if (feedback.feedback) {
+        interaction.feedback = feedback.feedback;
+      }
+      if (
+        feedback.est_connue_utilisateur !== null &&
+        feedback.est_connue_utilisateur !== undefined
+      ) {
+        interaction.est_connue_utilisateur = !!feedback.est_connue_utilisateur;
+      }
+      if (
+        feedback.sera_sollicitee_utilisateur !== null &&
+        feedback.sera_sollicitee_utilisateur !== undefined
+      ) {
+        interaction.sera_sollicitee_utilisateur =
+          !!feedback.sera_sollicitee_utilisateur;
+      }
     } else {
       const new_interaction = new AideHistory({
         content_id: id_cms,
-        deroulee_at: new Date(),
+        feedback: feedback.feedback,
+        est_connue_utilisateur: feedback.est_connue_utilisateur,
+        sera_sollicitee_utilisateur: feedback.sera_sollicitee_utilisateur,
+        like_level: feedback.like_level,
       });
       this.aide_interactions.push(new_interaction);
     }

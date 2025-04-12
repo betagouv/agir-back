@@ -492,6 +492,8 @@ describe('Duplicate Usecase', () => {
           action: { code: '1', type: TypeAction.classique },
           faite_le: new Date(123),
           vue_le: new Date(456),
+          feedback: 'good',
+          like_level: 3,
         },
       ],
       liste_tags_excluants: [],
@@ -529,6 +531,8 @@ describe('Duplicate Usecase', () => {
       type_code_id: 'classique_1',
       user_id: '123',
       vue_le: new Date(456),
+      feedback: 'good',
+      like_level: 3,
     });
   });
   it('duplicateArticle : copy ok articles utilisateur', async () => {
@@ -592,7 +596,10 @@ describe('Duplicate Usecase', () => {
           clicked_infos: false,
           vue_at: new Date(123),
           content_id: '1',
-          deroulee_at: null,
+          est_connue_utilisateur: true,
+          sera_sollicitee_utilisateur: false,
+          feedback: 'good',
+          like_level: 3,
         },
       ],
       quizz_interactions: [],
@@ -627,6 +634,10 @@ describe('Duplicate Usecase', () => {
       titre: 'titreA',
       user_id: '123',
       vue_le: new Date(123),
+      est_connue_utilisateur: true,
+      feedback: 'good',
+      like_level: 3,
+      sera_sollicitee_utilisateur: false,
     });
   });
 

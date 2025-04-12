@@ -1,10 +1,9 @@
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TestUtil } from '../../TestUtil';
-//import _situationNGCTest from './situationNGCtest.json';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import _situationNGCTest from './situationNGC_3.3.2.json';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { TestUtil } from '../../TestUtil';
+import _situationNGCTest from './situation_NGC_v3.6.3.json';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;
@@ -73,24 +72,24 @@ describe('/utilisateurs - Inscription - (API test)', () => {
       user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_local_frequence)
         .getCodeReponseQuestionChoixUnique(),
-    ).toEqual('souvent');
+    ).toEqual('parfois');
     expect(
-      user.kyc_history
+      user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_voiture_km)
         .getReponseSimpleValue(),
-    ).toEqual('11960');
+    ).toEqual('1560');
     expect(
-      user.kyc_history
+      user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_avion_3_annees)
         .getCodeReponseQuestionChoixUnique(),
     ).toEqual('oui');
     expect(
-      user.kyc_history
+      user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_superficie)
         .getReponseSimpleValue(),
     ).toEqual('130');
     expect(
-      user.kyc_history
+      user_full.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_menage)
         .getReponseSimpleValue(),
     ).toEqual('4');

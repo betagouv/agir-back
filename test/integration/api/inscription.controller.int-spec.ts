@@ -9,7 +9,7 @@ import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
-import _situationNGCTest from './situationNGCtest.json';
+import _situationNGCTest from './situation_NGC_v3.6.3.json';
 
 describe('/utilisateurs - Inscription - (API test)', () => {
   const OLD_ENV = process.env;

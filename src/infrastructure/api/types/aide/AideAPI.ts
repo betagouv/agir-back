@@ -30,6 +30,7 @@ export class AideAPI {
   @ApiProperty() partenaire_url: string;
   @ApiProperty() partenaire_logo_url: string;
   @ApiProperty() est_gratuit: boolean;
+  @ApiProperty() like_level: number;
 
   public static mapToAPI(aide: Aide): AideAPI {
     return {
@@ -57,6 +58,7 @@ export class AideAPI {
       echelle: Echelle[aide.echelle],
       est_gratuit: aide.est_gratuit,
       deja_vue_le: aide.vue_at,
+      like_level: aide.like_level,
     };
   }
 }

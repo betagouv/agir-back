@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -21,6 +23,7 @@ import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { AideAPI } from './types/aide/AideAPI';
 import { CatalogueAideAPI } from './types/aide/CatalogueAideAPI';
+import { FeedbackAideInputAPI } from './types/aide/FeedbackAideInputAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -58,18 +61,22 @@ export class AidesController extends GenericControler {
     await this.aidesUsecase.consulterAide(utilisateurId, aideId);
   }
 
-  @Post('utilisateurs/:utilisateurId/aides/:aideId/derouler')
+  @Post('utilisateurs/:utilisateurId/aides/:aideId/feedback')
   @ApiOperation({
-    summary: `Indique que l'utilisateur a déroulé cette aide dans le catalogue`,
+    summary: `Positionne un feedback sur l'aide`,
   })
   @UseGuards(AuthGuard)
-  async deroulerAide(
+  @ApiBody({
+    type: FeedbackAideInputAPI,
+  })
+  async feedbackAide(
     @Param('utilisateurId') utilisateurId: string,
     @Param('aideId') aideId: string,
+    @Body() body,
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
-    await this.aidesUsecase.deroulerAide(utilisateurId, aideId);
+    await this.aidesUsecase.feedbackAide(utilisateurId, aideId, body);
   }
 
   @Post('utilisateurs/:utilisateurId/aides/:aideId/vu_demande')

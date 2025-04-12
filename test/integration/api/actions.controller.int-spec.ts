@@ -566,6 +566,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           vue_le: new Date(),
           faite_le: null,
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -656,6 +658,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           faite_le: new Date(),
           vue_le: null,
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -747,6 +751,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '1' },
           faite_le: new Date(),
           vue_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_tags_excluants: [],
@@ -799,6 +805,8 @@ describe('Actions (API test)', () => {
           action: { type: TypeAction.classique, code: '123' },
           vue_le: new Date(),
           faite_le: new Date(),
+          feedback: null,
+          like_level: null,
         },
       ],
       liste_thematiques: [],
@@ -1115,7 +1123,26 @@ describe('Actions (API test)', () => {
     });
 
     await blockTextRepository.loadCache();
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_tags_excluants: [],
+      liste_actions_utilisateur: [
+        {
+          action: { type: TypeAction.classique, code: '123' },
+          vue_le: null,
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: 2,
+        },
+      ],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      code_commune: '21231',
+      thematique_history: thematique_history as any,
+    });
+
     await TestUtil.create(DB.action, {
       code: '123',
       type: TypeAction.classique,
@@ -1165,8 +1192,9 @@ describe('Actions (API test)', () => {
       ],
       nombre_actions_en_cours: 45,
       nombre_actions_faites: 45,
-      deja_faite: false,
+      deja_faite: true,
       deja_vue: false,
+      like_level: 2,
       faqs: [],
       kycs: [],
       label_compteur: '45 haha',
@@ -1847,5 +1875,296 @@ describe('Actions (API test)', () => {
     expect(compteur.length).toEqual(1);
     expect(compteur[0].faites).toEqual(1);
     expect(compteur[0].type_code_id).toEqual('classique_123');
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - pousse un feedback pour une action deja vue`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      like_level: 2,
+      feedback: 'pas si mal',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u).toEqual({
+      action: {
+        code: '123',
+        type: 'classique',
+      },
+      faite_le: new Date(1),
+      feedback: 'pas si mal',
+      like_level: 2,
+      vue_le: null,
+    });
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - pousse un feedback pour une action jamais vue`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      like_level: 2,
+      feedback: 'pas si mal',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u).toEqual({
+      action: {
+        code: '123',
+        type: 'classique',
+      },
+      faite_le: null,
+      feedback: 'pas si mal',
+      like_level: 2,
+      vue_le: null,
+    });
+  });
+  it(`POST /utilisateurs/id/actions/id/feedback - like level optionnel`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      feedback: 'pas si mal',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u).toEqual({
+      action: {
+        code: '123',
+        type: 'classique',
+      },
+      faite_le: null,
+      feedback: 'pas si mal',
+      like_level: null,
+      vue_le: null,
+    });
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - feedback optionnel`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      like_level: 3,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u).toEqual({
+      action: {
+        code: '123',
+        type: 'classique',
+      },
+      faite_le: null,
+      feedback: null,
+      like_level: 3,
+      vue_le: null,
+    });
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - erreur si mauvais like level`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      like_level: 5.4,
+      feedback: 'pas si mal',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Les niveaux de like autorisés sont 1 - 2 - 3 - 4 , ou null, reçu [5.4]',
+    );
+  });
+  it(`POST /utilisateurs/id/actions/id/feedback - erreur feedback trop long`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      feedback:
+        '#########################################################################################################' +
+        '#########################################################################################################' +
+        '#########################################################################################################' +
+        '#########################################################################################################' +
+        '#########################################################################################################',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `L'attribut [feedback] doit être de longueur maximale 500, longueur reçue : 525`,
+    );
+  });
+  it(`POST /utilisateurs/id/actions/id/feedback - erreur feedback avec caracteres spéciaux`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/feedback',
+    ).send({
+      feedback: 'ce ci est du code index++ ${}',
+    });
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      `le texte de feedback ne peut pas contenir de caractères spéciaux comme [^#&*<>/{|}$%@+]`,
+    );
   });
 });

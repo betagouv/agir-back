@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -29,6 +31,7 @@ import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
+import { FeedbackActionInputAPI } from './types/actions/FeedbackActionInputAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -214,6 +217,44 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     let type = this.castTypeActionOrException(type_action);
     await this.actionUsecase.faireAction(code_action, type, utilisateurId);
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/actions/:type_action/:code_action/feedback',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Positionne un feedback pour une action donnée`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  @ApiBody({
+    type: FeedbackActionInputAPI,
+  })
+  async feedbackAction(
+    @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: FeedbackActionInputAPI,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.actionUsecase.feedbackAction(
+      code_action,
+      type,
+      utilisateurId,
+      body.like_level,
+      body.feedback,
+    );
   }
 
   @Get('actions/:type_action/:code_action')
