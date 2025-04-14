@@ -562,6 +562,66 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     });
   });
 
+  it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article replace _top _self _parent par _blank', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      partenaire_id: '123',
+      contenu: '_top _self _parent',
+    });
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toEqual('_blank _blank _blank');
+  });
+
+  it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article inject target="_blank" sur chaque lien', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      history: {
+        version: 0,
+        article_interactions: [],
+        quizz_interactions: [],
+        aide_interactions: [],
+      },
+    });
+    await TestUtil.create(DB.partenaire);
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      partenaire_id: '123',
+      contenu: '<a href="https://">bla</a>',
+    });
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toEqual(
+      '<a target="_blank" href="https://">bla</a>',
+    );
+  });
+
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, celui-ci devient alors lu', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

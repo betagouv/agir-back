@@ -136,6 +136,7 @@ export class QuestionKYCEnchainementUsecase {
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
   async getFirstOfEnchainementQuestionsWithExcludes(
@@ -178,6 +179,7 @@ export class QuestionKYCEnchainementUsecase {
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 
@@ -222,6 +224,7 @@ export class QuestionKYCEnchainementUsecase {
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 
@@ -266,6 +269,7 @@ export class QuestionKYCEnchainementUsecase {
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 
