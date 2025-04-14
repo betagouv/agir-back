@@ -166,6 +166,17 @@ export class UtilisateurRepository {
       },
     });
   }
+  async setMobileToken(utilisateurId: string, token: string) {
+    await this.prisma.utilisateur.update({
+      where: {
+        id: utilisateurId,
+      },
+      data: {
+        mobile_token: token,
+        mobile_token_updated_at: new Date(),
+      },
+    });
+  }
 
   async does_email_exist(email: string): Promise<boolean> {
     const count = await this.prisma.utilisateur.count({

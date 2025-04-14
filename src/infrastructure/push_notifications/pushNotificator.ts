@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 
+export enum MessagingStatus {
+  ok = 'ok',
+  ko = 'ko',
+  bad_token = 'bad_token',
+  internal_error = 'internal_error',
+}
 export class MessageAPI {
   notification: {
     title: string;
@@ -63,26 +69,37 @@ export class PushNotificator {
     this.messaging_service = this.admin_firebase.messaging();
   }
 
-  public async pushMessage(message: PushNotificationMessage): Promise<boolean> {
+  public async pushMessage(
+    message: PushNotificationMessage,
+  ): Promise<MessagingStatus> {
     if (!this.messaging_service) {
       console.error(
         'Service de push notification non initialisé correctement !',
       );
-      return false;
+      return MessagingStatus.internal_error;
     }
 
     const payload = MessageAPI.buildMessage(message);
 
     try {
-      const response = await this.messaging_service.send(payload);
-      console.log(response);
-      return true;
+      await this.messaging_service.send(payload);
+      return MessagingStatus.ok;
     } catch (error) {
+      if (error.errorInfo) {
+        if (
+          error.errorInfo.code === 'messaging/registration-token-not-registered'
+        ) {
+          console.log(
+            `Error sending push notification to BAD token : ${message.token}`,
+          );
+          return MessagingStatus.bad_token;
+        }
+      }
       console.log(
         `Error sending push notification to token : ${message.token}`,
-        error,
       );
-      return false;
+      console.log(error);
+      return MessagingStatus.ko;
     }
   }
 }

@@ -295,9 +295,7 @@ export class ProfileUsecase {
     );
     Utilisateur.checkState(target_user);
 
-    target_user.mobile_token = token;
-    target_user.mobile_token_updated_at = new Date();
-    await this.utilisateurRepository.updateUtilisateur(target_user);
+    await this.utilisateurRepository.setMobileToken(utilisateurId, token);
   }
   async deleteMobileToken(utilisateurId: string) {
     const target_user = await this.utilisateurRepository.getById(
