@@ -361,8 +361,9 @@ export class QuestionKYC implements TaggedContent {
   public hasAnyComplexeResponse(): boolean {
     if (this.reponse_complexe) {
       for (const reponse of this.reponse_complexe) {
-        if (reponse.value) return true;
-        if (reponse.selected) return true;
+        console.log(reponse);
+        if (!!reponse.value) return true;
+        if (!!reponse.selected) return true;
       }
     }
     return false;
@@ -435,7 +436,7 @@ export class QuestionKYC implements TaggedContent {
   }
 
   public getNombreReponsesPossibles(): number {
-    if (!this.hasAnyComplexeResponse()) return 0;
+    if (!this.reponse_complexe) return 0;
     return this.reponse_complexe.length;
   }
 

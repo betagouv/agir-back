@@ -610,16 +610,17 @@ export class KYCHistory {
       (element) => element.code === code,
     );
     if (answered) {
-      answered.is_answered = true;
+      this.refreshQuestion(answered);
+      answered.is_answered = answered.hasAnyResponses();
     }
-    return this.refreshQuestion(answered);
+    return answered;
   }
   public getAnsweredQuestionByCode(code: string): QuestionKYC {
     const answered = this.answered_questions.find(
       (element) => element.code === code,
     );
     if (answered) {
-      answered.is_answered = true;
+      answered.is_answered = answered.hasAnyResponses();
     }
     return answered;
   }
