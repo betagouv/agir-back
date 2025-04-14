@@ -648,7 +648,7 @@ export class TestUtil {
       external_stat_id: null,
       pseudo: 'pseudo',
       cache_bilan_carbone: cache_bilan_carbone as any,
-      global_user_version: GlobalUserVersion.V1,
+      global_user_version: GlobalUserVersion.V2,
       ...override,
     };
   }
