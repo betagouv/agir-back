@@ -161,6 +161,8 @@ export class EmailTemplateRepository {
             PSEUDO: utilisateur.pseudo,
             UNSUBSCRIBE_URL: unsubscribe_URL,
             HOME_URL: App.getBaseURLFront(),
+            CONTACT_EMAIL: utilisateur.email,
+            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
         };
       case TypeNotification.email_relance_onboarding_j14:

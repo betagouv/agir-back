@@ -557,8 +557,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // WHEN
     const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
 
-    console.log(question);
-
     // THEN
     expect(question.getNombreReponsesPossibles()).toEqual(1);
     expect(question.getReponseComplexeByCode('b')).toEqual({
