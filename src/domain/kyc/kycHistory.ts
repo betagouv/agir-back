@@ -357,17 +357,19 @@ export class KYCHistory {
         const code_dpe = kyc.getCodeReponseQuestionChoixUnique();
         utilisateur.logement.dpe = DPE[code_dpe];
         break;
+      // FIXME: Why we want to loose precision here?
       case KYCID.KYC_superficie:
         const valeur = kyc.getReponseSimpleValueAsNumber();
-        if (valeur < 35)
+        // FIXME: Was it intentional to match 30 to superficie_150?
+        if (valeur < 35) {
           utilisateur.logement.superficie = Superficie.superficie_35;
-        if (valeur < 70)
+        } else if (valeur < 70) {
           utilisateur.logement.superficie = Superficie.superficie_70;
-        if (valeur < 100)
+        } else if (valeur < 100) {
           utilisateur.logement.superficie = Superficie.superficie_100;
-        if (valeur < 150)
+        } else if (valeur < 150) {
           utilisateur.logement.superficie = Superficie.superficie_150;
-        if (valeur >= 150)
+        } else if (valeur >= 150)
           utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
         break;
       case KYCID.KYC_proprietaire:
@@ -384,6 +386,14 @@ export class KYCHistory {
           code_log === 'type_appartement'
             ? TypeLogement.appartement
             : TypeLogement.maison;
+        break;
+      // FIXME: Is this the mapping we want ?
+      case KYCID.KYC_menage:
+        // const nombre = kyc.getReponseSimpleValueAsNumber();
+        // if (nombre) {
+        //   utilisateur.logement.nombre_adultes = nombre;
+        //   utilisateur.logement.nombre_enfants = 0;
+        // }
         break;
       default:
         break;
@@ -557,6 +567,7 @@ export class KYCHistory {
       return question_catalogue;
     }
   }
+
   public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
     let question = this.getUpToDateAnsweredQuestionByCode(code);
     if (question) {

@@ -230,7 +230,7 @@ export class ProfileUsecase {
     }
 
     if (input.commune) {
-      const code_commune = this.communeRepository.getCodeCommune(
+      const code_commune = this.communeRepository.getCommuneCodeInsee(
         input.code_postal,
         input.commune,
       );

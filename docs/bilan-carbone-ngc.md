@@ -1,6 +1,6 @@
 # Calcul du bilan carbone
 
-J'agis utilise actuellement le modèle de calcul
+_J'agis_ utilise actuellement le modèle de calcul
 [`@incubateur-ademe/nosgestesclimat`](https://publi.codes/@incubateur-ademe/nosgestesclimat)
 pour effectuer le bilan carbone des utilisateurices et à terme, par
 thématiques.
@@ -15,7 +15,7 @@ calcul) pour effectuer un calcul.
 Actuellement, il y a deux façons de récupérer une situation dans le serveur :
 
 1. la reconstruire à partir des réponses aux KYCs renseignées par
-   l'utilisateurice dans J'agis,
+   l'utilisateurice dans _J'agis_,
 2. la récupérer depuis un webhook en provenance de nosgestesclimat.fr.
 
 ### Versionnage des situations
@@ -46,7 +46,7 @@ version du modèle.
 
 #### Migration à partir des KYCs
 
-Chaque [KYCs](./kycs.md) utilisées dans J'agis peut être associée à une règle du modèle de
+Chaque [KYCs](./kycs.md) utilisées dans _J'agis_ peut être associée à une règle du modèle de
 NGC. Cependant, lors de l'évolution du modèle, il est possible que ces règles
 soient renommées ou supprimées. Il est donc nécessaire de pouvoir appliquer les
 migrations sur la situation reconstruite à partir des KYCs avant d'effectuer le
@@ -59,8 +59,8 @@ montée de version cassante.
 La migration des situation fournies par nosgestesclimat.fr est plus compliquée
 car bien que l'on puisse attendre que la situation soit déjà à jours avec la
 version du modèle utilisé sur nosgestesclimat.fr, il n'est pas garanti que
-cette version soit la même que celle utilisée par J'agis à cet instant.
+cette version soit la même que celle utilisée par _J'agis_ à cet instant.
 
 Il est donc nécessaire de mettre en place un système garantissant que les
 situations provenant de nosgestesclimat.fr soient compatibles avec la version
-du modèle de J'agis.
+du modèle de _J'agis_.

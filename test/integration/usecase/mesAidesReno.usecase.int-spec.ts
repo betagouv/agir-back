@@ -1,0 +1,275 @@
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { MesAidesRenoUsecase } from '../../../src/usecase/mesAidesReno.usecase';
+import { DB, TestUtil } from '../../TestUtil';
+
+describe('Mes Aides Réno', () => {
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const communeRepository = new CommuneRepository(TestUtil.prisma);
+  const kycRepository = new KycRepository(TestUtil.prisma);
+  const usecase = new MesAidesRenoUsecase(
+    utilisateurRepository,
+    communeRepository,
+  );
+
+  beforeAll(async () => {
+    await TestUtil.appinit();
+  });
+
+  beforeEach(async () => {
+    await TestUtil.deleteAll();
+  });
+
+  afterAll(async () => {
+    await TestUtil.appclose();
+  });
+
+  describe('updateUtilisateurWith', () => {
+    test("propriétaire d'une maison principale à Toulouse", async () => {
+      await TestUtil.create(DB.utilisateur, {
+        revenu_fiscal: 20000,
+        logement: {
+          version: 0,
+          superficie: Superficie.superficie_150,
+          type: TypeLogement.appartement,
+          code_postal: '91120',
+          chauffage: Chauffage.bois,
+          commune: 'PALAISEAU',
+          dpe: DPE.B,
+          nombre_adultes: 2,
+          nombre_enfants: 2,
+          plus_de_15_ans: false,
+          proprietaire: false,
+        },
+      });
+      await TestUtil.createKYCLogement();
+      await kycRepository.loadCache();
+
+      await usecase.updateUtilisateurWith('utilisateur-id', {
+        'vous . propriétaire . statut': '"propriétaire"',
+        'logement . propriétaire occupant': 'oui',
+        'logement . résidence principale propriétaire': 'oui',
+        'logement . type': '"maison"',
+        'logement . surface': '30',
+        'logement . période de construction': '"au moins 15 ans"',
+        'ménage . personnes': '2',
+        'ménage . code région': '"76"',
+        'ménage . code département': '"31"',
+        'ménage . EPCI': '"243100518"',
+        'ménage . commune': '"31555"',
+        'ménage . commune . nom': '"Toulouse"',
+        'taxe foncière . commune . éligible . ménage': 'non',
+        'logement . commune . denormandie': 'non',
+        'ménage . revenu': '32197',
+        'DPE . actuel': '3',
+      });
+
+      const utilisateur = await utilisateurRepository.getById(
+        'utilisateur-id',
+        [Scope.logement, Scope.kyc],
+      );
+
+      expect(utilisateur.logement.dpe).toEqual(DPE.C);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_DPE)
+          .getReponseComplexeByCode(DPE.C).selected,
+      ).toBeTruthy();
+
+      expect(utilisateur.logement.proprietaire).toBeTruthy();
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
+          .getReponseComplexeByCode('oui').selected,
+      ).toBeTruthy();
+
+      expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC006)
+          .getReponseComplexeByCode('plus_15').selected,
+      ).toBeTruthy();
+      expect(utilisateur.revenu_fiscal).toEqual(32197);
+
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(2);
+
+      expect(utilisateur.logement.type).toBe(TypeLogement.maison);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_type_logement)
+          .getReponseComplexeByCode(TypeLogement.maison).selected,
+      ).toBeTruthy();
+
+      expect(utilisateur.logement.superficie).toBe(Superficie.superficie_35);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_superficie)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(30);
+
+      expect(utilisateur.code_commune).toEqual('31555');
+      expect(utilisateur.logement.commune).toEqual('TOULOUSE');
+      expect(utilisateur.logement.code_postal).toEqual('31000');
+    });
+
+    test("le logement n'est pas la résidence principale", async () => {
+      await TestUtil.create(DB.utilisateur, {
+        revenu_fiscal: 20000,
+        code_commune: '91120',
+        logement: {
+          version: 0,
+          superficie: Superficie.superficie_150,
+          type: TypeLogement.appartement,
+          code_postal: '91120',
+          chauffage: Chauffage.bois,
+          commune: 'PALAISEAU',
+          dpe: DPE.B,
+          nombre_adultes: 2,
+          nombre_enfants: 2,
+          plus_de_15_ans: false,
+          proprietaire: false,
+        },
+      });
+      await TestUtil.createKYCLogement();
+      await kycRepository.loadCache();
+
+      await usecase.updateUtilisateurWith('utilisateur-id', {
+        'vous . propriétaire . statut': '"propriétaire"',
+        'logement . propriétaire occupant': 'non',
+        'logement . résidence principale propriétaire': 'non',
+        'logement . type': '"maison"',
+        'logement . surface': '30',
+        'logement . période de construction': '"au moins 15 ans"',
+        'ménage . personnes': '2',
+        'logement . code région': '"76"',
+        'logement . code département': '"31"',
+        'logement . EPCI': '"243100518"',
+        'logement . commune': '"31555"',
+        'logement . commune . nom': '"Toulouse"',
+        'taxe foncière . commune . éligible . ménage': 'non',
+        'logement . commune . denormandie': 'non',
+        'ménage . revenu': '32197',
+        'DPE . actuel': '3',
+      });
+
+      const utilisateur = await utilisateurRepository.getById(
+        'utilisateur-id',
+        [Scope.logement, Scope.kyc],
+      );
+
+      // Ces informations devraient être modifiées car elles concernent le
+      // ménage et non le logement.
+      expect(utilisateur.revenu_fiscal).toEqual(32197);
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
+      expect(
+        utilisateur.kyc_history
+          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getReponseSimpleValueAsNumber(),
+      ).toEqual(2);
+
+      // Ces informations ne devraient pas être modifiées car elles concernent
+      // le logement qui n'est pas la résidence principale de l'utilisateurice.
+      expect(utilisateur.logement.dpe).toEqual(DPE.B);
+      expect(utilisateur.logement.proprietaire).toBeFalsy();
+      expect(utilisateur.logement.plus_de_15_ans).toBeFalsy();
+      expect(utilisateur.logement.type).toBe(TypeLogement.appartement);
+      expect(utilisateur.logement.superficie).toBe(Superficie.superficie_150);
+      expect(utilisateur.code_commune).toEqual('91120');
+      expect(utilisateur.logement.commune).toEqual('PALAISEAU');
+      expect(utilisateur.logement.code_postal).toEqual('91120');
+    });
+  });
+
+  describe('getIframeUrl', () => {
+    test("should return the url without params if the user doesn't exist", async () => {
+      const result = await usecase.getIframeUrl('non_existant_id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
+      );
+    });
+
+    test('should correctly parse informations', async () => {
+      await TestUtil.create(DB.utilisateur, {
+        logement: {
+          proprietaire: true,
+          plus_de_15_ans: true,
+          dpe: 'B',
+          type: TypeLogement.appartement,
+          nombre_adultes: 2,
+          commune: 'TOULOUSE',
+          code_postal: '31500',
+          superficie: Superficie.superficie_150,
+        },
+        revenu_fiscal: 20000,
+      });
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+      );
+    });
+
+    test('superficice from KYC instead of profil', async () => {
+      await TestUtil.create(DB.utilisateur, {
+        logement: {
+          proprietaire: true,
+          plus_de_15_ans: true,
+          dpe: 'B',
+          type: TypeLogement.appartement,
+          nombre_adultes: 2,
+          commune: 'TOULOUSE',
+          code_postal: '31500',
+          superficie: Superficie.superficie_70,
+        },
+        revenu_fiscal: 20000,
+      });
+      await TestUtil.createKYCLogement();
+      await kycRepository.loadCache();
+
+      const utilisateur = await utilisateurRepository.getById(
+        'utilisateur-id',
+        [Scope.kyc],
+      );
+
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_superficie,
+        ['50'],
+      );
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=50&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+      );
+    });
+
+    test('should correctly parse partial informations', async () => {
+      await TestUtil.create(DB.utilisateur, {
+        logement: {
+          proprietaire: true,
+          dpe: 'B',
+          nombre_adultes: 2,
+        },
+        revenu_fiscal: 20000,
+      });
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
+      );
+    });
+  });
+});
