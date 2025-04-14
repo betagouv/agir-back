@@ -10,6 +10,9 @@ export class App {
   public static isConnexionDown(): boolean {
     return process.env.IS_CONNEXION_DOWN === 'true';
   }
+  public static isFranceConnectDown(): boolean {
+    return process.env.IS_FRANCE_CONNECT_DOWN === 'true';
+  }
   public static currentUserSystemVersion(): number {
     return App.USER_CURRENT_VERSION;
   }

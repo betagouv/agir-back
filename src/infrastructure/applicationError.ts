@@ -741,7 +741,7 @@ export class ApplicationError {
     this.throwAppError(
       '139',
       `Bonjour,
-Suite à un problème technique, vous ne pouvez pas vous connecter au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
+suite à un problème technique, vous ne pouvez pas vous connecter au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
     );
   }
 
@@ -749,7 +749,7 @@ Suite à un problème technique, vous ne pouvez pas vous connecter au service J'
     this.throwAppError(
       '140',
       `Bonjour,
-Suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
+suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
     );
   }
 

@@ -51,7 +51,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual(`Bonjour,
-Suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à XXXX`);
+suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à XXXX`);
   });
   it('POST /utilisateurs_v2 - create new utilisateur avec seulement email et mot de passe', async () => {
     // GIVEN

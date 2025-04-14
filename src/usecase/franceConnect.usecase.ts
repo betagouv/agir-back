@@ -26,6 +26,10 @@ export class FranceConnectUsecase {
   ) {}
 
   async genererConnexionFranceConnect(situation_ngc_id?: string): Promise<URL> {
+    if (App.isFranceConnectDown()) {
+      ApplicationError.throwConnexionDown(App.getEmailContact());
+    }
+
     const redirect_infos = this.oidcService.generatedAuthRedirectUrl();
 
     if (situation_ngc_id && situation_ngc_id.length !== 36) {
