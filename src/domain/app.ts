@@ -4,6 +4,12 @@ export class App {
   static USER_CURRENT_VERSION = 15;
   static BACK_CURRENT_VERSION = '1';
 
+  public static isInscriptionDown(): boolean {
+    return process.env.IS_INSCRIPTION_DOWN === 'true';
+  }
+  public static isConnexionDown(): boolean {
+    return process.env.IS_CONNEXION_DOWN === 'true';
+  }
   public static currentUserSystemVersion(): number {
     return App.USER_CURRENT_VERSION;
   }

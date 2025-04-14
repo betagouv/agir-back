@@ -42,6 +42,36 @@ describe('/utilisateurs - Connexion V2 Compte utilisateur (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('POST /utilisateurs/login_v2 - login down', async () => {
+    // GIVEN
+    process.env.OTP_DEV = '123456';
+    process.env.IS_CONNEXION_DOWN = 'true';
+    process.env.EMAIL_CONTACT = 'XXXX';
+
+    const utilisateur = getFakeUtilisteur();
+    PasswordManager.setUserPassword(utilisateur, '#1234567890HAHAa');
+
+    await TestUtil.create(DB.utilisateur, {
+      passwordHash: utilisateur.passwordHash,
+      passwordSalt: utilisateur.passwordSalt,
+      active_account: true,
+      parts: null,
+      force_connexion: true,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/login_v2')
+      .send({
+        mot_de_passe: '#1234567890HAHAa',
+        email: 'yo@truc.com',
+      });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(`Bonjour,
+Suite à un problème technique, vous ne pouvez pas vous connecter au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à XXXX`);
+  });
+
   it('POST /utilisateurs/login_v2 - envoi un code da validation', async () => {
     // GIVEN
     process.env.OTP_DEV = '123456';
