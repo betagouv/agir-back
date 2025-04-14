@@ -5,8 +5,8 @@ choix a été fait pour faciliter l'intégration et ne pas avoir à refaire la
 logique du simulateur qui est relativement complexe.
 
 Cette intégration n'a pas pour but de remplacer l'expérience complète
-disponible sur https://mesaidesreno.beta.gouv.fr. Elle s'arrête jusqu'au calcul
-de l'éligibilité.
+disponible sur https://mesaidesreno.beta.gouv.fr. La simulation est considérée
+comme étant terminée à la fin du calcul de l'éligibilité.
 
 ## Synchronisation des informations
 
