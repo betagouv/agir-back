@@ -17,6 +17,7 @@ import {
 import { MesAidesRenoUsecase } from '../../usecase/mesAidesReno.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
+import { SituationMesAidesRenoAPI } from './types/mes_aides_voiture/situationMesAidesRenoAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -52,18 +53,18 @@ export class MesAidesRenoController extends GenericControler {
       "Met à jour la situation de l'utilisateurice avec celle retournée par Mes Aides Réno",
   })
   @ApiBody({
-    type: [Object],
+    type: SituationMesAidesRenoAPI,
     description: "La nouvelle situation de l'utilisateurice",
   })
   async setSituation(
     @Param('utilisateurId') utilisateurId: string,
-    @Body() nouvellesSituations: Record<string, string>,
+    @Body() body: SituationMesAidesRenoAPI,
     @Request() req,
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
     await this.mesAidesRenoUsecase.updateUtilisateurWith(
       utilisateurId,
-      nouvellesSituations,
+      body.situation,
     );
   }
 }
