@@ -48,12 +48,13 @@ export class MesAidesRenoUsecase {
     ]);
 
     const estLogementPrincipal =
-      // C'est-à-dire que l'utilisateur est locataire
+      // The user is a tenant
       situation[MesAidesRenoRuleNames.logementProprietaire] ===
         'non propriétaire' ||
       situation[
         MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire
       ] === 'oui' ||
+      // NOTE: seems to be true if and only if the user is logementResidencePrincipaleProprietaire == 'oui'
       situation[MesAidesRenoRuleNames.logementProprietaireOccupant] === 'oui';
 
     for (const [ruleName, value] of Object.entries(situation)) {
@@ -97,11 +98,16 @@ export class MesAidesRenoUsecase {
 
     // Handle the commune and EPCI information separately, to avoid redundant
     // calls to the commune repository.
-    if (utilisateur.logement?.code_postal && utilisateur.logement?.commune) {
-      const code_insee = this.communeRepository.getCommuneCodeInsee(
-        utilisateur.logement.code_postal,
-        utilisateur.logement.commune,
-      );
+    if (
+      utilisateur.code_commune ||
+      (utilisateur.logement?.code_postal && utilisateur.logement?.commune)
+    ) {
+      const code_insee =
+        utilisateur.code_commune ??
+        this.communeRepository.getCommuneCodeInsee(
+          utilisateur.logement.code_postal,
+          utilisateur.logement.commune,
+        );
       const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
       const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
 
@@ -145,8 +151,20 @@ export class MesAidesRenoUsecase {
       logement?.dpe && logement.dpe !== DPE.ne_sais_pas
         ? dpeToNumber(logement.dpe)
         : undefined,
-    [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: ({ logement }) =>
-      logement?.plus_de_15_ans ? 'au moins 15 ans' : undefined,
+    [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: ({
+      logement,
+      kyc_history,
+    }) => {
+      const agePrecis = kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        ?.getReponseSimpleValueAsNumber();
+
+      if (agePrecis !== null && agePrecis !== undefined) {
+        return numberToAgeLogementIntervalle(agePrecis);
+      }
+
+      return logement?.plus_de_15_ans ? 'au moins 15 ans' : undefined;
+    },
     [MesAidesRenoRuleNames.logementProprietaire]: ({ logement }) =>
       // NOTE: missing the case 'acquéreur'
       logement?.proprietaire != null
@@ -161,10 +179,19 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: ({
       logement,
     }) => (logement?.proprietaire != null ? logement.proprietaire : undefined),
-    [MesAidesRenoRuleNames.logementSurface]: ({ logement }) =>
-      logement?.superficie != null
+    [MesAidesRenoRuleNames.logementSurface]: ({ kyc_history, logement }) => {
+      const superficiePrecise = kyc_history
+        .getAnsweredQuestionByCode(KYCID.KYC_superficie)
+        ?.getReponseSimpleValueAsNumber();
+
+      if (superficiePrecise !== null && superficiePrecise !== undefined) {
+        return superficiePrecise;
+      }
+
+      return logement?.superficie != null
         ? superficieToNumber(logement.superficie)
-        : undefined,
+        : undefined;
+    },
     [MesAidesRenoRuleNames.logementType]: ({ logement }) =>
       logement?.type != null
         ? logement.type === TypeLogement.maison
@@ -208,6 +235,7 @@ export class MesAidesRenoUsecase {
         if (estLogementPrincipal && typeof value === 'string') {
           const commune = this.communeRepository.getCommuneByCodeINSEE(value);
           if (commune) {
+            utilisateur.code_commune = commune.code;
             utilisateur.logement.code_postal = commune.codesPostaux[0];
             utilisateur.logement.commune = commune.nom.toUpperCase();
           }
@@ -217,10 +245,14 @@ export class MesAidesRenoUsecase {
     ],
     [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: [
       (utilisateur, value, estLogementPrincipal) => {
-        if (estLogementPrincipal && value === 'au moins 15 ans') {
+        if (estLogementPrincipal) {
           return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
             KYCID.KYC_logement_age,
-            ['15'],
+            [
+              ageLogementIntervalleToNumber(
+                value as AgeLogementIntervalle,
+              ).toString(),
+            ],
           );
         }
       },
@@ -292,15 +324,13 @@ export class MesAidesRenoUsecase {
       },
     ],
     [MesAidesRenoRuleNames.menageCommune]: [
-      (utilisateur, value, estLogementPrincipal) => {
+      (utilisateur, value) => {
         if (typeof value === 'string') {
           const commune = this.communeRepository.getCommuneByCodeINSEE(value);
           if (commune) {
             utilisateur.code_commune = commune.code;
-            if (estLogementPrincipal) {
-              utilisateur.logement.commune = commune.nom.toUpperCase();
-              utilisateur.logement.code_postal = commune.codesPostaux[0];
-            }
+            utilisateur.logement.commune = commune.nom.toUpperCase();
+            utilisateur.logement.code_postal = commune.codesPostaux[0];
           }
         }
         return undefined;
@@ -510,5 +540,40 @@ function superficieToNumber(superficie: Superficie): number {
       return 125;
     case Superficie.superficie_150_et_plus:
       return 200;
+  }
+}
+
+type AgeLogementIntervalle =
+  | 'moins de 2 ans'
+  | 'de 2 à 10 ans'
+  | 'de 10 à 15 ans'
+  | 'au moins 15 ans';
+
+function ageLogementIntervalleToNumber(age: AgeLogementIntervalle): number {
+  switch (age) {
+    case 'moins de 2 ans':
+      return 1;
+    case 'de 2 à 10 ans':
+      return 5;
+    case 'de 10 à 15 ans':
+      return 12;
+    case 'au moins 15 ans':
+      return 20;
+    default:
+      throw new Error(`Unknown age: ${age}`);
+  }
+}
+
+function numberToAgeLogementIntervalle(
+  agePrecis: number,
+): AgeLogementIntervalle {
+  if (agePrecis < 2) {
+    return 'moins de 2 ans';
+  } else if (agePrecis <= 10) {
+    return 'de 2 à 10 ans';
+  } else if (agePrecis <= 15) {
+    return 'de 10 à 15 ans';
+  } else {
+    return 'au moins 15 ans';
   }
 }

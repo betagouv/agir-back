@@ -100,7 +100,7 @@ describe('Mes Aides Réno', () => {
       ).toBeTruthy();
       expect(utilisateur.revenu_fiscal).toEqual(32197);
 
-      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(2);
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
           .getAnsweredQuestionByCode(KYCID.KYC_menage)
@@ -129,6 +129,7 @@ describe('Mes Aides Réno', () => {
     test("le logement n'est pas la résidence principale", async () => {
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
+        code_commune: '91120',
         logement: {
           version: 0,
           superficie: Superficie.superficie_150,
@@ -154,11 +155,11 @@ describe('Mes Aides Réno', () => {
         'logement . surface': '30',
         'logement . période de construction': '"au moins 15 ans"',
         'ménage . personnes': '2',
-        'ménage . code région': '"76"',
-        'ménage . code département': '"31"',
-        'ménage . EPCI': '"243100518"',
-        'ménage . commune': '"31555"',
-        'ménage . commune . nom': '"Toulouse"',
+        'logement . code région': '"76"',
+        'logement . code département': '"31"',
+        'logement . EPCI': '"243100518"',
+        'logement . commune': '"31555"',
+        'logement . commune . nom': '"Toulouse"',
         'taxe foncière . commune . éligible . ménage': 'non',
         'logement . commune . denormandie': 'non',
         'ménage . revenu': '32197',
@@ -172,9 +173,8 @@ describe('Mes Aides Réno', () => {
 
       // Ces informations devraient être modifiées car elles concernent le
       // ménage et non le logement.
-      expect(utilisateur.code_commune).toEqual('31555');
       expect(utilisateur.revenu_fiscal).toEqual(32197);
-      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(2);
+      expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
           .getAnsweredQuestionByCode(KYCID.KYC_menage)
@@ -188,8 +188,7 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.logement.plus_de_15_ans).toBeFalsy();
       expect(utilisateur.logement.type).toBe(TypeLogement.appartement);
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_150);
-
-      // FIXME: Ces informations devraient-elles être modifiées ?
+      expect(utilisateur.code_commune).toEqual('91120');
       expect(utilisateur.logement.commune).toEqual('PALAISEAU');
       expect(utilisateur.logement.code_postal).toEqual('91120');
     });
@@ -221,6 +220,39 @@ describe('Mes Aides Réno', () => {
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(
         'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+      );
+    });
+
+    test('superficice from KYC instead of profil', async () => {
+      await TestUtil.create(DB.utilisateur, {
+        logement: {
+          proprietaire: true,
+          plus_de_15_ans: true,
+          dpe: 'B',
+          type: TypeLogement.appartement,
+          nombre_adultes: 2,
+          commune: 'TOULOUSE',
+          code_postal: '31500',
+          superficie: Superficie.superficie_70,
+        },
+        revenu_fiscal: 20000,
+      });
+      await TestUtil.createKYCLogement();
+      await kycRepository.loadCache();
+
+      const utilisateur = await utilisateurRepository.getById(
+        'utilisateur-id',
+        [Scope.kyc],
+      );
+
+      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+        KYCID.KYC_superficie,
+        ['50'],
+      );
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=50&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
       );
     });
 

@@ -389,11 +389,11 @@ export class KYCHistory {
         break;
       // FIXME: Is this the mapping we want ?
       case KYCID.KYC_menage:
-        const nombre = kyc.getReponseSimpleValueAsNumber();
-        if (nombre) {
-          utilisateur.logement.nombre_adultes = nombre;
-          utilisateur.logement.nombre_enfants = 0;
-        }
+        // const nombre = kyc.getReponseSimpleValueAsNumber();
+        // if (nombre) {
+        //   utilisateur.logement.nombre_adultes = nombre;
+        //   utilisateur.logement.nombre_enfants = 0;
+        // }
         break;
       default:
         break;
