@@ -299,7 +299,6 @@ export class MesAidesRenoUsecase {
             utilisateur.code_commune = commune.code;
             if (estLogementPrincipal) {
               utilisateur.logement.commune = commune.nom.toUpperCase();
-              utilisateur.logement.commune = commune.nom.toUpperCase();
               utilisateur.logement.code_postal = commune.codesPostaux[0];
             }
           }
