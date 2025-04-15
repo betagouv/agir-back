@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Contact } from './contact';
-import Brevo from '@getbrevo/brevo';
+import { AddContactToList, ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { App } from '../../domain/app';
-import { isDate } from 'util/types';
 
 @Injectable()
 export class BrevoRepository {
-  private client;
-  private apiInstance;
+  private apiInstance: ContactsApi;
   private batchApiUrl = 'https://api.brevo.com/v3/contacts/batch';
-  private apiKey = App.getBrevoApiToken();
+  private apiKey: string;
 
   constructor() {
-    this.client = Brevo.ApiClient.instance;
-    const apiKey = this.client.authentications['api-key'];
-    apiKey.apiKey = App.getBrevoApiToken();
-    this.apiInstance = new Brevo.ContactsApi();
+    this.apiInstance = new ContactsApi();
+    this.apiKey = App.getBrevoApiToken();
+    this.apiInstance.setApiKey(
+      ContactsApiApiKeys.apiKey,
+      this.apiKey,
+    );
   }
 
   public async BatchUpdateContacts(utilisateurs: Utilisateur[]) {
@@ -96,11 +96,11 @@ export class BrevoRepository {
         return null;
       }
 
-      const date_creation = new Date(brevo_contact.createdAt);
+      const date_creation = new Date(brevo_contact.body.createdAt);
 
       if (isNaN(date_creation.getTime())) {
         console.log(
-          `BAD date retrieved from BREVO for ${email}: [${brevo_contact.createdAt}] => setting to now() as default`,
+          `BAD date retrieved from BREVO for ${email}: [${brevo_contact.body.createdAt}] => setting to now() as default`,
         );
         return new Date();
       } else {
@@ -115,7 +115,9 @@ export class BrevoRepository {
   public async addContactsToList(emails: string[], listId: number) {
     if (this.is_synchro_disabled()) return true;
     try {
-      await this.apiInstance.addContactToList(listId, emails);
+      const contactEmails = new AddContactToList();
+      contactEmails.emails = emails;
+      await this.apiInstance.addContactToList(listId, contactEmails);
       console.log(`BREVO contacts added to list ${listId} : ${emails}`);
       return true;
     } catch (error) {

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { App } from '../../../src/domain/app';
-const Brevo = require('@getbrevo/brevo');
+import { SendSmtpEmail, TransactionalEmailsApi, TransactionalEmailsApiApiKeys } from '@getbrevo/brevo';
 
 @Injectable()
 export class EmailSender {
-  private client?;
-  private apiInstance?;
+  private apiInstance: TransactionalEmailsApi;
 
   constructor() {
-    this.client = Brevo.ApiClient.instance;
-    const apiKey = this.client.authentications['api-key'];
-    apiKey.apiKey = App.getBrevoApiToken();
-    this.apiInstance = new Brevo.TransactionalEmailsApi();
+    this.apiInstance = new TransactionalEmailsApi();
+    this.apiInstance.setApiKey(
+      TransactionalEmailsApiApiKeys.apiKey,
+      App.getBrevoApiToken(),
+    );
   }
 
   public async sendEmail(
@@ -24,7 +24,7 @@ export class EmailSender {
       name = 'utilisateur';
     }
 
-    const smtpEmail = new Brevo.SendSmtpEmail();
+    const smtpEmail = new SendSmtpEmail();
     smtpEmail.to = [{ email: email_to, name: name }];
     smtpEmail.sender = { name: `J'agis`, email: 'noreply-jagis@beta.gouv.fr' };
     smtpEmail.subject = subject;
