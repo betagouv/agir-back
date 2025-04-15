@@ -47,10 +47,12 @@ export class MesAidesRenoUsecase {
       Scope.logement,
     ]);
 
+    console.log('situation', situation);
+
     const estLogementPrincipal =
       // The user is a tenant
       situation[MesAidesRenoRuleNames.logementProprietaire] ===
-        'non propriétaire' ||
+        "'non propriétaire'" ||
       situation[
         MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire
       ] === 'oui' ||
