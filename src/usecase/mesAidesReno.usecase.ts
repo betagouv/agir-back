@@ -46,25 +46,31 @@ export class MesAidesRenoUsecase {
       Scope.kyc,
       Scope.logement,
     ]);
-
-    console.log('situation', situation);
+    const normalizedSituation = Object.fromEntries(
+      Object.entries(situation).map(([key, value]) => [
+        key,
+        parsePublicodesValue(value),
+      ]),
+    );
 
     const estLogementPrincipal =
       // The user is a tenant
-      situation[MesAidesRenoRuleNames.logementProprietaire] ===
-        "'non propriétaire'" ||
-      situation[
+      normalizedSituation[MesAidesRenoRuleNames.logementProprietaire] ===
+        'non propriétaire' ||
+      normalizedSituation[
         MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire
-      ] === 'oui' ||
+      ] === true ||
       // NOTE: seems to be true if and only if the user is logementResidencePrincipaleProprietaire == 'oui'
-      situation[MesAidesRenoRuleNames.logementProprietaireOccupant] === 'oui';
+      normalizedSituation[
+        MesAidesRenoRuleNames.logementProprietaireOccupant
+      ] === true;
 
-    for (const [ruleName, value] of Object.entries(situation)) {
+    for (const [ruleName, value] of Object.entries(normalizedSituation)) {
       this.mappingMesAidesRenoToUpdatedKYC[ruleName]?.forEach(
         (getUpdatedKyc: UpdateQuestionKYCCallback) => {
           const updated_kyc = getUpdatedKyc(
             utilisateur,
-            parsePublicodesValue(value),
+            value,
             estLogementPrincipal,
           );
 
