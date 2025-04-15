@@ -86,6 +86,7 @@ export class RecommandationUsecase {
 
     return this.personnalisator.personnaliser(content, utilisateur, [
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 

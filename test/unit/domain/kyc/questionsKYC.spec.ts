@@ -489,6 +489,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ngc_code: '000',
       selected: false,
     });
+    expect(question.is_answered).toEqual(true);
+    expect(question.hasAnyResponses()).toEqual(true);
 
     expect(
       history.getRawAnsweredKYCs()[0].getNombreReponsesPossibles(),
@@ -512,6 +514,59 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       ngc_code: '000',
       selected: false,
     });
+  });
+
+  it('getQuestionOrException : si code manquant dans catalogue, reponse disparait même si répondu', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: 'a',
+              ngc_code: '123',
+              selected: true,
+            },
+            {
+              label: 'truc',
+              code: 'b',
+              ngc_code: '456',
+              selected: false,
+            },
+          ],
+        },
+      ],
+    });
+    history.setCatalogue([
+      new KycDefinition({
+        ...KYC_DEF,
+        reponses: [
+          {
+            code: 'b',
+            label: 'hihi',
+            ngc_code: '000',
+          },
+        ],
+      }),
+    ]);
+
+    // WHEN
+    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+
+    // THEN
+    expect(question.getNombreReponsesPossibles()).toEqual(1);
+    expect(question.getReponseComplexeByCode('b')).toEqual({
+      code: 'b',
+      label: 'hihi',
+      ngc_code: '000',
+      selected: false,
+    });
+    expect(question.hasAnyResponses()).toEqual(false);
+    expect(question.is_answered).toEqual(false);
   });
 
   it('getQuestionOrException : si code manquant pas grave si question pas de type choix', () => {

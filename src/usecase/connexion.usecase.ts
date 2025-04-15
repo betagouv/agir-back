@@ -27,6 +27,10 @@ export class Connexion_v2_Usecase {
   ) {}
 
   async loginUtilisateur(email: string, password: string) {
+    if (App.isConnexionDown()) {
+      ApplicationError.throwConnexionDown(App.getEmailContact());
+    }
+
     if (!email || email === '') {
       ApplicationError.throwMissinEmail();
     }
@@ -105,6 +109,10 @@ export class Connexion_v2_Usecase {
   }
 
   async oubli_mot_de_passe(email: string) {
+    if (App.isConnexionDown()) {
+      ApplicationError.throwConnexionDown(App.getEmailContact());
+    }
+
     const utilisateur = await this.utilisateurRepository.findByEmail(email);
 
     if (!utilisateur) {

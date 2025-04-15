@@ -225,7 +225,7 @@ export class MigrationUsecase {
       Scope.logement,
     ]);
     if (utilisateur.logement.code_postal && utilisateur.logement.commune) {
-      const code_commune = _this.communeRepository.getCodeCommune(
+      const code_commune = _this.communeRepository.getCommuneCodeInsee(
         utilisateur.logement.code_postal,
         utilisateur.logement.commune,
       );

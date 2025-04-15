@@ -648,7 +648,7 @@ export class TestUtil {
       external_stat_id: null,
       pseudo: 'pseudo',
       cache_bilan_carbone: cache_bilan_carbone as any,
-      global_user_version: GlobalUserVersion.V1,
+      global_user_version: GlobalUserVersion.V2,
       ...override,
     };
   }
@@ -840,5 +840,69 @@ export class TestUtil {
       updated_at: new Date(),
       ...override,
     };
+  }
+
+  /**
+   * Create KYC questions for logement (used to test Mes Aides Reno API)
+   */
+  static createKYCLogement(): Promise<void[]> {
+    return Promise.all([
+      TestUtil.create(DB.kYC, {
+        id_cms: 1,
+        code: KYCID.KYC_proprietaire,
+        type: TypeReponseQuestionKYC.choix_unique,
+        reponses: [
+          { code: 'oui', label: 'Oui' },
+          { code: 'non', label: 'Non' },
+        ],
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 2,
+        code: KYCID.KYC_DPE,
+        type: TypeReponseQuestionKYC.choix_unique,
+        reponses: [
+          { code: 'A', label: 'A' },
+          { code: 'B', label: 'B' },
+          { code: 'C', label: 'C' },
+          { code: 'D', label: 'D' },
+          { code: 'E', label: 'E' },
+          { code: 'F', label: 'F' },
+          { code: 'G', label: 'G' },
+        ],
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 3,
+        code: KYCID.KYC_logement_age,
+        type: TypeReponseQuestionKYC.entier,
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 4,
+        code: KYCID.KYC006,
+        type: TypeReponseQuestionKYC.choix_unique,
+        reponses: [
+          { code: 'moins_15', label: 'Moins de 15 ans (neuf ou récent)' },
+          { code: 'plus_15', label: 'Plus de 15 ans' },
+        ],
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 5,
+        code: KYCID.KYC_menage,
+        type: TypeReponseQuestionKYC.entier,
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 6,
+        code: KYCID.KYC_type_logement,
+        type: TypeReponseQuestionKYC.choix_unique,
+        reponses: [
+          { code: TypeLogement.appartement, label: 'Appartement' },
+          { code: TypeLogement.maison, label: 'Maison' },
+        ],
+      }),
+      TestUtil.create(DB.kYC, {
+        id_cms: 7,
+        code: KYCID.KYC_superficie,
+        type: TypeReponseQuestionKYC.entier,
+      }),
+    ]);
   }
 }

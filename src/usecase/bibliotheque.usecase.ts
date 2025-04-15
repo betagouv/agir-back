@@ -67,7 +67,10 @@ export class BibliothequeUsecase {
         );
     }
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.no_blank_links,
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   // tous les articles par défaut
@@ -124,7 +127,10 @@ export class BibliothequeUsecase {
         );
     }
 
-    return this.personnalisator.personnaliser(result, utilisateur);
+    return this.personnalisator.personnaliser(result, utilisateur, [
+      CLE_PERSO.no_blank_links,
+      CLE_PERSO.block_text_cms,
+    ]);
   }
 
   public async getArticleAnonymous(content_id: string): Promise<Article> {

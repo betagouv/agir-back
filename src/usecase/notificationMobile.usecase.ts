@@ -5,7 +5,10 @@ import {
 } from '../domain/notification/notificationHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { PushNotificationTemplateRepository } from '../infrastructure/push_notifications/pushNotificationTemplate.repository';
-import { PushNotificator } from '../infrastructure/push_notifications/pushNotificator';
+import {
+  MessagingStatus,
+  PushNotificator,
+} from '../infrastructure/push_notifications/pushNotificator';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const day_10 = 1000 * 60 * 60 * 24 * 10;
@@ -89,13 +92,20 @@ export class NotificationMobileUsecase {
       );
 
     if (message) {
-      const sent_message = await this.pushNotificator.pushMessage(message);
-      if (update_history && utilisateur.notification_history && sent_message) {
+      const status = await this.pushNotificator.pushMessage(message);
+      if (
+        update_history &&
+        utilisateur.notification_history &&
+        status === MessagingStatus.ok
+      ) {
         utilisateur.notification_history.declareSentNotification(
           type_notif,
           CanalNotification.mobile,
         );
         return true;
+      }
+      if (status === MessagingStatus.bad_token) {
+        await this.utilisateurRepository.setMobileToken(utilisateur.id, null);
       }
     }
     return false;

@@ -35,6 +35,24 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     await TestUtil.appclose();
   });
 
+  it('POST /utilisateurs_v2 - inscription down', async () => {
+    // GIVEN
+    process.env.OTP_DEV = '112233';
+    process.env.IS_INSCRIPTION_DOWN = 'true';
+    process.env.EMAIL_CONTACT = 'XXXX';
+
+    // WHEN
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+    });
+    // THEN
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(`Bonjour,
+suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à XXXX`);
+  });
   it('POST /utilisateurs_v2 - create new utilisateur avec seulement email et mot de passe', async () => {
     // GIVEN
     process.env.OTP_DEV = '112233';

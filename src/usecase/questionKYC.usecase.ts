@@ -41,6 +41,7 @@ export class QuestionKYCUsecase {
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 
@@ -76,6 +77,7 @@ export class QuestionKYCUsecase {
     return this.personnalisator.personnaliser(result_kyc, utilisateur, [
       CLE_PERSO.espace_insecable,
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 

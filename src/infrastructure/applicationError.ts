@@ -737,6 +737,22 @@ export class ApplicationError {
     );
   }
 
+  static throwConnexionDown(contact: string) {
+    this.throwAppError(
+      '139',
+      `Bonjour,
+suite à un problème technique, vous ne pouvez pas vous connecter au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
+    );
+  }
+
+  static throwInscriptionDown(contact: string) {
+    this.throwAppError(
+      '140',
+      `Bonjour,
+suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

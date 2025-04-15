@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
 import { KYCID } from '../domain/kyc/KYCID';
 import { BooleanKYC } from '../domain/kyc/questionKYC';
 import { TypeNotification } from '../domain/notification/notificationHistory';
@@ -35,6 +36,10 @@ export class InscriptionUsecase {
   ) {}
 
   async inscrire_utilisateur(utilisateurInput: CreateUtilisateurAPI) {
+    if (App.isInscriptionDown()) {
+      ApplicationError.throwInscriptionDown(App.getEmailContact());
+    }
+
     if (!utilisateurInput.email) {
       ApplicationError.throwEmailObligatoireError();
     }
@@ -103,6 +108,9 @@ export class InscriptionUsecase {
   }
 
   async renvoyerCodeInscription(email: string) {
+    if (App.isInscriptionDown()) {
+      ApplicationError.throwInscriptionDown(App.getEmailContact());
+    }
     const utilisateur = await this.utilisateurRespository.findByEmail(email);
     if (!utilisateur) {
       return;

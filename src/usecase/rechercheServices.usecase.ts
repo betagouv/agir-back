@@ -206,6 +206,7 @@ export class RechercheServicesUsecase {
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 
@@ -224,6 +225,7 @@ export class RechercheServicesUsecase {
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.block_text_cms,
+      CLE_PERSO.no_blank_links,
     ]);
   }
 

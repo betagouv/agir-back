@@ -8,6 +8,7 @@ export enum CLE_PERSO {
   code_postal = '{CODE_POSTAL}',
   espace_insecable = 'espace_insecable',
   block_text_cms = 'block_text_cms',
+  no_blank_links = 'not_blank_links',
 }
 
 @Injectable()
@@ -57,20 +58,25 @@ export class Personnalisator {
     disable_actions: CLE_PERSO[] = [],
   ): string {
     let new_value = text;
-    if (!disable_actions.includes(CLE_PERSO.espace_insecable)) {
+    if (this.isActive(CLE_PERSO.espace_insecable, disable_actions)) {
       new_value = this.replaceLastSpaceByNBSP(text);
     }
 
     if (utilisateur) {
       for (const cle of this.KEYS_PERSO) {
-        if (new_value.includes(cle) && !disable_actions.includes(cle)) {
+        if (new_value.includes(cle) && this.isActive(cle, disable_actions)) {
           new_value = this.replace(new_value, cle, utilisateur);
         }
       }
     }
 
-    if (!disable_actions.includes(CLE_PERSO.block_text_cms)) {
+    if (this.isActive(CLE_PERSO.block_text_cms, disable_actions)) {
       new_value = this.replaceCmsBlockText(new_value);
+    }
+
+    if (this.isActive(CLE_PERSO.no_blank_links, disable_actions)) {
+      new_value = new_value.replace(/_self|_parent|_top/gi, '_blank');
+      new_value = new_value.replace(/<a /gi, '<a target="_blank" ');
     }
 
     return new_value;
@@ -123,5 +129,9 @@ export class Personnalisator {
       utilisateur.logement.code_postal,
       utilisateur.logement.commune,
     );
+  }
+
+  private isActive(cle: CLE_PERSO, disable_actions: CLE_PERSO[]): boolean {
+    return !disable_actions.includes(cle);
   }
 }
