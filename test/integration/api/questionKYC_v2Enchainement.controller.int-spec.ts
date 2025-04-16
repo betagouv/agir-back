@@ -13,9 +13,11 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuestionKYCEnchainementUsecase } from '../../../src/usecase/questionKYCEnchainement.usecase';
@@ -87,6 +89,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -240,6 +243,150 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     expect(response.body.message).toEqual(
       "L'enchainement d'id [BAD] n'existe pas",
     );
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de simultateur`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.simulateur,
+      type_code_id: 'simulateur_123',
+      label_compteur: 'ttt',
+      kyc_codes: ['KYC001', 'KYC002'],
+    });
+
+    await TestUtil.create(DB.utilisateur);
+    await kycRepository.loadCache();
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/simulateur_123/first',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 2,
+      nombre_total_questions_effectives: 2,
+      position_courante: 1,
+      is_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      is_eligible: true,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC001',
+        is_NGC: true,
+        is_answered: false,
+        points: 20,
+        question: 'quest 1',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de bilan`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.bilan,
+      type_code_id: 'bilan_123',
+      label_compteur: 'ttt',
+      kyc_codes: ['KYC001', 'KYC002'],
+    });
+
+    await TestUtil.create(DB.utilisateur);
+    await kycRepository.loadCache();
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/bilan_123/first',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 2,
+      nombre_total_questions_effectives: 2,
+      position_courante: 1,
+      is_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      is_eligible: true,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC001',
+        is_NGC: true,
+        is_answered: false,
+        points: 20,
+        question: 'quest 1',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
   });
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement, même si répondu`, async () => {

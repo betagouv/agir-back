@@ -44,12 +44,19 @@ export class ActionRepository {
 
     const liste = await this.prisma.action.findMany();
     for (const action_db of liste) {
-      new_map.set(
-        action_db.type_code_id,
-        this.buildActionDefinitionFromDB(action_db),
-      );
+      const action_def = this.buildActionDefinitionFromDB(action_db);
+      new_map.set(action_db.type_code_id, action_def);
     }
     ActionRepository.catalogue = new_map;
+  }
+
+  public isSimulateur(action: TypeCodeAction): boolean {
+    const action_def = this.getActionDefinitionByTypeCode(action);
+    return action_def && action_def.type === TypeAction.simulateur;
+  }
+  public isBilan(action: TypeCodeAction): boolean {
+    const action_def = this.getActionDefinitionByTypeCode(action);
+    return action_def && action_def.type === TypeAction.bilan;
   }
 
   public static resetCache() {
@@ -91,7 +98,7 @@ export class ActionRepository {
       recette_categorie: action.recette_categorie,
       sous_titre: action.sous_titre,
       type: action.type,
-      type_code_id: action.getTypeCodeId(),
+      type_code_id: action.getTypeCodeAsString(),
       tags_excluants: action.tags_excluants,
       sources: action.sources as any,
       pdcn_categorie: action.pdcn_categorie,

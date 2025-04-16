@@ -77,7 +77,7 @@ export class StatistiqueExternalRepository {
         user_id: user_id,
         cms_id: action.cms_id,
         code_action: action.code,
-        type_code_id: action.getTypeCodeId(),
+        type_code_id: action.getTypeCodeAsString(),
         thematique: action.thematique,
         titre: action.titre,
         type_action: action.type,

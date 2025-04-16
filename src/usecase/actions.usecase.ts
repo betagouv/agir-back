@@ -362,10 +362,10 @@ export class ActionUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
-      code,
-      type,
-    );
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      code: code,
+      type: type,
+    });
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -427,16 +427,18 @@ export class ActionUsecase {
       );
     }
 
-    const enchainementName =
-      action.type === TypeAction.bilan
-        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action.code]]
-        : undefined;
-
-    action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      enchainementName
-        ? QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainementName]
-        : action_def.kyc_codes,
-    );
+    if (action_def.type === TypeAction.bilan) {
+      const kyc_codes = this.external_get_kyc_codes_from_action_bilan(
+        action_def.code,
+      );
+      action.kycs =
+        utilisateur.kyc_history.getEnchainementKYCsEligibles(kyc_codes);
+    }
+    if (action_def.type === TypeAction.simulateur) {
+      action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        action_def.kyc_codes,
+      );
+    }
 
     const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
     action.nombre_actions_faites = nbr_faites;
@@ -457,6 +459,23 @@ export class ActionUsecase {
     return this.personnalisator.personnaliser(action, undefined, [
       CLE_PERSO.espace_insecable,
     ]);
+  }
+
+  public external_get_kyc_codes_from_action_bilan(
+    code_action: string,
+  ): string[] {
+    const enchainement_id =
+      ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[code_action]];
+
+    if (enchainement_id) {
+      return QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainement_id];
+    } else {
+      const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+        type: TypeAction.bilan,
+        code: code_action,
+      });
+      return action_def ? action_def.kyc_codes : [];
+    }
   }
 
   public async calculeScoreQuizzAction(

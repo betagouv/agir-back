@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
+import { Enchainement } from '../domain/kyc/enchainement';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -10,7 +11,6 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
-import { Enchainement } from './questionKYCEnchainement.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =

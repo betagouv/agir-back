@@ -116,6 +116,8 @@ export class ActionAPI {
   @ApiProperty({ type: [ServiceActionAPI] })
   services: ServiceActionAPI[];
 
+  @ApiProperty() enchainement_id: string;
+
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
@@ -144,6 +146,7 @@ export class ActionAPI {
       sources: action.sources,
       articles: action.article_liste.map((a) => ArticleLightAPI.mapToAPI(a)),
       like_level: action.like_level,
+      enchainement_id: action.enchainement_id,
     };
   }
 }

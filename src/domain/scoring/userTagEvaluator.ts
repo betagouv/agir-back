@@ -1,6 +1,6 @@
-import { Thematique } from '../thematique/thematique';
 import { KYCID } from '../kyc/KYCID';
 import { BooleanKYC, QuestionKYC } from '../kyc/questionKYC';
+import { Thematique } from '../thematique/thematique';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { Tag } from './tag';
 
