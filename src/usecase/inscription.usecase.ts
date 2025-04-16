@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
-import { KYCID } from '../domain/kyc/KYCID';
-import { BooleanKYC } from '../domain/kyc/questionKYC';
 import { TypeNotification } from '../domain/notification/notificationHistory';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -13,10 +11,9 @@ import {
 } from '../domain/utilisateur/utilisateur';
 import { CreateUtilisateurAPI } from '../infrastructure/api/types/utilisateur/onboarding/createUtilisateurAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { KycRepository } from '../infrastructure/repository/kyc.repository';
-import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { BilanCarboneUsecase } from './bilanCarbone.usecase';
 import { NotificationEmailUsecase } from './notificationEmail.usecase';
 
 export type Phrase = {
@@ -30,7 +27,7 @@ export class InscriptionUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private securityEmailManager: SecurityEmailManager,
     private codeManager: CodeManager,
-    private situationNGCRepository: SituationNGCRepository,
+    private bilanCarboneUseCase: BilanCarboneUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private tokenRepository: TokenRepository,
   ) {}
@@ -69,7 +66,7 @@ export class InscriptionUsecase {
     utilisateurToCreate.status = UtilisateurStatus.creation_compte_etape_1;
 
     if (utilisateurInput.situation_ngc_id) {
-      await this.external_inject_situation_to_user_kycs(
+      await this.bilanCarboneUseCase.external_inject_situation_to_user_kycs(
         utilisateurToCreate,
         utilisateurInput.situation_ngc_id,
       );
@@ -132,44 +129,6 @@ export class InscriptionUsecase {
       utilisateur,
       okAction,
     );
-  }
-
-  async external_inject_situation_to_user_kycs(
-    utilisateurToCreate: Utilisateur,
-    situation_ngc_id: string,
-  ) {
-    utilisateurToCreate.kyc_history.setCatalogue(KycRepository.getCatalogue());
-
-    utilisateurToCreate.cache_bilan_carbone.est_bilan_complet = true;
-
-    const situation = await this.situationNGCRepository.getSituationNGCbyId(
-      situation_ngc_id,
-    );
-    if (situation) {
-      await this.situationNGCRepository.setUtilisateurIdToSituation(
-        utilisateurToCreate.id,
-        situation_ngc_id,
-      );
-
-      utilisateurToCreate.kyc_history.trySelectChoixUniqueByCode(
-        KYCID.KYC_bilan,
-        BooleanKYC.oui,
-      );
-      const updated_keys = utilisateurToCreate.kyc_history.injectSituationNGC(
-        situation.situation as any,
-        utilisateurToCreate,
-      );
-
-      utilisateurToCreate.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
-
-      if (updated_keys.length > 0) {
-        console.log(
-          `Updated NGC kycs for ${
-            utilisateurToCreate.email
-          } : ${updated_keys.join('|')}`,
-        );
-      }
-    }
   }
 
   private async sendValidationCode(utilisateur: Utilisateur) {

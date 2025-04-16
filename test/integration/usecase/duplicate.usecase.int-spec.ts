@@ -19,6 +19,7 @@ import { ArticleRepository } from '../../../src/infrastructure/repository/articl
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
+import { SituationNGCRepository } from '../../../src/infrastructure/repository/situationNGC.repository';
 import { StatistiqueExternalRepository } from '../../../src/infrastructure/repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { BilanCarboneUsecase } from '../../../src/usecase/bilanCarbone.usecase';
@@ -122,9 +123,12 @@ describe('Duplicate Usecase', () => {
   const aideRepository = new AideRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const nGCCalculator = new NGCCalculator();
+  const situationRepository = new SituationNGCRepository(TestUtil.prisma);
+
   const bilanCarboneUsecase = new BilanCarboneUsecase(
     nGCCalculator,
     utilisateurRepository,
+    situationRepository,
   );
 
   let duplicateUsecase = new DuplicateBDDForStatsUsecase(

@@ -8,10 +8,16 @@ import {
 } from '../domain/bilan/bilanCarbone';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import {
+  BooleanKYC,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from '../domain/kyc/questionKYC';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
+import { KycRepository } from '../infrastructure/repository/kyc.repository';
+import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
@@ -38,7 +44,74 @@ export class BilanCarboneUsecase {
   constructor(
     private nGCCalculator: NGCCalculator,
     private utilisateurRepository: UtilisateurRepository,
+    private situationRepository: SituationNGCRepository,
   ) {}
+
+  async reInjecterSituationsNGC(block_size = 200): Promise<string[]> {
+    const result = [];
+    const total = await this.situationRepository.countAllWithUserId();
+    for (let index = 0; index < total; index = index + block_size) {
+      const current_situation_id_list =
+        await this.situationRepository.listeIdsLinkedToUser(index, block_size);
+
+      for (const situation of current_situation_id_list) {
+        const user = await this.utilisateurRepository.getById(
+          situation.user_id,
+          [Scope.kyc, Scope.logement, Scope.cache_bilan_carbone],
+        );
+
+        const updated_keys = await this.external_inject_situation_to_user_kycs(
+          user,
+          situation.id,
+        );
+        if (updated_keys.length > 0) {
+          result.push(`Set on user ${user.id} : ` + updated_keys.join('|'));
+          await this.utilisateurRepository.updateUtilisateur(user);
+        }
+      }
+    }
+    return result;
+  }
+
+  async external_inject_situation_to_user_kycs(
+    utilisateur: Utilisateur,
+    situation_ngc_id: string,
+  ): Promise<string[]> {
+    utilisateur.kyc_history.setCatalogue(KycRepository.getCatalogue());
+
+    utilisateur.cache_bilan_carbone.est_bilan_complet = true;
+
+    const situation = await this.situationRepository.getSituationNGCbyId(
+      situation_ngc_id,
+    );
+    if (situation) {
+      await this.situationRepository.setUtilisateurIdToSituation(
+        utilisateur.id,
+        situation_ngc_id,
+      );
+
+      utilisateur.kyc_history.trySelectChoixUniqueByCode(
+        KYCID.KYC_bilan,
+        BooleanKYC.oui,
+      );
+      const updated_keys = utilisateur.kyc_history.injectSituationNGC(
+        situation.situation as any,
+        utilisateur,
+      );
+
+      utilisateur.kyc_history.flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered();
+
+      if (updated_keys.length > 0) {
+        console.log(
+          `Updated NGC kycs for ${utilisateur.email} : ${updated_keys.join(
+            '|',
+          )}`,
+        );
+      }
+      return updated_keys;
+    }
+    return [];
+  }
 
   async flagToutUtilisateurForcerCaclculStatsBilan(block_size = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();

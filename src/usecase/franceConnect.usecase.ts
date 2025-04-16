@@ -12,7 +12,7 @@ import { FCUserInfo, OidcService } from '../infrastructure/auth/oidc.service';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { InscriptionUsecase } from './inscription.usecase';
+import { BilanCarboneUsecase } from './bilanCarbone.usecase';
 
 @Injectable()
 export class FranceConnectUsecase {
@@ -22,7 +22,7 @@ export class FranceConnectUsecase {
     private passwordManager: PasswordManager,
     private oIDCStateRepository: OIDCStateRepository,
     private tokenRepository: TokenRepository,
-    private inscriptionUsecase: InscriptionUsecase,
+    private bilanCarboneUseCase: BilanCarboneUsecase,
   ) {}
 
   async genererConnexionFranceConnect(situation_ngc_id?: string): Promise<URL> {
@@ -143,7 +143,7 @@ export class FranceConnectUsecase {
     new_utilisateur.est_valide_pour_classement = true;
 
     if (state.situation_ngc_id) {
-      await this.inscriptionUsecase.external_inject_situation_to_user_kycs(
+      await this.bilanCarboneUseCase.external_inject_situation_to_user_kycs(
         new_utilisateur,
         state.situation_ngc_id,
       );

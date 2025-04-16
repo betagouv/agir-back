@@ -116,6 +116,13 @@ export class AdminController extends GenericControler {
     return await this.serviceUsecase.refreshScheduledServices();
   }
 
+  @Post('admin/re_inject_situations_NGC')
+  @ApiOkResponse({ type: [String] })
+  async re_inject_situations_NGC(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.bilanCarboneUsecase.reInjecterSituationsNGC();
+  }
+
   @Post('services/compute_stats')
   @ApiOkResponse({ type: [String] })
   async compute_stats(@Request() req) {

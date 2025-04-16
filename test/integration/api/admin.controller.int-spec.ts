@@ -2160,4 +2160,105 @@ describe('Admin (API test)', () => {
       url_source: 'b',
     });
   });
+
+  it('POST /admin/re_inject_situations_NGC : OK si table vide de situation', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/re_inject_situations_NGC');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([]);
+  });
+  it('POST /admin/re_inject_situations_NGC : rien si situation pas liée à un utilisateur', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC, {
+      created_at: new Date(1),
+      situation: {},
+      id: '123',
+      utilisateurId: null,
+      updated_at: new Date(1),
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/re_inject_situations_NGC');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([]);
+  });
+  it(`POST /admin/re_inject_situations_NGC : maj d'une KYC`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.situationNGC, {
+      id: '123',
+      utilisateurId: 'utilisateur-id',
+      created_at: new Date(1),
+      updated_at: new Date(1),
+      situation: {
+        'transport . voiture . km': 2999,
+        'alimentation . de saison . consommation': "'bof'",
+      },
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_km,
+      type: TypeReponseQuestionKYC.entier,
+      is_ngc: true,
+      question: `Km en voiture ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [],
+      ngc_key: 'transport . voiture . km',
+    });
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 2,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.test,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: "'souvent'" },
+        { label: 'Jamais', code: 'jamais', ngc_code: "'bof'" },
+        { label: 'Parfois', code: 'parfois', ngc_code: "'burp'" },
+      ],
+      tags: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      conditions: [],
+      is_ngc: true,
+    });
+
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/re_inject_situations_NGC');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      'Set on user utilisateur-id : transport . voiture . km|alimentation . de saison . consommation',
+    ]);
+
+    const user_DB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(
+      user_DB.kyc_history
+        .getUpToDateAnsweredQuestionByCode('KYC_transport_voiture_km')
+        .getReponseSimpleValueAsNumber(),
+    ).toEqual(2999);
+    expect(
+      user_DB.kyc_history
+        .getUpToDateAnsweredQuestionByCode('KYC_saison_frequence')
+        .getCodeReponseQuestionChoixUnique(),
+    ).toEqual('jamais');
+  });
 });

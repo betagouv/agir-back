@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { SituationNGC } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SituationNGCRepository {
@@ -11,6 +11,39 @@ export class SituationNGCRepository {
     return this.prisma.situationNGC.findUnique({
       where: { id },
     });
+  }
+
+  async countAllWithUserId(): Promise<number> {
+    return this.prisma.situationNGC.count({
+      where: {
+        utilisateurId: {
+          not: null,
+        },
+      },
+    });
+  }
+
+  async listeIdsLinkedToUser(
+    skip: number,
+    take: number,
+  ): Promise<{ id: string; user_id: string }[]> {
+    const result = await this.prisma.situationNGC.findMany({
+      skip: skip,
+      take: take,
+      orderBy: {
+        id: 'desc',
+      },
+      where: {
+        utilisateurId: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        utilisateurId: true,
+      },
+    });
+    return result.map((r) => ({ id: r.id, user_id: r.utilisateurId }));
   }
 
   async createSituation(situation: object): Promise<string> {

@@ -788,7 +788,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
     expect(
-      user.kyc_history.isQuestionAnsweredByCode(KYCID.KYC_chauffage_fioul),
+      user.kyc_history.isQuestionAnswered(KYCID.KYC_chauffage_fioul),
     ).toEqual(true);
     expect(user.kyc_history.getRawAnsweredMosaics()).toHaveLength(2);
     expect(

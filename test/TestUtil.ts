@@ -302,13 +302,15 @@ export class TestUtil {
       },
     };
   }
-  static situationNGCData(override?): SituationNGC {
+  static situationNGCData(override?: Partial<SituationNGC>): SituationNGC {
     return {
       id: 'situationNGC-id',
       situation: {
         'transport . voiture . km': 12000,
       },
-      created_at: new Date(),
+      utilisateurId: '123',
+      updated_at: undefined,
+      created_at: undefined,
       ...override,
     };
   }
