@@ -6,50 +6,48 @@ export class EnchainementKYC {
   private liste_kyc: QuestionKYC[];
   private history: KYCHistory;
   private current_kyc: QuestionKYC;
+  private is_force_rewinded: boolean;
 
   constructor(liste_kyc: QuestionKYC[], history: KYCHistory) {
     this.liste_kyc = liste_kyc;
     this.history = history;
+    this.is_force_rewinded = false;
   }
 
-  public setCurrentKYC(kyc: QuestionKYC) {
-    this.current_kyc = kyc;
-  }
-
-  public getNombreTotalQuestionsEligibles(): number {
-    let total = 0;
-    for (const kyc of this.liste_kyc) {
-      total += this.history.isKYCEligible(kyc) ? 1 : 0;
-    }
-    return total;
+  public forceRewind() {
+    this.current_kyc = this.liste_kyc[0];
+    this.is_force_rewinded = true;
   }
 
   public getNombreTotalQuestionseffectives(
     excludes: EnchainementKYCExclude[],
   ): number {
+    if (this.is_force_rewinded) {
+      return this.liste_kyc.length;
+    }
+    if (excludes.length === 0) {
+      return this.liste_kyc.length;
+    }
+
     let total = 0;
     for (const kyc of this.liste_kyc) {
-      if (excludes.length === 0) {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          if (kyc.is_answered) {
+            continue; // on zap cette question, elle est répondu
+          }
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          if (!this.history.isKYCEligible(kyc)) {
+            continue; // on zap cette question, elle est pas pas eligible
+          }
+        }
         total++;
       } else {
-        if (excludes.length === 1) {
-          if (excludes.includes(EnchainementKYCExclude.repondu)) {
-            if (kyc.is_answered) {
-              continue; // on zap cette question, elle est répondu
-            }
-          }
-          if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
-            if (!this.history.isKYCEligible(kyc)) {
-              continue; // on zap cette question, elle est pas pas eligible
-            }
-          }
-          total++;
-        } else {
-          if (!this.history.isKYCEligible(kyc) || kyc.is_answered) {
-            continue;
-          }
-          total++;
+        if (!this.history.isKYCEligible(kyc) || kyc.is_answered) {
+          continue;
         }
+        total++;
       }
     }
     return total;
@@ -98,110 +96,116 @@ export class EnchainementKYC {
     }
   }
 
-  public getPositionCouranteDansEligibles(): number {
-    if (!this.current_kyc) {
-      return NaN;
-    }
-    if (!this.history.isKYCEligible(this.current_kyc)) {
-      return NaN;
-    }
-    let index_result = 0;
-    for (const kyc of this.liste_kyc) {
-      if (kyc.code === this.current_kyc.code) {
-        return index_result;
-      }
-      if (this.history.isKYCEligible(kyc)) {
-        index_result++;
-      }
-    }
-    return NaN;
-  }
-  public getPositionCourante(): number {
-    if (!this.current_kyc) {
-      return NaN;
-    }
-    const found_index = this.liste_kyc.findIndex(
-      (k) => k.code === this.current_kyc.code,
-    );
-    if (found_index !== -1) {
-      return found_index;
-    } else {
-      return NaN;
-    }
-  }
-
   public getNombreTotalQuestions(): number {
     return this.liste_kyc.length;
   }
 
-  public setFirst(): QuestionKYC {
-    this.current_kyc = this.liste_kyc[0];
+  public setFirstFromExcludes(excludes: EnchainementKYCExclude[]): QuestionKYC {
+    this.current_kyc = this.getFirstWithExcludes(excludes);
     return this.current_kyc;
   }
-  public setFirstToAnswer(): QuestionKYC {
-    for (const kyc of this.liste_kyc) {
-      if (!kyc.is_answered) {
-        this.current_kyc = kyc;
-        return kyc;
-      }
-    }
-    return undefined;
+
+  public setNextWithExcludes(
+    current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC {
+    const next = this.getNextWithExcludes(current_kyc_code, excludes);
+    this.current_kyc = next;
+    return next;
   }
 
-  public isCurrentFirstEligible(): boolean {
-    const first = this.getFirstKYCEligible();
+  public setPreviousWithExcludes(
+    current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC {
+    const previous = this.getPreviousWithExcludes(current_kyc_code, excludes);
+    this.current_kyc = previous;
+    return previous;
+  }
+
+  public getNextWithExcludes(
+    current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC {
+    if (excludes.length === 0) {
+      return this.getNextKyc(current_kyc_code);
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          return this.getNextKycNonRepondu(current_kyc_code);
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          return this.getNextKycEligible(current_kyc_code);
+        }
+      } else {
+        return this.getNextKycEligibleNonRepondu(current_kyc_code);
+      }
+    }
+  }
+
+  public isVeryFirst(): boolean {
+    if (!this.current_kyc) return false;
+    return this.liste_kyc[0].code === this.current_kyc.code;
+  }
+
+  public isFirst(excludes: EnchainementKYCExclude[]) {
+    if (this.is_force_rewinded) {
+      return true;
+    }
+    const first = this.getFirstWithExcludes(excludes);
     if (!first) return false;
     if (!this.current_kyc) return false;
     return first.code === this.current_kyc.code;
   }
-  public isCurrentLastEligible(): boolean {
-    const last = this.getLastKYCEligible();
+
+  public isLast(excludes: EnchainementKYCExclude[]) {
+    const last = this.getLastWithExcludes(excludes);
     if (!last) return false;
     if (!this.current_kyc) return false;
     return last.code === this.current_kyc.code;
-  }
-
-  public setFirstToAnswerEligible(): QuestionKYC {
-    for (const kyc of this.liste_kyc) {
-      if (!kyc.is_answered && this.history.isKYCEligible(kyc)) {
-        this.current_kyc = kyc;
-        return kyc;
-      }
-    }
-    return undefined;
-  }
-
-  public setFirstEligible(): QuestionKYC | undefined {
-    for (const kyc of this.liste_kyc) {
-      if (this.history.isKYCEligible(kyc)) {
-        this.current_kyc = kyc;
-        return kyc;
-      }
-    }
-    return undefined;
-  }
-
-  public getFirstKyc(): QuestionKYC {
-    return this.liste_kyc[0];
   }
 
   public getKycCourante(): QuestionKYC {
     return this.current_kyc;
   }
 
-  public getFirstKYCNonRepondue(): QuestionKYC | undefined {
+  private getFirstWithExcludes(
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC {
+    if (excludes.length === 0) {
+      return this.getFirst();
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          return this.getFirstKYCNonRepondue();
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          return this.getFirstKYCEligible();
+        }
+      } else {
+        return this.getFirstKYCNonRepondueEligible();
+      }
+    }
+  }
+
+  private getFirst(): QuestionKYC {
+    return this.liste_kyc[0];
+  }
+
+  private getFirstKYCNonRepondue(): QuestionKYC | undefined {
     return this.liste_kyc.find((k) => !k.is_answered);
   }
 
-  public getFirstKYCNonRepondueEligible(): QuestionKYC | undefined {
+  private getFirstKYCNonRepondueEligible(): QuestionKYC | undefined {
     return this.liste_kyc.find(
       (k) => !k.is_answered && this.history.isKYCEligible(k),
     );
   }
-  public getFirstKYCEligible(): QuestionKYC | undefined {
+  private getFirstKYCEligible(): QuestionKYC | undefined {
     return this.liste_kyc.find((k) => this.history.isKYCEligible(k));
   }
-  public getLastKYCEligible(): QuestionKYC | undefined {
+
+  private getLastKYCEligible(): QuestionKYC | undefined {
     for (let index = this.liste_kyc.length - 1; index >= 0; index--) {
       const kyc = this.liste_kyc[index];
       if (this.history.isKYCEligible(kyc)) {
@@ -210,156 +214,192 @@ export class EnchainementKYC {
     }
     return undefined;
   }
+  private getLastKYCNonRepondu(): QuestionKYC | undefined {
+    for (let index = this.liste_kyc.length - 1; index >= 0; index--) {
+      const kyc = this.liste_kyc[index];
+      if (!kyc.is_answered) {
+        return kyc;
+      }
+    }
+    return undefined;
+  }
+  private getLastKYCNonReponduEligible(): QuestionKYC | undefined {
+    for (let index = this.liste_kyc.length - 1; index >= 0; index--) {
+      const kyc = this.liste_kyc[index];
+      if (!kyc.is_answered && this.history.isKYCEligible(kyc)) {
+        return kyc;
+      }
+    }
+    return undefined;
+  }
 
-  public setNextKycEligible(current_kyc_code: string): QuestionKYC | undefined {
+  private getLastWithExcludes(
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC | undefined {
+    if (excludes.length === 0) {
+      return this.liste_kyc[this.liste_kyc.length - 1];
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          return this.getLastKYCNonRepondu();
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          return this.getLastKYCEligible();
+        }
+      } else {
+        return this.getLastKYCNonReponduEligible();
+      }
+    }
+  }
+
+  private getNextKycEligible(
+    current_kyc_code: string,
+  ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
       const current_kyc = this.liste_kyc[index];
 
       if (this.history.isKYCEligible(current_kyc)) {
-        this.current_kyc = current_kyc;
         return current_kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 
-  public setNextKycEligibleNonRepondu(
+  private getNextKycEligibleNonRepondu(
     current_kyc_code: string,
   ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
       const current_kyc = this.liste_kyc[index];
 
       if (this.history.isKYCEligible(current_kyc) && !current_kyc.is_answered) {
-        this.current_kyc = current_kyc;
         return current_kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 
-  public setNextKyc(current_kyc_code: string): QuestionKYC | undefined {
+  private getNextKyc(current_kyc_code: string): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
-    const result = this.liste_kyc[foundIndex + 1];
-    this.current_kyc = result;
-    return result;
+    return this.liste_kyc[foundIndex + 1];
   }
 
-  public setNextKycNonRepondu(
+  private getNextKycNonRepondu(
     current_kyc_code: string,
   ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === this.liste_kyc.length - 1 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
       const current_kyc = this.liste_kyc[index];
 
       if (!current_kyc.is_answered) {
-        this.current_kyc = current_kyc;
         return current_kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 
-  public setPreviousKyc(current_kyc_code: string): QuestionKYC | undefined {
+  private getPreviousWithExcludes(
+    current_kyc_code: string,
+    excludes: EnchainementKYCExclude[],
+  ): QuestionKYC {
+    if (excludes.length === 0) {
+      return this.getPreviousKyc(current_kyc_code);
+    } else {
+      if (excludes.length === 1) {
+        if (excludes.includes(EnchainementKYCExclude.repondu)) {
+          return this.getPreviousKycNonRepondu(current_kyc_code);
+        }
+        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
+          return this.getPreviousKycEligible(current_kyc_code);
+        }
+      } else {
+        return this.getPreviousKycEligibleNonRepondu(current_kyc_code);
+      }
+    }
+  }
+
+  private getPreviousKyc(current_kyc_code: string): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === 0 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
-    const result = this.liste_kyc[foundIndex - 1];
-    this.current_kyc = result;
-    return result;
+    return this.liste_kyc[foundIndex - 1];
   }
-  public setPreviousKycNonRepondu(
+
+  private getPreviousKycNonRepondu(
     current_kyc_code: string,
   ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === 0 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex - 1; index >= 0; index--) {
       const kyc = this.liste_kyc[index];
       if (!kyc.is_answered) {
-        this.current_kyc = kyc;
         return kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 
-  public setPreviousKycEligible(
+  private getPreviousKycEligible(
     current_kyc_code: string,
   ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === 0 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex - 1; index >= 0; index--) {
       const kyc = this.liste_kyc[index];
       if (this.history.isKYCEligible(kyc)) {
-        this.current_kyc = kyc;
         return kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 
-  public setPreviousKycEligibleNonRepondu(
+  private getPreviousKycEligibleNonRepondu(
     current_kyc_code: string,
   ): QuestionKYC | undefined {
     const foundIndex = this.liste_kyc.findIndex(
       (k) => k.code === current_kyc_code,
     );
     if (foundIndex === 0 || foundIndex === -1) {
-      this.current_kyc = undefined;
       return undefined;
     }
     for (let index = foundIndex - 1; index >= 0; index--) {
       const kyc = this.liste_kyc[index];
       if (this.history.isKYCEligible(kyc) && !kyc.is_answered) {
-        this.current_kyc = kyc;
         return kyc;
       }
     }
-    this.current_kyc = undefined;
     return undefined;
   }
 }

@@ -157,19 +157,9 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    if (excludes.length === 0) {
-      enchainement.setFirst();
-    } else {
-      if (excludes.length === 1) {
-        if (excludes.includes(EnchainementKYCExclude.repondu)) {
-          enchainement.setFirstToAnswer();
-        }
-        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
-          enchainement.setFirstEligible();
-        }
-      } else {
-        enchainement.setFirstToAnswerEligible();
-      }
+    const first_kyc = enchainement.setFirstFromExcludes(excludes);
+    if (!first_kyc) {
+      enchainement.forceRewind();
     }
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
@@ -201,20 +191,7 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    if (excludes.length === 0) {
-      enchainement.setNextKyc(current_kyc_code);
-    } else {
-      if (excludes.length === 1) {
-        if (excludes.includes(EnchainementKYCExclude.repondu)) {
-          enchainement.setNextKycNonRepondu(current_kyc_code);
-        }
-        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
-          enchainement.setNextKycEligible(current_kyc_code);
-        }
-      } else {
-        enchainement.setNextKycEligibleNonRepondu(current_kyc_code);
-      }
-    }
+    enchainement.setNextWithExcludes(current_kyc_code, excludes);
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -245,20 +222,7 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    if (excludes.length === 0) {
-      enchainement.setPreviousKyc(current_kyc_code);
-    } else {
-      if (excludes.length === 1) {
-        if (excludes.includes(EnchainementKYCExclude.repondu)) {
-          enchainement.setPreviousKycNonRepondu(current_kyc_code);
-        }
-        if (excludes.includes(EnchainementKYCExclude.non_eligible)) {
-          enchainement.setPreviousKycEligible(current_kyc_code);
-        }
-      } else {
-        enchainement.setPreviousKycEligibleNonRepondu(current_kyc_code);
-      }
-    }
+    enchainement.setPreviousWithExcludes(current_kyc_code, excludes);
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,

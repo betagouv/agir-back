@@ -284,6 +284,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 1,
       is_first: true,
+      is_very_first: true,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -356,6 +357,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 1,
       is_first: true,
+      is_very_first: true,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -447,6 +449,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 3,
       position_courante: 1,
       is_first: true,
+      is_very_first: true,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -537,7 +540,8 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions: 3,
       nombre_total_questions_effectives: 2,
       position_courante: 1,
-      is_first: false,
+      is_first: true,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -553,6 +557,120 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
             code: 'oui',
             label: 'Oui',
             selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first_to_answer - premier element d'un enchainement quand tout est déjà répondu`, async () => {
+    // GIVEN
+    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
+      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
+    };
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC001,
+          id_cms: 1,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: true },
+            { label: 'Non', code: 'non', selected: false },
+            { label: 'Je sais pas', code: 'sais_pas', selected: false },
+          ],
+        },
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC002,
+          id_cms: 2,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: false },
+            { label: 'Non', code: 'non', selected: true },
+            { label: 'Je sais pas', code: 'sais_pas', selected: false },
+          ],
+        },
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC003,
+          id_cms: 3,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: false },
+            { label: 'Non', code: 'non', selected: false },
+            { label: 'Je sais pas', code: 'sais_pas', selected: true },
+          ],
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 3,
+      question: 'quest 3',
+      code: KYCID.KYC003,
+    });
+
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first?exclude=repondu',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 3,
+      nombre_total_questions_effectives: 3,
+      position_courante: 1,
+      is_first: true,
+      is_very_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      is_eligible: true,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC001',
+        is_NGC: true,
+        is_answered: true,
+        points: 20,
+        question: 'quest 1',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: true,
           },
           {
             code: 'non',
@@ -629,7 +747,8 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions: 3,
       nombre_total_questions_effectives: 1,
       position_courante: 1,
-      is_first: false,
+      is_first: true,
+      is_very_first: false,
       is_last: true,
       is_out_of_range: false,
       is_eligible: true,
@@ -729,6 +848,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 1,
       is_first: true,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -833,6 +953,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 2,
       is_first: false,
+      is_very_first: false,
       is_last: true,
       is_out_of_range: false,
       is_eligible: true,
@@ -936,6 +1057,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 3,
       position_courante: 2,
       is_first: false,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: false,
       is_eligible: false,
@@ -1039,6 +1161,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 2,
       is_first: false,
+      is_very_first: false,
       is_last: true,
       is_out_of_range: false,
       is_eligible: true,
@@ -1106,6 +1229,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: -1,
       is_first: false,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: true,
       is_eligible: false,
@@ -1182,6 +1306,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 3,
       position_courante: 2,
       is_first: false,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -1295,6 +1420,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 1,
       is_first: true,
+      is_very_first: true,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -1387,6 +1513,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 2,
       position_courante: 1,
       is_first: true,
+      is_very_first: true,
       is_last: false,
       is_out_of_range: false,
       is_eligible: true,
@@ -1479,6 +1606,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions_effectives: 3,
       position_courante: 2,
       is_first: false,
+      is_very_first: false,
       is_last: false,
       is_out_of_range: false,
       is_eligible: false,
@@ -1582,6 +1710,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       nombre_total_questions: 4,
       nombre_total_questions_effectives: 4,
       position_courante: 2,
+      is_very_first: false,
       is_first: false,
       is_last: false,
       is_out_of_range: false,

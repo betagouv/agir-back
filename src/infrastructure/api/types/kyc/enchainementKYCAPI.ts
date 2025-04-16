@@ -11,6 +11,7 @@ export class EnchainementKYCAPI {
   @ApiProperty() nombre_total_questions: number;
   @ApiProperty() nombre_total_questions_effectives: number;
   @ApiProperty() position_courante: number;
+  @ApiProperty() is_very_first: boolean;
   @ApiProperty() is_first: boolean;
   @ApiProperty() is_last: boolean;
   @ApiProperty() is_out_of_range: boolean;
@@ -35,8 +36,9 @@ export class EnchainementKYCAPI {
       question_courante: enchainement.getKycCourante()
         ? QuestionKYCAPI_v2.mapToAPI(enchainement.getKycCourante())
         : undefined,
-      is_first: enchainement.isCurrentFirstEligible(),
-      is_last: enchainement.isCurrentLastEligible(),
+      is_very_first: enchainement.isVeryFirst(),
+      is_first: enchainement.isFirst(excludes),
+      is_last: enchainement.isLast(excludes),
       is_out_of_range: Number.isNaN(position_courante),
       is_eligible: enchainement.isCouranteEligible(),
     };
