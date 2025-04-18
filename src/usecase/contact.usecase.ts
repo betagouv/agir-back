@@ -16,8 +16,10 @@ export class ContactUsecase {
     let result = [];
     const block_size = 100;
 
-    const count_to_update =
+    let count_to_update =
       await this.utilisateurRepository.countUtilisateurToUpdateInBrevo();
+
+    count_to_update = Math.min(count_to_update, 200);
 
     for (let index = 0; index < count_to_update; index = index + block_size) {
       let current_user_list =
@@ -32,13 +34,14 @@ export class ContactUsecase {
           ],
         );
 
-      current_user_list = current_user_list.filter(
-        (u) => u.id === 'wojtek' || u.id === 'wojtek2',
-      );
       for (const user of current_user_list) {
         const updated_OK = await this.brevoRepository.updateContact(user);
         if (updated_OK) {
           result.push(`Updated Brevo contact ${user.email} ok`);
+          user.brevo_updated_at = new Date();
+          await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+            Scope.core,
+          ]);
         } else {
           result.push(`ECHEC updating Brevo contact ${user.email}`);
         }

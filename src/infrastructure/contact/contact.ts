@@ -10,7 +10,7 @@ export class Contact {
     FIRSTNAME: string;
     LASTNAME: string;
     PSEUDO: string;
-    MAILING_DISABLED: boolean;
+    MAILING_ENABLED: boolean;
   };
   email: string;
   ext_id?: string;
@@ -36,7 +36,7 @@ export class Contact {
       FIRSTNAME: user.prenom,
       LASTNAME: user.nom,
       PSEUDO: user.pseudo,
-      MAILING_DISABLED: user.notification_history.isCanalDisabled(
+      MAILING_ENABLED: !user.notification_history.isCanalDisabled(
         CanalNotification.email,
       ),
     };
@@ -61,7 +61,7 @@ export class Contact {
       FIRSTNAME: null,
       LASTNAME: null,
       PSEUDO: null,
-      MAILING_DISABLED: false,
+      MAILING_ENABLED: true,
     };
     result.email = email;
     result.ext_id = utilisateurId;

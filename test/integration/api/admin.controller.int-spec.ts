@@ -1189,7 +1189,7 @@ describe('Admin (API test)', () => {
     expect(response.body[0].label).toEqual('En construction 🚧');
   });
 
-  it.skip('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
+  it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
@@ -1200,7 +1200,29 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('utilisateur-id');
+    expect(response.body).toEqual(['ECHEC updating Brevo contact yo@truc.com']);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.brevo_updated_at).toEqual(null);
+  });
+
+  it('POST /admin/contacts/synchronize - synchro user dans Brevo skip si deja synchro', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, {
+      brevo_updated_at: new Date(456),
+      derniere_activite: new Date(123),
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/contacts/synchronize');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveLength(0);
   });
 
   it("POST /admin/article-statistique - calcul des statistiques de l'ensemble des articles", async () => {
