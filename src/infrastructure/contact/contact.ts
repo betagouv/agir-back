@@ -8,6 +8,7 @@ export class Contact {
     DERNIERE_ACTIVITE: Date;
     FIRSTNAME: string;
     LASTNAME: string;
+    PSEUDO: string;
   };
   email: string;
   ext_id?: string;
@@ -32,6 +33,7 @@ export class Contact {
       DERNIERE_ACTIVITE: user.derniere_activite,
       FIRSTNAME: user.prenom,
       LASTNAME: user.nom,
+      PSEUDO: user.pseudo,
     };
     result.email = user.email;
     result.ext_id = user.id;
@@ -53,6 +55,7 @@ export class Contact {
       DERNIERE_ACTIVITE: null,
       FIRSTNAME: null,
       LASTNAME: null,
+      PSEUDO: null,
     };
     result.email = email;
     result.ext_id = utilisateurId;

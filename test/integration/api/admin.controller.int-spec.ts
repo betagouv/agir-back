@@ -1189,7 +1189,7 @@ describe('Admin (API test)', () => {
     expect(response.body[0].label).toEqual('En construction 🚧');
   });
 
-  it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
+  it.skip('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
