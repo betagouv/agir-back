@@ -44,6 +44,21 @@ export class BrevoRepository {
     }
   }
 
+  public async updateContact(utilisateur: Utilisateur) {
+    if (this.is_synchro_disabled()) return;
+
+    const contact = Contact.buildContactFromUtilisateur(utilisateur);
+
+    try {
+      await this.apiInstance.updateContact(utilisateur.email, contact);
+      console.log(`BREVO contact ${utilisateur.email} updated `);
+      return true;
+    } catch (error) {
+      console.error(error.response.text);
+      return false;
+    }
+  }
+
   public async createContact(
     email: string,
     utilisateurId: string,

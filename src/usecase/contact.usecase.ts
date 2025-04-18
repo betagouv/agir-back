@@ -26,11 +26,18 @@ export class ContactUsecase {
           block_size,
           [Scope.core, Scope.logement, Scope.gamification],
         );
+
       current_user_list = current_user_list.filter(
         (u) => u.id === 'wojtek' || u.id === 'wojtek2',
       );
-      this.brevoRepository.BatchUpdateContacts(current_user_list);
-      result = result.concat(current_user_list.map((u) => u.id));
+      for (const user of current_user_list) {
+        const updated_OK = this.brevoRepository.updateContact(user);
+        if (updated_OK) {
+          result.push(`Updated Brevo contact ${user.email} ok`);
+        } else {
+          result.push(`ECHEC updating Brevo contact ${user.email}`);
+        }
+      }
     }
 
     return result;
