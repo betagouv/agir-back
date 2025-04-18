@@ -1654,34 +1654,7 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('[email2] CREATE OK');
-
-    const userDB = await utilisateurRepository.getById('2', []);
-    expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
-  });
-  it(`POST /admin/create_brevo_contacts 2 fois n'ajoute plus`, async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      id: '2',
-      prenom: 'B',
-      email: 'email2',
-      brevo_created_at: null,
-    });
-    // WHEN
-    let response = await TestUtil.POST('/admin/create_brevo_contacts');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('[email2] CREATE OK');
-
-    // WHEN
-    response = await TestUtil.POST('/admin/create_brevo_contacts');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(0);
+    expect(response.body[0]).toEqual('[email2] CREATE SKIPPED');
   });
   it(`GET/POST /admin/id/raw_sql_user lit / écrit un utilisateur en BDD`, async () => {
     // GIVEN

@@ -68,7 +68,7 @@ describe('ContactUsecase', () => {
       return null;
     });
     brevoRepository.createContact.mockImplementation(() => {
-      return true;
+      return BrevoResponse.ok;
     });
 
     // WHEN
@@ -94,12 +94,13 @@ describe('ContactUsecase', () => {
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
       brevo_created_at: null,
+      active_account: true,
     });
     brevoRepository.getContactCreationDate.mockImplementation(() => {
       return null;
     });
     brevoRepository.createContact.mockImplementation(() => {
-      return false;
+      return BrevoResponse.error;
     });
 
     // WHEN
@@ -115,6 +116,26 @@ describe('ContactUsecase', () => {
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     expect(userDB.brevo_created_at).toEqual(null);
+  });
+  it('createMissingContacts : contact pas actif => skip', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      email: 'emailYO',
+      brevo_created_at: null,
+      active_account: false,
+    });
+    brevoRepository.getContactCreationDate.mockImplementation(() => {
+      return null;
+    });
+    brevoRepository.createContact.mockImplementation(() => {
+      return BrevoResponse.ok;
+    });
+
+    // WHEN
+    const result = await contactUsecase.createMissingContacts();
+
+    // THEN
+    expect(result).toEqual([]);
   });
   it('batchUpdate : cas passant OK', async () => {
     // GIVEN

@@ -77,12 +77,12 @@ export class BrevoRepository {
   public async createContact(
     email: string,
     utilisateurId: string,
-  ): Promise<boolean> {
+  ): Promise<BrevoResponse> {
     if (this.is_synchro_disabled()) {
       console.log(
         `BREVO creation would have been done for contact ${email} - disable on that environment `,
       );
-      return true;
+      return BrevoResponse.disabled;
     }
 
     const contact = Contact.newContactFromEmail(email, utilisateurId);
@@ -93,11 +93,18 @@ export class BrevoRepository {
       console.log(
         `BREVO contact ${email} created and added to list ${contact.listIds}`,
       );
-      return true;
+      return BrevoResponse.ok;
     } catch (error) {
-      console.warn(error.response.text);
+      console.log(error.response.text);
+      if (
+        error.response.text &&
+        error.response.text.includes('Invalid email address')
+      ) {
+        console.log(`BREVO PERMANENT ERROR creating contact ${email}`);
+        return BrevoResponse.permanent_error;
+      }
       console.log(`BREVO ERROR creating contact ${email}`);
-      return false;
+      return BrevoResponse.error;
     }
   }
   public async getContactCreationDate(email: string): Promise<Date | null> {

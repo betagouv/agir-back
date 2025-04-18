@@ -404,7 +404,10 @@ export class UtilisateurRepository {
       orderBy: {
         id: 'asc',
       },
-      where: { brevo_created_at: null },
+      where: {
+        brevo_created_at: null,
+        active_account: true,
+      },
     });
     return result.map((elem) => elem['id']);
   }
