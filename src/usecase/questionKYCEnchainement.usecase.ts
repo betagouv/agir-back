@@ -7,7 +7,6 @@ import { Enchainement } from '../domain/kyc/enchainement';
 import { EnchainementKYC } from '../domain/kyc/enchainementKYC';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
-import { EnchainementKYCExclude } from '../infrastructure/api/types/kyc/enchainementKYCAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -136,10 +135,9 @@ export class QuestionKYCEnchainementUsecase {
       CLE_PERSO.no_blank_links,
     ]);
   }
-  async getFirstOfEnchainementQuestionsWithExcludes(
+  async getFirst(
     utilisateurId: string,
     enchainementId: string,
-    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -166,11 +164,10 @@ export class QuestionKYCEnchainementUsecase {
     ]);
   }
 
-  async getNextWithExcludes(
+  async getNext(
     utilisateurId: string,
     enchainementId: string,
     current_kyc_code: string,
-    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
@@ -197,11 +194,10 @@ export class QuestionKYCEnchainementUsecase {
     ]);
   }
 
-  async getPreviousWithExcludes(
+  async getPrevious(
     utilisateurId: string,
     enchainementId: string,
     current_kyc_code: string,
-    excludes: EnchainementKYCExclude[],
   ): Promise<EnchainementKYC> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
