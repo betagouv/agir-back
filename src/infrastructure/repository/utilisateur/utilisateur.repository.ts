@@ -426,6 +426,9 @@ export class UtilisateurRepository {
       },
       where: {
         brevo_update_disabled: false,
+        brevo_created_at: {
+          not: null,
+        },
         OR: [
           {
             brevo_updated_at: null,
