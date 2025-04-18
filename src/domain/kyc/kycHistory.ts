@@ -195,14 +195,21 @@ export class KYCHistory {
       if (!kyc) {
         console.log(`KYC NGC manquant dans agir [${key}]`);
       } else {
-        if (kyc.is_NGC) {
+        if (
+          kyc.is_NGC &&
+          !utilisateur.kyc_history.isQuestionAnswered(kyc.code)
+        ) {
           const string_value = '' + value;
 
           const is_kyc_number =
             kyc.type === TypeReponseQuestionKYC.entier ||
             kyc.type === TypeReponseQuestionKYC.decimal;
 
-          if (validator.isInt(string_value) && is_kyc_number) {
+          if (
+            (validator.isInt(string_value) ||
+              validator.isDecimal(string_value)) &&
+            is_kyc_number
+          ) {
             const updated_kyc = this.updateQuestionByNGCKeyWithLabel(key, [
               string_value,
             ]);
@@ -246,6 +253,11 @@ export class KYCHistory {
       }
     }
     return result;
+  }
+
+  private isKycNotModifiedAfter(kyc: QuestionKYC, after_date: Date): boolean {
+    if (!kyc.last_update) return false;
+    return kyc.last_update.getTime() > after_date.getTime();
   }
 
   public patchLogement(input: LogementInput) {
@@ -521,8 +533,8 @@ export class KYCHistory {
     return result;
   }
 
-  public isQuestionAnsweredByCode(code: string): boolean {
-    return !!this.getAnsweredQuestionByCode(code);
+  public isQuestionAnswered(code_kyc: string): boolean {
+    return !!this.getAnsweredQuestionByCode(code_kyc);
   }
 
   public updateQuestionInHistory(question: QuestionKYC) {

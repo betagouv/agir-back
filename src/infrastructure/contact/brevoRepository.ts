@@ -1,10 +1,9 @@
+import Brevo from '@getbrevo/brevo';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Contact } from './contact';
-import Brevo from '@getbrevo/brevo';
-import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { App } from '../../domain/app';
-import { isDate } from 'util/types';
+import { Utilisateur } from '../../domain/utilisateur/utilisateur';
+import { Contact } from './contact';
 
 @Injectable()
 export class BrevoRepository {
@@ -44,24 +43,21 @@ export class BrevoRepository {
       console.warn(JSON.stringify(error));
     }
   }
-  /*
-  public async updateContacts(utilisateur: Utilisateur) {
-    if (this.is_synchro_disabled()) return;
 
-    const contact = new Contact(utilisateur);
+  public async updateContact(utilisateur: Utilisateur): Promise<boolean> {
+    if (this.is_synchro_disabled()) return false;
+
+    const contact = Contact.buildContactFromUtilisateur(utilisateur);
 
     try {
-      await this.apiInstance.updateContact(utilisateur.email, updateContact);
-      console.log(
-        `BREVO contact ${utilisateur.email} created and added to list ${contact.listIds}`,
-      );
+      await this.apiInstance.updateContact(utilisateur.email, contact);
+      console.log(`BREVO contact ${utilisateur.email} updated `);
       return true;
     } catch (error) {
-      console.warn(error.response.text);
+      console.error(error.response.text);
       return false;
     }
   }
-  */
 
   public async createContact(
     email: string,

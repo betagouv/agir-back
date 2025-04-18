@@ -409,6 +409,53 @@ export class UtilisateurRepository {
     return result.map((elem) => elem['id']);
   }
 
+  async listUtilisateurToUpdateInBrevo(
+    skip: number,
+    take: number,
+    scopes: Scope[],
+  ): Promise<Utilisateur[]> {
+    if (scopes.includes(Scope.ALL)) {
+      scopes = Object.values(Scope);
+    }
+    const result = await this.prisma.utilisateur.findMany({
+      skip: skip,
+      take: take,
+      omit: this.buildOmitBlockFromScopes(scopes),
+      orderBy: {
+        id: 'asc',
+      },
+      where: {
+        OR: [
+          {
+            brevo_updated_at: null,
+          },
+          {
+            brevo_updated_at: {
+              lt: this.prisma.utilisateur.fields.derniere_activite,
+            },
+          },
+        ],
+      },
+    });
+    return result.map((r) => this.buildUtilisateurFromDB(r));
+  }
+  async countUtilisateurToUpdateInBrevo(): Promise<number> {
+    return await this.prisma.utilisateur.count({
+      where: {
+        OR: [
+          {
+            brevo_updated_at: null,
+          },
+          {
+            brevo_updated_at: {
+              lt: this.prisma.utilisateur.fields.derniere_activite,
+            },
+          },
+        ],
+      },
+    });
+  }
+
   async createUtilisateur(utilisateur: Utilisateur) {
     try {
       await this.prisma.utilisateur.create({

@@ -8,14 +8,14 @@ import { EmailScheduler } from './emailScheduler';
 import { MobileScheduler } from './mobileScheduler';
 
 export enum EmailNotification {
+  // INSCRIPTION / CONNEXION
   email_existing_account = 'email_existing_account',
   inscription_code = 'inscription_code',
   change_mot_de_passe_code = 'change_mot_de_passe_code',
   connexion_code = 'connexion_code',
 
-  //AUTO
+  //AUTO toutes les 10 min
   welcome = 'welcome',
-  late_onboarding = 'late_onboarding',
 
   // NEW
   email_demande_feedback = 'email_demande_feedback',
@@ -26,6 +26,7 @@ export enum EmailNotification {
 }
 
 export enum MobileNotification {
+  //AUTO toutes les 10 min
   mobile_inscription_J2 = 'mobile_inscription_J2',
   mobile_inscription_J9 = 'mobile_inscription_J9',
 }
@@ -79,8 +80,12 @@ export class NotificationHistory {
     }
   }
 
-  public isNotificationActive(notif: TypeNotification) {
-    return !App.getInactiveNotificationsListe().includes(notif);
+  public isNotificationMailActive(notif: TypeNotification) {
+    return !App.getInactiveNotificationsMailListe().includes(notif);
+  }
+
+  public isNotificationMobileActive(notif: TypeNotification) {
+    return !App.getInactiveNotificationsMobileListe().includes(notif);
   }
 
   public reset() {
@@ -111,7 +116,7 @@ export class NotificationHistory {
         result.push(notif);
       }
     }
-    return result.filter((n) => this.isNotificationActive(n));
+    return result.filter((n) => this.isNotificationMobileActive(n));
   }
   public getNouvellesNotificationsEmailAPousser(
     utilisateur: Utilisateur,
@@ -123,6 +128,6 @@ export class NotificationHistory {
         result.push(notif);
       }
     }
-    return result.filter((n) => this.isNotificationActive(n));
+    return result.filter((n) => this.isNotificationMailActive(n));
   }
 }

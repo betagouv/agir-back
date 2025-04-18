@@ -316,7 +316,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     const questionsKYC = new KYCHistory();
 
     // THEN
-    expect(questionsKYC.isQuestionAnsweredByCode('2')).toStrictEqual(false);
+    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
   });
   it('isMosaicAnswered :false si pas répondu', () => {
     // WHEN

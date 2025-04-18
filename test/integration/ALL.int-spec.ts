@@ -2,7 +2,10 @@ import { TestUtil } from '../TestUtil';
 
 TestUtil.ok_appclose = false;
 
+import './api/actions.catalogue.controller.int-spec';
+import './api/actions.catalogue.offline.controller.int-spec';
 import './api/actions.controller.int-spec';
+import './api/actions.offline.controller.int-spec';
 import './api/admin.controller.int-spec';
 import './api/aide.controller.int-spec';
 import './api/aideVelo.controller.int-spec';
@@ -48,6 +51,7 @@ import './repository/universStatistique.repository.int-spec';
 import './repository/utilisateur.repository.int-spec';
 import './repository/utilisateurBoard.repository.int-spec';
 import './services/linkyServiceManager.int-spec';
+import './usecase/bilanCarbone.usecase.int-spec';
 import './usecase/contact.usecase.int-spec';
 import './usecase/duplicate.usecase.int-spec';
 import './usecase/linky.usecase.int-spec';

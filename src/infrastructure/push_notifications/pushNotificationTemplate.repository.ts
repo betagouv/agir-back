@@ -12,8 +12,17 @@ export class PushNotificationTemplateRepository {
     switch (type) {
       case MobileNotification.mobile_inscription_J2:
         return new PushNotificationMessage({
-          title: 'Vos premiers pas avec J’agis 🌱',
-          body: "Découvrez l'application mobile et prenez vos première actions !",
+          title: 'Bienvenue sur J’agis ! 🌱',
+          body: 'Découvrez les actions près de chez vous',
+          image_url: null,
+          data: {},
+          token: utilisateur.mobile_token,
+        });
+
+      case MobileNotification.mobile_inscription_J9:
+        return new PushNotificationMessage({
+          title: 'Prêt(e) à passer à l’action ? 🔥',
+          body: 'Découvrez les actions de la semaine sur J’agis',
           image_url: null,
           data: {},
           token: utilisateur.mobile_token,

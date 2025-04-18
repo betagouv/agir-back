@@ -1,5 +1,5 @@
-import { Enchainement } from '../../../usecase/questionKYCEnchainement.usecase';
 import { Action } from '../../actions/action';
+import { Enchainement } from '../../kyc/enchainement';
 import { Thematique } from '../thematique';
 
 export class DetailThematique {

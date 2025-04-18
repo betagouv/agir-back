@@ -8,6 +8,7 @@ import { QuestionKYC } from '../kyc/questionKYC';
 import { ActionUtilisateur } from '../thematique/history/thematiqueHistory';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { ActionDefinition } from './actionDefinition';
+import { TypeAction } from './typeAction';
 
 export class ActionService {
   recherche_service_id: ServiceRechercheID;
@@ -30,9 +31,10 @@ export class Action extends ActionDefinition {
   faite_le?: Date;
   like_level?: number;
   feedback?: string;
+  enchainement_id?: string;
 
-  constructor(data: ActionDefinition) {
-    super(data);
+  constructor(action_def: ActionDefinition) {
+    super(action_def);
     this.aides = [];
     this.services = [];
     this.quizz_liste = [];
@@ -40,6 +42,12 @@ export class Action extends ActionDefinition {
     this.article_liste = [];
     this.nombre_aides = 0;
     this.nombre_actions_faites = 0;
+    if (
+      action_def.type === TypeAction.bilan ||
+      action_def.type === TypeAction.simulateur
+    ) {
+      this.enchainement_id = action_def.getTypeCodeAsString();
+    }
   }
 
   public static newAction(

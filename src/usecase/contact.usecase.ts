@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { Scope } from '../domain/utilisateur/utilisateur';
 import { BrevoRepository } from '../infrastructure/contact/brevoRepository';
-import { Utilisateur } from '../domain/utilisateur/utilisateur';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const H24 = 24 * 60 * 60 * 1000;
 
@@ -14,21 +14,40 @@ export class ContactUsecase {
 
   async batchUpdate(): Promise<string[]> {
     let result = [];
-    const hier = new Date(Date.now() - H24);
+    const block_size = 100;
 
-    const nombreTotalUtilisateurs =
-      await this.utilisateurRepository.countActiveUsersWithRecentActivity(hier);
+    let count_to_update =
+      await this.utilisateurRepository.countUtilisateurToUpdateInBrevo();
 
-    for (let index = 0; index < nombreTotalUtilisateurs; index += 100) {
-      const utilisateurs =
-        await this.utilisateurRepository.findLastActiveUtilisateurs(
-          100,
+    count_to_update = Math.min(count_to_update, 200);
+
+    for (let index = 0; index < count_to_update; index = index + block_size) {
+      let current_user_list =
+        await this.utilisateurRepository.listUtilisateurToUpdateInBrevo(
           index,
-          hier,
+          block_size,
+          [
+            Scope.core,
+            Scope.logement,
+            Scope.gamification,
+            Scope.notification_history,
+          ],
         );
-      this.brevoRepository.BatchUpdateContacts(utilisateurs);
-      result = result.concat(utilisateurs.map((u) => u.id));
+
+      for (const user of current_user_list) {
+        const updated_OK = await this.brevoRepository.updateContact(user);
+        if (updated_OK) {
+          result.push(`Updated Brevo contact ${user.email} ok`);
+          user.brevo_updated_at = new Date();
+          await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+            Scope.core,
+          ]);
+        } else {
+          result.push(`ECHEC updating Brevo contact ${user.email}`);
+        }
+      }
     }
+
     return result;
   }
 
@@ -40,7 +59,7 @@ export class ContactUsecase {
     const result = [];
 
     const list_missing_contacts =
-      await this.utilisateurRepository.listUtilisateurIdsToCreateInBrevo(100);
+      await this.utilisateurRepository.listUtilisateurIdsToCreateInBrevo(200);
 
     for (const user_id of list_missing_contacts) {
       const utilisateur = await this.utilisateurRepository.getById(user_id, []);

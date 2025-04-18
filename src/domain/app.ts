@@ -114,8 +114,11 @@ export class App {
   public static getCurrentPonderationRubriqueSetName(): string {
     return process.env.PONDERATION_RUBRIQUES;
   }
-  public static getInactiveNotificationsListe(): string {
+  public static getInactiveNotificationsMailListe(): string {
     return process.env.NOTIFICATIONS_MAIL_INACTIVES || '';
+  }
+  public static getInactiveNotificationsMobileListe(): string {
+    return process.env.NOTIFICATIONS_MOBILE_INACTIVES || '';
   }
   public static getBasicLogin(): string {
     return process.env.BASIC_LOGIN || '';

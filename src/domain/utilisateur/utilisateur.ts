@@ -278,7 +278,7 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone(): boolean {
-    const KYC_preference_answered = this.kyc_history.isQuestionAnsweredByCode(
+    const KYC_preference_answered = this.kyc_history.isQuestionAnswered(
       KYCID.KYC_preference,
     );
 

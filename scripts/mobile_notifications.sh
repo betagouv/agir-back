@@ -1,0 +1,1 @@
+npm run execute send_notifications_mobile

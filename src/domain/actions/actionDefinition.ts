@@ -50,10 +50,13 @@ export class ActionDefinition extends ActionDefinitionData {
   }
 
   public static getIdFromTypeCode(type_code: TypeCodeAction): string {
-    return type_code.type + '_' + type_code.code;
+    return '' + type_code.type + '_' + type_code.code;
   }
 
   public static getTypeCodeFromString(type_code: string): TypeCodeAction {
+    if (!type_code) {
+      return { code: undefined, type: undefined };
+    }
     const separateur = type_code.indexOf('_');
     return {
       type: TypeAction[type_code.substring(0, separateur)],
@@ -61,7 +64,7 @@ export class ActionDefinition extends ActionDefinitionData {
     };
   }
 
-  public getTypeCodeId(): string {
+  public getTypeCodeAsString(): string {
     return this.type + '_' + this.code;
   }
   public getTypeCode(): TypeCodeAction {

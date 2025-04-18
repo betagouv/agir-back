@@ -12,8 +12,6 @@ export class EmailTemplateRepository {
   private email_change_mot_de_passe_code: HandlebarsTemplateDelegate;
   private email_connexion_code: HandlebarsTemplateDelegate;
   private email_welcome: HandlebarsTemplateDelegate;
-  private email_relance_onboarding: HandlebarsTemplateDelegate;
-  private email_relance_action: HandlebarsTemplateDelegate;
   private email_existing_account: HandlebarsTemplateDelegate;
 
   // NEW MAILS
@@ -36,12 +34,6 @@ export class EmailTemplateRepository {
       );
       this.email_welcome = Handlebars.compile(
         await this.readTemplate('email_welcome.hbs'),
-      );
-      this.email_relance_onboarding = Handlebars.compile(
-        await this.readTemplate('email_relance_onboarding.hbs'),
-      );
-      this.email_relance_action = Handlebars.compile(
-        await this.readTemplate('email_relance_action.hbs'),
       );
       this.email_existing_account = Handlebars.compile(
         await this.readTemplate('email_existing_account.hbs'),
@@ -134,17 +126,6 @@ export class EmailTemplateRepository {
             HOME_URL: App.getBaseURLFront(),
           }),
         };
-      case TypeNotification.late_onboarding:
-        return {
-          subject: `Vos premiers pas avec J'agis 🌱`,
-          body: this.email_relance_onboarding({
-            PRENOM: utilisateur.pseudo,
-            CONTACT_EMAIL: utilisateur.email,
-            UNSUBSCRIBE_URL: unsubscribe_URL,
-            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
-            HOME_URL: App.getBaseURLFront(),
-          }),
-        };
       case TypeNotification.email_demande_feedback:
         return {
           subject: `Votre avis nous intéresse 🌱`,
@@ -172,8 +153,8 @@ export class EmailTemplateRepository {
             PSEUDO: utilisateur.pseudo,
             UNSUBSCRIBE_URL: unsubscribe_URL,
             HOME_URL: App.getBaseURLFront(),
-            THEMATIQUE_ALIMENTATION_URL:
-              App.getBaseURLFront() + '/v2/thematique/me-nourrir',
+            CONTACT_EMAIL: utilisateur.email,
+            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
         };
       case TypeNotification.email_utilisateur_inactif_j30:

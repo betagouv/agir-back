@@ -123,6 +123,17 @@ async function bootstrap() {
       );
       console.log(result_crea_brevo);
       break;
+    case 'update_brevo_contacts':
+      start_time = Date.now();
+      console.log(`START update_brevo_contacts ${start_time}`);
+      const result_update_brevo = await application
+        .get(ContactUsecase)
+        .batchUpdate();
+      console.log(
+        `STOP update_brevo_contacts after ${Date.now() - start_time} ms`,
+      );
+      console.log(result_update_brevo);
+      break;
     case 'process_async_service':
       start_time = Date.now();
       console.log(`START process_async_service ${start_time}`);

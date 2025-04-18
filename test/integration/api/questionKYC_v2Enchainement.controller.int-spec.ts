@@ -13,9 +13,11 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { QuestionKYCEnchainementUsecase } from '../../../src/usecase/questionKYCEnchainement.usecase';
@@ -87,6 +89,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -242,7 +245,149 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     );
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement, même si répondu`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de simultateur`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.simulateur,
+      type_code_id: 'simulateur_123',
+      label_compteur: 'ttt',
+      kyc_codes: ['KYC001', 'KYC002'],
+    });
+
+    await TestUtil.create(DB.utilisateur);
+    await kycRepository.loadCache();
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/simulateur_123/first',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 2,
+      nombre_total_questions_effectives: 2,
+      position_courante: 1,
+      is_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC001',
+        is_NGC: true,
+        is_answered: false,
+        points: 20,
+        question: 'quest 1',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de bilan`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.bilan,
+      type_code_id: 'bilan_123',
+      label_compteur: 'ttt',
+      kyc_codes: ['KYC001', 'KYC002'],
+    });
+
+    await TestUtil.create(DB.utilisateur);
+    await kycRepository.loadCache();
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/bilan_123/first',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 2,
+      nombre_total_questions_effectives: 2,
+      position_courante: 1,
+      is_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC001',
+        is_NGC: true,
+        is_answered: false,
+        points: 20,
+        question: 'quest 1',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement non répondu`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
@@ -298,23 +443,22 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       nombre_total_questions: 3,
       nombre_total_questions_effectives: 3,
-      position_courante: 1,
-      is_first: true,
+      position_courante: 2,
+      is_first: false,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC001',
+        code: 'KYC002',
         is_NGC: true,
-        is_answered: true,
+        is_answered: false,
         points: 20,
-        question: 'quest 1',
+        question: 'quest 2',
         reponse_multiple: [
           {
             code: 'oui',
             label: 'Oui',
-            selected: true,
+            selected: false,
           },
           {
             code: 'non',
@@ -333,7 +477,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first_to_answer - premier element d'un enchainement non répondu`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement quand tout est déjà répondu`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
@@ -352,6 +496,28 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
             { label: 'Oui', code: 'oui', selected: true },
             { label: 'Non', code: 'non', selected: false },
             { label: 'Je sais pas', code: 'sais_pas', selected: false },
+          ],
+        },
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC002,
+          id_cms: 2,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: false },
+            { label: 'Non', code: 'non', selected: true },
+            { label: 'Je sais pas', code: 'sais_pas', selected: false },
+          ],
+        },
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC003,
+          id_cms: 3,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: false },
+            { label: 'Non', code: 'non', selected: false },
+            { label: 'Je sais pas', code: 'sais_pas', selected: true },
           ],
         },
       ],
@@ -381,31 +547,30 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first?exclude=repondu',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       nombre_total_questions: 3,
-      nombre_total_questions_effectives: 2,
+      nombre_total_questions_effectives: 3,
       position_courante: 1,
-      is_first: false,
+      is_first: true,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC002',
+        code: 'KYC001',
         is_NGC: true,
-        is_answered: false,
+        is_answered: true,
         points: 20,
-        question: 'quest 2',
+        question: 'quest 1',
         reponse_multiple: [
           {
             code: 'oui',
             label: 'Oui',
-            selected: false,
+            selected: true,
           },
           {
             code: 'non',
@@ -473,19 +638,18 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first?exclude=non_eligible&exclude=repondu',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       nombre_total_questions: 3,
-      nombre_total_questions_effectives: 1,
-      position_courante: 1,
+      nombre_total_questions_effectives: 2,
+      position_courante: 2,
       is_first: false,
       is_last: true,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
         code: 'KYC003',
@@ -516,7 +680,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first_to_answer_eligible - premier element d'un enchainement eligible`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement eligible`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC002, KYCID.KYC003, KYCID.KYC004],
@@ -572,7 +736,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first?exclude=non_eligible',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/first',
     );
 
     // THEN
@@ -584,7 +748,6 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_first: true,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
         code: 'KYC003',
@@ -615,7 +778,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/XXX - element suivant d'un enchainement eligible`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/following - element suivant d'un enchainement eligible`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [
@@ -676,7 +839,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC001?exclude=non_eligible',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC001',
     );
 
     // THEN
@@ -688,7 +851,6 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_first: false,
       is_last: true,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
         code: 'KYC004',
@@ -719,7 +881,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/XXX - element suivant d'un enchainement non repondu`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following zappe une non eligible`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [
@@ -779,7 +941,109 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC001?exclude=repondu',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC002',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 4,
+      nombre_total_questions_effectives: 3,
+      position_courante: 3,
+      is_first: false,
+      is_last: true,
+      is_out_of_range: false,
+      question_courante: {
+        categorie: 'recommandation',
+        code: 'KYC004',
+        is_NGC: true,
+        is_answered: false,
+        points: 20,
+        question: 'quest 4',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - element deja repondu renvoyé quand même`, async () => {
+    // GIVEN
+    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
+      ENCHAINEMENT_KYC_1: [
+        KYCID.KYC001,
+        KYCID.KYC002,
+        KYCID.KYC003,
+        KYCID.KYC004,
+      ],
+    };
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC002,
+          id_cms: 2,
+          type: TypeReponseQuestionKYC.choix_unique,
+          reponse_complexe: [
+            { label: 'Oui', code: 'oui', selected: true },
+            { label: 'Non', code: 'non', selected: false },
+            { label: 'Je sais pas', code: 'sais_pas', selected: false },
+          ],
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: KYCID.KYC001,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: KYCID.KYC002,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 3,
+      question: 'quest 3',
+      code: KYCID.KYC003,
+      conditions: [[{ id_kyc: 2, code_reponse: 'non' }]],
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 4,
+      question: 'quest 4',
+      code: KYCID.KYC004,
+    });
+
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC001',
     );
 
     // THEN
@@ -791,19 +1055,18 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_first: false,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: false,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC003',
+        code: 'KYC002',
         is_NGC: true,
-        is_answered: false,
+        is_answered: true,
         points: 20,
-        question: 'quest 3',
+        question: 'quest 2',
         reponse_multiple: [
           {
             code: 'oui',
             label: 'Oui',
-            selected: false,
+            selected: true,
           },
           {
             code: 'non',
@@ -822,110 +1085,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/XXX - element suivant d'un enchainement non repondu et eligible`, async () => {
-    // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: KYCID.KYC002,
-          id_cms: 2,
-          type: TypeReponseQuestionKYC.choix_unique,
-          reponse_complexe: [
-            { label: 'Oui', code: 'oui', selected: true },
-            { label: 'Non', code: 'non', selected: false },
-            { label: 'Je sais pas', code: 'sais_pas', selected: false },
-          ],
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 1,
-      question: 'quest 1',
-      code: KYCID.KYC001,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 2,
-      question: 'quest 2',
-      code: KYCID.KYC002,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 3,
-      question: 'quest 3',
-      code: KYCID.KYC003,
-      conditions: [[{ id_kyc: 2, code_reponse: 'non' }]],
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 4,
-      question: 'quest 4',
-      code: KYCID.KYC004,
-    });
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC001?exclude=repondu&exclude=non_eligible',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      nombre_total_questions: 4,
-      nombre_total_questions_effectives: 2,
-      position_courante: 2,
-      is_first: false,
-      is_last: true,
-      is_out_of_range: false,
-      is_eligible: true,
-      question_courante: {
-        categorie: 'recommandation',
-        code: 'KYC004',
-        is_NGC: true,
-        is_answered: false,
-        points: 20,
-        question: 'quest 4',
-        reponse_multiple: [
-          {
-            code: 'oui',
-            label: 'Oui',
-            selected: false,
-          },
-          {
-            code: 'non',
-            label: 'Non',
-            selected: false,
-          },
-          {
-            code: 'sais_pas',
-            label: 'Je sais pas',
-            selected: false,
-          },
-        ],
-        thematique: 'alimentation',
-        type: 'choix_unique',
-      },
-    });
-  });
-
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/XXX - dépasse dernier élément`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - dépasse dernier élément`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002],
@@ -949,7 +1109,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC002?exclude=non_eligible',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/following/KYC002',
     );
 
     // THEN
@@ -961,114 +1121,10 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_first: false,
       is_last: false,
       is_out_of_range: true,
-      is_eligible: false,
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding_eligible/XXX - element precedent d'un enchainement eligible`, async () => {
-    // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: KYCID.KYC001,
-          id_cms: 1,
-          type: TypeReponseQuestionKYC.choix_unique,
-          reponse_complexe: [
-            { label: 'Oui', code: 'oui', selected: true },
-            { label: 'Non', code: 'non', selected: false },
-            { label: 'Je sais pas', code: 'sais_pas', selected: false },
-          ],
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 1,
-      question: 'quest 1',
-      code: KYCID.KYC001,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 2,
-      question: 'quest 2',
-      code: KYCID.KYC002,
-      conditions: [[{ id_kyc: 1, code_reponse: 'non' }]],
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 3,
-      question: 'quest 3',
-      code: KYCID.KYC003,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 4,
-      question: 'quest 4',
-      code: KYCID.KYC004,
-    });
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/preceding/KYC004?exclude=non_eligible',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      nombre_total_questions: 4,
-      nombre_total_questions_effectives: 3,
-      position_courante: 2,
-      is_first: false,
-      is_last: false,
-      is_out_of_range: false,
-      is_eligible: true,
-      question_courante: {
-        categorie: 'recommandation',
-        code: 'KYC003',
-        is_NGC: true,
-        is_answered: false,
-        points: 20,
-        question: 'quest 3',
-        reponse_multiple: [
-          {
-            code: 'oui',
-            label: 'Oui',
-            selected: false,
-          },
-          {
-            code: 'non',
-            label: 'Non',
-            selected: false,
-          },
-          {
-            code: 'sais_pas',
-            label: 'Je sais pas',
-            selected: false,
-          },
-        ],
-        thematique: 'alimentation',
-        type: 'choix_unique',
-      },
-    });
-  });
-
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding_eligible/XXX - element precedent d'un enchainement non repondu`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding - recule sur une question deja repondu`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [
@@ -1138,118 +1194,25 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/preceding/KYC004?exclude=repondu',
+      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/preceding/KYC004',
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       nombre_total_questions: 4,
-      nombre_total_questions_effectives: 2,
-      position_courante: 1,
-      is_first: true,
+      nombre_total_questions_effectives: 4,
+      position_courante: 3,
+      is_first: false,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: true,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC001',
-        is_NGC: true,
-        is_answered: false,
-        points: 20,
-        question: 'quest 1',
-        reponse_multiple: [
-          {
-            code: 'oui',
-            label: 'Oui',
-            selected: false,
-          },
-          {
-            code: 'non',
-            label: 'Non',
-            selected: false,
-          },
-          {
-            code: 'sais_pas',
-            label: 'Je sais pas',
-            selected: false,
-          },
-        ],
-        thematique: 'alimentation',
-        type: 'choix_unique',
-      },
-    });
-  });
-
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding/XXX - element precedent d'un enchainement eligible, saute la quesiton non eligible`, async () => {
-    // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-    };
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          code: KYCID.KYC001,
-          id_cms: 1,
-          type: TypeReponseQuestionKYC.choix_unique,
-          reponse_complexe: [
-            { label: 'Oui', code: 'oui', selected: true },
-            { label: 'Non', code: 'non', selected: false },
-            { label: 'Je sais pas', code: 'sais_pas', selected: false },
-          ],
-        },
-      ],
-    };
-
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 1,
-      question: 'quest 1',
-      code: KYCID.KYC001,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 2,
-      question: 'quest 2',
-      code: KYCID.KYC002,
-      conditions: [[{ id_kyc: 1, code_reponse: 'non' }]],
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 3,
-      question: 'quest 3',
-      code: KYCID.KYC003,
-    });
-
-    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/ENCHAINEMENT_KYC_1/preceding/KYC003?exclude=non_eligible',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      nombre_total_questions: 3,
-      nombre_total_questions_effectives: 2,
-      position_courante: 1,
-      is_first: true,
-      is_last: false,
-      is_out_of_range: false,
-      is_eligible: true,
-      question_courante: {
-        categorie: 'recommandation',
-        code: 'KYC001',
+        code: 'KYC003',
         is_NGC: true,
         is_answered: true,
         points: 20,
-        question: 'quest 1',
+        question: 'quest 3',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1273,7 +1236,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding/XXX - element precedent d'un enchainement`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding/XXX - element precedent d'un enchainement, zappe non eligible`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
@@ -1329,24 +1292,23 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       nombre_total_questions: 3,
-      nombre_total_questions_effectives: 3,
-      position_courante: 2,
-      is_first: false,
+      nombre_total_questions_effectives: 2,
+      position_courante: 1,
+      is_first: true,
       is_last: false,
       is_out_of_range: false,
-      is_eligible: false,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC002',
+        code: 'KYC001',
         is_NGC: true,
-        is_answered: false,
+        is_answered: true,
         points: 20,
-        question: 'quest 2',
+        question: 'quest 1',
         reponse_multiple: [
           {
             code: 'oui',
             label: 'Oui',
-            selected: false,
+            selected: true,
           },
           {
             code: 'non',
@@ -1365,7 +1327,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following/XXX - element suivant d'un enchainement`, async () => {
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following/XXX - zapp 2 non eligible`, async () => {
     // GIVEN
     QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
       ENCHAINEMENT_KYC_1: [
@@ -1433,19 +1395,18 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       nombre_total_questions: 4,
-      nombre_total_questions_effectives: 4,
+      nombre_total_questions_effectives: 2,
       position_courante: 2,
       is_first: false,
-      is_last: false,
+      is_last: true,
       is_out_of_range: false,
-      is_eligible: false,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC002',
+        code: 'KYC004',
         is_NGC: true,
         is_answered: false,
         points: 20,
-        question: 'quest 2',
+        question: 'quest 4',
         reponse_multiple: [
           {
             code: 'oui',
