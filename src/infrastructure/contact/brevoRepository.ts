@@ -69,6 +69,7 @@ export class BrevoRepository {
       ) {
         return BrevoResponse.permanent_error;
       }
+      console.log(error.response.text);
       return BrevoResponse.error;
     }
   }

@@ -6,8 +6,6 @@ import {
 } from '../infrastructure/contact/brevoRepository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
-const H24 = 24 * 60 * 60 * 1000;
-
 @Injectable()
 export class ContactUsecase {
   constructor(
@@ -17,18 +15,19 @@ export class ContactUsecase {
 
   async batchUpdate(): Promise<string[]> {
     let result = [];
-    const block_size = 100;
+    const BLOCK_SIZE = 100;
+    const MAX_TOTAL_UPDATES = 500;
 
     let count_to_update =
       await this.utilisateurRepository.countUtilisateurToUpdateInBrevo();
 
-    count_to_update = Math.min(count_to_update, 200);
+    count_to_update = Math.min(count_to_update, MAX_TOTAL_UPDATES);
 
-    for (let index = 0; index < count_to_update; index = index + block_size) {
+    for (let index = 0; index < count_to_update; index = index + BLOCK_SIZE) {
       let current_user_list =
         await this.utilisateurRepository.listUtilisateurToUpdateInBrevo(
           index,
-          block_size,
+          BLOCK_SIZE,
           [
             Scope.core,
             Scope.logement,
