@@ -30,7 +30,6 @@ export class EmailScheduler extends NotificationScheduler {
     }
     if (notif === EmailNotification.email_relance_onboarding_j8) {
       const age_user = this.getAgeCreationUtilisateur(utilisateur);
-      console.log(this.not_sent(notif, utilisateur));
       return (
         utilisateur.active_account &&
         utilisateur.isV2User() &&
