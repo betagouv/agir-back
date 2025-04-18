@@ -1,3 +1,4 @@
+import { CanalNotification } from '../../domain/notification/notificationHistory';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 
 export class Contact {
@@ -9,6 +10,7 @@ export class Contact {
     FIRSTNAME: string;
     LASTNAME: string;
     PSEUDO: string;
+    MAILING_DISABLED: boolean;
   };
   email: string;
   ext_id?: string;
@@ -34,6 +36,9 @@ export class Contact {
       FIRSTNAME: user.prenom,
       LASTNAME: user.nom,
       PSEUDO: user.pseudo,
+      MAILING_DISABLED: user.notification_history.isCanalDisabled(
+        CanalNotification.email,
+      ),
     };
     result.email = user.email;
     result.ext_id = user.id;
@@ -56,6 +61,7 @@ export class Contact {
       FIRSTNAME: null,
       LASTNAME: null,
       PSEUDO: null,
+      MAILING_DISABLED: false,
     };
     result.email = email;
     result.ext_id = utilisateurId;

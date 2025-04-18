@@ -24,14 +24,19 @@ export class ContactUsecase {
         await this.utilisateurRepository.listUtilisateurToUpdateInBrevo(
           index,
           block_size,
-          [Scope.core, Scope.logement, Scope.gamification],
+          [
+            Scope.core,
+            Scope.logement,
+            Scope.gamification,
+            Scope.notification_history,
+          ],
         );
 
       current_user_list = current_user_list.filter(
         (u) => u.id === 'wojtek' || u.id === 'wojtek2',
       );
       for (const user of current_user_list) {
-        const updated_OK = this.brevoRepository.updateContact(user);
+        const updated_OK = await this.brevoRepository.updateContact(user);
         if (updated_OK) {
           result.push(`Updated Brevo contact ${user.email} ok`);
         } else {
