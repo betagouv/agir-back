@@ -53,7 +53,6 @@ export class BrevoRepository {
 
   public async updateContact(utilisateur: Utilisateur): Promise<BrevoResponse> {
     if (this.is_synchro_disabled()) return BrevoResponse.disabled;
-    if (utilisateur.id !== 'wojtek2') return BrevoResponse.disabled;
 
     const contact = Contact.buildContactFromUtilisateur(utilisateur);
 

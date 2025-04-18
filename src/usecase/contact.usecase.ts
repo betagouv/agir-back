@@ -38,7 +38,6 @@ export class ContactUsecase {
         );
 
       for (const user of current_user_list) {
-        if (user.id !== 'wojtek2') continue;
         const update_status = await this.brevoRepository.updateContact(user);
         if (update_status === BrevoResponse.ok) {
           result.push(`Updated Brevo contact [${user.email}] ok`);

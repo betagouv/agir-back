@@ -116,7 +116,7 @@ describe('ContactUsecase', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     expect(userDB.brevo_created_at).toEqual(null);
   });
-  it.skip('batchUpdate : cas passant OK', async () => {
+  it('batchUpdate : cas passant OK', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
@@ -139,7 +139,7 @@ describe('ContactUsecase', () => {
     ]);
     expect(userDB.brevo_updated_at.getTime()).toBeGreaterThan(Date.now() - 200);
   });
-  it.skip('batchUpdate : cas disabled', async () => {
+  it('batchUpdate : cas disabled', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
@@ -162,7 +162,7 @@ describe('ContactUsecase', () => {
     ]);
     expect(userDB.brevo_updated_at).toEqual(null);
   });
-  it.skip('batchUpdate : cas erreur', async () => {
+  it('batchUpdate : cas erreur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
@@ -185,7 +185,7 @@ describe('ContactUsecase', () => {
     ]);
     expect(userDB.brevo_updated_at).toEqual(null);
   });
-  it.skip('batchUpdate : cas erreur permanente', async () => {
+  it('batchUpdate : cas erreur permanente', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
