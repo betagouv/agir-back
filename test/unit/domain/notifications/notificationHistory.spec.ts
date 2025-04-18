@@ -246,10 +246,9 @@ describe('NotificationHistory', () => {
     // THEN
     expect(result).toHaveLength(0);
   });
-  it(`getNouvellesNotifications : pas de notif late_onboarding si dejà envoyé`, () => {
+  it(`getNouvellesNotifications : pas de notif si dejà envoyé`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_INACTIVES =
-      'welcome,email_relance_onboarding_j8';
+    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
       false,
@@ -257,21 +256,17 @@ describe('NotificationHistory', () => {
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
     utilisateur.active_account = true;
-    const notifications = new NotificationHistory({
-      version: 0,
-      sent_notifications: [
-        {
-          type: TypeNotification.late_onboarding,
-          canal: CanalNotification.email,
-          date_envoie: new Date(),
-        },
-      ],
-      enabled_canals: [CanalNotification.email, CanalNotification.mobile],
+    utilisateur.notification_history.sent_notifications.push({
+      type: TypeNotification.email_relance_onboarding_j8,
+      canal: CanalNotification.email,
+      date_envoie: new Date(),
     });
 
     // WHEN
     const result =
-      notifications.getNouvellesNotificationsEmailAPousser(utilisateur);
+      utilisateur.notification_history.getNouvellesNotificationsEmailAPousser(
+        utilisateur,
+      );
 
     // THEN
     expect(result).toHaveLength(0);
@@ -445,7 +440,7 @@ describe('NotificationHistory', () => {
   });
   it(`getNouvellesNotifications : mobile_inscription_J9`, () => {
     // GIVEN
-    process.env.NOTIFICATIONS_MAIL_INACTIVES = 'mobile_inscription_J2';
+    process.env.NOTIFICATIONS_MOBILE_INACTIVES = 'mobile_inscription_J2';
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
