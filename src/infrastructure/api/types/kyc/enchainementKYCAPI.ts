@@ -11,36 +11,28 @@ export class EnchainementKYCAPI {
   @ApiProperty() nombre_total_questions: number;
   @ApiProperty() nombre_total_questions_effectives: number;
   @ApiProperty() position_courante: number;
-  @ApiProperty() is_very_first: boolean;
   @ApiProperty() is_first: boolean;
   @ApiProperty() is_last: boolean;
   @ApiProperty() is_out_of_range: boolean;
-  @ApiProperty() is_eligible: boolean;
   @ApiProperty({ type: QuestionKYCAPI_v2 })
   question_courante: QuestionKYCAPI_v2;
 
-  public static mapToAPI(
-    enchainement: EnchainementKYC,
-    excludes: EnchainementKYCExclude[],
-  ): EnchainementKYCAPI {
-    const position_courante =
-      enchainement.getPositionCouranteWithExcludes(excludes);
+  public static mapToAPI(enchainement: EnchainementKYC): EnchainementKYCAPI {
+    const position_courante = enchainement.getPositionCourante();
 
     return {
       nombre_total_questions: enchainement.getNombreTotalQuestions(),
       nombre_total_questions_effectives:
-        enchainement.getNombreTotalQuestionseffectives(excludes),
+        enchainement.getNombreTotalQuestionsEligibles(),
       position_courante: Number.isNaN(position_courante)
         ? -1
         : position_courante,
       question_courante: enchainement.getKycCourante()
         ? QuestionKYCAPI_v2.mapToAPI(enchainement.getKycCourante())
         : undefined,
-      is_very_first: enchainement.isVeryFirst(),
-      is_first: enchainement.isFirst(excludes),
-      is_last: enchainement.isLast(excludes),
+      is_first: enchainement.isFirst(),
+      is_last: enchainement.isLast(),
       is_out_of_range: Number.isNaN(position_courante),
-      is_eligible: enchainement.isCouranteEligible(),
     };
   }
 }

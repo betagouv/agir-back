@@ -157,10 +157,7 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    const first_kyc = enchainement.setFirstFromExcludes(excludes);
-    if (!first_kyc) {
-      enchainement.forceRewind();
-    }
+    enchainement.setFirst();
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -191,7 +188,7 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    enchainement.setNextWithExcludes(current_kyc_code, excludes);
+    enchainement.setNext(current_kyc_code);
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -222,7 +219,7 @@ export class QuestionKYCEnchainementUsecase {
       utilisateur.kyc_history,
     );
 
-    enchainement.setPreviousWithExcludes(current_kyc_code, excludes);
+    enchainement.setPrevious(current_kyc_code);
 
     return this.personnalisator.personnaliser(enchainement, utilisateur, [
       CLE_PERSO.espace_insecable,

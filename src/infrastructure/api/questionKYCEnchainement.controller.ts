@@ -104,7 +104,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
+      return EnchainementKYCAPI.mapToAPI(enchainement);
     } else {
       ApplicationError.throwQuestionNotFound();
     }
@@ -151,7 +151,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
+      return EnchainementKYCAPI.mapToAPI(enchainement);
     } else {
       ApplicationError.throwQuestionNotFound();
     }
@@ -198,7 +198,7 @@ export class QuestionsKYCEnchainementController extends GenericControler {
         final_excludes,
       );
     if (enchainement) {
-      return EnchainementKYCAPI.mapToAPI(enchainement, final_excludes);
+      return EnchainementKYCAPI.mapToAPI(enchainement);
     } else {
       ApplicationError.throwQuestionNotFound();
     }
