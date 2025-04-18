@@ -1,6 +1,10 @@
 {
   "jobs": [
     {
+      "command": "0 8 * * * ./scripts/mobile_notifications.sh",
+      "size": "M"
+    },
+    {
       "command": "*/10 * * * * ./scripts/ten_minute_jobs.sh",
       "size": "M"
     },
