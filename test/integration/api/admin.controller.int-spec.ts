@@ -1200,7 +1200,9 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body).toEqual(['ECHEC updating Brevo contact yo@truc.com']);
+    expect(response.body).toEqual([
+      'SKIP updating Brevo contact [yo@truc.com]',
+    ]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,

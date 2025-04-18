@@ -643,6 +643,7 @@ export class TestUtil {
       est_valide_pour_classement: true,
       brevo_created_at: null,
       brevo_updated_at: null,
+      brevo_update_disabled: false,
       mobile_token: null,
       mobile_token_updated_at: null,
       code_commune: null,

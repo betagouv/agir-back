@@ -425,6 +425,7 @@ export class UtilisateurRepository {
         id: 'asc',
       },
       where: {
+        brevo_update_disabled: false,
         OR: [
           {
             brevo_updated_at: null,
@@ -631,6 +632,7 @@ export class UtilisateurRepository {
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
       brevo_updated_at: user.brevo_updated_at,
+      brevo_update_disabled: user.brevo_update_disabled,
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
       code_commune: user.code_commune,
@@ -696,6 +698,7 @@ export class UtilisateurRepository {
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
       brevo_updated_at: user.brevo_updated_at,
+      brevo_update_disabled: user.brevo_update_disabled,
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
       created_at: undefined,

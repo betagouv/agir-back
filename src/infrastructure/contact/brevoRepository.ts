@@ -5,6 +5,13 @@ import { App } from '../../domain/app';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { Contact } from './contact';
 
+export enum BrevoResponse {
+  ok = 'ok',
+  disabled = 'disabled',
+  error = 'error',
+  permanent_error = 'permanent_error',
+}
+
 @Injectable()
 export class BrevoRepository {
   private client;
@@ -44,18 +51,25 @@ export class BrevoRepository {
     }
   }
 
-  public async updateContact(utilisateur: Utilisateur): Promise<boolean> {
-    if (this.is_synchro_disabled()) return false;
+  public async updateContact(utilisateur: Utilisateur): Promise<BrevoResponse> {
+    if (this.is_synchro_disabled()) return BrevoResponse.disabled;
 
     const contact = Contact.buildContactFromUtilisateur(utilisateur);
 
     try {
       await this.apiInstance.updateContact(utilisateur.email, contact);
       console.log(`BREVO contact ${utilisateur.email} updated `);
-      return true;
+      return BrevoResponse.ok;
     } catch (error) {
       console.error(error.response.text);
-      return false;
+      if (
+        error.response.text &&
+        error.response.text.message ===
+          `Invalid value passed for identifierType email_id`
+      ) {
+        return BrevoResponse.permanent_error;
+      }
+      return BrevoResponse.error;
     }
   }
 
