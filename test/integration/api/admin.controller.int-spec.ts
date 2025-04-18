@@ -1192,7 +1192,7 @@ describe('Admin (API test)', () => {
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.utilisateur, { brevo_created_at: new Date() });
 
     // WHEN
     const response = await TestUtil.POST('/admin/contacts/synchronize');

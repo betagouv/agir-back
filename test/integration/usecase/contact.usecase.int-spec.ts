@@ -121,6 +121,7 @@ describe('ContactUsecase', () => {
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
       brevo_updated_at: null,
+      brevo_created_at: new Date(),
       brevo_update_disabled: false,
     });
     brevoRepository.updateContact.mockImplementation(() => {
@@ -139,11 +140,30 @@ describe('ContactUsecase', () => {
     ]);
     expect(userDB.brevo_updated_at.getTime()).toBeGreaterThan(Date.now() - 200);
   });
+  it('batchUpdate : cas passant KO par pas de date de creation', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      email: 'emailYO',
+      brevo_updated_at: null,
+      brevo_created_at: null,
+      brevo_update_disabled: false,
+    });
+    brevoRepository.updateContact.mockImplementation(() => {
+      return BrevoResponse.ok;
+    });
+
+    // WHEN
+    const result = await contactUsecase.batchUpdate();
+
+    // THEN
+    expect(result).toEqual([]);
+  });
   it('batchUpdate : cas disabled', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
       brevo_updated_at: null,
+      brevo_created_at: new Date(),
       brevo_update_disabled: false,
     });
     brevoRepository.updateContact.mockImplementation(() => {
@@ -167,6 +187,7 @@ describe('ContactUsecase', () => {
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
       brevo_updated_at: null,
+      brevo_created_at: new Date(),
       brevo_update_disabled: false,
     });
     brevoRepository.updateContact.mockImplementation(() => {
@@ -190,6 +211,7 @@ describe('ContactUsecase', () => {
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
       brevo_updated_at: null,
+      brevo_created_at: new Date(),
       brevo_update_disabled: false,
     });
     brevoRepository.updateContact.mockImplementation(() => {
