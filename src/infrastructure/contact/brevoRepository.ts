@@ -62,11 +62,11 @@ export class BrevoRepository {
       console.log(`BREVO contact ${utilisateur.email} updated `);
       return BrevoResponse.ok;
     } catch (error) {
-      console.log(JSON.stringify(error));
-      console.error(error.response.text);
       if (
-        error.response.message ===
-        `Invalid value passed for identifierType email_id`
+        error.response.text &&
+        error.response.text.includes(
+          `Invalid value passed for identifierType email_id`,
+        )
       ) {
         return BrevoResponse.permanent_error;
       }
