@@ -101,6 +101,7 @@ export class UtilisateurData {
   est_valide_pour_classement: boolean;
   brevo_created_at: Date;
   brevo_updated_at: Date;
+  brevo_update_disabled: boolean;
   mobile_token: string;
   mobile_token_updated_at: Date;
   code_commune: string;
@@ -198,6 +199,7 @@ export class Utilisateur extends UtilisateurData {
       est_valide_pour_classement: false,
       brevo_created_at: null,
       brevo_updated_at: null,
+      brevo_update_disabled: false,
       mobile_token_updated_at: null,
       mobile_token: null,
       code_commune: null,

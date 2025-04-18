@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Scope } from '../domain/utilisateur/utilisateur';
-import { BrevoRepository } from '../infrastructure/contact/brevoRepository';
+import {
+  BrevoRepository,
+  BrevoResponse,
+} from '../infrastructure/contact/brevoRepository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const H24 = 24 * 60 * 60 * 1000;
@@ -35,15 +38,26 @@ export class ContactUsecase {
         );
 
       for (const user of current_user_list) {
-        const updated_OK = await this.brevoRepository.updateContact(user);
-        if (updated_OK) {
-          result.push(`Updated Brevo contact ${user.email} ok`);
+        const update_status = await this.brevoRepository.updateContact(user);
+        if (update_status === BrevoResponse.ok) {
+          result.push(`Updated Brevo contact [${user.email}] ok`);
           user.brevo_updated_at = new Date();
           await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
             Scope.core,
           ]);
-        } else {
-          result.push(`ECHEC updating Brevo contact ${user.email}`);
+        }
+        if (update_status === BrevoResponse.error) {
+          result.push(`ECHEC updating Brevo contact [${user.email}]`);
+        }
+        if (update_status === BrevoResponse.disabled) {
+          result.push(`SKIP updating Brevo contact [${user.email}]`);
+        }
+        if (update_status === BrevoResponse.permanent_error) {
+          result.push(`PERMANENT ERROR updating Brevo contact [${user.email}]`);
+          user.brevo_update_disabled = true;
+          await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+            Scope.core,
+          ]);
         }
       }
     }

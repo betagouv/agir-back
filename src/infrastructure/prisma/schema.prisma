@@ -74,6 +74,7 @@ model Utilisateur {
   est_valide_pour_classement Boolean   @default(true)
   brevo_created_at           DateTime? @db.Timestamptz(3)
   brevo_updated_at           DateTime? @db.Timestamptz(3)
+  brevo_update_disabled      Boolean   @default(false)
   mobile_token               String?   @unique
   mobile_token_updated_at    DateTime? @db.Timestamptz(3)
   code_commune               String?
