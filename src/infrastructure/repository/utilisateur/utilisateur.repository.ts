@@ -406,7 +406,6 @@ export class UtilisateurRepository {
       },
       where: {
         brevo_created_at: null,
-        active_account: true,
       },
     });
     return result.map((elem) => elem['id']);

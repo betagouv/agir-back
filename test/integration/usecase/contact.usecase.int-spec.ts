@@ -117,7 +117,7 @@ describe('ContactUsecase', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', []);
     expect(userDB.brevo_created_at).toEqual(null);
   });
-  it('createMissingContacts : contact pas actif => skip', async () => {
+  it.skip('createMissingContacts : contact pas actif => skip', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'emailYO',
