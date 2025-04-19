@@ -205,11 +205,7 @@ export class KYCHistory {
             kyc.type === TypeReponseQuestionKYC.entier ||
             kyc.type === TypeReponseQuestionKYC.decimal;
 
-          if (
-            (validator.isInt(string_value) ||
-              validator.isDecimal(string_value)) &&
-            is_kyc_number
-          ) {
+          if (validator.isInt(string_value) && is_kyc_number) {
             const updated_kyc = this.updateQuestionByNGCKeyWithLabel(key, [
               string_value,
             ]);
