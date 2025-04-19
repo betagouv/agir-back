@@ -1,16 +1,14 @@
-import { Thematique } from '../thematique/thematique';
 import { App } from '../app';
+import { Thematique } from '../thematique/thematique';
 
 export enum ScheduledService {
   dummy_scheduled = 'dummy_scheduled',
 }
 export enum LiveService {
   fruits = 'fruits',
-  linky = 'linky',
   dummy_live = 'dummy_live',
 }
 export enum AsyncService {
-  linky = 'linky',
   dummy_async = 'dummy_async',
 }
 

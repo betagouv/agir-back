@@ -1,6 +1,5 @@
 import { NewServiceDefinition } from '../../domain/bibliotheque_services/newServiceDefinition';
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { ServiceAsyncID } from '../../domain/bibliotheque_services/serviceAsyncID';
 import { ServiceExterneID } from '../../domain/bibliotheque_services/serviceExterneID';
 import { Thematique } from '../../domain/thematique/thematique';
 
@@ -23,18 +22,6 @@ const new_service_catalogue: NewServiceDefinition[] = [
     thematique: Thematique.consommation,
     is_available_inhouse: true,
   },
-  /*
-  {
-    id: ServiceAsyncID.linky,
-    external_url: 'https://www.winter-energies.fr/',
-    icon_url:
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1727275914/Screenshot_2024_09_25_at_16_51_08_876426bef9.png',
-    titre: 'Votre consommation électrique',
-    sous_titre: 'Conseils et suivi',
-    thematique: Thematique.logement,
-    is_available_inhouse: true,
-  },
-  */
   {
     id: ServiceRechercheID.proximite,
     external_url: 'https://presdecheznous.fr/map#/carte/{CODE_POSTAL}',

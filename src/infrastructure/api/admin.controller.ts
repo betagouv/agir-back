@@ -18,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
-import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
@@ -60,7 +59,6 @@ export class AdminController extends GenericControler {
     private rechercheServicesUsecase: RechercheServicesUsecase,
     private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
-    private linkyUsecase: LinkyUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
@@ -137,15 +135,6 @@ export class AdminController extends GenericControler {
     return await this.serviceUsecase.processAsyncServices();
   }
 
-  @Post('services/clean_linky_data')
-  @ApiOkResponse({ type: Object })
-  async cleanLinkyData(@Request() req): Promise<object> {
-    this.checkCronAPIProtectedEndpoint(req);
-    const result = await this.linkyUsecase.cleanLinkyData();
-
-    return { result: `Cleaned ${result} PRMs` };
-  }
-
   @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:
@@ -181,15 +170,6 @@ export class AdminController extends GenericControler {
   async unlockUsers(@Request() req): Promise<any> {
     this.checkCronAPIProtectedEndpoint(req);
     await this.migrationUsecase.unlockUserMigration();
-  }
-
-  @Post('/admin/unsubscribe_oprhan_prms')
-  @ApiOperation({
-    summary: `Dé inscrit les prms orphelins (suite à suppression de comptes)`,
-  })
-  async unsubscribe_oprhan_prms(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.linkyUsecase.unsubscribeOrphanPRMs();
   }
 
   @Post('admin/contacts/synchronize')

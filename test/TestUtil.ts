@@ -18,7 +18,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   Aide,
   Article,
-  Linky,
   Quizz,
   Service,
   ServiceDefinition,
@@ -85,7 +84,6 @@ export enum DB {
   service = 'service',
   serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
-  linky = 'linky',
   article = 'article',
   partenaire = 'partenaire',
   aideExpirationWarning = 'aideExpirationWarning',
@@ -109,7 +107,6 @@ export class TestUtil {
     service: TestUtil.serviceData,
     serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
-    linky: TestUtil.linkyData,
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
     fAQ: TestUtil.fAQData,
@@ -198,7 +195,6 @@ export class TestUtil {
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.thematique.deleteMany();
-    await this.prisma.linky.deleteMany();
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
@@ -766,28 +762,6 @@ export class TestUtil {
       sous_description: 'sous desc',
       parametrage_requis: true,
       thematiques: ['climat', 'logement'],
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-  static linkyData(override?: Partial<Linky>): Linky {
-    return {
-      prm: 'abc',
-      winter_pk: '123',
-      utilisateurId: 'utilisateur-id',
-      data: [
-        {
-          date: new Date(123),
-          day_value: 100,
-          value_cumulee: null,
-        },
-        {
-          date: new Date(456),
-          day_value: 110,
-          value_cumulee: null,
-        },
-      ] as any,
       created_at: undefined,
       updated_at: undefined,
       ...override,

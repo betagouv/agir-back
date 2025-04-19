@@ -5,7 +5,6 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { LinkyUsecase } from './usecase/linky.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
@@ -22,27 +21,12 @@ async function bootstrap() {
   const command = process.argv[2];
   let start_time;
   switch (command) {
-    case 'clean_linky_data':
-      start_time = Date.now();
-      console.log(`START clean_linky_data ${start_time}`);
-      const result = await application.get(LinkyUsecase).cleanLinkyData();
-      console.log(`STOP clean_linky_data after ${Date.now() - start_time} ms`);
-      console.log(`Cleaned ${result} PRMs`);
-      break;
     case 'upsert_service_definitions':
       start_time = Date.now();
       console.log(`START upsert_service_definitions ${start_time}`);
       await application.get(ReferentielUsecase).upsertServicesDefinitions();
       console.log(
         `STOP upsert_service_definitions after ${Date.now() - start_time}  ms`,
-      );
-      break;
-    case 'unsubscribe_oprhan_prms':
-      start_time = Date.now();
-      console.log(`START unsubscribe_oprhan_prms ${start_time}`);
-      await application.get(LinkyUsecase).unsubscribeOrphanPRMs();
-      console.log(
-        `STOP unsubscribe_oprhan_prms after ${Date.now() - start_time}  ms`,
       );
       break;
     case 'article_statistique':

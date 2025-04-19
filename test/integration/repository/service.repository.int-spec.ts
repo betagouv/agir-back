@@ -1,6 +1,5 @@
-import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
+import { DB, TestUtil } from '../../TestUtil';
 
 async function injectData() {
   await TestUtil.create(DB.utilisateur, { id: 'u1', email: '1' });
