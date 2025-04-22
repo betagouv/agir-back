@@ -5,6 +5,7 @@ import { Thematique } from '../thematique/thematique';
 import { KycDefinition } from './kycDefinition';
 import { KYCMosaicID } from './KYCMosaicID';
 import { MosaicKYC_CATALOGUE, MosaicKYCDef } from './mosaicKYC';
+import { QuestionChoix } from './new_interfaces/QuestionChoix';
 import { QuestionChoixMultiple } from './new_interfaces/QuestionChoixMultiples';
 import { QuestionChoixUnique } from './new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from './new_interfaces/QuestionNumerique';
@@ -197,7 +198,7 @@ export class KYCHistory {
     }
 
     for (const kyc_code of mosaic_def.question_kyc_codes) {
-      const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+      const kyc = this.getQuestion(kyc_code);
 
       if (kyc && kyc.hasAnyResponses()) {
         return true;
@@ -218,7 +219,7 @@ export class KYCHistory {
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_id);
+        const kyc = this.getQuestion(kyc_id);
         if (kyc && this.isKYCEligible(kyc)) {
           result.push(kyc);
         }
@@ -236,7 +237,7 @@ export class KYCHistory {
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+        const kyc = this.getQuestion(kyc_code);
         if (kyc) {
           result.push(kyc);
         }
@@ -383,7 +384,7 @@ export class KYCHistory {
 
     const target_kyc_liste: QuestionKYC[] = [];
     for (const kyc_code of mosaic_def.question_kyc_codes) {
-      const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+      const kyc = this.getQuestion(kyc_code);
       if (kyc) {
         target_kyc_liste.push(kyc);
       }
@@ -404,7 +405,7 @@ export class KYCHistory {
       let union = true;
       for (const cond of and_set) {
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
-        if (!(kyc && kyc.isSelected(cond.code_reponse))) {
+        if (!(kyc && new QuestionChoix(kyc).isSelected(cond.code_reponse))) {
           union = false;
         }
       }

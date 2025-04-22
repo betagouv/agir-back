@@ -21,6 +21,7 @@ export class QuestionKYC extends QuestionKYCData {
     return this;
   }
 
+  // OK
   public isSimpleQuestion(): boolean {
     return (
       this.type === TypeReponseQuestionKYC.decimal ||
@@ -28,52 +29,61 @@ export class QuestionKYC extends QuestionKYCData {
       this.type === TypeReponseQuestionKYC.entier
     );
   }
+  // OK
   public isChoixQuestion(): boolean {
     return (
       this.type === TypeReponseQuestionKYC.choix_unique ||
       this.type === TypeReponseQuestionKYC.choix_multiple
     );
   }
+
+  // OK
   public isChoixUnique(): boolean {
     return this.type === TypeReponseQuestionKYC.choix_unique;
   }
+  // OK
   public isChampLibre(): boolean {
     return this.type === TypeReponseQuestionKYC.libre;
   }
+  // OK
   public isChampEntier(): boolean {
     return this.type === TypeReponseQuestionKYC.entier;
   }
+  // OK
   public isChampDecimal(): boolean {
     return this.type === TypeReponseQuestionKYC.decimal;
   }
+  // OK
   public isChoixMultiple(): boolean {
     return this.type === TypeReponseQuestionKYC.choix_multiple;
   }
 
+  // OK
   public hasConditions() {
     return this.conditions && this.conditions.length > 0;
   }
 
+  // OK
   public hasAnyResponses(): boolean {
     return this.hasAnySimpleResponse() || this.hasAnyComplexeResponse();
   }
 
+  // OK
   public getTags(): Tag[] {
     return this.tags.concat(this.thematique);
   }
 
+  // OK
   public getDistinctText(): string {
     return this.question;
   }
+
+  // OK
   public isLocal(): boolean {
     return false;
   }
 
-  public static isTrueBooleanString(str: string): boolean {
-    if (!str) return false;
-    return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
-  }
-
+  // OK
   public isMosaic(): boolean {
     return (
       this.type === TypeReponseQuestionKYC.mosaic_boolean ||
@@ -81,11 +91,13 @@ export class QuestionKYC extends QuestionKYCData {
     );
   }
 
+  // OK
   public getConditions(): AndConditionSet[] {
     if (this.hasConditions()) return this.conditions;
     return [];
   }
 
+  /*
   public isSelected(code_reponse: string): boolean {
     if (!this.hasAnyComplexeResponse()) {
       return false;
@@ -93,6 +105,7 @@ export class QuestionKYC extends QuestionKYCData {
     const found = this.reponse_complexe.find((r) => r.code === code_reponse);
     return found ? found.selected : false;
   }
+    */
 
   public getNGCCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;

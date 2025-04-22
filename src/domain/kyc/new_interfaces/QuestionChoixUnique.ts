@@ -1,21 +1,9 @@
 import { QuestionKYC } from '../questionKYC';
+import { QuestionChoix } from './QuestionChoix';
 
-export class QuestionChoixUnique {
-  private kyc: QuestionKYC;
-
+export class QuestionChoixUnique extends QuestionChoix {
   constructor(kyc: QuestionKYC) {
-    this.kyc = kyc;
-  }
-
-  public getCode(): string {
-    return this.kyc.code;
-  }
-  public getKyc(): QuestionKYC {
-    return this.kyc;
-  }
-
-  public isAnswered(): boolean {
-    return this.kyc.hasAnyComplexeResponse();
+    super(kyc);
   }
 
   public getSelectedCode(): string {
@@ -26,6 +14,7 @@ export class QuestionChoixUnique {
     this.kyc.touch();
     this.kyc.selectChoixUniqueByCode(code);
   }
+
   public selectByCodeNgc(code_ngc: string): boolean {
     this.kyc.touch();
     const code = this.kyc.getCodeByNGCCode(code_ngc);

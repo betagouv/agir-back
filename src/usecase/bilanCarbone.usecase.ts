@@ -432,17 +432,17 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactTransport(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_voiture = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_voiture = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_transport_voiture_km,
     );
     if (!kyc_voiture) return null;
     if (!kyc_voiture.hasAnyResponses()) return null;
 
-    const kyc_avion = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_avion = utilisateur.kyc_history.getQuestionChoixUnique(
       KYCID.KYC_transport_avion_3_annees,
     );
     if (!kyc_avion) return null;
-    if (!kyc_avion.hasAnyResponses()) return null;
+    if (!kyc_avion.isAnswered()) return null;
 
     const avion = kyc_avion.isSelected('oui');
     const km = kyc_voiture.getReponseSimpleValueAsNumber();
@@ -471,7 +471,7 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactAlimentation(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_regime = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_regime = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_alimentation_regime,
     );
     if (!kyc_regime) return null;
@@ -492,10 +492,9 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactConsommation(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_type_conso =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC_consommation_type_consommateur,
-      );
+    const kyc_type_conso = utilisateur.kyc_history.getQuestion(
+      KYCID.KYC_consommation_type_consommateur,
+    );
     if (!kyc_type_conso) return null;
     if (!kyc_type_conso.hasAnyResponses()) return null;
 
@@ -514,16 +513,13 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactLogement(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_menage = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-      KYCID.KYC_menage,
-    );
+    const kyc_menage = utilisateur.kyc_history.getQuestion(KYCID.KYC_menage);
     if (!kyc_menage) return null;
     if (!kyc_menage.hasAnyResponses()) return null;
 
-    const kyc_superficie =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC_superficie,
-      );
+    const kyc_superficie = utilisateur.kyc_history.getQuestion(
+      KYCID.KYC_superficie,
+    );
     if (!kyc_superficie) return null;
     if (!kyc_superficie.hasAnyResponses()) return null;
 
@@ -533,25 +529,25 @@ export class BilanCarboneUsecase {
       return null;
     }
 
-    const kyc_bois = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_bois = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_bois,
     );
     if (!kyc_bois) return null;
     if (!kyc_bois.hasAnyResponses()) return null;
 
-    const kyc_elec = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_elec = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_elec,
     );
     if (!kyc_elec) return null;
     if (!kyc_elec.hasAnyResponses()) return null;
 
-    const kyc_gaz = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_gaz = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_gaz,
     );
     if (!kyc_gaz) return null;
     if (!kyc_gaz.hasAnyResponses()) return null;
 
-    const kyc_fioul = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+    const kyc_fioul = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_fioul,
     );
     if (!kyc_fioul) return null;

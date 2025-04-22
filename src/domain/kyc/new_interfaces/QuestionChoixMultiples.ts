@@ -1,25 +1,9 @@
 import { QuestionKYC } from '../questionKYC';
+import { QuestionChoix } from './QuestionChoix';
 
-export class QuestionChoixMultiple {
-  private kyc: QuestionKYC;
-
+export class QuestionChoixMultiple extends QuestionChoix {
   constructor(kyc: QuestionKYC) {
-    this.kyc = kyc;
-  }
-
-  public getCode(): string {
-    return this.kyc.code;
-  }
-  public getKyc(): QuestionKYC {
-    return this.kyc;
-  }
-
-  public isAnswered(): boolean {
-    return this.kyc.hasAnyComplexeResponse();
-  }
-
-  public getAllCodes(): string[] {
-    return this.kyc.getRAWListeReponsesComplexes().map((r) => r.code);
+    super(kyc);
   }
 
   public select(code: string) {

@@ -1,0 +1,30 @@
+import { QuestionKYC } from '../questionKYC';
+
+export class QuestionChoix {
+  protected kyc: QuestionKYC;
+
+  constructor(kyc: QuestionKYC) {
+    this.kyc = kyc;
+  }
+
+  public getCode(): string {
+    return this.kyc.code;
+  }
+  public getKyc(): QuestionKYC {
+    return this.kyc;
+  }
+
+  public isAnswered(): boolean {
+    return this.kyc.hasAnyComplexeResponse();
+  }
+
+  public isSelected(code_reponse: string): boolean {
+    const entry_liste = this.kyc.getRAWListeReponsesComplexes();
+    const found = entry_liste.find((r) => r.code === code_reponse);
+    return found ? found.selected : false;
+  }
+
+  public getAllCodes(): string[] {
+    return this.kyc.getRAWListeReponsesComplexes().map((r) => r.code);
+  }
+}

@@ -6,6 +6,7 @@ import {
 } from '../../logement/logement';
 import { Utilisateur } from '../../utilisateur/utilisateur';
 import { KYCID } from '../KYCID';
+import { QuestionChoix } from '../new_interfaces/QuestionChoix';
 import { QuestionChoixMultiple } from '../new_interfaces/QuestionChoixMultiples';
 import { QuestionChoixUnique } from '../new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from '../new_interfaces/QuestionNumerique';
@@ -28,7 +29,9 @@ export class KycToProfileSync {
 
     switch (kyc.code) {
       case KYCID.KYC006:
-        utilisateur.logement.plus_de_15_ans = kyc.isSelected('plus_15');
+        utilisateur.logement.plus_de_15_ans = new QuestionChoix(kyc).isSelected(
+          'plus_15',
+        );
         break;
       case KYCID.KYC_logement_age:
         const value = kyc.getReponseSimpleValueAsNumber();

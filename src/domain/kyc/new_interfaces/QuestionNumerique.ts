@@ -1,28 +1,16 @@
 import { QuestionKYC } from '../questionKYC';
+import { QuestionSimple } from './QuestionSimple';
 
-export class QuestionNumerique {
-  private kyc: QuestionKYC;
-
+export class QuestionNumerique extends QuestionSimple {
   constructor(kyc: QuestionKYC) {
-    this.kyc = kyc;
-  }
-
-  public getCode(): string {
-    return this.kyc.code;
-  }
-  public getKyc(): QuestionKYC {
-    return this.kyc;
-  }
-
-  public isAnswered(): boolean {
-    return this.kyc.hasAnySimpleResponse();
+    super(kyc);
   }
 
   public getValue(): number {
     return this.kyc.getReponseSimpleValueAsNumber();
   }
+
   public setValue(value: number) {
-    this.kyc.touch();
-    this.kyc.setReponseSimpleValue('' + value);
+    this.setStringValue('' + value);
   }
 }

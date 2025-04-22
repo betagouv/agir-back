@@ -11,13 +11,11 @@ import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { EnchainementKYCAPI } from './types/kyc/enchainementKYCAPI';
-import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
 import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
-import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
 
 @Controller()
-@ApiExtraModels(MosaicKYCAPI, ReponseKYCMosaicAPI, ReponseKYCAPI)
+@ApiExtraModels(ReponseKYCAPI)
 @ApiBearerAuth()
 @ApiTags('QuestionsKYC - Enchainements')
 export class QuestionsKYCEnchainementController extends GenericControler {

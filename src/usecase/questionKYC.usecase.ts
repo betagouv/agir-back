@@ -183,9 +183,7 @@ export class QuestionKYCUsecase {
 
     if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const code_selected of reponses_code_selected) {
-        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          code_selected.code,
-        );
+        const kyc = utilisateur.kyc_history.getQuestion(code_selected.code);
         if (kyc) {
           if (kyc.type === TypeReponseQuestionKYC.entier) {
             this.updateQuestionOfCode_v2(
@@ -193,7 +191,6 @@ export class QuestionKYCUsecase {
               [{ value: code_selected.selected ? '1' : '0' }],
               utilisateur,
             );
-            //kyc.setReponseSimpleValue(code_selected.selected ? '1' : '0');
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             this.updateQuestionOfCode_v2(
               code_selected.code,
@@ -207,7 +204,6 @@ export class QuestionKYCUsecase {
               ],
               utilisateur,
             );
-            //kyc.selectChoixUniqueByCode(code_selected.selected ? BooleanKYC.oui : BooleanKYC.non);
           } else {
             ApplicationError.throwBadMosaiConfigurationError(mosaicId);
           }
@@ -291,7 +287,7 @@ export class QuestionKYCUsecase {
     if (kyc.isInteger()) {
       if (!validator.isInt('' + input))
         ApplicationError.throwKycNoInteger(input);
-      kyc.setValue(input);
+      kyc.setStringValue(input);
       return;
     }
 
@@ -299,11 +295,11 @@ export class QuestionKYCUsecase {
       const alt_decimal = input.replace(',', '.');
       if (!validator.isDecimal('' + alt_decimal))
         ApplicationError.throwKycNoDecimal(input);
-      kyc.setValue(alt_decimal);
+      kyc.setStringValue(alt_decimal);
       return;
     }
 
-    kyc.setValue(input);
+    kyc.setStringValue(input);
   }
   private updateQuestionChoixUnique(
     kyc: QuestionChoixUnique,

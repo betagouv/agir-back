@@ -8,7 +8,7 @@ import { Gamification } from '../gamification/gamification';
 import { History } from '../history/history';
 import { KYCID } from '../kyc/KYCID';
 import { KYCHistory } from '../kyc/kycHistory';
-import { QuestionKYC } from '../kyc/questionKYC';
+import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
 import { Logement } from '../logement/logement';
 import { NotificationHistory } from '../notification/notificationHistory';
 import { Tag } from '../scoring/tag';
@@ -377,10 +377,10 @@ export class Utilisateur extends UtilisateurData {
   }
   public increaseTagForAnswers(
     tag: Tag,
-    kyc: QuestionKYC,
+    kyc: QuestionChoixUnique,
     map: Record<string, number>,
   ) {
-    if (kyc && kyc.hasAnyResponses()) {
+    if (kyc && kyc.isAnswered()) {
       for (const key in map) {
         if (kyc.isSelected(key)) {
           this.increaseTagValue(tag, map[key]);

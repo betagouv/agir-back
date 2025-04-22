@@ -19,14 +19,12 @@ import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { MosaicKYCAPI } from './types/kyc/mosaicKYCAPI';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
 import { ReponseKYCAPI } from './types/kyc/reponseKYCAPI';
 import { ReponseKYCAPI_v2 } from './types/kyc/reponseKYCAPI_v2';
-import { ReponseKYCMosaicAPI } from './types/kyc/reponseKYCMosaicAPI';
 
 @Controller()
-@ApiExtraModels(MosaicKYCAPI, ReponseKYCMosaicAPI, ReponseKYCAPI)
+@ApiExtraModels(ReponseKYCAPI)
 @ApiBearerAuth()
 @ApiTags('QuestionsKYC')
 export class QuestionsKYCController extends GenericControler {

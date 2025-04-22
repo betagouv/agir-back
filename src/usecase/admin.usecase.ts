@@ -74,32 +74,24 @@ export class AdminUsecase {
         changer_voiture: false,
       };
 
-      const kyc_009 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC009,
+      const kyc_009 = utilisateur.kyc_history.getQuestion(KYCID.KYC009);
+      const kyc_011 = utilisateur.kyc_history.getQuestion(KYCID.KYC011);
+      const kyc_012 = utilisateur.kyc_history.getQuestion(KYCID.KYC012);
+      const KYC_transport_voiture_km = utilisateur.kyc_history.getQuestion(
+        KYCID.KYC_transport_voiture_km,
       );
-      const kyc_011 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC011,
-      );
-      const kyc_012 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC012,
-      );
-      const KYC_transport_voiture_km =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          KYCID.KYC_transport_voiture_km,
-        );
       const KYC_transport_voiture_motorisation =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        utilisateur.kyc_history.getQuestion(
           KYCID.KYC_transport_voiture_motorisation,
         );
 
       const KYC_transport_type_utilisateur =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        utilisateur.kyc_history.getQuestion(
           KYCID.KYC_transport_type_utilisateur,
         );
-      const KYC_changer_voiture =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          KYCID.KYC_changer_voiture,
-        );
+      const KYC_changer_voiture = utilisateur.kyc_history.getQuestion(
+        KYCID.KYC_changer_voiture,
+      );
 
       //################################
 

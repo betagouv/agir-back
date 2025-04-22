@@ -1198,10 +1198,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
     dbUser.kyc_history.setCatalogue(KycRepository.getCatalogue());
 
-    const question = dbUser.kyc_history.getUpToDateQuestionByCodeOrNull(
-      KYCID.KYC006,
-    );
-    expect(question.hasAnyResponses());
+    const question = dbUser.kyc_history.getQuestionChoixUnique(KYCID.KYC006);
+    expect(question.isAnswered());
     expect(question.isSelected('plus_15'));
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {

@@ -159,7 +159,7 @@ export class KYCHistory_v2 extends Versioned_v2 {
                 code: reponse.code,
                 label: reponse.label,
                 ngc_code: reponse.ngc_code,
-                selected: QuestionKYC.isTrueBooleanString(reponse.value),
+                selected: this.isTrueBooleanString(reponse.value),
               });
             }
           }
@@ -168,5 +168,10 @@ export class KYCHistory_v2 extends Versioned_v2 {
       }
     }
     return result;
+  }
+
+  private static isTrueBooleanString(str: string): boolean {
+    if (!str) return false;
+    return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
   }
 }

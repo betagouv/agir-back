@@ -1392,7 +1392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1471,7 +1471,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1520,7 +1520,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1548,7 +1548,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN

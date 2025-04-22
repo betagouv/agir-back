@@ -27,13 +27,13 @@ export class SituationNgcToKycSync {
 
           if (validator.isInt(string_value) && is_kyc_number) {
             const number_kyc = new QuestionSimple(kyc_ngc);
-            number_kyc.setValue(string_value);
+            number_kyc.setStringValue(string_value);
             history.updateQuestion(number_kyc);
             result.push(key);
             KycToProfileSync.synchronize(number_kyc, utilisateur);
           } else if (validator.isDecimal(string_value) && is_kyc_number) {
             const number_kyc = new QuestionSimple(kyc_ngc);
-            number_kyc.setValue(string_value);
+            number_kyc.setStringValue(string_value);
             history.updateQuestion(number_kyc);
             result.push(key);
             KycToProfileSync.synchronize(number_kyc, utilisateur);

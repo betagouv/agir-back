@@ -1,28 +1,15 @@
 import { QuestionKYC } from '../questionKYC';
+import { QuestionSimple } from './QuestionSimple';
 
-export class QuestionTexteLibre {
-  private kyc: QuestionKYC;
-
+export class QuestionTexteLibre extends QuestionSimple {
   constructor(kyc: QuestionKYC) {
-    this.kyc = kyc;
-  }
-
-  public getCode(): string {
-    return this.kyc.code;
-  }
-  public getKyc(): QuestionKYC {
-    return this.kyc;
-  }
-
-  public isAnswered(): boolean {
-    return this.kyc.hasAnySimpleResponse();
+    super(kyc);
   }
 
   public getText(): string {
     return this.kyc.getReponseSimpleValue();
   }
   public setText(texte: string) {
-    this.kyc.touch();
-    this.kyc.setReponseSimpleValue(texte);
+    this.setStringValue(texte);
   }
 }

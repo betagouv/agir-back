@@ -1,6 +1,7 @@
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
+import { QuestionChoixUnique } from '../../../../src/domain/kyc/new_interfaces/QuestionChoixUnique';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -220,7 +221,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers(Tag.climat, new QuestionChoixUnique(kyc), {
       cafe: 100,
       the: 50,
       chicore: 10,
@@ -270,7 +271,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers(Tag.climat, new QuestionChoixUnique(kyc), {
       cafe: 100,
       the: 50,
       chicore: 10,
@@ -325,7 +326,7 @@ describe('Objet Utilisateur', () => {
     });
 
     // WHEN
-    user.increaseTagForAnswers(Tag.climat, kyc, {
+    user.increaseTagForAnswers(Tag.climat, new QuestionChoixUnique(kyc), {
       cafe: 100,
       the: 50,
       chicore: 10,

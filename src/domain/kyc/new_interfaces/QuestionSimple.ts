@@ -1,7 +1,7 @@
 import { QuestionKYC, TypeReponseQuestionKYC } from '../questionKYC';
 
 export class QuestionSimple {
-  private kyc: QuestionKYC;
+  protected kyc: QuestionKYC;
 
   constructor(kyc: QuestionKYC) {
     this.kyc = kyc;
@@ -18,7 +18,7 @@ export class QuestionSimple {
     return this.kyc.hasAnySimpleResponse();
   }
 
-  public setValue(value: string) {
+  public setStringValue(value: string) {
     this.kyc.touch();
     return this.kyc.setReponseSimpleValue(value);
   }
