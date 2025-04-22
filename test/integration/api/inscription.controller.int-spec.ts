@@ -488,7 +488,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
     expect(kyc_bois).not.toBeUndefined();
     expect(kyc_bois.hasAnyResponses()).toEqual(true);
-    expect(kyc_bois.getCodeReponseQuestionChoixUnique()).toEqual('oui');
+    expect(kyc_bois.getSelected()).toEqual('oui');
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => set id utilisateur sur situation`, async () => {

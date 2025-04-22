@@ -1,6 +1,7 @@
 import { KYCHistory } from '../../kyc/kycHistory';
 import { KYCID } from '../../kyc/KYCID';
-import { BooleanKYC, QuestionKYC } from '../../kyc/questionKYC';
+import { QuestionKYC } from '../../kyc/questionKYC';
+import { BooleanKYC } from '../../kyc/QuestionKYCData';
 import { TagExcluant } from '../../scoring/tagExcluant';
 
 export class KycTagExcluantTranslator {

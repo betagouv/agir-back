@@ -5,7 +5,7 @@ import { KYCID } from '../../../src/domain/kyc/KYCID';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionKYC';
+} from '../../../src/domain/kyc/QuestionKYCData';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,

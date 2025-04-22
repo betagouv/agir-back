@@ -193,7 +193,7 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getCodeReponseQuestionChoixUnique();
+      reponse.reponse_unique_code = kyc.getSelected();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
       reponse.reponse_multiple_code = kyc.getSelectedCodes();
@@ -234,7 +234,7 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getCodeReponseQuestionChoixUnique();
+      reponse.reponse_unique_code = kyc.getSelected();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
       reponse.reponse_multiple_code = kyc.getSelectedCodes();

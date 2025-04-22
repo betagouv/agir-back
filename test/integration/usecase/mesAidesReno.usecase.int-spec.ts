@@ -245,10 +245,11 @@ describe('Mes Aides Réno', () => {
         [Scope.kyc],
       );
 
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+      const kyc = utilisateur.kyc_history.getQuestionNumerique(
         KYCID.KYC_superficie,
-        ['50'],
       );
+      kyc.setValue(50);
+      utilisateur.kyc_history.updateQuestion(kyc);
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(

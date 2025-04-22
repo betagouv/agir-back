@@ -1,14 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Categorie } from '../../../../domain/contenu/categorie';
-import {
-  KYCMosaicReponse,
-  MosaicKYC_CATALOGUE,
-  TypeMosaic,
-} from '../../../../domain/kyc/mosaicKYC';
-import {
-  KYCReponseComplexe,
-  QuestionKYC,
-} from '../../../../domain/kyc/questionKYC';
+import { TypeMosaic } from '../../../../domain/kyc/mosaicKYC';
+import { QuestionKYC } from '../../../../domain/kyc/questionKYC';
+import { KYCReponseComplexe } from '../../../../domain/kyc/QuestionKYCData';
 
 export class KYCMosaicReponseAPI {
   @ApiProperty() code: string;

@@ -1,16 +1,16 @@
-import { Versioned, Versioned_v0 } from '../versioned';
-import { KYCHistory } from '../../kyc/kycHistory';
-import {
-  KYCReponse,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-  Unite,
-} from '../../kyc/questionKYC';
-import { Thematique } from '../../thematique/thematique';
-import { Tag } from '../../scoring/tag';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import {
+  KYCReponse,
+  TypeReponseQuestionKYC,
+  Unite,
+} from '../../kyc/QuestionKYCData';
 import { ConditionKYC } from '../../kyc/conditionKYC';
+import { KYCHistory } from '../../kyc/kycHistory';
+import { QuestionKYC } from '../../kyc/questionKYC';
+import { Tag } from '../../scoring/tag';
+import { Thematique } from '../../thematique/thematique';
+import { Versioned_v0 } from '../versioned';
 
 export class KYCReponse_v0 {
   code: string;

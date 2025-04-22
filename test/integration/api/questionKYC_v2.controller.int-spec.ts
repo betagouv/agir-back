@@ -9,7 +9,7 @@ import {
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
-} from '../../../src/domain/kyc/questionKYC';
+} from '../../../src/domain/kyc/QuestionKYCData';
 import {
   Chauffage,
   DPE,
@@ -1575,9 +1575,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
     expect(
-      user.kyc_history
-        .getUpToDateQuestionByCodeOrException('_2')
-        .getCodeReponseQuestionChoixUnique(),
+      user.kyc_history.getUpToDateQuestionByCodeOrException('_2').getSelected(),
     ).toStrictEqual(Thematique.climat);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [

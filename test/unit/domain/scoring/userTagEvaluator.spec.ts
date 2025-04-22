@@ -56,7 +56,9 @@ describe('UseragEvaluator', () => {
         emoji: '🔥',
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, []);
+    const kyc = user.kyc_history.getQuestionChoixMultiple(KYCID.KYC001);
+    kyc.deselectAll();
+    user.kyc_history.updateQuestion(kyc);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -107,15 +109,15 @@ describe('UseragEvaluator', () => {
         emoji: '🔥',
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabelOrException(KYCID.KYC001, [
-      '🥦 Alimentation',
-      '☀️ Climat et Environnement',
-      '🛒 Consommation durable',
-      '🗑️ Déchets',
-      '🏡 Logement',
-      '⚽ Loisirs (vacances, sport,...)',
-      '🚗 Transports',
-    ]);
+    const kyc = user.kyc_history.getQuestionChoixMultiple(KYCID.KYC001);
+    kyc.select(Thematique.alimentation);
+    kyc.select(Thematique.climat);
+    kyc.select(Thematique.consommation);
+    kyc.select(Thematique.dechet);
+    kyc.select(Thematique.logement);
+    kyc.select(Thematique.loisir);
+    kyc.select(Thematique.transport);
+    user.kyc_history.updateQuestion(kyc);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);
@@ -169,15 +171,12 @@ describe('UseragEvaluator', () => {
         emoji: '🔥',
       }),
     ]);
-    user.kyc_history.updateQuestionByCodeWithLabelOrException(
-      KYCID.KYC_preference,
-      [
-        'La cuisine et l’alimentation',
-        'Mes déplacements',
-        'Ma consommation',
-        'Mon logement',
-      ],
-    );
+    const kyc = user.kyc_history.getQuestionChoixMultiple(KYCID.KYC_preference);
+    kyc.select(Thematique.alimentation);
+    kyc.select(Thematique.transport);
+    kyc.select(Thematique.consommation);
+    kyc.select(Thematique.logement);
+    user.kyc_history.updateQuestion(kyc);
 
     // WHEN
     UserTagEvaluator.recomputeRecoTags(user);

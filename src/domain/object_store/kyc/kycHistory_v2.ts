@@ -1,15 +1,15 @@
 import { ApplicationError } from '../../../infrastructure/applicationError';
 import { Categorie } from '../../contenu/categorie';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
-import { ConditionKYC } from '../../kyc/conditionKYC';
-import { KYCHistory } from '../../kyc/kycHistory';
 import {
   KYCReponseComplexe,
   KYCReponseSimple,
-  QuestionKYC,
   TypeReponseQuestionKYC,
   Unite,
-} from '../../kyc/questionKYC';
+} from '../../kyc/QuestionKYCData';
+import { ConditionKYC } from '../../kyc/conditionKYC';
+import { KYCHistory } from '../../kyc/kycHistory';
+import { QuestionKYC } from '../../kyc/questionKYC';
 import { Tag } from '../../scoring/tag';
 import { Thematique } from '../../thematique/thematique';
 import { Versioned_v2 } from '../versioned';

@@ -1842,7 +1842,7 @@ describe('Admin (API test)', () => {
     expect(
       user_DB.kyc_history
         .getUpToDateAnsweredQuestionByCode('KYC_saison_frequence')
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('jamais');
   });
 });

@@ -1,162 +1,25 @@
 import { ApplicationError } from '../../infrastructure/applicationError';
-import { Categorie } from '../contenu/categorie';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
-import { TaggedContent } from '../scoring/taggedContent';
-import { Thematique } from '../thematique/thematique';
-import { ConditionKYC } from './conditionKYC';
+import {
+  AndConditionSet,
+  KYCReponseComplexe,
+  KYCReponseSimple,
+  QuestionKYCData,
+  TypeReponseQuestionKYC,
+  Unite,
+} from './QuestionKYCData';
 import { KycDefinition } from './kycDefinition';
 import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
 import { KYCComplexValues } from './publicodesMapping';
 
-export enum TypeReponseQuestionKYC {
-  libre = 'libre',
-  entier = 'entier',
-  decimal = 'decimal',
-
-  choix_unique = 'choix_unique',
-  choix_multiple = 'choix_multiple',
-
-  mosaic_boolean = 'mosaic_boolean',
-  mosaic_number = 'mosaic_number',
-}
-
-export enum BooleanKYC {
-  oui = 'oui',
-  non = 'non',
-}
-
-/**
- * @example
- * // CMS string: 'kg (kilogramme)'
- * { abreviation: 'kg', long: 'kilogramme'}
- *
- * // CMS string: '€/kWh (euro par kilowattheure)'
- * { abreviation: '€/kWh', long: 'euro par kilowattheure'}
- *
- * // CMS string: 'kg'
- * { abreviation: 'kg' }
- */
-export type Unite = {
-  abreviation: string;
-  long?: string;
-};
-
-/**
- * @example
- * extractUnite('kg (kilogramme)') === { abreviation: 'kg', long: 'kilogramme'}
- * extractUnite('€/kWh (euro par kilowattheure)') === { abreviation: '€/kWh', long: 'euro par kilowattheure'}
- * extractUnite('kg') === { abreviation: 'kg' }
- * extractUnite() === null
- */
-export function parseUnite(label_unite: string | undefined): Unite | null {
-  if (!label_unite) {
-    return null;
-  }
-
-  const space_index = label_unite.indexOf(' ');
-
-  return space_index === -1
-    ? { abreviation: label_unite }
-    : {
-        abreviation: label_unite.substring(0, space_index),
-        long: label_unite
-          .substring(space_index + 1)
-          .replace(/^\(/, '')
-          .replace(/\)$/, ''),
-      };
-}
-
-export class KYCReponse {
-  code: string;
-  label: string;
-  ngc_code?: string;
-  value?: string;
-}
-
-export type AndConditionSet = ConditionKYC[];
-
-export type KYCReponseSimple = {
-  value: string;
-  unite?: Unite;
-};
-
-export type KYCReponseComplexe<ID extends keyof KYCComplexValues = '_default'> =
-  {
-    code: KYCComplexValues[ID]['code'];
-    label: string;
-    selected: boolean;
-    value?: string;
-    ngc_code?: KYCComplexValues[ID]['ngc_code'];
-    image_url?: string;
-    emoji?: string;
-    unite?: Unite;
-  };
-
-export class QuestionKYC implements TaggedContent {
-  code: string;
-  id_cms: number;
-  last_update: Date;
-  question: string;
-  short_question: string;
-  emoji: string;
-  image_url: string;
-  unite: Unite;
-  type: TypeReponseQuestionKYC;
-  categorie: Categorie;
-  thematique: Thematique;
-  thematiques: Thematique[];
-  points: number;
-  is_NGC: boolean;
-  a_supprimer: boolean;
-  is_mosaic_answered?: boolean;
-  is_answered?: boolean;
-  tags: Tag[];
-  score: number;
-  // TODO: should use the generated DottedName instead of string
-  ngc_key?: string;
-  private reponse_simple: KYCReponseSimple;
-  private reponse_complexe: KYCReponseComplexe[];
-  private conditions: AndConditionSet[];
-
+export class QuestionKYC extends QuestionKYCData {
   constructor(data?: QuestionKYC_v2) {
-    if (!data) return;
-    this.code = data.code;
-    this.id_cms = data.id_cms;
-    this.question = data.question;
-    this.short_question = data.short_question;
-    this.emoji = data.emoji;
-    this.unite = data.unite;
-    this.image_url = data.image_url;
-    this.type = data.type;
-    this.categorie = data.categorie;
-    this.points = data.points;
-    this.is_NGC = data.is_NGC;
-    this.ngc_key = data.ngc_key;
-    this.thematique = data.thematique;
-    this.tags = data.tags ? data.tags : [];
-    this.score = 0;
-    this.conditions = data.conditions ? data.conditions : [];
-    this.a_supprimer = !!data.a_supprimer;
-    this.last_update = data.last_update;
-
-    this.reponse_simple = data.reponse_simple;
-    this.reponse_complexe = data.reponse_complexe
-      ? data.reponse_complexe.map((r) => ({
-          code: r.code,
-          label: r.label,
-          ngc_code: r.ngc_code,
-          value: r.value,
-          selected: r.selected,
-          emoji: undefined,
-          image_url: undefined,
-          unite: undefined,
-        }))
-      : undefined;
+    super(data);
   }
 
-  public touch() {
-    this.last_update = new Date();
+  public getKyc(): QuestionKYC {
+    return this;
   }
 
   public static buildFromDef(def: KycDefinition): QuestionKYC {
@@ -246,9 +109,8 @@ export class QuestionKYC implements TaggedContent {
       let selected: boolean;
       if (kyc.hasAnyResponses()) {
         if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          value =
-            kyc.getCodeReponseQuestionChoixUnique() === 'oui' ? 'oui' : 'non';
-          selected = kyc.getCodeReponseQuestionChoixUnique() === 'oui';
+          value = kyc.getSelected() === 'oui' ? 'oui' : 'non';
+          selected = kyc.getSelected() === 'oui';
         } else if (kyc.type === TypeReponseQuestionKYC.entier) {
           value = kyc.getReponseSimpleValue() === '1' ? 'oui' : 'non';
           selected = kyc.getReponseSimpleValue() === '1';
@@ -396,25 +258,15 @@ export class QuestionKYC implements TaggedContent {
     return [];
   }
 
-  public isSelectedReponseCode(code: string): boolean {
+  public isSelected(code_reponse: string): boolean {
     if (!this.hasAnyComplexeResponse()) {
       return false;
     }
-    const found = this.reponse_complexe.find((r) => r.code === code);
+    const found = this.reponse_complexe.find((r) => r.code === code_reponse);
     return found ? found.selected : false;
   }
 
-  public listeReponseValues(): string[] {
-    if (this.reponse_simple && this.reponse_simple.value) {
-      return [this.reponse_simple.value];
-    }
-    if (this.reponse_complexe) {
-      return this.reponse_complexe.map((r) => r.value).filter((v) => !!v);
-    }
-    return [];
-  }
-
-  public getCodeReponseQuestionChoixUnique(): string {
+  public getSelected(): string | null {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
       if (reponse.selected) {
@@ -483,62 +335,6 @@ export class QuestionKYC implements TaggedContent {
     return undefined;
   }
 
-  // DEPRECATED
-  public listeLabelsReponseComplexe() {
-    if (this.reponse_complexe) {
-      return this.reponse_complexe.map((e) => e.label);
-    } else {
-      return [];
-    }
-  }
-
-  // DEPRECATED
-  public setResponseWithValueOrLabels(reponses: string[]) {
-    this.touch();
-    this.throwExceptionIfReponseNotExists(reponses);
-
-    if (this.isSimpleQuestion()) {
-      if (reponses && reponses.length === 1) {
-        this.reponse_simple = { value: reponses[0] };
-      }
-    } else if (this.isChoixUnique()) {
-      this.setChoixUniqueByLabel(reponses[0]);
-    } else if (this.isChoixMultiple()) {
-      this.deSelectAll();
-      for (const rep of reponses) {
-        this.selectChoixByLabel(rep);
-      }
-    }
-  }
-
-  // DEPRECATED
-  private selectChoixByLabel(label: string) {
-    if (!this.reponse_complexe) return;
-    this.touch();
-    for (const rep of this.reponse_complexe) {
-      if (rep.label === label) {
-        rep.selected = true;
-        return;
-      }
-    }
-  }
-  // DEPRECATED
-  private setChoixUniqueByLabel(label: string) {
-    if (!this.reponse_complexe) return;
-    this.touch();
-    for (const rep of this.reponse_complexe) {
-      rep.selected = rep.label === label;
-    }
-  }
-
-  private deSelectAll() {
-    if (!this.reponse_complexe) return;
-    this.touch();
-    for (const rep of this.reponse_complexe) {
-      rep.selected = false;
-    }
-  }
-
   public getSelectedLabels(): string[] {
     if (!this.reponse_complexe) return [];
     const result = [];
@@ -589,17 +385,6 @@ export class QuestionKYC implements TaggedContent {
     this.touch();
     for (const rep of this.reponse_complexe) {
       rep.selected = rep.code === code;
-    }
-  }
-
-  public setChoixByCode(code: string, selected: boolean) {
-    if (!this.reponse_complexe) return;
-    this.touch();
-    for (const rep of this.reponse_complexe) {
-      if (rep.code === code) {
-        rep.selected = selected;
-        return;
-      }
     }
   }
 
@@ -673,3 +458,28 @@ export class QuestionKYC implements TaggedContent {
     return { current: progression, target: liste.length };
   }
 }
+/**
+ * @example
+ * extractUnite('kg (kilogramme)') === { abreviation: 'kg', long: 'kilogramme'}
+ * extractUnite('€/kWh (euro par kilowattheure)') === { abreviation: '€/kWh', long: 'euro par kilowattheure'}
+ * extractUnite('kg') === { abreviation: 'kg' }
+ * extractUnite() === null
+ */
+export function parseUnite(label_unite: string | undefined): Unite | null {
+  if (!label_unite) {
+    return null;
+  }
+
+  const space_index = label_unite.indexOf(' ');
+
+  return space_index === -1
+    ? { abreviation: label_unite }
+    : {
+        abreviation: label_unite.substring(0, space_index),
+        long: label_unite
+          .substring(space_index + 1)
+          .replace(/^\(/, '')
+          .replace(/\)$/, ''),
+      };
+}
+export { AndConditionSet, TypeReponseQuestionKYC };

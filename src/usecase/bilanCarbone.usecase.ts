@@ -8,11 +8,12 @@ import {
 } from '../domain/bilan/bilanCarbone';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import {
   BooleanKYC,
-  QuestionKYC,
   TypeReponseQuestionKYC,
-} from '../domain/kyc/questionKYC';
+} from '../domain/kyc/QuestionKYCData';
+import { SituationNgcToKycSync } from '../domain/kyc/synchro/situationNgcToKycSync';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
@@ -90,11 +91,15 @@ export class BilanCarboneUsecase {
         situation_ngc_id,
       );
 
-      utilisateur.kyc_history.trySelectChoixUniqueByCode(
+      const kyc_bilan = utilisateur.kyc_history.getQuestionChoixUnique(
         KYCID.KYC_bilan,
-        BooleanKYC.oui,
       );
-      const updated_keys = utilisateur.kyc_history.injectSituationNGC(
+      if (kyc_bilan) {
+        kyc_bilan.selectByCode(BooleanKYC.oui);
+        utilisateur.kyc_history.updateQuestion(kyc_bilan);
+      }
+
+      const updated_keys = SituationNgcToKycSync.synchronize(
         situation.situation as any,
         utilisateur,
       );
@@ -439,7 +444,7 @@ export class BilanCarboneUsecase {
     if (!kyc_avion) return null;
     if (!kyc_avion.hasAnyResponses()) return null;
 
-    const avion = kyc_avion.isSelectedReponseCode('oui');
+    const avion = kyc_avion.isSelected('oui');
     const km = kyc_voiture.getReponseSimpleValueAsNumber();
     if (!avion) {
       if (km < 1000) return NiveauImpact.faible;
@@ -472,7 +477,7 @@ export class BilanCarboneUsecase {
     if (!kyc_regime) return null;
     if (!kyc_regime.hasAnyResponses()) return null;
 
-    const regime_code = kyc_regime.getCodeReponseQuestionChoixUnique();
+    const regime_code = kyc_regime.getSelected();
     switch (regime_code) {
       case 'vegetalien':
         return NiveauImpact.faible;
@@ -494,7 +499,7 @@ export class BilanCarboneUsecase {
     if (!kyc_type_conso) return null;
     if (!kyc_type_conso.hasAnyResponses()) return null;
 
-    const code = kyc_type_conso.getCodeReponseQuestionChoixUnique();
+    const code = kyc_type_conso.getSelected();
     switch (code) {
       case 'achete_jamais':
         return NiveauImpact.faible;
@@ -552,10 +557,10 @@ export class BilanCarboneUsecase {
     if (!kyc_fioul) return null;
     if (!kyc_fioul.hasAnyResponses()) return null;
 
-    const is_fioul = kyc_fioul.getCodeReponseQuestionChoixUnique() === 'oui';
-    const is_gaz = kyc_gaz.getCodeReponseQuestionChoixUnique() === 'oui';
-    const is_elec = kyc_elec.getCodeReponseQuestionChoixUnique() === 'oui';
-    const is_bois = kyc_bois.getCodeReponseQuestionChoixUnique() === 'oui';
+    const is_fioul = kyc_fioul.getSelected() === 'oui';
+    const is_gaz = kyc_gaz.getSelected() === 'oui';
+    const is_elec = kyc_elec.getSelected() === 'oui';
+    const is_bois = kyc_bois.getSelected() === 'oui';
 
     let type_chauffage_nbr;
 

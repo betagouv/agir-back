@@ -873,7 +873,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(
       dbUser.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_DPE)
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('E');
     expect(
       dbUser.kyc_history
@@ -883,22 +883,22 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(
       dbUser.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_proprietaire)
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('non');
     expect(
       dbUser.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage_elec)
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('oui');
     expect(
       dbUser.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage_bois)
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('ne_sais_pas');
     expect(
       dbUser.kyc_history
         .getUpToDateAnsweredQuestionByCode(KYCID.KYC_type_logement)
-        .getCodeReponseQuestionChoixUnique(),
+        .getSelected(),
     ).toEqual('type_appartement');
     expect(
       dbUser.kyc_history
@@ -1202,7 +1202,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       KYCID.KYC006,
     );
     expect(question.hasAnyResponses());
-    expect(question.isSelectedReponseCode('plus_15'));
+    expect(question.isSelected('plus_15'));
   });
   it('PATCH /utilisateurs/id/profile - bad password format', async () => {
     // GIVEN

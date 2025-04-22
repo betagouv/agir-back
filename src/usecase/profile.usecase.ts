@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
 import { App } from '../domain/app';
+import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -249,7 +250,7 @@ export class ProfileUsecase {
     utilisateur.logement.patch(update_data, utilisateur);
 
     try {
-      utilisateur.kyc_history.patchLogement(input);
+      LogementToKycSync.synchronize(input, utilisateur.kyc_history);
     } catch (error) {
       console.error(`Fail synchro KYCs logement : ${error.message}`);
     }

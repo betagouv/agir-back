@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Categorie } from '../../../../../src/domain/contenu/categorie';
+import { QuestionKYC } from '../../../../domain/kyc/questionKYC';
 import {
   KYCReponseSimple,
-  QuestionKYC,
   TypeReponseQuestionKYC,
   Unite,
-} from '../../../../domain/kyc/questionKYC';
+} from '../../../../domain/kyc/QuestionKYCData';
 
 export class UniteAPI {
   @ApiProperty({}) abreviation: string;

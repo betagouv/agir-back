@@ -1,19 +1,19 @@
-import { Versioned_v1 } from '../versioned';
+import { Categorie } from '../../../../src/domain/contenu/categorie';
+import { ApplicationError } from '../../../infrastructure/applicationError';
+import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory } from '../../kyc/kycHistory';
+import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { QuestionKYC } from '../../kyc/questionKYC';
 import {
   KYCReponseComplexe,
   KYCReponseSimple,
-  QuestionKYC,
   TypeReponseQuestionKYC,
   Unite,
-} from '../../kyc/questionKYC';
-import { Thematique } from '../../thematique/thematique';
+} from '../../kyc/QuestionKYCData';
 import { Tag } from '../../scoring/tag';
-import { Categorie } from '../../../../src/domain/contenu/categorie';
-import { ConditionKYC } from '../../kyc/conditionKYC';
+import { Thematique } from '../../thematique/thematique';
+import { Versioned_v1 } from '../versioned';
 import { KYCHistory_v0 } from './kycHistory_v0';
-import { KYCMosaicID } from '../../kyc/KYCMosaicID';
-import { ApplicationError } from '../../../infrastructure/applicationError';
 
 export class ReponseSimple_v1 {
   unite?: Unite;

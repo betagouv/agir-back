@@ -382,7 +382,7 @@ export class Utilisateur extends UtilisateurData {
   ) {
     if (kyc && kyc.hasAnyResponses()) {
       for (const key in map) {
-        if (kyc.isSelectedReponseCode(key)) {
+        if (kyc.isSelected(key)) {
           this.increaseTagValue(tag, map[key]);
         }
       }
