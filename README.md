@@ -41,34 +41,9 @@ Le backend a besoin d'une instance Postgresql (v14) pour s'exécuter, également
 
 Vous êtes libre de configuer en local ces instance selon vos préférences :
 
-- via une installation standalone de Postgresql
+- via une installation standalone de Postgresql (plus efficace en terme de ressources)
+  - sous Mac https://postgresapp.com fonctionne très bien par exemple
 - via docker (un fichier `docker-compose.yml` est fournit à titre d'exemple)
-
-### Exemple d'installation de docker sous mac (optionel)
-
-Sur mac voici une façon de faire (si vous ne pouvez pas utiliser Docker Desktop pour des questions de licence):
-
-```bash
-# Install hyperkit and minikube
-brew install hyperkit
-brew install minikube
-
-# Install Docker CLI
-brew install docker
-brew install docker-compose
-
-# Start minikube
-minikube start
-
-# Tell Docker CLI to talk to minikube's VM
-eval $(minikube docker-env)
-
-# Save IP to a hostname
-echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
-
-# Test
-docker run hello-world
-```
 
 ### Paramétrage des URLs de BDD
 
@@ -78,12 +53,14 @@ docker run hello-world
 
 ### Lancer les bases de données
 
-Si vous utilisez docker, vous avec les raccourcis suivants ;
+**Si vous utilisez docker**, vous avec les raccourcis suivants ;
 
 ```bash
 npm run db:up
 npm run db:down
 ```
+
+Sinon lancer votre instance local postgresql
 
 ### Lancer les migrations sur les bases de dev et tests
 
