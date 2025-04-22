@@ -1,4 +1,3 @@
-import { ApplicationError } from '../../infrastructure/applicationError';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
 import {
@@ -10,7 +9,7 @@ import {
   Unite,
 } from './QuestionKYCData';
 import { KycDefinition } from './kycDefinition';
-import { MosaicKYCDef, TypeMosaic } from './mosaicKYC';
+import { MosaicKYCDef } from './mosaicKYC';
 import { KYCComplexValues } from './publicodesMapping';
 
 export class QuestionKYC extends QuestionKYCData {
@@ -20,162 +19,6 @@ export class QuestionKYC extends QuestionKYCData {
 
   public getKyc(): QuestionKYC {
     return this;
-  }
-
-  public static buildFromDef(def: KycDefinition): QuestionKYC {
-    const result = new QuestionKYC({
-      categorie: def.categorie,
-      code: def.code,
-      id_cms: def.id_cms,
-      is_NGC: def.is_ngc,
-      points: def.points,
-      tags: def.tags,
-      type: def.type,
-      ngc_key: def.ngc_key,
-      thematique: def.thematique,
-      question: def.question,
-      conditions: def.conditions ? def.conditions : [],
-      a_supprimer: !!def.a_supprimer,
-      reponse_simple: null,
-      reponse_complexe: null,
-      emoji: def.emoji,
-      image_url: def.image_url,
-      short_question: def.short_question,
-      unite: def.unite,
-      last_update: undefined,
-    });
-    result.is_answered = false;
-
-    if (
-      def.type === TypeReponseQuestionKYC.choix_unique ||
-      def.type === TypeReponseQuestionKYC.choix_multiple
-    ) {
-      result.reponse_complexe = [];
-      for (const reponse of def.reponses) {
-        result.reponse_complexe.push({
-          label: reponse.label,
-          code: reponse.code,
-          ngc_code: reponse.ngc_code,
-          selected: false,
-        });
-      }
-    } else {
-      result.reponse_simple = {
-        unite: def.unite,
-        value: undefined,
-      };
-    }
-
-    return result;
-  }
-
-  public static buildFromMosaicDef(
-    def: MosaicKYCDef,
-    liste_kyc: QuestionKYC[],
-  ): QuestionKYC {
-    const result = new QuestionKYC({
-      id_cms: undefined,
-      question: def.titre,
-      thematique: def.thematique,
-      categorie: def.categorie,
-      code: def.id,
-      points: def.points,
-      type:
-        def.type === TypeMosaic.mosaic_boolean
-          ? TypeReponseQuestionKYC.mosaic_boolean
-          : TypeReponseQuestionKYC.mosaic_number,
-      is_NGC: false,
-      tags: [],
-      conditions: [],
-      a_supprimer: false,
-      reponse_simple: undefined,
-      reponse_complexe: undefined,
-      last_update: undefined,
-    });
-    if (def.type === TypeMosaic.mosaic_boolean) {
-      result.reponse_complexe =
-        QuestionKYC.buildBooleanResponseListe(liste_kyc);
-    }
-
-    return result;
-  }
-
-  private static buildBooleanResponseListe(
-    kyc_liste: QuestionKYC[],
-  ): KYCReponseComplexe[] {
-    const liste_reponses: KYCReponseComplexe[] = [];
-    for (const kyc of kyc_liste) {
-      let value: string;
-      let selected: boolean;
-      if (kyc.hasAnyResponses()) {
-        if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-          value = kyc.getSelected() === 'oui' ? 'oui' : 'non';
-          selected = kyc.getSelected() === 'oui';
-        } else if (kyc.type === TypeReponseQuestionKYC.entier) {
-          value = kyc.getReponseSimpleValue() === '1' ? 'oui' : 'non';
-          selected = kyc.getReponseSimpleValue() === '1';
-        }
-      } else {
-        value = 'non';
-        selected = false;
-      }
-      liste_reponses.push({
-        code: kyc.code,
-        value: value,
-        selected: selected,
-        label: kyc.short_question,
-        image_url: kyc.image_url,
-        unite: kyc.unite,
-        emoji: kyc.emoji,
-        ngc_code: undefined,
-      });
-    }
-    return liste_reponses;
-  }
-
-  public refreshFromDef(def: KycDefinition) {
-    if (
-      def.type === TypeReponseQuestionKYC.choix_unique ||
-      def.type === TypeReponseQuestionKYC.choix_multiple
-    ) {
-      const updated_set: KYCReponseComplexe[] = [];
-      for (const def_reponse of def.reponses) {
-        const current_rep = this.getQuestionComplexeByCode(def_reponse.code);
-        if (current_rep) {
-          current_rep.ngc_code = def_reponse.ngc_code;
-          current_rep.label = def_reponse.label;
-          updated_set.push(current_rep);
-        } else {
-          updated_set.push({
-            code: def_reponse.code,
-            label: def_reponse.label,
-            ngc_code: def_reponse.ngc_code,
-            selected: false,
-          });
-        }
-      }
-      this.reponse_complexe = updated_set;
-    } else {
-      if (this.reponse_simple) {
-        this.reponse_simple.unite = def.unite;
-      }
-    }
-
-    this.question = def.question;
-    this.type = def.type;
-    this.categorie = def.categorie;
-    this.points = def.points;
-    this.is_NGC = def.is_ngc;
-    this.a_supprimer = !!def.a_supprimer;
-    this.ngc_key = def.ngc_key;
-    this.thematique = def.thematique;
-    this.tags = def.tags ? def.tags : [];
-    this.conditions = def.conditions ? def.conditions : [];
-    this.id_cms = def.id_cms;
-    this.emoji = def.emoji;
-    this.image_url = def.image_url;
-    this.unite = def.unite;
-    this.short_question = def.short_question;
   }
 
   public isSimpleQuestion(): boolean {
@@ -214,21 +57,6 @@ export class QuestionKYC extends QuestionKYCData {
   public hasAnyResponses(): boolean {
     return this.hasAnySimpleResponse() || this.hasAnyComplexeResponse();
   }
-  public hasAnySimpleResponse(): boolean {
-    if (this.reponse_simple && this.reponse_simple.value) {
-      return true;
-    }
-    return false;
-  }
-  public hasAnyComplexeResponse(): boolean {
-    if (this.reponse_complexe) {
-      for (const reponse of this.reponse_complexe) {
-        if (!!reponse.value) return true;
-        if (!!reponse.selected) return true;
-      }
-    }
-    return false;
-  }
 
   public getTags(): Tag[] {
     return this.tags.concat(this.thematique);
@@ -264,16 +92,6 @@ export class QuestionKYC extends QuestionKYCData {
     }
     const found = this.reponse_complexe.find((r) => r.code === code_reponse);
     return found ? found.selected : false;
-  }
-
-  public getSelected(): string | null {
-    if (!this.hasAnyComplexeResponse()) return null;
-    for (const reponse of this.reponse_complexe) {
-      if (reponse.selected) {
-        return reponse.code;
-      }
-    }
-    return null;
   }
 
   public getNGCCodeReponseQuestionChoixUnique(): string {
@@ -314,13 +132,6 @@ export class QuestionKYC extends QuestionKYCData {
       return Number(this.reponse_simple.value);
     }
     return null;
-  }
-
-  public getReponseSimpleValue(): string {
-    if (this.reponse_simple) {
-      return this.reponse_simple.value;
-    }
-    return undefined;
   }
 
   public setReponseSimpleValue(value: string) {
@@ -388,11 +199,6 @@ export class QuestionKYC extends QuestionKYCData {
     }
   }
 
-  private getQuestionComplexeByCode(code: string): KYCReponseComplexe {
-    if (!this.reponse_complexe) return null;
-    return this.reponse_complexe.find((r) => r.code === code);
-  }
-
   private getQuestionComplexeByLabel(label: string): KYCReponseComplexe {
     if (!this.reponse_complexe) return null;
     return this.reponse_complexe.find((r) => r.label === label);
@@ -401,22 +207,6 @@ export class QuestionKYC extends QuestionKYCData {
   private getQuestionComplexeByNgcCode(ngc_code: string): KYCReponseComplexe {
     if (!this.reponse_complexe) return null;
     return this.reponse_complexe.find((r) => r.ngc_code === ngc_code);
-  }
-
-  // DEPRECATED
-  private throwExceptionIfReponseNotExists(reponses: string[]) {
-    if (
-      this.type !== TypeReponseQuestionKYC.choix_multiple &&
-      this.type !== TypeReponseQuestionKYC.choix_unique
-    ) {
-      return;
-    }
-    for (const reponse_label of reponses) {
-      const code = this.getCodeByLabel(reponse_label);
-      if (!code) {
-        ApplicationError.throwBadResponseValue(reponse_label, this.code);
-      }
-    }
   }
 
   public getAllCodes(): string[] {
@@ -456,6 +246,21 @@ export class QuestionKYC extends QuestionKYCData {
       }
     }
     return { current: progression, target: liste.length };
+  }
+
+  public static buildFromDef(def: KycDefinition): QuestionKYC {
+    const kyc = new QuestionKYC();
+    Object.assign(kyc, QuestionKYC.buildKycFromDef(def));
+    return kyc;
+  }
+
+  public static buildFromMosaicDef(
+    def: MosaicKYCDef,
+    liste_kyc: QuestionKYC[],
+  ): QuestionKYC {
+    const kyc = new QuestionKYC();
+    Object.assign(kyc, QuestionKYC.buildKycFromMosaicDef(def, liste_kyc));
+    return kyc;
   }
 }
 /**
