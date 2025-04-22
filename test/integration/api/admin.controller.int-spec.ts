@@ -1836,13 +1836,11 @@ describe('Admin (API test)', () => {
 
     expect(
       user_DB.kyc_history
-        .getUpToDateAnsweredQuestionByCode('KYC_transport_voiture_km')
+        .getQuestion('KYC_transport_voiture_km')
         .getReponseSimpleValueAsNumber(),
     ).toEqual(2999);
     expect(
-      user_DB.kyc_history
-        .getUpToDateAnsweredQuestionByCode('KYC_saison_frequence')
-        .getSelected(),
+      user_DB.kyc_history.getQuestion('KYC_saison_frequence').getSelected(),
     ).toEqual('jamais');
   });
 });

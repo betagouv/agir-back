@@ -280,9 +280,8 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone(): boolean {
-    const KYC_preference_answered = this.kyc_history.isQuestionAnswered(
-      KYCID.KYC_preference,
-    );
+    const kyc = this.kyc_history.getQuestionChoixMultiple(KYCID.KYC_preference);
+    const KYC_preference_answered = !!kyc && kyc.isAnswered();
 
     const ok_pseudo = !!this.pseudo && this.pseudo !== '';
     const ok_prenom = !!this.prenom && this.prenom !== '';

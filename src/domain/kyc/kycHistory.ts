@@ -1,4 +1,3 @@
-import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
@@ -276,9 +275,7 @@ export class KYCHistory {
     let result: QuestionKYC[] = [];
 
     this.catalogue.forEach((question) => {
-      const answered_question = this.getUpToDateAnsweredQuestionByCode(
-        question.code,
-      );
+      const answered_question = this.getQuestion(question.code);
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
     if (kyc_only) {
@@ -327,16 +324,6 @@ export class KYCHistory {
       .map((c) => QuestionKYC.buildFromDef(c));
   }
 
-  public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
-    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
-
-    if (answered_question) {
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
-  }
-
   private refreshQuestion(kyc: QuestionKYC): QuestionKYC {
     if (!kyc) return null;
 
@@ -345,32 +332,6 @@ export class KYCHistory {
       kyc.refreshFromDef(question_catalogue);
     }
     return kyc;
-  }
-
-  public getUpToDateQuestionByCodeOrNull(code: string): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCodeOrNull(code);
-    if (!question_catalogue) {
-      return null;
-    }
-
-    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
-    if (answered_question) {
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
-  }
-  public getUpToDateQuestionByCmsIdOrNull(cms_id: number): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCmsIdOrNull(cms_id);
-    if (!question_catalogue) {
-      return null;
-    }
-
-    let answered_question = this.getAnsweredQuestionByIdCMS(cms_id);
-    if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
   }
 
   public getUpToDateMosaicById(mosaicID: KYCMosaicID): QuestionKYC {
@@ -414,63 +375,15 @@ export class KYCHistory {
     return result;
   }
 
-  public isQuestionAnswered(code_kyc: string): boolean {
-    return !!this.getAnsweredQuestionByCode(code_kyc);
-  }
-
-  public checkQuestionExistsByCode(code_question: string) {
-    this.getKYCDefinitionByCodeOrException(code_question);
-  }
   public doesQuestionExistsByCode(code_question: string) {
     return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
-  }
-
-  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.answered_questions.find(
-      (element) => element.code === code,
-    );
-    if (answered) {
-      this.refreshQuestion(answered);
-      answered.is_answered = answered.hasAnyResponses();
-    }
-    return answered;
-  }
-  public getAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.answered_questions.find(
-      (element) => element.code === code,
-    );
-    if (answered) {
-      answered.is_answered = answered.hasAnyResponses();
-    }
-    return answered;
   }
 
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
     return this.answered_questions.find((element) => element.id_cms === id_cms);
   }
 
-  private getKYCByCodeFromCatalogue(code: string): QuestionKYC {
-    const question_def = this.catalogue.find(
-      (element) => element.code === code,
-    );
-
-    if (question_def) {
-      return QuestionKYC.buildFromDef(question_def);
-    }
-    return null;
-  }
-  private getKYCDefinitionByCodeOrException(code: string): KycDefinition {
-    const question_def = this.getKYCDefinitionByCodeOrNull(code);
-    if (!question_def) {
-      ApplicationError.throwQuestionInconnue(code);
-    }
-    return question_def;
-  }
-
   private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
     return this.catalogue.find((element) => element.code === code);
-  }
-  private getKYCDefinitionByCmsIdOrNull(cms_id: number): KycDefinition {
-    return this.catalogue.find((element) => element.id_cms === cms_id);
   }
 }

@@ -97,16 +97,6 @@ export class QuestionKYC extends QuestionKYCData {
     return [];
   }
 
-  /*
-  public isSelected(code_reponse: string): boolean {
-    if (!this.hasAnyComplexeResponse()) {
-      return false;
-    }
-    const found = this.reponse_complexe.find((r) => r.code === code_reponse);
-    return found ? found.selected : false;
-  }
-    */
-
   public getNGCCodeReponseQuestionChoixUnique(): string {
     if (!this.hasAnyComplexeResponse()) return null;
     for (const reponse of this.reponse_complexe) {
@@ -115,11 +105,6 @@ export class QuestionKYC extends QuestionKYCData {
       }
     }
     return null;
-  }
-
-  public getNombreReponsesPossibles(): number {
-    if (!this.reponse_complexe) return 0;
-    return this.reponse_complexe.length;
   }
 
   public getReponseComplexeByCode<ID extends keyof KYCComplexValues>(

@@ -161,12 +161,10 @@ export class MesAidesRenoUsecase {
       logement,
       kyc_history,
     }) => {
-      const agePrecis = kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_logement_age)
-        ?.getReponseSimpleValueAsNumber();
+      const kyc_age = kyc_history.getQuestionNumerique(KYCID.KYC_logement_age);
 
-      if (agePrecis !== null && agePrecis !== undefined) {
-        return numberToAgeLogementIntervalle(agePrecis);
+      if (kyc_age && kyc_age.isAnswered()) {
+        return numberToAgeLogementIntervalle(kyc_age.getValue());
       }
 
       return logement?.plus_de_15_ans ? 'au moins 15 ans' : undefined;
@@ -186,12 +184,11 @@ export class MesAidesRenoUsecase {
       logement,
     }) => (logement?.proprietaire != null ? logement.proprietaire : undefined),
     [MesAidesRenoRuleNames.logementSurface]: ({ kyc_history, logement }) => {
-      const superficiePrecise = kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_superficie)
-        ?.getReponseSimpleValueAsNumber();
-
-      if (superficiePrecise !== null && superficiePrecise !== undefined) {
-        return superficiePrecise;
+      const kyc_superficie = kyc_history.getQuestionNumerique(
+        KYCID.KYC_superficie,
+      );
+      if (kyc_superficie && kyc_superficie.isAnswered()) {
+        return kyc_superficie.getValue();
       }
 
       return logement?.superficie != null

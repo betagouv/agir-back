@@ -114,15 +114,13 @@ export class QuestionKYCUsecase {
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
-    code_question: string,
+    question: QuestionKYC,
     utilisateur: Utilisateur,
   ) {
-    const question_depart =
-      utilisateur.kyc_history.getUpToDateAnsweredQuestionByCode(code_question);
-    switch (question_depart.code) {
+    switch (question.code) {
       case KYCID.KYC_alimentation_regime:
         KycRegimeToKycRepas.synchroAlimentationRegime(
-          new QuestionChoixUnique(question_depart),
+          new QuestionChoixUnique(question),
           utilisateur,
         );
         break;
@@ -258,7 +256,10 @@ export class QuestionKYCUsecase {
 
     KycToProfileSync.synchronize(question_to_update, utilisateur);
 
-    this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
+    this.dispatchKYCUpdateToOtherKYCsPostUpdate(
+      question_to_update,
+      utilisateur,
+    );
 
     utilisateur.recomputeRecoTags();
   }

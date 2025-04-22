@@ -81,21 +81,21 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.logement.dpe).toEqual(DPE.C);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_DPE)
+          .getQuestion(KYCID.KYC_DPE)
           .getReponseComplexeByCode(DPE.C).selected,
       ).toBeTruthy();
 
       expect(utilisateur.logement.proprietaire).toBeTruthy();
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
+          .getQuestion(KYCID.KYC_proprietaire)
           .getReponseComplexeByCode('oui').selected,
       ).toBeTruthy();
 
       expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC006)
+          .getQuestion(KYCID.KYC006)
           .getReponseComplexeByCode('plus_15').selected,
       ).toBeTruthy();
       expect(utilisateur.revenu_fiscal).toEqual(32197);
@@ -103,21 +103,21 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getQuestion(KYCID.KYC_menage)
           .getReponseSimpleValueAsNumber(),
       ).toEqual(2);
 
       expect(utilisateur.logement.type).toBe(TypeLogement.maison);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_type_logement)
+          .getQuestion(KYCID.KYC_type_logement)
           .getReponseComplexeByCode(TypeLogement.maison).selected,
       ).toBeTruthy();
 
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_35);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_superficie)
+          .getQuestion(KYCID.KYC_superficie)
           .getReponseSimpleValueAsNumber(),
       ).toEqual(30);
 
@@ -177,7 +177,7 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_menage)
+          .getQuestion(KYCID.KYC_menage)
           .getReponseSimpleValueAsNumber(),
       ).toEqual(2);
 

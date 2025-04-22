@@ -313,13 +313,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
-  it('isQuestionAnsweredByCode :false si pas répondu', () => {
-    // WHEN
-    const questionsKYC = new KYCHistory();
-
-    // THEN
-    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
-  });
   it('isMosaicAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
@@ -348,11 +341,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
 
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(false);
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(false);
   });
   it('hasResponses :false si attribut []', () => {
     // GIVEN
@@ -372,11 +361,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
 
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(false);
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(false);
   });
   it('hasResponses :true si au moins un reponse valorisée', () => {
     // GIVEN
@@ -407,11 +392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(true);
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(true);
   });
 
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
@@ -458,10 +439,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
-    expect(question.getNombreReponsesPossibles()).toEqual(2);
+    expect(question.getRAWListeReponsesComplexes().length).toEqual(2);
     expect(question.getReponseComplexeByCode('a')).toEqual({
       code: 'a',
       emoji: undefined,
@@ -481,7 +462,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(question.hasAnyResponses()).toEqual(true);
 
     expect(
-      history.getRawAnsweredKYCs()[0].getNombreReponsesPossibles(),
+      history.getRawAnsweredKYCs()[0].getRAWListeReponsesComplexes().length,
     ).toEqual(2);
     expect(
       history.getRawAnsweredKYCs()[0].getReponseComplexeByCode('a'),
@@ -543,10 +524,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
-    expect(question.getNombreReponsesPossibles()).toEqual(1);
+    expect(question.getRAWListeReponsesComplexes().length).toEqual(1);
     expect(question.getReponseComplexeByCode('b')).toEqual({
       code: 'b',
       label: 'hihi',
@@ -580,7 +561,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
     expect(question.getRAWReponseSimple()).toEqual({
@@ -781,7 +762,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(
-      history.getAnsweredQuestionByIdCMS(1).getNombreReponsesPossibles(),
+      history.getAnsweredQuestionByIdCMS(1).getRAWListeReponsesComplexes()
+        .length,
     ).toEqual(3);
     expect(
       history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('oui'),
@@ -810,7 +792,8 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: false,
     });
     expect(
-      history.getAnsweredQuestionByIdCMS(2).getNombreReponsesPossibles(),
+      history.getAnsweredQuestionByIdCMS(2).getRAWListeReponsesComplexes()
+        .length,
     ).toEqual(3);
     expect(
       history.getAnsweredQuestionByIdCMS(2).getReponseComplexeByCode('oui'),
@@ -947,9 +930,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
 
@@ -986,9 +967,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
 
@@ -1025,9 +1004,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseSimpleValueAsNumber(),
     ).toEqual(123);
   });
 
@@ -1064,9 +1041,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseSimpleValueAsNumber(),
     ).toEqual(123.34);
   });
 
@@ -1209,15 +1184,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(history.getQuestion(KYCID.KYC_chauffage).getSelected()).toEqual('a');
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getSelected(),
-    ).toEqual('a');
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('a'),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseComplexeByCode('a'),
     ).toEqual({
       code: 'a',
       label: 'A',
@@ -1225,9 +1194,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       selected: true,
     });
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('b'),
+      history.getQuestion(KYCID.KYC_chauffage).getReponseComplexeByCode('b'),
     ).toEqual({
       code: 'b',
       label: 'B',
@@ -1236,7 +1203,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     expect(
       history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
+        .getQuestion(KYCID.KYC_chauffage)
         .getReponseComplexeByCode('ne_sais_pas'),
     ).toEqual({
       code: 'ne_sais_pas',
@@ -1313,11 +1280,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(history.getRawAnsweredKYCs()).toHaveLength(1);
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getSelected(),
-    ).toEqual('a');
+    expect(history.getQuestion(KYCID.KYC_chauffage).getSelected()).toEqual('a');
   });
 
   it(`isKYCEligible : true si condition ok`, () => {

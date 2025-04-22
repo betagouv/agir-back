@@ -113,9 +113,7 @@ describe('BilanCarboneUsecase', () => {
 
     // THEN
 
-    const kyc = user.kyc_history.getUpToDateAnsweredQuestionByCode(
-      KYCID.KYC_transport_voiture_km,
-    );
+    const kyc = user.kyc_history.getQuestion(KYCID.KYC_transport_voiture_km);
 
     expect(kyc.getReponseSimpleValueAsNumber()).toEqual(20000);
     expect(kyc.last_update.getTime()).toBeGreaterThan(Date.now() - 200);
@@ -187,7 +185,7 @@ describe('BilanCarboneUsecase', () => {
       '123',
     );
 
-    const kyc_user = user.kyc_history.getUpToDateAnsweredQuestionByCode(
+    const kyc_user = user.kyc_history.getQuestion(
       KYCID.KYC_transport_voiture_km,
     );
 

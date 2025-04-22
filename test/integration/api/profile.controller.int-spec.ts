@@ -870,39 +870,29 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.code_postal_classement).toEqual('21000');
 
     // KYCs
+    expect(dbUser.kyc_history.getQuestion(KYCID.KYC_DPE).getSelected()).toEqual(
+      'E',
+    );
     expect(
       dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_DPE)
-        .getSelected(),
-    ).toEqual('E');
-    expect(
-      dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_superficie)
+        .getQuestion(KYCID.KYC_superficie)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(34);
     expect(
-      dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_proprietaire)
-        .getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_proprietaire).getSelected(),
     ).toEqual('non');
     expect(
-      dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage_elec)
-        .getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_chauffage_elec).getSelected(),
     ).toEqual('oui');
     expect(
-      dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage_bois)
-        .getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_chauffage_bois).getSelected(),
     ).toEqual('ne_sais_pas');
     expect(
-      dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_type_logement)
-        .getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_type_logement).getSelected(),
     ).toEqual('type_appartement');
     expect(
       dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_menage)
+        .getQuestion(KYCID.KYC_menage)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(5);
   });
@@ -939,7 +929,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // KYCs
     expect(
       dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .getQuestion(KYCID.KYC_logement_age)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(5);
   });
@@ -975,7 +965,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // KYCs
     expect(
       dbUser.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_logement_age)
+        .getQuestion(KYCID.KYC_logement_age)
         .getReponseSimpleValueAsNumber(),
     ).toEqual(20);
   });

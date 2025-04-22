@@ -145,6 +145,6 @@ export class KycTagExcluantTranslator {
   }
 
   private static getKYC(history: KYCHistory, code: KYCID) {
-    return history.getAnsweredQuestionByCode(code);
+    return history.getQuestion(code);
   }
 }
