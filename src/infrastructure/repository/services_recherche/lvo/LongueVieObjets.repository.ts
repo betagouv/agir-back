@@ -121,7 +121,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
     let response;
     const call_time = Date.now();
     const params = {
-      rayon: filtre.rayon_metres ? filtre.rayon_metres / 1000 : 10,
+      rayon: filtre.rayon_metres ? filtre.rayon_metres / 1000 : 5,
       offset: 0,
       latitude: filtre.point.latitude,
       longitude: filtre.point.longitude,

@@ -1,5 +1,6 @@
-import { CategorieRecherche } from './categorieRecherche';
+import { getDistance } from 'geolib';
 import { ModeDeplacement } from '../types/modeDeplacement';
+import { CategorieRecherche } from './categorieRecherche';
 
 export class FiltreRecherche {
   text?: string;
@@ -38,6 +39,16 @@ export class FiltreRecherche {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c * 1000; // Distance in metres
     return Math.round(d);
+  }
+
+  public getDistanceMetresFromSearchPoint2?(
+    latitude: number,
+    longitude: number,
+  ): number {
+    return getDistance(
+      { latitude: latitude, longitude: longitude },
+      { latitude: this.point.latitude, longitude: this.point.longitude },
+    );
   }
 
   private deg2rad?(deg) {
