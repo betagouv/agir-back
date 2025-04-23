@@ -244,7 +244,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {
     // GIVEN
-    process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -372,7 +371,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations v2 - filtrage par univers (anciennement thémaiques)', async () => {
     // GIVEN
-    process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -449,7 +447,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations v2 - pas de contenu de categorie non recommandation', async () => {
     // GIVEN
-    process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
@@ -529,7 +526,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations_v3 - que des articles si filtre articles seuls', async () => {
     // GIVEN
-    process.env.KYC_RECO_ENABLED = 'true';
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
       code: KYCID._1,
@@ -588,7 +584,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations_v3 - nombre max de résultats', async () => {
     // GIVEN
-    process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, { content_id: '1' });

@@ -323,7 +323,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic', async () => {
     // GIVEN
-    process.env.GAIN_CONTENT_POINT = 'true';
     const dbKYC: KYC = {
       id_cms: 1,
       categorie: Categorie.recommandation,
