@@ -1293,6 +1293,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1306,6 +1307,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

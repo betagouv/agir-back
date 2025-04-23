@@ -587,6 +587,11 @@ export class TestUtil {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: {
+        nombre_catnat_commune: 1,
+        pourcent_exposition_commune_innondations: 2,
+        pourcent_exposition_commune_secheresse_geotech: 3,
+      },
     };
 
     return {

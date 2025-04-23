@@ -1078,6 +1078,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       superficie: Superficie.superficie_150_et_plus,
       type: TypeLogement.appartement,
       version: 0,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

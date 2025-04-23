@@ -390,6 +390,7 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -438,6 +439,7 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

@@ -206,7 +206,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Logement = { ...input };
+    const update_data: Partial<Logement> = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))

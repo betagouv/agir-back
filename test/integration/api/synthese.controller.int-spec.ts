@@ -36,7 +36,7 @@ describe('Synthese (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      logement: logement,
+      logement: logement as any,
       gamification: gamification as any,
     });
 
@@ -66,7 +66,7 @@ describe('Synthese (API test)', () => {
       badges: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      logement: logement,
+      logement: logement as any,
       gamification: gamification as any,
     });
     // WHEN
@@ -90,7 +90,7 @@ describe('Synthese (API test)', () => {
     const logement: Partial<Logement_v0> = { code_postal: '21000', version: 0 };
 
     await TestUtil.create(DB.utilisateur, {
-      logement: logement,
+      logement: logement as any,
     });
     await TestUtil.create(DB.aide, { codes_postaux: ['21000'] });
 

@@ -175,6 +175,7 @@ export class Utilisateur extends UtilisateurData {
         proprietaire: null,
         superficie: null,
         type: null,
+        risques: null,
       }),
       tag_ponderation_set: {},
       force_connexion: false,

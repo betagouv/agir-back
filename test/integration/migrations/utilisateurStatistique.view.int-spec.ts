@@ -50,6 +50,7 @@ describe('UtilisateurView', () => {
         superficie: Superficie.superficie_100,
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
+        risques: undefined,
       }) as any,
       gamification: new Gamification({
         version: 0,
