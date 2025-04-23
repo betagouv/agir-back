@@ -38,6 +38,7 @@ export type LVOResponse = {
       nom: string; //'Éts Gargne Capelle';
       nom_commercial: string; //'';
       adresse: string; //'LIEU DIT LAPEYRE';
+      sources: string[]; //["Longue Vie Aux Objets","ADEME", "Bibliothèques - Ministère de la culture" ]
       identifiant_unique: string; //'ets_gargne_capelle_160221_reparation_0555285063';
       siret: string; //'35351809500016';
     },
@@ -108,6 +109,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
                 )
                 .filter((a) => !!a)
             : [],
+          sources_lvao: r.sources,
         }),
     );
 

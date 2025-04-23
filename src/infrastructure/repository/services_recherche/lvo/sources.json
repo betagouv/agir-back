@@ -1,0 +1,359 @@
+[
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_22.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=03440b1839a33db52022da397debd863eee7015adf5e6089a12c2b6650f1669a",
+      "id": 92,
+      "code": "ecodds",
+      "libelle": "ECODDS",
+      "url": "https://www.ecodds.com/"
+    },
+    {
+      "logo": "",
+      "id": 253,
+      "code": "deprecated_lvao",
+      "libelle": "",
+      "url": null
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/planete_liege.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ce89bd860aa0fe73320670ea3fce35e1791893dca5a47707fb905652d4c53fba",
+      "id": 254,
+      "code": "planeteliege",
+      "libelle": "Planète Liège - Fédération Française du Liège",
+      "url": "https://planeteliege.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/unique.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=9f5e74473a6fe083136600f29cbef80289088d5f0fb6554043a85b56bfd068d2",
+      "id": 255,
+      "code": "uniqueapp",
+      "libelle": "Adresse ajoutée de manière collaborative par la communauté UNIQUE",
+      "url": "http://www.unique-app.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/cropped-big-logo-REFER-72.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=30a50acfc08ab11de579178c378c84f2c39c55a34ac0ac74a6437a47410e333f",
+      "id": 116,
+      "code": "lerefer",
+      "libelle": "Le REFER",
+      "url": "https://www.reemploi-idf.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Emmaus_defi.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a90af8a9886ce0fcd9296c5540851b734b6d659ab3f35ee2b171fc88b2955ca0",
+      "id": 111,
+      "code": "emmausdefi",
+      "libelle": "Emmaüs Défi",
+      "url": "https://emmaus-defi.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/zac.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7539641c04b4ec031b6c79469654c0acf198319595ab3228dc8e14f1a2349217",
+      "id": 112,
+      "code": "lunettesdezac",
+      "libelle": "Lunettes de Zac",
+      "url": "https://lunettesdezac.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/crar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=46c4954dba4116efab8078131f277660da132ddf83258bf24c91e4b8ba170825",
+      "id": 113,
+      "code": "crarnormandie",
+      "libelle": "CRAR Normandie",
+      "url": "https://www.crar-normandie.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ordre_pharmaciens.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=759783625a186959d66da0e915e538054ac111792a77bfabe59b2a2e7a5db840",
+      "id": 149,
+      "code": "ordredespharmaciens",
+      "libelle": "Ordre National Des Pharmaciens",
+      "url": "https://www.ordre.pharmacien.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_6.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=d05890d0162e04633a7a35d4badac8934dc78322420d21dba80522195cfd3437",
+      "id": 109,
+      "code": "emmausconnect",
+      "libelle": "Emmaüs Connect",
+      "url": "https://emmaus-connect.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Logo_recycloptics_new-FT-1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=e4cd09172372a63ac2b060b93bc63a5453334405505f6cdc0297c5cb9515af2b",
+      "id": 110,
+      "code": "recycloptics",
+      "libelle": "RecylOptics",
+      "url": "https://recycloptics.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/syvadec.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a87b2a55805cf763f111000bb3dba2e9d59ddd689d687ce1f24f9598ce5d73ac",
+      "id": 114,
+      "code": "syvadec",
+      "libelle": "Syvadec",
+      "url": "https://www.syvadec.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/aliapur.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3ba39b52bf47cf25a497bdad147ef81ce5c917a7a8d3226c11b181876ced0d62",
+      "id": 85,
+      "code": "aliapur",
+      "libelle": "ALIAPUR",
+      "url": "https://aliapur.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/paris.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a8787db309835303bd1e093789b68b4d31df5386544c91dda0a2270234591c7a",
+      "id": 115,
+      "code": "villedeparis",
+      "libelle": "Ville de Paris",
+      "url": "https://www.paris.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Origine.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=56aa563c186010d899adb010b2f01573a7b08bb1ebb855dbcb82d98235fa7999",
+      "id": 106,
+      "code": "originecycles",
+      "libelle": "Origine Cycles",
+      "url": "https://www.origine-cycles.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Reseau_ressourceries_et_recycleries.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7ed0c16b652cbee49780d5a9ff217c681010e8a3d5d0ebdb66282b73f945ef39",
+      "id": 49,
+      "code": "ressourceries",
+      "libelle": "Réseau National des Ressourceries et Recycleries",
+      "url": "https://ressourcerie.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/recyclivre.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=58ed4273eb339adc0a6d384bc42d594d7ac8f56144d2fe2052384c510a3a1eab",
+      "id": 12,
+      "code": "recyclivrebal",
+      "libelle": "Recyclivre - Boîtes à lire",
+      "url": "https://www.boite-a-lire.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ALF.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=58a203c4fdaa1763e83159781d2d5243bb9d934c0db215a6d290f7be98418669",
+      "id": 10,
+      "code": "ludotheques",
+      "libelle": "Association des Ludothèques Françaises",
+      "url": "https://www.kananas.com/associationdesludothequesfrancaises"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=0d909d1d7681a44bb395b260b7758421e809b421b3c6ec3f41f24c37eac0305b",
+      "id": 9,
+      "code": "bibliotheques",
+      "libelle": "Bibliothèques - Ministère de la culture",
+      "url": "https://data.culture.gouv.fr/explore/dataset/adresses-des-bibliotheques-publiques/information/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ademe_logo.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7252fc67cbff9d7957eca08c62a8f66dc3766bc576c6d02fbc6b2f49022872d5",
+      "id": 5,
+      "code": "ademelocales",
+      "libelle": "ADEME - Initiatives locales",
+      "url": "https://www.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ademe_logo.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7252fc67cbff9d7957eca08c62a8f66dc3766bc576c6d02fbc6b2f49022872d5",
+      "id": 1,
+      "code": "ademedigitaux",
+      "libelle": "ADEME - Acteurs digitaux",
+      "url": "https://www.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ademe_logo.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7252fc67cbff9d7957eca08c62a8f66dc3766bc576c6d02fbc6b2f49022872d5",
+      "id": 7,
+      "code": "ademenationales",
+      "libelle": "ADEME - Initiatives nationales",
+      "url": "https://www.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/essfrance-logo-carteco.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2645fd528355090e472b0b1ce12e91be53ee57de8e4b67fe1a5057dccdd6e61c",
+      "id": 107,
+      "code": "carteco",
+      "libelle": "CartEco - ESS France",
+      "url": "https://carteco-ess.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ademe_logo.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7252fc67cbff9d7957eca08c62a8f66dc3766bc576c6d02fbc6b2f49022872d5",
+      "id": 3,
+      "code": "ademelocation",
+      "libelle": "ADEME - Locations",
+      "url": "https://www.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Findis.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42c5b99312a5910207945e476a0f6ccc281c36ec6dd08d4d9daa1faa82f3fe0a",
+      "id": 47,
+      "code": "findis",
+      "libelle": "Groupe Findis",
+      "url": "https://www.groupefindis.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/batribox.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2184d8e5f1f17aa6ffacb3c4bb1ea944b64349f22e224e638736a626fc65dc3a",
+      "id": 99,
+      "code": "batribox",
+      "libelle": "Batribox",
+      "url": "https://www.batribox.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/qualirepar.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=37def0902da1ed825ff0ad70ee63ad10326394888875a2b6e42cf06afbf82f48",
+      "id": 215,
+      "code": "ocad3e",
+      "libelle": "Ecologic & Ecosystem",
+      "url": "https://www.label-qualirepar.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/logo-orange.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=658b695c245beb61cc9c5742c5b48ce27b24c4e8651088dc1c606de51f892994",
+      "id": 218,
+      "code": "orange",
+      "libelle": "Orange",
+      "url": "https://collecte-mobile.orange.fr/notre-programme-deconomie-circulaire"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ECOPAE_LOGO_CMJN_1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=cbbb60e441f51b1c112c083b317cfec3c335e6d01403e2a241398c4826614ccc",
+      "id": 252,
+      "code": "ecopae",
+      "libelle": "ECOPAE",
+      "url": "https://www.ecopae.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ademe_logo.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7252fc67cbff9d7957eca08c62a8f66dc3766bc576c6d02fbc6b2f49022872d5",
+      "id": 6,
+      "code": "sinoe",
+      "libelle": "ADEME - SINOE",
+      "url": "https://www.sinoe.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Logo_Ecomaison.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fac187eb7a2cadb0fae89b6504cdc423fc890d192b5bc37d428612c32fe86197",
+      "id": 48,
+      "code": "ecomaison",
+      "libelle": "ECOMAISON",
+      "url": "https://ecomaison.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ec413270d7886d70fc613738c71f99dca6ebf720b1dd53d0fcc1496061d212f1",
+      "id": 46,
+      "code": "communautelvao",
+      "libelle": "Communauté Longue Vie Aux Objets",
+      "url": "https://longuevieauxobjets.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/encore.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=1dd6dfe7d06ba35fe1e40ecb515b35988887fa8cfcf4e56e220063fc1f60a4d0",
+      "id": 11,
+      "code": "encore",
+      "libelle": "Collectif Encore",
+      "url": "https://www.cadeausecondemain.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=0d909d1d7681a44bb395b260b7758421e809b421b3c6ec3f41f24c37eac0305b",
+      "id": 90,
+      "code": "cyclevia",
+      "libelle": "CYCLEVIA",
+      "url": "https://www.cyclevia.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/AmbertLivradoisForez.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fea4eb21776cebb41a8549eadcf8c1690049f4576fe91ae432213db2f86165c8",
+      "id": 104,
+      "code": "alv",
+      "libelle": "Collectivité Ambert Livradois Forez",
+      "url": "https://www.ambertlivradoisforez.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=b985ccaf8fb289449baac2d0974aea3b73a142311aef7f7dcaf77ec0dd66d10f",
+      "id": 82,
+      "code": "envie",
+      "libelle": "Fédération Envie",
+      "url": "https://www.envie.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/corepile.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=bd59ff50a902ffc96c1e7aafe6d8f1ad4fb1e24d30063c66636064b980e424a5",
+      "id": 88,
+      "code": "corepile",
+      "libelle": "COREPILE",
+      "url": "https://www.corepile.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ecologic.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=43d06930121fe920cfedfdc68d4017105b490449e28a625073a762260f7d3290",
+      "id": 93,
+      "code": "ecologic",
+      "libelle": "ECOLOGIC",
+      "url": "https://www.ecologic-france.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/valdelia.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=d9748cb725af934c7f42e6d029f03160348ac5e5e79561948ccea239c5f25441",
+      "id": 102,
+      "code": "valdelia",
+      "libelle": "VALDELIA",
+      "url": "https://www.valdelia.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/valobat.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=50f9a31193f133314361e734f0b997f12861ba701dcb0fc7ac3494f87c3614c9",
+      "id": 103,
+      "code": "valobat",
+      "libelle": "VALOBAT",
+      "url": "http://www.valobat.fr"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ecominero.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=d00c050e8d787567dfb86e91df314814fcb772c90033cdd2af3e3f0fb57eb6f7",
+      "id": 94,
+      "code": "ecominero",
+      "libelle": "ECOMINERO",
+      "url": "https://www.ecominero.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/pyreo.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=6624342cbb2544deaa326a446f656f3ed25cbe7c62922aaafda701650fa35006",
+      "id": 98,
+      "code": "pyreo",
+      "libelle": "PYREO",
+      "url": "https://www.pyreo.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/refashion.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=465c9f5ac765504df178634bc07168a1f21ca608e3266c2d137914219a83faff",
+      "id": 45,
+      "code": "refashion",
+      "libelle": "REFASHION",
+      "url": "https://refashion.fr/citoyen/fr"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/recyclivre.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=58ed4273eb339adc0a6d384bc42d594d7ac8f56144d2fe2052384c510a3a1eab",
+      "id": 105,
+      "code": "recyclivrepl",
+      "libelle": "Recyclivre - Point livres",
+      "url": "https://www.point-livres.com/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Logo-Ademe-32.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=c1bc9e079ccfe66f6db9ce57488cde88ecc354ed9a3cb6f5ea78d40ba1e91724",
+      "id": 216,
+      "code": "ademesinoedecheteries",
+      "libelle": "ADEME - SINOE - Déchèteries",
+      "url": "https://www.sinoe.org/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ec413270d7886d70fc613738c71f99dca6ebf720b1dd53d0fcc1496061d212f1",
+      "id": 2,
+      "code": "lvao",
+      "libelle": "Longue Vie Aux Objets",
+      "url": "https://longuevieauxobjets.ademe.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/ecosystem.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=6cfa0d0d865b959f2d658379076b58a04caaadd1f2684d6487e21ac548f031c6",
+      "id": 95,
+      "code": "ecosystem",
+      "libelle": "ECOSYSTEM",
+      "url": "https://ecosystem.eco/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/soren.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3aad0cb32c99449be3e7666fe5141a115aea364cfd441b4fbdf9c26a54c14ebf",
+      "id": 100,
+      "code": "soren",
+      "libelle": "SOREN",
+      "url": "https://www.soren.eco/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/leroy_merlin.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=f75af2cfbe0ad6b0c0400c0f6bcd0d59621ede6d194ff434ae0010811a16b7e4",
+      "id": 182,
+      "code": "leroymerlin",
+      "libelle": "Leroy Merlin",
+      "url": "https://leroymerlin.fr"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/laposte.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a3c6c88364a04a3e015661e1c29b3ea8ec7920d49f7132858af4181d526aa179",
+      "id": 217,
+      "code": "laposte",
+      "libelle": "La Poste",
+      "url": "https://laposte.fr/"
+    },
+    {
+      "logo": "https://lvao.ademe.frhttps://cellar-c2.services.clever-cloud.com/qfdmo-interface/logos/Sans_titre_1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RE4G7HSVS4R3YXRKHW5W%2F20250423%2Ffr%2Fs3%2Faws4_request&X-Amz-Date=20250423T201356Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=37ed8126bf7c4151e022f79394679af2de9a428538b85ed094cfd1f928202b27",
+      "id": 4,
+      "code": "cmareparacteur",
+      "libelle": "CMA - Chambre des métiers et de l'artisanat",
+      "url": "https://www.artisanat.fr/"
+    }
+  ]

@@ -71,6 +71,8 @@ export class ResultatRecherche {
 
   nbr_resultats_max_dispo?: number;
 
+  sources_lvao?: string[];
+
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
     this.titre = res.titre;
@@ -106,5 +108,6 @@ export class ResultatRecherche {
       ? res.etapes_recette.map((e) => new EtapeRecette(e))
       : [];
     this.nbr_resultats_max_dispo = res.nbr_resultats_max_dispo;
+    this.sources_lvao = res.sources_lvao;
   }
 }

@@ -78,6 +78,7 @@ export class ResultatRecherche_v0 {
   ingredients?: IngredientRecette_v0[];
   etapes_recette?: EtapeRecette_v0[];
   nbr_resultats_max_dispo?: number;
+  sources_lvao?: string[];
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
@@ -113,6 +114,7 @@ export class ResultatRecherche_v0 {
         : [],
       siret: res.siret,
       nbr_resultats_max_dispo: res.nbr_resultats_max_dispo,
+      sources_lvao: res.sources_lvao,
     };
   }
 }

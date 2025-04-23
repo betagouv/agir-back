@@ -32,6 +32,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() impact_carbone_kg: number;
   @ApiProperty() type_plat: string;
   @ApiProperty() difficulty_plat: string;
+  @ApiProperty({ type: [String] }) sources: string[];
   @ApiProperty() temps_prepa_min: number;
   @ApiProperty() distance_metres: number;
   @ApiProperty() image_url: string;
@@ -90,6 +91,7 @@ export class ResultatRechercheAPI {
       categories_labels: res.categories
         ? res.categories.map((c) => CategorieRechercheManager.getLabel(c))
         : [],
+      sources: res.sources_lvao,
     };
   }
 }
