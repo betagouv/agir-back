@@ -31,9 +31,6 @@ export class KYCHistory {
     }
   }
 
-  // ###################################################################################
-  // ###################################################################################
-
   public isKycAnswered(code: string): boolean {
     const found = this.answered_questions.find((q) => q.code === code);
     return !!found;
@@ -41,7 +38,7 @@ export class KYCHistory {
 
   public getQuestionTextLibre(code: string): QuestionTexteLibre {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return new QuestionTexteLibre(kyc);
     return undefined;
@@ -49,7 +46,7 @@ export class KYCHistory {
 
   public getQuestionNumerique(code: string): QuestionNumerique {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return new QuestionNumerique(kyc);
     return undefined;
@@ -57,7 +54,7 @@ export class KYCHistory {
 
   public getQuestionChoixUnique(code: string): QuestionChoixUnique {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return new QuestionChoixUnique(kyc);
     return undefined;
@@ -65,15 +62,23 @@ export class KYCHistory {
 
   public getQuestionChoixMultiple(code: string): QuestionChoixMultiple {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return new QuestionChoixMultiple(kyc);
     return undefined;
   }
 
+  public getQuestionChoix(code: string): QuestionChoix {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionChoix(kyc);
+    return undefined;
+  }
+
   public getQuestionSimple(code: string): QuestionSimple {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return new QuestionSimple(kyc);
     return undefined;
@@ -81,7 +86,7 @@ export class KYCHistory {
 
   public getQuestion(code: string): QuestionKYC {
     const kyc =
-      this.getUpToDateAnsweredQuestionByCode_new(code) ||
+      this.getUpToDateAnsweredQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
     if (kyc) return kyc;
     return undefined;
@@ -89,7 +94,7 @@ export class KYCHistory {
 
   public getQuestionByNGCKey(ngc_key: string): QuestionKYC {
     const kyc =
-      this.getUpToDateAnsweredQuestionByNGCKeyCode_new(ngc_key) ||
+      this.getUpToDateAnsweredQuestionByNGCKeyCode(ngc_key) ||
       this.getKycFromCatalogueByNGCKey_new(ngc_key);
     if (kyc) return kyc;
     return undefined;
@@ -113,7 +118,7 @@ export class KYCHistory {
     }
   }
 
-  private getUpToDateAnsweredQuestionByNGCKeyCode_new(
+  private getUpToDateAnsweredQuestionByNGCKeyCode(
     ngc_key: string,
   ): QuestionKYC {
     const answered = this.answered_questions.find(
@@ -126,7 +131,7 @@ export class KYCHistory {
     return answered;
   }
 
-  private getUpToDateAnsweredQuestionByCode_new(code: string): QuestionKYC {
+  private getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
     const answered = this.answered_questions.find(
       (element) => element.code === code,
     );
@@ -152,9 +157,6 @@ export class KYCHistory {
     return undefined;
   }
 
-  // ###################################################################################
-  // ###################################################################################
-
   public getLastUpdate(): Date {
     let max_epoch = 0;
     for (const kyc of this.answered_questions) {
@@ -165,10 +167,10 @@ export class KYCHistory {
     return new Date(max_epoch);
   }
 
-  public getRawAnsweredKYCs(): QuestionKYC[] {
+  public getAnsweredKYCs(): QuestionKYC[] {
     return this.answered_questions;
   }
-  public getRawAnsweredKYCsAfter(after: Date): QuestionKYC[] {
+  public getAnsweredKYCsAfter(after: Date): QuestionKYC[] {
     return this.answered_questions.filter(
       (q) =>
         q.last_update === null ||
@@ -176,7 +178,7 @@ export class KYCHistory {
         q.last_update.getTime() > after.getTime(),
     );
   }
-  public getRawAnsweredMosaics(): KYCMosaicID[] {
+  public getAnsweredMosaics(): KYCMosaicID[] {
     return this.answered_mosaics;
   }
 
@@ -271,16 +273,18 @@ export class KYCHistory {
     return this.answered_mosaics.includes(type);
   }
 
-  public getAllUpToDateQuestionSet(kyc_only: boolean = false): QuestionKYC[] {
-    let result: QuestionKYC[] = [];
+  public getAllKycs(): QuestionKYC[] {
+    const result: QuestionKYC[] = [];
 
     this.catalogue.forEach((question) => {
       const answered_question = this.getQuestion(question.code);
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
-    if (kyc_only) {
-      return result;
-    }
+    return result;
+  }
+
+  public getAllKycsAndMosaics(): QuestionKYC[] {
+    const result = this.getAllKycs();
 
     const liste_mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {
@@ -298,10 +302,8 @@ export class KYCHistory {
 
     let liste_nouvelles_kyc = [];
     for (const kyc_catalogue of kycs_catalogue_by_cat) {
-      const kyc_utilisateur = this.getAnsweredQuestionByIdCMS(
-        kyc_catalogue.id_cms,
-      );
-      if (!kyc_utilisateur) {
+      const answered = this.isKycAnswered(kyc_catalogue.code);
+      if (!answered) {
         liste_nouvelles_kyc.push(kyc_catalogue);
       }
     }

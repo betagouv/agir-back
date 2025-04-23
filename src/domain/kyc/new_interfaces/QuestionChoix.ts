@@ -19,12 +19,22 @@ export class QuestionChoix {
   }
 
   public isSelected(code_reponse: string): boolean {
-    const entry_liste = this.kyc.getRAWListeReponsesComplexes();
+    const entry_liste = this.kyc.reponse_complexe;
     const found = entry_liste.find((r) => r.code === code_reponse);
     return found ? found.selected : false;
   }
 
   public getAllCodes(): string[] {
-    return this.kyc.getRAWListeReponsesComplexes().map((r) => r.code);
+    return this.kyc.reponse_complexe.map((r) => r.code);
+  }
+  public getSelectedCodes(): string[] {
+    if (!this.kyc.reponse_complexe) return [];
+    const result = [];
+    for (const rep of this.kyc.reponse_complexe) {
+      if (rep.selected) {
+        result.push(rep.code);
+      }
+    }
+    return result;
   }
 }

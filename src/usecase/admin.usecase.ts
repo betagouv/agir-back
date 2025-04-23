@@ -77,9 +77,10 @@ export class AdminUsecase {
       const kyc_009 = utilisateur.kyc_history.getQuestion(KYCID.KYC009);
       const kyc_011 = utilisateur.kyc_history.getQuestion(KYCID.KYC011);
       const kyc_012 = utilisateur.kyc_history.getQuestion(KYCID.KYC012);
-      const KYC_transport_voiture_km = utilisateur.kyc_history.getQuestion(
-        KYCID.KYC_transport_voiture_km,
-      );
+      const KYC_transport_voiture_km =
+        utilisateur.kyc_history.getQuestionNumerique(
+          KYCID.KYC_transport_voiture_km,
+        );
       const KYC_transport_voiture_motorisation =
         utilisateur.kyc_history.getQuestion(
           KYCID.KYC_transport_voiture_motorisation,
@@ -95,19 +96,20 @@ export class AdminUsecase {
 
       //################################
 
-      reponses.trajet_ma_voiture = kyc_009?.getSelected() === 'ma_voit';
-      reponses.thermique = kyc_011?.getSelected() === 'voit_therm';
-      reponses.elec = kyc_011?.getSelected() === 'voit_elec_hybride';
-      reponses.trajet_court_voit = kyc_012?.getSelected() === 'oui';
-      reponses.km = KYC_transport_voiture_km?.getReponseSimpleValueAsNumber()
-        ? KYC_transport_voiture_km.getReponseSimpleValueAsNumber()
+      reponses.trajet_ma_voiture = kyc_009?.getSelectedCode() === 'ma_voit';
+      reponses.thermique = kyc_011?.getSelectedCode() === 'voit_therm';
+      reponses.elec = kyc_011?.getSelectedCode() === 'voit_elec_hybride';
+      reponses.trajet_court_voit = kyc_012?.getSelectedCode() === 'oui';
+      reponses.km = KYC_transport_voiture_km?.getValue()
+        ? KYC_transport_voiture_km.getValue()
         : 0;
-      reponses.motorisation = KYC_transport_voiture_motorisation?.getSelected();
+      reponses.motorisation =
+        KYC_transport_voiture_motorisation?.getSelectedCode();
       reponses.proprio =
-        KYC_transport_type_utilisateur?.getSelected() === 'proprio';
+        KYC_transport_type_utilisateur?.getSelectedCode() === 'proprio';
       reponses.changer_voiture =
         KYC_changer_voiture?.hasAnyResponses() &&
-        KYC_changer_voiture?.getSelected() !== 'non';
+        KYC_changer_voiture?.getSelectedCode() !== 'non';
 
       if (
         reponses.trajet_ma_voiture ||

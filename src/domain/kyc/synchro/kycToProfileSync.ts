@@ -7,24 +7,11 @@ import {
 import { Utilisateur } from '../../utilisateur/utilisateur';
 import { KYCID } from '../KYCID';
 import { QuestionChoix } from '../new_interfaces/QuestionChoix';
-import { QuestionChoixMultiple } from '../new_interfaces/QuestionChoixMultiples';
-import { QuestionChoixUnique } from '../new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from '../new_interfaces/QuestionNumerique';
-import { QuestionSimple } from '../new_interfaces/QuestionSimple';
-import { QuestionTexteLibre } from '../new_interfaces/QuestionTexteLibre';
 import { QuestionKYC } from '../questionKYC';
 
 export class KycToProfileSync {
-  public static synchronize(
-    question:
-      | QuestionKYC
-      | QuestionChoixMultiple
-      | QuestionChoixUnique
-      | QuestionNumerique
-      | QuestionTexteLibre
-      | QuestionSimple,
-    utilisateur: Utilisateur,
-  ) {
+  public static synchronize(question: QuestionKYC, utilisateur: Utilisateur) {
     const kyc = question.getKyc();
 
     switch (kyc.code) {
@@ -34,18 +21,18 @@ export class KycToProfileSync {
         );
         break;
       case KYCID.KYC_logement_age:
-        const value = kyc.getReponseSimpleValueAsNumber();
+        const value = new QuestionNumerique(kyc).getValue();
         if (value) {
           utilisateur.logement.plus_de_15_ans = value >= 15;
         }
         break;
       case KYCID.KYC_DPE:
-        const code_dpe = kyc.getSelected();
+        const code_dpe = kyc.getSelectedCode();
         utilisateur.logement.dpe = DPE[code_dpe];
         break;
       // FIXME: Why we want to loose precision here?
       case KYCID.KYC_superficie:
-        const valeur = kyc.getReponseSimpleValueAsNumber();
+        const valeur = new QuestionNumerique(kyc).getValue();
         // FIXME: Was it intentional to match 30 to superficie_150?
         if (valeur < 35) {
           utilisateur.logement.superficie = Superficie.superficie_35;
@@ -59,15 +46,15 @@ export class KycToProfileSync {
           utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
         break;
       case KYCID.KYC_proprietaire:
-        const code_prop = kyc.getSelected();
+        const code_prop = kyc.getSelectedCode();
         utilisateur.logement.proprietaire = code_prop === 'oui';
         break;
       case KYCID.KYC_chauffage:
-        const code_chauff = kyc.getSelected();
+        const code_chauff = kyc.getSelectedCode();
         utilisateur.logement.chauffage = Chauffage[code_chauff];
         break;
       case KYCID.KYC_type_logement:
-        const code_log = kyc.getSelected();
+        const code_log = kyc.getSelectedCode();
         utilisateur.logement.type =
           code_log === 'type_appartement'
             ? TypeLogement.appartement

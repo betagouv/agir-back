@@ -74,12 +74,10 @@ export class QuestionKYC_v1 {
       is_NGC: elem.is_NGC,
       a_supprimer: elem.a_supprimer,
       ngc_key: elem.ngc_key,
-      reponse_simple: elem.getRAWReponseSimple()
-        ? ReponseSimple_v1.map(elem.getRAWReponseSimple())
-        : null,
-      reponse_complexe: elem
-        .getRAWListeReponsesComplexes()
-        .map((r) => ReponseComplexe_v1.map(r)),
+      reponse_simple: elem.reponse_simple,
+      reponse_complexe: elem.reponse_complexe
+        ? elem.reponse_complexe.map((r) => ReponseComplexe_v1.map(r))
+        : [],
       thematique: elem.thematique,
       tags: elem.tags,
       id_cms: elem.id_cms,
@@ -105,9 +103,9 @@ export class KYCHistory_v1 extends Versioned_v1 {
     return {
       version: 1,
       answered_questions: domain
-        .getRawAnsweredKYCs()
+        .getAnsweredKYCs()
         .map((e) => QuestionKYC_v1.map(e)),
-      answered_mosaics: domain.getRawAnsweredMosaics(),
+      answered_mosaics: domain.getAnsweredMosaics(),
     };
   }
 

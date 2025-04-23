@@ -4,8 +4,6 @@
 
 ## npm run execute article_statistique
 
-## npm run execute kyc_statistique
-
 ## npm run execute service_statistique
 
 npm run execute update_user_couverture

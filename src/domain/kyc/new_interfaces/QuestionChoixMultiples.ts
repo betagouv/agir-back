@@ -15,7 +15,7 @@ export class QuestionChoixMultiple extends QuestionChoix {
 
   public setCodeState(code: string, selected: boolean) {
     this.kyc.touch();
-    const entry_liste = this.kyc.getRAWListeReponsesComplexes();
+    const entry_liste = this.kyc.reponse_complexe;
     for (const entry of entry_liste) {
       if (entry.code === code) {
         entry.selected = selected;
@@ -25,7 +25,7 @@ export class QuestionChoixMultiple extends QuestionChoix {
   }
   public deselectAll() {
     this.kyc.touch();
-    const entry_liste = this.kyc.getRAWListeReponsesComplexes();
+    const entry_liste = this.kyc.reponse_complexe;
     for (const entry of entry_liste) {
       entry.selected = false;
     }

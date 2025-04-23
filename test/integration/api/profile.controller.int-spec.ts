@@ -870,30 +870,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.code_postal_classement).toEqual('21000');
 
     // KYCs
-    expect(dbUser.kyc_history.getQuestion(KYCID.KYC_DPE).getSelected()).toEqual(
-      'E',
-    );
     expect(
-      dbUser.kyc_history
-        .getQuestion(KYCID.KYC_superficie)
-        .getReponseSimpleValueAsNumber(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_DPE).getSelectedCode(),
+    ).toEqual('E');
+    expect(
+      dbUser.kyc_history.getQuestionNumerique(KYCID.KYC_superficie).getValue(),
     ).toEqual(34);
     expect(
-      dbUser.kyc_history.getQuestion(KYCID.KYC_proprietaire).getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_proprietaire).getSelectedCode(),
     ).toEqual('non');
     expect(
-      dbUser.kyc_history.getQuestion(KYCID.KYC_chauffage_elec).getSelected(),
+      dbUser.kyc_history
+        .getQuestion(KYCID.KYC_chauffage_elec)
+        .getSelectedCode(),
     ).toEqual('oui');
     expect(
-      dbUser.kyc_history.getQuestion(KYCID.KYC_chauffage_bois).getSelected(),
+      dbUser.kyc_history
+        .getQuestion(KYCID.KYC_chauffage_bois)
+        .getSelectedCode(),
     ).toEqual('ne_sais_pas');
     expect(
-      dbUser.kyc_history.getQuestion(KYCID.KYC_type_logement).getSelected(),
+      dbUser.kyc_history.getQuestion(KYCID.KYC_type_logement).getSelectedCode(),
     ).toEqual('type_appartement');
     expect(
-      dbUser.kyc_history
-        .getQuestion(KYCID.KYC_menage)
-        .getReponseSimpleValueAsNumber(),
+      dbUser.kyc_history.getQuestionNumerique(KYCID.KYC_menage).getValue(),
     ).toEqual(5);
   });
 
@@ -929,8 +929,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // KYCs
     expect(
       dbUser.kyc_history
-        .getQuestion(KYCID.KYC_logement_age)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_logement_age)
+        .getValue(),
     ).toEqual(5);
   });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
@@ -965,8 +965,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // KYCs
     expect(
       dbUser.kyc_history
-        .getQuestion(KYCID.KYC_logement_age)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_logement_age)
+        .getValue(),
     ).toEqual(20);
   });
 

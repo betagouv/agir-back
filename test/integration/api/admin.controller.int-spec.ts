@@ -338,7 +338,7 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.kyc_history.getRawAnsweredKYCs()[0].id_cms).toEqual(1);
+    expect(userDB.kyc_history.getAnsweredKYCs()[0].id_cms).toEqual(1);
   });
   it.skip('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN
@@ -966,114 +966,6 @@ describe('Admin (API test)', () => {
     expect(article1.nombre_de_rating).toBe(1);
     expect(article1.nombre_de_mise_en_favoris).toBe(1);
     expect(article1.titre).toBe(`Article [article-id-1] supprimé`);
-  });
-
-  it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: 'id-kyc-1',
-          type: TypeReponseQuestionKYC.choix_multiple,
-          question: `Question kyc 1`,
-          reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, selected: true },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-          ],
-        },
-        {
-          ...KYC_DATA,
-          id_cms: 2,
-          code: 'id-kyc-2',
-          question: `Question kyc 2`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          reponse_complexe: [
-            { label: 'Une réponse', code: Thematique.climat, selected: true },
-          ],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      id: 'test-id-1',
-      email: 'john-doe@dev.com',
-      kyc: kyc as any,
-    });
-
-    const kyc_2: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: 'id-kyc-1',
-          question: `Question kyc 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, selected: true },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-            { label: 'Appartement', code: Thematique.logement, selected: true },
-          ],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      id: 'test-id-2',
-      email: 'john-doedoe@dev.com',
-      kyc: kyc_2 as any,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/kyc-statistique');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const kyc1 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-1',
-          kycId: 'id-kyc-1',
-        },
-      },
-    });
-    const kyc2 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-1',
-          kycId: 'id-kyc-2',
-        },
-      },
-    });
-    const kyc3 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-2',
-          kycId: 'id-kyc-1',
-        },
-      },
-    });
-
-    expect(kyc1.titre).toEqual('Question kyc 1');
-    expect(kyc1.reponse).toEqual('Le climat, Mon logement');
-    expect(kyc2.titre).toEqual('Question kyc 2');
-    expect(kyc2.reponse).toEqual('Une réponse');
-    expect(kyc3.titre).toEqual('Question kyc 1');
-    expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
   });
 
   it('GET /admin/prenoms_a_valider', async () => {
@@ -1836,11 +1728,11 @@ describe('Admin (API test)', () => {
 
     expect(
       user_DB.kyc_history
-        .getQuestion('KYC_transport_voiture_km')
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique('KYC_transport_voiture_km')
+        .getValue(),
     ).toEqual(2999);
     expect(
-      user_DB.kyc_history.getQuestion('KYC_saison_frequence').getSelected(),
+      user_DB.kyc_history.getQuestion('KYC_saison_frequence').getSelectedCode(),
     ).toEqual('jamais');
   });
 });

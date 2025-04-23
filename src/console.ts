@@ -12,7 +12,6 @@ import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
-import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 
 async function bootstrap() {
@@ -36,12 +35,6 @@ async function bootstrap() {
       console.log(
         `STOP article_statistique after ${Date.now() - start_time} ms`,
       );
-      break;
-    case 'kyc_statistique':
-      start_time = Date.now();
-      console.log(`START kyc_statistique ${start_time}`);
-      await application.get(KycStatistiqueUsecase).calculStatistique();
-      console.log(`STOP kyc_statistique after ${Date.now() - start_time} ms`);
       break;
     case 'service_statistique':
       start_time = Date.now();

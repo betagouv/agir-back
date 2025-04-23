@@ -34,7 +34,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
+    const result = utilisateur.kyc_history.getAllKycsAndMosaics();
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.kyc],

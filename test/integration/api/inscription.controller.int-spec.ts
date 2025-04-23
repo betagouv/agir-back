@@ -476,17 +476,17 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
-    const kyc_voiture = user.kyc_history.getQuestion(
+    const kyc_voiture = user.kyc_history.getQuestionNumerique(
       KYCID.KYC_transport_voiture_km,
     );
     expect(kyc_voiture).not.toBeUndefined();
-    expect(kyc_voiture.hasAnyResponses()).toEqual(true);
-    expect(kyc_voiture.getReponseSimpleValueAsNumber()).toEqual(20000);
+    expect(kyc_voiture.isAnswered()).toEqual(true);
+    expect(kyc_voiture.getValue()).toEqual(20000);
 
     const kyc_bois = user.kyc_history.getQuestion(KYCID.KYC_chauffage_bois);
     expect(kyc_bois).not.toBeUndefined();
     expect(kyc_bois.hasAnyResponses()).toEqual(true);
-    expect(kyc_bois.getSelected()).toEqual('oui');
+    expect(kyc_bois.getSelectedCode()).toEqual('oui');
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC => set id utilisateur sur situation`, async () => {
@@ -702,7 +702,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
-    expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(user.kyc_history.getAnsweredKYCs()).toHaveLength(0);
   });
   it(`POST /utilisateurs_v2 - integration situation NGC , pas d'erreurs n importe quoi `, async () => {
     // GIVEN
@@ -732,7 +732,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     expect(response.status).toBe(201);
     const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
 
-    expect(user.kyc_history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(user.kyc_history.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it(`POST /utilisateurs_v2 - integration situation NGC touches les mosaics`, async () => {
@@ -788,7 +788,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
         .getQuestionChoixUnique(KYCID.KYC_chauffage_fioul)
         .isAnswered(),
     ).toEqual(true);
-    expect(user.kyc_history.getRawAnsweredMosaics()).toHaveLength(2);
+    expect(user.kyc_history.getAnsweredMosaics()).toHaveLength(2);
     expect(
       user.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE),
     ).toEqual(true);

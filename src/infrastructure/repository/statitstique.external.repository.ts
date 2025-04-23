@@ -4,6 +4,11 @@ import { Aide } from '../../domain/aides/aide';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Article } from '../../domain/contenu/article';
 import { Quizz } from '../../domain/contenu/quizz';
+import { QuestionChoixMultiple } from '../../domain/kyc/new_interfaces/QuestionChoixMultiples';
+import { QuestionChoixUnique } from '../../domain/kyc/new_interfaces/QuestionChoixUnique';
+import { QuestionNumerique } from '../../domain/kyc/new_interfaces/QuestionNumerique';
+import { QuestionSimple } from '../../domain/kyc/new_interfaces/QuestionSimple';
+import { QuestionTexteLibre } from '../../domain/kyc/new_interfaces/QuestionTexteLibre';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -193,19 +198,23 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getSelected();
+      reponse.reponse_unique_code = new QuestionChoixUnique(
+        kyc,
+      ).getSelectedCode();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
-      reponse.reponse_multiple_code = kyc.getSelectedCodes();
+      reponse.reponse_multiple_code = new QuestionChoixMultiple(
+        kyc,
+      ).getSelectedCodes();
     }
     if (kyc.type === TypeReponseQuestionKYC.libre) {
-      reponse.reponse_texte = kyc.getReponseSimpleValue();
+      reponse.reponse_texte = new QuestionTexteLibre(kyc).getText();
     }
     if (kyc.type === TypeReponseQuestionKYC.entier) {
-      reponse.reponse_entier = kyc.getReponseSimpleValueAsNumber();
+      reponse.reponse_entier = new QuestionNumerique(kyc).getValue();
     }
     if (kyc.type === TypeReponseQuestionKYC.decimal) {
-      reponse.reponse_decimal = kyc.getReponseSimpleValue();
+      reponse.reponse_decimal = new QuestionSimple(kyc).getStringValue();
     }
 
     await this.prismaStats.kYCCopy.create({
@@ -234,19 +243,23 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getSelected();
+      reponse.reponse_unique_code = new QuestionChoixUnique(
+        kyc,
+      ).getSelectedCode();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
-      reponse.reponse_multiple_code = kyc.getSelectedCodes();
+      reponse.reponse_multiple_code = new QuestionChoixMultiple(
+        kyc,
+      ).getSelectedCodes();
     }
     if (kyc.type === TypeReponseQuestionKYC.libre) {
-      reponse.reponse_texte = kyc.getReponseSimpleValue();
+      reponse.reponse_texte = new QuestionTexteLibre(kyc).getText();
     }
     if (kyc.type === TypeReponseQuestionKYC.entier) {
-      reponse.reponse_entier = kyc.getReponseSimpleValueAsNumber();
+      reponse.reponse_entier = new QuestionNumerique(kyc).getValue();
     }
     if (kyc.type === TypeReponseQuestionKYC.decimal) {
-      reponse.reponse_decimal = kyc.getReponseSimpleValue();
+      reponse.reponse_decimal = new QuestionSimple(kyc).getStringValue();
     }
 
     await this.prismaStats.kYCCopy.upsert({

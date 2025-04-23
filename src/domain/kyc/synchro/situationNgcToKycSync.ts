@@ -30,20 +30,20 @@ export class SituationNgcToKycSync {
             number_kyc.setStringValue(string_value);
             history.updateQuestion(number_kyc);
             result.push(key);
-            KycToProfileSync.synchronize(number_kyc, utilisateur);
+            KycToProfileSync.synchronize(kyc_ngc, utilisateur);
           } else if (validator.isDecimal(string_value) && is_kyc_number) {
             const number_kyc = new QuestionSimple(kyc_ngc);
             number_kyc.setStringValue(string_value);
             history.updateQuestion(number_kyc);
             result.push(key);
-            KycToProfileSync.synchronize(number_kyc, utilisateur);
+            KycToProfileSync.synchronize(kyc_ngc, utilisateur);
           } else if (kyc_ngc.type === TypeReponseQuestionKYC.choix_unique) {
             const choix_unique_kyc = new QuestionChoixUnique(kyc_ngc);
             const ok = choix_unique_kyc.selectByCodeNgc(string_value);
             history.updateQuestion(choix_unique_kyc);
             if (ok) {
               result.push(key);
-              KycToProfileSync.synchronize(choix_unique_kyc, utilisateur);
+              KycToProfileSync.synchronize(kyc_ngc, utilisateur);
             } else {
               console.error(
                 `Code NGC [${string_value}] non disponible pour la KYC ${kyc_ngc.id_cms}/${kyc_ngc.code}`,

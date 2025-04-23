@@ -67,7 +67,7 @@ export class RecommandationUsecase {
       quizzes = await this.getQuizzes(utilisateur, 10, thematique);
     }
     if (types.includes(ContentType.kyc)) {
-      kycs = await this.getKYC(utilisateur, thematique);
+      kycs = this.getKYC(utilisateur, thematique);
     }
 
     if (kycs.length > 0) {

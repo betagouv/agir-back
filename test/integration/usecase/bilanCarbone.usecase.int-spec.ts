@@ -113,10 +113,14 @@ describe('BilanCarboneUsecase', () => {
 
     // THEN
 
-    const kyc = user.kyc_history.getQuestion(KYCID.KYC_transport_voiture_km);
+    const kyc = user.kyc_history.getQuestionNumerique(
+      KYCID.KYC_transport_voiture_km,
+    );
 
-    expect(kyc.getReponseSimpleValueAsNumber()).toEqual(20000);
-    expect(kyc.last_update.getTime()).toBeGreaterThan(Date.now() - 200);
+    expect(kyc.getValue()).toEqual(20000);
+    expect(kyc.getKyc().last_update.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
 
     console.log(kyc);
   });
@@ -185,11 +189,11 @@ describe('BilanCarboneUsecase', () => {
       '123',
     );
 
-    const kyc_user = user.kyc_history.getQuestion(
+    const kyc_user = user.kyc_history.getQuestionNumerique(
       KYCID.KYC_transport_voiture_km,
     );
 
     // THEN
-    expect(kyc_user.getReponseSimpleValueAsNumber()).toEqual(300);
+    expect(kyc_user.getValue()).toEqual(300);
   });
 });

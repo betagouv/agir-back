@@ -20,7 +20,10 @@ export class QuestionSimple {
 
   public setStringValue(value: string) {
     this.kyc.touch();
-    return this.kyc.setReponseSimpleValue(value);
+    this.kyc.reponse_simple.value = value;
+  }
+  public getStringValue() {
+    return this.kyc.reponse_simple.value;
   }
 
   public isInteger(): boolean {

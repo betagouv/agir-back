@@ -181,7 +181,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       Scope.ALL,
     ]);
 
-    const new_kyc = userDB.kyc_history.getRawAnsweredKYCs()[0];
+    const new_kyc = userDB.kyc_history.getAnsweredKYCs()[0];
 
     expect(new_kyc.question).toEqual('The question !');
     expect(new_kyc.points).toEqual(20);
@@ -191,16 +191,28 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(new_kyc.tags).toEqual([Tag.possede_voiture]);
     expect(new_kyc.thematique).toEqual(Thematique.alimentation);
     expect(new_kyc.ngc_key).toEqual('a . b . c');
-    expect(new_kyc.getReponseComplexeByCode(Thematique.climat)).toEqual({
-      code: 'climat',
-      emoji: undefined,
-      image_url: undefined,
-      label: 'Le climat !!!',
-      ngc_code: undefined,
-      unite: undefined,
-      value: undefined,
-      selected: true,
-    });
+    expect(new_kyc.reponse_complexe).toEqual([
+      {
+        code: 'climat',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'Le climat !!!',
+        ngc_code: undefined,
+        unite: undefined,
+        value: undefined,
+        selected: true,
+      },
+      {
+        code: 'logement',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'Mon logement !!!',
+        ngc_code: undefined,
+        selected: false,
+        unite: undefined,
+        value: undefined,
+      },
+    ]);
   });
 
   it('GET /utilisateurs/id/questionsKYC_v2 - liste N questions', async () => {
@@ -1214,33 +1226,33 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_vegetaliens)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_vegetaliens)
+        .getValue(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_vegetariens)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_vegetariens)
+        .getValue(),
     ).toEqual(7);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_poisson_blanc)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_poisson_blanc)
+        .getValue(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_poisson_gras)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_poisson_gras)
+        .getValue(),
     ).toEqual(1);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_viande_blanche)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_viande_blanche)
+        .getValue(),
     ).toEqual(4);
     expect(
       userDB.kyc_history
-        .getQuestion(KYCID.KYC_nbr_plats_viande_rouge)
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique(KYCID.KYC_nbr_plats_viande_rouge)
+        .getValue(),
     ).toEqual(0);
   });
 
@@ -1509,9 +1521,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(
-      user.kyc_history.getQuestion('_1').getReponseSimpleValueAsNumber(),
-    ).toEqual(2.3);
+    expect(user.kyc_history.getQuestionNumerique('_1').getValue()).toEqual(2.3);
 
     // WHEN
     response = await TestUtil.PUT(
@@ -1572,7 +1582,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       Scope.ALL,
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    expect(user.kyc_history.getQuestion('_2').getSelected()).toStrictEqual(
+    expect(user.kyc_history.getQuestion('_2').getSelectedCode()).toStrictEqual(
       Thematique.climat,
     );
 
@@ -1611,9 +1621,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       Scope.ALL,
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    expect(user.kyc_history.getQuestion('_2').getSelectedCodes()).toStrictEqual(
-      [Thematique.climat, Thematique.logement],
-    );
+    expect(
+      user.kyc_history.getQuestionChoix('_2').getSelectedCodes(),
+    ).toStrictEqual([Thematique.climat, Thematique.logement]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
@@ -1682,9 +1692,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       Scope.ALL,
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
-    expect(user.kyc_history.getQuestion('1').getSelectedCodes()).toStrictEqual([
-      Thematique.alimentation,
-    ]);
+    expect(
+      user.kyc_history.getQuestionChoix('1').getSelectedCodes(),
+    ).toStrictEqual([Thematique.alimentation]);
   });
 
   it('PUT /utilisateurs/id/questionsKYC_v2/1 - met à jour la reponse à la question 1 type choix unique , trop de choix !', async () => {

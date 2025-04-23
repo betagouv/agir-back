@@ -71,7 +71,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(
       user_full.kyc_history
         .getQuestion(KYCID.KYC_local_frequence)
-        .getSelected(),
+        .getSelectedCode(),
     ).toEqual('parfois');
     expect(
       user_full.kyc_history
@@ -81,7 +81,7 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     expect(
       user_full.kyc_history
         .getQuestion(KYCID.KYC_transport_avion_3_annees)
-        .getSelected(),
+        .getSelectedCode(),
     ).toEqual('oui');
     expect(
       user_full.kyc_history

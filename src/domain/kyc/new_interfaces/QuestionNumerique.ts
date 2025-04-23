@@ -7,7 +7,10 @@ export class QuestionNumerique extends QuestionSimple {
   }
 
   public getValue(): number {
-    return this.kyc.getReponseSimpleValueAsNumber();
+    if (this.kyc.reponse_simple && this.kyc.reponse_simple.value) {
+      return Number(this.kyc.reponse_simple.value);
+    }
+    return undefined;
   }
 
   public setValue(value: number) {

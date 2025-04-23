@@ -34,7 +34,6 @@ import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecas
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
-import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -66,7 +65,6 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
-    private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
     private prisma: PrismaService,
@@ -188,15 +186,6 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/kyc-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des kyc`,
-  })
-  async calcul_kyc_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.kycStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/compute_all_aides_communes_from_partenaires')

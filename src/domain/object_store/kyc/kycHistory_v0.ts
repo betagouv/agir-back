@@ -85,9 +85,9 @@ export class KYCHistory_v0 extends Versioned_v0 {
     return {
       version: 0,
       answered_questions: domain
-        .getRawAnsweredKYCs()
+        .getAnsweredKYCs()
         .map((e) => QuestionKYC_v0.map(e)),
-      answered_mosaics: domain.getRawAnsweredMosaics(),
+      answered_mosaics: domain.getAnsweredMosaics(),
     };
   }
 }

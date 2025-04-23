@@ -89,8 +89,8 @@ export class QuestionKYCData implements TaggedContent {
   score: number;
   // TODO: should use the generated DottedName instead of string
   ngc_key?: string;
-  protected reponse_simple: KYCReponseSimple;
-  protected reponse_complexe: KYCReponseComplexe[];
+  reponse_simple: KYCReponseSimple;
+  reponse_complexe: KYCReponseComplexe[];
   protected conditions: AndConditionSet[];
 
   constructor(data?: QuestionKYC_v2) {
@@ -126,7 +126,7 @@ export class QuestionKYCData implements TaggedContent {
           image_url: undefined,
           unite: undefined,
         }))
-      : undefined;
+      : [];
   }
 
   public getTags(): Tag[] {
@@ -142,6 +142,50 @@ export class QuestionKYCData implements TaggedContent {
 
   public touch() {
     this.last_update = new Date();
+  }
+
+  public hasAnySimpleResponse(): boolean {
+    if (this.reponse_simple && this.reponse_simple.value) {
+      return true;
+    }
+    return false;
+  }
+
+  public hasAnyComplexeResponse(): boolean {
+    if (this.reponse_complexe) {
+      for (const reponse of this.reponse_complexe) {
+        if (!!reponse.value) return true;
+        if (!!reponse.selected) return true;
+      }
+    }
+    return false;
+  }
+
+  public getSelectedCode(): string | undefined {
+    if (!this.hasAnyComplexeResponse()) return undefined;
+    for (const reponse of this.reponse_complexe) {
+      if (reponse.selected) {
+        return reponse.code;
+      }
+    }
+    return undefined;
+  }
+
+  public getSelectedNgcCode(): string {
+    if (!this.hasAnyComplexeResponse()) return undefined;
+    for (const reponse of this.reponse_complexe) {
+      if (reponse.selected) {
+        return reponse.ngc_code;
+      }
+    }
+    return undefined;
+  }
+
+  public getReponseSimpleValue(): string {
+    if (this.reponse_simple) {
+      return this.reponse_simple.value;
+    }
+    return undefined;
   }
 
   protected static buildKycFromDef(def: KycDefinition): QuestionKYCData {
@@ -280,8 +324,8 @@ export class QuestionKYCData implements TaggedContent {
       let selected: boolean;
       if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
         if (kyc.hasAnyComplexeResponse()) {
-          value = kyc.getSelected() === 'oui' ? 'oui' : 'non';
-          selected = kyc.getSelected() === 'oui';
+          value = kyc.getSelectedCode() === 'oui' ? 'oui' : 'non';
+          selected = kyc.getSelectedCode() === 'oui';
         } else {
           value = 'non';
           selected = false;
@@ -308,38 +352,5 @@ export class QuestionKYCData implements TaggedContent {
       });
     }
     return liste_reponses;
-  }
-
-  public hasAnySimpleResponse(): boolean {
-    if (this.reponse_simple && this.reponse_simple.value) {
-      return true;
-    }
-    return false;
-  }
-  public hasAnyComplexeResponse(): boolean {
-    if (this.reponse_complexe) {
-      for (const reponse of this.reponse_complexe) {
-        if (!!reponse.value) return true;
-        if (!!reponse.selected) return true;
-      }
-    }
-    return false;
-  }
-
-  public getSelected(): string | undefined {
-    if (!this.hasAnyComplexeResponse()) return undefined;
-    for (const reponse of this.reponse_complexe) {
-      if (reponse.selected) {
-        return reponse.code;
-      }
-    }
-    return undefined;
-  }
-
-  public getReponseSimpleValue(): string {
-    if (this.reponse_simple) {
-      return this.reponse_simple.value;
-    }
-    return undefined;
   }
 }

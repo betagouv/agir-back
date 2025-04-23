@@ -8,6 +8,8 @@ import {
 } from '../domain/bilan/bilanCarbone';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixUnique';
+import { QuestionNumerique } from '../domain/kyc/new_interfaces/QuestionNumerique';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
 import {
   BooleanKYC,
@@ -251,18 +253,18 @@ export class BilanCarboneUsecase {
       (q) => q !== null,
     );
 
-    const enchainement_transport_progression = QuestionKYC.getProgression(
+    const enchainement_transport_progression = this.getProgression(
       enchainement_transport,
     );
-    const enchainement_logement_progression = QuestionKYC.getProgression(
+    const enchainement_logement_progression = this.getProgression(
       enchainement_logement,
     );
     const enchainement_conso_progression =
-      QuestionKYC.getProgression(enchainement_conso);
-    const enchainement_alimentation_progression = QuestionKYC.getProgression(
+      this.getProgression(enchainement_conso);
+    const enchainement_alimentation_progression = this.getProgression(
       enchainement_alimentation,
     );
-    const enchainement_minibilan_progression = QuestionKYC.getProgression(
+    const enchainement_minibilan_progression = this.getProgression(
       enchainement_mini_bilan,
     );
 
@@ -402,7 +404,7 @@ export class BilanCarboneUsecase {
   public external_compute_situation(utilisateur: Utilisateur): SituationNGC {
     const situation = {};
 
-    const kyc_liste = utilisateur.kyc_history.getAllUpToDateQuestionSet(true);
+    const kyc_liste = utilisateur.kyc_history.getAllKycs();
     for (const kyc of kyc_liste) {
       if (kyc.is_NGC) {
         if (!kyc.ngc_key) {
@@ -411,9 +413,9 @@ export class BilanCarboneUsecase {
           );
         } else {
           if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-            if (kyc.hasAnyComplexeResponse()) {
-              situation[kyc.ngc_key] =
-                kyc.getNGCCodeReponseQuestionChoixUnique();
+            const choix_kyc = new QuestionChoixUnique(kyc);
+            if (choix_kyc.isAnswered()) {
+              situation[kyc.ngc_key] = choix_kyc.getSelectedNgcCode();
             }
           }
           if (
@@ -421,7 +423,7 @@ export class BilanCarboneUsecase {
             kyc.type === TypeReponseQuestionKYC.decimal
           ) {
             if (kyc.hasAnySimpleResponse()) {
-              const value = kyc.getReponseSimpleValueAsNumber();
+              const value = new QuestionNumerique(kyc).getValue();
               situation[kyc.ngc_key] = Number.isNaN(value) ? 0 : value;
             }
           }
@@ -432,11 +434,11 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactTransport(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_voiture = utilisateur.kyc_history.getQuestion(
+    const kyc_voiture = utilisateur.kyc_history.getQuestionNumerique(
       KYCID.KYC_transport_voiture_km,
     );
     if (!kyc_voiture) return null;
-    if (!kyc_voiture.hasAnyResponses()) return null;
+    if (!kyc_voiture.isAnswered()) return null;
 
     const kyc_avion = utilisateur.kyc_history.getQuestionChoixUnique(
       KYCID.KYC_transport_avion_3_annees,
@@ -445,7 +447,7 @@ export class BilanCarboneUsecase {
     if (!kyc_avion.isAnswered()) return null;
 
     const avion = kyc_avion.isSelected('oui');
-    const km = kyc_voiture.getReponseSimpleValueAsNumber();
+    const km = kyc_voiture.getValue();
     if (!avion) {
       if (km < 1000) return NiveauImpact.faible;
       if (km < 10000) return NiveauImpact.moyen;
@@ -477,7 +479,7 @@ export class BilanCarboneUsecase {
     if (!kyc_regime) return null;
     if (!kyc_regime.hasAnyResponses()) return null;
 
-    const regime_code = kyc_regime.getSelected();
+    const regime_code = kyc_regime.getSelectedCode();
     switch (regime_code) {
       case 'vegetalien':
         return NiveauImpact.faible;
@@ -498,7 +500,7 @@ export class BilanCarboneUsecase {
     if (!kyc_type_conso) return null;
     if (!kyc_type_conso.hasAnyResponses()) return null;
 
-    const code = kyc_type_conso.getSelected();
+    const code = kyc_type_conso.getSelectedCode();
     switch (code) {
       case 'achete_jamais':
         return NiveauImpact.faible;
@@ -513,15 +515,17 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactLogement(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_menage = utilisateur.kyc_history.getQuestion(KYCID.KYC_menage);
+    const kyc_menage = utilisateur.kyc_history.getQuestionNumerique(
+      KYCID.KYC_menage,
+    );
     if (!kyc_menage) return null;
-    if (!kyc_menage.hasAnyResponses()) return null;
+    if (!kyc_menage.isAnswered()) return null;
 
-    const kyc_superficie = utilisateur.kyc_history.getQuestion(
+    const kyc_superficie = utilisateur.kyc_history.getQuestionNumerique(
       KYCID.KYC_superficie,
     );
     if (!kyc_superficie) return null;
-    if (!kyc_superficie.hasAnyResponses()) return null;
+    if (!kyc_superficie.isAnswered()) return null;
 
     if (
       !utilisateur.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE)
@@ -553,10 +557,10 @@ export class BilanCarboneUsecase {
     if (!kyc_fioul) return null;
     if (!kyc_fioul.hasAnyResponses()) return null;
 
-    const is_fioul = kyc_fioul.getSelected() === 'oui';
-    const is_gaz = kyc_gaz.getSelected() === 'oui';
-    const is_elec = kyc_elec.getSelected() === 'oui';
-    const is_bois = kyc_bois.getSelected() === 'oui';
+    const is_fioul = kyc_fioul.getSelectedCode() === 'oui';
+    const is_gaz = kyc_gaz.getSelectedCode() === 'oui';
+    const is_elec = kyc_elec.getSelectedCode() === 'oui';
+    const is_bois = kyc_bois.getSelectedCode() === 'oui';
 
     let type_chauffage_nbr;
 
@@ -570,8 +574,8 @@ export class BilanCarboneUsecase {
       type_chauffage_nbr = 2;
     }
 
-    const nbr_hab = kyc_menage.getReponseSimpleValueAsNumber();
-    const superficie = kyc_superficie.getReponseSimpleValueAsNumber();
+    const nbr_hab = kyc_menage.getValue();
+    const superficie = kyc_superficie.getValue();
     let nbr_superficie;
     if (superficie <= 35) nbr_superficie = 1;
     if (superficie <= 70) nbr_superficie = 2;
@@ -591,5 +595,22 @@ export class BilanCarboneUsecase {
     if (impact_number <= 4) return NiveauImpact.moyen;
     if (impact_number <= 8) return NiveauImpact.fort;
     return NiveauImpact.tres_fort;
+  }
+
+  private getProgression(liste: QuestionKYC[]): {
+    current: number;
+    target: number;
+  } {
+    let progression = 0;
+    for (const question of liste) {
+      if (question.isMosaic()) {
+        if (question.is_mosaic_answered) {
+          progression++;
+        }
+      } else if (question.hasAnyResponses()) {
+        progression++;
+      }
+    }
+    return { current: progression, target: liste.length };
   }
 }

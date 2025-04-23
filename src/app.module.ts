@@ -128,7 +128,6 @@ import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
-import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
@@ -235,7 +234,6 @@ function getControllers(): any[] {
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
     QuizStatistiqueRepository,
-    KycStatistiqueUsecase,
     KycStatistiqueRepository,
     KycRepository,
     MissionStatistiqueRepository,

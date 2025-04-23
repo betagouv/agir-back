@@ -90,39 +90,35 @@ export class QuestionKYCAPI_v2 {
     if (question.isSimpleQuestion()) {
       result.reponse_unique = {
         value: question.getReponseSimpleValue(),
-        unite: UniteAPI.mapToAPI(question.getReponseSimpleUnite()),
+        unite: UniteAPI.mapToAPI(question.getUnite()),
       };
     } else if (question.isChoixQuestion()) {
-      result.reponse_multiple = question
-        .getRAWListeReponsesComplexes()
-        .map((r) => ({
+      result.reponse_multiple = question.reponse_complexe.map((r) => ({
+        code: r.code,
+        label: r.label,
+        selected: r.selected,
+      }));
+    } else if (question.isMosaic()) {
+      result.reponse_multiple = question.reponse_complexe.map((r) => {
+        const common = {
           code: r.code,
           label: r.label,
-          selected: r.selected,
-        }));
-    } else if (question.isMosaic()) {
-      result.reponse_multiple = question
-        .getRAWListeReponsesComplexes()
-        .map((r) => {
-          const common = {
-            code: r.code,
-            label: r.label,
-            emoji: r.emoji,
-            image_url: r.image_url,
-            unite: UniteAPI.mapToAPI(r.unite),
+          emoji: r.emoji,
+          image_url: r.image_url,
+          unite: UniteAPI.mapToAPI(r.unite),
+        };
+        if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
+          return {
+            ...common,
+            selected: r.selected,
           };
-          if (question.type === TypeReponseQuestionKYC.mosaic_boolean) {
-            return {
-              ...common,
-              selected: r.selected,
-            };
-          } else {
-            return {
-              ...common,
-              value: r.value,
-            };
-          }
-        });
+        } else {
+          return {
+            ...common,
+            value: r.value,
+          };
+        }
+      });
       result.is_answered = question.is_mosaic_answered;
     }
     return result;

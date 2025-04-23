@@ -73,7 +73,7 @@ export class DuplicateBDDForStatsUsecase {
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
 
-        const liste_kyc = user.kyc_history.getRawAnsweredKYCsAfter(start_date);
+        const liste_kyc = user.kyc_history.getAnsweredKYCsAfter(start_date);
         for (const kyc of liste_kyc) {
           try {
             await this.statistiqueExternalRepository.upsertKYCData(
