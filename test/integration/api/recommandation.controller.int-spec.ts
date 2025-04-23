@@ -372,7 +372,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations v2 - filtrage par univers (anciennement thémaiques)', async () => {
     // GIVEN
-    process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.kYC, {
@@ -450,7 +449,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations v2 - pas de contenu de categorie non recommandation', async () => {
     // GIVEN
-    process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
 
     await TestUtil.create(DB.kYC, {
@@ -531,7 +529,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations_v3 - que des articles si filtre articles seuls', async () => {
     // GIVEN
-    process.env.DEFI_ENABLED = 'true';
     process.env.KYC_RECO_ENABLED = 'true';
     await TestUtil.create(DB.kYC, {
       id_cms: 1,

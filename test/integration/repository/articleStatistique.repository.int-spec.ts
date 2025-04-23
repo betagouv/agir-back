@@ -1,5 +1,5 @@
-import { TestUtil } from '../../TestUtil';
 import { ArticleStatistiqueRepository } from '../../../src/infrastructure/repository/articleStatistique.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('ArticleStatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -14,7 +14,6 @@ describe('ArticleStatistiqueRepository', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV };
-    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {

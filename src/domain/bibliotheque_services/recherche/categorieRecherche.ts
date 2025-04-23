@@ -1,4 +1,5 @@
 export enum CategorieRecherche {
+  catnat = 'catnat',
   vos_objets = 'vos_objets',
   donner = 'donner',
   jeter = 'jeter',
@@ -54,6 +55,7 @@ export class CategorieRechercheManager {
     CategorieRecherche.vos_objets,
   ];
   private static labels: Record<CategorieRecherche, string> = {
+    catnat: 'Catastrophes naturelles',
     vos_objets: 'Vos objets',
     donner: 'Donner',
     jeter: 'Jeter',

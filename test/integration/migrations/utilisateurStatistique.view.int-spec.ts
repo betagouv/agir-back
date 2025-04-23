@@ -18,7 +18,6 @@ describe('UtilisateurView', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV };
-    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {

@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
 import { App } from '../domain/app';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
+import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -36,6 +40,7 @@ export class ProfileUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
+    private rechercheServiceManager: RechercheServiceManager,
   ) {}
 
   @Retryable({
@@ -264,6 +269,8 @@ export class ProfileUsecase {
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.async_SetRisquesFromCodeCommune(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -396,5 +403,23 @@ export class ProfileUsecase {
   private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;
+  }
+
+  private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
+    const finder = this.rechercheServiceManager.getFinderById(
+      ServiceRechercheID.maif,
+    );
+    const filtre: FiltreRecherche = {
+      code_commune: utilisateur.code_commune,
+      categorie: CategorieRecherche.catnat,
+    };
+
+    const risques_catnat = await finder.find(filtre);
+
+    utilisateur.logement.risques.nombre_catnat_commune = risques_catnat.length;
+
+    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
+      Scope.logement,
+    ]);
   }
 }

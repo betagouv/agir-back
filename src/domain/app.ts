@@ -54,9 +54,6 @@ export class App {
   public static getWinterApiURL(): string {
     return process.env.WINTER_URL;
   }
-  public static areServiceAPIEnabled(): boolean {
-    return process.env.SERVICE_APIS_ENABLED === 'true';
-  }
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;
   }
@@ -143,6 +140,12 @@ export class App {
   }
   public static getLVO_API_URL(): string {
     return process.env.LVO_API_URL || '';
+  }
+  public static getMaifAPILogin(): string {
+    return process.env.MAIF_API_LOGIN;
+  }
+  public static getMaifAPIPassword(): string {
+    return process.env.MAIF_API_PASSWORD;
   }
   public static getThrottleLimit(): number {
     return parseInt(process.env.THROTTLE_LIMIT) ?? 2;

@@ -87,6 +87,7 @@ import { DistancesRepository } from './infrastructure/repository/services_recher
 import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
+import { MaifRepository } from './infrastructure/repository/services_recherche/maif/maif.repository';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
@@ -283,6 +284,7 @@ function getControllers(): any[] {
     CMSDataHelperUsecase,
     QuestionKYCEnchainementUsecase,
     MesAidesRenoUsecase,
+    MaifRepository,
   ],
 })
 export class AppModule {}

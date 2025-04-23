@@ -4,4 +4,5 @@ export enum ServiceRechercheID {
   fruits_legumes = 'fruits_legumes',
   recettes = 'recettes',
   impact_transports = 'impact_transports',
+  maif = 'maif',
 }

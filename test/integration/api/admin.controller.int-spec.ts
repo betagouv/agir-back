@@ -71,7 +71,6 @@ describe('Admin (API test)', () => {
     await TestUtil.generateAuthorizationToken('utilisateur-id');
 
     process.env.EMAIL_ENABLED = 'false';
-    process.env.SERVICE_APIS_ENABLED = 'false';
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 

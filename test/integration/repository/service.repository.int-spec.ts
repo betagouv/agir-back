@@ -54,7 +54,6 @@ describe('ServiceRepository', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {
