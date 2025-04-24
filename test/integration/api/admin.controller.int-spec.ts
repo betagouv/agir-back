@@ -1743,4 +1743,63 @@ describe('Admin (API test)', () => {
       user_DB.kyc_history.getQuestion('KYC_saison_frequence').getSelectedCode(),
     ).toEqual('jamais');
   });
+
+  it(`POST /admin/liste_questions_utilisateur`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+          liste_questions: [
+            {
+              date: new Date(123),
+              est_action_faite: true,
+              question: 'mais quoi donc ?',
+            },
+          ],
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET('/admin/liste_questions_utilisateur');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        action_cms_id: '111',
+        action_faite: true,
+        action_titre: '**The titre**',
+        date: '1970-01-01T00:00:00.123Z',
+        email: 'yo@truc.com',
+        nom: 'nom',
+        prenom: 'prenom',
+        pseudo: 'pseudo',
+        question: 'mais quoi donc ?',
+      },
+    ]);
+  });
 });

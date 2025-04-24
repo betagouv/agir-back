@@ -391,4 +391,13 @@ export class AdminController extends GenericControler {
     const aides = await this.adminUsecase.exportAides();
     return aides.map((elem) => AideExportAPI.mapToAPI(elem));
   }
+
+  @Get('/admin/liste_questions_utilisateur')
+  @ApiOperation({
+    summary: `listes les questions qui ont été posée par les utilisateurs`,
+  })
+  async listeQuesitons(@Request() req): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.actionUsecase.getAllQuestions();
+  }
 }

@@ -4,7 +4,10 @@ import {
   TypeCodeAction,
 } from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
-import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
+import {
+  ActionUtilisateur_v0,
+  ThematiqueHistory_v0,
+} from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
 import { KycTagExcluantTranslator } from './kycTagTranslator';
@@ -19,14 +22,27 @@ export type Question = {
   est_action_faite: boolean;
 };
 
-export type ActionUtilisateur = {
+export class ActionUtilisateur {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
   like_level: number;
   feedback: string;
   liste_questions: Question[];
-};
+
+  constructor(data?: ActionUtilisateur_v0) {
+    if (data) {
+      this.action = data.action;
+      this.vue_le = data.vue_le;
+      this.faite_le = data.faite_le;
+      this.like_level = data.like_level;
+      this.feedback = data.feedback;
+      this.liste_questions = data.liste_questions ? data.liste_questions : [];
+    } else {
+      this.liste_questions = [];
+    }
+  }
+}
 
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
@@ -44,12 +60,27 @@ export class ThematiqueHistory {
         );
       }
       if (data.liste_actions_utilisateur) {
-        this.liste_actions_utilisateur = data.liste_actions_utilisateur;
+        this.liste_actions_utilisateur = data.liste_actions_utilisateur.map(
+          (a) => new ActionUtilisateur(a),
+        );
+      } else {
+        data.liste_actions_utilisateur = [];
       }
       if (data.liste_tags_excluants) {
         this.liste_tags_excluants = data.liste_tags_excluants;
       }
     }
+  }
+
+  public getAllQuestions(): { question: Question; action: TypeCodeAction }[] {
+    const result: { question: Question; action: TypeCodeAction }[] = [];
+
+    for (const action of this.liste_actions_utilisateur) {
+      for (const question of action.liste_questions) {
+        result.push({ question: question, action: action.action });
+      }
+    }
+    return result;
   }
 
   public recomputeTagExcluant(history: KYCHistory) {

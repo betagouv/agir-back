@@ -39,6 +39,18 @@ import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecas
 const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
 const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
 
+type QuestionAction = {
+  nom: string;
+  prenom: string;
+  pseudo: string;
+  email: string;
+  date: Date;
+  question: string;
+  action_cms_id: string;
+  action_titre: string;
+  action_faite: boolean;
+};
+
 @Injectable()
 export class ActionUsecase {
   constructor(
@@ -643,6 +655,44 @@ export class ActionUsecase {
       }
     }
     catalogue.actions = new_action_list;
+  }
+
+  async getAllQuestions(block_size: number = 200): Promise<QuestionAction[]> {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const result: QuestionAction[] = [];
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        const liste_questions = user.thematique_history.getAllQuestions();
+        for (const question of liste_questions) {
+          const action_def =
+            this.actionRepository.getActionDefinitionByTypeCode(
+              question.action,
+            );
+          result.push({
+            action_cms_id: action_def.cms_id,
+            action_faite: question.question.est_action_faite,
+            action_titre: action_def.titre,
+            date: question.question.date,
+            email: user.email,
+            nom: user.nom,
+            prenom: user.prenom,
+            pseudo: user.pseudo,
+            question: question.question.question,
+          });
+        }
+      }
+    }
+    return result;
   }
 
   async updateActionStats(block_size: number = 50): Promise<void> {
