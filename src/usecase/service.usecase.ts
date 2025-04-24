@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Service, ServiceStatus } from '../../src/domain/service/service';
+import { ApplicationError } from '../../src/infrastructure/applicationError';
+import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
+import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
+import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
+import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
+import { EventUsecase } from '../../src/usecase/event.usecase';
+import { EventType } from '../domain/appEvent';
 import {
   AsyncService,
   LiveService,
   ScheduledService,
   ServiceDefinition,
 } from '../domain/service/serviceDefinition';
-import { ServiceRepository } from '../../src/infrastructure/repository/service.repository';
 import { FruitsEtLegumesServiceManager } from '../infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { ScheduledServiceManager } from '../../src/infrastructure/service/ScheduledServiceManager';
-import { LiveServiceManager } from '../../src/infrastructure/service/LiveServiceManager';
-import { EventUsecase } from '../../src/usecase/event.usecase';
-import { EventType } from '../domain/appEvent';
-import { LinkyServiceManager } from '../../src/infrastructure/service/linky/LinkyServiceManager';
-import { LinkyConfigurationAPI } from '../../src/infrastructure/api/types/service/linkyConfigurationAPI';
-import { AsyncServiceManager } from '../../src/infrastructure/service/AsyncServiceManager';
-import { ApplicationError } from '../../src/infrastructure/applicationError';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 
 const dummy_live_manager = {
   computeLiveDynamicData: async (service: Service) => {
@@ -59,7 +57,6 @@ export class ServiceUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private serviceRepository: ServiceRepository,
     private readonly fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
-    private readonly linkyServiceManager: LinkyServiceManager,
     private readonly eventUsecase: EventUsecase,
   ) {
     this.SCHEDULED_SERVICES = {
@@ -67,38 +64,11 @@ export class ServiceUsecase {
     };
     this.LIVE_SERVICES = {
       fruits: this.fruitsEtLegumesServiceManager,
-      linky: this.linkyServiceManager,
       dummy_live: dummy_live_manager,
     };
     this.ASYNC_SERVICES = {
-      linky: this.linkyServiceManager,
       dummy_async: dummy_async_manager,
     };
-  }
-
-  async updateServiceConfiguration(
-    utilisateurId: string,
-    serviceDefinitionId: string,
-    payload: LinkyConfigurationAPI,
-  ) {
-    await this.utilisateurRepository.checkState(utilisateurId);
-
-    const service = await this.serviceRepository.getServiceOfUtilisateur(
-      utilisateurId,
-      serviceDefinitionId,
-    );
-
-    if (!service) {
-      await this.addServiceToUtilisateur(utilisateurId, serviceDefinitionId);
-    }
-
-    const manager = this.getAsyncServiceManager(serviceDefinitionId);
-
-    manager.checkConfiguration(payload);
-
-    service.configuration = { ...service.configuration, ...payload };
-
-    await manager.processAndUpdateConfiguration(service);
   }
 
   async refreshScheduledServices(): Promise<string[]> {
@@ -223,18 +193,6 @@ export class ServiceUsecase {
       utilisateurId,
       serviceDefinitionId,
     );
-
-    if (!service) {
-      if (serviceDefinitionId === AsyncService.linky) {
-        await this.addServiceToUtilisateur(utilisateurId, serviceDefinitionId);
-        service = await this.serviceRepository.getServiceOfUtilisateur(
-          utilisateurId,
-          serviceDefinitionId,
-        );
-      } else {
-        return null;
-      }
-    }
 
     if (service.isLiveServiceType()) {
       await this.refreshLiveService(service);

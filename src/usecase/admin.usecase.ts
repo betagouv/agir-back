@@ -74,54 +74,42 @@ export class AdminUsecase {
         changer_voiture: false,
       };
 
-      const kyc_009 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC009,
-      );
-      const kyc_011 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC011,
-      );
-      const kyc_012 = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-        KYCID.KYC012,
-      );
+      const kyc_009 = utilisateur.kyc_history.getQuestion(KYCID.KYC009);
+      const kyc_011 = utilisateur.kyc_history.getQuestion(KYCID.KYC011);
+      const kyc_012 = utilisateur.kyc_history.getQuestion(KYCID.KYC012);
       const KYC_transport_voiture_km =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        utilisateur.kyc_history.getQuestionNumerique(
           KYCID.KYC_transport_voiture_km,
         );
       const KYC_transport_voiture_motorisation =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        utilisateur.kyc_history.getQuestion(
           KYCID.KYC_transport_voiture_motorisation,
         );
 
       const KYC_transport_type_utilisateur =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
+        utilisateur.kyc_history.getQuestion(
           KYCID.KYC_transport_type_utilisateur,
         );
-      const KYC_changer_voiture =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          KYCID.KYC_changer_voiture,
-        );
+      const KYC_changer_voiture = utilisateur.kyc_history.getQuestion(
+        KYCID.KYC_changer_voiture,
+      );
 
       //################################
 
-      reponses.trajet_ma_voiture =
-        kyc_009?.getCodeReponseQuestionChoixUnique() === 'ma_voit';
-      reponses.thermique =
-        kyc_011?.getCodeReponseQuestionChoixUnique() === 'voit_therm';
-      reponses.elec =
-        kyc_011?.getCodeReponseQuestionChoixUnique() === 'voit_elec_hybride';
-      reponses.trajet_court_voit =
-        kyc_012?.getCodeReponseQuestionChoixUnique() === 'oui';
-      reponses.km = KYC_transport_voiture_km?.getReponseSimpleValueAsNumber()
-        ? KYC_transport_voiture_km.getReponseSimpleValueAsNumber()
+      reponses.trajet_ma_voiture = kyc_009?.getSelectedCode() === 'ma_voit';
+      reponses.thermique = kyc_011?.getSelectedCode() === 'voit_therm';
+      reponses.elec = kyc_011?.getSelectedCode() === 'voit_elec_hybride';
+      reponses.trajet_court_voit = kyc_012?.getSelectedCode() === 'oui';
+      reponses.km = KYC_transport_voiture_km?.getValue()
+        ? KYC_transport_voiture_km.getValue()
         : 0;
       reponses.motorisation =
-        KYC_transport_voiture_motorisation?.getCodeReponseQuestionChoixUnique();
+        KYC_transport_voiture_motorisation?.getSelectedCode();
       reponses.proprio =
-        KYC_transport_type_utilisateur?.getCodeReponseQuestionChoixUnique() ===
-        'proprio';
+        KYC_transport_type_utilisateur?.getSelectedCode() === 'proprio';
       reponses.changer_voiture =
         KYC_changer_voiture?.hasAnyResponses() &&
-        KYC_changer_voiture?.getCodeReponseQuestionChoixUnique() !== 'non';
+        KYC_changer_voiture?.getSelectedCode() !== 'non';
 
       if (
         reponses.trajet_ma_voiture ||

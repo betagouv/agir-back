@@ -14,7 +14,6 @@ import { BlockTextRepository } from '../../../src/infrastructure/repository/bloc
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -24,7 +23,6 @@ describe('Actions (API test)', () => {
   const compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
-  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const fAQRepository = new FAQRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
@@ -92,6 +90,7 @@ describe('Actions (API test)', () => {
           faite_le: new Date(1),
           feedback: null,
           like_level: 2,
+          liste_questions: [],
         },
       ],
       liste_thematiques: [],
@@ -852,6 +851,7 @@ describe('Actions (API test)', () => {
           feedback: null,
           like_level: null,
           vue_le: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -897,7 +897,116 @@ describe('Actions (API test)', () => {
       feedback: 'pas si mal',
       like_level: 2,
       vue_le: null,
+      liste_questions: [],
     });
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - pousse une question pour une action deja faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+          liste_questions: [],
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/question',
+    ).send({
+      question: 'Pour de vrai, comment faire ?',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u.liste_questions).toHaveLength(1);
+    expect(action_u.liste_questions[0].date.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+    expect(action_u.liste_questions[0].est_action_faite).toEqual(true);
+    expect(action_u.liste_questions[0].question).toEqual(
+      'Pour de vrai, comment faire ?',
+    );
+  });
+
+  it(`POST /utilisateurs/id/actions/id/feedback - pousse une question pour une action pas encore faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/question',
+    ).send({
+      question: 'Pour de vrai, comment faire ?',
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u.liste_questions).toHaveLength(1);
+    expect(action_u.liste_questions[0].date.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+    expect(action_u.liste_questions[0].est_action_faite).toEqual(false);
+    expect(action_u.liste_questions[0].question).toEqual(
+      'Pour de vrai, comment faire ?',
+    );
   });
 
   it(`POST /utilisateurs/id/actions/id/feedback - pousse un feedback pour une action jamais vue`, async () => {
@@ -948,6 +1057,7 @@ describe('Actions (API test)', () => {
       feedback: 'pas si mal',
       like_level: 2,
       vue_le: null,
+      liste_questions: [],
     });
   });
   it(`POST /utilisateurs/id/actions/id/feedback - like level optionnel`, async () => {
@@ -997,6 +1107,7 @@ describe('Actions (API test)', () => {
       feedback: 'pas si mal',
       like_level: null,
       vue_le: null,
+      liste_questions: [],
     });
   });
 
@@ -1047,6 +1158,7 @@ describe('Actions (API test)', () => {
       feedback: null,
       like_level: 3,
       vue_le: null,
+      liste_questions: [],
     });
   });
 
@@ -1125,7 +1237,7 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
-      `le texte de feedback ne peut pas contenir de caractères spéciaux comme [^#&*<>/{|}$%@+]`,
+      `le texte ne peut pas contenir de caractères spéciaux comme [^#&*<>/{|}$%@+]`,
     );
   });
 });

@@ -98,9 +98,7 @@ export class EnchainementKYC {
     }
     for (let index = foundIndex + 1; index < this.liste_kyc.length; index++) {
       const current_kyc = this.liste_kyc[index];
-      console.log(current_kyc);
       if (this.history.isKYCEligible(current_kyc)) {
-        console.log('returned');
         return current_kyc;
       }
     }

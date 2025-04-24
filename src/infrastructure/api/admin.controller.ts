@@ -18,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
-import { LinkyUsecase } from '../../../src/usecase/linky.usecase';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
@@ -35,7 +34,6 @@ import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecas
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
-import { KycStatistiqueUsecase } from '../../usecase/stats/kycStatistique.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -60,7 +58,6 @@ export class AdminController extends GenericControler {
     private rechercheServicesUsecase: RechercheServicesUsecase,
     private profileUsecase: ProfileUsecase,
     private serviceUsecase: ServiceUsecase,
-    private linkyUsecase: LinkyUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
     private communesUsecase: CommunesUsecase,
@@ -68,7 +65,6 @@ export class AdminController extends GenericControler {
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
-    private kycStatistiqueUsecase: KycStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
     private prisma: PrismaService,
@@ -137,15 +133,6 @@ export class AdminController extends GenericControler {
     return await this.serviceUsecase.processAsyncServices();
   }
 
-  @Post('services/clean_linky_data')
-  @ApiOkResponse({ type: Object })
-  async cleanLinkyData(@Request() req): Promise<object> {
-    this.checkCronAPIProtectedEndpoint(req);
-    const result = await this.linkyUsecase.cleanLinkyData();
-
-    return { result: `Cleaned ${result} PRMs` };
-  }
-
   @Post('/admin/upsert_service_definitions')
   @ApiOperation({
     summary:
@@ -183,15 +170,6 @@ export class AdminController extends GenericControler {
     await this.migrationUsecase.unlockUserMigration();
   }
 
-  @Post('/admin/unsubscribe_oprhan_prms')
-  @ApiOperation({
-    summary: `Dé inscrit les prms orphelins (suite à suppression de comptes)`,
-  })
-  async unsubscribe_oprhan_prms(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.linkyUsecase.unsubscribeOrphanPRMs();
-  }
-
   @Post('admin/contacts/synchronize')
   @ApiOperation({
     summary: "Synchronise les contacts de l'application avec ceux de Brevo ",
@@ -208,15 +186,6 @@ export class AdminController extends GenericControler {
   async calcul_article_statistique(@Request() req): Promise<string[]> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
-  @Post('/admin/kyc-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des kyc`,
-  })
-  async calcul_kyc_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.kycStatistiqueUsecase.calculStatistique();
   }
 
   @Post('/admin/compute_all_aides_communes_from_partenaires')
@@ -421,5 +390,14 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     const aides = await this.adminUsecase.exportAides();
     return aides.map((elem) => AideExportAPI.mapToAPI(elem));
+  }
+
+  @Get('/admin/liste_questions_utilisateur')
+  @ApiOperation({
+    summary: `listes les questions qui ont été posée par les utilisateurs`,
+  })
+  async listeQuesitons(@Request() req): Promise<any> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.actionUsecase.getAllQuestions();
   }
 }

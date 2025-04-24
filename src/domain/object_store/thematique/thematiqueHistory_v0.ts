@@ -2,6 +2,7 @@ import { TypeCodeAction } from '../../actions/actionDefinition';
 import { TagExcluant } from '../../scoring/tagExcluant';
 import {
   ActionUtilisateur,
+  Question,
   ThematiqueHistory,
 } from '../../thematique/history/thematiqueHistory';
 import {
@@ -10,6 +11,20 @@ import {
 } from '../../thematique/history/thematiqueRecommandation';
 import { Thematique } from '../../thematique/thematique';
 import { Versioned_v0 } from '../versioned';
+
+export class Question_v0 {
+  date: Date;
+  question: string;
+  est_action_faite: boolean;
+
+  static serialise(domain: Question): Question_v0 {
+    return {
+      date: domain.date,
+      question: domain.question,
+      est_action_faite: domain.est_action_faite,
+    };
+  }
+}
 
 export class ActionExclue_v0 {
   action: TypeCodeAction;
@@ -29,6 +44,7 @@ export class ActionUtilisateur_v0 {
   faite_le: Date;
   like_level: number;
   feedback: string;
+  liste_questions: Question_v0[];
 
   static serialise(domain: ActionUtilisateur): ActionUtilisateur_v0 {
     return {
@@ -37,6 +53,9 @@ export class ActionUtilisateur_v0 {
       faite_le: domain.faite_le,
       like_level: domain.like_level,
       feedback: domain.feedback,
+      liste_questions: domain.liste_questions
+        ? domain.liste_questions.map((q) => Question_v0.serialise(q))
+        : [],
     };
   }
 }

@@ -19,9 +19,6 @@ export class App {
   public static getBackCurrentVersion(): string {
     return App.BACK_CURRENT_VERSION;
   }
-  public static kycRecoEnabled(): boolean {
-    return process.env.KYC_RECO_ENABLED === 'true';
-  }
   public static isProd(): boolean {
     return process.env.IS_PROD === 'true';
   }
@@ -54,9 +51,6 @@ export class App {
   public static getWinterApiURL(): string {
     return process.env.WINTER_URL;
   }
-  public static areServiceAPIEnabled(): boolean {
-    return process.env.SERVICE_APIS_ENABLED === 'true';
-  }
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;
   }
@@ -77,9 +71,6 @@ export class App {
 
   public static getCmsURL(): string {
     return process.env.CMS_URL;
-  }
-  public static getCmsBaseURL(): string {
-    return process.env.CMS_BASE_URL;
   }
   public static getCmsAidePreviewURL(): string {
     return process.env.CMS_AIDE_PREVIEW_URL;
@@ -144,12 +135,14 @@ export class App {
   public static getLVO_API_URL(): string {
     return process.env.LVO_API_URL || '';
   }
+  public static getMaifAPILogin(): string {
+    return process.env.MAIF_API_LOGIN;
+  }
+  public static getMaifAPIPassword(): string {
+    return process.env.MAIF_API_PASSWORD;
+  }
   public static getThrottleLimit(): number {
     return parseInt(process.env.THROTTLE_LIMIT) ?? 2;
-  }
-
-  public static gainContentPoint(): boolean {
-    return process.env.GAIN_CONTENT_POINT === 'true';
   }
 
   public static getBasicLoginPwdBase64(): string {

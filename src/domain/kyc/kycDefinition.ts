@@ -1,8 +1,8 @@
 import { Categorie } from '../contenu/categorie';
-import { Thematique } from '../thematique/thematique';
 import { Tag } from '../scoring/tag';
+import { Thematique } from '../thematique/thematique';
 import { ConditionKYC } from './conditionKYC';
-import { TypeReponseQuestionKYC, Unite } from './questionKYC';
+import { TypeReponseQuestionKYC, Unite } from './QuestionKYCData';
 
 export type ReponseDefinition = {
   label: string;

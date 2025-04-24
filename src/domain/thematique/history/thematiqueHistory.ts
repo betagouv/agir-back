@@ -4,7 +4,10 @@ import {
   TypeCodeAction,
 } from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
-import { ThematiqueHistory_v0 } from '../../object_store/thematique/thematiqueHistory_v0';
+import {
+  ActionUtilisateur_v0,
+  ThematiqueHistory_v0,
+} from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
 import { KycTagExcluantTranslator } from './kycTagTranslator';
@@ -13,13 +16,34 @@ import {
   ThematiqueRecommandation,
 } from './thematiqueRecommandation';
 
-export type ActionUtilisateur = {
+export type Question = {
+  date: Date;
+  question: string;
+  est_action_faite: boolean;
+};
+
+export class ActionUtilisateur {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
   like_level: number;
   feedback: string;
-};
+  liste_questions: Question[];
+
+  constructor(data?: ActionUtilisateur_v0) {
+    if (data) {
+      this.action = data.action;
+      this.vue_le = data.vue_le;
+      this.faite_le = data.faite_le;
+      this.like_level = data.like_level;
+      this.feedback = data.feedback;
+      this.liste_questions = data.liste_questions ? data.liste_questions : [];
+    } else {
+      this.liste_questions = [];
+    }
+  }
+}
+
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
@@ -36,12 +60,27 @@ export class ThematiqueHistory {
         );
       }
       if (data.liste_actions_utilisateur) {
-        this.liste_actions_utilisateur = data.liste_actions_utilisateur;
+        this.liste_actions_utilisateur = data.liste_actions_utilisateur.map(
+          (a) => new ActionUtilisateur(a),
+        );
+      } else {
+        data.liste_actions_utilisateur = [];
       }
       if (data.liste_tags_excluants) {
         this.liste_tags_excluants = data.liste_tags_excluants;
       }
     }
+  }
+
+  public getAllQuestions(): { question: Question; action: TypeCodeAction }[] {
+    const result: { question: Question; action: TypeCodeAction }[] = [];
+
+    for (const action of this.liste_actions_utilisateur) {
+      for (const question of action.liste_questions) {
+        result.push({ question: question, action: action.action });
+      }
+    }
+    return result;
   }
 
   public recomputeTagExcluant(history: KYCHistory) {
@@ -148,6 +187,7 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: null,
         feedback: null,
+        liste_questions: [],
       });
     }
   }
@@ -162,6 +202,7 @@ export class ThematiqueHistory {
         faite_le: new Date(),
         like_level: null,
         feedback: null,
+        liste_questions: [],
       });
     }
   }
@@ -181,6 +222,33 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: like_level ? like_level : null,
         feedback: feedback ? feedback : null,
+        liste_questions: [],
+      });
+    }
+  }
+
+  public setActionQuestion(action: TypeCodeAction, question: string) {
+    const found = this.findAction(action);
+    if (found) {
+      found.liste_questions.push({
+        date: new Date(),
+        est_action_faite: this.isActionFaite(action),
+        question: question,
+      });
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: null,
+        feedback: null,
+        liste_questions: [
+          {
+            date: new Date(),
+            est_action_faite: this.isActionFaite(action),
+            question: question,
+          },
+        ],
       });
     }
   }

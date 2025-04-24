@@ -56,6 +56,57 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
+  async duplicateQuestionsUtilisateur(block_size: number = 200) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllQuestionData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        const liste_questions = user.thematique_history.getAllQuestions();
+        for (const question of liste_questions) {
+          const action_def =
+            this.actionRepository.getActionDefinitionByTypeCode(
+              question.action,
+            );
+
+          const data = {
+            action_cms_id: action_def.cms_id,
+            action_faite: question.question.est_action_faite,
+            action_titre: action_def.titre,
+            date: question.question.date,
+            question: question.question.question,
+          };
+          try {
+            await this.statistiqueExternalRepository.createUserQuestionData(
+              data.action_cms_id,
+              data.action_titre,
+              data.date,
+              data.action_faite,
+              data.question,
+              user.external_stat_id,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(
+              `Error Creating User Question : ${JSON.stringify(data)}`,
+            );
+          }
+        }
+      }
+    }
+  }
+
   async duplicateKYC(block_size: number = 100) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
@@ -73,7 +124,7 @@ export class DuplicateBDDForStatsUsecase {
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
 
-        const liste_kyc = user.kyc_history.getRawAnsweredKYCsAfter(start_date);
+        const liste_kyc = user.kyc_history.getAnsweredKYCsAfter(start_date);
         for (const kyc of liste_kyc) {
           try {
             await this.statistiqueExternalRepository.upsertKYCData(

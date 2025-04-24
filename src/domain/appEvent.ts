@@ -11,7 +11,6 @@ export enum EventType {
   like = 'like',
   article_favoris = 'article_favoris',
   article_non_favoris = 'article_non_favoris',
-  access_conf_linky = 'access_conf_linky',
 }
 
 export class AppEvent {

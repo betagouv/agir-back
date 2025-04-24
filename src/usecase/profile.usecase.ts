@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
 import { App } from '../domain/app';
+import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
+import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
+import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
+import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
+import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -35,6 +41,7 @@ export class ProfileUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
+    private rechercheServiceManager: RechercheServiceManager,
   ) {}
 
   @Retryable({
@@ -205,7 +212,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Logement = { ...input };
+    const update_data: Partial<Logement> = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -249,7 +256,7 @@ export class ProfileUsecase {
     utilisateur.logement.patch(update_data, utilisateur);
 
     try {
-      utilisateur.kyc_history.patchLogement(input);
+      LogementToKycSync.synchronize(input, utilisateur.kyc_history);
     } catch (error) {
       console.error(`Fail synchro KYCs logement : ${error.message}`);
     }
@@ -263,6 +270,8 @@ export class ProfileUsecase {
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.async_SetRisquesFromCodeCommune(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -395,5 +404,48 @@ export class ProfileUsecase {
   private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;
+  }
+
+  private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
+    if (!utilisateur.code_commune) return;
+
+    const finder = this.rechercheServiceManager.getFinderById(
+      ServiceRechercheID.maif,
+    );
+
+    const filtre: FiltreRecherche = {
+      code_commune: utilisateur.code_commune,
+      silent_error: true,
+    };
+
+    const risques_catnat = await finder.find({
+      ...filtre,
+      categorie: CategorieRecherche.catnat,
+    });
+    const risques_zones_secheresse = await finder.find({
+      ...filtre,
+      categorie: CategorieRecherche.zones_secheresse,
+    });
+
+    utilisateur.logement.risques.nombre_catnat_commune = risques_catnat.length;
+
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_1 =
+      this.zone_pourcent_value(1, risques_zones_secheresse);
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_2 =
+      this.zone_pourcent_value(2, risques_zones_secheresse);
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_3 =
+      this.zone_pourcent_value(3, risques_zones_secheresse);
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_4 =
+      this.zone_pourcent_value(4, risques_zones_secheresse);
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_5 =
+      this.zone_pourcent_value(5, risques_zones_secheresse);
+    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
+      Scope.logement,
+    ]);
+  }
+
+  private zone_pourcent_value(zone: number, resultats: ResultatRecherche[]) {
+    const found = resultats.find((a) => a.id === `zone_${zone}`);
+    return found ? found.pourcentage : 0;
   }
 }

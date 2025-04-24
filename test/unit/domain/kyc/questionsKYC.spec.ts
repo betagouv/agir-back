@@ -4,6 +4,8 @@ import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
+import { LogementToKycSync } from '../../../../src/domain/kyc/synchro/logementToKycSync';
+import { SituationNgcToKycSync } from '../../../../src/domain/kyc/synchro/situationNgcToKycSync';
 import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { QuestionKYC_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Tag } from '../../../../src/domain/scoring/tag';
@@ -311,13 +313,6 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
-  it('isQuestionAnsweredByCode :false si pas répondu', () => {
-    // WHEN
-    const questionsKYC = new KYCHistory();
-
-    // THEN
-    expect(questionsKYC.isQuestionAnswered('2')).toStrictEqual(false);
-  });
   it('isMosaicAnswered :false si pas répondu', () => {
     // WHEN
     const questionsKYC = new KYCHistory();
@@ -346,11 +341,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
 
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(false);
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(false);
   });
   it('hasResponses :false si attribut []', () => {
     // GIVEN
@@ -370,11 +361,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
 
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(false);
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(false);
   });
   it('hasResponses :true si au moins un reponse valorisée', () => {
     // GIVEN
@@ -405,25 +392,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     });
     history.setCatalogue([new KycDefinition(KYC_DEF)]);
     // THEN
-    expect(
-      history
-        .getUpToDateQuestionByCodeOrException(KYCID.KYC001)
-        .hasAnyResponses(),
-    ).toEqual(true);
-  });
-
-  it('updateQuestion : exeption si question id inconnu', () => {
-    // GIVEN
-    const questionsKYC = new KYCHistory();
-
-    // WHEN
-    try {
-      questionsKYC.updateQuestionByCodeWithLabelOrException('1234', ['yo']);
-      fail();
-    } catch (error) {
-      // THEN
-      expect(error.code).toEqual('030');
-    }
+    expect(history.getQuestion(KYCID.KYC001).hasAnyResponses()).toEqual(true);
   });
 
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait', () => {
@@ -470,50 +439,50 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
-    expect(question.getNombreReponsesPossibles()).toEqual(2);
-    expect(question.getReponseComplexeByCode('a')).toEqual({
-      code: 'a',
-      emoji: undefined,
-      image_url: undefined,
-      label: 'yoyo',
-      ngc_code: '0987',
-      unite: undefined,
-      selected: true,
-    });
-    expect(question.getReponseComplexeByCode('c')).toEqual({
-      code: 'c',
-      label: 'hihi',
-      ngc_code: '000',
-      selected: false,
-    });
+    expect(question.reponse_complexe.length).toEqual(2);
+    expect(question.reponse_complexe).toEqual([
+      {
+        code: 'a',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'yoyo',
+        ngc_code: '0987',
+        selected: true,
+        unite: undefined,
+        value: undefined,
+      },
+      {
+        code: 'c',
+        label: 'hihi',
+        ngc_code: '000',
+        selected: false,
+      },
+    ]);
     expect(question.is_answered).toEqual(true);
     expect(question.hasAnyResponses()).toEqual(true);
 
-    expect(
-      history.getRawAnsweredKYCs()[0].getNombreReponsesPossibles(),
-    ).toEqual(2);
-    expect(
-      history.getRawAnsweredKYCs()[0].getReponseComplexeByCode('a'),
-    ).toEqual({
-      code: 'a',
-      emoji: undefined,
-      image_url: undefined,
-      label: 'yoyo',
-      ngc_code: '0987',
-      unite: undefined,
-      selected: true,
-    });
-    expect(
-      history.getRawAnsweredKYCs()[0].getReponseComplexeByCode('c'),
-    ).toEqual({
-      code: 'c',
-      label: 'hihi',
-      ngc_code: '000',
-      selected: false,
-    });
+    expect(history.getAnsweredKYCs()[0].reponse_complexe.length).toEqual(2);
+    expect(history.getAnsweredKYCs()[0].reponse_complexe).toEqual([
+      {
+        code: 'a',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'yoyo',
+        ngc_code: '0987',
+        selected: true,
+        unite: undefined,
+        value: undefined,
+      },
+      {
+        code: 'c',
+        label: 'hihi',
+        ngc_code: '000',
+        selected: false,
+      },
+    ]);
   });
 
   it('getQuestionOrException : si code manquant dans catalogue, reponse disparait même si répondu', () => {
@@ -555,16 +524,23 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
-    expect(question.getNombreReponsesPossibles()).toEqual(1);
-    expect(question.getReponseComplexeByCode('b')).toEqual({
-      code: 'b',
-      label: 'hihi',
-      ngc_code: '000',
-      selected: false,
-    });
+    expect(question.reponse_complexe.length).toEqual(1);
+    expect(question.reponse_complexe).toEqual([
+      {
+        code: 'b',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'hihi',
+        ngc_code: '000',
+        selected: false,
+        unite: undefined,
+        value: undefined,
+      },
+    ]);
+
     expect(question.hasAnyResponses()).toEqual(false);
     expect(question.is_answered).toEqual(false);
   });
@@ -592,10 +568,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    const question = history.getUpToDateQuestionByCodeOrException(KYCID.KYC001);
+    const question = history.getQuestion(KYCID.KYC001);
 
     // THEN
-    expect(question.getRAWReponseSimple()).toEqual({
+    expect(question.reponse_simple).toEqual({
       value: '123',
       unite: { abreviation: 'kg' },
     });
@@ -784,69 +760,62 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.patchLogement({
-      chauffage: Chauffage.bois,
-    });
+    LogementToKycSync.synchronize(
+      {
+        chauffage: Chauffage.bois,
+      },
+      history,
+    );
 
     // THEN
     expect(
-      history.getAnsweredQuestionByIdCMS(1).getNombreReponsesPossibles(),
+      history.getAnsweredQuestionByIdCMS(1).reponse_complexe.length,
     ).toEqual(3);
-    expect(
-      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('oui'),
-    ).toEqual({
-      label: 'OUI',
-      code: 'oui',
-      ngc_code: '_oui',
-      selected: true,
-    });
-    expect(
-      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('non'),
-    ).toEqual({
-      label: 'NON',
-      code: 'non',
-      ngc_code: '_non',
-      selected: false,
-    });
-    expect(
-      history
-        .getAnsweredQuestionByIdCMS(1)
-        .getReponseComplexeByCode('ne_sais_pas'),
-    ).toEqual({
-      label: 'Ne sais pas',
-      code: 'ne_sais_pas',
-      ngc_code: undefined,
-      selected: false,
-    });
-    expect(
-      history.getAnsweredQuestionByIdCMS(2).getNombreReponsesPossibles(),
-    ).toEqual(3);
-    expect(
-      history.getAnsweredQuestionByIdCMS(2).getReponseComplexeByCode('oui'),
-    ).toEqual({
-      code: 'oui',
-      label: 'OUI',
-      ngc_code: '_oui',
-      selected: false,
-    });
-    expect(
-      history.getAnsweredQuestionByIdCMS(2).getReponseComplexeByCode('non'),
-    ).toEqual({
-      code: 'non',
-      label: 'NON',
-      ngc_code: '_non',
-      selected: false,
-    });
-    expect(
-      history
-        .getAnsweredQuestionByIdCMS(2)
-        .getReponseComplexeByCode('ne_sais_pas'),
-    ).toEqual({
-      code: 'ne_sais_pas',
-      label: 'Ne sais pas',
-      ngc_code: undefined,
-      selected: true,
-    });
+    expect(history.getAnsweredQuestionByIdCMS(1).reponse_complexe).toEqual([
+      {
+        code: 'oui',
+        label: 'OUI',
+        ngc_code: '_oui',
+        selected: true,
+      },
+      {
+        code: 'non',
+        label: 'NON',
+        ngc_code: '_non',
+        selected: false,
+      },
+      {
+        code: 'ne_sais_pas',
+        label: 'Ne sais pas',
+        ngc_code: undefined,
+        selected: false,
+      },
+    ]);
+
+    expect(history.getAnsweredQuestionByIdCMS(2).reponse_complexe).toEqual([
+      {
+        code: 'oui',
+        emoji: undefined,
+        image_url: undefined,
+        label: 'OUI',
+        ngc_code: '_oui',
+        selected: false,
+        unite: undefined,
+        value: undefined,
+      },
+      {
+        code: 'non',
+        label: 'NON',
+        ngc_code: '_non',
+        selected: false,
+      },
+      {
+        code: 'ne_sais_pas',
+        label: 'Ne sais pas',
+        ngc_code: undefined,
+        selected: true,
+      },
+    ]);
   });
 
   it('patchLogement :DPE', () => {
@@ -874,30 +843,38 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.patchLogement({
-      dpe: DPE.B,
-    });
+    LogementToKycSync.synchronize(
+      {
+        dpe: DPE.B,
+      },
+      history,
+    );
 
     // THEN
-    expect(
-      history.getAnsweredQuestionByIdCMS(1).getCodeReponseQuestionChoixUnique(),
-    ).toEqual('B');
-    expect(
-      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('A'),
-    ).toEqual({ label: 'A', code: 'A', ngc_code: undefined, selected: false });
-    expect(
-      history.getAnsweredQuestionByIdCMS(1).getReponseComplexeByCode('B'),
-    ).toEqual({ label: 'B', code: 'B', ngc_code: undefined, selected: true });
-    expect(
-      history
-        .getAnsweredQuestionByIdCMS(1)
-        .getReponseComplexeByCode('ne_sais_pas'),
-    ).toEqual({
-      label: 'Ne sais pas',
-      code: 'ne_sais_pas',
-      ngc_code: undefined,
-      selected: false,
-    });
+    expect(history.getAnsweredQuestionByIdCMS(1).getSelectedCode()).toEqual(
+      'B',
+    );
+
+    expect(history.getAnsweredQuestionByIdCMS(1).reponse_complexe).toEqual([
+      {
+        code: 'A',
+        label: 'A',
+        ngc_code: undefined,
+        selected: false,
+      },
+      {
+        code: 'B',
+        label: 'B',
+        ngc_code: undefined,
+        selected: true,
+      },
+      {
+        code: 'ne_sais_pas',
+        label: 'Ne sais pas',
+        ngc_code: undefined,
+        selected: false,
+      },
+    ]);
   });
 
   it('injectSituationNGC : ok si la situtation ne match rien', () => {
@@ -908,9 +885,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b': 123,
       },
@@ -918,7 +896,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(history.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
@@ -929,6 +907,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -943,7 +922,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': 123,
       },
@@ -951,11 +930,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestionNumerique(KYCID.KYC_chauffage).getValue(),
     ).toEqual(123);
   });
 
@@ -967,6 +944,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -981,7 +959,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': '123',
       },
@@ -989,11 +967,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestionNumerique(KYCID.KYC_chauffage).getValue(),
     ).toEqual(123);
   });
 
@@ -1005,6 +981,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1019,7 +996,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': '123',
       },
@@ -1027,11 +1004,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestionNumerique(KYCID.KYC_chauffage).getValue(),
     ).toEqual(123);
   });
 
@@ -1043,6 +1018,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1057,7 +1033,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': '123.34',
       },
@@ -1065,11 +1041,9 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
     expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseSimpleValueAsNumber(),
+      history.getQuestionNumerique(KYCID.KYC_chauffage).getValue(),
     ).toEqual(123.34);
   });
 
@@ -1081,6 +1055,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1095,7 +1070,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': 'bad',
       },
@@ -1103,7 +1078,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(history.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
@@ -1114,6 +1089,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1128,7 +1104,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': 'bad',
       },
@@ -1136,7 +1112,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(history.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : ignore pour un kyc non ngc ', () => {
@@ -1147,6 +1123,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1161,7 +1138,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': '123',
       },
@@ -1169,7 +1146,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(history.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it('injectSituationNGC : integre une reponse string pour une question a choix unique', () => {
@@ -1180,6 +1157,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
       answered_mosaics: [],
       answered_questions: [],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1199,7 +1177,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': 'toto . a',
       },
@@ -1207,45 +1185,33 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getCodeReponseQuestionChoixUnique(),
-    ).toEqual('a');
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('a'),
-    ).toEqual({
-      code: 'a',
-      label: 'A',
-      ngc_code: 'toto . a',
-      selected: true,
-    });
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('b'),
-    ).toEqual({
-      code: 'b',
-      label: 'B',
-      ngc_code: 'toto . b',
-      selected: false,
-    });
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('ne_sais_pas'),
-    ).toEqual({
-      code: 'ne_sais_pas',
-      label: 'Ne sais pas',
-      ngc_code: null,
-      selected: false,
-    });
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
+    expect(history.getQuestion(KYCID.KYC_chauffage).getSelectedCode()).toEqual(
+      'a',
+    );
+    expect(history.getQuestion(KYCID.KYC_chauffage).reponse_complexe).toEqual([
+      {
+        code: 'a',
+        label: 'A',
+        ngc_code: 'toto . a',
+        selected: true,
+      },
+      {
+        code: 'b',
+        label: 'B',
+        ngc_code: 'toto . b',
+        selected: false,
+      },
+      {
+        code: 'ne_sais_pas',
+        label: 'Ne sais pas',
+        ngc_code: null,
+        selected: false,
+      },
+    ]);
   });
 
-  it(`injectSituationNGC : maj d'une KYC deja renseignée`, () => {
+  it(`injectSituationNGC : maj d'une KYC deja renseignée => pas de maj`, () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
     const history = new KYCHistory({
@@ -1283,6 +1249,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
         },
       ],
     });
+    utilisateur.kyc_history = history;
 
     history.setCatalogue([
       new KycDefinition({
@@ -1302,7 +1269,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
 
     // WHEN
-    history.injectSituationNGC(
+    SituationNgcToKycSync.synchronize(
       {
         'a . b . c': 'toto . b',
       },
@@ -1310,55 +1277,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     );
 
     // THEN
-    expect(history.getRawAnsweredKYCs()).toHaveLength(1);
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getCodeReponseQuestionChoixUnique(),
-    ).toEqual('b');
-
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('a'),
-    ).toEqual({
-      code: 'a',
-      label: 'A',
-      ngc_code: 'toto . a',
-      value: undefined,
-      selected: false,
-      emoji: undefined,
-      image_url: undefined,
-      unite: undefined,
-    });
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('b'),
-    ).toEqual({
-      code: 'b',
-      label: 'B',
-      ngc_code: 'toto . b',
-      value: undefined,
-      selected: true,
-      emoji: undefined,
-      image_url: undefined,
-      unite: undefined,
-    });
-    expect(
-      history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_chauffage)
-        .getReponseComplexeByCode('ne_sais_pas'),
-    ).toEqual({
-      code: 'ne_sais_pas',
-      label: 'Ne sais pas',
-      ngc_code: null,
-      value: undefined,
-      selected: false,
-      emoji: undefined,
-      image_url: undefined,
-      unite: undefined,
-    });
+    expect(history.getAnsweredKYCs()).toHaveLength(1);
+    expect(history.getQuestion(KYCID.KYC_chauffage).getSelectedCode()).toEqual(
+      'a',
+    );
   });
 
   it(`isKYCEligible : true si condition ok`, () => {
@@ -1433,7 +1355,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1512,7 +1434,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1561,7 +1483,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN
@@ -1589,7 +1511,7 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     ]);
     // WHEN
     const reponse = history.isKYCEligible(
-      history.getUpToDateQuestionByCodeOrNull(KYCID.KYC_chauffage),
+      history.getQuestion(KYCID.KYC_chauffage),
     );
 
     // THEN

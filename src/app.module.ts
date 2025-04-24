@@ -39,9 +39,7 @@ import { ConnexionController } from './infrastructure/api/connexion.controller';
 import { EventController } from './infrastructure/api/event.controller';
 import { GamificationController } from './infrastructure/api/gamification.controller';
 import { GoneController } from './infrastructure/api/gone.controller';
-import { WinterController } from './infrastructure/api/incoming/winter.controller';
 import { InscriptionController } from './infrastructure/api/inscription.controller';
-import { LinkyController } from './infrastructure/api/linky.controller';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { MesAidesRenoController } from './infrastructure/api/mesAidesReno.controller';
@@ -78,7 +76,6 @@ import { ConformiteRepository } from './infrastructure/repository/conformite.rep
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
-import { LinkyRepository } from './infrastructure/repository/linky.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
@@ -90,6 +87,7 @@ import { DistancesRepository } from './infrastructure/repository/services_recher
 import { FruitsLegumesRepository } from './infrastructure/repository/services_recherche/fruitsLegumes.repository';
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
+import { MaifRepository } from './infrastructure/repository/services_recherche/maif/maif.repository';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
@@ -101,9 +99,6 @@ import { ThematiqueStatistiqueRepository } from './infrastructure/repository/uni
 import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
-import { LinkyAPIConnector } from './infrastructure/service/linky/LinkyAPIConnector';
-import { LinkyEmailer } from './infrastructure/service/linky/LinkyEmailer';
-import { LinkyServiceManager } from './infrastructure/service/linky/LinkyServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
 import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
@@ -120,7 +115,6 @@ import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
-import { LinkyUsecase } from './usecase/linky.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
@@ -135,7 +129,6 @@ import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
-import { KycStatistiqueUsecase } from './usecase/stats/kycStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
@@ -151,10 +144,8 @@ function getControllers(): any[] {
     CMSController,
     CommunesController,
     ServiceController,
-    WinterController,
     EventController,
     GamificationController,
-    LinkyController,
     AdminController,
     QuestionsKYCController,
     RecommandationsController,
@@ -229,9 +220,6 @@ function getControllers(): any[] {
     FruitsEtLegumesServiceManager,
     EventUsecase,
     GamificationUsecase,
-    LinkyUsecase,
-    LinkyServiceManager,
-    LinkyRepository,
     QuestionKYCUsecase,
     ArticleRepository,
     QuizzRepository,
@@ -241,15 +229,12 @@ function getControllers(): any[] {
     MigrationUsecase,
     ReferentielUsecase,
     BibliothequeUsecase,
-    LinkyAPIConnector,
-    LinkyEmailer,
     InscriptionUsecase,
     AideRepository,
     LinkyConsentRepository,
     ArticleStatistiqueUsecase,
     ArticleStatistiqueRepository,
     QuizStatistiqueRepository,
-    KycStatistiqueUsecase,
     KycStatistiqueRepository,
     KycRepository,
     MissionStatistiqueRepository,
@@ -299,6 +284,7 @@ function getControllers(): any[] {
     CMSDataHelperUsecase,
     QuestionKYCEnchainementUsecase,
     MesAidesRenoUsecase,
+    MaifRepository,
   ],
 })
 export class AppModule {}

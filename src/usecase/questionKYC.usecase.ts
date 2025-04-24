@@ -5,11 +5,13 @@ import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
-import {
-  BooleanKYC,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from '../domain/kyc/questionKYC';
+import { QuestionChoixMultiple } from '../domain/kyc/new_interfaces/QuestionChoixMultiples';
+import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixUnique';
+import { QuestionSimple } from '../domain/kyc/new_interfaces/QuestionSimple';
+import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { BooleanKYC } from '../domain/kyc/QuestionKYCData';
+import { KycRegimeToKycRepas } from '../domain/kyc/synchro/kycRegimeToKycRepas';
+import { KycToProfileSync } from '../domain/kyc/synchro/kycToProfileSync';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -32,7 +34,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const result = utilisateur.kyc_history.getAllUpToDateQuestionSet();
+    const result = utilisateur.kyc_history.getAllKycsAndMosaics();
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.kyc],
@@ -67,10 +69,10 @@ export class QuestionKYCUsecase {
       }
       result_kyc = utilisateur.kyc_history.getUpToDateMosaic(mosaic_def);
     } else {
-      result_kyc =
-        utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
-          questionId,
-        );
+      result_kyc = utilisateur.kyc_history.getQuestion(questionId);
+      if (!result_kyc) {
+        ApplicationError.throwQuestionInconnue(questionId);
+      }
     }
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
@@ -112,14 +114,15 @@ export class QuestionKYCUsecase {
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
-    code_question: string,
+    question: QuestionKYC,
     utilisateur: Utilisateur,
   ) {
-    const question_depart =
-      utilisateur.kyc_history.getUpToDateAnsweredQuestionByCode(code_question);
-    switch (question_depart.code) {
+    switch (question.code) {
       case KYCID.KYC_alimentation_regime:
-        this.synchroAlimentationRegime(question_depart, utilisateur);
+        KycRegimeToKycRepas.synchroAlimentationRegime(
+          new QuestionChoixUnique(question),
+          utilisateur,
+        );
         break;
       default:
         break;
@@ -178,9 +181,7 @@ export class QuestionKYCUsecase {
 
     if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const code_selected of reponses_code_selected) {
-        const kyc = utilisateur.kyc_history.getUpToDateQuestionByCodeOrNull(
-          code_selected.code,
-        );
+        const kyc = utilisateur.kyc_history.getQuestion(code_selected.code);
         if (kyc) {
           if (kyc.type === TypeReponseQuestionKYC.entier) {
             this.updateQuestionOfCode_v2(
@@ -188,7 +189,6 @@ export class QuestionKYCUsecase {
               [{ value: code_selected.selected ? '1' : '0' }],
               utilisateur,
             );
-            //kyc.setReponseSimpleValue(code_selected.selected ? '1' : '0');
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             this.updateQuestionOfCode_v2(
               code_selected.code,
@@ -202,7 +202,6 @@ export class QuestionKYCUsecase {
               ],
               utilisateur,
             );
-            //kyc.selectChoixUniqueByCode(code_selected.selected ? BooleanKYC.oui : BooleanKYC.non);
           } else {
             ApplicationError.throwBadMosaiConfigurationError(mosaicId);
           }
@@ -229,36 +228,44 @@ export class QuestionKYCUsecase {
     utilisateur: Utilisateur,
   ) {
     const question_to_update =
-      utilisateur.kyc_history.getUpToDateQuestionByCodeOrException(
-        code_question,
-      );
+      utilisateur.kyc_history.getQuestion(code_question);
+
+    if (!question_to_update) {
+      ApplicationError.throwQuestionInconnue(code_question);
+    }
 
     if (question_to_update.isSimpleQuestion()) {
-      this.updateSimpleQuestion(question_to_update, input_reponse_payload);
-    }
-    if (question_to_update.isChoixUnique()) {
-      this.updateQuestionChoixUnique(question_to_update, input_reponse_payload);
-    }
-    if (question_to_update.isChoixMultiple()) {
-      this.updateQuestionChoixMultiple(
-        question_to_update,
+      this.updateSimpleQuestion(
+        new QuestionSimple(question_to_update),
         input_reponse_payload,
       );
     }
-    utilisateur.kyc_history.updateQuestionInHistory(question_to_update);
+    if (question_to_update.isChoixUnique()) {
+      this.updateQuestionChoixUnique(
+        new QuestionChoixUnique(question_to_update),
+        input_reponse_payload,
+      );
+    }
+    if (question_to_update.isChoixMultiple()) {
+      this.updateQuestionChoixMultiple(
+        new QuestionChoixMultiple(question_to_update),
+        input_reponse_payload,
+      );
+    }
+    utilisateur.kyc_history.updateQuestion(question_to_update);
 
-    utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
+    KycToProfileSync.synchronize(question_to_update, utilisateur);
+
+    this.dispatchKYCUpdateToOtherKYCsPostUpdate(
       question_to_update,
       utilisateur,
     );
-
-    this.dispatchKYCUpdateToOtherKYCsPostUpdate(code_question, utilisateur);
 
     utilisateur.recomputeRecoTags();
   }
 
   private updateSimpleQuestion(
-    question_to_update: QuestionKYC,
+    kyc: QuestionSimple,
     input_reponse_payload: {
       code?: string;
       value?: string;
@@ -266,10 +273,10 @@ export class QuestionKYCUsecase {
     }[],
   ) {
     if (input_reponse_payload.length !== 1) {
-      ApplicationError.throwUniqueReponseExpected(question_to_update.code);
+      ApplicationError.throwUniqueReponseExpected(kyc.getCode());
     }
     if (!input_reponse_payload[0].value) {
-      ApplicationError.throwMissingValue(question_to_update.code);
+      ApplicationError.throwMissingValue(kyc.getCode());
     }
 
     const input = input_reponse_payload[0].value;
@@ -277,21 +284,26 @@ export class QuestionKYCUsecase {
     if (input.length > FIELD_MAX_LENGTH) {
       ApplicationError.throwTooBigData('value', input, FIELD_MAX_LENGTH);
     }
-    if (question_to_update.isChampEntier()) {
+
+    if (kyc.isInteger()) {
       if (!validator.isInt('' + input))
         ApplicationError.throwKycNoInteger(input);
+      kyc.setStringValue(input);
+      return;
     }
-    if (question_to_update.isChampDecimal()) {
+
+    if (kyc.isDecimal()) {
       const alt_decimal = input.replace(',', '.');
       if (!validator.isDecimal('' + alt_decimal))
         ApplicationError.throwKycNoDecimal(input);
-      question_to_update.setReponseSimpleValue(alt_decimal);
+      kyc.setStringValue(alt_decimal);
       return;
     }
-    question_to_update.setReponseSimpleValue(input);
+
+    kyc.setStringValue(input);
   }
   private updateQuestionChoixUnique(
-    question_to_update: QuestionKYC,
+    kyc: QuestionChoixUnique,
     input_reponse_payload: {
       code?: string;
       value?: string;
@@ -309,162 +321,47 @@ export class QuestionKYCUsecase {
 
       if (!!target_code && already_found) {
         ApplicationError.throwToManySelectedAttributesForKYC(
-          question_to_update.code,
+          kyc.getCode(),
           target_code,
         );
       }
 
       if (target_code) {
-        question_to_update.selectChoixUniqueByCode(target_code);
+        kyc.selectByCode(target_code);
         already_found = true;
       }
     }
     if (!already_found) {
-      ApplicationError.throwNoneSelectedButNeededOne(question_to_update.code);
+      ApplicationError.throwNoneSelectedButNeededOne(kyc.getCode());
     }
   }
 
   private updateQuestionChoixMultiple(
-    question_to_update: QuestionKYC,
+    kyc: QuestionChoixMultiple,
     input_reponse_payload: {
       code?: string;
       value?: string;
       selected?: boolean;
     }[],
   ) {
-    for (const code_ref of question_to_update.getAllCodes()) {
+    const code_liste = kyc.getAllCodes();
+    for (const code_ref of code_liste) {
       const answered_element = input_reponse_payload.find(
         (r) => r.code === code_ref,
       );
       if (!answered_element) {
-        ApplicationError.throwMissingValueForCode(
-          question_to_update.code,
-          code_ref,
-        );
+        ApplicationError.throwMissingValueForCode(kyc.getCode(), code_ref);
       }
       if (
         answered_element.selected === undefined ||
         answered_element.selected === null
       ) {
         ApplicationError.throwMissingSelectedAttributeForCode(
-          question_to_update.code,
+          kyc.getCode(),
           code_ref,
         );
       }
-      question_to_update.setChoixByCode(code_ref, answered_element.selected);
-    }
-  }
-
-  private synchroAlimentationRegime(
-    kyc: QuestionKYC,
-    utilisateur: Utilisateur,
-  ) {
-    const code_reponse_unique = kyc.getCodeReponseQuestionChoixUnique();
-    if (!code_reponse_unique) return;
-
-    if (code_reponse_unique === 'vegetalien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['14'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'vegetarien') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['3'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['11'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'peu_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['7'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['4'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['0'],
-      );
-    }
-    if (code_reponse_unique === 'chaque_jour_viande') {
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetaliens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_vegetariens,
-        ['0'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_blanc,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_poisson_gras,
-        ['1'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_blanche,
-        ['6'],
-      );
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
-        KYCID.KYC_nbr_plats_viande_rouge,
-        ['6'],
-      );
+      kyc.setCodeState(code_ref, answered_element.selected);
     }
   }
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { Day } from '../../../../domain/bibliotheque_services/types/days';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
-import { OpenHour } from '../../../../domain/bibliotheque_services/types/openHour';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { Day } from '../../../../domain/bibliotheque_services/types/days';
+import { OpenHour } from '../../../../domain/bibliotheque_services/types/openHour';
+import { ApplicationError } from '../../../applicationError';
 import { AddressesRepository } from '../addresses.repository';
 import { PresDeChezNousCategorieMapping } from './presDeChezNousCategorieMapping';
-import { ApplicationError } from '../../../applicationError';
 
 const API_URL = 'https://presdecheznous.gogocarto.fr/api/elements.json';
 
@@ -98,7 +98,7 @@ export class PresDeChezNousRepository implements FinderInterface {
     if (filtre.rayon_metres) {
       filtre.computeBox(filtre.rayon_metres);
     } else {
-      filtre.computeBox(10000);
+      filtre.computeBox(5000);
     }
 
     const liste_categories =
@@ -112,12 +112,7 @@ export class PresDeChezNousRepository implements FinderInterface {
       ApplicationError.throwExternalServiceError('Près de chez nous');
     }
 
-    const subset = result.data.slice(
-      0,
-      filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
-    );
-
-    const final_result: ResultatRecherche[] = subset.map(
+    const final_result: ResultatRecherche[] = result.data.map(
       (r) =>
         new ResultatRecherche({
           id: r.id,
@@ -141,14 +136,20 @@ export class PresDeChezNousRepository implements FinderInterface {
     );
 
     for (const resultat of final_result) {
-      resultat.distance_metres = filtre.getDistanceMetresFromSearchPoint(
+      resultat.distance_metres = filtre.getDistanceMetresFromSearchPoint2(
         resultat.latitude,
         resultat.longitude,
       );
     }
+
     final_result.sort((a, b) => a.distance_metres - b.distance_metres);
 
-    return final_result;
+    const subset = final_result.slice(
+      0,
+      filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
+    );
+
+    return subset;
   }
 
   public mapOpenHours(hours: Record<DaysPresDeChezNous, string>): OpenHour[] {
@@ -184,7 +185,7 @@ export class PresDeChezNousRepository implements FinderInterface {
         },
         params: {
           categories: categories,
-          limit: 500,
+          limit: 100,
           bounds: `${filtre.rect_A.longitude},${filtre.rect_A.latitude},${filtre.rect_B.longitude},${filtre.rect_B.latitude}`,
         },
       });

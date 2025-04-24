@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from '../domain/kyc/KYCID';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { KycToProfileSync } from '../domain/kyc/synchro/kycToProfileSync';
 import { DPE, Superficie, TypeLogement } from '../domain/logement/logement';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
@@ -75,10 +76,7 @@ export class MesAidesRenoUsecase {
           );
 
           if (updated_kyc) {
-            utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
-              updated_kyc,
-              utilisateur,
-            );
+            KycToProfileSync.synchronize(updated_kyc, utilisateur);
           }
         },
       );
@@ -163,12 +161,10 @@ export class MesAidesRenoUsecase {
       logement,
       kyc_history,
     }) => {
-      const agePrecis = kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_logement_age)
-        ?.getReponseSimpleValueAsNumber();
+      const kyc_age = kyc_history.getQuestionNumerique(KYCID.KYC_logement_age);
 
-      if (agePrecis !== null && agePrecis !== undefined) {
-        return numberToAgeLogementIntervalle(agePrecis);
+      if (kyc_age && kyc_age.isAnswered()) {
+        return numberToAgeLogementIntervalle(kyc_age.getValue());
       }
 
       return logement?.plus_de_15_ans ? 'au moins 15 ans' : undefined;
@@ -188,12 +184,11 @@ export class MesAidesRenoUsecase {
       logement,
     }) => (logement?.proprietaire != null ? logement.proprietaire : undefined),
     [MesAidesRenoRuleNames.logementSurface]: ({ kyc_history, logement }) => {
-      const superficiePrecise = kyc_history
-        .getAnsweredQuestionByCode(KYCID.KYC_superficie)
-        ?.getReponseSimpleValueAsNumber();
-
-      if (superficiePrecise !== null && superficiePrecise !== undefined) {
-        return superficiePrecise;
+      const kyc_superficie = kyc_history.getQuestionNumerique(
+        KYCID.KYC_superficie,
+      );
+      if (kyc_superficie && kyc_superficie.isAnswered()) {
+        return kyc_superficie.getValue();
       }
 
       return logement?.superficie != null
@@ -231,10 +226,12 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.dpeActuel]: [
       (utilisateur, value, estLogementPrincipal) => {
         if (estLogementPrincipal && Number.isSafeInteger(value)) {
-          return utilisateur.kyc_history.selectChoixUniqueByCode(
+          const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
             KYCID.KYC_DPE,
-            numberToDpe(value as number),
           );
+          kyc.selectByCode(numberToDpe(value as number));
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],
@@ -254,22 +251,26 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.logementPeriodeDeConstruction]: [
       (utilisateur, value, estLogementPrincipal) => {
         if (estLogementPrincipal) {
-          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+          const kyc = utilisateur.kyc_history.getQuestionNumerique(
             KYCID.KYC_logement_age,
-            [
-              ageLogementIntervalleToNumber(
-                value as AgeLogementIntervalle,
-              ).toString(),
-            ],
           );
+          kyc.setValue(
+            ageLogementIntervalleToNumber(value as AgeLogementIntervalle),
+          );
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
       (utilisateur, value, estLogementPrincipal) => {
         if (estLogementPrincipal) {
-          return utilisateur.kyc_history.selectChoixUniqueByCode(
+          const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
             KYCID.KYC006,
+          );
+          kyc.selectByCode(
             value === 'au moins 15 ans' ? 'plus_15' : 'moins_15',
           );
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],
@@ -281,30 +282,37 @@ export class MesAidesRenoUsecase {
           (value === 'propriétaire' || value === 'non propriétaire')
         ) {
           const estProprietaire = value === 'propriétaire';
-          return utilisateur.kyc_history.selectChoixUniqueByCode(
+
+          const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
             KYCID.KYC_proprietaire,
-            estProprietaire ? 'oui' : 'non',
           );
+          kyc.selectByCode(estProprietaire ? 'oui' : 'non');
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],
     [MesAidesRenoRuleNames.logementResidencePrincipaleProprietaire]: [
       (utilisateur, value) => {
         if (value === 'oui') {
-          return utilisateur.kyc_history.selectChoixUniqueByCode(
+          const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
             KYCID.KYC_proprietaire,
-            'oui',
           );
+          kyc.selectByCode('oui');
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],
     [MesAidesRenoRuleNames.logementSurface]: [
       (utilisateur, value, estLogementPrincipal) => {
         if (estLogementPrincipal && typeof value === 'number') {
-          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+          const kyc = utilisateur.kyc_history.getQuestionNumerique(
             KYCID.KYC_superficie,
-            [value.toString()],
           );
+          kyc.setValue(value);
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],
@@ -313,16 +321,20 @@ export class MesAidesRenoUsecase {
         if (estLogementPrincipal && typeof value === 'string') {
           switch (value) {
             case 'maison': {
-              return utilisateur.kyc_history.selectChoixUniqueByCode(
+              const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
                 KYCID.KYC_type_logement,
-                TypeLogement.maison,
               );
+              kyc.selectByCode(TypeLogement.maison);
+              utilisateur.kyc_history.updateQuestion(kyc);
+              return kyc.getKyc();
             }
             case 'appartement': {
-              return utilisateur.kyc_history.selectChoixUniqueByCode(
+              const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
                 KYCID.KYC_type_logement,
-                TypeLogement.appartement,
               );
+              kyc.selectByCode(TypeLogement.appartement);
+              utilisateur.kyc_history.updateQuestion(kyc);
+              return kyc.getKyc();
             }
             default: {
               throw new Error(`Unknown type of logement: ${value}`);
@@ -347,10 +359,12 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.menagePersonnes]: [
       (utilisateur, value) => {
         if (typeof value === 'number') {
-          return utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+          const kyc = utilisateur.kyc_history.getQuestionNumerique(
             KYCID.KYC_menage,
-            [value.toString()],
           );
+          kyc.setValue(value);
+          utilisateur.kyc_history.updateQuestion(kyc);
+          return kyc.getKyc();
         }
       },
     ],

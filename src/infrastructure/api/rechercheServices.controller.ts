@@ -70,6 +70,7 @@ export class RechecheServicesController extends GenericControler {
       nombre_max_resultats: body.nombre_max_resultats,
       rayon_metres: body.rayon_metres,
       distance_metres: body.distance_metres,
+      code_commune: body.code_commune,
     };
 
     if (body.latitude_depart) {

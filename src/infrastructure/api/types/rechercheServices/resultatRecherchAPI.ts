@@ -32,8 +32,10 @@ export class ResultatRechercheAPI {
   @ApiProperty() impact_carbone_kg: number;
   @ApiProperty() type_plat: string;
   @ApiProperty() difficulty_plat: string;
+  @ApiProperty({ type: [String] }) sources: string[];
   @ApiProperty() temps_prepa_min: number;
   @ApiProperty() distance_metres: number;
+  @ApiProperty() pourcentage: number;
   @ApiProperty() image_url: string;
   @ApiProperty({
     description: 'Fallback image url in case the image_url is not available',
@@ -90,6 +92,8 @@ export class ResultatRechercheAPI {
       categories_labels: res.categories
         ? res.categories.map((c) => CategorieRechercheManager.getLabel(c))
         : [],
+      sources: res.sources_lvao,
+      pourcentage: res.pourcentage,
     };
   }
 }

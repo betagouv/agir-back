@@ -15,11 +15,9 @@ import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { ApplicationError } from '../applicationError';
 import { BrevoRepository } from '../contact/brevoRepository';
 import { PrismaService } from '../prisma/prisma.service';
-import { LinkyRepository } from '../repository/linky.repository';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { GenericControler } from './genericControler';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
-const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 
 @Controller()
 @ApiTags('TestData')
@@ -27,7 +25,6 @@ const _linky_data = require('../../../test_data/PRM_thermo_pas_sensible');
 export class TestDataController extends GenericControler {
   constructor(
     private prisma: PrismaService,
-    private linkyRepository: LinkyRepository,
     private migrationUsecase: MigrationUsecase,
     public contactSynchro: BrevoRepository,
     private utilisateurRepository2: UtilisateurRepository,
@@ -132,19 +129,7 @@ export class TestDataController extends GenericControler {
     if (!utilisateurs_content[utilisateurId]) return '{}';
     await this.deleteUtilisateur(utilisateurId);
     await this.insertUtilisateur(utilisateurId);
-    await this.insertLinkyDataForUtilisateur(utilisateurId);
     return utilisateurs_content[utilisateurId];
-  }
-
-  async insertLinkyDataForUtilisateur(utilisateurId: string) {
-    const linky = utilisateurs_content[utilisateurId].linky;
-    if (!linky) return;
-    await this.linkyRepository.upsertLinkyEntry(
-      linky.prm,
-      linky.winterpk,
-      utilisateurId,
-    );
-    await this.linkyRepository.upsertDataForPRM(linky.prm, _linky_data);
   }
 
   async deleteUtilisateur(utilisateurId: string) {

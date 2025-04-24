@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { Action } from '../../domain/actions/action';
 import { Aide } from '../../domain/aides/aide';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
 import { Article } from '../../domain/contenu/article';
 import { Quizz } from '../../domain/contenu/quizz';
+import { QuestionChoixMultiple } from '../../domain/kyc/new_interfaces/QuestionChoixMultiples';
+import { QuestionChoixUnique } from '../../domain/kyc/new_interfaces/QuestionChoixUnique';
+import { QuestionNumerique } from '../../domain/kyc/new_interfaces/QuestionNumerique';
+import { QuestionSimple } from '../../domain/kyc/new_interfaces/QuestionSimple';
+import { QuestionTexteLibre } from '../../domain/kyc/new_interfaces/QuestionTexteLibre';
 import {
   QuestionKYC,
   TypeReponseQuestionKYC,
@@ -41,6 +47,30 @@ export class StatistiqueExternalRepository {
   public async deleteAllPersoData() {
     await this.prismaStats.personnalisation.deleteMany();
   }
+  public async deleteAllQuestionData() {
+    await this.prismaStats.questionsUtilisateur.deleteMany();
+  }
+
+  public async createUserQuestionData(
+    action_cms_id: string,
+    action_titre: string,
+    date_question: Date,
+    est_action_faite: boolean,
+    question: string,
+    user_id: string,
+  ) {
+    await this.prismaStats.questionsUtilisateur.create({
+      data: {
+        id: uuidv4(),
+        action_cms_id: action_cms_id,
+        action_titre: action_titre,
+        date_question: date_question,
+        est_action_faite: est_action_faite,
+        question: question,
+        user_id: user_id,
+      },
+    });
+  }
 
   public async createUserData(utilisateur: Utilisateur) {
     const code_depart =
@@ -67,6 +97,7 @@ export class StatistiqueExternalRepository {
         rang_commune: utilisateur.rank_commune,
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,
+        version_utilisateur: utilisateur.global_user_version,
       },
     });
   }
@@ -193,19 +224,23 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getCodeReponseQuestionChoixUnique();
+      reponse.reponse_unique_code = new QuestionChoixUnique(
+        kyc,
+      ).getSelectedCode();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
-      reponse.reponse_multiple_code = kyc.getSelectedCodes();
+      reponse.reponse_multiple_code = new QuestionChoixMultiple(
+        kyc,
+      ).getSelectedCodes();
     }
     if (kyc.type === TypeReponseQuestionKYC.libre) {
-      reponse.reponse_texte = kyc.getReponseSimpleValue();
+      reponse.reponse_texte = new QuestionTexteLibre(kyc).getText();
     }
     if (kyc.type === TypeReponseQuestionKYC.entier) {
-      reponse.reponse_entier = kyc.getReponseSimpleValueAsNumber();
+      reponse.reponse_entier = new QuestionNumerique(kyc).getValue();
     }
     if (kyc.type === TypeReponseQuestionKYC.decimal) {
-      reponse.reponse_decimal = kyc.getReponseSimpleValue();
+      reponse.reponse_decimal = new QuestionSimple(kyc).getStringValue();
     }
 
     await this.prismaStats.kYCCopy.create({
@@ -234,19 +269,23 @@ export class StatistiqueExternalRepository {
     if (kyc.isMosaic()) return;
 
     if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-      reponse.reponse_unique_code = kyc.getCodeReponseQuestionChoixUnique();
+      reponse.reponse_unique_code = new QuestionChoixUnique(
+        kyc,
+      ).getSelectedCode();
     }
     if (kyc.type === TypeReponseQuestionKYC.choix_multiple) {
-      reponse.reponse_multiple_code = kyc.getSelectedCodes();
+      reponse.reponse_multiple_code = new QuestionChoixMultiple(
+        kyc,
+      ).getSelectedCodes();
     }
     if (kyc.type === TypeReponseQuestionKYC.libre) {
-      reponse.reponse_texte = kyc.getReponseSimpleValue();
+      reponse.reponse_texte = new QuestionTexteLibre(kyc).getText();
     }
     if (kyc.type === TypeReponseQuestionKYC.entier) {
-      reponse.reponse_entier = kyc.getReponseSimpleValueAsNumber();
+      reponse.reponse_entier = new QuestionNumerique(kyc).getValue();
     }
     if (kyc.type === TypeReponseQuestionKYC.decimal) {
-      reponse.reponse_decimal = kyc.getReponseSimpleValue();
+      reponse.reponse_decimal = new QuestionSimple(kyc).getStringValue();
     }
 
     await this.prismaStats.kYCCopy.upsert({

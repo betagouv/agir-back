@@ -1,15 +1,15 @@
 import { ApplicationError } from '../../../infrastructure/applicationError';
 import { Categorie } from '../../contenu/categorie';
 import { KYCMosaicID } from '../../kyc/KYCMosaicID';
-import { ConditionKYC } from '../../kyc/conditionKYC';
-import { KYCHistory } from '../../kyc/kycHistory';
 import {
   KYCReponseComplexe,
   KYCReponseSimple,
-  QuestionKYC,
   TypeReponseQuestionKYC,
   Unite,
-} from '../../kyc/questionKYC';
+} from '../../kyc/QuestionKYCData';
+import { ConditionKYC } from '../../kyc/conditionKYC';
+import { KYCHistory } from '../../kyc/kycHistory';
+import { QuestionKYC } from '../../kyc/questionKYC';
 import { Tag } from '../../scoring/tag';
 import { Thematique } from '../../thematique/thematique';
 import { Versioned_v2 } from '../versioned';
@@ -78,12 +78,10 @@ export class QuestionKYC_v2 {
       is_NGC: elem.is_NGC,
       a_supprimer: elem.a_supprimer,
       ngc_key: elem.ngc_key,
-      reponse_simple: elem.getRAWReponseSimple()
-        ? ReponseSimple_v2.map(elem.getRAWReponseSimple())
-        : null,
-      reponse_complexe: elem
-        .getRAWListeReponsesComplexes()
-        .map((r) => ReponseComplexe_v2.map(r)),
+      reponse_simple: elem.reponse_simple,
+      reponse_complexe: elem.reponse_complexe
+        ? elem.reponse_complexe.map((r) => ReponseComplexe_v2.map(r))
+        : [],
       thematique: elem.thematique,
       tags: elem.tags,
       id_cms: elem.id_cms,
@@ -109,9 +107,9 @@ export class KYCHistory_v2 extends Versioned_v2 {
     return {
       version: 2,
       answered_questions: domain
-        .getRawAnsweredKYCs()
+        .getAnsweredKYCs()
         .map((e) => QuestionKYC_v2.map(e)),
-      answered_mosaics: domain.getRawAnsweredMosaics(),
+      answered_mosaics: domain.getAnsweredMosaics(),
     };
   }
 
@@ -159,7 +157,7 @@ export class KYCHistory_v2 extends Versioned_v2 {
                 code: reponse.code,
                 label: reponse.label,
                 ngc_code: reponse.ngc_code,
-                selected: QuestionKYC.isTrueBooleanString(reponse.value),
+                selected: this.isTrueBooleanString(reponse.value),
               });
             }
           }
@@ -168,5 +166,10 @@ export class KYCHistory_v2 extends Versioned_v2 {
       }
     }
     return result;
+  }
+
+  private static isTrueBooleanString(str: string): boolean {
+    if (!str) return false;
+    return ['oui', 'true', 'yes', '1'].includes(str.trim().toLowerCase());
   }
 }

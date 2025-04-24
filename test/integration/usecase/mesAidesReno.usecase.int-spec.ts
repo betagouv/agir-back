@@ -80,45 +80,41 @@ describe('Mes Aides Réno', () => {
 
       expect(utilisateur.logement.dpe).toEqual(DPE.C);
       expect(
-        utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_DPE)
-          .getReponseComplexeByCode(DPE.C).selected,
-      ).toBeTruthy();
+        utilisateur.kyc_history.getQuestion(KYCID.KYC_DPE).getSelectedCode(),
+      ).toEqual(DPE.C);
 
       expect(utilisateur.logement.proprietaire).toBeTruthy();
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_proprietaire)
-          .getReponseComplexeByCode('oui').selected,
-      ).toBeTruthy();
+          .getQuestion(KYCID.KYC_proprietaire)
+          .getSelectedCode(),
+      ).toEqual('oui');
 
       expect(utilisateur.logement.plus_de_15_ans).toBeTruthy();
       expect(
-        utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC006)
-          .getReponseComplexeByCode('plus_15').selected,
-      ).toBeTruthy();
+        utilisateur.kyc_history.getQuestion(KYCID.KYC006).getSelectedCode(),
+      ).toEqual('plus_15');
       expect(utilisateur.revenu_fiscal).toEqual(32197);
 
       expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_menage)
-          .getReponseSimpleValueAsNumber(),
+          .getQuestionNumerique(KYCID.KYC_menage)
+          .getValue(),
       ).toEqual(2);
 
       expect(utilisateur.logement.type).toBe(TypeLogement.maison);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_type_logement)
-          .getReponseComplexeByCode(TypeLogement.maison).selected,
-      ).toBeTruthy();
+          .getQuestion(KYCID.KYC_type_logement)
+          .getSelectedCode(),
+      ).toEqual(TypeLogement.maison);
 
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_35);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_superficie)
-          .getReponseSimpleValueAsNumber(),
+          .getQuestionNumerique(KYCID.KYC_superficie)
+          .getValue(),
       ).toEqual(30);
 
       expect(utilisateur.code_commune).toEqual('31555');
@@ -177,8 +173,8 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.getNombrePersonnesDansLogement()).toBe(4);
       expect(
         utilisateur.kyc_history
-          .getAnsweredQuestionByCode(KYCID.KYC_menage)
-          .getReponseSimpleValueAsNumber(),
+          .getQuestionNumerique(KYCID.KYC_menage)
+          .getValue(),
       ).toEqual(2);
 
       // Ces informations ne devraient pas être modifiées car elles concernent
@@ -245,10 +241,11 @@ describe('Mes Aides Réno', () => {
         [Scope.kyc],
       );
 
-      utilisateur.kyc_history.updateQuestionByCodeWithLabelOrException(
+      const kyc = utilisateur.kyc_history.getQuestionNumerique(
         KYCID.KYC_superficie,
-        ['50'],
       );
+      kyc.setValue(50);
+      utilisateur.kyc_history.updateQuestion(kyc);
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result).toBe(

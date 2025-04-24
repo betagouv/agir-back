@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from '../domain/kyc/KYCID';
+import { QuestionNumerique } from '../domain/kyc/new_interfaces/QuestionNumerique';
 import { KYCS_TO_RULE_NAME } from '../domain/kyc/publicodesMapping';
 import { RegleSimulateurVoiture } from '../domain/simulateur_voiture/parametres';
 import {
@@ -55,7 +56,7 @@ function getParams(
   utilisateur: Utilisateur,
 ): SimulateurVoitureParamsConstructor {
   const questions = utilisateur.kyc_history
-    .getRawAnsweredKYCs()
+    .getAnsweredKYCs()
     .filter((kyc) => utilisateur.kyc_history.isKYCEligible(kyc));
   const params = new SimulateurVoitureParamsConstructor();
 
@@ -82,7 +83,7 @@ function getParams(
         // les valeur en km annuels ou en km par trajet. Par simplicité, on
         // suppose que l'utilisateur a rentré les valeurs en km annuels.
         params.set('usage . km annuels . connus', 'oui');
-        params.set(regle, question.getReponseSimpleValueAsNumber());
+        params.set(regle, new QuestionNumerique(question).getValue());
         break;
       }
 

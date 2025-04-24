@@ -1,4 +1,4 @@
-import { Logement_v0 } from '../object_store/logement/logement_v0';
+import { Logement_v0, Risques_v0 } from '../object_store/logement/logement_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 
 export enum TypeLogement {
@@ -31,6 +31,34 @@ export enum DPE {
   ne_sais_pas = 'ne_sais_pas',
 }
 
+export class Risques {
+  nombre_catnat_commune: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_1: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_2: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_3: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_4: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_5: number;
+  pourcent_exposition_commune_innondations: number;
+
+  constructor(risques: Risques_v0) {
+    if (risques) {
+      this.nombre_catnat_commune = risques.nombre_catnat_commune;
+      this.pourcent_exposition_commune_innondations =
+        risques.pourcent_exposition_commune_innondations;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_1 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_1;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_2 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_2;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_3 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_3;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_4 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_4;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_5 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_5;
+    }
+  }
+}
+
 export class Logement {
   nombre_adultes: number;
   nombre_enfants: number;
@@ -43,6 +71,7 @@ export class Logement {
   chauffage: Chauffage;
   plus_de_15_ans: boolean;
   dpe: DPE;
+  risques: Risques;
 
   constructor(log?: Logement_v0) {
     if (!log) return;
@@ -56,9 +85,10 @@ export class Logement {
     this.chauffage = this.undefinedToNull(log.chauffage);
     this.plus_de_15_ans = this.undefinedToNull(log.plus_de_15_ans);
     this.dpe = this.undefinedToNull(log.dpe);
+    this.risques = new Risques(log.risques);
   }
 
-  patch?(input: Logement, utilisateur: Utilisateur) {
+  patch?(input: Partial<Logement>, utilisateur: Utilisateur) {
     this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
 

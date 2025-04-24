@@ -36,10 +36,20 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
-const MAX_FEEDBACK_LENGTH = 500;
-
 const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
 const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
+
+type QuestionAction = {
+  nom: string;
+  prenom: string;
+  pseudo: string;
+  email: string;
+  date: Date;
+  question: string;
+  action_cms_id: string;
+  action_titre: string;
+  action_faite: boolean;
+};
 
 @Injectable()
 export class ActionUsecase {
@@ -54,6 +64,9 @@ export class ActionUsecase {
     private personnalisator: Personnalisator,
     private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
+
+  static MAX_FEEDBACK_LENGTH = 500;
+  static MAX_QUESTION_LENGTH = 500;
 
   async getCompteurActions(): Promise<number> {
     return await this.compteurActionsRepository.getTotalFaites();
@@ -274,11 +287,11 @@ export class ActionUsecase {
       }
     }
     if (feedback) {
-      if (feedback.length > 500) {
+      if (feedback.length > ActionUsecase.MAX_FEEDBACK_LENGTH) {
         ApplicationError.throwTooBigData(
           'feedback',
           feedback,
-          MAX_FEEDBACK_LENGTH,
+          ActionUsecase.MAX_FEEDBACK_LENGTH,
         );
       }
       if (!BAD_CHAR_REGEXP.test(feedback)) {
@@ -291,6 +304,47 @@ export class ActionUsecase {
       like_level,
       feedback,
     );
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+
+  async questionAction(
+    code: string,
+    type: TypeAction,
+    utilisateurId: string,
+    question: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      type: type,
+      code: code,
+    });
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code, type);
+    }
+    if (!question) {
+      ApplicationError.throwMissingQuestion();
+    }
+    if (question.length > ActionUsecase.MAX_QUESTION_LENGTH) {
+      ApplicationError.throwTooBigData(
+        'question',
+        question,
+        ActionUsecase.MAX_QUESTION_LENGTH,
+      );
+    }
+    if (!BAD_CHAR_REGEXP.test(question)) {
+      ApplicationError.throwBadChar(BAD_CHAR_LISTE);
+    }
+    utilisateur.thematique_history.setActionQuestion(action_def, question);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
@@ -601,6 +655,44 @@ export class ActionUsecase {
       }
     }
     catalogue.actions = new_action_list;
+  }
+
+  async getAllQuestions(block_size: number = 200): Promise<QuestionAction[]> {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const result: QuestionAction[] = [];
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.thematique_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        const liste_questions = user.thematique_history.getAllQuestions();
+        for (const question of liste_questions) {
+          const action_def =
+            this.actionRepository.getActionDefinitionByTypeCode(
+              question.action,
+            );
+          result.push({
+            action_cms_id: action_def.cms_id,
+            action_faite: question.question.est_action_faite,
+            action_titre: action_def.titre,
+            date: question.question.date,
+            email: user.email,
+            nom: user.nom,
+            prenom: user.prenom,
+            pseudo: user.pseudo,
+            question: question.question.question,
+          });
+        }
+      }
+    }
+    return result;
   }
 
   async updateActionStats(block_size: number = 50): Promise<void> {

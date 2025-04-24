@@ -84,16 +84,23 @@ export class ContactUsecase {
         utilisateur.brevo_created_at = creation_date;
         await this.utilisateurRepository.updateUtilisateur(utilisateur);
       } else {
-        const created_ok = await this.brevoRepository.createContact(
+        const creation_status = await this.brevoRepository.createContact(
           utilisateur.email,
           utilisateur.id,
         );
-        if (created_ok) {
+        if (creation_status === BrevoResponse.ok) {
           result.push(`[${utilisateur.email}] CREATE OK`);
           utilisateur.brevo_created_at = new Date();
           await this.utilisateurRepository.updateUtilisateur(utilisateur);
-        } else {
+        }
+        if (creation_status === BrevoResponse.error) {
           result.push(`[${utilisateur.email}] CREATE ECHEC`);
+        }
+        if (creation_status === BrevoResponse.permanent_error) {
+          result.push(`[${utilisateur.email}] CREATE ECHEC PERMANENT`);
+        }
+        if (creation_status === BrevoResponse.disabled) {
+          result.push(`[${utilisateur.email}] CREATE SKIPPED`);
         }
       }
     }

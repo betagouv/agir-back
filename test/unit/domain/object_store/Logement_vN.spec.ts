@@ -1,8 +1,4 @@
 import {
-  SerialisableDomain,
-  Upgrader,
-} from '../../../../src/domain/object_store/upgrader';
-import {
   Chauffage,
   DPE,
   Logement,
@@ -10,6 +6,10 @@ import {
   TypeLogement,
 } from '../../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../../src/domain/object_store/logement/logement_v0';
+import {
+  SerialisableDomain,
+  Upgrader,
+} from '../../../../src/domain/object_store/upgrader';
 
 describe('Logement vN ', () => {
   it('build OK from empty', () => {
@@ -34,6 +34,15 @@ describe('Logement vN ', () => {
       proprietaire: true,
       commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
+      risques: {
+        nombre_catnat_commune: 1,
+        pourcent_exposition_commune_innondations: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+      },
     });
 
     // WHEN
@@ -57,6 +66,15 @@ describe('Logement vN ', () => {
       proprietaire: true,
       commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
+      risques: {
+        nombre_catnat_commune: 1,
+        pourcent_exposition_commune_innondations: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+      },
     });
 
     // WHEN

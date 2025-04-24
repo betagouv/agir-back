@@ -1,3 +1,1 @@
-export enum ServiceAsyncID {
-  linky = 'linky',
-}
+export enum ServiceAsyncID {}

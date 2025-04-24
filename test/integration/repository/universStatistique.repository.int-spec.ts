@@ -1,6 +1,6 @@
-import { TestUtil } from '../../TestUtil';
-import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { ThematiqueStatistiqueRepository } from '../../../src/infrastructure/repository/universStatistique.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('UniversStatistiqueRepository', () => {
   const OLD_ENV = process.env;
@@ -15,7 +15,6 @@ describe('UniversStatistiqueRepository', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV };
-    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {

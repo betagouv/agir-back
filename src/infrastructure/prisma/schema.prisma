@@ -502,15 +502,6 @@ model ServiceDefinition {
   services           Service[]
 }
 
-model Linky {
-  utilisateurId String?  @unique
-  winter_pk     String?  @unique
-  prm           String   @id
-  data          Json     @default("{}")
-  created_at    DateTime @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
 view PrenomVue {
   id     Int    @id
   prenom String

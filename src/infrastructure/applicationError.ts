@@ -726,7 +726,7 @@ export class ApplicationError {
   static throwBadChar(forbiden_chars: string) {
     this.throwAppError(
       '137',
-      `le texte de feedback ne peut pas contenir de caractères spéciaux comme [${forbiden_chars}]`,
+      `le texte ne peut pas contenir de caractères spéciaux comme [${forbiden_chars}]`,
     );
   }
 
@@ -751,6 +751,10 @@ suite à un problème technique, vous ne pouvez pas vous connecter au service J'
       `Bonjour,
 suite à un problème technique, vous ne pouvez pas vous inscrire au service J'agis. Nous vous recommandons de réessayer dans quelques heures. Si le problème persiste vous pouvez joindre notre support en envoyant un mail à ${contact}`,
     );
+  }
+
+  static throwMissingQuestion() {
+    this.throwAppError('141', `Attribut [question] obligatoire`);
   }
 
   private static throwAppError(

@@ -29,6 +29,7 @@ const logement_palaiseau: Logement_v0 = {
   nombre_enfants: 2,
   plus_de_15_ans: true,
   proprietaire: true,
+  risques: undefined,
 };
 
 describe('RechercheServices (API test)', () => {
@@ -198,7 +199,11 @@ describe('RechercheServices (API test)', () => {
   it(`POST /utlilisateur/id/recherche_services/proximite/search 400 si utilisateur sans code postal`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      logement: { ...logement_palaiseau, code_postal: null },
+      logement: {
+        ...logement_palaiseau,
+        code_postal: null,
+        risques: undefined,
+      },
     });
 
     // WHEN

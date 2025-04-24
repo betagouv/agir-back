@@ -21,7 +21,7 @@ describe('KYC vN ', () => {
     const domain = new KYCHistory(raw);
 
     // THEN
-    expect(domain.getRawAnsweredKYCs()).toHaveLength(0);
+    expect(domain.getAnsweredKYCs()).toHaveLength(0);
   });
 
   it('serialise <=> deserialise v0 OK', () => {

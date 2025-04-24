@@ -70,27 +70,27 @@ describe('/utilisateurs - Inscription - (API test)', () => {
     const user_full = await utilisateurRepository.getById(user.id, [Scope.ALL]);
     expect(
       user_full.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_local_frequence)
-        .getCodeReponseQuestionChoixUnique(),
+        .getQuestion(KYCID.KYC_local_frequence)
+        .getSelectedCode(),
     ).toEqual('parfois');
     expect(
       user_full.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_voiture_km)
+        .getQuestion(KYCID.KYC_transport_voiture_km)
         .getReponseSimpleValue(),
     ).toEqual('1560');
     expect(
       user_full.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_transport_avion_3_annees)
-        .getCodeReponseQuestionChoixUnique(),
+        .getQuestion(KYCID.KYC_transport_avion_3_annees)
+        .getSelectedCode(),
     ).toEqual('oui');
     expect(
       user_full.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_superficie)
+        .getQuestion(KYCID.KYC_superficie)
         .getReponseSimpleValue(),
     ).toEqual('130');
     expect(
       user_full.kyc_history
-        .getUpToDateAnsweredQuestionByCode(KYCID.KYC_menage)
+        .getQuestion(KYCID.KYC_menage)
         .getReponseSimpleValue(),
     ).toEqual('4');
   });

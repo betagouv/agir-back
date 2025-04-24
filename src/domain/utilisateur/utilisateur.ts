@@ -8,7 +8,7 @@ import { Gamification } from '../gamification/gamification';
 import { History } from '../history/history';
 import { KYCID } from '../kyc/KYCID';
 import { KYCHistory } from '../kyc/kycHistory';
-import { QuestionKYC } from '../kyc/questionKYC';
+import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
 import { Logement } from '../logement/logement';
 import { NotificationHistory } from '../notification/notificationHistory';
 import { Tag } from '../scoring/tag';
@@ -175,6 +175,7 @@ export class Utilisateur extends UtilisateurData {
         proprietaire: null,
         superficie: null,
         type: null,
+        risques: null,
       }),
       tag_ponderation_set: {},
       force_connexion: false,
@@ -280,9 +281,8 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone(): boolean {
-    const KYC_preference_answered = this.kyc_history.isQuestionAnswered(
-      KYCID.KYC_preference,
-    );
+    const kyc = this.kyc_history.getQuestionChoixMultiple(KYCID.KYC_preference);
+    const KYC_preference_answered = !!kyc && kyc.isAnswered();
 
     const ok_pseudo = !!this.pseudo && this.pseudo !== '';
     const ok_prenom = !!this.prenom && this.prenom !== '';
@@ -377,12 +377,12 @@ export class Utilisateur extends UtilisateurData {
   }
   public increaseTagForAnswers(
     tag: Tag,
-    kyc: QuestionKYC,
+    kyc: QuestionChoixUnique,
     map: Record<string, number>,
   ) {
-    if (kyc && kyc.hasAnyResponses()) {
+    if (kyc && kyc.isAnswered()) {
       for (const key in map) {
-        if (kyc.isSelectedReponseCode(key)) {
+        if (kyc.isSelected(key)) {
           this.increaseTagValue(tag, map[key]);
         }
       }

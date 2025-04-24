@@ -1,6 +1,5 @@
-import { DB, TestUtil } from '../../TestUtil';
 import { ServiceRepository } from '../../../src/infrastructure/repository/service.repository';
-import { ScheduledService } from '../../../src/domain/service/serviceDefinition';
+import { DB, TestUtil } from '../../TestUtil';
 
 async function injectData() {
   await TestUtil.create(DB.utilisateur, { id: 'u1', email: '1' });
@@ -55,7 +54,6 @@ describe('ServiceRepository', () => {
   beforeEach(async () => {
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
-    process.env.SERVICE_APIS_ENABLED = 'false';
   });
 
   afterAll(async () => {

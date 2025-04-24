@@ -323,7 +323,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
   it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic', async () => {
     // GIVEN
-    process.env.GAIN_CONTENT_POINT = 'true';
     const dbKYC: KYC = {
       id_cms: 1,
       categorie: Categorie.recommandation,
@@ -380,12 +379,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
+    expect(dbUser.kyc_history.getAnsweredKYCs()).toHaveLength(2);
 
-    delete dbUser.kyc_history.getRawAnsweredKYCs()[0].last_update;
-    delete dbUser.kyc_history.getRawAnsweredKYCs()[1].last_update;
+    delete dbUser.kyc_history.getAnsweredKYCs()[0].last_update;
+    delete dbUser.kyc_history.getAnsweredKYCs()[1].last_update;
 
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()[0]).toEqual({
+    expect(dbUser.kyc_history.getAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
       type: 'choix_unique',
@@ -437,7 +436,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       emoji: '🔥',
       unite: { abreviation: 'kg' },
     });
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
+    expect(dbUser.kyc_history.getAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
       type: 'choix_unique',
@@ -661,12 +660,12 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()).toHaveLength(2);
+    expect(dbUser.kyc_history.getAnsweredKYCs()).toHaveLength(2);
 
-    delete dbUser.kyc_history.getRawAnsweredKYCs()[0].last_update;
-    delete dbUser.kyc_history.getRawAnsweredKYCs()[1].last_update;
+    delete dbUser.kyc_history.getAnsweredKYCs()[0].last_update;
+    delete dbUser.kyc_history.getAnsweredKYCs()[1].last_update;
 
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()[0]).toEqual({
+    expect(dbUser.kyc_history.getAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
       type: 'entier',
@@ -692,7 +691,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       unite: { abreviation: 'kg' },
       emoji: '🔥',
     });
-    expect(dbUser.kyc_history.getRawAnsweredKYCs()[1]).toEqual({
+    expect(dbUser.kyc_history.getAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
       type: 'entier',

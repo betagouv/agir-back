@@ -22,15 +22,11 @@ import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematiqu
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
-import { ServiceStatus } from '../../../src/domain/service/service';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { LinkyRepository } from '../../../src/infrastructure/repository/linky.repository';
-import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { ThematiqueRepository } from '../../../src/infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -59,12 +55,9 @@ describe('Admin (API test)', () => {
   const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  const linkyRepository = new LinkyRepository(TestUtil.prisma);
-  const thematiqueRepository = new ThematiqueRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
-  const quizzRepository = new QuizzRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -78,7 +71,6 @@ describe('Admin (API test)', () => {
     await TestUtil.generateAuthorizationToken('utilisateur-id');
 
     process.env.EMAIL_ENABLED = 'false';
-    process.env.SERVICE_APIS_ENABLED = 'false';
     process.env.PONDERATION_RUBRIQUES = ApplicativePonderationSetName.neutre;
   });
 
@@ -126,26 +118,6 @@ describe('Admin (API test)', () => {
     expect(service.sous_description).toEqual(
       'Suivez votre consommation électrique au quotidien en un clic : analysez vos habitudes, identifiez et éliminez les gaspillages pour une efficacité énergétique optimale !',
     );
-  });
-  it('POST /admin/unsubscribe_oprhan_prms retourne liste des suppressions', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.linky, {
-      utilisateurId: '123',
-      prm: '111',
-      winter_pk: 'abc',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/unsubscribe_oprhan_prms');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toContain('DELETED');
-    expect(response.body[0]).toContain('123');
-    expect(response.body[0]).toContain('111');
-    expect(response.body[0]).toContain('abc');
   });
   it('POST /admin/lock_user_migration retourne une 403 si pas le bon id d utilisateur', async () => {
     // GIVEN
@@ -365,7 +337,7 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.kyc_history.getRawAnsweredKYCs()[0].id_cms).toEqual(1);
+    expect(userDB.kyc_history.getAnsweredKYCs()[0].id_cms).toEqual(1);
   });
   it.skip('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN
@@ -417,6 +389,7 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -465,6 +438,7 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      risques: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -546,6 +520,7 @@ describe('Admin (API test)', () => {
           vue_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
@@ -620,6 +595,7 @@ describe('Admin (API test)', () => {
           vue_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -751,365 +727,7 @@ describe('Admin (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(0);
   });
-  it('POST /services/clean_linky_data appel ok si aucune donnee linky', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
 
-    // WHEN
-    const response = await TestUtil.POST('/services/clean_linky_data');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual({ result: 'Cleaned 0 PRMs' });
-  });
-  it('POST /services/clean_linky_data clean ok', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.linky, {
-      prm: 'abc',
-      winter_pk: '111',
-      utilisateurId: '1',
-      data: [
-        {
-          date: new Date(123),
-          value: 100,
-        },
-        {
-          date: new Date(123),
-          value: 110,
-        },
-      ] as any,
-    });
-    await TestUtil.create(DB.linky, {
-      prm: 'efg',
-      utilisateurId: '2',
-      winter_pk: '222',
-      data: [
-        {
-          date: new Date(456),
-          value: 210,
-        },
-        {
-          date: new Date(123),
-          value: 200,
-        },
-      ] as any,
-    });
-    // WHEN
-    const response = await TestUtil.POST('/services/clean_linky_data');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual({ result: 'Cleaned 2 PRMs' });
-    const linky_abc = await TestUtil.prisma.linky.findUnique({
-      where: { prm: 'abc' },
-    });
-    const linky_efg = await TestUtil.prisma.linky.findUnique({
-      where: { prm: 'efg' },
-    });
-    expect(linky_abc.data).toHaveLength(1);
-    expect(linky_abc.data[0].value).toEqual(110);
-    expect(linky_efg.data).toHaveLength(2);
-    expect(linky_efg.data[0].value).toEqual(200);
-    expect(linky_efg.data[1].value).toEqual(210);
-  });
-  it('POST /services/process_async_service appel ok, renvoi id du service traité', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'dummy_async',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'dummy_async',
-      status: 'LIVE',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('service-id');
-  });
-  it('POST /services/process_async_service appel ok, renvoi id info service linky deja LIVE', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'LIVE',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'ALREADY LIVE : linky - service-id | data_email:false',
-    );
-  });
-  it('POST /services/process_async_service appel ok, 2 service linky LIVE', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, { id: '1', email: 'a' });
-    await TestUtil.create(DB.utilisateur, { id: '2', email: 'b' });
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      id: '123',
-      utilisateurId: '1',
-      serviceDefinitionId: 'linky',
-      status: 'LIVE',
-    });
-    await TestUtil.create(DB.service, {
-      id: '456',
-      utilisateurId: '2',
-      serviceDefinitionId: 'linky',
-      status: 'LIVE',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(2);
-  });
-  it('POST /services/process_async_service appel ok, status inconnu', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'blurp',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'UNKNOWN STATUS : linky - service-id - blurp | data_email:false',
-    );
-  });
-  it('POST /services/process_async_service appel ok, prm manquant', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.WINTER_API_ENABLED = 'false';
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'CREATED',
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'ERROR : linky - service-id : missing prm data | data_email:false',
-    );
-  });
-  it('POST /services/process_async_service appel ok, CREATED delcenche traitement pour linky', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.WINTER_API_ENABLED = 'false';
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'CREATED',
-      configuration: { prm: '123' },
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    const serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'INITIALISED : linky - service-id - prm:123 | data_email:false',
-    );
-    expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
-    expect(serviceDB.configuration['prm']).toEqual('123');
-    expect(serviceDB.configuration['live_prm']).toEqual('123');
-    expect(serviceDB.configuration['winter_pk']).toEqual('fake_winter_pk');
-  });
-  it('POST /services/process_async_service appel ok, la presence de donnee declenche une unique fois envoi de mail data', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.WINTER_API_ENABLED = 'false';
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'CREATED',
-      configuration: { prm: '123' },
-    });
-
-    // WHEN
-    let response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    let serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'INITIALISED : linky - service-id - prm:123 | data_email:false',
-    );
-    expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
-
-    // WHEN
-    response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'ALREADY LIVE : linky - service-id | data_email:false',
-    );
-    expect(serviceDB.configuration['sent_data_email']).toBeUndefined();
-
-    // WHEN
-    await linkyRepository.upsertDataForPRM('123', [
-      {
-        date: new Date(),
-        day_value: 12,
-        value_cumulee: null,
-      },
-    ]);
-
-    // WHEN
-    response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'ALREADY LIVE : linky - service-id | data_email:true',
-    );
-    expect(serviceDB.configuration['sent_data_email']).toEqual(true);
-
-    // WHEN
-    response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'ALREADY LIVE : linky - service-id | data_email:false',
-    );
-    expect(serviceDB.configuration['sent_data_email']).toEqual(true);
-  });
-  it('POST /services/process_async_service appel ok, CREATED avec un ancien PRM live retourn qu il est deja live', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.WINTER_API_ENABLED = 'false';
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'CREATED',
-      configuration: { prm: '123', live_prm: '123' },
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    const serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    const linkyDB = await TestUtil.prisma.linky.findUnique({
-      where: { prm: '123' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'PREVIOUSLY LIVE : linky - service-id - prm:123 | data_email:false',
-    );
-    expect(serviceDB.status).toEqual(ServiceStatus.LIVE);
-    expect(serviceDB.configuration['prm']).toEqual('123');
-    expect(serviceDB.configuration['live_prm']).toEqual('123');
-    expect(linkyDB).toBeNull(); // pas de recreation, ça existe a priori déjà
-  });
-  it('POST /services/process_async_service appel ok, supprime le serice linky OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.WINTER_API_ENABLED = 'false';
-
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'linky',
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'linky',
-      status: 'TO_DELETE',
-      configuration: { prm: '123', winter_pk: 'abc' },
-    });
-    await TestUtil.create(DB.linky, { prm: '123' });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/process_async_service');
-
-    // THEN
-    const serviceDB = await TestUtil.prisma.service.findUnique({
-      where: { id: 'service-id' },
-    });
-    const linkyDB = await TestUtil.prisma.linky.findUnique({
-      where: { prm: '123' },
-    });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual(
-      'DELETED : linky - service-id - prm:123 | data_email:false',
-    );
-    expect(serviceDB).toBeNull();
-    expect(linkyDB).toBeNull();
-  });
   it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1159,34 +777,6 @@ describe('Admin (API test)', () => {
         (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
       ),
     ).toEqual(30 * 60);
-  });
-  it.skip('POST /services/refresh_dynamic_data puis GET /utilisateurs/id/services appel récupère les données calculées en schedule', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    process.env.ADMIN_IDS = '';
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'dummy_scheduled',
-      scheduled_refresh: new Date(Date.now() - 1000),
-      minute_period: 30,
-    });
-    await TestUtil.create(DB.service, {
-      serviceDefinitionId: 'dummy_scheduled',
-    });
-
-    // WHEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.POST('/services/refresh_dynamic_data');
-
-    await TestUtil.generateAuthorizationToken('utilisateur-id');
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/services',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].label).toEqual('En construction 🚧');
   });
 
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
@@ -1381,114 +971,6 @@ describe('Admin (API test)', () => {
     expect(article1.titre).toBe(`Article [article-id-1] supprimé`);
   });
 
-  it("POST /admin/kyc-statistique - calcul des statistiques de l'ensemble des kyc", async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: 'id-kyc-1',
-          type: TypeReponseQuestionKYC.choix_multiple,
-          question: `Question kyc 1`,
-          reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, selected: true },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-          ],
-        },
-        {
-          ...KYC_DATA,
-          id_cms: 2,
-          code: 'id-kyc-2',
-          question: `Question kyc 2`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          reponse_complexe: [
-            { label: 'Une réponse', code: Thematique.climat, selected: true },
-          ],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      id: 'test-id-1',
-      email: 'john-doe@dev.com',
-      kyc: kyc as any,
-    });
-
-    const kyc_2: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
-        {
-          ...KYC_DATA,
-          id_cms: 1,
-          code: 'id-kyc-1',
-          question: `Question kyc 1`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          reponse_complexe: [
-            { label: 'Le climat', code: Thematique.climat, selected: true },
-            {
-              label: 'Mon logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-            { label: 'Appartement', code: Thematique.logement, selected: true },
-          ],
-        },
-      ],
-    };
-    await TestUtil.create(DB.utilisateur, {
-      id: 'test-id-2',
-      email: 'john-doedoe@dev.com',
-      kyc: kyc_2 as any,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/kyc-statistique');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const kyc1 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-1',
-          kycId: 'id-kyc-1',
-        },
-      },
-    });
-    const kyc2 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-1',
-          kycId: 'id-kyc-2',
-        },
-      },
-    });
-    const kyc3 = await TestUtil.prisma.kycStatistique.findUnique({
-      where: {
-        utilisateurId_kycId: {
-          utilisateurId: 'test-id-2',
-          kycId: 'id-kyc-1',
-        },
-      },
-    });
-
-    expect(kyc1.titre).toEqual('Question kyc 1');
-    expect(kyc1.reponse).toEqual('Le climat, Mon logement');
-    expect(kyc2.titre).toEqual('Question kyc 2');
-    expect(kyc2.reponse).toEqual('Une réponse');
-    expect(kyc3.titre).toEqual('Question kyc 1');
-    expect(kyc3.reponse).toEqual('Appartement, Le climat, Mon logement');
-  });
-
   it('GET /admin/prenoms_a_valider', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1654,34 +1136,7 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('[email2] CREATE OK');
-
-    const userDB = await utilisateurRepository.getById('2', []);
-    expect(userDB.brevo_created_at.getTime()).toBeGreaterThan(Date.now() - 200);
-  });
-  it(`POST /admin/create_brevo_contacts 2 fois n'ajoute plus`, async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      id: '2',
-      prenom: 'B',
-      email: 'email2',
-      brevo_created_at: null,
-    });
-    // WHEN
-    let response = await TestUtil.POST('/admin/create_brevo_contacts');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('[email2] CREATE OK');
-
-    // WHEN
-    response = await TestUtil.POST('/admin/create_brevo_contacts');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(0);
+    expect(response.body[0]).toEqual('[email2] CREATE SKIPPED');
   });
   it(`GET/POST /admin/id/raw_sql_user lit / écrit un utilisateur en BDD`, async () => {
     // GIVEN
@@ -1944,6 +1399,7 @@ describe('Admin (API test)', () => {
           faite_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -1951,6 +1407,7 @@ describe('Admin (API test)', () => {
           faite_le: new Date(),
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -2007,6 +1464,7 @@ describe('Admin (API test)', () => {
           faite_le: new Date(),
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -2022,6 +1480,7 @@ describe('Admin (API test)', () => {
           faite_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -2029,6 +1488,7 @@ describe('Admin (API test)', () => {
           faite_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -2276,13 +1736,70 @@ describe('Admin (API test)', () => {
 
     expect(
       user_DB.kyc_history
-        .getUpToDateAnsweredQuestionByCode('KYC_transport_voiture_km')
-        .getReponseSimpleValueAsNumber(),
+        .getQuestionNumerique('KYC_transport_voiture_km')
+        .getValue(),
     ).toEqual(2999);
     expect(
-      user_DB.kyc_history
-        .getUpToDateAnsweredQuestionByCode('KYC_saison_frequence')
-        .getCodeReponseQuestionChoixUnique(),
+      user_DB.kyc_history.getQuestion('KYC_saison_frequence').getSelectedCode(),
     ).toEqual('jamais');
+  });
+
+  it(`POST /admin/liste_questions_utilisateur`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+          liste_questions: [
+            {
+              date: new Date(123),
+              est_action_faite: true,
+              question: 'mais quoi donc ?',
+            },
+          ],
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET('/admin/liste_questions_utilisateur');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        action_cms_id: '111',
+        action_faite: true,
+        action_titre: '**The titre**',
+        date: '1970-01-01T00:00:00.123Z',
+        email: 'yo@truc.com',
+        nom: 'nom',
+        prenom: 'prenom',
+        pseudo: 'pseudo',
+        question: 'mais quoi donc ?',
+      },
+    ]);
   });
 });

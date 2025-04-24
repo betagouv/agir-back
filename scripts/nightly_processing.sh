@@ -1,12 +1,8 @@
-## npm run execute clean_linky_data
-
 ## npm run execute upsert_service_definitions
 
 ## npm run execute unsubscribe_oprhan_prms
 
 ## npm run execute article_statistique
-
-## npm run execute kyc_statistique
 
 ## npm run execute service_statistique
 

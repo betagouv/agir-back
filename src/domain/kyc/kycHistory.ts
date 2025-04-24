@@ -1,32 +1,16 @@
-import validator from 'validator';
-import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { Categorie } from '../contenu/categorie';
-import { Chauffage, DPE, Superficie, TypeLogement } from '../logement/logement';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
-import { Utilisateur } from '../utilisateur/utilisateur';
 import { KycDefinition } from './kycDefinition';
-import { KYCID } from './KYCID';
 import { KYCMosaicID } from './KYCMosaicID';
 import { MosaicKYC_CATALOGUE, MosaicKYCDef } from './mosaicKYC';
-import {
-  AndConditionSet,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from './questionKYC';
-
-type LogementInput = {
-  nombre_adultes?: number;
-  nombre_enfants?: number;
-  code_postal?: string;
-  commune?: string;
-  type?: TypeLogement;
-  superficie?: Superficie;
-  proprietaire?: boolean;
-  chauffage?: Chauffage;
-  plus_de_15_ans?: boolean;
-  dpe?: DPE;
-};
+import { QuestionChoix } from './new_interfaces/QuestionChoix';
+import { QuestionChoixMultiple } from './new_interfaces/QuestionChoixMultiples';
+import { QuestionChoixUnique } from './new_interfaces/QuestionChoixUnique';
+import { QuestionNumerique } from './new_interfaces/QuestionNumerique';
+import { QuestionSimple } from './new_interfaces/QuestionSimple';
+import { QuestionTexteLibre } from './new_interfaces/QuestionTexteLibre';
+import { AndConditionSet, QuestionKYC } from './questionKYC';
 
 export class KYCHistory {
   private answered_questions: QuestionKYC[];
@@ -47,6 +31,132 @@ export class KYCHistory {
     }
   }
 
+  public isKycAnswered(code: string): boolean {
+    const found = this.answered_questions.find((q) => q.code === code);
+    return !!found;
+  }
+
+  public getQuestionTextLibre(code: string): QuestionTexteLibre {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionTexteLibre(kyc);
+    return undefined;
+  }
+
+  public getQuestionNumerique(code: string): QuestionNumerique {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionNumerique(kyc);
+    return undefined;
+  }
+
+  public getQuestionChoixUnique(code: string): QuestionChoixUnique {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionChoixUnique(kyc);
+    return undefined;
+  }
+
+  public getQuestionChoixMultiple(code: string): QuestionChoixMultiple {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionChoixMultiple(kyc);
+    return undefined;
+  }
+
+  public getQuestionChoix(code: string): QuestionChoix {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionChoix(kyc);
+    return undefined;
+  }
+
+  public getQuestionSimple(code: string): QuestionSimple {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return new QuestionSimple(kyc);
+    return undefined;
+  }
+
+  public getQuestion(code: string): QuestionKYC {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getKycFromCatalogue_new(code);
+    if (kyc) return kyc;
+    return undefined;
+  }
+
+  public getQuestionByNGCKey(ngc_key: string): QuestionKYC {
+    const kyc =
+      this.getUpToDateAnsweredQuestionByNGCKeyCode(ngc_key) ||
+      this.getKycFromCatalogueByNGCKey_new(ngc_key);
+    if (kyc) return kyc;
+    return undefined;
+  }
+
+  public updateQuestion(
+    question:
+      | QuestionKYC
+      | QuestionChoixMultiple
+      | QuestionChoixUnique
+      | QuestionSimple
+      | QuestionNumerique
+      | QuestionTexteLibre,
+  ) {
+    const kyc = question.getKyc();
+    const index = this.answered_questions.findIndex((q) => q.code === kyc.code);
+    if (index >= 0) {
+      this.answered_questions[index] = kyc;
+    } else {
+      this.answered_questions.push(kyc);
+    }
+  }
+
+  private getUpToDateAnsweredQuestionByNGCKeyCode(
+    ngc_key: string,
+  ): QuestionKYC {
+    const answered = this.answered_questions.find(
+      (element) => element.ngc_key === ngc_key,
+    );
+    if (answered) {
+      this.refreshQuestion(answered);
+      answered.is_answered = answered.hasAnyResponses();
+    }
+    return answered;
+  }
+
+  private getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
+    const answered = this.answered_questions.find(
+      (element) => element.code === code,
+    );
+    if (answered) {
+      this.refreshQuestion(answered);
+      answered.is_answered = answered.hasAnyResponses();
+    }
+    return answered;
+  }
+
+  private getKycFromCatalogue_new(code: string): QuestionKYC {
+    const found = this.catalogue.find((element) => element.code === code);
+    if (found) {
+      return QuestionKYC.buildFromDef(found);
+    }
+    return undefined;
+  }
+  private getKycFromCatalogueByNGCKey_new(ngc_key: string): QuestionKYC {
+    const found = this.catalogue.find((element) => element.ngc_key === ngc_key);
+    if (found) {
+      return QuestionKYC.buildFromDef(found);
+    }
+    return undefined;
+  }
+
   public getLastUpdate(): Date {
     let max_epoch = 0;
     for (const kyc of this.answered_questions) {
@@ -57,10 +167,10 @@ export class KYCHistory {
     return new Date(max_epoch);
   }
 
-  public getRawAnsweredKYCs(): QuestionKYC[] {
+  public getAnsweredKYCs(): QuestionKYC[] {
     return this.answered_questions;
   }
-  public getRawAnsweredKYCsAfter(after: Date): QuestionKYC[] {
+  public getAnsweredKYCsAfter(after: Date): QuestionKYC[] {
     return this.answered_questions.filter(
       (q) =>
         q.last_update === null ||
@@ -68,7 +178,7 @@ export class KYCHistory {
         q.last_update.getTime() > after.getTime(),
     );
   }
-  public getRawAnsweredMosaics(): KYCMosaicID[] {
+  public getAnsweredMosaics(): KYCMosaicID[] {
     return this.answered_mosaics;
   }
 
@@ -89,7 +199,7 @@ export class KYCHistory {
     }
 
     for (const kyc_code of mosaic_def.question_kyc_codes) {
-      const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+      const kyc = this.getQuestion(kyc_code);
 
       if (kyc && kyc.hasAnyResponses()) {
         return true;
@@ -110,7 +220,7 @@ export class KYCHistory {
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_id);
+        const kyc = this.getQuestion(kyc_id);
         if (kyc && this.isKYCEligible(kyc)) {
           result.push(kyc);
         }
@@ -128,7 +238,7 @@ export class KYCHistory {
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+        const kyc = this.getQuestion(kyc_code);
         if (kyc) {
           result.push(kyc);
         }
@@ -163,18 +273,18 @@ export class KYCHistory {
     return this.answered_mosaics.includes(type);
   }
 
-  public getAllUpToDateQuestionSet(kyc_only: boolean = false): QuestionKYC[] {
-    let result: QuestionKYC[] = [];
+  public getAllKycs(): QuestionKYC[] {
+    const result: QuestionKYC[] = [];
 
     this.catalogue.forEach((question) => {
-      const answered_question = this.getUpToDateAnsweredQuestionByCode(
-        question.code,
-      );
+      const answered_question = this.getQuestion(question.code);
       result.push(answered_question || QuestionKYC.buildFromDef(question));
     });
-    if (kyc_only) {
-      return result;
-    }
+    return result;
+  }
+
+  public getAllKycsAndMosaics(): QuestionKYC[] {
+    const result = this.getAllKycs();
 
     const liste_mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {
@@ -182,234 +292,6 @@ export class KYCHistory {
     }
 
     return result;
-  }
-
-  public injectSituationNGC(
-    situation: object,
-    utilisateur: Utilisateur,
-  ): string[] {
-    const result = [];
-    for (const [key, value] of Object.entries(situation)) {
-      const kyc = this.getKYCByNGCKeyFromCatalogue(key);
-
-      if (!kyc) {
-        console.log(`KYC NGC manquant dans agir [${key}]`);
-      } else {
-        if (
-          kyc.is_NGC &&
-          !utilisateur.kyc_history.isQuestionAnswered(kyc.code)
-        ) {
-          const string_value = '' + value;
-
-          const is_kyc_number =
-            kyc.type === TypeReponseQuestionKYC.entier ||
-            kyc.type === TypeReponseQuestionKYC.decimal;
-
-          if (
-            (validator.isInt(string_value) ||
-              validator.isDecimal(string_value)) &&
-            is_kyc_number
-          ) {
-            const updated_kyc = this.updateQuestionByNGCKeyWithLabel(key, [
-              string_value,
-            ]);
-            result.push(key);
-            utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
-              updated_kyc,
-              utilisateur,
-            );
-          } else if (validator.isDecimal(string_value) && is_kyc_number) {
-            const updated_kyc = this.updateQuestionByNGCKeyWithLabel(key, [
-              string_value,
-            ]);
-            result.push(key);
-            utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
-              updated_kyc,
-              utilisateur,
-            );
-          } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
-            const code_reponse = kyc.getCodeByNGCCode(string_value);
-            if (code_reponse) {
-              const updated_kyc = this.selectChoixUniqueByCode(
-                kyc.code,
-                code_reponse,
-              );
-              result.push(key);
-              utilisateur.kyc_history.synchroKYCAvecProfileUtilisateur(
-                updated_kyc,
-                utilisateur,
-              );
-            } else {
-              console.error(
-                `Code NGC [${string_value}] non disponible pour la KYC ${kyc.id_cms}/${kyc.code}`,
-              );
-            }
-          }
-        } else {
-          console.log(
-            `KYC NGC trouvée dans agir [${key}] mais non flaguée NGC !`,
-          );
-        }
-      }
-    }
-    return result;
-  }
-
-  private isKycNotModifiedAfter(kyc: QuestionKYC, after_date: Date): boolean {
-    if (!kyc.last_update) return false;
-    return kyc.last_update.getTime() > after_date.getTime();
-  }
-
-  public patchLogement(input: LogementInput) {
-    if (input.dpe && this.doesQuestionExistsByCode(KYCID.KYC_DPE)) {
-      this.selectChoixUniqueByCode(KYCID.KYC_DPE, input.dpe);
-    }
-    if (
-      input.superficie &&
-      this.doesQuestionExistsByCode(KYCID.KYC_superficie)
-    ) {
-      const value: Record<Superficie, number> = {
-        superficie_35: 34,
-        superficie_70: 69,
-        superficie_100: 99,
-        superficie_150: 149,
-        superficie_150_et_plus: 200,
-      };
-      this.updateQuestionByCodeWithLabelOrException(KYCID.KYC_superficie, [
-        value[input.superficie].toString(),
-      ]);
-    }
-    if (
-      input.proprietaire !== undefined &&
-      input.proprietaire !== null &&
-      this.doesQuestionExistsByCode(KYCID.KYC_proprietaire)
-    ) {
-      this.selectChoixUniqueByCode(
-        KYCID.KYC_proprietaire,
-        input.proprietaire ? 'oui' : 'non',
-      );
-    }
-    if (input.chauffage) {
-      const target_KYC: Record<Chauffage, string> = {
-        gaz: KYCID.KYC_chauffage_gaz,
-        fioul: KYCID.KYC_chauffage_fioul,
-        electricite: KYCID.KYC_chauffage_elec,
-        bois: KYCID.KYC_chauffage_bois,
-        autre: null,
-      };
-
-      if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_gaz)) {
-        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_gaz, 'ne_sais_pas');
-      }
-      if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_fioul)) {
-        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_fioul, 'ne_sais_pas');
-      }
-      if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_bois)) {
-        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_bois, 'ne_sais_pas');
-      }
-      if (this.doesQuestionExistsByCode(KYCID.KYC_chauffage_elec)) {
-        this.selectChoixUniqueByCode(KYCID.KYC_chauffage_elec, 'ne_sais_pas');
-      }
-      if (input.chauffage !== Chauffage.autre) {
-        if (this.doesQuestionExistsByCode(target_KYC[input.chauffage]))
-          this.selectChoixUniqueByCode(target_KYC[input.chauffage], 'oui');
-      }
-    }
-
-    if (input.nombre_adultes || input.nombre_enfants) {
-      if (this.doesQuestionExistsByCode(KYCID.KYC_menage)) {
-        this.updateQuestionByCodeWithLabelOrException(KYCID.KYC_menage, [
-          '' +
-            ((input.nombre_adultes ? input.nombre_adultes : 0) +
-              (input.nombre_enfants ? input.nombre_enfants : 0)),
-        ]);
-      }
-    }
-    if (input.type) {
-      if (this.doesQuestionExistsByCode(KYCID.KYC_type_logement)) {
-        this.selectChoixUniqueByCode(
-          KYCID.KYC_type_logement,
-          input.type === TypeLogement.appartement
-            ? 'type_appartement'
-            : 'type_maison',
-        );
-      }
-    }
-    if (input.plus_de_15_ans !== undefined && input.plus_de_15_ans !== null) {
-      if (this.doesQuestionExistsByCode(KYCID.KYC006)) {
-        this.selectChoixUniqueByCode(
-          KYCID.KYC006,
-          input.plus_de_15_ans ? 'plus_15' : 'moins_15',
-        );
-      }
-      if (this.doesQuestionExistsByCode(KYCID.KYC_logement_age)) {
-        this.tryUpdateQuestionByCodeWithLabel(KYCID.KYC_logement_age, [
-          '' + (input.plus_de_15_ans ? 20 : 5),
-        ]);
-      }
-    }
-  }
-
-  public synchroKYCAvecProfileUtilisateur(
-    kyc: QuestionKYC,
-    utilisateur: Utilisateur,
-  ) {
-    switch (kyc.code) {
-      case KYCID.KYC006:
-        utilisateur.logement.plus_de_15_ans =
-          kyc.isSelectedReponseCode('plus_15');
-        break;
-      case KYCID.KYC_logement_age:
-        const value = kyc.getReponseSimpleValueAsNumber();
-        if (value) {
-          utilisateur.logement.plus_de_15_ans = value >= 15;
-        }
-        break;
-      case KYCID.KYC_DPE:
-        const code_dpe = kyc.getCodeReponseQuestionChoixUnique();
-        utilisateur.logement.dpe = DPE[code_dpe];
-        break;
-      // FIXME: Why we want to loose precision here?
-      case KYCID.KYC_superficie:
-        const valeur = kyc.getReponseSimpleValueAsNumber();
-        // FIXME: Was it intentional to match 30 to superficie_150?
-        if (valeur < 35) {
-          utilisateur.logement.superficie = Superficie.superficie_35;
-        } else if (valeur < 70) {
-          utilisateur.logement.superficie = Superficie.superficie_70;
-        } else if (valeur < 100) {
-          utilisateur.logement.superficie = Superficie.superficie_100;
-        } else if (valeur < 150) {
-          utilisateur.logement.superficie = Superficie.superficie_150;
-        } else if (valeur >= 150)
-          utilisateur.logement.superficie = Superficie.superficie_150_et_plus;
-        break;
-      case KYCID.KYC_proprietaire:
-        const code_prop = kyc.getCodeReponseQuestionChoixUnique();
-        utilisateur.logement.proprietaire = code_prop === 'oui';
-        break;
-      case KYCID.KYC_chauffage:
-        const code_chauff = kyc.getCodeReponseQuestionChoixUnique();
-        utilisateur.logement.chauffage = Chauffage[code_chauff];
-        break;
-      case KYCID.KYC_type_logement:
-        const code_log = kyc.getCodeReponseQuestionChoixUnique();
-        utilisateur.logement.type =
-          code_log === 'type_appartement'
-            ? TypeLogement.appartement
-            : TypeLogement.maison;
-        break;
-      // FIXME: Is this the mapping we want ?
-      case KYCID.KYC_menage:
-        // const nombre = kyc.getReponseSimpleValueAsNumber();
-        // if (nombre) {
-        //   utilisateur.logement.nombre_adultes = nombre;
-        //   utilisateur.logement.nombre_enfants = 0;
-        // }
-        break;
-      default:
-        break;
-    }
   }
 
   public getKYCsNeverAnswered(
@@ -420,10 +302,8 @@ export class KYCHistory {
 
     let liste_nouvelles_kyc = [];
     for (const kyc_catalogue of kycs_catalogue_by_cat) {
-      const kyc_utilisateur = this.getAnsweredQuestionByIdCMS(
-        kyc_catalogue.id_cms,
-      );
-      if (!kyc_utilisateur) {
+      const answered = this.isKycAnswered(kyc_catalogue.code);
+      if (!answered) {
         liste_nouvelles_kyc.push(kyc_catalogue);
       }
     }
@@ -446,16 +326,6 @@ export class KYCHistory {
       .map((c) => QuestionKYC.buildFromDef(c));
   }
 
-  public getUpToDateQuestionByCodeOrException(code: string): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCodeOrException(code);
-    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
-
-    if (answered_question) {
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
-  }
-
   private refreshQuestion(kyc: QuestionKYC): QuestionKYC {
     if (!kyc) return null;
 
@@ -464,32 +334,6 @@ export class KYCHistory {
       kyc.refreshFromDef(question_catalogue);
     }
     return kyc;
-  }
-
-  public getUpToDateQuestionByCodeOrNull(code: string): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCodeOrNull(code);
-    if (!question_catalogue) {
-      return null;
-    }
-
-    let answered_question = this.getUpToDateAnsweredQuestionByCode(code);
-    if (answered_question) {
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
-  }
-  public getUpToDateQuestionByCmsIdOrNull(cms_id: number): QuestionKYC {
-    const question_catalogue = this.getKYCDefinitionByCmsIdOrNull(cms_id);
-    if (!question_catalogue) {
-      return null;
-    }
-
-    let answered_question = this.getAnsweredQuestionByIdCMS(cms_id);
-    if (answered_question) {
-      answered_question.refreshFromDef(question_catalogue);
-      return answered_question;
-    }
-    return QuestionKYC.buildFromDef(question_catalogue);
   }
 
   public getUpToDateMosaicById(mosaicID: KYCMosaicID): QuestionKYC {
@@ -503,7 +347,7 @@ export class KYCHistory {
 
     const target_kyc_liste: QuestionKYC[] = [];
     for (const kyc_code of mosaic_def.question_kyc_codes) {
-      const kyc = this.getUpToDateQuestionByCodeOrNull(kyc_code);
+      const kyc = this.getQuestion(kyc_code);
       if (kyc) {
         target_kyc_liste.push(kyc);
       }
@@ -524,7 +368,7 @@ export class KYCHistory {
       let union = true;
       for (const cond of and_set) {
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
-        if (!(kyc && kyc.isSelectedReponseCode(cond.code_reponse))) {
+        if (!(kyc && new QuestionChoix(kyc).isSelected(cond.code_reponse))) {
           union = false;
         }
       }
@@ -533,171 +377,15 @@ export class KYCHistory {
     return result;
   }
 
-  public isQuestionAnswered(code_kyc: string): boolean {
-    return !!this.getAnsweredQuestionByCode(code_kyc);
-  }
-
-  public updateQuestionInHistory(question: QuestionKYC) {
-    const position = this.answered_questions.findIndex(
-      (q) => q.code === question.code,
-    );
-    if (position >= 0) {
-      this.answered_questions[position] = question;
-    } else {
-      this.answered_questions.push(question);
-    }
-  }
-
-  // FIXME : DEPRECATED
-  public updateQuestionByCodeWithLabelOrException(
-    code: string,
-    reponses: string[],
-  ): QuestionKYC {
-    let question = this.getUpToDateAnsweredQuestionByCode(code);
-    if (question) {
-      question.setResponseWithValueOrLabels(reponses);
-      return question;
-    } else {
-      let question_catalogue = this.getKYCByCodeFromCatalogueOrException(code);
-      question_catalogue.setResponseWithValueOrLabels(reponses);
-      this.answered_questions.push(question_catalogue);
-      return question_catalogue;
-    }
-  }
-  public updateQuestionByNGCKeyWithLabel(
-    ngc_key: string,
-    reponses: string[],
-  ): QuestionKYC {
-    let question = this.getAnsweredQuestionByNGCKey(ngc_key);
-    if (question) {
-      question.setResponseWithValueOrLabels(reponses);
-      return question;
-    } else {
-      let question_catalogue = this.getKYCByNGCKeyFromCatalogue(ngc_key);
-      question_catalogue.setResponseWithValueOrLabels(reponses);
-      this.answered_questions.push(question_catalogue);
-      return question_catalogue;
-    }
-  }
-
-  public tryUpdateQuestionByCodeWithLabel(code: string, reponses: string[]) {
-    let question = this.getUpToDateAnsweredQuestionByCode(code);
-    if (question) {
-      question.setResponseWithValueOrLabels(reponses);
-    } else {
-      let question_catalogue = this.getKYCByCodeFromCatalogue(code);
-      if (question_catalogue) {
-        question_catalogue.setResponseWithValueOrLabels(reponses);
-        this.answered_questions.push(question_catalogue);
-      }
-    }
-  }
-
-  public trySelectChoixUniqueByCode(
-    code_question: string,
-    code_reponse: string,
-  ) {
-    try {
-      this.selectChoixUniqueByCode(code_question, code_reponse);
-    } catch (error) {
-      return;
-    }
-  }
-
-  public selectChoixUniqueByCode(
-    code_question: string,
-    code_reponse: string,
-  ): QuestionKYC {
-    let question = this.getUpToDateAnsweredQuestionByCode(code_question);
-    if (question) {
-      question.selectChoixUniqueByCode(code_reponse);
-      return question;
-    } else {
-      let question_catalogue =
-        this.getKYCByCodeFromCatalogueOrException(code_question);
-      question_catalogue.selectChoixUniqueByCode(code_reponse);
-      this.answered_questions.push(question_catalogue);
-      return question_catalogue;
-    }
-  }
-
-  public checkQuestionExistsByCode(code_question: string) {
-    this.getKYCDefinitionByCodeOrException(code_question);
-  }
   public doesQuestionExistsByCode(code_question: string) {
     return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
-  }
-
-  public getUpToDateAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.answered_questions.find(
-      (element) => element.code === code,
-    );
-    if (answered) {
-      this.refreshQuestion(answered);
-      answered.is_answered = answered.hasAnyResponses();
-    }
-    return answered;
-  }
-  public getAnsweredQuestionByCode(code: string): QuestionKYC {
-    const answered = this.answered_questions.find(
-      (element) => element.code === code,
-    );
-    if (answered) {
-      answered.is_answered = answered.hasAnyResponses();
-    }
-    return answered;
   }
 
   public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
     return this.answered_questions.find((element) => element.id_cms === id_cms);
   }
-  public getAnsweredQuestionByNGCKey(key: string): QuestionKYC {
-    return this.answered_questions.find((element) => element.ngc_key === key);
-  }
-
-  private getKYCByCodeFromCatalogueOrException(code: string): QuestionKYC {
-    const question_def = this.catalogue.find(
-      (element) => element.code === code,
-    );
-    if (!question_def) {
-      ApplicationError.throwQuestionInconnue(code);
-    }
-    return QuestionKYC.buildFromDef(question_def);
-  }
-
-  private getKYCByCodeFromCatalogue(code: string): QuestionKYC {
-    const question_def = this.catalogue.find(
-      (element) => element.code === code,
-    );
-
-    if (question_def) {
-      return QuestionKYC.buildFromDef(question_def);
-    }
-    return null;
-  }
-  private getKYCByNGCKeyFromCatalogue(key: string): QuestionKYC {
-    const question_def = this.catalogue.find(
-      (element) => element.ngc_key === key,
-    );
-
-    if (question_def) {
-      return QuestionKYC.buildFromDef(question_def);
-    }
-    return null;
-  }
-
-  private getKYCDefinitionByCodeOrException(code: string): KycDefinition {
-    const question_def = this.getKYCDefinitionByCodeOrNull(code);
-    if (!question_def) {
-      ApplicationError.throwQuestionInconnue(code);
-    }
-    return question_def;
-  }
 
   private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
     return this.catalogue.find((element) => element.code === code);
-  }
-  private getKYCDefinitionByCmsIdOrNull(cms_id: number): KycDefinition {
-    return this.catalogue.find((element) => element.id_cms === cms_id);
   }
 }
