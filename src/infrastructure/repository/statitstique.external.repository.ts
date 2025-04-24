@@ -72,6 +72,7 @@ export class StatistiqueExternalRepository {
         rang_commune: utilisateur.rank_commune,
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,
+        version_utilisateur: utilisateur.global_user_version,
       },
     });
   }

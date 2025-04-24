@@ -192,6 +192,7 @@ describe('Duplicate Usecase', () => {
       rang_commune: 12,
       rang_national: 123,
       date_inscription: new Date(2),
+      version_utilisateur: 'V2',
     });
   });
 

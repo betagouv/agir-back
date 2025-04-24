@@ -26,6 +26,7 @@ model UtilisateurCopy {
   rang_national          Int?
   rang_commune           Int?
   date_inscription       DateTime? @db.Timestamptz(3)
+  version_utilisateur    String?
 }
 
 model Personnalisation {
