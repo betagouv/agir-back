@@ -407,6 +407,8 @@ export class ProfileUsecase {
   }
 
   private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
+    if (!utilisateur.code_commune) return;
+
     const finder = this.rechercheServiceManager.getFinderById(
       ServiceRechercheID.maif,
     );
