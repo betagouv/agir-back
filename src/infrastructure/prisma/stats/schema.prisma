@@ -59,6 +59,16 @@ model BilanCarbone {
   updated_at                           DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model QuestionsUtilisateur {
+  id               String    @id
+  user_id          String
+  action_cms_id    String
+  action_titre     String
+  est_action_faite Boolean
+  question         String
+  date_question    DateTime? @db.Timestamptz(3)
+}
+
 model KYCCopy {
   code_kyc              String
   cms_id                String

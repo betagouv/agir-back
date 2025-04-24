@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { Action } from '../../domain/actions/action';
 import { Aide } from '../../domain/aides/aide';
 import { Bilan_OLD } from '../../domain/bilan/bilan_old';
@@ -45,6 +46,30 @@ export class StatistiqueExternalRepository {
   }
   public async deleteAllPersoData() {
     await this.prismaStats.personnalisation.deleteMany();
+  }
+  public async deleteAllQuestionData() {
+    await this.prismaStats.questionsUtilisateur.deleteMany();
+  }
+
+  public async createUserQuestionData(
+    action_cms_id: string,
+    action_titre: string,
+    date_question: Date,
+    est_action_faite: boolean,
+    question: string,
+    user_id: string,
+  ) {
+    await this.prismaStats.questionsUtilisateur.create({
+      data: {
+        id: uuidv4(),
+        action_cms_id: action_cms_id,
+        action_titre: action_titre,
+        date_question: date_question,
+        est_action_faite: est_action_faite,
+        question: question,
+        user_id: user_id,
+      },
+    });
   }
 
   public async createUserData(utilisateur: Utilisateur) {

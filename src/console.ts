@@ -170,6 +170,19 @@ async function bootstrap() {
       );
       break;
 
+    case 'dump_utilisateur_question_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_utilisateur_question_for_stats ${start_time}`);
+      await application
+        .get(DuplicateBDDForStatsUsecase)
+        .duplicateQuestionsUtilisateur();
+      console.log(
+        `STOP dump_utilisateur_question_for_stats after ${
+          Date.now() - start_time
+        } ms`,
+      );
+      break;
+
     case 'dump_kyc_copy_for_stats':
       start_time = Date.now();
       console.log(`START dump_kyc_copy_for_stats ${start_time}`);

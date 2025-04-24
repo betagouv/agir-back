@@ -196,6 +196,69 @@ describe('Duplicate Usecase', () => {
     });
   });
 
+  it('duplicateQuestionUtilisateur : copy ok ', async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+          liste_questions: [
+            {
+              date: new Date(123),
+              est_action_faite: true,
+              question: 'mais quoi donc ?',
+            },
+          ],
+        },
+      ],
+      liste_tags_excluants: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+      external_stat_id: '123',
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    await duplicateUsecase.duplicateQuestionsUtilisateur(5);
+
+    // THEN
+    const questions =
+      await TestUtil.prisma_stats.questionsUtilisateur.findMany();
+
+    expect(questions).toHaveLength(1);
+
+    const question = questions[0];
+
+    expect(question.id.length).toBeGreaterThan(30);
+    delete question.id;
+
+    expect(question).toEqual({
+      action_cms_id: '111',
+      action_titre: '**The titre**',
+      date_question: new Date(123),
+      est_action_faite: true,
+      question: 'mais quoi donc ?',
+      user_id: '123',
+    });
+  });
+
   it(`duplicateUtilisateur : copy ok si plus d'utilisateuts que block size`, async () => {
     // GIVEN
     for (let index = 0; index < 10; index++) {
