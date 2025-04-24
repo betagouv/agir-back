@@ -29,6 +29,9 @@ describe('ThematiqueHistory vN ', () => {
           faite_le: new Date(123),
           feedback: 'pas mal',
           like_level: 2,
+          liste_questions: [
+            { date: new Date(), est_action_faite: true, question: 'haha' },
+          ],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
@@ -67,6 +70,9 @@ describe('ThematiqueHistory vN ', () => {
           faite_le: new Date(123),
           feedback: 'pas mal',
           like_level: 2,
+          liste_questions: [
+            { date: new Date(), est_action_faite: true, question: 'haha' },
+          ],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],

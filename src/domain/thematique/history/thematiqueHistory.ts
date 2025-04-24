@@ -13,13 +13,21 @@ import {
   ThematiqueRecommandation,
 } from './thematiqueRecommandation';
 
+export type Question = {
+  date: Date;
+  question: string;
+  est_action_faite: boolean;
+};
+
 export type ActionUtilisateur = {
   action: TypeCodeAction;
   vue_le: Date;
   faite_le: Date;
   like_level: number;
   feedback: string;
+  liste_questions: Question[];
 };
+
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
@@ -148,6 +156,7 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: null,
         feedback: null,
+        liste_questions: [],
       });
     }
   }
@@ -162,6 +171,7 @@ export class ThematiqueHistory {
         faite_le: new Date(),
         like_level: null,
         feedback: null,
+        liste_questions: [],
       });
     }
   }
@@ -181,6 +191,33 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: like_level ? like_level : null,
         feedback: feedback ? feedback : null,
+        liste_questions: [],
+      });
+    }
+  }
+
+  public setActionQuestion(action: TypeCodeAction, question: string) {
+    const found = this.findAction(action);
+    if (found) {
+      found.liste_questions.push({
+        date: new Date(),
+        est_action_faite: this.isActionFaite(action),
+        question: question,
+      });
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: null,
+        feedback: null,
+        liste_questions: [
+          {
+            date: new Date(),
+            est_action_faite: this.isActionFaite(action),
+            question: question,
+          },
+        ],
       });
     }
   }

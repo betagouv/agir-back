@@ -499,6 +499,7 @@ describe('Duplicate Usecase', () => {
           vue_le: new Date(456),
           feedback: 'good',
           like_level: 3,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],

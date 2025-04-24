@@ -8,14 +8,7 @@ import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematiqu
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
-import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
-import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions Catalogue Utilisateur (API test)', () => {
@@ -23,13 +16,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
   const compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
-  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  const fAQRepository = new FAQRepository(TestUtil.prisma);
-  const articleRepository = new ArticleRepository(TestUtil.prisma);
-  const quizzRepository = new QuizzRepository(TestUtil.prisma);
-  const kycRepository = new KycRepository(TestUtil.prisma);
-  let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -288,6 +274,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           faite_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -380,6 +367,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           vue_le: null,
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -473,6 +461,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           vue_le: new Date(),
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
@@ -527,6 +516,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           faite_le: new Date(),
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_thematiques: [],

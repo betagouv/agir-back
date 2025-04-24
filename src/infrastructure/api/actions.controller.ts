@@ -32,6 +32,7 @@ import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
 import { FeedbackActionInputAPI } from './types/actions/FeedbackActionInputAPI';
+import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -254,6 +255,43 @@ export class ActionsController extends GenericControler {
       utilisateurId,
       body.like_level,
       body.feedback,
+    );
+  }
+
+  @Post(
+    'utilisateurs/:utilisateurId/actions/:type_action/:code_action/question',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Pose une question à l'équipe concernant une action`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  @ApiBody({
+    type: QuestionActionInputAPI,
+  })
+  async questionAction(
+    @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Body() body: QuestionActionInputAPI,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.actionUsecase.questionAction(
+      code_action,
+      type,
+      utilisateurId,
+      body.question,
     );
   }
 

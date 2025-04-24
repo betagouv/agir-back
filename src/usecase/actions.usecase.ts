@@ -36,8 +36,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
-const MAX_FEEDBACK_LENGTH = 500;
-
 const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
 const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
 
@@ -54,6 +52,9 @@ export class ActionUsecase {
     private personnalisator: Personnalisator,
     private bibliothequeUsecase: BibliothequeUsecase,
   ) {}
+
+  static MAX_FEEDBACK_LENGTH = 500;
+  static MAX_QUESTION_LENGTH = 500;
 
   async getCompteurActions(): Promise<number> {
     return await this.compteurActionsRepository.getTotalFaites();
@@ -274,11 +275,11 @@ export class ActionUsecase {
       }
     }
     if (feedback) {
-      if (feedback.length > 500) {
+      if (feedback.length > ActionUsecase.MAX_FEEDBACK_LENGTH) {
         ApplicationError.throwTooBigData(
           'feedback',
           feedback,
-          MAX_FEEDBACK_LENGTH,
+          ActionUsecase.MAX_FEEDBACK_LENGTH,
         );
       }
       if (!BAD_CHAR_REGEXP.test(feedback)) {
@@ -291,6 +292,47 @@ export class ActionUsecase {
       like_level,
       feedback,
     );
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+
+  async questionAction(
+    code: string,
+    type: TypeAction,
+    utilisateurId: string,
+    question: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      type: type,
+      code: code,
+    });
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code, type);
+    }
+    if (!question) {
+      ApplicationError.throwMissingQuestion();
+    }
+    if (question.length > ActionUsecase.MAX_QUESTION_LENGTH) {
+      ApplicationError.throwTooBigData(
+        'question',
+        question,
+        ActionUsecase.MAX_QUESTION_LENGTH,
+      );
+    }
+    if (!BAD_CHAR_REGEXP.test(question)) {
+      ApplicationError.throwBadChar(BAD_CHAR_LISTE);
+    }
+    utilisateur.thematique_history.setActionQuestion(action_def, question);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,

@@ -416,6 +416,7 @@ describe('Thematique (API test)', () => {
           faite_le: new Date(),
           feedback: null,
           like_level: null,
+          liste_questions: [],
         },
       ],
       liste_tags_excluants: [],
