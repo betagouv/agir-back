@@ -10,7 +10,11 @@ import { Versioned_v0 } from '../versioned';
 
 export class Risques_v0 {
   nombre_catnat_commune: number;
-  pourcent_exposition_commune_secheresse_geotech: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_1: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_2: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_3: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_4: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_5: number;
   pourcent_exposition_commune_innondations: number;
 
   static serialise(domain: Risques): Risques_v0 {
@@ -18,8 +22,16 @@ export class Risques_v0 {
       nombre_catnat_commune: domain.nombre_catnat_commune,
       pourcent_exposition_commune_innondations:
         domain.pourcent_exposition_commune_innondations,
-      pourcent_exposition_commune_secheresse_geotech:
-        domain.pourcent_exposition_commune_secheresse_geotech,
+      pourcent_exposition_commune_secheresse_geotech_zone_1:
+        domain.pourcent_exposition_commune_secheresse_geotech_zone_1,
+      pourcent_exposition_commune_secheresse_geotech_zone_2:
+        domain.pourcent_exposition_commune_secheresse_geotech_zone_2,
+      pourcent_exposition_commune_secheresse_geotech_zone_3:
+        domain.pourcent_exposition_commune_secheresse_geotech_zone_3,
+      pourcent_exposition_commune_secheresse_geotech_zone_4:
+        domain.pourcent_exposition_commune_secheresse_geotech_zone_4,
+      pourcent_exposition_commune_secheresse_geotech_zone_5:
+        domain.pourcent_exposition_commune_secheresse_geotech_zone_5,
     };
   }
 }

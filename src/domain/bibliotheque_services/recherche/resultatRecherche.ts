@@ -72,6 +72,7 @@ export class ResultatRecherche {
   nbr_resultats_max_dispo?: number;
 
   sources_lvao?: string[];
+  pourcentage?: number;
 
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;

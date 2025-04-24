@@ -15,6 +15,7 @@ export class FiltreRecherche {
   nombre_max_resultats?: number;
   mode_deplacement?: ModeDeplacement;
   distance_metres?: number;
+  silent_error?: boolean;
 
   constructor(filtre: FiltreRecherche) {
     Object.assign(this, filtre);

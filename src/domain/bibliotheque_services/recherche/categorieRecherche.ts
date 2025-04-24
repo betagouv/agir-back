@@ -1,5 +1,6 @@
 export enum CategorieRecherche {
   catnat = 'catnat',
+  zones_secheresse = 'zones_secheresse',
   vos_objets = 'vos_objets',
   donner = 'donner',
   jeter = 'jeter',
@@ -56,6 +57,7 @@ export class CategorieRechercheManager {
   ];
   private static labels: Record<CategorieRecherche, string> = {
     catnat: 'Catastrophes naturelles',
+    zones_secheresse: 'Sécheresse Géotechnique',
     vos_objets: 'Vos objets',
     donner: 'Donner',
     jeter: 'Jeter',

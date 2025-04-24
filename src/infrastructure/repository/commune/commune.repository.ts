@@ -41,6 +41,7 @@ export type Departement = {
 export type Commune = {
   /** The INSEE code of the commune (e.g. "75056"). */
   code: string;
+  commune: string;
   nom: string;
   typeLiaison?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8;
   zone: 'metro' | 'dom' | 'com';

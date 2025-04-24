@@ -33,7 +33,11 @@ export enum DPE {
 
 export class Risques {
   nombre_catnat_commune: number;
-  pourcent_exposition_commune_secheresse_geotech: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_1: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_2: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_3: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_4: number;
+  pourcent_exposition_commune_secheresse_geotech_zone_5: number;
   pourcent_exposition_commune_innondations: number;
 
   constructor(risques: Risques_v0) {
@@ -41,8 +45,16 @@ export class Risques {
       this.nombre_catnat_commune = risques.nombre_catnat_commune;
       this.pourcent_exposition_commune_innondations =
         risques.pourcent_exposition_commune_innondations;
-      this.pourcent_exposition_commune_secheresse_geotech =
-        risques.pourcent_exposition_commune_secheresse_geotech;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_1 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_1;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_2 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_2;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_3 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_3;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_4 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_4;
+      this.pourcent_exposition_commune_secheresse_geotech_zone_5 =
+        risques.pourcent_exposition_commune_secheresse_geotech_zone_5;
     }
   }
 }
