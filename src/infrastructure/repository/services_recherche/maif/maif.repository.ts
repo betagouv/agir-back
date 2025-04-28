@@ -10,6 +10,7 @@ import {
   MaifAPIClient,
   NiveauRisqueNat,
   NiveauRisqueNat_Value,
+  SCORE_API_NAME,
 } from './maifAPIClient';
 
 const mapping_score_risque_label: Record<
@@ -89,15 +90,83 @@ export class MaifRepository implements FinderInterface {
       filtre.point.longitude,
       filtre.point.latitude,
     );
+    const score_inondation = await this.maifAPIClient.callAPIInondationScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const score_submersion = await this.maifAPIClient.callAPISubmersionScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const score_tempete = await this.maifAPIClient.callAPITempeteScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const score_seisme = await this.maifAPIClient.callAPISeismeScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const score_argile = await this.maifAPIClient.callAPIArgileScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const score_radon = await this.maifAPIClient.callAPIRadonScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
     const result: ResultatRecherche[] = [];
 
     result.push({
-      id: 'score_secheresse',
-      titre: `Score de risque à la sécheresse`,
+      id: SCORE_API_NAME.score_secheresse,
+      titre: `Risques de sécheresse`,
       niveau_risque: score_secheresse.actuel.score,
       niveau_risque_label: this.getLabelNiveauRisqueFromScore(
         score_secheresse.actuel.score,
       ),
+    });
+    result.push({
+      id: SCORE_API_NAME.score_inondation,
+      titre: `Risques d'inondations`,
+      niveau_risque: score_inondation.actuel.score,
+      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+        score_inondation.actuel.score,
+      ),
+    });
+    result.push({
+      id: SCORE_API_NAME.score_submersion,
+      titre: `Risques de submersion`,
+      niveau_risque: score_submersion.actuel.score,
+      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+        score_submersion.actuel.score,
+      ),
+    });
+    result.push({
+      id: SCORE_API_NAME.score_tempete,
+      titre: `Risques de tempetes`,
+      niveau_risque: score_tempete.actuel.score,
+      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+        score_tempete.actuel.score,
+      ),
+    });
+    result.push({
+      id: SCORE_API_NAME.score_seisme,
+      titre: `Risques sismiques`,
+      niveau_risque: parseInt(score_seisme.score),
+      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+        score_seisme.score,
+      ),
+    });
+    result.push({
+      id: SCORE_API_NAME.score_argile,
+      titre: `Risques retrait/gonflement des sols argileux`,
+      niveau_risque: score_argile.data.score,
+      niveau_risque_label: score_argile.data.label,
+    });
+    result.push({
+      id: SCORE_API_NAME.score_radon,
+      titre: `Risques d'exposition au radon`,
+      niveau_risque: score_radon.potentielRadon,
+      niveau_risque_label: score_radon.label,
     });
 
     return result;
