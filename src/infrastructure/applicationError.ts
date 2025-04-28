@@ -757,6 +757,18 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError('141', `Attribut [question] obligatoire`);
   }
 
+  static throwMissingLogitudeLatitude() {
+    this.throwAppError(
+      '142',
+      `Longitude ou latitude manquante pour la recherche de score de risques naturels`,
+    );
+  }
+  static throwErrorCallingExterneAPI(api_name: string) {
+    this.throwAppError(
+      '143',
+      `Erreur lors de l'appel à l'API externe [${api_name}]`,
+    );
+  }
   private static throwAppError(
     code: string,
     message: string,

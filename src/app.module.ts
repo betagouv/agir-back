@@ -88,6 +88,7 @@ import { FruitsLegumesRepository } from './infrastructure/repository/services_re
 import { ImpactTransportsRepository } from './infrastructure/repository/services_recherche/impactTransport.repository';
 import { LongueVieObjetsRepository } from './infrastructure/repository/services_recherche/lvo/LongueVieObjets.repository';
 import { MaifRepository } from './infrastructure/repository/services_recherche/maif/maif.repository';
+import { MaifAPIClient } from './infrastructure/repository/services_recherche/maif/maifAPIClient';
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
@@ -285,6 +286,7 @@ function getControllers(): any[] {
     QuestionKYCEnchainementUsecase,
     MesAidesRenoUsecase,
     MaifRepository,
+    MaifAPIClient,
   ],
 })
 export class AppModule {}

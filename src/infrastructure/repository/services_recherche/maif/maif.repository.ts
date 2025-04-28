@@ -1,70 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { SphericalUtil } from 'node-geometry-library';
-import { App } from '../../../../domain/app';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { ApplicationError } from '../../../applicationError';
 import { CommuneRepository } from '../../commune/commune.repository';
+import {
+  MaifAPIClient,
+  NiveauRisqueNat,
+  NiveauRisqueNat_Value,
+} from './maifAPIClient';
 
-const API_URL_CATNAT =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/catnat';
-
-const API_URL_ZONES_SECHERESSE =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/secheresses/scores/CODE_COMMUNE/zones';
-
-export type CatnatResponseElement = {
-  codNatCatnat: string; // '79PREF20170717'
-  communes: [
-    {
-      _path: string; //'/api/v1/{ressource}/{id}';
-      typecom: {
-        typecom: string; //'COMD';
-        libelle: string; //'Commune déléguée';
-      };
-      com: string; //'13055';
-      libelle: string; // 'Marseille';
-    },
-  ];
-  numRisqueJo: string; //'1';
-  libRisqueJo: string; //'Inondations et coulées de boue';
-  dateDeb: string; //'08/12/1982';
-  dateFin: string; //'31/12/1982';
-  datePubArrete: string; //'11/01/1983';
-  datePubJo: string; //'13/01/1983';
-};
-
-export type ZonesSecheresseReponse = {
-  actuel: {
-    type: string; //"FeatureCollection",
-    features: [
-      {
-        type: string; //"Feature",
-        geometry: {
-          type: string; //"Polygon",
-          coordinates: [
-            [
-              number[],
-              // 4.974005,
-              // 47.307084
-            ],
-          ];
-        };
-        properties: {
-          score: number; //4,
-          color: string; //"#e9352e",
-          label: string; //"Fort"
-        };
-      },
-    ];
-  };
+const mapping_score_risque_label: Record<
+  NiveauRisqueNat_Value,
+  NiveauRisqueNat
+> = {
+  '1': NiveauRisqueNat['Très faible'],
+  '2': NiveauRisqueNat.Faible,
+  '3': NiveauRisqueNat.Moyen,
+  '4': NiveauRisqueNat.Fort,
+  '5': NiveauRisqueNat['Très fort'],
 };
 
 @Injectable()
 export class MaifRepository implements FinderInterface {
-  constructor(private commune_repo: CommuneRepository) {}
+  constructor(
+    private commune_repo: CommuneRepository,
+    private maifAPIClient: MaifAPIClient,
+  ) {}
 
   static API_TIMEOUT = 4000;
 
@@ -73,7 +37,11 @@ export class MaifRepository implements FinderInterface {
   }
 
   public getManagedCategories(): CategorieRecherche[] {
-    return [CategorieRecherche.catnat, CategorieRecherche.zones_secheresse];
+    return [
+      CategorieRecherche.catnat,
+      CategorieRecherche.zones_secheresse,
+      CategorieRecherche.score_risque,
+    ];
   }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
@@ -85,12 +53,16 @@ export class MaifRepository implements FinderInterface {
       if (!filtre.code_commune) return [];
       return this.findZonesSecheresse(filtre);
     }
+    if (filtre.categorie === CategorieRecherche.score_risque) {
+      if (!filtre.hasPoint()) ApplicationError.throwMissingLogitudeLatitude();
+      return this.findScoreRisque(filtre);
+    }
   }
 
   private async findCatnat(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
-    const result = await this.searchCatnatByCodeCommune(
+    const result = await this.maifAPIClient.callAPICatnatByCodeCommune(
       this.getCommuneGlobale(filtre.code_commune),
     );
     if (!result) {
@@ -110,10 +82,31 @@ export class MaifRepository implements FinderInterface {
     );
   }
 
+  private async findScoreRisque(
+    filtre: FiltreRecherche,
+  ): Promise<ResultatRecherche[]> {
+    const score_secheresse = await this.maifAPIClient.callAPISecheresseScore(
+      filtre.point.longitude,
+      filtre.point.latitude,
+    );
+    const result: ResultatRecherche[] = [];
+
+    result.push({
+      id: 'score_secheresse',
+      titre: `Score de risque à la sécheresse`,
+      niveau_risque: score_secheresse.actuel.score,
+      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+        score_secheresse.actuel.score,
+      ),
+    });
+
+    return result;
+  }
+
   private async findZonesSecheresse(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
-    const result = await this.searchZonesSecheresseByCodeCommune(
+    const result = await this.maifAPIClient.callAPIZonesSecheresseByCodeCommune(
       this.getCommuneGlobale(filtre.code_commune),
     );
     if (!result) {
@@ -183,89 +176,6 @@ export class MaifRepository implements FinderInterface {
     ];
   }
 
-  private async searchCatnatByCodeCommune(
-    code_commune: string,
-  ): Promise<CatnatResponseElement[]> {
-    if (!App.getMaifAPILogin()) {
-      console.log('Missing MAIF Credentials');
-      return [];
-    }
-    let response;
-    const call_time = Date.now();
-    const params = {
-      codeInsee: code_commune,
-    };
-
-    const BASIC = Buffer.from(
-      `${App.getMaifAPILogin()}:${App.getMaifAPIPassword()}`,
-    ).toString('base64');
-    try {
-      response = await axios.get(API_URL_CATNAT, {
-        timeout: MaifRepository.API_TIMEOUT,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${BASIC}`,
-        },
-        params: params,
-      });
-    } catch (error) {
-      console.log(
-        `Error calling [maif/catnat] after ${Date.now() - call_time} ms`,
-      );
-      if (error.response) {
-        console.error(error.response);
-      } else if (error.request) {
-        console.error(error.request);
-      }
-      return null;
-    }
-    console.log(`API_TIME:maif/catnat:${Date.now() - call_time}`);
-
-    return response.data;
-  }
-
-  private async searchZonesSecheresseByCodeCommune(
-    code_commune: string,
-  ): Promise<ZonesSecheresseReponse> {
-    if (!App.getMaifAPILogin()) {
-      console.log('Missing MAIF Credentials');
-      return undefined;
-    }
-    let response;
-    const call_time = Date.now();
-
-    const BASIC = Buffer.from(
-      `${App.getMaifAPILogin()}:${App.getMaifAPIPassword()}`,
-    ).toString('base64');
-    try {
-      response = await axios.get(
-        API_URL_ZONES_SECHERESSE.replace('CODE_COMMUNE', code_commune),
-        {
-          timeout: MaifRepository.API_TIMEOUT,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${BASIC}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.log(
-        `Error calling [maif/zones_secheresse] after ${
-          Date.now() - call_time
-        } ms`,
-      );
-      if (error.response) {
-        console.error(error.response);
-      } else if (error.request) {
-        console.error(error.request);
-      }
-      return null;
-    }
-    console.log(`API_TIME:maif/zones_secheresse:${Date.now() - call_time}`);
-
-    return response.data;
-  }
-
   private computeAreaOfClosedPath(path: number[][]): number {
     const converted_format = path.map((point) => ({
       lat: point[1],
@@ -278,5 +188,10 @@ export class MaifRepository implements FinderInterface {
   private getCommuneGlobale(code_commune: string): string {
     const commune = this.commune_repo.getCommuneByCodeINSEE(code_commune);
     return commune.commune ? commune.commune : code_commune;
+  }
+
+  private getLabelNiveauRisqueFromScore(score: string | number): string {
+    const value = mapping_score_risque_label['' + score];
+    return value ? value : 'inconnu';
   }
 }

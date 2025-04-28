@@ -73,6 +73,8 @@ export class ResultatRecherche {
 
   sources_lvao?: string[];
   pourcentage?: number;
+  niveau_risque?: number;
+  niveau_risque_label?: string;
 
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
