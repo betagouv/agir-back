@@ -4,24 +4,25 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { NiveauRisqueLogement } from '../../../../domain/logement/NiveauRisque';
+import { TypeRisqueLogement } from '../../../../domain/logement/TypeRisque';
 import { ApplicationError } from '../../../applicationError';
 import { CommuneRepository } from '../../commune/commune.repository';
 import {
   MaifAPIClient,
-  NiveauRisqueNat,
   NiveauRisqueNat_Value,
   SCORE_API_NAME,
 } from './maifAPIClient';
 
 const mapping_score_risque_label: Record<
   NiveauRisqueNat_Value,
-  NiveauRisqueNat
+  NiveauRisqueLogement
 > = {
-  '1': NiveauRisqueNat['Très faible'],
-  '2': NiveauRisqueNat.Faible,
-  '3': NiveauRisqueNat.Moyen,
-  '4': NiveauRisqueNat.Fort,
-  '5': NiveauRisqueNat['Très fort'],
+  '1': NiveauRisqueLogement.tres_faible,
+  '2': NiveauRisqueLogement.faible,
+  '3': NiveauRisqueLogement.moyen,
+  '4': NiveauRisqueLogement.fort,
+  '5': NiveauRisqueLogement.tres_fort,
 };
 
 @Injectable()
@@ -119,54 +120,62 @@ export class MaifRepository implements FinderInterface {
     result.push({
       id: SCORE_API_NAME.score_secheresse,
       titre: `Risques de sécheresse`,
-      niveau_risque: score_secheresse.actuel.score,
-      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+      niveau_risque: this.getNiveauRisqueFromScore(
         score_secheresse.actuel.score,
       ),
+      type_risque: TypeRisqueLogement.secheresse,
+      description: `La sécheresse géotechnique est le nom donné au phénomène de retrait-gonflement des argiles, processus naturel où les sols argileux gonflent lorsqu'ils sont humides et se rétractent lorsqu'ils sont secs, ce qui peut causer des dégradations sur les structures construites sur ces sols.`,
     });
     result.push({
       id: SCORE_API_NAME.score_inondation,
       titre: `Risques d'inondations`,
-      niveau_risque: score_inondation.actuel.score,
-      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+      niveau_risque: this.getNiveauRisqueFromScore(
         score_inondation.actuel.score,
       ),
+      type_risque: TypeRisqueLogement.inondation,
+      description: `Une inondation est une submersion ponctuelle d’origine naturelle d’une zone habituellement hors d’eau. Elle peut relever d'un phénomène régulier ou catastrophique pouvant se produire lentement ou très rapidement. Elle peut être liée à différents événements :
+- la remontée des nappes phréatiques
+- le ruissellement
+- le débordement des cours d'eau`,
     });
     result.push({
       id: SCORE_API_NAME.score_submersion,
       titre: `Risques de submersion`,
-      niveau_risque: score_submersion.actuel.score,
-      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
+      niveau_risque: this.getNiveauRisqueFromScore(
         score_submersion.actuel.score,
       ),
+      type_risque: TypeRisqueLogement.submersion,
+      description: `Les submersions marines sont des inondations rapides et de courtes durées (de quelques heures à quelques jours) de la zone côtière par la mer, lors de conditions météorologiques et océaniques défavorables.`,
     });
     result.push({
       id: SCORE_API_NAME.score_tempete,
       titre: `Risques de tempetes`,
-      niveau_risque: score_tempete.actuel.score,
-      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
-        score_tempete.actuel.score,
-      ),
+      niveau_risque: this.getNiveauRisqueFromScore(score_tempete.actuel.score),
+      type_risque: TypeRisqueLogement.tempete,
+      description: ``,
     });
     result.push({
       id: SCORE_API_NAME.score_seisme,
       titre: `Risques sismiques`,
-      niveau_risque: parseInt(score_seisme.score),
-      niveau_risque_label: this.getLabelNiveauRisqueFromScore(
-        score_seisme.score,
-      ),
+      niveau_risque: this.getNiveauRisqueFromScore(score_seisme.score),
+      type_risque: TypeRisqueLogement.seisme,
+      description: `Un séisme ou tremblement de terre est une rupture brutale et profonde des roches le long d'une faille (déplacement tectonique) qui provoque des vibrations plus ou moins violentes à la surface du sol.  D'autres phénomènes peuvent être à l'origine de secousses sismiques (volcan qui entre en éruption…), de mouvements des glaces ou consécutifs à l’action humaine (activités minières, barrages ou explosions).`,
     });
     result.push({
       id: SCORE_API_NAME.score_argile,
       titre: `Risques retrait/gonflement des sols argileux`,
-      niveau_risque: score_argile.data.score,
-      niveau_risque_label: score_argile.data.label,
+      niveau_risque: this.getNiveauRisqueFromScore(score_argile.data.score + 1),
+      type_risque: TypeRisqueLogement.argile,
+      description: `La sécheresse géotechnique est le nom donné au phénomène de retrait-gonflement des argiles, processus naturel où les sols argileux gonflent lorsqu'ils sont humides et se rétractent lorsqu'ils sont secs, ce qui peut causer des dégradations sur les structures construites sur ces sols.`,
     });
     result.push({
       id: SCORE_API_NAME.score_radon,
       titre: `Risques d'exposition au radon`,
-      niveau_risque: score_radon.potentielRadon,
-      niveau_risque_label: score_radon.label,
+      niveau_risque: this.getNiveauRisqueFromScore(
+        score_radon.potentielRadon + 1,
+      ),
+      type_risque: TypeRisqueLogement.radon,
+      description: ``,
     });
 
     return result;
@@ -259,8 +268,17 @@ export class MaifRepository implements FinderInterface {
     return commune.commune ? commune.commune : code_commune;
   }
 
-  private getLabelNiveauRisqueFromScore(score: string | number): string {
+  private getNiveauRisqueFromScore(
+    score: string | number,
+  ): NiveauRisqueLogement {
+    if (parseInt('' + score) < 1) {
+      return NiveauRisqueLogement.tres_faible;
+    }
+    if (parseInt('' + score) > 5) {
+      return NiveauRisqueLogement.tres_fort;
+    }
     const value = mapping_score_risque_label['' + score];
-    return value ? value : 'inconnu';
+
+    return value ? value : NiveauRisqueLogement.inconnu;
   }
 }

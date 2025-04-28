@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CategorieRechercheManager } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { Day } from '../../../../domain/bibliotheque_services/types/days';
-import { NiveauRisqueNat } from '../../../repository/services_recherche/maif/maifAPIClient';
+import { NiveauRisqueLogement } from '../../../../domain/logement/NiveauRisque';
+import { TypeRisqueLogement } from '../../../../domain/logement/TypeRisque';
 import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
 
 export class OpenHourAPI {
@@ -47,9 +48,10 @@ export class ResultatRechercheAPI {
   @ApiProperty() emoji: string;
   @ApiProperty({ enum: FruitLegume }) type_fruit_legume: FruitLegume;
 
-  @ApiProperty({ enum: [1, 2, 3, 4, 5] }) niveau_risque?: number;
-  @ApiProperty({ enum: NiveauRisqueNat })
-  niveau_risque_label?: string;
+  @ApiProperty({ enum: NiveauRisqueLogement })
+  niveau_risque?: NiveauRisqueLogement;
+  @ApiProperty({ enum: TypeRisqueLogement })
+  type_risque?: TypeRisqueLogement;
 
   @ApiProperty() commitment: string;
   @ApiProperty() description: string;
@@ -100,7 +102,7 @@ export class ResultatRechercheAPI {
       sources: res.sources_lvao,
       pourcentage: res.pourcentage,
       niveau_risque: res.niveau_risque,
-      niveau_risque_label: res.niveau_risque_label,
+      type_risque: res.type_risque,
     };
   }
 }

@@ -1,4 +1,6 @@
 import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
+import { NiveauRisqueLogement } from '../../logement/NiveauRisque';
+import { TypeRisqueLogement } from '../../logement/TypeRisque';
 import {
   EtapeRecette_v0,
   IngredientRecette_v0,
@@ -73,8 +75,8 @@ export class ResultatRecherche {
 
   sources_lvao?: string[];
   pourcentage?: number;
-  niveau_risque?: number;
-  niveau_risque_label?: string;
+  niveau_risque?: NiveauRisqueLogement;
+  type_risque?: TypeRisqueLogement;
 
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;

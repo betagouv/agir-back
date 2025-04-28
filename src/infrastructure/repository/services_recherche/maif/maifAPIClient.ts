@@ -37,7 +37,7 @@ const NAME_URL_MAPPING: Record<SCORE_API_NAME, string> = {
 
 const API_TIMEOUT = 4000;
 
-export enum NiveauRisqueNat {
+export enum NiveauRisqueNatAPI {
   'A priori nul ou hors zonage' = 'A priori nul ou hors zonage',
   'Très faible' = 'Très faible',
   'Faible' = 'Faible',
@@ -121,7 +121,7 @@ export type GenericScoreResponseAPI = {
   actuel: {
     score: NiveauRisqueNat_Value; //5,
     color: string; //"#68389b",
-    label: NiveauRisqueNat; //"Très fort",
+    label: NiveauRisqueNatAPI; //"Très fort",
     zone: {
       type: string; //"Feature",
       geometry: {
@@ -131,14 +131,14 @@ export type GenericScoreResponseAPI = {
       properties: {
         score: NiveauRisqueNat_Value; //5;
         color: string; //'#68389b';
-        label: NiveauRisqueNat; //'Très fort';
+        label: NiveauRisqueNatAPI; //'Très fort';
       };
     };
   };
   futur: {
     score: NiveauRisqueNat_Value; //1;
     color: string; //'#a0cd63';
-    label: NiveauRisqueNat; //'A priori nul ou hors zonage';
+    label: NiveauRisqueNatAPI; //'A priori nul ou hors zonage';
   };
 };
 
@@ -182,7 +182,7 @@ export type ZonesSecheresseReponseAPI = {
         properties: {
           score: NiveauRisqueNat_Value; //4,
           color: string; //"#e9352e",
-          label: NiveauRisqueNat; //"Fort"
+          label: NiveauRisqueNatAPI; //"Fort"
         };
       },
     ];
