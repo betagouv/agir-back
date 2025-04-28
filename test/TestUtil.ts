@@ -590,12 +590,19 @@ export class TestUtil {
       proprietaire: true,
       risques: {
         nombre_catnat_commune: 1,
-        pourcent_exposition_commune_innondations: 2,
+
         pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
         pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
         pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
         pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
         pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+        pourcent_exposition_commune_inondation_zone_1: 1,
+        pourcent_exposition_commune_inondation_zone_2: 2,
+        pourcent_exposition_commune_inondation_zone_3: 3,
+        pourcent_exposition_commune_inondation_zone_4: 4,
+        pourcent_exposition_commune_inondation_zone_5: 5,
+        pourcent_exposition_commune_inondation_total_a_risque: 12,
+        pourcent_exposition_commune_secheresse_total_a_risque: 23,
       },
     };
 

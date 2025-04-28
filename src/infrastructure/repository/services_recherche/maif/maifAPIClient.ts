@@ -9,6 +9,9 @@ const API_URL_CATNAT =
 const API_URL_ZONES_SECHERESSE =
   'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/secheresses/scores/CODE_COMMUNE/zones';
 
+const API_URL_ZONES_INONDATION =
+  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/inondations/scores/CODE_COMMUNE/zones';
+
 export enum SCORE_API_NAME {
   'score_seisme' = 'score_seisme',
   'score_secheresse' = 'score_secheresse',
@@ -163,7 +166,7 @@ export type CatnatResponseElementAPI = {
   datePubJo: string; //'13/01/1983';
 };
 
-export type ZonesSecheresseReponseAPI = {
+export type ZonesReponseAPI = {
   actuel: {
     type: string; //"FeatureCollection",
     features: [
@@ -205,14 +208,25 @@ export class MaifAPIClient {
 
   public async callAPIZonesSecheresseByCodeCommune(
     code_commune: string,
-  ): Promise<ZonesSecheresseReponseAPI> {
+  ): Promise<ZonesReponseAPI> {
     const result = await this.callAPI(
       API_URL_ZONES_SECHERESSE.replace('CODE_COMMUNE', code_commune),
-      'maif/zones_secheresse',
+      'zones_secheresse',
       {},
     );
     if (!result) return null;
-    return result as ZonesSecheresseReponseAPI;
+    return result as ZonesReponseAPI;
+  }
+  public async callAPIZonesinondationByCodeCommune(
+    code_commune: string,
+  ): Promise<ZonesReponseAPI> {
+    const result = await this.callAPI(
+      API_URL_ZONES_INONDATION.replace('CODE_COMMUNE', code_commune),
+      'zones_inondation',
+      {},
+    );
+    if (!result) return null;
+    return result as ZonesReponseAPI;
   }
 
   public async callAPISecheresseScore(

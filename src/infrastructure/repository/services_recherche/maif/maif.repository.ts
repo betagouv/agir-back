@@ -12,6 +12,7 @@ import {
   MaifAPIClient,
   NiveauRisqueNat_Value,
   SCORE_API_NAME,
+  ZonesReponseAPI,
 } from './maifAPIClient';
 
 const mapping_score_risque_label: Record<
@@ -43,6 +44,7 @@ export class MaifRepository implements FinderInterface {
       CategorieRecherche.catnat,
       CategorieRecherche.zones_secheresse,
       CategorieRecherche.score_risque,
+      CategorieRecherche.zones_inondation,
     ];
   }
 
@@ -54,6 +56,10 @@ export class MaifRepository implements FinderInterface {
     if (filtre.categorie === CategorieRecherche.zones_secheresse) {
       if (!filtre.code_commune) return [];
       return this.findZonesSecheresse(filtre);
+    }
+    if (filtre.categorie === CategorieRecherche.zones_inondation) {
+      if (!filtre.code_commune) return [];
+      return this.findZonesInondation(filtre);
     }
     if (filtre.categorie === CategorieRecherche.score_risque) {
       if (!filtre.hasPoint()) ApplicationError.throwMissingLogitudeLatitude();
@@ -196,6 +202,29 @@ export class MaifRepository implements FinderInterface {
         );
       }
     }
+    return this.computeSyntheseZonesARisque(result);
+  }
+  private async findZonesInondation(
+    filtre: FiltreRecherche,
+  ): Promise<ResultatRecherche[]> {
+    const result = await this.maifAPIClient.callAPIZonesinondationByCodeCommune(
+      this.getCommuneGlobale(filtre.code_commune),
+    );
+    if (!result) {
+      if (filtre.silent_error) {
+        return [];
+      } else {
+        ApplicationError.throwExternalServiceError(
+          'Alentours / Inondation zones',
+        );
+      }
+    }
+    return this.computeSyntheseZonesARisque(result);
+  }
+
+  private computeSyntheseZonesARisque(
+    zones: ZonesReponseAPI,
+  ): ResultatRecherche[] {
     let synthese = {
       zone_1: 0,
       zone_2: 0,
@@ -204,7 +233,7 @@ export class MaifRepository implements FinderInterface {
       zone_5: 0,
     };
 
-    for (const feature of result.actuel.features) {
+    for (const feature of zones.actuel.features) {
       const area = this.computeAreaOfClosedPath(
         feature.geometry.coordinates[0],
       );
@@ -245,7 +274,7 @@ export class MaifRepository implements FinderInterface {
         pourcentage: Math.round((synthese.zone_5 / total_area) * 100),
       },
       {
-        id: 'total',
+        id: 'zone_total',
         titre: 'Total considéré à risque',
         pourcentage: Math.round(
           ((synthese.zone_5 + synthese.zone_4) / total_area) * 100,

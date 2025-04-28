@@ -426,25 +426,45 @@ export class ProfileUsecase {
       ...filtre,
       categorie: CategorieRecherche.zones_secheresse,
     });
+    const risques_zones_inondation = await finder.find({
+      ...filtre,
+      categorie: CategorieRecherche.zones_inondation,
+    });
 
     utilisateur.logement.risques.nombre_catnat_commune = risques_catnat.length;
 
     utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_1 =
-      this.zone_pourcent_value(1, risques_zones_secheresse);
+      this.zone_pourcent_value('1', risques_zones_secheresse);
     utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_2 =
-      this.zone_pourcent_value(2, risques_zones_secheresse);
+      this.zone_pourcent_value('2', risques_zones_secheresse);
     utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_3 =
-      this.zone_pourcent_value(3, risques_zones_secheresse);
+      this.zone_pourcent_value('3', risques_zones_secheresse);
     utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_4 =
-      this.zone_pourcent_value(4, risques_zones_secheresse);
+      this.zone_pourcent_value('4', risques_zones_secheresse);
     utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_5 =
-      this.zone_pourcent_value(5, risques_zones_secheresse);
+      this.zone_pourcent_value('5', risques_zones_secheresse);
+    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_total_a_risque =
+      this.zone_pourcent_value('total', risques_zones_secheresse);
+
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_1 =
+      this.zone_pourcent_value('1', risques_zones_inondation);
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_2 =
+      this.zone_pourcent_value('2', risques_zones_inondation);
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_3 =
+      this.zone_pourcent_value('3', risques_zones_inondation);
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_4 =
+      this.zone_pourcent_value('4', risques_zones_inondation);
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_5 =
+      this.zone_pourcent_value('5', risques_zones_inondation);
+    utilisateur.logement.risques.pourcent_exposition_commune_inondation_total_a_risque =
+      this.zone_pourcent_value('total', risques_zones_inondation);
+
     this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
       Scope.logement,
     ]);
   }
 
-  private zone_pourcent_value(zone: number, resultats: ResultatRecherche[]) {
+  private zone_pourcent_value(zone: string, resultats: ResultatRecherche[]) {
     const found = resultats.find((a) => a.id === `zone_${zone}`);
     return found ? found.pourcentage : 0;
   }

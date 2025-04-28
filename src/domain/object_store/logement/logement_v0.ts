@@ -15,13 +15,19 @@ export class Risques_v0 {
   pourcent_exposition_commune_secheresse_geotech_zone_3: number;
   pourcent_exposition_commune_secheresse_geotech_zone_4: number;
   pourcent_exposition_commune_secheresse_geotech_zone_5: number;
-  pourcent_exposition_commune_innondations: number;
+  pourcent_exposition_commune_secheresse_total_a_risque: number;
+
+  pourcent_exposition_commune_inondation_zone_1: number;
+  pourcent_exposition_commune_inondation_zone_2: number;
+  pourcent_exposition_commune_inondation_zone_3: number;
+  pourcent_exposition_commune_inondation_zone_4: number;
+  pourcent_exposition_commune_inondation_zone_5: number;
+  pourcent_exposition_commune_inondation_total_a_risque: number;
 
   static serialise(domain: Risques): Risques_v0 {
     return {
       nombre_catnat_commune: domain.nombre_catnat_commune,
-      pourcent_exposition_commune_innondations:
-        domain.pourcent_exposition_commune_innondations,
+
       pourcent_exposition_commune_secheresse_geotech_zone_1:
         domain.pourcent_exposition_commune_secheresse_geotech_zone_1,
       pourcent_exposition_commune_secheresse_geotech_zone_2:
@@ -32,6 +38,22 @@ export class Risques_v0 {
         domain.pourcent_exposition_commune_secheresse_geotech_zone_4,
       pourcent_exposition_commune_secheresse_geotech_zone_5:
         domain.pourcent_exposition_commune_secheresse_geotech_zone_5,
+
+      pourcent_exposition_commune_inondation_zone_1:
+        domain.pourcent_exposition_commune_inondation_zone_1,
+      pourcent_exposition_commune_inondation_zone_2:
+        domain.pourcent_exposition_commune_inondation_zone_2,
+      pourcent_exposition_commune_inondation_zone_3:
+        domain.pourcent_exposition_commune_inondation_zone_3,
+      pourcent_exposition_commune_inondation_zone_4:
+        domain.pourcent_exposition_commune_inondation_zone_4,
+      pourcent_exposition_commune_inondation_zone_5:
+        domain.pourcent_exposition_commune_inondation_zone_5,
+
+      pourcent_exposition_commune_inondation_total_a_risque:
+        domain.pourcent_exposition_commune_inondation_total_a_risque,
+      pourcent_exposition_commune_secheresse_total_a_risque:
+        domain.pourcent_exposition_commune_secheresse_geotech_total_a_risque,
     };
   }
 }
