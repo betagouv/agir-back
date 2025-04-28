@@ -263,27 +263,6 @@ export class QuestionKYCEnchainementUsecase {
     );
   }
 
-  private getListKycFromEnchainementId(
-    enchainementId: string,
-    utilisateur: Utilisateur,
-    eligibles: boolean,
-  ): QuestionKYC[] {
-    const liste_kycs_codes =
-      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainementId];
-
-    if (!liste_kycs_codes) {
-      ApplicationError.throwUnkownEnchainement(enchainementId);
-    }
-
-    if (eligibles) {
-      return utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        liste_kycs_codes,
-      );
-    } else {
-      return utilisateur.kyc_history.getListeKycsFromCodes(liste_kycs_codes);
-    }
-  }
-
   private isSimulateurId(id: string): boolean {
     const action = ActionDefinition.getTypeCodeFromString(id);
     return this.actionRepository.isSimulateur(action);

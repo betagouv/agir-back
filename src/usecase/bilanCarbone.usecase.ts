@@ -603,11 +603,7 @@ export class BilanCarboneUsecase {
   } {
     let progression = 0;
     for (const question of liste) {
-      if (question.isMosaic()) {
-        if (question.is_mosaic_answered) {
-          progression++;
-        }
-      } else if (question.hasAnyResponses()) {
+      if (question.is_answered) {
         progression++;
       }
     }

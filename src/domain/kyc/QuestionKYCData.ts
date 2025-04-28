@@ -83,7 +83,6 @@ export class QuestionKYCData implements TaggedContent {
   points: number;
   is_NGC: boolean;
   a_supprimer: boolean;
-  is_mosaic_answered?: boolean;
   is_answered?: boolean;
   tags: Tag[];
   score: number;

@@ -354,7 +354,7 @@ export class KYCHistory {
     }
 
     const result = QuestionKYC.buildFromMosaicDef(mosaic_def, target_kyc_liste);
-    result.is_mosaic_answered = this.isMosaicAnswered(mosaic_def.id);
+    result.is_answered = this.isMosaicAnswered(mosaic_def.id);
 
     return result;
   }
