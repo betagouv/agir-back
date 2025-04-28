@@ -60,6 +60,33 @@ export type PartenaireData = {
   updatedBy: number; //null
 };
 
+export type ActionData = {
+  id: number; //5,
+  titre: string; //"Préparer un plat avec **des ingrédients locaux**",
+  code: string; //"action_plat_local",
+  sous_titre: string; //"Où trouver des produits locaux ?",
+  pourquoi: string; //"# Pourquoi c'est important ?\n\n**Consommer local et de saison** a une influence directe sur la réduction des transports tout en permettant de soutenir l'économie locale. Des systèmes de vente directe du producteur au consommateur, tels que les marchés paysans ou les AMAP (Associations pour le maintien d'une agriculture paysanne) se développent aussi et contribuent à renforcer les liens entre les consommateurs et les agriculteurs.\n\n![Guide_ADEME](https://res.cloudinary.com/dq023imd8/image/upload/t_media_lib_thumb/v1739883747/Capture_d_ecran_2025_02_18_140100_4bb340c086.png)\n\n[Pour tout savoir sur l'alimentation durable, cliquez ici.](https://librairie.ademe.fr/ged/9236/guide-alimentation-plus-durable.pdf)",
+  comment: string; //"# Comment faire ?\n\nConnaissez-vous les spécialités et les aliments produits dans votre région ?\nCette semaine, nous vous proposons de **composer un plat en utilisant majoritairement des ingrédients locaux !** Vous pouvez vous inspirer de nos recettes de saison en adaptant les ingrédients.\n\n# Où trouver des ingrédients locaux ?\n\n**[Sur cette carte](https://jagis.beta.gouv.fr/thematique/me-nourrir/service/pres-de-chez-nous)**, vous pourrez trouver les producteurs locaux autour de vous.\n\nIl existe aussi de nombreux autres cartes en ligne pour trouver des produits en circuits courts, comme le site *Frais et local*, *Bienvenue à la ferme* ou encore *le réseau des AMAP*.",
+  categorie_recettes: string; //"saison",
+  action_lvo: null;
+  objet_lvo: null;
+  createdAt: string; //"2025-02-17T15:16:10.354Z",
+  updatedAt: string; //"2025-03-31T16:46:11.557Z",
+  publishedAt: string; //"2025-02-18T09:35:11.549Z",
+  ngc_action_rule: null;
+  consigne: string; //"Préparez un plat avec une majorité d'ingrédients locaux cette semaine",
+  label_compteur: string; //"**{NBR_ACTIONS} plats préparés** par la communauté",
+  categorie_pdcn: string; //null,
+  thematique: number; //1,
+  besoins: number[];
+  tags_excluants: number[];
+  faqs: number[];
+  sources: [];
+  articles: [];
+  createdBy: number;
+  updatedBy: number;
+};
+
 export type AideData = {
   id: number; //3,
   titre?: string; //"Acheter un vélo",
@@ -91,6 +118,37 @@ export type AideData = {
   updatedBy?: number; //11
 };
 
+export type TagExcluant = { id: number; valeur: string };
+
+export type Thematique = {
+  id: number;
+  titre: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  code: string;
+  label: string;
+  emoji: string;
+  articles: null;
+  quizzes: null;
+  aides: null;
+  quizzes_gamification: null;
+  rubriques: null;
+  articles_gamifications: null;
+  services: null;
+  defis: null;
+  imageUrl: null;
+  kycs: null;
+  missions: null;
+  action_classiques: null;
+  action_bilans: null;
+  action_quizzes: null;
+  action_simulateurs: null;
+  faqs: null;
+  createdBy: null;
+  updatedBy: null;
+};
+
 export type ArticleAndSourceExport = {
   version: number;
   data: {
@@ -103,6 +161,17 @@ export type AideAndPartenaireExport = {
   data: {
     'api::partenaire.partenaire'?: Record<string, PartenaireData>;
     'api::aide.aide': Record<string, AideData>;
+  };
+};
+export type ActionExport = {
+  version: number;
+  data: {
+    'api::action-classique.action-classique'?: Record<string, ActionData>;
+    'api::action-quizz.action-quizz'?: Record<string, ActionData>;
+    'api::action-simulateur.action-simulateur'?: Record<string, ActionData>;
+    'api::action-bilan.action-bilan'?: Record<string, ActionData>;
+    'tags.tag-excluant'?: Record<string, TagExcluant>;
+    'api::thematique.thematique'?: Record<string, Thematique>;
   };
 };
 
@@ -201,6 +270,85 @@ export class CMSDataHelperUsecase {
     }
     // dump du résultat
     writeFileSync('output.json', JSON.stringify(output));
+  }
+
+  public async cleanActionExport(jsonFilePath: string) {
+    var data: ActionExport = JSON.parse(readFileSync(jsonFilePath, 'utf8'));
+    const liste_actions_classiques =
+      data.data['api::action-classique.action-classique'];
+    const liste_quizz = data.data['api::action-quizz.action-quizz'];
+    const liste_simu = data.data['api::action-simulateur.action-simulateur'];
+    const liste_bilan = data.data['api::action-bilan.action-bilan'];
+
+    const tags_excluant = data.data['tags.tag-excluant'];
+    const thematiques = data.data['api::thematique.thematique'];
+
+    const output = [];
+    if (liste_actions_classiques) {
+      for (const [action_id, action] of Object.entries(
+        liste_actions_classiques,
+      )) {
+        output.push({
+          id: action_id,
+          type: 'classique',
+          titre: action.titre,
+          est_brouillon: !action.publishedAt,
+          tags_excluant: action.tags_excluants.map(
+            (t) => tags_excluant['' + t]?.valeur,
+          ),
+          thematique: thematiques['' + action.thematique]?.code,
+        });
+      }
+      writeFileSync('out_actions_classique.json', JSON.stringify(output));
+    }
+
+    if (liste_quizz) {
+      for (const [action_id, action] of Object.entries(liste_quizz)) {
+        output.push({
+          id: action_id,
+          type: 'quizz',
+          titre: action.titre,
+          est_brouillon: !action.publishedAt,
+          tags_excluant: action.tags_excluants.map(
+            (t) => tags_excluant['' + t]?.valeur,
+          ),
+          thematique: thematiques['' + action.thematique]?.code,
+        });
+      }
+      writeFileSync('out_actions_quizz.json', JSON.stringify(output));
+    }
+
+    if (liste_simu) {
+      for (const [action_id, action] of Object.entries(liste_simu)) {
+        output.push({
+          id: action_id,
+          type: 'simulateur',
+          titre: action.titre,
+          est_brouillon: !action.publishedAt,
+          tags_excluant: action.tags_excluants.map(
+            (t) => tags_excluant['' + t]?.valeur,
+          ),
+          thematique: thematiques['' + action.thematique]?.code,
+        });
+      }
+      writeFileSync('out_actions_simulateur.json', JSON.stringify(output));
+    }
+
+    if (liste_bilan) {
+      for (const [action_id, action] of Object.entries(liste_bilan)) {
+        output.push({
+          id: action_id,
+          type: 'bilan',
+          titre: action.titre,
+          est_brouillon: !action.publishedAt,
+          tags_excluant: action.tags_excluants.map(
+            (t) => tags_excluant['' + t]?.valeur,
+          ),
+          thematique: thematiques['' + action.thematique]?.code,
+        });
+      }
+      writeFileSync('out_actions_bilan.json', JSON.stringify(output));
+    }
   }
 
   private findSourceOfLink(
