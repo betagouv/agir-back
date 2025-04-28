@@ -119,7 +119,6 @@ export class QuestionKYCAPI_v2 {
           };
         }
       });
-      result.is_answered = question.is_mosaic_answered;
     }
     return result;
   }
