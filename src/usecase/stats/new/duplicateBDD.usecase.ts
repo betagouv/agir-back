@@ -46,8 +46,14 @@ export class DuplicateBDDForStatsUsecase {
 
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
+        const activity_log = await this.utilisateurRepository.getActivityLog(
+          user.id,
+        );
         try {
-          await this.statistiqueExternalRepository.createUserData(user);
+          await this.statistiqueExternalRepository.createUserData(
+            user,
+            activity_log,
+          );
         } catch (error) {
           console.error(error);
           console.error(`Error Creating User : ${JSON.stringify(user)}`);
