@@ -186,24 +186,59 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   });
   it('GET /utilisateurs/id/logement - read logement datas', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: {
+        nombre_catnat_commune: 1,
+
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+        pourcent_exposition_commune_inondation_zone_1: 1,
+        pourcent_exposition_commune_inondation_zone_2: 2,
+        pourcent_exposition_commune_inondation_zone_3: 3,
+        pourcent_exposition_commune_inondation_zone_4: 4,
+        pourcent_exposition_commune_inondation_zone_5: 5,
+        pourcent_exposition_commune_inondation_total_a_risque: 12,
+        pourcent_exposition_commune_secheresse_total_a_risque: 23,
+      },
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/logement',
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.dpe).toEqual(DPE.B);
-    expect(response.body.superficie).toEqual(Superficie.superficie_150);
-    expect(response.body.type).toEqual(TypeLogement.maison);
-    expect(response.body.code_postal).toEqual('91120');
-    expect(response.body.chauffage).toEqual(Chauffage.bois);
-    expect(response.body.commune).toEqual('PALAISEAU');
-    expect(response.body.commune_label).toEqual('Palaiseau');
-    expect(response.body.nombre_adultes).toEqual(2);
-    expect(response.body.nombre_enfants).toEqual(2);
-    expect(response.body.plus_de_15_ans).toEqual(true);
-    expect(response.body.proprietaire).toEqual(true);
+    expect(response.body).toEqual({
+      chauffage: 'bois',
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      commune_label: 'Palaiseau',
+      dpe: 'B',
+      nombre_adultes: 2,
+      nombre_arrets_catnat: 1,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      pourcentage_surface_inondation: 12,
+      pourcentage_surface_secheresse_geotech: 23,
+      proprietaire: true,
+      superficie: 'superficie_150',
+      type: 'maison',
+    });
   });
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
     // GIVEN

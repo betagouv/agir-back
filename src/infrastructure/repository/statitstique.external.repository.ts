@@ -72,7 +72,7 @@ export class StatistiqueExternalRepository {
     });
   }
 
-  public async createUserData(utilisateur: Utilisateur) {
+  public async createUserData(utilisateur: Utilisateur, activity_log: Date[]) {
     const code_depart =
       this.communeRepository.findDepartementRegionByCodeCommune(
         utilisateur.code_commune,
@@ -98,6 +98,7 @@ export class StatistiqueExternalRepository {
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,
         version_utilisateur: utilisateur.global_user_version,
+        actif_le: activity_log,
       },
     });
   }

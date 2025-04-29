@@ -60,6 +60,8 @@ export class MosaicKYC_CATALOGUE {
         KYCID.KYC_chauffage_fioul,
         KYCID.KYC_chauffage_gaz,
         KYCID.KYC_chauffage_elec,
+        KYCID.KYC_chauffage_pompe_chaleur,
+        KYCID.KYC_chauffage_reseau,
       ],
       thematique: Thematique.logement,
     },

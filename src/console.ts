@@ -260,6 +260,12 @@ async function bootstrap() {
         .migrateMultiPartenairesAides(process.argv[3]);
       break;
 
+    case 'cms_clean_actions_export':
+      await application
+        .get(CMSDataHelperUsecase)
+        .cleanActionExport(process.argv[3]);
+      break;
+
     case 'compute_all_aides_communes_from_partenaires':
       console.log(
         `START compute_all_aides_communes_from_partenaires ${start_time}`,
