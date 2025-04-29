@@ -482,13 +482,24 @@ export class UtilisateurRepository {
     return Number(count);
   }
 
-  async update_last_activite(utilisateurId: string) {
+  async update_last_activite(utilisateurId: string, log: Date[]) {
     await this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: {
         derniere_activite: new Date(),
+        activity_dates_log: log,
       },
     });
+  }
+  async getActivityLog(utilisateurId: string): Promise<Date[]> {
+    const result = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        activity_dates_log: true,
+      },
+    });
+
+    return result.activity_dates_log;
   }
 
   async findLastActiveUtilisateurs(
@@ -721,6 +732,7 @@ export class UtilisateurRepository {
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
       global_user_version: user.global_user_version,
+      activity_dates_log: undefined,
     };
   }
 
@@ -815,6 +827,7 @@ export class UtilisateurRepository {
       notification_history: !scopes.includes(Scope.notification_history),
       thematique_history: !scopes.includes(Scope.thematique_history),
       cache_bilan_carbone: !scopes.includes(Scope.cache_bilan_carbone),
+      activity_dates_log: true,
     };
   }
 }

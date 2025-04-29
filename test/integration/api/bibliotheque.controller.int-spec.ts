@@ -77,6 +77,9 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(userDB.derniere_activite.getTime()).toBeGreaterThan(
       Date.now() - 200,
     );
+    const log = await utilisateurRepository.getActivityLog('utilisateur-id');
+    expect(log).toHaveLength(1);
+    expect(log[0].getTime()).toBeGreaterThan(Date.now() - 200);
   });
   it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN

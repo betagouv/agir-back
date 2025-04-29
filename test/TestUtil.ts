@@ -665,6 +665,7 @@ export class TestUtil {
       pseudo: 'pseudo',
       cache_bilan_carbone: cache_bilan_carbone as any,
       global_user_version: GlobalUserVersion.V2,
+      activity_dates_log: [],
       ...override,
     };
   }
