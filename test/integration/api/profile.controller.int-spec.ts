@@ -202,6 +202,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
 
       risques: {
         nombre_catnat_commune: 1,
@@ -1081,6 +1082,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
 
     expect(dbUser.code_commune).toEqual('21231');
+    expect(dbUser.logement.code_commune).toEqual('21231');
+  });
+  it('PATCH /utilisateurs/id/logement - maj code commune surcharge le reste', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      commune: 'DIJON',
+      code_commune: '91477',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.code_commune).toEqual('91477');
+    expect(dbUser.logement.code_commune).toEqual('91477');
+    expect(dbUser.logement.commune).toEqual('Palaiseau');
+    expect(dbUser.logement.code_postal).toEqual('21000'); // code postal lui pas touché car on peut pas retoruver un unique code postal à partir d'un code commune
   });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
     // GIVEN
@@ -1368,6 +1393,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1386,6 +1412,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

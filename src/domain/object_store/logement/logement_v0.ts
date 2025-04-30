@@ -62,6 +62,7 @@ export class Logement_v0 extends Versioned_v0 {
   nombre_adultes: number;
   nombre_enfants: number;
   code_postal: string;
+  code_commune: string;
   commune: string;
   numero_rue: string; // 3, 12bis
   rue: string; // avenue de la paix
@@ -93,6 +94,7 @@ export class Logement_v0 extends Versioned_v0 {
       longitude: domain.longitude,
       numero_rue: domain.numero_rue,
       rue: domain.rue,
+      code_commune: domain.code_commune,
     };
   }
 }

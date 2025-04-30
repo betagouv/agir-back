@@ -214,7 +214,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Partial<Logement> = { ...input };
+    const data_to_update: Partial<Logement> = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -249,10 +249,22 @@ export class ProfileUsecase {
           input.commune,
         );
       }
-      utilisateur.code_commune = this.AorB(
-        code_commune,
-        utilisateur.code_commune,
+      utilisateur.code_commune = code_commune;
+      data_to_update.code_commune = code_commune;
+    }
+
+    if (input.code_commune) {
+      console.log(input.code_commune);
+      const commune = this.communeRepository.getCommuneByCodeINSEE(
+        input.code_commune,
       );
+      if (commune) {
+        utilisateur.code_commune = commune.code;
+        data_to_update.code_commune = commune.code;
+        data_to_update.commune = commune.nom;
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(input.code_commune);
+      }
     }
 
     if (input.rue) {
@@ -289,7 +301,7 @@ export class ProfileUsecase {
       }
     }
 
-    utilisateur.logement.patch(update_data, utilisateur);
+    utilisateur.logement.patch(data_to_update, utilisateur);
 
     try {
       LogementToKycSync.synchronize(input, utilisateur.kyc_history);

@@ -33,6 +33,7 @@ const logement_palaiseau: Logement_v0 = {
   longitude: 2,
   numero_rue: '12',
   rue: 'avenue de la Paix',
+  code_commune: undefined,
 };
 
 describe('RechercheServices (API test)', () => {
@@ -151,6 +152,7 @@ describe('RechercheServices (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });
@@ -188,6 +190,7 @@ describe('RechercheServices (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });

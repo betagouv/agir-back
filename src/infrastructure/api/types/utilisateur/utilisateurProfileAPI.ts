@@ -13,6 +13,7 @@ export class LogementAPI {
   @ApiProperty({ required: false }) nombre_enfants: number;
   @ApiProperty({ required: false }) code_postal: string;
   @ApiProperty({ required: false }) commune: string;
+  @ApiProperty({ required: false }) code_commune: string;
   @ApiProperty() latitude: number;
   @ApiProperty() longitude: number;
   @ApiProperty() numero_rue: string;
@@ -53,6 +54,7 @@ export class LogementAPI {
       pourcentage_surface_secheresse_geotech:
         log.risques
           .pourcent_exposition_commune_secheresse_geotech_total_a_risque,
+      code_commune: log.code_commune,
     };
   }
 }

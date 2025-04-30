@@ -84,6 +84,7 @@ export class Risques {
 export class Logement {
   nombre_adultes: number;
   nombre_enfants: number;
+  code_commune: string;
   code_postal: string;
   commune: string;
   numero_rue: string; // 3, 12bis
@@ -120,6 +121,7 @@ export class Logement {
     this.rue = log.rue;
     this.latitude = log.latitude;
     this.longitude = log.longitude;
+    this.code_commune = log.code_commune;
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {
@@ -143,6 +145,7 @@ export class Logement {
     this.rue = this.AorB(input.rue, this.rue);
     this.longitude = this.AorB(input.longitude, this.longitude);
     this.latitude = this.AorB(input.latitude, this.latitude);
+    this.code_commune = this.AorB(input.code_commune, this.code_commune);
   }
 
   private AorB?<T>(a: T, b: T): T {

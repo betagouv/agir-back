@@ -54,6 +54,7 @@ describe('UtilisateurView', () => {
         numero_rue: '13bis',
         longitude: 1,
         latitude: 43.7,
+        code_commune: '91477',
       }) as any,
       gamification: new Gamification({
         version: 0,

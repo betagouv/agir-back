@@ -104,7 +104,7 @@ export class UtilisateurData {
   brevo_update_disabled: boolean;
   mobile_token: string;
   mobile_token_updated_at: Date;
-  code_commune: string;
+  code_commune: string; // FIXME : deprecated , à supprimer dès que celui de logement est mis en service
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;

@@ -34,6 +34,7 @@ const logement_palaiseau: Logement_v0 = {
   longitude: 2,
   numero_rue: '12',
   rue: 'avenue de la Paix',
+  code_commune: undefined,
 };
 
 describe('RechercheServices (API test)', () => {

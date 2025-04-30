@@ -53,6 +53,7 @@ describe('Logement vN ', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: '91477',
     });
 
     // WHEN
@@ -95,6 +96,7 @@ describe('Logement vN ', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: '91477',
     });
 
     // WHEN

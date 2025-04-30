@@ -1086,6 +1086,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
