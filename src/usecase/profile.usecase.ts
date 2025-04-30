@@ -319,7 +319,7 @@ export class ProfileUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.async_SetRisquesFromCodeCommune(utilisateur);
+    this.setRisquesFromCodeCommune(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -386,6 +386,45 @@ export class ProfileUsecase {
     }
   }
 
+  async updateAllCommuneRisques(block_size: number = 50): Promise<string[]> {
+    const result: string[] = [];
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const MAX_TOTAL_COMPUTE = 200;
+
+    let total = 0;
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.logement],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        if (total > MAX_TOTAL_COMPUTE) return result;
+
+        if (
+          user.code_commune &&
+          user.logement.risques.nombre_catnat_commune === undefined
+        ) {
+          try {
+            await this.setRisquesFromCodeCommune(user, false);
+            result.push(`Computed risques communes OK for [${user.id}]`);
+            total++;
+          } catch (error) {
+            result.push(
+              `Error computing risques communes for [${user.id}] : ${error.message}`,
+            );
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   async updateAllUserCouvertureAides(): Promise<{
     couvert: number;
     pas_couvert: number;
@@ -449,12 +488,10 @@ export class ProfileUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private AorB?<T>(a: T, b: T): T {
-    if (a === undefined) return b;
-    return a;
-  }
-
-  private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
+  private async setRisquesFromCodeCommune(
+    utilisateur: Utilisateur,
+    silent_error = true,
+  ) {
     if (!utilisateur.code_commune) return;
 
     const finder = this.rechercheServiceManager.getFinderById(
@@ -463,7 +500,7 @@ export class ProfileUsecase {
 
     const filtre: FiltreRecherche = {
       code_commune: utilisateur.code_commune,
-      silent_error: true,
+      silent_error: silent_error,
     };
 
     const risques_catnat = await finder.find({
@@ -507,9 +544,10 @@ export class ProfileUsecase {
     utilisateur.logement.risques.pourcent_exposition_commune_inondation_total_a_risque =
       this.zone_pourcent_value('total', risques_zones_inondation);
 
-    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
-      Scope.logement,
-    ]);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.logement],
+    );
   }
 
   private zone_pourcent_value(zone: string, resultats: ResultatRecherche[]) {

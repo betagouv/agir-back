@@ -1711,6 +1711,45 @@ describe('Admin (API test)', () => {
     });
   });
 
+  it('POST /admin/update_all_communes_risques', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '91477',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/update_all_communes_risques');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      "Error computing risques communes for [utilisateur-id] : Le service externe 'Alentours / Catnat' semble rencontrer un problème, nous vous proposons de re-essayer plus tard",
+    ]);
+  });
+
   it('POST /admin/re_inject_situations_NGC : OK si table vide de situation', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
