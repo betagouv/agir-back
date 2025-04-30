@@ -37,10 +37,11 @@ export class AidesVeloUsecase {
     const RFR =
       utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;
     const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();
-    const ABONNEMENT =
-      utilisateur.abonnement_ter_loire === null
-        ? false
-        : utilisateur.abonnement_ter_loire;
+    // NOTE: l'aide pays de la loire a été désactivée.
+    // const ABONNEMENT =
+    //   utilisateur.abonnement_ter_loire === null
+    //     ? false
+    //     : utilisateur.abonnement_ter_loire;
 
     const code_insee = this.communeRepository.getCommuneCodeInsee(
       utilisateur.logement.code_postal,
@@ -55,7 +56,8 @@ export class AidesVeloUsecase {
       'localisation . région': commune?.region,
       'localisation . département': commune?.departement,
       'vélo . prix': prix_velo,
-      'aides . pays de la loire . abonné TER': ABONNEMENT,
+      // NOTE: l'aide pays de la loire a été désactivée.
+      // 'aides . pays de la loire . abonné TER': ABONNEMENT,
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
       'revenu fiscal de référence par part . revenu de référence': RFR,
       'revenu fiscal de référence par part . nombre de parts': PARTS,
@@ -102,7 +104,7 @@ export class AidesVeloUsecase {
       'localisation . région': region,
       'localisation . département': departement,
       'vélo . prix': prix_velo ? prix_velo : 1000,
-      'aides . pays de la loire . abonné TER': false,
+      // 'aides . pays de la loire . abonné TER': false,
       'foyer . personnes': parts ? parts : 2,
       'revenu fiscal de référence par part . revenu de référence': rfr
         ? rfr
