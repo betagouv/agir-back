@@ -317,6 +317,33 @@ export class MigrationUsecase {
   ): Promise<{ ok: boolean; info: string }> {
     const utilisateur = await _this.utilisateurRepository.getById(user_id, [
       Scope.core,
+      Scope.logement,
+    ]);
+
+    // DO SOMETHING
+
+    utilisateur.logement.code_commune = utilisateur.code_commune;
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.logement, Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `updated logement.code_commune`,
+    };
+  }
+  private async migrate_17(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
     ]);
 
     // DO SOMETHING

@@ -657,6 +657,62 @@ describe('Admin (API test)', () => {
     expect(userDB.code_postal_classement).toEqual('45664');
   });
 
+  it('POST /admin/migrate_users migration V16 OK - inject code_commune dans logement', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: null,
+      chauffage: Chauffage.bois,
+      commune: null,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 15,
+      migration_enabled: true,
+      code_commune: '12345',
+      logement: logement as any,
+    });
+    App.USER_CURRENT_VERSION = 16;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 16,
+            ok: true,
+            info: 'updated logement.code_commune',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.code_commune).toEqual('12345');
+    expect(userDB.version).toEqual(16);
+    expect(userDB.logement.code_commune).toEqual('12345');
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
