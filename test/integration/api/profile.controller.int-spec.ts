@@ -198,6 +198,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+
       risques: {
         nombre_catnat_commune: 1,
 
@@ -238,6 +243,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       proprietaire: true,
       superficie: 'superficie_150',
       type: 'maison',
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
     });
   });
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
@@ -1028,6 +1037,32 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
+
+  it('PATCH /utilisateurs/id/logement - maj rue, num rue, long et lat', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      rue: 'rue du soleil',
+      numero_rue: '13bis',
+      longitude: 1,
+      latitude: 43.7,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.logement.rue).toEqual('rue du soleil');
+    expect(dbUser.logement.numero_rue).toEqual('13bis');
+    expect(dbUser.logement.longitude).toEqual(1);
+    expect(dbUser.logement.latitude).toEqual(43.7);
+  });
+
   it('PATCH /utilisateurs/id/logement - maj code postal positionne le code insee de la commune', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1329,6 +1364,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1343,6 +1382,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
     };
 
     await TestUtil.create(DB.utilisateur, {

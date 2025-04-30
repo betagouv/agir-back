@@ -5,6 +5,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -35,21 +36,28 @@ describe('Mes Aides Réno', () => {
 
   describe('updateUtilisateurWith', () => {
     test("propriétaire d'une maison principale à Toulouse", async () => {
+      const logement: Logement_v0 = {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.appartement,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: false,
+        latitude: undefined,
+        longitude: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+      };
+
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
-        logement: {
-          version: 0,
-          superficie: Superficie.superficie_150,
-          type: TypeLogement.appartement,
-          code_postal: '91120',
-          chauffage: Chauffage.bois,
-          commune: 'PALAISEAU',
-          dpe: DPE.B,
-          nombre_adultes: 2,
-          nombre_enfants: 2,
-          plus_de_15_ans: false,
-          proprietaire: false,
-        },
+        logement: logement as any,
       });
       await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
@@ -123,22 +131,29 @@ describe('Mes Aides Réno', () => {
     });
 
     test("le logement n'est pas la résidence principale", async () => {
+      const logement: Logement_v0 = {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.appartement,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: false,
+        latitude: undefined,
+        longitude: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+      };
+
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
         code_commune: '91120',
-        logement: {
-          version: 0,
-          superficie: Superficie.superficie_150,
-          type: TypeLogement.appartement,
-          code_postal: '91120',
-          chauffage: Chauffage.bois,
-          commune: 'PALAISEAU',
-          dpe: DPE.B,
-          nombre_adultes: 2,
-          nombre_enfants: 2,
-          plus_de_15_ans: false,
-          proprietaire: false,
-        },
+        logement: logement as any,
       });
       await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
@@ -199,17 +214,26 @@ describe('Mes Aides Réno', () => {
     });
 
     test('should correctly parse informations', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        plus_de_15_ans: true,
+        dpe: DPE.B,
+        type: TypeLogement.appartement,
+        nombre_adultes: 2,
+        commune: 'TOULOUSE',
+        code_postal: '31500',
+        superficie: Superficie.superficie_150,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+      };
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          plus_de_15_ans: true,
-          dpe: 'B',
-          type: TypeLogement.appartement,
-          nombre_adultes: 2,
-          commune: 'TOULOUSE',
-          code_postal: '31500',
-          superficie: Superficie.superficie_150,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
 
@@ -220,17 +244,27 @@ describe('Mes Aides Réno', () => {
     });
 
     test('superficice from KYC instead of profil', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        plus_de_15_ans: true,
+        dpe: DPE.B,
+        type: TypeLogement.appartement,
+        nombre_adultes: 2,
+        commune: 'TOULOUSE',
+        code_postal: '31500',
+        superficie: Superficie.superficie_70,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+      };
+
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          plus_de_15_ans: true,
-          dpe: 'B',
-          type: TypeLogement.appartement,
-          nombre_adultes: 2,
-          commune: 'TOULOUSE',
-          code_postal: '31500',
-          superficie: Superficie.superficie_70,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
       await TestUtil.createKYCLogement();
@@ -254,12 +288,26 @@ describe('Mes Aides Réno', () => {
     });
 
     test('should correctly parse partial informations', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        code_postal: undefined,
+        commune: undefined,
+        plus_de_15_ans: undefined,
+        superficie: undefined,
+        type: undefined,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+      };
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          dpe: 'B',
-          nombre_adultes: 2,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
 

@@ -50,6 +50,10 @@ describe('UtilisateurView', () => {
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
         risques: undefined,
+        rue: 'rue du soleil',
+        numero_rue: '13bis',
+        longitude: 1,
+        latitude: 43.7,
       }) as any,
       gamification: new Gamification({
         version: 0,

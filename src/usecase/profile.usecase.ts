@@ -25,6 +25,8 @@ import { ContactUsecase } from './contact.usecase';
 import { FranceConnectUsecase } from './franceConnect.usecase';
 
 const FIELD_MAX_LENGTH = 40;
+const NUM_RUE_MAX_LENGTH = 10;
+const NOM_RUE_MAX_LENGTH = 100;
 
 export type Phrase = {
   phrase: string;
@@ -251,6 +253,40 @@ export class ProfileUsecase {
         code_commune,
         utilisateur.code_commune,
       );
+    }
+
+    if (input.rue) {
+      if (input.rue.length > NOM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData('rue', input.rue, NOM_RUE_MAX_LENGTH);
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.longitude) {
+      if (!validator.isDecimal('' + input.longitude)) {
+        ApplicationError.throwNotDecimalField('longitude', input.longitude);
+      }
+    }
+    if (input.latitude) {
+      if (!validator.isDecimal('' + input.latitude)) {
+        ApplicationError.throwNotDecimalField('latitude', input.latitude);
+      }
     }
 
     utilisateur.logement.patch(update_data, utilisateur);
