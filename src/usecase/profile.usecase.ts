@@ -390,7 +390,7 @@ export class ProfileUsecase {
     const result: string[] = [];
     const total_user_count = await this.utilisateurRepository.countAll();
 
-    const MAX_TOTAL_COMPUTE = 200;
+    const MAX_TOTAL_COMPUTE = 10;
 
     let total = 0;
 
@@ -406,10 +406,11 @@ export class ProfileUsecase {
       for (const user of current_user_list) {
         if (total > MAX_TOTAL_COMPUTE) return result;
 
-        if (
-          user.code_commune &&
-          user.logement.risques.nombre_catnat_commune === undefined
-        ) {
+        if (!user.code_commune) {
+          result.push(`Code commune absent pour [${user.id}]`);
+        } else if (user.logement.risques.nombre_catnat_commune !== undefined) {
+          result.push(`Risques commune déjà présents pour [${user.id}]`);
+        } else {
           try {
             await this.setRisquesFromCodeCommune(user, false);
             result.push(`Computed risques communes OK for [${user.id}]`);
