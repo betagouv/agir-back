@@ -31,7 +31,7 @@ describe('/communes (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('PALAISEAU');
   });
-  it.only('GET /communes_v2?code_postal=XXXX - ville unique - libellé + code INSEE', async () => {
+  it('GET /communes_v2?code_postal=XXXX - ville unique - libellé + code INSEE', async () => {
     // WHEN
     const response = await TestUtil.GET('/communes_v2?code_postal=91120');
 
