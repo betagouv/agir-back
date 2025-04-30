@@ -390,7 +390,7 @@ export class ProfileUsecase {
     const result: string[] = [];
     const total_user_count = await this.utilisateurRepository.countAll();
 
-    const MAX_TOTAL_COMPUTE = 10;
+    const MAX_TOTAL_COMPUTE = 200;
 
     let total = 0;
 
