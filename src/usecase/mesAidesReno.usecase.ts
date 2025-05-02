@@ -21,18 +21,31 @@ export class MesAidesRenoUsecase {
    * Returns the URL of the Mes Aides Reno iframe with the user's information
    * prefilled based on the user's information and KYC history.
    */
-  async getIframeUrl(userId: string): Promise<string> {
+  async getIframeUrl(
+    userId: string,
+  ): Promise<{ iframe_url: string; iframe_url_deja_faite: string }> {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
       Scope.logement,
     ]);
     if (!utilisateur) {
-      return MES_AIDES_RENO_IFRAME_SIMULATION_URL;
+      return {
+        iframe_url: MES_AIDES_RENO_IFRAME_SIMULATION_URL,
+        iframe_url_deja_faite: MES_AIDES_RENO_IFRAME_SIMULATION_URL,
+      };
     }
 
     const params = this.getInputSearchParamsFor(utilisateur);
+    const deja_faite_params = new URLSearchParams();
 
-    return `${MES_AIDES_RENO_IFRAME_SIMULATION_URL}&${params.toString()}`;
+    params.forEach((value, key) => {
+      deja_faite_params.set(key, value + '*');
+    });
+
+    return {
+      iframe_url: `${MES_AIDES_RENO_IFRAME_SIMULATION_URL}&${params.toString()}`,
+      iframe_url_deja_faite: `${MES_AIDES_RENO_IFRAME_SIMULATION_URL}&${deja_faite_params.toString()}`,
+    };
   }
 
   /**
