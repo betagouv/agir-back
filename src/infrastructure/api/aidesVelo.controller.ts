@@ -21,7 +21,6 @@ import { GenericControler } from './genericControler';
 import { AidesVeloParTypeAPI } from './types/aide/AidesVeloParTypeAPI';
 import { AideVeloNonCalculeeAPI } from './types/aide/AideVeloNonCalculeesAPI';
 import { InputAideVeloAPI } from './types/aide/inputAideVeloAPI';
-import { InputAideVeloOpenAPI } from './types/aide/inputAideVeloOpenAPI';
 import { InputRecupererAideVeloAPI } from './types/aide/InputRecupererAideVeloAPI';
 
 @Controller()
@@ -50,29 +49,6 @@ export class AidesVeloController extends GenericControler {
       body.etat_du_velo,
       body.situation_handicap,
     );
-    return AidesVeloParTypeAPI.mapToAPI(result);
-  }
-
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: App.getThrottleLimit(), ttl: 1000 } })
-  @ApiOkResponse({ type: AidesVeloParTypeAPI })
-  @Post('aides/simulerAideVelo')
-  @ApiBody({
-    type: InputAideVeloOpenAPI,
-    description:
-      'DEPRECATED: Utiliser /utilisateurs/:utilisateurId/simulerAideVelo ou /aides/recupererAideVeloParCodeCommuneOuEPCI',
-  })
-  async simulerAideVelo(
-    @Body() body: InputAideVeloOpenAPI,
-  ): Promise<AidesVeloParTypeAPI> {
-    const result =
-      await this.aidesVeloUsecase.simulerAideVeloParCodeCommmuneOuEPCI(
-        body.code_insee,
-        body.prix_du_velo,
-        body.rfr,
-        body.parts,
-        body.etat_du_velo,
-      );
     return AidesVeloParTypeAPI.mapToAPI(result);
   }
 
