@@ -378,6 +378,12 @@ export class MaifAPIClient {
         params: params,
       });
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return {};
+      }
+      if (error.response && error.response.status === 404) {
+        return {};
+      }
       console.log(
         `Error calling [maif/${name}] after ${Date.now() - call_time} ms`,
       );

@@ -324,6 +324,9 @@ export class MaifRepository implements FinderInterface {
   private getNiveauRisqueFromScore(
     score: string | number,
   ): NiveauRisqueLogement {
+    if (score === undefined) {
+      return NiveauRisqueLogement.inconnu;
+    }
     if (parseInt('' + score) < 1) {
       return NiveauRisqueLogement.tres_faible;
     }
