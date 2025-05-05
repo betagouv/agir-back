@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
-import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
@@ -454,19 +453,15 @@ export class ProfileUsecase {
       utilisateurId,
       [],
     );
-    const result = {
+    let result = {
       fc_logout_url: undefined,
     };
 
-    if (App.isProd()) {
-      return {}; // PAS de FC encore en PROD
-    } else {
-      const logout_url =
-        await this.franceConnectUsecase.external_logout_france_connect(
-          utilisateurId,
-        );
-      result.fc_logout_url = logout_url.fc_logout_url;
-    }
+    const logout_url =
+      await this.franceConnectUsecase.external_logout_france_connect(
+        utilisateurId,
+      );
+    result.fc_logout_url = logout_url.fc_logout_url;
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
