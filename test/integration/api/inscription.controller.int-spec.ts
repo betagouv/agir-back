@@ -88,8 +88,8 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
     expect(user.active_account).toEqual(false);
 
-    expect(user.logement.code_postal).toEqual(null);
-    expect(user.logement.commune).toEqual(null);
+    expect(user.logement.code_postal).toEqual(undefined);
+    expect(user.logement.commune).toEqual(undefined);
   });
   it('POST /utilisateurs_v2 - no user version defaults to App version', async () => {
     // GIVEN
@@ -104,7 +104,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(15);
+    expect(user.version).toEqual(16);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {

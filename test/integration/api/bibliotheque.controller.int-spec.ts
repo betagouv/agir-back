@@ -1082,6 +1082,11 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       type: TypeLogement.appartement,
       version: 0,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

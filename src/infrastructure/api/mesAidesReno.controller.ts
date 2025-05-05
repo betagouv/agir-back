@@ -17,6 +17,7 @@ import {
 import { MesAidesRenoUsecase } from '../../usecase/mesAidesReno.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
+import { MesAidesRenoIframeUrlsAPI } from './types/mes_aides_reno/MesAidesRenoIframeUrlsAPI';
 import { SituationMesAidesRenoAPI } from './types/mes_aides_voiture/situationMesAidesRenoAPI';
 
 @Controller()
@@ -27,21 +28,21 @@ export class MesAidesRenoController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/mes_aides_reno/iframe_url')
+  @Get('utilisateurs/:utilisateurId/mes_aides_reno/get_iframe_urls')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary:
       "Retourne l'url de l'iframe avec réponses pré-remplies par rapport à la situation de l'utilisateurice",
   })
   @ApiOkResponse({
-    type: String,
+    type: MesAidesRenoIframeUrlsAPI,
     description:
       "L'url de l'iframe avec les réponses pré-remplies par rapport à la situation de l'utilisateurice",
   })
   async getIframeUrl(
     @Param('utilisateurId') utilisateurId: string,
     @Request() req,
-  ): Promise<string> {
+  ): Promise<MesAidesRenoIframeUrlsAPI> {
     this.checkCallerId(req, utilisateurId);
     return await this.mesAidesRenoUsecase.getIframeUrl(utilisateurId);
   }

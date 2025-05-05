@@ -70,8 +70,16 @@ export class MaifRepository implements FinderInterface {
   private async findCatnat(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
+    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
+    if (!code_commmune_globale) {
+      if (filtre.silent_error) {
+        return [];
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
+      }
+    }
     const result = await this.maifAPIClient.callAPICatnatByCodeCommune(
-      this.getCommuneGlobale(filtre.code_commune),
+      code_commmune_globale,
     );
     if (!result) {
       if (filtre.silent_error) {
@@ -190,8 +198,16 @@ export class MaifRepository implements FinderInterface {
   private async findZonesSecheresse(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
+    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
+    if (!code_commmune_globale) {
+      if (filtre.silent_error) {
+        return [];
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
+      }
+    }
     const result = await this.maifAPIClient.callAPIZonesSecheresseByCodeCommune(
-      this.getCommuneGlobale(filtre.code_commune),
+      code_commmune_globale,
     );
     if (!result) {
       if (filtre.silent_error) {
@@ -207,8 +223,16 @@ export class MaifRepository implements FinderInterface {
   private async findZonesInondation(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
+    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
+    if (!code_commmune_globale) {
+      if (filtre.silent_error) {
+        return [];
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
+      }
+    }
     const result = await this.maifAPIClient.callAPIZonesinondationByCodeCommune(
-      this.getCommuneGlobale(filtre.code_commune),
+      code_commmune_globale,
     );
     if (!result) {
       if (filtre.silent_error) {

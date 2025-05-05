@@ -936,6 +936,11 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -985,6 +990,11 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: false,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1041,6 +1051,11 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: false,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1116,6 +1131,11 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: false,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

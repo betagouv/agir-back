@@ -104,7 +104,7 @@ export class UtilisateurData {
   brevo_update_disabled: boolean;
   mobile_token: string;
   mobile_token_updated_at: Date;
-  code_commune: string;
+  code_commune: string; // FIXME : deprecated , à supprimer dès que celui de logement est mis en service
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;
@@ -163,20 +163,7 @@ export class Utilisateur extends UtilisateurData {
       history: new History(),
       kyc_history: new KYCHistory(),
       version: App.currentUserSystemVersion(),
-      logement: new Logement({
-        version: 0,
-        dpe: null,
-        plus_de_15_ans: null,
-        chauffage: null,
-        code_postal: null,
-        commune: null,
-        nombre_adultes: null,
-        nombre_enfants: null,
-        proprietaire: null,
-        superficie: null,
-        type: null,
-        risques: null,
-      }),
+      logement: new Logement(),
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
@@ -339,12 +326,14 @@ export class Utilisateur extends UtilisateurData {
   /**
    * Returns the total number of people in the household, including adults and
    * children (see {@link Utilisateur.logement}).
+   * Si pas d'info, retourne 1 par défaut
    *
    * @ensures The result to be in the range [1, +∞[.
    */
   public getNombrePersonnesDansLogement(): number {
     return Math.max(
-      this.logement.nombre_adultes + this.logement.nombre_enfants,
+      (this.logement.nombre_adultes ? this.logement.nombre_adultes : 0) +
+        (this.logement.nombre_enfants ? this.logement.nombre_enfants : 0),
       1,
     );
   }

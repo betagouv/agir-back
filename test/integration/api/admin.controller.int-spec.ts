@@ -390,6 +390,11 @@ describe('Admin (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -439,6 +444,11 @@ describe('Admin (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -645,6 +655,62 @@ describe('Admin (API test)', () => {
     expect(userDB.points_classement).toEqual(0);
     expect(userDB.commune_classement).toEqual('1234');
     expect(userDB.code_postal_classement).toEqual('45664');
+  });
+
+  it('POST /admin/migrate_users migration V16 OK - inject code_commune dans logement', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: null,
+      chauffage: Chauffage.bois,
+      commune: null,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 15,
+      migration_enabled: true,
+      code_commune: '12345',
+      logement: logement as any,
+    });
+    App.USER_CURRENT_VERSION = 16;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 16,
+            ok: true,
+            info: 'updated logement.code_commune',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.code_commune).toEqual('12345');
+    expect(userDB.version).toEqual(16);
+    expect(userDB.logement.code_commune).toEqual('12345');
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
@@ -1643,6 +1709,137 @@ describe('Admin (API test)', () => {
       url_simulateur: 'a',
       url_source: 'b',
     });
+  });
+
+  it('POST /admin/update_all_communes_risques', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '91477',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/update_all_communes_risques');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      "Error computing risques communes for [utilisateur-id] : Le service externe 'Alentours / Catnat' semble rencontrer un problème, nous vous proposons de re-essayer plus tard",
+    ]);
+  });
+
+  it('POST /admin/update_all_communes_risques', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: null,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/update_all_communes_risques');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      'Code commune absent pour [utilisateur-id]',
+    ]);
+  });
+
+  it('POST /admin/update_all_communes_risques', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      risques: {
+        nombre_catnat_commune: 2,
+        pourcent_exposition_commune_inondation_zone_1: 1,
+        pourcent_exposition_commune_inondation_total_a_risque: 2,
+        pourcent_exposition_commune_inondation_zone_2: 3,
+        pourcent_exposition_commune_inondation_zone_3: 3,
+        pourcent_exposition_commune_inondation_zone_4: 4,
+        pourcent_exposition_commune_inondation_zone_5: 5,
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+        pourcent_exposition_commune_secheresse_total_a_risque: 123,
+      },
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '91477',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/update_all_communes_risques');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      'Risques commune déjà présents pour [utilisateur-id]',
+    ]);
   });
 
   it('POST /admin/re_inject_situations_NGC : OK si table vide de situation', async () => {

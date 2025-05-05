@@ -49,6 +49,11 @@ describe('Logement vN ', () => {
         pourcent_exposition_commune_inondation_total_a_risque: 12,
         pourcent_exposition_commune_secheresse_total_a_risque: 23,
       },
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
     });
 
     // WHEN
@@ -87,6 +92,11 @@ describe('Logement vN ', () => {
         pourcent_exposition_commune_inondation_total_a_risque: 12,
         pourcent_exposition_commune_secheresse_total_a_risque: 23,
       },
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
     });
 
     // WHEN

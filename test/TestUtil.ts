@@ -583,11 +583,17 @@ export class TestUtil {
       code_postal: '91120',
       chauffage: Chauffage.bois,
       commune: 'PALAISEAU',
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      code_commune: undefined,
+
       risques: {
         nombre_catnat_commune: 1,
 
