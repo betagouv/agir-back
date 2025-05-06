@@ -1,4 +1,4 @@
-import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
+import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr-opti.json';
 import instructionsDeMigration from '@incubateur-ademe/nosgestesclimat/public/migration.json';
 import { Injectable } from '@nestjs/common';
 import Engine, { Evaluation } from 'publicodes';
