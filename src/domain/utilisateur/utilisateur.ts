@@ -11,6 +11,7 @@ import { KYCHistory } from '../kyc/kycHistory';
 import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
 import { Logement } from '../logement/logement';
 import { NotificationHistory } from '../notification/notificationHistory';
+import { ProfileRecommandationUtilisateur } from '../scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag } from '../scoring/tag';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
@@ -24,6 +25,7 @@ export enum UtilisateurStatus {
   creation_compte_etape_1 = 'creation_compte_etape_1',
   connexion_etape_1 = 'connexion_etape_1',
   mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
+  magic_link_etape_1 = 'magic_link_etape_1',
 }
 
 export enum SourceInscription {
@@ -31,6 +33,7 @@ export enum SourceInscription {
   mobile = 'mobile',
   web_ngc = 'web_ngc',
   france_connect = 'france_connect',
+  magic_link = 'magic_link',
   inconnue = 'inconnue',
 }
 export enum GlobalUserVersion {
@@ -48,6 +51,7 @@ export enum Scope {
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
   cache_bilan_carbone = 'cache_bilan_carbone',
+  recommandation = 'recommandation',
 }
 
 export class UtilisateurData {
@@ -104,10 +108,11 @@ export class UtilisateurData {
   brevo_update_disabled: boolean;
   mobile_token: string;
   mobile_token_updated_at: Date;
-  code_commune: string;
+  code_commune: string; // FIXME : deprecated , à supprimer dès que celui de logement est mis en service
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;
+  recommandation: ProfileRecommandationUtilisateur;
   global_user_version: GlobalUserVersion;
 
   constructor(data?: UtilisateurData) {
@@ -157,26 +162,13 @@ export class Utilisateur extends UtilisateurData {
       failed_login_count: 0,
       prevent_login_before: new Date(),
       prevent_checkcode_before: new Date(),
-      sent_email_count: 1,
+      sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       gamification: new Gamification(),
       history: new History(),
       kyc_history: new KYCHistory(),
       version: App.currentUserSystemVersion(),
-      logement: new Logement({
-        version: 0,
-        dpe: null,
-        plus_de_15_ans: null,
-        chauffage: null,
-        code_postal: null,
-        commune: null,
-        nombre_adultes: null,
-        nombre_enfants: null,
-        proprietaire: null,
-        superficie: null,
-        type: null,
-        risques: null,
-      }),
+      logement: new Logement(),
       tag_ponderation_set: {},
       force_connexion: false,
       derniere_activite: new Date(),
@@ -207,6 +199,7 @@ export class Utilisateur extends UtilisateurData {
       france_connect_sub: null,
       external_stat_id: uuidv4(),
       cache_bilan_carbone: new CacheBilanCarbone(),
+      recommandation: new ProfileRecommandationUtilisateur(),
       global_user_version: GlobalUserVersion.V2,
     });
   }
@@ -305,7 +298,8 @@ export class Utilisateur extends UtilisateurData {
 
   public isMagicLinkCodeExpired(): boolean {
     return (
-      this.code === null ||
+      !this.code ||
+      !this.code_generation_time ||
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }
@@ -339,12 +333,14 @@ export class Utilisateur extends UtilisateurData {
   /**
    * Returns the total number of people in the household, including adults and
    * children (see {@link Utilisateur.logement}).
+   * Si pas d'info, retourne 1 par défaut
    *
    * @ensures The result to be in the range [1, +∞[.
    */
   public getNombrePersonnesDansLogement(): number {
     return Math.max(
-      this.logement.nombre_adultes + this.logement.nombre_enfants,
+      (this.logement.nombre_adultes ? this.logement.nombre_adultes : 0) +
+        (this.logement.nombre_enfants ? this.logement.nombre_enfants : 0),
       1,
     );
   }

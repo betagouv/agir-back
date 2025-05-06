@@ -40,7 +40,7 @@ export class DuplicateBDDForStatsUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.logement, Scope.gamification],
+          [Scope.logement, Scope.gamification, Scope.notification_history],
           {},
         );
 
@@ -51,6 +51,79 @@ export class DuplicateBDDForStatsUsecase {
         } catch (error) {
           console.error(error);
           console.error(`Error Creating User : ${JSON.stringify(user)}`);
+        }
+      }
+    }
+  }
+
+  async duplicateUtilisateurNotifications(block_size: number = 200) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllUserNotifData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.notification_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        for (const notif of user.notification_history.sent_notifications) {
+          let data;
+          try {
+            data = {
+              user_ext_id: user.external_stat_id,
+              type: notif.type,
+              canal: notif.canal,
+              date: notif.date_envoie,
+            };
+            await this.statistiqueExternalRepository.createUserNotificationData(
+              data,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(`Error Creating Notif : ${JSON.stringify(data)}`);
+          }
+        }
+      }
+    }
+  }
+  async duplicateUtilisateurVistes(block_size: number = 200) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllUserVisiteData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.core],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        const activity_log = await this.utilisateurRepository.getActivityLog(
+          user.id,
+        );
+
+        for (const date of activity_log) {
+          try {
+            await this.statistiqueExternalRepository.createUserVisiteData(
+              user.external_stat_id,
+              date,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(`Error Creating Visite at date [${date}]`);
+          }
         }
       }
     }
@@ -140,7 +213,7 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
-  async duplicateAction(block_size: number = 100) {
+  async duplicateAction(block_size: number = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
     await this.statistiqueExternalRepository.deleteAllActionData();
@@ -188,7 +261,7 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
-  async duplicateArticle(block_size: number = 100) {
+  async duplicateArticle(block_size: number = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
     await this.statistiqueExternalRepository.deleteAllArticleData();
@@ -216,9 +289,7 @@ export class DuplicateBDDForStatsUsecase {
           }
 
           const final_article = new Article(article_def);
-          final_article.read_date = article_utilisateur.read_date;
-          final_article.like_level = article_utilisateur.like_level;
-          final_article.favoris = article_utilisateur.favoris;
+          final_article.setHistory(article_utilisateur);
 
           try {
             await this.statistiqueExternalRepository.createArticleData(
@@ -236,7 +307,7 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
-  async duplicateAides(block_size: number = 100) {
+  async duplicateAides(block_size: number = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
     await this.statistiqueExternalRepository.deleteAllAideData();
@@ -283,7 +354,7 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
-  async duplicateQuizz(block_size: number = 100) {
+  async duplicateQuizz(block_size: number = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();
 
     await this.statistiqueExternalRepository.deleteAllQuizzData();
@@ -344,7 +415,7 @@ export class DuplicateBDDForStatsUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.thematique_history],
+          [Scope.thematique_history, Scope.recommandation],
           {},
         );
 

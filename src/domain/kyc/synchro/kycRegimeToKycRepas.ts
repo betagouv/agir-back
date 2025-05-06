@@ -56,7 +56,7 @@ export class KycRegimeToKycRepas {
     }
     if (code === 'chaque_jour_viande') {
       KYC_nbr_plats_vegetaliens.setValue(0);
-      KYC_nbr_plats_vegetariens.setValue(1);
+      KYC_nbr_plats_vegetariens.setValue(0);
       KYC_nbr_plats_poisson_blanc.setValue(1);
       KYC_nbr_plats_poisson_gras.setValue(1);
       KYC_nbr_plats_viande_blanche.setValue(6);

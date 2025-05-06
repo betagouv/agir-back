@@ -135,7 +135,7 @@ export class OidcService {
     const blocks = user_data_base64.split('.');
     const charge_utile = blocks[1];
     const json_user_data = Buffer.from(charge_utile, 'base64').toString(
-      'ascii',
+      'utf-8',
     );
     console.log(json_user_data);
     const user_info: FCUserInfo = JSON.parse(json_user_data);
@@ -146,7 +146,7 @@ export class OidcService {
   public decodeIdToken(id_token: string): ID_TOKEN_FORMAT {
     const blocks = id_token.split('.');
     const charge_utile = blocks[1];
-    const json_data = Buffer.from(charge_utile, 'base64').toString('ascii');
+    const json_data = Buffer.from(charge_utile, 'base64').toString('utf-8');
     return JSON.parse(json_data) as ID_TOKEN_FORMAT;
   }
 }

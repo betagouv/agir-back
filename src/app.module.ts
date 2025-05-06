@@ -49,6 +49,7 @@ import { QuestionsKYCController } from './infrastructure/api/questionKYC.control
 import { QuestionsKYCEnchainementController } from './infrastructure/api/questionKYCEnchainement.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
+import { RisqesController } from './infrastructure/api/risques.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
@@ -80,6 +81,7 @@ import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
+import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
@@ -127,6 +129,7 @@ import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
+import { RisquesUsecase } from './usecase/risques.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
@@ -167,11 +170,12 @@ function getControllers(): any[] {
     QuestionsKYCEnchainementController,
     FranceConnectController,
     MesAidesRenoController,
+    RisqesController,
+    MagicLinkController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
-    controllers.push(MagicLinkController);
     controllers.push(CmsPreviewController);
   }
   return controllers;
@@ -287,6 +291,8 @@ function getControllers(): any[] {
     MesAidesRenoUsecase,
     MaifRepository,
     MaifAPIClient,
+    RisquesNaturelsCommunesRepository,
+    RisquesUsecase,
   ],
 })
 export class AppModule {}

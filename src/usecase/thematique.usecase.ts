@@ -3,6 +3,7 @@ import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { Enchainement } from '../domain/kyc/enchainement';
+import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -37,7 +38,7 @@ export class ThematiqueUsecase {
   ): Promise<DetailThematique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.recommandation, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -85,13 +86,11 @@ export class ThematiqueUsecase {
     const thema = detailThematique.thematique;
     const history = utilisateur.thematique_history;
 
-    const stock_actions_eligibles = await this.getActionEligiblesUtilisateur(
-      utilisateur,
-      {
+    const stock_actions_eligibles =
+      await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
         type_codes_exclus: history.getActionsExclues(thema),
         thematique: thema,
-      },
-    );
+      });
 
     if (history.existeDesPropositions(thema)) {
       this.refreshActionProposeesWhenMissingInCMS(
@@ -130,7 +129,7 @@ export class ThematiqueUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
     const action: TypeCodeAction = { type: type_action, code: code_action };
@@ -157,15 +156,13 @@ export class ThematiqueUsecase {
     const history = utilisateur.thematique_history;
 
     if (history.doesActionsProposeesInclude(thema, action_to_remove)) {
-      const new_action_list = await this.getActionEligiblesUtilisateur(
-        utilisateur,
-        {
+      const new_action_list =
+        await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
           thematique: thema,
           type_codes_exclus: history
             .getActionsProposees(thema)
             .concat(history.getActionsExclues(thema)),
-        },
-      );
+        });
       if (new_action_list.length === 0) {
         history.removeActionAndShift(thema, action_to_remove);
       } else {
@@ -181,7 +178,12 @@ export class ThematiqueUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc, Scope.gamification],
+      [
+        Scope.thematique_history,
+        Scope.kyc,
+        Scope.gamification,
+        Scope.recommandation,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -192,13 +194,19 @@ export class ThematiqueUsecase {
     }
     utilisateur.thematique_history.declarePersonnalisationDone(thematique);
 
-    utilisateur.thematique_history.recomputeTagExcluant(
+    new KycToTags_v2(
       utilisateur.kyc_history,
-    );
+      utilisateur.recommandation,
+    ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.thematique_history, Scope.gamification, Scope.core],
+      [
+        Scope.thematique_history,
+        Scope.gamification,
+        Scope.core,
+        Scope.recommandation,
+      ],
     );
   }
 
@@ -265,29 +273,18 @@ export class ThematiqueUsecase {
     return undefined;
   }
 
-  private async getActionEligiblesUtilisateur(
+  private async getActionEligiblesEtRecommandeesUtilisateur(
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {
-    const result: Action[] = [];
-
-    const liste_actions = await this.actionUsecase.external_get_user_actions(
+    let liste_actions = await this.actionUsecase.external_get_user_actions(
       utilisateur,
       filtre,
     );
 
-    const tag_excluants =
-      utilisateur.thematique_history.getListeTagsExcluants();
+    liste_actions =
+      utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
 
-    for (const action of liste_actions) {
-      if (!this.hasIntersect(action.tags_excluants, tag_excluants)) {
-        result.push(action);
-      }
-    }
-    return result;
-  }
-
-  private hasIntersect(array_1: any[], array_2: any[]): boolean {
-    return array_1.some((v) => array_2.indexOf(v) !== -1);
+    return liste_actions;
   }
 }

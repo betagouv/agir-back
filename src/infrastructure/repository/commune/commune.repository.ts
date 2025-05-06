@@ -239,14 +239,24 @@ export class CommuneRepository {
   }
 
   checkOKCodePostalAndCommune(code_postal: string, commune: string): boolean {
-    const liste_communes = this.getListCommunesNamesParCodePostal(code_postal);
+    const liste_communes = this.getListNomsCommunesParCodePostal(code_postal);
     return liste_communes.length !== 0 && liste_communes.includes(commune);
   }
 
-  getListCommunesNamesParCodePostal(code_postal: string): string[] {
+  getListNomsCommunesParCodePostal(code_postal: string): string[] {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (liste === undefined) return [];
     return liste.map((a) => a.commune);
+  }
+  getListCommunesParCodePostal(
+    code_postal: string,
+  ): { code: string; label: string }[] {
+    const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
+    if (liste === undefined) return [];
+    return liste.map((a) => ({
+      code: a.INSEE,
+      label: a.commune,
+    }));
   }
 
   getListCodesCommunesParCodePostal(code_postal: string): string[] {

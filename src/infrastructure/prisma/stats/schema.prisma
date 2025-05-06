@@ -1,32 +1,34 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator client {
+generator client_stats {
   provider = "prisma-client-js"
   output   = "./prisma_client_stats"
 }
 
-datasource db {
+datasource db_stats {
   provider = "postgresql"
   url      = env("DATABASE_STATS_URL")
 }
 
 model UtilisateurCopy {
-  user_id                String    @id
-  compte_actif           Boolean
-  revenu_fiscal          Int?
-  nombre_parts_fiscales  Decimal?  @db.Decimal(4, 2)
-  date_derniere_activite DateTime? @db.Timestamptz(3)
-  nombre_points          Int?      @default(0)
-  code_postal            String?
-  nom_commune            String?
-  code_insee_commune     String?
-  code_departement       String?
-  source_inscription     String?
-  rang_national          Int?
-  rang_commune           Int?
-  date_inscription       DateTime? @db.Timestamptz(3)
-  version_utilisateur    String?
+  user_id                      String    @id
+  compte_actif                 Boolean
+  revenu_fiscal                Int?
+  nombre_parts_fiscales        Decimal?  @db_stats.Decimal(4, 2)
+  date_derniere_activite       DateTime? @db_stats.Timestamptz(3)
+  nombre_points                Int?      @default(0)
+  code_postal                  String?
+  nom_commune                  String?
+  code_insee_commune           String?
+  code_departement             String?
+  source_inscription           String?
+  rang_national                Int?
+  rang_commune                 Int?
+  notifications_mobile_actives Boolean?
+  notifications_email_actives  Boolean?
+  date_inscription             DateTime? @db_stats.Timestamptz(3)
+  version_utilisateur          String?
 }
 
 model Personnalisation {
@@ -35,7 +37,7 @@ model Personnalisation {
   perso_transport_done_once     Boolean  @default(false)
   perso_logement_done_once      Boolean  @default(false)
   perso_consommation_done_once  Boolean  @default(false)
-  tags_exclusion                String[]
+  tags                          String[]
   actions_rejetees_all          String[]
   actions_alimentation_rejetees String[]
   actions_logement_rejetees     String[]
@@ -55,8 +57,8 @@ model BilanCarbone {
   pourcentage_progression_transport    Int      @default(0)
   pourcentage_progression_logement     Int      @default(0)
   pourcentage_progression_consommation Int      @default(0)
-  created_at                           DateTime @default(now()) @db.Timestamptz(3)
-  updated_at                           DateTime @updatedAt @db.Timestamptz(3)
+  created_at                           DateTime @default(now()) @db_stats.Timestamptz(3)
+  updated_at                           DateTime @updatedAt @db_stats.Timestamptz(3)
 }
 
 model QuestionsUtilisateur {
@@ -66,7 +68,7 @@ model QuestionsUtilisateur {
   action_titre     String
   est_action_faite Boolean
   question         String
-  date_question    DateTime? @db.Timestamptz(3)
+  date_question    DateTime? @db_stats.Timestamptz(3)
 }
 
 model KYCCopy {
@@ -75,7 +77,7 @@ model KYCCopy {
   user_id               String
   question              String
   thematique            String
-  derniere_mise_a_jour  DateTime? @db.Timestamptz(3)
+  derniere_mise_a_jour  DateTime? @db_stats.Timestamptz(3)
   type_question         String
   reponse_texte         String?
   reponse_entier        Int?
@@ -86,30 +88,46 @@ model KYCCopy {
   @@unique([user_id, code_kyc])
 }
 
+model Notifications {
+  id                 String    @id
+  user_id            String
+  type_notification  String
+  canal_notification String
+  date_notification  DateTime? @db_stats.Timestamptz(3)
+}
+
+model Visites {
+  id                            String    @id
+  user_id                       String
+  heure_premiere_visite_du_jour DateTime? @db_stats.Timestamptz(3)
+}
+
 model ActionCopy {
-  type_code_id String
-  code_action  String
-  cms_id       String
-  type_action  String
-  user_id      String
-  titre        String
-  thematique   String
-  vue_le       DateTime? @db.Timestamptz(3)
-  faite_le     DateTime? @db.Timestamptz(3)
-  feedback     String?
-  like_level   Int?
+  type_code_id   String
+  code_action    String
+  cms_id         String
+  type_action    String
+  user_id        String
+  titre          String
+  thematique     String
+  vue_le         DateTime?  @db_stats.Timestamptz(3)
+  faite_le       DateTime?  @db_stats.Timestamptz(3)
+  feedback       String?
+  like_level     Int?
+  dates_partages DateTime[] @default([])
 
   @@unique([user_id, type_code_id])
 }
 
 model ArticleCopy {
-  cms_id      String
-  user_id     String
-  titre       String
-  thematique  String
-  lu_le       DateTime? @db.Timestamptz(3)
-  like_level  Int?
-  est_favoris Boolean?
+  cms_id         String
+  user_id        String
+  titre          String
+  thematique     String
+  lu_le          DateTime?  @db_stats.Timestamptz(3)
+  like_level     Int?
+  est_favoris    Boolean?
+  dates_partages DateTime[] @default([])
 
   @@unique([user_id, cms_id])
 }
@@ -119,7 +137,7 @@ model AideCopy {
   user_id                     String
   titre                       String
   thematiques                 String[]
-  vue_le                      DateTime? @db.Timestamptz(3)
+  vue_le                      DateTime? @db_stats.Timestamptz(3)
   clicked_infos               Boolean?
   clicked_demande             Boolean?
   sera_sollicitee_utilisateur Boolean?
@@ -137,7 +155,7 @@ model QuizzCopy {
   thematique        String
   bon_premier_coup  Boolean?
   nombre_tentatives Int?
-  date_premier_coup DateTime? @db.Timestamptz(3)
+  date_premier_coup DateTime? @db_stats.Timestamptz(3)
   like_level        Int?
 
   @@unique([user_id, cms_id])

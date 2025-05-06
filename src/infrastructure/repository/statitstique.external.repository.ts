@@ -14,6 +14,7 @@ import {
   QuestionKYC,
   TypeReponseQuestionKYC,
 } from '../../domain/kyc/questionKYC';
+import { CanalNotification } from '../../domain/notification/notificationHistory';
 import { Thematique } from '../../domain/thematique/thematique';
 import { Utilisateur } from '../../domain/utilisateur/utilisateur';
 import { PrismaServiceStat } from '../prisma/stats/prisma.service.stats';
@@ -28,6 +29,13 @@ export class StatistiqueExternalRepository {
 
   public async deleteAllUserData() {
     await this.prismaStats.utilisateurCopy.deleteMany();
+  }
+  public async deleteAllUserNotifData() {
+    await this.prismaStats.notifications.deleteMany();
+  }
+
+  public async deleteAllUserVisiteData() {
+    await this.prismaStats.visites.deleteMany();
   }
   public async deleteAllKYCData() {
     await this.prismaStats.kYCCopy.deleteMany();
@@ -98,6 +106,38 @@ export class StatistiqueExternalRepository {
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,
         version_utilisateur: utilisateur.global_user_version,
+        notifications_mobile_actives: !!utilisateur.mobile_token,
+        notifications_email_actives:
+          utilisateur.notification_history.isCanalEnabled(
+            CanalNotification.email,
+          ),
+      },
+    });
+  }
+
+  public async createUserNotificationData(data: {
+    user_ext_id: string;
+    type: string;
+    canal: string;
+    date: Date;
+  }) {
+    await this.prismaStats.notifications.create({
+      data: {
+        id: uuidv4(),
+        user_id: data.user_ext_id,
+        canal_notification: data.canal,
+        type_notification: data.type,
+        date_notification: data.date,
+      },
+    });
+  }
+
+  public async createUserVisiteData(user_ext_id: string, date: Date) {
+    await this.prismaStats.visites.create({
+      data: {
+        id: uuidv4(),
+        user_id: user_ext_id,
+        heure_premiere_visite_du_jour: date,
       },
     });
   }
@@ -116,6 +156,7 @@ export class StatistiqueExternalRepository {
         vue_le: action.vue_le,
         feedback: action.feedback,
         like_level: action.like_level,
+        dates_partages: action.liste_partages,
       },
     });
   }
@@ -129,6 +170,7 @@ export class StatistiqueExternalRepository {
         lu_le: article.read_date,
         est_favoris: article.favoris,
         like_level: article.like_level,
+        dates_partages: article.liste_partages,
       },
     });
   }
@@ -181,7 +223,7 @@ export class StatistiqueExternalRepository {
     await this.prismaStats.personnalisation.create({
       data: {
         user_id: utilisateur.external_stat_id,
-        tags_exclusion: utilisateur.thematique_history.getListeTagsExcluants(),
+        tags: utilisateur.recommandation.getListeTagsActifs(),
         perso_alimentation_done_once:
           utilisateur.thematique_history.isPersonnalisationDoneOnce(
             Thematique.alimentation,

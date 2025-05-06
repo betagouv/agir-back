@@ -12,6 +12,7 @@ import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { BooleanKYC } from '../domain/kyc/QuestionKYCData';
 import { KycRegimeToKycRepas } from '../domain/kyc/synchro/kycRegimeToKycRepas';
 import { KycToProfileSync } from '../domain/kyc/synchro/kycToProfileSync';
+import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
@@ -100,15 +101,17 @@ export class QuestionKYCUsecase {
         Scope.gamification,
         Scope.logement,
         Scope.thematique_history,
+        Scope.recommandation,
       ],
     );
     Utilisateur.checkState(utilisateur);
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur);
 
-    utilisateur.thematique_history.recomputeTagExcluant(
+    new KycToTags_v2(
       utilisateur.kyc_history,
-    );
+      utilisateur.recommandation,
+    ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -154,6 +157,7 @@ export class QuestionKYCUsecase {
         Scope.gamification,
         Scope.logement,
         Scope.thematique_history,
+        Scope.recommandation,
       ],
     );
     Utilisateur.checkState(utilisateur);
@@ -211,9 +215,10 @@ export class QuestionKYCUsecase {
 
     utilisateur.kyc_history.addAnsweredMosaic(mosaic.id);
 
-    utilisateur.thematique_history.recomputeTagExcluant(
+    new KycToTags_v2(
       utilisateur.kyc_history,
-    );
+      utilisateur.recommandation,
+    ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

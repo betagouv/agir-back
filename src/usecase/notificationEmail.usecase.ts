@@ -61,6 +61,7 @@ export class NotificationEmailUsecase {
         const is_sent_email = await this.external_send_user_email_of_type(
           TypeNotification.welcome,
           utilisateur,
+          {},
         );
 
         if (is_sent_email) {
@@ -108,6 +109,7 @@ export class NotificationEmailUsecase {
           const is_sent_email = await this.external_send_user_email_of_type(
             notif_type,
             utilisateur,
+            {},
           );
 
           if (is_sent_email) {
@@ -162,11 +164,13 @@ export class NotificationEmailUsecase {
   public async external_send_user_email_of_type(
     type_notif: TypeNotification,
     utilisateur: Utilisateur,
+    extra_data: object,
     update_history: boolean = true,
   ): Promise<boolean> {
     const email = this.emailTemplateRepository.generateUserEmailByType(
       type_notif,
       utilisateur,
+      extra_data,
       utilisateur.unsubscribe_mail_token,
     );
 
@@ -211,6 +215,6 @@ export class NotificationEmailUsecase {
     type: TypeNotification,
     utilisateur: Utilisateur,
   ) {
-    await this.external_send_user_email_of_type(type, utilisateur, false);
+    await this.external_send_user_email_of_type(type, utilisateur, {}, false);
   }
 }

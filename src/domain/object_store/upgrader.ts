@@ -6,6 +6,7 @@ import { KYCHistory_v1 } from './kyc/kycHistory_v1';
 import { KYCHistory_v2 } from './kyc/kycHistory_v2';
 import { Logement_v0 } from './logement/logement_v0';
 import { NotificationHistory_v0 } from './notification/NotificationHistory_v0';
+import { ProfileRecommandationUtilisateur_v0 } from './recommandation/ProfileRecommandationUtilisateur_v0';
 import { BibliothequeServices_v0 } from './service/BibliothequeService_v0';
 import { ThematiqueHistory_v0 } from './thematique/thematiqueHistory_v0';
 
@@ -18,6 +19,7 @@ export enum SerialisableDomain {
   NotificationHistory = 'NotificationHistory',
   ThematiqueHistory = 'ThematiqueHistory',
   CacheBilanCarbone = 'CacheBilanCarbone',
+  ProfileRecommandationUtilisateur = 'ProfileRecommandationUtilisateur',
   Object = 'Object',
 }
 const CLASS_DICTIONNARY = {
@@ -31,6 +33,7 @@ const CLASS_DICTIONNARY = {
   NotificationHistory_v0: NotificationHistory_v0,
   ThematiqueHistory_v0: ThematiqueHistory_v0,
   CacheBilanCarbone_v0: CacheBilanCarbone_v0,
+  ProfileRecommandationUtilisateur_v0: ProfileRecommandationUtilisateur_v0,
 };
 
 const DATE_REGEXP =

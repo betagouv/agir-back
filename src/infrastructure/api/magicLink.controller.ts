@@ -1,24 +1,18 @@
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiQuery,
+  ApiBody,
+  ApiHeader,
   ApiOkResponse,
-  ApiParam,
+  ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
-import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
-import { GenericControler } from './genericControler';
-import { MagicLinkUsecase } from '../../usecase/magicLink.usecase';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { MagicLinkUsecase } from '../../usecase/magicLink.usecase';
+import { GenericControler } from './genericControler';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { CreateUtilisateurMagicLinkAPI } from './types/utilisateur/onboarding/createUtilisateurMagicLinkAPI';
+import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 
 @Controller()
 @ApiTags('Magic Link')
@@ -28,34 +22,50 @@ export class MagicLinkController extends GenericControler {
   }
 
   @Post('utilisateurs/send_magic_link')
+  @ApiHeader({
+    name: 'origin',
+    required: false,
+
+    description:
+      'Base url qui va être utilisée pour générer le lien présent dans le mail, pour test en DEV seulement',
+  })
   @ApiOperation({
     summary: 'envoie une lien de connexion au mail argument',
   })
+  @ApiBody({
+    type: CreateUtilisateurMagicLinkAPI,
+  })
   @UseGuards(ThrottlerGuard)
-  async sendMagicLink(@Body() body: ProspectSubmitAPI) {
-    await this.magicLinkUsecase.sendLink(body.email);
+  async sendMagicLink(
+    @Body() body: CreateUtilisateurMagicLinkAPI,
+    @Headers('origin') origin?: string,
+  ): Promise<EmailAPI> {
+    await this.magicLinkUsecase.sendLink(
+      body.email,
+      body.source_inscription,
+      origin,
+      body.origin,
+      body.situation_ngc_id,
+    );
+    return EmailAPI.mapToAPI(body.email);
   }
-  @ApiParam({
-    name: 'email',
-    type: String,
-    required: true,
-  })
-  @ApiQuery({
-    name: 'code',
-    type: String,
-    required: true,
-  })
+
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiOperation({
-    summary: 'envoie une lien de connexion au mail argument',
+    summary: `Crée et/ou connect l'utilisateur`,
   })
   @UseGuards(ThrottlerGuard)
-  @Get('utilisateurs/:email/login')
-  async validateMagicLink(
-    @Query('code') code: string,
-    @Param('email') email: string,
-  ) {
-    const loggedUser = await this.magicLinkUsecase.validateLink(email, code);
+  @Post('utilisateurs/magic_link_login')
+  @ApiBody({
+    type: ValidateCodeAPI,
+  })
+  async post_validateMagicLink(
+    @Body() body: ValidateCodeAPI,
+  ): Promise<LoggedUtilisateurAPI> {
+    const loggedUser = await this.magicLinkUsecase.validateLink(
+      body.email,
+      body.code,
+    );
     return LoggedUtilisateurAPI.mapToAPI(
       loggedUser.token,
       loggedUser.utilisateur,

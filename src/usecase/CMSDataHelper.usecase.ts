@@ -113,7 +113,7 @@ export type AideData = {
   besoin?: number; //1,
   tags?: [];
   partenaire?: number; //58,
-  partenaires: number[];
+  partenaires?: number[];
   createdBy?: number; //null,
   updatedBy?: number; //11
 };
@@ -160,6 +160,12 @@ export type AideAndPartenaireExport = {
   version: number;
   data: {
     'api::partenaire.partenaire'?: Record<string, PartenaireData>;
+    'api::aide.aide': Record<string, AideData>;
+  };
+};
+export type AideExport = {
+  version: number;
+  data: {
     'api::aide.aide': Record<string, AideData>;
   };
 };
@@ -238,6 +244,32 @@ export class CMSDataHelperUsecase {
       output.data['api::article.article']['' + article_id] = {
         id: parseInt(article_id),
         sources: article.sources,
+      };
+    }
+    // dump du résultat
+    writeFileSync('output.json', JSON.stringify(output));
+  }
+
+  public async migrateEchelleAides(jsonFilePath: string) {
+    var data: AideExport = JSON.parse(readFileSync(jsonFilePath, 'utf8'));
+    const liste_aides = data.data['api::aide.aide'];
+
+    for (const [aide_id, aide] of Object.entries(liste_aides)) {
+      if (aide.echelle === 'Agglomération') {
+        aide.echelle = `Communauté d'agglomération`;
+      }
+    }
+
+    const output: AideExport = {
+      version: data.version,
+      data: {
+        'api::aide.aide': {},
+      },
+    };
+    for (const [aide_id, aide] of Object.entries(liste_aides)) {
+      output.data['api::aide.aide']['' + aide_id] = {
+        id: parseInt(aide_id),
+        echelle: aide.echelle,
       };
     }
     // dump du résultat

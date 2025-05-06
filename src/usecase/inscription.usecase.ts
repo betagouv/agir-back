@@ -135,6 +135,7 @@ export class InscriptionUsecase {
     await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.inscription_code,
       utilisateur,
+      {},
     );
   }
   private async sendExistingAccountEmail(email: string) {

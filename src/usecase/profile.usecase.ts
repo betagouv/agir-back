@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
-import { App } from '../domain/app';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
-import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
-import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
-import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -20,11 +15,14 @@ import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
+import { MaifRepository } from '../infrastructure/repository/services_recherche/maif/maif.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ContactUsecase } from './contact.usecase';
 import { FranceConnectUsecase } from './franceConnect.usecase';
 
 const FIELD_MAX_LENGTH = 40;
+const NUM_RUE_MAX_LENGTH = 10;
+const NOM_RUE_MAX_LENGTH = 100;
 
 export type Phrase = {
   phrase: string;
@@ -42,6 +40,7 @@ export class ProfileUsecase {
     private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
     private rechercheServiceManager: RechercheServiceManager,
+    private maifRepository: MaifRepository,
   ) {}
 
   @Retryable({
@@ -68,6 +67,9 @@ export class ProfileUsecase {
     const char_regexp = new RegExp(
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
+    const char_regexp_plus_chiffres = new RegExp(
+      "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-0123456789]+$",
+    );
     if (profile.nom) {
       if (!utilisateur.isDataFranceConnectModifiable()) {
         ApplicationError.throwMajImpossibleFC();
@@ -81,7 +83,7 @@ export class ProfileUsecase {
     }
 
     if (profile.pseudo) {
-      if (!char_regexp.test(profile.pseudo)) {
+      if (!char_regexp_plus_chiffres.test(profile.pseudo)) {
         ApplicationError.throwNotAlhpaPseudo();
       }
       if (profile.pseudo.length > FIELD_MAX_LENGTH) {
@@ -212,7 +214,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Partial<Logement> = { ...input };
+    const data_to_update: Partial<Logement> = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -231,7 +233,7 @@ export class ProfileUsecase {
 
     if (
       (input.commune && !input.code_postal) ||
-      (!input.commune && input.code_postal)
+      (!input.commune && !input.code_commune && input.code_postal)
     ) {
       ApplicationError.throwCodePostalCommuneMandatory();
     }
@@ -247,13 +249,64 @@ export class ProfileUsecase {
           input.commune,
         );
       }
-      utilisateur.code_commune = this.AorB(
-        code_commune,
-        utilisateur.code_commune,
-      );
+      utilisateur.code_commune = code_commune;
+      data_to_update.code_commune = code_commune;
     }
 
-    utilisateur.logement.patch(update_data, utilisateur);
+    if (input.code_commune) {
+      const commune = this.communeRepository.getCommuneByCodeINSEE(
+        input.code_commune,
+      );
+      if (!commune.codesPostaux.includes(input.code_postal)) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          input.code_postal,
+          input.code_commune,
+        );
+      }
+      if (commune) {
+        utilisateur.code_commune = commune.code;
+        data_to_update.code_commune = commune.code;
+        data_to_update.commune = commune.nom;
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(input.code_commune);
+      }
+    }
+
+    if (input.rue) {
+      if (input.rue.length > NOM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData('rue', input.rue, NOM_RUE_MAX_LENGTH);
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.longitude) {
+      if (!validator.isDecimal('' + input.longitude)) {
+        ApplicationError.throwNotDecimalField('longitude', input.longitude);
+      }
+    }
+    if (input.latitude) {
+      if (!validator.isDecimal('' + input.latitude)) {
+        ApplicationError.throwNotDecimalField('latitude', input.latitude);
+      }
+    }
+
+    utilisateur.logement.patch(data_to_update, utilisateur);
 
     try {
       LogementToKycSync.synchronize(input, utilisateur.kyc_history);
@@ -271,7 +324,9 @@ export class ProfileUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.async_SetRisquesFromCodeCommune(utilisateur);
+    if (input.longitude && input.latitude) {
+      this.setRisqueFromCoordonnees(utilisateur);
+    }
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -338,6 +393,48 @@ export class ProfileUsecase {
     }
   }
 
+  /*
+  async updateAllCommuneRisques(block_size: number = 50): Promise<string[]> {
+    const result: string[] = [];
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const MAX_TOTAL_COMPUTE = 200;
+
+    let total = 0;
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.logement],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        if (total > MAX_TOTAL_COMPUTE) return result;
+
+        if (!user.code_commune) {
+          result.push(`Code commune absent pour [${user.id}]`);
+        } else if (user.logement.risques.nombre_catnat_commune !== undefined) {
+          result.push(`Risques commune déjà présents pour [${user.id}]`);
+        } else {
+          try {
+            await this.setRisquesFromCodeCommune(user, false);
+            result.push(`Computed risques communes OK for [${user.id}]`);
+            total++;
+          } catch (error) {
+            result.push(
+              `Error computing risques communes for [${user.id}] : ${error.message}`,
+            );
+          }
+        }
+      }
+    }
+    return result;
+  }
+    */
+
   async updateAllUserCouvertureAides(): Promise<{
     couvert: number;
     pas_couvert: number;
@@ -349,6 +446,7 @@ export class ProfileUsecase {
       const utilisateur = await this.utilisateurRepository.getById(id, [
         Scope.logement,
       ]);
+
       utilisateur.couverture_aides_ok =
         await this.aideRepository.isCodePostalCouvert(
           utilisateur.logement.code_postal,
@@ -366,19 +464,15 @@ export class ProfileUsecase {
       utilisateurId,
       [],
     );
-    const result = {
+    let result = {
       fc_logout_url: undefined,
     };
 
-    if (App.isProd()) {
-      return {}; // PAS de FC encore en PROD
-    } else {
-      const logout_url =
-        await this.franceConnectUsecase.external_logout_france_connect(
-          utilisateurId,
-        );
-      result.fc_logout_url = logout_url.fc_logout_url;
-    }
+    const logout_url =
+      await this.franceConnectUsecase.external_logout_france_connect(
+        utilisateurId,
+      );
+    result.fc_logout_url = logout_url.fc_logout_url;
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
@@ -401,71 +495,17 @@ export class ProfileUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private AorB?<T>(a: T, b: T): T {
-    if (a === undefined) return b;
-    return a;
-  }
-
-  private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
-    if (!utilisateur.code_commune) return;
-
-    const finder = this.rechercheServiceManager.getFinderById(
-      ServiceRechercheID.maif,
-    );
-
-    const filtre: FiltreRecherche = {
-      code_commune: utilisateur.code_commune,
-      silent_error: true,
-    };
-
-    const risques_catnat = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.catnat,
-    });
-    const risques_zones_secheresse = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.zones_secheresse,
-    });
-    const risques_zones_inondation = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.zones_inondation,
-    });
-
-    utilisateur.logement.risques.nombre_catnat_commune = risques_catnat.length;
-
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_1 =
-      this.zone_pourcent_value('1', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_2 =
-      this.zone_pourcent_value('2', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_3 =
-      this.zone_pourcent_value('3', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_4 =
-      this.zone_pourcent_value('4', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_5 =
-      this.zone_pourcent_value('5', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_total_a_risque =
-      this.zone_pourcent_value('total', risques_zones_secheresse);
-
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_1 =
-      this.zone_pourcent_value('1', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_2 =
-      this.zone_pourcent_value('2', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_3 =
-      this.zone_pourcent_value('3', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_4 =
-      this.zone_pourcent_value('4', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_5 =
-      this.zone_pourcent_value('5', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_total_a_risque =
-      this.zone_pourcent_value('total', risques_zones_inondation);
-
-    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
-      Scope.logement,
-    ]);
-  }
-
-  private zone_pourcent_value(zone: string, resultats: ResultatRecherche[]) {
-    const found = resultats.find((a) => a.id === `zone_${zone}`);
-    return found ? found.pourcentage : 0;
+  private async setRisqueFromCoordonnees(utilisateur: Utilisateur) {
+    if (utilisateur.logement.longitude && utilisateur.logement.latitude) {
+      const scoring = await this.maifRepository.findScoreRisque_2(
+        utilisateur.logement.longitude,
+        utilisateur.logement.latitude,
+      );
+      utilisateur.logement.score_risques_adresse = scoring;
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        utilisateur,
+        [Scope.logement],
+      );
+    }
   }
 }

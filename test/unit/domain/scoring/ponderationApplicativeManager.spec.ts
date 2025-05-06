@@ -1,10 +1,11 @@
+import {
+  ApplicativePonderationSetName,
+  PonderationApplicativeManager,
+} from '../../../../src/domain/scoring/ponderationApplicative';
+import { ExplicationScore } from '../../../../src/domain/scoring/system_v2/ExplicationScore';
+import { Tag } from '../../../../src/domain/scoring/tag';
 import { TaggedContent } from '../../../../src/domain/scoring/taggedContent';
 import { TagRubrique } from '../../../../src/domain/scoring/tagRubrique';
-import {
-  PonderationApplicativeManager,
-  ApplicativePonderationSetName,
-} from '../../../../src/domain/scoring/ponderationApplicative';
-import { Tag } from '../../../../src/domain/scoring/tag';
 
 describe('PonderationApplicativeManager', () => {
   const OLD_ENV = process.env;
@@ -25,6 +26,9 @@ describe('PonderationApplicativeManager', () => {
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
     };
 
     // WHEN
@@ -40,6 +44,9 @@ describe('PonderationApplicativeManager', () => {
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => true,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
     };
 
     // WHEN
@@ -56,6 +63,9 @@ describe('PonderationApplicativeManager', () => {
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
     };
 
     // WHEN
@@ -72,6 +82,9 @@ describe('PonderationApplicativeManager', () => {
       getTags: () => [Tag.transport],
       getDistinctText: () => 'abc',
       isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
     };
 
     // WHEN
@@ -90,6 +103,9 @@ describe('PonderationApplicativeManager', () => {
       getTags: () => [TagRubrique.R1, TagRubrique.R2],
       getDistinctText: () => 'abc',
       isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
     };
 
     // WHEN

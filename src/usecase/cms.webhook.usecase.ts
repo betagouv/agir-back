@@ -13,7 +13,6 @@ import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -358,6 +357,12 @@ export class CMSWebhookUsecase {
       codes_departement: this.split(hook.entry.codes_departement),
       codes_region: this.split(hook.entry.codes_region),
       tag_article: hook.entry.tag_article ? hook.entry.tag_article.code : null,
+      tags_a_exclure: hook.entry.tag_v2_excluants
+        ? hook.entry.tag_v2_excluants.map((elem) => elem.code)
+        : [],
+      tags_a_inclure: hook.entry.tag_v2_incluants
+        ? hook.entry.tag_v2_incluants.map((elem) => elem.code)
+        : [],
     };
   }
 
@@ -498,9 +503,14 @@ export class CMSWebhookUsecase {
         : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
-      tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
       sources: entry.sources
         ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
+        : [],
+      tags_a_exclure: entry.tag_v2_excluants
+        ? entry.tag_v2_excluants.map((elem) => elem.code)
+        : [],
+      tags_a_inclure: entry.tag_v2_incluants
+        ? entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
     });
   }

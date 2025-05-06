@@ -30,6 +30,12 @@ const logement_palaiseau: Logement_v0 = {
   plus_de_15_ans: true,
   proprietaire: true,
   risques: undefined,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: undefined,
+  score_risques_adresse: undefined,
 };
 
 describe('RechercheServices (API test)', () => {
@@ -203,6 +209,7 @@ describe('RechercheServices (API test)', () => {
         ...logement_palaiseau,
         code_postal: null,
         risques: undefined,
+        score_risques_adresse: undefined,
       },
     });
 

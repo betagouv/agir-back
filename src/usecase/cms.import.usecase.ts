@@ -21,7 +21,6 @@ import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -44,7 +43,7 @@ const FULL_POPULATE_URL =
   '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
-  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires';
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
@@ -679,6 +678,20 @@ export class CMSImportUsecase {
       tag_article: entry.attributes.tag_article.data
         ? entry.attributes.tag_article.data.attributes.code
         : undefined,
+      tags_a_exclure:
+        entry.attributes.tag_v2_excluants &&
+        entry.attributes.tag_v2_excluants.data.length > 0
+          ? entry.attributes.tag_v2_excluants.data.map(
+              (elem) => elem.attributes.code,
+            )
+          : [],
+      tags_a_inclure:
+        entry.attributes.tag_v2_incluants &&
+        entry.attributes.tag_v2_incluants.data.length > 0
+          ? entry.attributes.tag_v2_incluants.data.map(
+              (elem) => elem.attributes.code,
+            )
+          : [],
     };
   }
 
@@ -887,15 +900,26 @@ export class CMSImportUsecase {
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : null,
-      tags_excluants: entry.attributes.tags_excluants.map(
-        (t) => TagExcluant[t.valeur],
-      ),
       sources: entry.attributes.sources
         ? entry.attributes.sources.map((s) => ({
             label: s.libelle,
             url: s.lien,
           }))
         : [],
+      tags_a_exclure:
+        entry.attributes.tag_v2_excluants &&
+        entry.attributes.tag_v2_excluants.data.length > 0
+          ? entry.attributes.tag_v2_excluants.data.map(
+              (elem) => elem.attributes.code,
+            )
+          : [],
+      tags_a_inclure:
+        entry.attributes.tag_v2_incluants &&
+        entry.attributes.tag_v2_incluants.data.length > 0
+          ? entry.attributes.tag_v2_incluants.data.map(
+              (elem) => elem.attributes.code,
+            )
+          : [],
     });
   }
 

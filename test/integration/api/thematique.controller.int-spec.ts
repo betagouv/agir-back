@@ -1,3 +1,4 @@
+import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -11,8 +12,9 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -88,7 +90,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -100,10 +101,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
 
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
 
     // WHEN
@@ -131,7 +137,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -143,6 +148,11 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     const gamification: Gamification_v0 = {
       version: 0,
       points: 0,
@@ -154,6 +164,7 @@ describe('Thematique (API test)', () => {
       code_commune: '21231',
       thematique_history: thematique_history as any,
       gamification: gamification as any,
+      recommandation: reco as any,
     });
 
     // THEN
@@ -200,7 +211,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -219,10 +229,16 @@ describe('Thematique (API test)', () => {
       badges: [],
     };
 
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
       gamification: gamification as any,
+      recommandation: reco as any,
     });
     // WHEN
     await TestUtil.POST(
@@ -244,7 +260,34 @@ describe('Thematique (API test)', () => {
 
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - recalcul des tag d'exclusion`, async () => {
     // GIVEN
-
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: KYCID.KYC_proprietaire,
+      is_ngc: true,
+      a_supprimer: false,
+      points: 20,
+      question: 'Proprio ?',
+      tags: [],
+      thematique: Thematique.logement,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+      unite: undefined,
+      created_at: undefined,
+      updated_at: undefined,
+      emoji: '🔥',
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+    });
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -290,7 +333,7 @@ describe('Thematique (API test)', () => {
     const user_after = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(user_after.thematique_history.getListeTagsExcluants()).toEqual([
+    expect(user_after.recommandation.getListeTagsActifs()).toEqual([
       'est_proprietaire',
     ]);
   });
@@ -300,7 +343,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -351,7 +393,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -363,9 +404,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     await TestUtil.create(DB.action, {
       code: '123',
@@ -417,9 +464,9 @@ describe('Thematique (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -431,9 +478,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     await TestUtil.create(DB.action, {
       code: '123',
@@ -463,7 +516,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -475,9 +527,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -504,7 +562,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [TagExcluant.a_un_velo],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -516,9 +573,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_velo],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 3; index++) {
       await TestUtil.create(DB.action, {
@@ -533,7 +596,7 @@ describe('Thematique (API test)', () => {
       code: '4',
       cms_id: '4',
       thematique: Thematique.alimentation,
-      tags_excluants: [TagExcluant.a_un_velo],
+      tags_a_exclure_v2: [Tag_v2.a_un_velo],
     });
 
     await actionRepository.onApplicationBootstrap();
@@ -563,7 +626,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -575,9 +637,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 3; index++) {
       await TestUtil.create(DB.action, {
@@ -616,7 +684,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -632,9 +699,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -664,7 +737,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -676,9 +748,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     await TestUtil.create(DB.action, {
       code: '1',
@@ -709,7 +787,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -728,9 +806,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -782,7 +866,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
 
       liste_thematiques: [
         {
@@ -815,9 +898,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -866,7 +955,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -884,9 +972,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 5; index++) {
       await TestUtil.create(DB.action, {
@@ -941,7 +1035,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -960,9 +1054,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 6; index++) {
       await TestUtil.create(DB.action, {
@@ -1001,7 +1101,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1020,9 +1119,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 7; index++) {
       await TestUtil.create(DB.action, {
@@ -1066,7 +1171,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1085,9 +1189,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
@@ -1141,7 +1251,6 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1160,9 +1269,15 @@ describe('Thematique (API test)', () => {
         },
       ],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       code_commune: '21231',
       thematique_history: thematique_history as any,
+      recommandation: reco as any,
     });
     for (let index = 1; index <= 6; index++) {
       await TestUtil.create(DB.action, {

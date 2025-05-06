@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  GlobalUserVersion,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -61,10 +62,9 @@ export class FranceConnectUsecase {
 
     const state = await this.oIDCStateRepository.getByState(oidc_state);
     if (!state) {
-      console.error(
-        `FranceConnect : state manquant en base de donnée : ${oidc_state}`,
-      );
-      ApplicationError.throwSecurityTechnicalProblemDetected();
+      const message = `FranceConnect : state manquant en base de donnée : ${oidc_state}`;
+      console.error(message);
+      ApplicationError.throwSecurityTechnicalProblemDetected(message);
     }
 
     console.log(state);
@@ -78,10 +78,9 @@ export class FranceConnectUsecase {
     // Vérification NONCE
     const id_token_data = this.oidcService.decodeIdToken(tokens.id_token);
     if (id_token_data.nonce !== state.nonce) {
-      console.error(
-        `FranceConnect : mismatch sur NONCE => sent[${state.nonce}] VS received[${id_token_data.nonce}]`,
-      );
-      ApplicationError.throwSecurityTechnicalProblemDetected();
+      const message = `FranceConnect : mismatch sur NONCE => sent[${state.nonce}] VS received[${id_token_data.nonce}]`;
+      console.error(message);
+      ApplicationError.throwSecurityTechnicalProblemDetected(message);
     }
 
     await this.oIDCStateRepository.setIdToken(state.state, tokens.id_token);
@@ -113,21 +112,23 @@ export class FranceConnectUsecase {
     );
 
     if (standard_user) {
-      if (standard_user.getDateNaissanceString() !== user_info.birthdate) {
+      if (
+        standard_user.getDateNaissanceString() !== user_info.birthdate &&
+        standard_user.global_user_version !== GlobalUserVersion.V1
+      ) {
         ApplicationError.throwErreurRapporchementCompte();
-      } else {
-        await this.utilisateurRepository.setFranceConnectSub(
-          standard_user.id,
-          user_info.sub,
-        );
-        this.setFCUserInfoToUser(standard_user, user_info);
-
-        await this.utilisateurRepository.updateUtilisateurNoConcurency(
-          standard_user,
-          [Scope.core],
-        );
-        return await this.log_ok_fc_user(oidc_state, standard_user);
       }
+      await this.utilisateurRepository.setFranceConnectSub(
+        standard_user.id,
+        user_info.sub,
+      );
+      this.setFCUserInfoToUser(standard_user, user_info);
+
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        standard_user,
+        [Scope.core],
+      );
+      return await this.log_ok_fc_user(oidc_state, standard_user);
     }
 
     // NEW UTILISATEUR CREATION
@@ -175,7 +176,7 @@ export class FranceConnectUsecase {
       utilisateur.id,
     );
 
-    this.passwordManager.initLoginStateAfterSuccess(utilisateur);
+    await this.passwordManager.initLoginStateAfterSuccess(utilisateur);
 
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
@@ -218,12 +219,8 @@ export class FranceConnectUsecase {
   }
 
   async logout_FC_only(state: string): Promise<{ fc_logout_url?: URL }> {
-    if (App.isProd()) {
-      return {}; // PAS de FC encore en PROD
-    } else {
-      const result = await this.external_logout_france_connect_by_state(state);
-      return { fc_logout_url: result.fc_logout_url };
-    }
+    const result = await this.external_logout_france_connect_by_state(state);
+    return { fc_logout_url: result.fc_logout_url };
   }
 
   private getAnnee(date: string): number {

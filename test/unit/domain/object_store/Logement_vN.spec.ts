@@ -5,6 +5,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../../src/domain/logement/logement';
+import { NiveauRisqueLogement } from '../../../../src/domain/logement/NiveauRisque';
 import { Logement_v0 } from '../../../../src/domain/object_store/logement/logement_v0';
 import {
   SerialisableDomain,
@@ -49,6 +50,20 @@ describe('Logement vN ', () => {
         pourcent_exposition_commune_inondation_total_a_risque: 12,
         pourcent_exposition_commune_secheresse_total_a_risque: 23,
       },
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
+      score_risques_adresse: {
+        argile: NiveauRisqueLogement.faible,
+        inondation: NiveauRisqueLogement.fort,
+        radon: NiveauRisqueLogement.nul,
+        secheresse: NiveauRisqueLogement.tres_fort,
+        seisme: NiveauRisqueLogement.inconnu,
+        submersion: NiveauRisqueLogement.faible,
+        tempete: NiveauRisqueLogement.moyen,
+      },
     });
 
     // WHEN
@@ -86,6 +101,20 @@ describe('Logement vN ', () => {
         pourcent_exposition_commune_inondation_zone_5: 5,
         pourcent_exposition_commune_inondation_total_a_risque: 12,
         pourcent_exposition_commune_secheresse_total_a_risque: 23,
+      },
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
+      score_risques_adresse: {
+        argile: NiveauRisqueLogement.faible,
+        inondation: NiveauRisqueLogement.fort,
+        radon: NiveauRisqueLogement.nul,
+        secheresse: NiveauRisqueLogement.tres_fort,
+        seisme: NiveauRisqueLogement.inconnu,
+        submersion: NiveauRisqueLogement.faible,
+        tempete: NiveauRisqueLogement.moyen,
       },
     });
 

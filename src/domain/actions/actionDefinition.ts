@@ -1,7 +1,6 @@
 import { Besoin } from '../aides/besoin';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { Source } from '../contenu/source';
-import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
 
@@ -39,7 +38,8 @@ export class ActionDefinitionData {
   pdcn_categorie: CategorieRecherche;
   type: TypeAction;
   thematique: Thematique;
-  tags_excluants: TagExcluant[];
+  tags_a_inclure: string[];
+  tags_a_exclure: string[];
   sources: Source[];
 }
 

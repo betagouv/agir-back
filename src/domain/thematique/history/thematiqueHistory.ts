@@ -3,14 +3,11 @@ import {
   ActionDefinition,
   TypeCodeAction,
 } from '../../actions/actionDefinition';
-import { KYCHistory } from '../../kyc/kycHistory';
 import {
   ActionUtilisateur_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
-import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
-import { KycTagExcluantTranslator } from './kycTagTranslator';
 import {
   ActionExclue,
   ThematiqueRecommandation,
@@ -29,6 +26,7 @@ export class ActionUtilisateur {
   like_level: number;
   feedback: string;
   liste_questions: Question[];
+  liste_partages: Date[];
 
   constructor(data?: ActionUtilisateur_v0) {
     if (data) {
@@ -38,8 +36,10 @@ export class ActionUtilisateur {
       this.like_level = data.like_level;
       this.feedback = data.feedback;
       this.liste_questions = data.liste_questions ? data.liste_questions : [];
+      this.liste_partages = data.liste_partages ? data.liste_partages : [];
     } else {
       this.liste_questions = [];
+      this.liste_partages = [];
     }
   }
 }
@@ -47,12 +47,10 @@ export class ActionUtilisateur {
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
-  private liste_tags_excluants: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
-    this.liste_tags_excluants = [];
     if (data) {
       if (data.liste_thematiques) {
         this.liste_thematiques = data.liste_thematiques.map(
@@ -66,9 +64,6 @@ export class ThematiqueHistory {
       } else {
         data.liste_actions_utilisateur = [];
       }
-      if (data.liste_tags_excluants) {
-        this.liste_tags_excluants = data.liste_tags_excluants;
-      }
     }
   }
 
@@ -81,11 +76,6 @@ export class ThematiqueHistory {
       }
     }
     return result;
-  }
-
-  public recomputeTagExcluant(history: KYCHistory) {
-    const set = KycTagExcluantTranslator.extractTagsFromKycs(history);
-    this.liste_tags_excluants = Array.from(set.values());
   }
 
   public declarePersonnalisationDone(thematique: Thematique) {
@@ -109,7 +99,11 @@ export class ThematiqueHistory {
   public reset() {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
-    this.liste_tags_excluants = [];
+  }
+  public getRecommandationByThematique(
+    thematique: Thematique,
+  ): ThematiqueRecommandation {
+    return this.liste_thematiques.find((t) => t.thematique === thematique);
   }
 
   public resetPersonnalisation(thematique: Thematique) {
@@ -134,9 +128,6 @@ export class ThematiqueHistory {
 
   public getListeThematiques(): ThematiqueRecommandation[] {
     return this.liste_thematiques;
-  }
-  public getListeTagsExcluants(): TagExcluant[] {
-    return this.liste_tags_excluants;
   }
   public getListeActionsUtilisateur(): ActionUtilisateur[] {
     return this.liste_actions_utilisateur;
@@ -188,6 +179,7 @@ export class ThematiqueHistory {
         like_level: null,
         feedback: null,
         liste_questions: [],
+        liste_partages: [],
       });
     }
   }
@@ -203,6 +195,7 @@ export class ThematiqueHistory {
         like_level: null,
         feedback: null,
         liste_questions: [],
+        liste_partages: [],
       });
     }
   }
@@ -223,6 +216,23 @@ export class ThematiqueHistory {
         like_level: like_level ? like_level : null,
         feedback: feedback ? feedback : null,
         liste_questions: [],
+        liste_partages: [],
+      });
+    }
+  }
+  public shareAction(action: TypeCodeAction) {
+    const found = this.findAction(action);
+    if (found) {
+      found.liste_partages.push(new Date());
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: null,
+        feedback: null,
+        liste_questions: [],
+        liste_partages: [new Date()],
       });
     }
   }
@@ -242,6 +252,7 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: null,
         feedback: null,
+        liste_partages: [],
         liste_questions: [
           {
             date: new Date(),
@@ -251,12 +262,6 @@ export class ThematiqueHistory {
         ],
       });
     }
-  }
-
-  public getRecommandationByThematique(
-    thematique: Thematique,
-  ): ThematiqueRecommandation {
-    return this.liste_thematiques.find((t) => t.thematique === thematique);
   }
 
   public getNombreActionProposees(thematique: Thematique): number {

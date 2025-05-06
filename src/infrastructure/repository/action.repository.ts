@@ -7,7 +7,6 @@ import {
 } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { TagExcluant } from '../../domain/scoring/tagExcluant';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -99,9 +98,10 @@ export class ActionRepository {
       sous_titre: action.sous_titre,
       type: action.type,
       type_code_id: action.getTypeCodeAsString(),
-      tags_excluants: action.tags_excluants,
       sources: action.sources as any,
       pdcn_categorie: action.pdcn_categorie,
+      tags_a_inclure_v2: action.tags_a_inclure,
+      tags_a_exclure_v2: action.tags_a_exclure,
 
       created_at: undefined,
       updated_at: undefined,
@@ -243,12 +243,13 @@ export class ActionRepository {
       sous_titre: action.sous_titre,
       type: TypeAction[action.type],
       quizz_felicitations: action.quizz_felicitations,
-      tags_excluants: action.tags_excluants.map((t) => TagExcluant[t]),
       faq_ids: action.faq_ids,
       consigne: action.consigne,
       label_compteur: action.label_compteur,
       sources: action.sources as any,
       article_ids: action.articles_ids,
+      tags_a_exclure: action.tags_a_exclure_v2,
+      tags_a_inclure: action.tags_a_inclure_v2,
     });
   }
 }

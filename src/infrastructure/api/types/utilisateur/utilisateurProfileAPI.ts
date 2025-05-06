@@ -3,48 +3,44 @@ import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import {
   Chauffage,
   DPE,
-  Logement,
   Superficie,
   TypeLogement,
 } from '../../../../domain/logement/logement';
 
 export class LogementAPI {
-  @ApiProperty({ required: false })
-  nombre_adultes: number;
-  @ApiProperty({ required: false })
-  nombre_enfants: number;
-  @ApiProperty({ required: false })
-  code_postal: string;
-  @ApiProperty({ required: false })
-  commune: string;
-  @ApiProperty({ required: false })
-  commune_label: string;
-  @ApiProperty({ enum: TypeLogement })
-  type: TypeLogement;
-  @ApiProperty({ enum: Superficie })
-  superficie: Superficie;
-  @ApiProperty({ required: false })
-  proprietaire: boolean;
-  @ApiProperty({ enum: Chauffage })
-  chauffage: Chauffage;
-  @ApiProperty({ required: false })
-  plus_de_15_ans: boolean;
-  @ApiProperty({ enum: DPE })
-  dpe: DPE;
+  @ApiProperty({ required: false }) nombre_adultes: number;
+  @ApiProperty({ required: false }) nombre_enfants: number;
+  @ApiProperty({ required: false }) code_postal: string;
+  @ApiProperty({ required: false }) commune: string;
+  @ApiProperty({ required: false }) code_commune: string;
+  @ApiProperty() latitude: number;
+  @ApiProperty() longitude: number;
+  @ApiProperty() numero_rue: string;
+  @ApiProperty() rue: string;
 
-  @ApiProperty()
-  nombre_arrets_catnat: number;
-  @ApiProperty()
-  pourcentage_surface_secheresse_geotech: number;
-  @ApiProperty()
-  pourcentage_surface_inondation: number;
+  @ApiProperty({ required: false }) commune_label: string;
+  @ApiProperty({ enum: TypeLogement }) type: TypeLogement;
+  @ApiProperty({ enum: Superficie }) superficie: Superficie;
+  @ApiProperty({ required: false }) proprietaire: boolean;
+  @ApiProperty({ enum: Chauffage }) chauffage: Chauffage;
+  @ApiProperty({ required: false }) plus_de_15_ans: boolean;
+  @ApiProperty({ enum: DPE }) dpe: DPE;
 
-  public static mapToAPI(log: Logement): LogementAPI {
+  @ApiProperty() nombre_arrets_catnat: number;
+  @ApiProperty() pourcentage_surface_secheresse_geotech: number;
+  @ApiProperty() pourcentage_surface_inondation: number;
+
+  public static mapToAPI(user: Utilisateur): LogementAPI {
+    const log = user.logement;
     return {
       nombre_adultes: log.nombre_adultes,
       nombre_enfants: log.nombre_enfants,
       code_postal: log.code_postal,
       commune: log.commune,
+      rue: log.rue,
+      numero_rue: log.numero_rue,
+      longitude: log.longitude,
+      latitude: log.latitude,
       type: log.type,
       superficie: log.superficie,
       proprietaire: log.proprietaire,
@@ -58,6 +54,7 @@ export class LogementAPI {
       pourcentage_surface_secheresse_geotech:
         log.risques
           .pourcent_exposition_commune_secheresse_geotech_total_a_risque,
+      code_commune: log.code_commune || user.code_commune,
     };
   }
 }
@@ -144,7 +141,7 @@ export class UtilisateurProfileAPI {
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       abonnement_ter_loire: user.abonnement_ter_loire,
-      logement: LogementAPI.mapToAPI(user.logement),
+      logement: LogementAPI.mapToAPI(user),
       annee_naissance: user.annee_naissance,
       mois_naissance: user.mois_naissance,
       jour_naissance: user.jour_naissance,

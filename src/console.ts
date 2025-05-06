@@ -170,6 +170,33 @@ async function bootstrap() {
       );
       break;
 
+    case 'dump_utilisateur_notif_copy_for_stats':
+      start_time = Date.now();
+      console.log(`START dump_utilisateur_notif_copy_for_stats ${start_time}`);
+      await application
+        .get(DuplicateBDDForStatsUsecase)
+        .duplicateUtilisateurNotifications();
+      console.log(
+        `STOP dump_utilisateur_notif_copy_for_stats after ${
+          Date.now() - start_time
+        } ms`,
+      );
+      break;
+    case 'dump_utilisateur_visites_copy_for_stats':
+      start_time = Date.now();
+      console.log(
+        `START dump_utilisateur_visites_copy_for_stats ${start_time}`,
+      );
+      await application
+        .get(DuplicateBDDForStatsUsecase)
+        .duplicateUtilisateurNotifications();
+      console.log(
+        `STOP dump_utilisateur_visites_copy_for_stats after ${
+          Date.now() - start_time
+        } ms`,
+      );
+      break;
+
     case 'dump_utilisateur_question_for_stats':
       start_time = Date.now();
       console.log(`START dump_utilisateur_question_for_stats ${start_time}`);
@@ -252,6 +279,12 @@ async function bootstrap() {
       await application
         .get(CMSDataHelperUsecase)
         .migrateSourceVersListeSourcesSurArticles(process.argv[3]);
+      break;
+
+    case 'cms_migrate_echelle_aides':
+      await application
+        .get(CMSDataHelperUsecase)
+        .migrateEchelleAides(process.argv[3]);
       break;
 
     case 'cms_migrate_aides_partenaires':

@@ -82,7 +82,6 @@ describe('Actions (API test)', () => {
     await blockTextRepository.loadCache();
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_tags_excluants: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -91,6 +90,7 @@ describe('Actions (API test)', () => {
           feedback: null,
           like_level: 2,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_thematiques: [],
@@ -725,7 +725,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
     const gamification: Gamification_v0 = {
@@ -782,7 +781,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
     const gamification: Gamification_v0 = {
@@ -852,9 +850,9 @@ describe('Actions (API test)', () => {
           like_level: null,
           vue_le: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -898,7 +896,103 @@ describe('Actions (API test)', () => {
       like_level: 2,
       vue_le: null,
       liste_questions: [],
+      liste_partages: [],
     });
+  });
+
+  it(`POST /utilisateurs/id/actions/id/share déclare un partage de l'action déjà faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          faite_le: new Date(1),
+          feedback: null,
+          like_level: null,
+          vue_le: null,
+          liste_questions: [],
+          liste_partages: [],
+        },
+      ],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/share',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u.liste_partages).toHaveLength(1);
+    expect(action_u.liste_partages[0].getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
+
+  it(`POST /utilisateurs/id/actions/id/share déclare un partage de l'action jamais croisée`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_thematiques: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thematique_history as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/actions/classique/123/share',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    const action_u = userDB.thematique_history.findAction({
+      type: TypeAction.classique,
+      code: '123',
+    });
+    expect(action_u.liste_partages).toHaveLength(1);
+    expect(action_u.liste_partages[0].getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
   });
 
   it(`POST /utilisateurs/id/actions/id/feedback - pousse une question pour une action deja faite`, async () => {
@@ -916,9 +1010,9 @@ describe('Actions (API test)', () => {
           like_level: null,
           vue_le: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -966,7 +1060,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1014,7 +1107,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1058,6 +1150,7 @@ describe('Actions (API test)', () => {
       like_level: 2,
       vue_le: null,
       liste_questions: [],
+      liste_partages: [],
     });
   });
   it(`POST /utilisateurs/id/actions/id/feedback - like level optionnel`, async () => {
@@ -1065,7 +1158,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1108,6 +1200,7 @@ describe('Actions (API test)', () => {
       like_level: null,
       vue_le: null,
       liste_questions: [],
+      liste_partages: [],
     });
   });
 
@@ -1116,7 +1209,6 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1159,6 +1251,7 @@ describe('Actions (API test)', () => {
       like_level: 3,
       vue_le: null,
       liste_questions: [],
+      liste_partages: [],
     });
   });
 

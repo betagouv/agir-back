@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { Aide } from '../domain/aides/aide';
+import { AideExport, EPCI_AIDE_EXPORT } from '../domain/aides/aideExport';
 import { KYCID } from '../domain/kyc/KYCID';
 import { Scope } from '../domain/utilisateur/utilisateur';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 
 @Injectable()
 export class AdminUsecase {
@@ -15,34 +16,77 @@ export class AdminUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
-  async exportAides(): Promise<Aide[]> {
-    const result: Aide[] = [];
+  async exportAides(): Promise<AideExport[]> {
+    const result: AideExport[] = [];
     const liste = await this.aideRepository.listAll();
     for (const aide_def of liste) {
-      const aide = new Aide(aide_def);
+      const aide = new AideExport(aide_def);
+      aide.liste_partenaires = [];
 
-      const metropoles = new Set<string>();
-      const cas = new Set<string>();
-      const cus = new Set<string>();
-      const ccs = new Set<string>();
-      for (const code_postal of aide_def.codes_postaux) {
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'METRO')
-          .map((m) => metropoles.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CA')
-          .map((m) => cas.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CC')
-          .map((m) => ccs.add(m));
-        this.communeRepository
-          .findRaisonSocialeDeNatureJuridiqueByCodePostal(code_postal, 'CU')
-          .map((m) => cus.add(m));
+      for (const part_id of aide.partenaires_supp_ids) {
+        const partenaire = PartenaireRepository.getPartenaire(part_id);
+        aide.liste_partenaires.push({ ...partenaire, type_epci: undefined });
       }
-      aide.ca = Array.from(cas.values());
-      aide.cc = Array.from(ccs.values());
-      aide.cu = Array.from(cus.values());
-      aide.metropoles = Array.from(metropoles.values());
+
+      for (const part of aide.liste_partenaires) {
+        if (part.code_epci) {
+          const EPCI = this.communeRepository.getEPCIBySIRENCode(
+            part.code_epci,
+          );
+          if (EPCI) {
+            part.type_epci = EPCI.type;
+          }
+        }
+      }
+
+      const liste_codes_communes = new Set<string>();
+      for (const code_postal of aide_def.codes_postaux) {
+        const communes =
+          this.communeRepository.getCommunesForCodePostal(code_postal);
+        for (const com of communes) {
+          liste_codes_communes.add(this.getCommuneGlobale(com.INSEE));
+        }
+      }
+      const liste_codes_EPCI = new Set<string>();
+      aide.liste_codes_communes_hors_EPCI = [];
+
+      for (const code_commune of liste_codes_communes) {
+        const EPCI =
+          this.communeRepository.getEPCIByCommuneCodeINSEE(code_commune);
+        if (EPCI) {
+          liste_codes_EPCI.add(EPCI.code);
+        } else {
+          aide.liste_codes_communes_hors_EPCI.push({
+            code: code_commune,
+            nom: this.communeRepository.getCommuneByCodeINSEE(code_commune).nom,
+          });
+        }
+      }
+
+      aide.liste_codes_communes = Array.from(liste_codes_communes.values());
+
+      aide.liste_EPCI = [];
+
+      for (const code_epci of liste_codes_EPCI) {
+        const EPCI = this.communeRepository.getEPCIBySIRENCode(code_epci);
+
+        const EPCI_export: EPCI_AIDE_EXPORT = {
+          code_siren_epci: EPCI.code,
+          nature_epci: EPCI.type,
+          nom_epci: EPCI.nom,
+          codes_commune_manquants: [],
+          codes_commune_qui_matchent: [],
+        };
+        for (const membre of EPCI.membres) {
+          if (!aide.liste_codes_communes.includes(membre.code)) {
+            EPCI_export.codes_commune_manquants.push(membre.code);
+          } else {
+            EPCI_export.codes_commune_qui_matchent.push(membre.code);
+          }
+        }
+        aide.liste_EPCI.push(EPCI_export);
+      }
+
       result.push(aide);
     }
     result.sort((a, b) => parseInt(a.content_id) - parseInt(b.content_id));
@@ -131,5 +175,9 @@ export class AdminUsecase {
     }
 
     return result;
+  }
+  private getCommuneGlobale(code_commune: string): string {
+    const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+    return commune.commune ? commune.commune : code_commune;
   }
 }

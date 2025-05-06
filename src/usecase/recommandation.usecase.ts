@@ -117,6 +117,7 @@ export class RecommandationUsecase {
       score: e.score,
       titre: e.question,
       type: ContentType.kyc,
+      explicationScore: undefined,
     }));
   }
 

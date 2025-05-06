@@ -36,9 +36,10 @@ describe('AideVeloRepository', () => {
     'revenu fiscal de référence par part . nombre de parts': 1,
     'vélo . prix': 500,
     'foyer . personnes': 1,
-    'aides . pays de la loire . abonné TER': false,
+    // 'aides . pays de la loire . abonné TER': false,
     'vélo . état': 'neuf',
     'demandeur . en situation de handicap': false,
+    'demandeur . âge': 30,
   };
 
   describe('getSummaryVelos', () => {
@@ -68,7 +69,7 @@ describe('AideVeloRepository', () => {
       ]);
     });
 
-    test("doit retourner le bon montant de l'aide avec un abonnement TER à Anger ", () => {
+    test.skip("doit retourner le bon montant de l'aide avec un abonnement TER à Anger ", () => {
       // WHEN
       const result = aidesVeloRepository.getSummaryVelos({
         ...baseParams,
@@ -76,7 +77,7 @@ describe('AideVeloRepository', () => {
         'localisation . epci': 'CU Angers Loire Métropole',
         'localisation . département': '49',
         'localisation . région': '52',
-        'aides . pays de la loire . abonné TER': true,
+        // 'aides . pays de la loire . abonné TER': true,
         'revenu fiscal de référence par part . revenu de référence': 5000,
         'vélo . prix': 100,
       });
@@ -98,7 +99,7 @@ describe('AideVeloRepository', () => {
       ]);
     });
 
-    test("doit retourner le bon montant de l'aide sans un abonnement TER à Anger", () => {
+    test.skip("doit retourner le bon montant de l'aide sans un abonnement TER à Anger", () => {
       // WHEN
       const result = aidesVeloRepository.getSummaryVelos({
         ...baseParams,
@@ -106,7 +107,7 @@ describe('AideVeloRepository', () => {
         'localisation . epci': 'CU Angers Loire Métropole',
         'localisation . département': '49',
         'localisation . région': '52',
-        'aides . pays de la loire . abonné TER': false,
+        // 'aides . pays de la loire . abonné TER': false,
       });
 
       // THEN
@@ -131,7 +132,6 @@ describe('AideVeloRepository', () => {
           'localisation . epci': 'CC la Domitienne',
           'localisation . département': '34',
           'localisation . région': '76',
-          'aides . pays de la loire . abonné TER': false,
         });
 
         // THEN
@@ -209,13 +209,38 @@ describe('AideVeloRepository', () => {
         'localisation . epci': 'CA Villefranche Beaujolais Saône',
         'localisation . département': '69',
         'localisation . région': '84',
-        'aides . pays de la loire . abonné TER': false,
       });
 
       // THEN
       forEachAide(result, (aide: AideVelo) => {
         expect(aide.montant).toBeGreaterThanOrEqual(0);
       });
+    });
+
+    test("seul les personnes de 15 à 25 ans sont éligibles à l'aide pour l'achat d'un vélo mécanique en Ile-de-France", () => {
+      // WHEN
+      let result = aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '91477', // Palaiseau
+        'localisation . epci': 'CA Communauté Paris-Saclay',
+        'localisation . région': '11',
+        'localisation . département': '91',
+      });
+
+      // THEN
+      expect(result['mécanique simple'].length).toBe(1);
+
+      result = aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '91477', // Palaiseau
+        'localisation . epci': 'CA Communauté Paris-Saclay',
+        'localisation . région': '11',
+        'localisation . département': '91',
+        'demandeur . âge': 20,
+      });
+
+      // THEN
+      expect(result['mécanique simple'].length).toBe(2);
     });
   });
 

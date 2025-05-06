@@ -2,14 +2,20 @@ import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  CanalNotification,
+  EmailNotification,
+} from '../../../src/domain/notification/notificationHistory';
 import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { NotificationHistory_v0 } from '../../../src/domain/object_store/notification/NotificationHistory_v0';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
@@ -155,6 +161,94 @@ describe('Duplicate Usecase', () => {
     await TestUtil.appclose();
   });
 
+  it('duplicateUtilisateurNotifications : copy les notifs', async () => {
+    // GIVEN
+    const notifs: NotificationHistory_v0 = {
+      enabled_canals: [],
+      sent_notifications: [
+        {
+          canal: CanalNotification.email,
+          date_envoie: new Date(123),
+          type: EmailNotification.email_utilisateur_inactif_j30,
+        },
+        {
+          canal: CanalNotification.mobile,
+          date_envoie: new Date(456),
+          type: EmailNotification.connexion_code,
+        },
+      ],
+      version: 0,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      external_stat_id: '123',
+      notification_history: notifs as any,
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicateUtilisateurNotifications(5);
+
+    // THEN
+    const stats_users = await TestUtil.prisma_stats.notifications.findMany({
+      orderBy: {
+        date_notification: 'asc',
+      },
+      omit: {
+        id: true,
+      },
+    });
+
+    expect(stats_users).toHaveLength(2);
+
+    expect(stats_users).toEqual([
+      {
+        canal_notification: 'email',
+        date_notification: new Date(123),
+        type_notification: 'email_utilisateur_inactif_j30',
+        user_id: '123',
+      },
+      {
+        canal_notification: 'mobile',
+        date_notification: new Date(456),
+        type_notification: 'connexion_code',
+        user_id: '123',
+      },
+    ]);
+  });
+
+  it('duplicateUtilisateurVistes : copy les visites', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      external_stat_id: '123',
+      activity_dates_log: [new Date(123), new Date(456)],
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicateUtilisateurVistes(5);
+
+    // THEN
+    const stats_users = await TestUtil.prisma_stats.visites.findMany({
+      orderBy: {
+        heure_premiere_visite_du_jour: 'asc',
+      },
+      omit: {
+        id: true,
+      },
+    });
+
+    expect(stats_users).toHaveLength(2);
+
+    expect(stats_users).toEqual([
+      {
+        heure_premiere_visite_du_jour: new Date(123),
+        user_id: '123',
+      },
+      {
+        heure_premiere_visite_du_jour: new Date(456),
+        user_id: '123',
+      },
+    ]);
+  });
+
   it('duplicateUtilisateur : copy ok si moins de user que block size', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -164,6 +258,7 @@ describe('Duplicate Usecase', () => {
       rank_commune: 12,
       rank: 123,
       created_at: new Date(2),
+      activity_dates_log: [new Date(456)],
     });
 
     // WHEN
@@ -193,6 +288,8 @@ describe('Duplicate Usecase', () => {
       rang_national: 123,
       date_inscription: new Date(2),
       version_utilisateur: 'V2',
+      notifications_email_actives: true,
+      notifications_mobile_actives: false,
     });
   });
 
@@ -217,9 +314,9 @@ describe('Duplicate Usecase', () => {
               question: 'mais quoi donc ?',
             },
           ],
+          liste_partages: [new Date(456)],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -563,9 +660,9 @@ describe('Duplicate Usecase', () => {
           feedback: 'good',
           like_level: 3,
           liste_questions: [],
+          liste_partages: [new Date(789)],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -602,6 +699,7 @@ describe('Duplicate Usecase', () => {
       vue_le: new Date(456),
       feedback: 'good',
       like_level: 3,
+      dates_partages: [new Date(789)],
     });
   });
   it('duplicateArticle : copy ok articles utilisateur', async () => {
@@ -616,6 +714,7 @@ describe('Duplicate Usecase', () => {
           like_level: 2,
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [new Date(789)],
         },
       ],
     };
@@ -652,6 +751,7 @@ describe('Duplicate Usecase', () => {
       thematique: 'climat',
       titre: 'titreA',
       user_id: '123',
+      dates_partages: [new Date(789)],
     });
   });
 
@@ -1149,7 +1249,6 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_tags_excluants: [TagExcluant.a_un_jardin, TagExcluant.a_un_velo],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1180,10 +1279,15 @@ describe('Duplicate Usecase', () => {
       ],
       liste_actions_utilisateur: [],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin, Tag_v2.a_un_velo],
+      version: 0,
+    };
 
     await TestUtil.create(DB.utilisateur, {
       thematique_history: thematique_history as any,
       external_stat_id: '123',
+      recommandation: reco as any,
     });
 
     // WHEN
@@ -1205,7 +1309,7 @@ describe('Duplicate Usecase', () => {
       perso_consommation_done_once: false,
       perso_logement_done_once: false,
       perso_transport_done_once: false,
-      tags_exclusion: ['a_un_jardin', 'a_un_velo'],
+      tags: ['a_un_jardin', 'a_un_velo'],
       user_id: '123',
     });
   });

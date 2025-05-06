@@ -1,5 +1,4 @@
 import { TypeCodeAction } from '../../actions/actionDefinition';
-import { TagExcluant } from '../../scoring/tagExcluant';
 import {
   ActionUtilisateur,
   Question,
@@ -45,6 +44,7 @@ export class ActionUtilisateur_v0 {
   like_level: number;
   feedback: string;
   liste_questions: Question_v0[];
+  liste_partages: Date[];
 
   static serialise(domain: ActionUtilisateur): ActionUtilisateur_v0 {
     return {
@@ -56,6 +56,7 @@ export class ActionUtilisateur_v0 {
       liste_questions: domain.liste_questions
         ? domain.liste_questions.map((q) => Question_v0.serialise(q))
         : [],
+      liste_partages: domain.liste_partages,
     };
   }
 }
@@ -87,7 +88,6 @@ export class ThematiqueRecommandation_v0 {
 export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
   liste_actions_utilisateur: ActionUtilisateur_v0[];
-  liste_tags_excluants: TagExcluant[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {
     return {
@@ -99,7 +99,6 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
       liste_actions_utilisateur: domain
         .getListeActionsUtilisateur()
         .map((a) => ActionUtilisateur_v0.serialise(a)),
-      liste_tags_excluants: domain.getListeTagsExcluants(),
     };
   }
 }

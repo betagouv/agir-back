@@ -77,6 +77,9 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(userDB.derniere_activite.getTime()).toBeGreaterThan(
       Date.now() - 200,
     );
+    const log = await utilisateurRepository.getActivityLog('utilisateur-id');
+    expect(log).toHaveLength(1);
+    expect(log[0].getTime()).toBeGreaterThan(Date.now() - 200);
   });
   it('GET /utilisateurs/id/bibliotheque - ne renvoie pas un article non lu', async () => {
     // GIVEN
@@ -511,6 +514,53 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.like_level).toEqual(1);
     expect(response.body.read_date).toEqual(new Date(1).toISOString());
   });
+
+  it('POST /utilisateurs/id/bibliotheque/article/123/share - déclare un article partagé', async () => {
+    // GIVEN
+    const historique: History_v0 = {
+      article_interactions: [
+        {
+          content_id: '1',
+          read_date: new Date(1),
+          favoris: true,
+          like_level: 1,
+          liste_partages: [],
+        },
+      ],
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      history: historique as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titreA',
+      contenu: 'haha {block_123}',
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/bibliotheque/articles/1/share',
+    );
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(userDB.history.article_interactions[0].liste_partages).toHaveLength(
+      1,
+    );
+    expect(
+      userDB.history.article_interactions[0].liste_partages[0].getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+  });
+
   it('GET /utilisateurs/id/bibliotheque/article/123 - renvoi un article non encore lu, sans le méta données', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -1012,16 +1062,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(789),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1079,6 +1132,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       type: TypeLogement.appartement,
       version: 0,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      score_risques_adresse: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1129,16 +1188,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: null,
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(789),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1181,16 +1243,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: null,
           favoris: true,
+          liste_partages: [],
         },
       ],
     };
@@ -1233,16 +1298,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: null,
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1287,11 +1355,13 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1333,16 +1403,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(789),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1386,16 +1459,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(789),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };
@@ -1438,16 +1514,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
           content_id: '1',
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(456),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(789),
           favoris: false,
+          liste_partages: [],
         },
       ],
     };

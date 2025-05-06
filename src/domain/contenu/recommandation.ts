@@ -1,3 +1,4 @@
+import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
 import { Thematique } from '../thematique/thematique';
 import { ContentType } from './contentType';
 
@@ -13,4 +14,5 @@ export type Recommandation = {
   jours_restants?: number;
   soustitre?: string;
   duree?: string;
+  explicationScore: ExplicationScore;
 };

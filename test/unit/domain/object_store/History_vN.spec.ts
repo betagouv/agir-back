@@ -1,9 +1,9 @@
+import { History } from '../../../../src/domain/history/history';
+import { History_v0 } from '../../../../src/domain/object_store/history/history_v0';
 import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { History } from '../../../../src/domain/history/history';
-import { History_v0 } from '../../../../src/domain/object_store/history/history_v0';
 
 describe('History vN ', () => {
   it('build OK from empty', () => {

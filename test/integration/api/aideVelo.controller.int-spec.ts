@@ -177,6 +177,7 @@ describe('Aide Velo (API test)', () => {
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].montant).toEqual(400);
   });
+
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -289,62 +290,47 @@ describe('Aide Velo (API test)', () => {
     ).toBeDefined();
   });
 
-  it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo prise en compte de l'age du demandeur`, async () => {
     // GIVEN
-    process.env.MINIATURES_URL = 'http://localhost:3000';
+    await TestUtil.create(DB.utilisateur);
 
     // WHEN
-    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
-      code_insee: '21231',
+    let res = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
     });
 
     // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['cargo électrique']).toEqual([
-      {
-        collectivite: {
-          kind: 'département',
-          value: '21',
-        },
-        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
+    expect(res.status).toBe(201);
+    expect(
+      res.body['mécanique simple'].find(
+        (a) => a.libelle === 'Île-de-France Mobilités',
+      ),
+    ).toBeUndefined();
 
-Dispositif valable jusqu'au 31 décembre 2024.`,
-        libelle: "Département Côte-d'Or",
-        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'http://localhost:3000/logo_cd21.webp',
-        montant: 250,
-        plafond: 250,
-      },
-    ]);
-  });
-
-  it(`POST /aides/simulerAideVelo OK avec un code métropole`, async () => {
-    // GIVEN
-    process.env.MINIATURES_URL = 'http://localhost:3000';
-
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id-2',
+      email: 'test@mail.fr',
+      annee_naissance: 2002,
+    });
+    await TestUtil.generateAuthorizationToken('utilisateur-id-2');
     // WHEN
-    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
-      code_insee: '242100410',
+    res = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id-2/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
     });
 
     // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['cargo électrique']).toEqual([
-      {
-        collectivite: {
-          kind: 'département',
-          value: '21',
-        },
-        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
-
-Dispositif valable jusqu'au 31 décembre 2024.`,
-        libelle: "Département Côte-d'Or",
-        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'http://localhost:3000/logo_cd21.webp',
-        montant: 250,
-        plafond: 250,
-      },
-    ]);
+    expect(res.status).toBe(201);
+    expect(
+      res.body['mécanique simple'].find(
+        (a) => a.libelle === 'Île-de-France Mobilités',
+      ),
+    ).toBeDefined();
   });
 
   describe('POST /aides/recupererAideVeloParCodeCommuneOuEPCI', () => {

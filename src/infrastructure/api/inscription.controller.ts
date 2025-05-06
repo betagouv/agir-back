@@ -16,7 +16,6 @@ import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituation
 import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { CreateUtilisateurAPI } from './types/utilisateur/onboarding/createUtilisateurAPI';
-import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 import { RenvoyerCodeAPI } from './types/utilisateur/renvoyerCodeAPI';
 import { TokenAPI } from './types/utilisateur/TokenAPI';
@@ -39,9 +38,11 @@ export class InscriptionController extends GenericControler {
     type: CreateUtilisateurAPI,
   })
   @ApiOkResponse({
-    type: ProspectSubmitAPI,
+    type: EmailAPI,
   })
-  async createUtilisateur_v2(@Body() body: CreateUtilisateurAPI) {
+  async createUtilisateur_v2(
+    @Body() body: CreateUtilisateurAPI,
+  ): Promise<EmailAPI> {
     await this.inscriptionUsecase.inscrire_utilisateur(body);
     return EmailAPI.mapToAPI(body.email);
   }

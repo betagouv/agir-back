@@ -95,6 +95,8 @@ export class ArticleRepository {
       sources: article_def.sources as any,
       derniere_maj: article_def.derniere_maj,
       echelle: article_def.echelle,
+      tags_a_exclure_v2: article_def.tags_a_exclure,
+      tags_a_inclure_v2: article_def.tags_a_inclure,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -262,6 +264,8 @@ export class ArticleRepository {
       sources: articleDB.sources as any,
       derniere_maj: articleDB.derniere_maj,
       echelle: Echelle[articleDB.echelle],
+      tags_a_exclure: articleDB.tags_a_exclure_v2,
+      tags_a_inclure: articleDB.tags_a_inclure_v2,
     });
   }
 }

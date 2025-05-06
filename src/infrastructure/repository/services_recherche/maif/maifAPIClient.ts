@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { App } from '../../../../domain/app';
-import { ApplicationError } from '../../../applicationError';
 
 const API_URL_CATNAT =
   'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/catnat';
 
 const API_URL_ZONES_SECHERESSE =
   'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/secheresses/scores/CODE_COMMUNE/zones';
+
+const API_URL_DETAIL_COMMUNE =
+  'https://api.aux-alentours.dev.1934.io/v1/territoires/communes/COM/CODE_COMMUNE';
 
 const API_URL_ZONES_INONDATION =
   'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/inondations/scores/CODE_COMMUNE/zones';
@@ -75,6 +77,72 @@ export type SeismeScoreResponseAPI = {
       color: string; //'#f0f0f0';
       label: string; //'1 - TRES FAIBLE';
     };
+  };
+};
+
+export type DetailCommuneAPI = {
+  com: string; //'21231';
+  typecom: {
+    typecom: string; //'COM';
+    libelle: string; //'Commune';
+  };
+  tncc: {
+    tncc: string; //'0';
+    article: string; //'';
+    charniere: string; //'DE';
+  };
+  ncc: string; //'DIJON';
+  nccenr: string; // 'Dijon';
+  libelle: string; //'Dijon';
+  region: {
+    _path: string; //'/api/v1/territoires/regions/27';
+    reg: string; //'27';
+    libelle: string; // 'Bourgogne-Franche-Comté';
+  };
+  departement: {
+    _path: string; //'/api/v1/territoires/departements/21';
+    dep: string; // '21';
+    libelle: string; // "Côte-d'Or";
+  };
+  collectivite_territoriale: {
+    _path: string; // '/api/v1/territoires/collectivites-territoriales/21D';
+    ctcd: string; //'21D';
+    libelle: string; // "Conseil départemental de La Côte-d'Or";
+  };
+  arrondissement: {
+    _path: string; //'/api/v1/territoires/arrondissements/212';
+    arr: string; //'212';
+    libelle: string; //'Dijon';
+  };
+  canton: {
+    _path: string; //'/api/v1/territoires/cantons/2199';
+    can: string; //'2199';
+    libelle: string; //'Dijon';
+  };
+  evenements: {
+    _path: string; //'/api/v1/territoires/communes/COM/21231/evenements';
+  };
+  contour: {
+    _path: string; //'/api/v1/territoires/communes/COM/21231/contour';
+  };
+  codes_postaux: string[]; //['21000'];
+  population: number; //162650;
+  superficie: number; //41.73;
+  epci: {
+    code: string; //'242100410';
+    libelle: string; //'Dijon Métropole';
+    nature_epci: {
+      code: string; //'ME';
+      libelle: string; //'Métropole';
+    };
+  };
+  tranche_unite_urbaine: {
+    code: string; //'7';
+    libelle: string; // 'Commune appartenant à une unité urbaine de 200 000 à 1 999 999 habitants';
+  };
+  tranche_detaillee_unite_urbaine: {
+    code: string; //'71';
+    libelle: string; //'Commune appartenant à une unité urbaine de 200 000 à 299 999 habitants';
   };
 };
 
@@ -217,6 +285,19 @@ export class MaifAPIClient {
     if (!result) return null;
     return result as ZonesReponseAPI;
   }
+
+  public async callAPIDetailCommuneByCodeCommune(
+    code_commune: string,
+  ): Promise<DetailCommuneAPI> {
+    const result = await this.callAPI(
+      API_URL_DETAIL_COMMUNE.replace('CODE_COMMUNE', code_commune),
+      'detail_commune',
+      {},
+    );
+    if (!result) return null;
+    return result as DetailCommuneAPI;
+  }
+
   public async callAPIZonesinondationByCodeCommune(
     code_commune: string,
   ): Promise<ZonesReponseAPI> {
@@ -241,10 +322,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_secheresse,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPIInondationScore(
@@ -259,10 +337,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_inondation,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPIRadonScore(
@@ -277,10 +352,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_radon,
-      );
+    if (!result) return undefined;
     return result as RadonScoreResponseAPI;
   }
   public async callAPISubmersionScore(
@@ -295,10 +367,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_submersion,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPITempeteScore(
@@ -313,10 +382,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_tempete,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPISeismeScore(
@@ -331,10 +397,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_seisme,
-      );
+    if (!result) return undefined;
     return result as SeismeScoreResponseAPI;
   }
 
@@ -350,10 +413,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_argile,
-      );
+    if (!result) return undefined;
     return result as ArgileScoreResponseAPI;
   }
 
@@ -378,6 +438,12 @@ export class MaifAPIClient {
         params: params,
       });
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        return {};
+      }
+      if (error.response && error.response.status === 404) {
+        return {};
+      }
       console.log(
         `Error calling [maif/${name}] after ${Date.now() - call_time} ms`,
       );
@@ -386,7 +452,7 @@ export class MaifAPIClient {
       } else if (error.request) {
         console.error(error.request);
       }
-      return null;
+      return undefined;
     }
     console.log(`API_TIME:maif/${name}:${Date.now() - call_time}`);
 
