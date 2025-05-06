@@ -620,6 +620,7 @@ describe('Duplicate Usecase', () => {
           like_level: 2,
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
       ],
     };

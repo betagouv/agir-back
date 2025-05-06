@@ -287,6 +287,7 @@ export class ActionUsecase {
       [Scope.thematique_history],
     );
   }
+
   async feedbackAction(
     code: string,
     type: TypeAction,
