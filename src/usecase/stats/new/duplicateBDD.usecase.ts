@@ -222,9 +222,7 @@ export class DuplicateBDDForStatsUsecase {
           }
 
           const final_article = new Article(article_def);
-          final_article.read_date = article_utilisateur.read_date;
-          final_article.like_level = article_utilisateur.like_level;
-          final_article.favoris = article_utilisateur.favoris;
+          final_article.setHistory(article_utilisateur);
 
           try {
             await this.statistiqueExternalRepository.createArticleData(

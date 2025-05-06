@@ -566,7 +566,7 @@ describe('Duplicate Usecase', () => {
           feedback: 'good',
           like_level: 3,
           liste_questions: [],
-          liste_partages: [],
+          liste_partages: [new Date(789)],
         },
       ],
       liste_tags_excluants: [],
@@ -606,6 +606,7 @@ describe('Duplicate Usecase', () => {
       vue_le: new Date(456),
       feedback: 'good',
       like_level: 3,
+      dates_partages: [new Date(789)],
     });
   });
   it('duplicateArticle : copy ok articles utilisateur', async () => {
@@ -620,7 +621,7 @@ describe('Duplicate Usecase', () => {
           like_level: 2,
           read_date: new Date(123),
           favoris: true,
-          liste_partages: [],
+          liste_partages: [new Date(789)],
         },
       ],
     };
@@ -657,6 +658,7 @@ describe('Duplicate Usecase', () => {
       thematique: 'climat',
       titre: 'titreA',
       user_id: '123',
+      dates_partages: [new Date(789)],
     });
   });
 
