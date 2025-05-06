@@ -122,7 +122,6 @@ export class EmailTemplateRepository {
           body: this.email_welcome({
             CONTACT_EMAIL: utilisateur.email,
             UNSUBSCRIBE_URL: unsubscribe_URL,
-            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
             HOME_URL: App.getBaseURLFront(),
           }),
         };
@@ -143,7 +142,6 @@ export class EmailTemplateRepository {
             UNSUBSCRIBE_URL: unsubscribe_URL,
             HOME_URL: App.getBaseURLFront(),
             CONTACT_EMAIL: utilisateur.email,
-            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
         };
       case TypeNotification.email_relance_onboarding_j14:
@@ -154,7 +152,6 @@ export class EmailTemplateRepository {
             UNSUBSCRIBE_URL: unsubscribe_URL,
             HOME_URL: App.getBaseURLFront(),
             CONTACT_EMAIL: utilisateur.email,
-            SERVICE_URL: `${App.getBaseURLFront()}/agir`,
           }),
         };
       case TypeNotification.email_utilisateur_inactif_j30:
