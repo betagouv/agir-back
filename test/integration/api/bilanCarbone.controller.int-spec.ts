@@ -317,8 +317,6 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🚲',
             },
-            // FIXME: Les vacances sont à la fois comptées dans la thématique
-            // transport et à la fois dans la thématique logement.
             // FIXME: Est-ce que l'on ne devrait pas rajouter un test qui
             // vérifie que la somme de tous les pourcentages = 100% ?
             {
@@ -356,13 +354,13 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 991.5498010903609,
+          impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
           details: [
             {
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 327.79344827586203,
+              pourcentage_categorie: 32,
+              impact_kg_annee: 313.92953517652757,
               emoji: '👕',
             },
             {
@@ -375,7 +373,7 @@ describe('/bilan (API test)', () => {
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 13,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
@@ -659,7 +657,7 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8863.759021558264,
+      impact_kg_annee: 8849.895108458928,
       top_3: [
         {
           label: 'Voiture',
@@ -873,13 +871,13 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 991.5498010903609,
+          impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
           details: [
             {
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 327.79344827586203,
+              pourcentage_categorie: 32,
+              impact_kg_annee: 313.92953517652757,
               emoji: '👕',
             },
             {
@@ -892,7 +890,7 @@ describe('/bilan (API test)', () => {
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 13,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
@@ -982,7 +980,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11217.986711969339,
+      11204.122798870005,
     );
   });
 
