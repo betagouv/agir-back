@@ -531,6 +531,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
@@ -606,6 +607,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_tags_excluants: [],
@@ -1466,6 +1468,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -1474,6 +1477,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_tags_excluants: [],
@@ -1531,6 +1535,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_tags_excluants: [],
@@ -1547,6 +1552,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -1555,6 +1561,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           liste_questions: [],
+          liste_partages: [],
         },
       ],
       liste_tags_excluants: [],
@@ -1956,6 +1963,7 @@ describe('Admin (API test)', () => {
           feedback: null,
           like_level: null,
           vue_le: null,
+          liste_partages: [],
           liste_questions: [
             {
               date: new Date(123),
