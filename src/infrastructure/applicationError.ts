@@ -769,6 +769,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `Erreur lors de l'appel à l'API externe [${api_name}]`,
     );
   }
+  static throwNotDecimalField(field: string, value) {
+    this.throwAppError(
+      '144',
+      `Le type du champ [${field}] doit être décimal, reçu : [${value}]`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

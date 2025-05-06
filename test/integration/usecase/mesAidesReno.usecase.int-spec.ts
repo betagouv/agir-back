@@ -5,6 +5,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -35,21 +36,29 @@ describe('Mes Aides Réno', () => {
 
   describe('updateUtilisateurWith', () => {
     test("propriétaire d'une maison principale à Toulouse", async () => {
+      const logement: Logement_v0 = {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.appartement,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: false,
+        latitude: undefined,
+        longitude: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        code_commune: undefined,
+      };
+
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
-        logement: {
-          version: 0,
-          superficie: Superficie.superficie_150,
-          type: TypeLogement.appartement,
-          code_postal: '91120',
-          chauffage: Chauffage.bois,
-          commune: 'PALAISEAU',
-          dpe: DPE.B,
-          nombre_adultes: 2,
-          nombre_enfants: 2,
-          plus_de_15_ans: false,
-          proprietaire: false,
-        },
+        logement: logement as any,
       });
       await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
@@ -123,22 +132,30 @@ describe('Mes Aides Réno', () => {
     });
 
     test("le logement n'est pas la résidence principale", async () => {
+      const logement: Logement_v0 = {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.appartement,
+        code_postal: '91120',
+        chauffage: Chauffage.bois,
+        commune: 'PALAISEAU',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: false,
+        proprietaire: false,
+        latitude: undefined,
+        longitude: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        code_commune: undefined,
+      };
+
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
         code_commune: '91120',
-        logement: {
-          version: 0,
-          superficie: Superficie.superficie_150,
-          type: TypeLogement.appartement,
-          code_postal: '91120',
-          chauffage: Chauffage.bois,
-          commune: 'PALAISEAU',
-          dpe: DPE.B,
-          nombre_adultes: 2,
-          nombre_enfants: 2,
-          plus_de_15_ans: false,
-          proprietaire: false,
-        },
+        logement: logement as any,
       });
       await TestUtil.createKYCLogement();
       await kycRepository.loadCache();
@@ -193,44 +210,71 @@ describe('Mes Aides Réno', () => {
   describe('getIframeUrl', () => {
     test("should return the url without params if the user doesn't exist", async () => {
       const result = await usecase.getIframeUrl('non_existant_id');
-      expect(result).toBe(
+      expect(result.iframe_url).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
+      );
+      expect(result.iframe_url_deja_faite).toBe(
         'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
       );
     });
 
     test('should correctly parse informations', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        plus_de_15_ans: true,
+        dpe: DPE.B,
+        type: TypeLogement.appartement,
+        nombre_adultes: 2,
+        commune: 'TOULOUSE',
+        code_postal: '31500',
+        superficie: Superficie.superficie_150,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+        code_commune: undefined,
+      };
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          plus_de_15_ans: true,
-          dpe: 'B',
-          type: TypeLogement.appartement,
-          nombre_adultes: 2,
-          commune: 'TOULOUSE',
-          code_postal: '31500',
-          superficie: Superficie.superficie_150,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
 
       const result = await usecase.getIframeUrl('utilisateur-id');
-      expect(result).toBe(
+      expect(result.iframe_url).toBe(
         'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+      );
+      expect(result.iframe_url_deja_faite).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=125*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*',
       );
     });
 
     test('superficice from KYC instead of profil', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        plus_de_15_ans: true,
+        dpe: DPE.B,
+        type: TypeLogement.appartement,
+        nombre_adultes: 2,
+        commune: 'TOULOUSE',
+        code_postal: '31500',
+        superficie: Superficie.superficie_70,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+        code_commune: undefined,
+      };
+
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          plus_de_15_ans: true,
-          dpe: 'B',
-          type: TypeLogement.appartement,
-          nombre_adultes: 2,
-          commune: 'TOULOUSE',
-          code_postal: '31500',
-          superficie: Superficie.superficie_70,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
       await TestUtil.createKYCLogement();
@@ -248,24 +292,45 @@ describe('Mes Aides Réno', () => {
       utilisateur.kyc_history.updateQuestion(kyc);
 
       const result = await usecase.getIframeUrl('utilisateur-id');
-      expect(result).toBe(
+      expect(result.iframe_url).toBe(
         'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=50&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+      );
+      expect(result.iframe_url_deja_faite).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=50*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*',
       );
     });
 
     test('should correctly parse partial informations', async () => {
+      const logement: Logement_v0 = {
+        proprietaire: true,
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        code_postal: undefined,
+        commune: undefined,
+        plus_de_15_ans: undefined,
+        superficie: undefined,
+        type: undefined,
+        chauffage: undefined,
+        latitude: undefined,
+        longitude: undefined,
+        nombre_enfants: undefined,
+        numero_rue: undefined,
+        risques: undefined,
+        rue: undefined,
+        version: 0,
+        code_commune: undefined,
+      };
       await TestUtil.create(DB.utilisateur, {
-        logement: {
-          proprietaire: true,
-          dpe: 'B',
-          nombre_adultes: 2,
-        },
+        logement: logement as any,
         revenu_fiscal: 20000,
       });
 
       const result = await usecase.getIframeUrl('utilisateur-id');
-      expect(result).toBe(
+      expect(result.iframe_url).toBe(
         'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
+      );
+      expect(result.iframe_url_deja_faite).toBe(
+        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*',
       );
     });
   });

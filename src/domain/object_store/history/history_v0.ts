@@ -12,6 +12,7 @@ export class ArticleHistory_v0 {
   read_date?: Date;
   like_level?: number;
   favoris: boolean;
+  liste_partages: Date[];
 
   static map(elem: ArticleHistory): ArticleHistory_v0 {
     return {
@@ -19,6 +20,7 @@ export class ArticleHistory_v0 {
       read_date: elem.read_date,
       like_level: elem.like_level,
       favoris: elem.favoris,
+      liste_partages: elem.liste_partages,
     };
   }
 }

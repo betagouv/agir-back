@@ -179,6 +179,16 @@ export class AdminController extends GenericControler {
     return await this.contactUsecase.batchUpdate();
   }
 
+  @Post('admin/update_all_communes_risques')
+  @ApiOperation({
+    summary:
+      'Calcul pour tous les utilisateur les risques commune quand absents',
+  })
+  async update_all_communes_risques(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.profileUsecase.updateAllCommuneRisques();
+  }
+
   @Post('/admin/article-statistique')
   @ApiOperation({
     summary: `Calcul des statistiques de l'ensemble des articles`,

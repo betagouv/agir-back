@@ -163,7 +163,7 @@ export class SyntheseController extends GenericControler {
 
     filtre.code_postal = code_postal;
     const liste_commune =
-      this.communeRepository.getListCommunesNamesParCodePostal(code_postal);
+      this.communeRepository.getListNomsCommunesParCodePostal(code_postal);
 
     filtre.commune = liste_commune[0];
 

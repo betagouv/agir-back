@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
-import { App } from '../domain/app';
 import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
@@ -25,6 +24,8 @@ import { ContactUsecase } from './contact.usecase';
 import { FranceConnectUsecase } from './franceConnect.usecase';
 
 const FIELD_MAX_LENGTH = 40;
+const NUM_RUE_MAX_LENGTH = 10;
+const NOM_RUE_MAX_LENGTH = 100;
 
 export type Phrase = {
   phrase: string;
@@ -212,7 +213,7 @@ export class ProfileUsecase {
       [Scope.logement, Scope.kyc],
     );
     Utilisateur.checkState(utilisateur);
-    const update_data: Partial<Logement> = { ...input };
+    const data_to_update: Partial<Logement> = { ...input };
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -247,13 +248,59 @@ export class ProfileUsecase {
           input.commune,
         );
       }
-      utilisateur.code_commune = this.AorB(
-        code_commune,
-        utilisateur.code_commune,
-      );
+      utilisateur.code_commune = code_commune;
+      data_to_update.code_commune = code_commune;
     }
 
-    utilisateur.logement.patch(update_data, utilisateur);
+    if (input.code_commune) {
+      console.log(input.code_commune);
+      const commune = this.communeRepository.getCommuneByCodeINSEE(
+        input.code_commune,
+      );
+      if (commune) {
+        utilisateur.code_commune = commune.code;
+        data_to_update.code_commune = commune.code;
+        data_to_update.commune = commune.nom;
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(input.code_commune);
+      }
+    }
+
+    if (input.rue) {
+      if (input.rue.length > NOM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData('rue', input.rue, NOM_RUE_MAX_LENGTH);
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.numero_rue) {
+      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
+        ApplicationError.throwTooBigData(
+          'numero_rue',
+          input.numero_rue,
+          NUM_RUE_MAX_LENGTH,
+        );
+      }
+    }
+    if (input.longitude) {
+      if (!validator.isDecimal('' + input.longitude)) {
+        ApplicationError.throwNotDecimalField('longitude', input.longitude);
+      }
+    }
+    if (input.latitude) {
+      if (!validator.isDecimal('' + input.latitude)) {
+        ApplicationError.throwNotDecimalField('latitude', input.latitude);
+      }
+    }
+
+    utilisateur.logement.patch(data_to_update, utilisateur);
 
     try {
       LogementToKycSync.synchronize(input, utilisateur.kyc_history);
@@ -271,7 +318,7 @@ export class ProfileUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.async_SetRisquesFromCodeCommune(utilisateur);
+    this.setRisquesFromCodeCommune(utilisateur);
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -338,6 +385,46 @@ export class ProfileUsecase {
     }
   }
 
+  async updateAllCommuneRisques(block_size: number = 50): Promise<string[]> {
+    const result: string[] = [];
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    const MAX_TOTAL_COMPUTE = 200;
+
+    let total = 0;
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.logement],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        if (total > MAX_TOTAL_COMPUTE) return result;
+
+        if (!user.code_commune) {
+          result.push(`Code commune absent pour [${user.id}]`);
+        } else if (user.logement.risques.nombre_catnat_commune !== undefined) {
+          result.push(`Risques commune déjà présents pour [${user.id}]`);
+        } else {
+          try {
+            await this.setRisquesFromCodeCommune(user, false);
+            result.push(`Computed risques communes OK for [${user.id}]`);
+            total++;
+          } catch (error) {
+            result.push(
+              `Error computing risques communes for [${user.id}] : ${error.message}`,
+            );
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   async updateAllUserCouvertureAides(): Promise<{
     couvert: number;
     pas_couvert: number;
@@ -366,19 +453,15 @@ export class ProfileUsecase {
       utilisateurId,
       [],
     );
-    const result = {
+    let result = {
       fc_logout_url: undefined,
     };
 
-    if (App.isProd()) {
-      return {}; // PAS de FC encore en PROD
-    } else {
-      const logout_url =
-        await this.franceConnectUsecase.external_logout_france_connect(
-          utilisateurId,
-        );
-      result.fc_logout_url = logout_url.fc_logout_url;
-    }
+    const logout_url =
+      await this.franceConnectUsecase.external_logout_france_connect(
+        utilisateurId,
+      );
+    result.fc_logout_url = logout_url.fc_logout_url;
 
     await this.oIDCStateRepository.delete(utilisateurId);
     await this.serviceRepository.deleteAllUserServices(utilisateurId);
@@ -401,12 +484,10 @@ export class ProfileUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private AorB?<T>(a: T, b: T): T {
-    if (a === undefined) return b;
-    return a;
-  }
-
-  private async async_SetRisquesFromCodeCommune(utilisateur: Utilisateur) {
+  private async setRisquesFromCodeCommune(
+    utilisateur: Utilisateur,
+    silent_error = true,
+  ) {
     if (!utilisateur.code_commune) return;
 
     const finder = this.rechercheServiceManager.getFinderById(
@@ -415,7 +496,7 @@ export class ProfileUsecase {
 
     const filtre: FiltreRecherche = {
       code_commune: utilisateur.code_commune,
-      silent_error: true,
+      silent_error: silent_error,
     };
 
     const risques_catnat = await finder.find({
@@ -459,9 +540,10 @@ export class ProfileUsecase {
     utilisateur.logement.risques.pourcent_exposition_commune_inondation_total_a_risque =
       this.zone_pourcent_value('total', risques_zones_inondation);
 
-    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
-      Scope.logement,
-    ]);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.logement],
+    );
   }
 
   private zone_pourcent_value(zone: string, resultats: ResultatRecherche[]) {

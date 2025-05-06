@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   Request,
   UseGuards,
@@ -13,6 +14,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -170,6 +172,24 @@ export class BibliothequeController extends GenericControler {
       content_id,
     );
     return ArticleBibliothequeAPI.mapArticleToAPI(article);
+  }
+
+  @Post('utilisateurs/:utilisateurId/bibliotheque/articles/:content_id/share')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Déclare le partage de cet article`,
+  })
+  @ApiParam({
+    name: 'content_id',
+    description: `id de l'article`,
+  })
+  async shareAction(
+    @Param('content_id') content_id: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    await this.bibliothequeUsecase.shareArticle(utilisateurId, content_id);
   }
 
   @Get('bibliotheque/articles/:content_id')

@@ -35,9 +35,40 @@ export class GenericControler {
       });
     }
     // Asynchronous
+    this.updateActivity(utilisateurId).catch(() => {});
+
+    /*
     this.utilisateurRepository
       .update_last_activite(utilisateurId)
       .catch(() => {});
+      */
+  }
+
+  private async updateActivity(utilisateurId) {
+    const activity_log = await this.utilisateurRepository.getActivityLog(
+      utilisateurId,
+    );
+
+    this.addActivityEvent(activity_log);
+
+    await this.utilisateurRepository.update_last_activite(
+      utilisateurId,
+      activity_log,
+    );
+  }
+
+  private addActivityEvent(log: Date[]) {
+    const last_date = log[log.length - 1];
+
+    if (!last_date) {
+      log.push(new Date());
+      return;
+    }
+
+    const now = new Date();
+    if (last_date.toLocaleDateString() !== now.toLocaleDateString()) {
+      log.push(now);
+    }
   }
 
   public getURLFromRequest(req: Request): string {

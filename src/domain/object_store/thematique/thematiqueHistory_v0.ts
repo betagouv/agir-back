@@ -45,6 +45,7 @@ export class ActionUtilisateur_v0 {
   like_level: number;
   feedback: string;
   liste_questions: Question_v0[];
+  liste_partages: Date[];
 
   static serialise(domain: ActionUtilisateur): ActionUtilisateur_v0 {
     return {
@@ -56,6 +57,7 @@ export class ActionUtilisateur_v0 {
       liste_questions: domain.liste_questions
         ? domain.liste_questions.map((q) => Question_v0.serialise(q))
         : [],
+      liste_partages: domain.liste_partages,
     };
   }
 }

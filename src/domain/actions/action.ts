@@ -32,6 +32,7 @@ export class Action extends ActionDefinition {
   like_level?: number;
   feedback?: string;
   enchainement_id?: string;
+  liste_partages?: Date[];
 
   constructor(action_def: ActionDefinition) {
     super(action_def);
@@ -62,6 +63,7 @@ export class Action extends ActionDefinition {
       action.deja_faite = !!action_user.faite_le;
       action.like_level = action_user.like_level;
       action.feedback = action_user.feedback;
+      action.liste_partages = action_user.liste_partages;
     } else {
       action.deja_vue = false;
       action.vue_le = null;
@@ -69,6 +71,7 @@ export class Action extends ActionDefinition {
       action.deja_faite = false;
       action.like_level = null;
       action.feedback = null;
+      action.liste_partages = [];
     }
     return action;
   }

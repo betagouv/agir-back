@@ -5,8 +5,13 @@ import { CommuneRepository } from '../../src/infrastructure/repository/commune/c
 @Injectable()
 export class CommunesUsecase {
   constructor(private communeRepository: CommuneRepository) {}
-  async getListeCommunes(codePostal: string): Promise<string[]> {
-    return this.communeRepository.getListCommunesNamesParCodePostal(codePostal);
+
+  getListeCommunes(codePostal: string): string[] {
+    return this.communeRepository.getListNomsCommunesParCodePostal(codePostal);
+  }
+
+  getListeCommunes_v2(codePostal: string): { code: string; label: string }[] {
+    return this.communeRepository.getListCommunesParCodePostal(codePostal);
   }
 
   async loadAllEpciAndCOmmunes() {

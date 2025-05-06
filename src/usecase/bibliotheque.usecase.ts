@@ -195,6 +195,27 @@ export class BibliothequeUsecase {
     return this.personnalisator.personnaliser(result, utilisateur);
   }
 
+  async shareArticle(utilisateurId: string, content_id: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.history_article_quizz_aides],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const article_def = this.articleRepository.getArticle(content_id);
+
+    if (!article_def) {
+      ApplicationError.throwArticleNotFound(content_id);
+    }
+
+    utilisateur.history.shareArticle(content_id);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.history_article_quizz_aides],
+    );
+  }
+
   public async addQuizzAttempt(
     utilisateurId: string,
     content_id: string,

@@ -258,6 +258,32 @@ export class ActionsController extends GenericControler {
     );
   }
 
+  @Post('utilisateurs/:utilisateurId/actions/:type_action/:code_action/share')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Déclare le partage de cette action`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `type de l'action (classique/bilan/quizz/etc)`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `code fonctionnel de l'action`,
+  })
+  async shareAction(
+    @Param('code_action') code_action: string,
+    @Param('type_action') type_action: string,
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.actionUsecase.shareAction(code_action, type, utilisateurId);
+  }
+
   @Post(
     'utilisateurs/:utilisateurId/actions/:type_action/:code_action/question',
   )

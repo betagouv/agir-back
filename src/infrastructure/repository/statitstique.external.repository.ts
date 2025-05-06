@@ -72,7 +72,7 @@ export class StatistiqueExternalRepository {
     });
   }
 
-  public async createUserData(utilisateur: Utilisateur) {
+  public async createUserData(utilisateur: Utilisateur, activity_log: Date[]) {
     const code_depart =
       this.communeRepository.findDepartementRegionByCodeCommune(
         utilisateur.code_commune,
@@ -98,6 +98,7 @@ export class StatistiqueExternalRepository {
         rang_national: utilisateur.rank,
         date_inscription: utilisateur.created_at,
         version_utilisateur: utilisateur.global_user_version,
+        actif_le: activity_log,
       },
     });
   }
@@ -116,6 +117,7 @@ export class StatistiqueExternalRepository {
         vue_le: action.vue_le,
         feedback: action.feedback,
         like_level: action.like_level,
+        dates_partages: action.liste_partages,
       },
     });
   }
@@ -129,6 +131,7 @@ export class StatistiqueExternalRepository {
         lu_le: article.read_date,
         est_favoris: article.favoris,
         like_level: article.like_level,
+        dates_partages: article.liste_partages,
       },
     });
   }

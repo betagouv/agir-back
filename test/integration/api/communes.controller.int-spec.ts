@@ -31,6 +31,19 @@ describe('/communes (API test)', () => {
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toEqual('PALAISEAU');
   });
+  it('GET /communes_v2?code_postal=XXXX - ville unique - libellé + code INSEE', async () => {
+    // WHEN
+    const response = await TestUtil.GET('/communes_v2?code_postal=91120');
+
+    //THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        label: 'PALAISEAU',
+        code: '91477',
+      },
+    ]);
+  });
   it('GET /communes?code_postal=XXXX - ville double', async () => {
     // WHEN
     const response = await TestUtil.GET('/communes?code_postal=26290');

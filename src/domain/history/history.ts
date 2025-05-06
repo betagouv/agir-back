@@ -204,6 +204,13 @@ export class History {
     let article = this.findOrCreateArticleById(content_id);
     article.read_date = date || new Date();
   }
+
+  public shareArticle(content_id: string) {
+    if (!content_id) return;
+    let article = this.findOrCreateArticleById(content_id);
+    article.liste_partages.push(new Date());
+  }
+
   public quizzAttempt(content_id: string, score: number, date?: Date) {
     let quizz = this.findQuizzByIdOrCreate(content_id);
     quizz.addAttempt(score, date);
@@ -252,6 +259,7 @@ export class History {
       result = new ArticleHistory({
         content_id: content_id,
         favoris: false,
+        liste_partages: [],
       });
       this.article_interactions.push(result);
     }

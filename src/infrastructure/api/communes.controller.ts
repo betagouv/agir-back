@@ -5,14 +5,19 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { GenericControler } from './genericControler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { CommunesUsecase } from '../../../src/usecase/communes.usecase';
 import { AuthGuard } from '../auth/guard';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { GenericControler } from './genericControler';
 
-export class CommuneEPCIAPI {
+class CommuneEPCIAPI {
   @ApiProperty() code_insee: string;
   @ApiProperty() nom: string;
+}
+
+class CommuneAPI {
+  @ApiProperty() code: string;
+  @ApiProperty() label: string;
 }
 
 @Controller()
@@ -29,7 +34,16 @@ export class CommunesController extends GenericControler {
   async getListeCommunes(
     @Query('code_postal') codePostal: string,
   ): Promise<string[]> {
-    return await this.communeUsecase.getListeCommunes(codePostal);
+    return this.communeUsecase.getListeCommunes(codePostal);
+  }
+
+  @ApiOkResponse({ type: [CommuneAPI] })
+  @Get('communes_v2')
+  @UseGuards(AuthGuard)
+  async getListeCommunes_v2(
+    @Query('code_postal') codePostal: string,
+  ): Promise<CommuneAPI[]> {
+    return this.communeUsecase.getListeCommunes_v2(codePostal);
   }
 
   @ApiOkResponse({ type: [CommuneEPCIAPI] })

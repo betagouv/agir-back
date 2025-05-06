@@ -48,7 +48,7 @@ export class Risques {
   pourcent_exposition_commune_inondation_zone_5: number;
   pourcent_exposition_commune_inondation_total_a_risque: number;
 
-  constructor(risques: Risques_v0) {
+  constructor(risques?: Risques_v0) {
     if (risques) {
       this.nombre_catnat_commune = risques.nombre_catnat_commune;
 
@@ -84,9 +84,13 @@ export class Risques {
 export class Logement {
   nombre_adultes: number;
   nombre_enfants: number;
+  code_commune: string;
   code_postal: string;
   commune: string;
-  commune_label?: string;
+  numero_rue: string; // 3, 12bis
+  rue: string; // avenue de la paix
+  longitude: number;
+  latitude: number;
   type: TypeLogement;
   superficie: Superficie;
   proprietaire: boolean;
@@ -95,19 +99,29 @@ export class Logement {
   dpe: DPE;
   risques: Risques;
 
+  commune_label?: string;
+
   constructor(log?: Logement_v0) {
-    if (!log) return;
-    this.nombre_adultes = this.undefinedToNull(log.nombre_adultes);
-    this.nombre_enfants = this.undefinedToNull(log.nombre_enfants);
-    this.code_postal = this.undefinedToNull(log.code_postal);
-    this.commune = this.undefinedToNull(log.commune);
-    this.type = this.undefinedToNull(log.type);
-    this.superficie = this.undefinedToNull(log.superficie);
-    this.proprietaire = this.undefinedToNull(log.proprietaire);
-    this.chauffage = this.undefinedToNull(log.chauffage);
-    this.plus_de_15_ans = this.undefinedToNull(log.plus_de_15_ans);
-    this.dpe = this.undefinedToNull(log.dpe);
+    if (!log) {
+      this.risques = new Risques();
+      return;
+    }
+    this.nombre_adultes = log.nombre_adultes;
+    this.nombre_enfants = log.nombre_enfants;
+    this.code_postal = log.code_postal;
+    this.commune = log.commune;
+    this.type = log.type;
+    this.superficie = log.superficie;
+    this.proprietaire = log.proprietaire;
+    this.chauffage = log.chauffage;
+    this.plus_de_15_ans = log.plus_de_15_ans;
+    this.dpe = log.dpe;
     this.risques = new Risques(log.risques);
+    this.numero_rue = log.numero_rue;
+    this.rue = log.rue;
+    this.latitude = log.latitude;
+    this.longitude = log.longitude;
+    this.code_commune = log.code_commune;
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {
@@ -127,10 +141,11 @@ export class Logement {
     this.plus_de_15_ans = this.AorB(input.plus_de_15_ans, this.plus_de_15_ans);
 
     this.dpe = this.AorB(input.dpe, this.dpe);
-  }
-
-  private undefinedToNull?<T>(val: T | undefined): T | null {
-    return val === undefined ? null : val;
+    this.numero_rue = this.AorB(input.numero_rue, this.numero_rue);
+    this.rue = this.AorB(input.rue, this.rue);
+    this.longitude = this.AorB(input.longitude, this.longitude);
+    this.latitude = this.AorB(input.latitude, this.latitude);
+    this.code_commune = this.AorB(input.code_commune, this.code_commune);
   }
 
   private AorB?<T>(a: T, b: T): T {

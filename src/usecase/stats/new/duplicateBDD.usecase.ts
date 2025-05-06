@@ -46,8 +46,14 @@ export class DuplicateBDDForStatsUsecase {
 
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
+        const activity_log = await this.utilisateurRepository.getActivityLog(
+          user.id,
+        );
         try {
-          await this.statistiqueExternalRepository.createUserData(user);
+          await this.statistiqueExternalRepository.createUserData(
+            user,
+            activity_log,
+          );
         } catch (error) {
           console.error(error);
           console.error(`Error Creating User : ${JSON.stringify(user)}`);
@@ -216,9 +222,7 @@ export class DuplicateBDDForStatsUsecase {
           }
 
           const final_article = new Article(article_def);
-          final_article.read_date = article_utilisateur.read_date;
-          final_article.like_level = article_utilisateur.like_level;
-          final_article.favoris = article_utilisateur.favoris;
+          final_article.setHistory(article_utilisateur);
 
           try {
             await this.statistiqueExternalRepository.createArticleData(

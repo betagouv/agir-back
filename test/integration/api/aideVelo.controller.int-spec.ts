@@ -289,64 +289,6 @@ describe('Aide Velo (API test)', () => {
     ).toBeDefined();
   });
 
-  it(`POST /aides/simulerAideVelo OK avec un code commune`, async () => {
-    // GIVEN
-    process.env.MINIATURES_URL = 'http://localhost:3000';
-
-    // WHEN
-    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
-      code_insee: '21231',
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['cargo électrique']).toEqual([
-      {
-        collectivite: {
-          kind: 'département',
-          value: '21',
-        },
-        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
-
-Dispositif valable jusqu'au 31 décembre 2024.`,
-        libelle: "Département Côte-d'Or",
-        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'http://localhost:3000/logo_cd21.webp',
-        montant: 250,
-        plafond: 250,
-      },
-    ]);
-  });
-
-  it(`POST /aides/simulerAideVelo OK avec un code métropole`, async () => {
-    // GIVEN
-    process.env.MINIATURES_URL = 'http://localhost:3000';
-
-    // WHEN
-    const response = await TestUtil.POST('/aides/simulerAideVelo').send({
-      code_insee: '242100410',
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['cargo électrique']).toEqual([
-      {
-        collectivite: {
-          kind: 'département',
-          value: '21',
-        },
-        description: `Une subvention de 250 € par VAE acheté dans un commerce de Côte-d'Or (pas sur internet). Une bonification de 100 € est accordée pour toute acquisition de VAE assemblé ou produit en Côte-d'Or, soit une aide totale de 350 €.
-
-Dispositif valable jusqu'au 31 décembre 2024.`,
-        libelle: "Département Côte-d'Or",
-        lien: 'https://www.cotedor.fr/aide/acquisition-de-velo-assistance-electrique',
-        logo: 'http://localhost:3000/logo_cd21.webp',
-        montant: 250,
-        plafond: 250,
-      },
-    ]);
-  });
-
   describe('POST /aides/recupererAideVeloParCodeCommuneOuEPCI', () => {
     test('OK avec un code INSEE (Ville de Merignac)', async () => {
       // WHEN

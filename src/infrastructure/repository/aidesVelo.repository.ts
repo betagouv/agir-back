@@ -40,7 +40,6 @@ export type SummaryVelosParams = Required<
     | 'localisation . région'
     | 'localisation . département'
     | 'vélo . prix'
-    | 'aides . pays de la loire . abonné TER'
     | 'foyer . personnes'
     | 'revenu fiscal de référence par part . revenu de référence'
     | 'revenu fiscal de référence par part . nombre de parts'

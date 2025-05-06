@@ -198,6 +198,12 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+
       risques: {
         nombre_catnat_commune: 1,
 
@@ -216,7 +222,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       },
     };
 
-    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '99999',
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/logement',
@@ -238,8 +247,186 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       proprietaire: true,
       superficie: 'superficie_150',
       type: 'maison',
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
     });
   });
+
+  it('GET /utilisateurs/id/logement - absence de risque', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      chauffage: 'bois',
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      commune_label: 'Palaiseau',
+      dpe: 'B',
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: 'superficie_150',
+      type: 'maison',
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+    });
+  });
+
+  it('GET /utilisateurs/id/logement - pousse code_commune niveau utilisateur si celui de logement est absent', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+
+      risques: {
+        nombre_catnat_commune: 1,
+
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+        pourcent_exposition_commune_inondation_zone_1: 1,
+        pourcent_exposition_commune_inondation_zone_2: 2,
+        pourcent_exposition_commune_inondation_zone_3: 3,
+        pourcent_exposition_commune_inondation_zone_4: 4,
+        pourcent_exposition_commune_inondation_zone_5: 5,
+        pourcent_exposition_commune_inondation_total_a_risque: 12,
+        pourcent_exposition_commune_secheresse_total_a_risque: 23,
+      },
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '23456',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toEqual('23456');
+  });
+  it('GET /utilisateurs/id/logement - pousse code_commune niveau utilisateur si celui de logement est absent', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '23456',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toEqual('23456');
+  });
+
+  it('GET /utilisateurs/id/logement - aucun code commune', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: undefined,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toBeNull();
+  });
+
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -1028,6 +1215,32 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     expect(dbUser.couverture_aides_ok).toEqual(true);
   });
+
+  it('PATCH /utilisateurs/id/logement - maj rue, num rue, long et lat', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      rue: 'rue du soleil',
+      numero_rue: '13bis',
+      longitude: 1,
+      latitude: 43.7,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.logement.rue).toEqual('rue du soleil');
+    expect(dbUser.logement.numero_rue).toEqual('13bis');
+    expect(dbUser.logement.longitude).toEqual(1);
+    expect(dbUser.logement.latitude).toEqual(43.7);
+  });
+
   it('PATCH /utilisateurs/id/logement - maj code postal positionne le code insee de la commune', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1046,6 +1259,30 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
 
     expect(dbUser.code_commune).toEqual('21231');
+    expect(dbUser.logement.code_commune).toEqual('21231');
+  });
+  it('PATCH /utilisateurs/id/logement - maj code commune surcharge le reste', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      commune: 'DIJON',
+      code_commune: '91477',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.code_commune).toEqual('91477');
+    expect(dbUser.logement.code_commune).toEqual('91477');
+    expect(dbUser.logement.commune).toEqual('Palaiseau');
+    expect(dbUser.logement.code_postal).toEqual('21000'); // code postal lui pas touché car on peut pas retoruver un unique code postal à partir d'un code commune
   });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
     // GIVEN
@@ -1329,6 +1566,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1343,6 +1585,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

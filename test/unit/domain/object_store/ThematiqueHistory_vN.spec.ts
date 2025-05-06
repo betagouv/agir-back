@@ -32,6 +32,7 @@ describe('ThematiqueHistory vN ', () => {
           liste_questions: [
             { date: new Date(), est_action_faite: true, question: 'haha' },
           ],
+          liste_partages: [new Date(123)],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
@@ -73,6 +74,7 @@ describe('ThematiqueHistory vN ', () => {
           liste_questions: [
             { date: new Date(), est_action_faite: true, question: 'haha' },
           ],
+          liste_partages: [new Date(132)],
         },
       ],
       liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
