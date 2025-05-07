@@ -31,6 +31,7 @@ export enum SourceInscription {
   mobile = 'mobile',
   web_ngc = 'web_ngc',
   france_connect = 'france_connect',
+  magic_link = 'magic_link',
   inconnue = 'inconnue',
 }
 export enum GlobalUserVersion {
@@ -292,7 +293,8 @@ export class Utilisateur extends UtilisateurData {
 
   public isMagicLinkCodeExpired(): boolean {
     return (
-      this.code === null ||
+      !this.code ||
+      !this.code_generation_time ||
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }

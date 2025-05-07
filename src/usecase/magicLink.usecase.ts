@@ -1,14 +1,13 @@
+import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
 import {
   SourceInscription,
   Utilisateur,
 } from '../domain/utilisateur/utilisateur';
-import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { EmailSender } from '../infrastructure/email/emailSender';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { App } from '../domain/app';
-import { Connexion_v2_Usecase } from './connexion.usecase';
+import { EmailSender } from '../infrastructure/email/emailSender';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 export type Phrase = {
   phrase: string;
@@ -36,7 +35,10 @@ export class MagicLinkUsecase {
       ApplicationError.throwCodeObligatoireMagicLinkError();
     }
 
-    let utilisateur = await this.utilisateurRespository.findByEmail(email);
+    let utilisateur = await this.utilisateurRespository.findByEmail(
+      email,
+      'full',
+    );
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -81,7 +83,7 @@ export class MagicLinkUsecase {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
         true,
-        SourceInscription.inconnue,
+        SourceInscription.magic_link,
       );
 
       await this.utilisateurRespository.createUtilisateur(utilisateur);
