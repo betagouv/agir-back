@@ -219,14 +219,8 @@ export class MaifRepository implements FinderInterface {
     const result = await this.maifAPIClient.callAPIZonesSecheresseByCodeCommune(
       code_commmune_globale,
     );
-    if (!result) {
-      if (filtre.silent_error) {
-        return [];
-      } else {
-        ApplicationError.throwExternalServiceError(
-          'Alentours / Secheresse zones',
-        );
-      }
+    if (!result || !result.actuel) {
+      return [];
     }
 
     return this.computeSyntheseZonesARisque(result);
@@ -247,13 +241,7 @@ export class MaifRepository implements FinderInterface {
       code_commmune_globale,
     );
     if (!result) {
-      if (filtre.silent_error) {
-        return undefined;
-      } else {
-        ApplicationError.throwExternalServiceError(
-          'Alentours / Secheresse zones',
-        );
-      }
+      return undefined;
     }
 
     return result.superficie;
@@ -273,14 +261,8 @@ export class MaifRepository implements FinderInterface {
     const result = await this.maifAPIClient.callAPIZonesinondationByCodeCommune(
       code_commmune_globale,
     );
-    if (!result) {
-      if (filtre.silent_error) {
-        return [];
-      } else {
-        ApplicationError.throwExternalServiceError(
-          'Alentours / Inondation zones',
-        );
-      }
+    if (!result || !result.actuel) {
+      return [];
     }
     const surface = await this.findSurfaceCommune(filtre);
     return this.computeSyntheseZonesARisque(result, surface);
