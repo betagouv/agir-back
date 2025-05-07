@@ -394,7 +394,7 @@ export class ApplicationError {
   ) {
     this.throwAppError(
       '079',
-      `Le code postal '${code_postal}' ne correspond pas à la commune ${commune}`,
+      `Le code postal [${code_postal}] ne correspond pas à la commune [${commune}]`,
     );
   }
   static throwUnkownEnchainement(id: string) {

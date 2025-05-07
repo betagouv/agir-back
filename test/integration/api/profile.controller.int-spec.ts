@@ -1271,7 +1271,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ).send({
       code_postal: '21000',
       commune: 'DIJON',
-      code_commune: '91477',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(200);
@@ -1279,9 +1279,9 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.code_commune).toEqual('91477');
-    expect(dbUser.logement.code_commune).toEqual('91477');
-    expect(dbUser.logement.commune).toEqual('Palaiseau');
+    expect(dbUser.code_commune).toEqual('21231');
+    expect(dbUser.logement.code_commune).toEqual('21231');
+    expect(dbUser.logement.commune).toEqual('Dijon');
     expect(dbUser.logement.code_postal).toEqual('21000'); // code postal lui pas touché car on peut pas retoruver un unique code postal à partir d'un code commune
   });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
@@ -1325,6 +1325,37 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('078');
+  });
+  it('PATCH /utilisateurs/id/logement - code postal avec code_commune sans label commune => OK', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      code_commune: '21231',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+  });
+  it('PATCH /utilisateurs/id/logement - code postal avec code_commune pas compatible OK', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      code_commune: '91477',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual(
+      `Le code postal [21000] ne correspond pas à la commune [91477]`,
+    );
   });
   it('PATCH /utilisateurs/id/logement - commune sans code postal', async () => {
     // GIVEN

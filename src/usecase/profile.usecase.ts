@@ -232,7 +232,7 @@ export class ProfileUsecase {
 
     if (
       (input.commune && !input.code_postal) ||
-      (!input.commune && input.code_postal)
+      (!input.commune && !input.code_commune && input.code_postal)
     ) {
       ApplicationError.throwCodePostalCommuneMandatory();
     }
@@ -257,6 +257,12 @@ export class ProfileUsecase {
       const commune = this.communeRepository.getCommuneByCodeINSEE(
         input.code_commune,
       );
+      if (!commune.codesPostaux.includes(input.code_postal)) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          input.code_postal,
+          input.code_commune,
+        );
+      }
       if (commune) {
         utilisateur.code_commune = commune.code;
         data_to_update.code_commune = commune.code;
