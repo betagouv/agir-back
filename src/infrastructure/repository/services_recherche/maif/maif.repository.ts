@@ -228,8 +228,37 @@ export class MaifRepository implements FinderInterface {
         );
       }
     }
+
     return this.computeSyntheseZonesARisque(result);
   }
+
+  private async findSurfaceCommune(
+    filtre: FiltreRecherche,
+  ): Promise<number | undefined> {
+    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
+    if (!code_commmune_globale) {
+      if (filtre.silent_error) {
+        return undefined;
+      } else {
+        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
+      }
+    }
+    const result = await this.maifAPIClient.callAPIDetailCommuneByCodeCommune(
+      code_commmune_globale,
+    );
+    if (!result) {
+      if (filtre.silent_error) {
+        return undefined;
+      } else {
+        ApplicationError.throwExternalServiceError(
+          'Alentours / Secheresse zones',
+        );
+      }
+    }
+
+    return result.superficie;
+  }
+
   private async findZonesInondation(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
@@ -253,11 +282,13 @@ export class MaifRepository implements FinderInterface {
         );
       }
     }
-    return this.computeSyntheseZonesARisque(result);
+    const surface = await this.findSurfaceCommune(filtre);
+    return this.computeSyntheseZonesARisque(result, surface);
   }
 
   private computeSyntheseZonesARisque(
     zones: ZonesReponseAPI,
+    surface_total?: number,
   ): ResultatRecherche[] {
     let synthese = {
       zone_1: 0,
@@ -268,50 +299,59 @@ export class MaifRepository implements FinderInterface {
     };
 
     for (const feature of zones.actuel.features) {
-      const area = this.computeAreaOfClosedPath(
-        feature.geometry.coordinates[0],
-      );
+      let area = 0;
+      for (const polygone of feature.geometry.coordinates) {
+        area += this.computeAreaOfClosedPath(polygone);
+      }
       synthese[`zone_${feature.properties.score}`] =
         synthese[`zone_${feature.properties.score}`] + area;
     }
-    const total_area =
-      synthese.zone_1 +
-      synthese.zone_2 +
-      synthese.zone_3 +
-      synthese.zone_4 +
-      synthese.zone_5;
+
+    let surface_total_m2: number;
+    if (surface_total) {
+      surface_total_m2 = surface_total * 1000 * 1000;
+    } else {
+      surface_total_m2 =
+        synthese.zone_1 +
+        synthese.zone_2 +
+        synthese.zone_3 +
+        synthese.zone_4 +
+        synthese.zone_5;
+    }
 
     return [
       {
         id: 'zone_1',
         titre: 'Pourcentage risque très faible',
-        pourcentage: Math.round((synthese.zone_1 / total_area) * 100),
+        pourcentage: (synthese.zone_1 / surface_total_m2) * 100,
       },
       {
         id: 'zone_2',
         titre: 'Pourcentage risque faible',
-        pourcentage: Math.round((synthese.zone_2 / total_area) * 100),
+        pourcentage: (synthese.zone_2 / surface_total_m2) * 100,
       },
       {
         id: 'zone_3',
         titre: 'Pourcentage risque moyen',
-        pourcentage: Math.round((synthese.zone_3 / total_area) * 100),
+        pourcentage: (synthese.zone_3 / surface_total_m2) * 100,
       },
       {
         id: 'zone_4',
         titre: 'Pourcentage risque fort',
-        pourcentage: Math.round((synthese.zone_4 / total_area) * 100),
+        pourcentage: (synthese.zone_4 / surface_total_m2) * 100,
       },
       {
         id: 'zone_5',
         titre: 'Pourcentage risque très fort',
-        pourcentage: Math.round((synthese.zone_5 / total_area) * 100),
+        pourcentage: (synthese.zone_5 / surface_total_m2) * 100,
       },
       {
         id: 'zone_total',
         titre: 'Total considéré à risque',
-        pourcentage: Math.round(
-          ((synthese.zone_5 + synthese.zone_4) / total_area) * 100,
+        pourcentage: Math.ceil(
+          ((synthese.zone_5 + synthese.zone_4 + synthese.zone_3) /
+            surface_total_m2) *
+            100,
         ),
       },
     ];
