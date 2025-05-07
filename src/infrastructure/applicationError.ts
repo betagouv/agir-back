@@ -775,6 +775,12 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `Le type du champ [${field}] doit être décimal, reçu : [${value}]`,
     );
   }
+  static throwSourceInscriptionInconnue(source: string) {
+    this.throwAppError(
+      '145',
+      `La source d'inscription [${source}] est inconnue`,
+    );
+  }
 
   private static throwAppError(
     code: string,
