@@ -135,7 +135,7 @@ export class MaifRepository implements FinderInterface {
       id: SCORE_API_NAME.score_secheresse,
       titre: `Risques de sécheresse`,
       niveau_risque: this.getNiveauRisqueFromScore(
-        score_secheresse.actuel.score,
+        score_secheresse?.actuel?.score,
       ),
       type_risque: TypeRisqueLogement.secheresse,
       description: `La sécheresse géotechnique est le nom donné au phénomène de retrait-gonflement des argiles, processus naturel où les sols argileux gonflent lorsqu'ils sont humides et se rétractent lorsqu'ils sont secs, ce qui peut causer des dégradations sur les structures construites sur ces sols.`,
@@ -144,7 +144,7 @@ export class MaifRepository implements FinderInterface {
       id: SCORE_API_NAME.score_inondation,
       titre: `Risques d'inondations`,
       niveau_risque: this.getNiveauRisqueFromScore(
-        score_inondation.actuel.score,
+        score_inondation?.actuel?.score,
       ),
       type_risque: TypeRisqueLogement.inondation,
       description: `Une inondation est une submersion ponctuelle d’origine naturelle d’une zone habituellement hors d’eau. Elle peut relever d'un phénomène régulier ou catastrophique pouvant se produire lentement ou très rapidement. Elle peut être liée à différents événements :
@@ -156,7 +156,7 @@ export class MaifRepository implements FinderInterface {
       id: SCORE_API_NAME.score_submersion,
       titre: `Risques de submersion`,
       niveau_risque: this.getNiveauRisqueFromScore(
-        score_submersion.actuel.score,
+        score_submersion?.actuel?.score,
       ),
       type_risque: TypeRisqueLogement.submersion,
       description: `Les submersions marines sont des inondations rapides et de courtes durées (de quelques heures à quelques jours) de la zone côtière par la mer, lors de conditions météorologiques et océaniques défavorables.`,
@@ -164,30 +164,40 @@ export class MaifRepository implements FinderInterface {
     result.push({
       id: SCORE_API_NAME.score_tempete,
       titre: `Risques de tempetes`,
-      niveau_risque: this.getNiveauRisqueFromScore(score_tempete.actuel.score),
+      niveau_risque: this.getNiveauRisqueFromScore(
+        score_tempete?.actuel?.score,
+      ),
       type_risque: TypeRisqueLogement.tempete,
       description: ``,
     });
     result.push({
       id: SCORE_API_NAME.score_seisme,
       titre: `Risques sismiques`,
-      niveau_risque: this.getNiveauRisqueFromScore(score_seisme.score),
+      niveau_risque: this.getNiveauRisqueFromScore(score_seisme?.score),
       type_risque: TypeRisqueLogement.seisme,
       description: `Un séisme ou tremblement de terre est une rupture brutale et profonde des roches le long d'une faille (déplacement tectonique) qui provoque des vibrations plus ou moins violentes à la surface du sol.  D'autres phénomènes peuvent être à l'origine de secousses sismiques (volcan qui entre en éruption…), de mouvements des glaces ou consécutifs à l’action humaine (activités minières, barrages ou explosions).`,
     });
+
+    let score_argile_value = score_argile?.data?.score;
+    if (score_argile_value != undefined) {
+      score_argile_value++;
+    }
     result.push({
       id: SCORE_API_NAME.score_argile,
       titre: `Risques retrait/gonflement des sols argileux`,
-      niveau_risque: this.getNiveauRisqueFromScore(score_argile.data.score + 1),
+      niveau_risque: this.getNiveauRisqueFromScore(score_argile_value),
       type_risque: TypeRisqueLogement.argile,
       description: `La sécheresse géotechnique est le nom donné au phénomène de retrait-gonflement des argiles, processus naturel où les sols argileux gonflent lorsqu'ils sont humides et se rétractent lorsqu'ils sont secs, ce qui peut causer des dégradations sur les structures construites sur ces sols.`,
     });
+
+    let score_radon_value = score_radon?.potentielRadon;
+    if (score_radon_value != undefined) {
+      score_radon_value++;
+    }
     result.push({
       id: SCORE_API_NAME.score_radon,
       titre: `Risques d'exposition au radon`,
-      niveau_risque: this.getNiveauRisqueFromScore(
-        score_radon.potentielRadon + 1,
-      ),
+      niveau_risque: this.getNiveauRisqueFromScore(score_radon_value),
       type_risque: TypeRisqueLogement.radon,
       description: ``,
     });

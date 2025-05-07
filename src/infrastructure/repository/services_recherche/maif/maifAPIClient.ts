@@ -392,7 +392,7 @@ export class MaifAPIClient {
       } else if (error.request) {
         console.error(error.request);
       }
-      return null;
+      return undefined;
     }
     console.log(`API_TIME:maif/${name}:${Date.now() - call_time}`);
 
