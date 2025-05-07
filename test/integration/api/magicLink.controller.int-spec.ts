@@ -253,6 +253,35 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     expect(userDB.active_account).toEqual(true);
+    expect(userDB.force_connexion).toEqual(false);
+  });
+  it(`GET /utilisateurs/:email/login - code OK, login OK, reset force_connexion`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      email: 'email@www.com',
+      code: '12345',
+      force_connexion: true,
+      failed_login_count: 2,
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      `/utilisateurs/email@www.com/login?code=12345`,
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body.token.length).toBeGreaterThan(20);
+    expect(response.body.utilisateur.id).toEqual('utilisateur-id');
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'email@www.com' },
+    });
+
+    expect(userDB.active_account).toEqual(true);
+    expect(userDB.force_connexion).toEqual(false);
+    expect(userDB.failed_login_count).toEqual(0);
   });
   it(`GET /utilisateurs/:email/login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
     // GIVEN

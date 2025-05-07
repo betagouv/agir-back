@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
 } from '../domain/utilisateur/utilisateur';
@@ -22,6 +24,7 @@ export class MagicLinkUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
     private tokenRepository: TokenRepository,
+    private passwordManager: PasswordManager,
   ) {}
 
   async validateLink(
@@ -62,9 +65,14 @@ export class MagicLinkUsecase {
       ApplicationError.throwBadCodError();
     }
 
+    await this.passwordManager.initLoginStateAfterSuccess(utilisateur);
+
     utilisateur.code = null;
     utilisateur.active_account = true;
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRespository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
 
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
