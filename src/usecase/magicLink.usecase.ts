@@ -71,10 +71,14 @@ export class MagicLinkUsecase {
     return { token: token, utilisateur: utilisateur };
   }
 
-  async sendLink(email: string): Promise<void> {
+  async sendLink(email: string, source: SourceInscription): Promise<void> {
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
     }
+    if (source && !SourceInscription[source]) {
+      ApplicationError.throwSourceInscriptionInconnue(source);
+    }
+
     Utilisateur.checkEmailFormat(email);
 
     let utilisateur = await this.utilisateurRespository.findByEmail(email);
@@ -83,7 +87,7 @@ export class MagicLinkUsecase {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
         true,
-        SourceInscription.magic_link,
+        source || SourceInscription.magic_link,
       );
 
       await this.utilisateurRespository.createUtilisateur(utilisateur);

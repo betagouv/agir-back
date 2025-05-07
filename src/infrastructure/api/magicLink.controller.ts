@@ -38,7 +38,7 @@ export class MagicLinkController extends GenericControler {
   })
   @UseGuards(ThrottlerGuard)
   async sendMagicLink(@Body() body: ProspectSubmitAPI) {
-    await this.magicLinkUsecase.sendLink(body.email);
+    await this.magicLinkUsecase.sendLink(body.email, body.source_inscription);
   }
 
   @ApiParam({
@@ -74,7 +74,12 @@ export class MagicLinkController extends GenericControler {
   })
   @UseGuards(ThrottlerGuard)
   @Post('utilisateurs/magic_link_login')
-  async post_validateMagicLink(@Body() body: ValidateCodeAPI) {
+  @ApiBody({
+    type: ValidateCodeAPI,
+  })
+  async post_validateMagicLink(
+    @Body() body: ValidateCodeAPI,
+  ): Promise<LoggedUtilisateurAPI> {
     const loggedUser = await this.magicLinkUsecase.validateLink(
       body.email,
       body.code,

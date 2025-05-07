@@ -1,7 +1,8 @@
 import { App } from '../../../src/domain/app';
+import { SourceInscription } from '../../../src/domain/utilisateur/utilisateur';
 import { DB, TestUtil } from '../../TestUtil';
 
-describe.skip('/utilisateurs - Magic link - (API test)', () => {
+describe('/utilisateurs - Magic link - (API test)', () => {
   const OLD_ENV = process.env;
   const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
 
@@ -38,6 +39,21 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
       `Format de l'adresse électronique bad_email incorrect`,
     );
   });
+  it(`POST /utilisateurs/send_magic_link - source inconnue `, async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'aaa@bbb.com',
+        source_inscription: 'bad',
+      });
+    // THEN
+    expect(response.status).toEqual(400);
+    expect(response.body.message).toEqual(
+      `La source d'inscription [bad] est inconnue`,
+    );
+  });
   it(`POST /utilisateurs/send_magic_link - email absent `, async () => {
     // GIVEN
     // WHEN
@@ -46,7 +62,7 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
       .send({});
     // THEN
     expect(response.status).toEqual(400);
-    expect(response.body.message).toEqual(`Email obligatoire`);
+    expect(response.body.message).toEqual(`Adresse électronique obligatoire`);
   });
   it(`POST /utilisateurs/send_magic_link - génère un magic_link et l'envoie en email, utilisateur créé dans la foulé`, async () => {
     // GIVEN
@@ -65,6 +81,30 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
       where: { email: 'ww@w.com' },
     });
 
+    expect(userDB.source_inscription).toEqual(SourceInscription.magic_link);
+    expect(userDB.is_magic_link_user).toEqual(true);
+    expect(userDB.active_account).toEqual(false);
+    expect(userDB.code.length).toEqual(6);
+  });
+  it(`POST /utilisateurs/send_magic_link - prend en compte la source`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'ww@w.com',
+        source_inscription: SourceInscription.mobile,
+      });
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'ww@w.com' },
+    });
+
+    expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
@@ -304,12 +344,15 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
     ).code;
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/ww@w.com/login?code=${code_1}`,
-    );
+    const response = await TestUtil.getServer()
+      .post(`/utilisateurs/magic_link_login`)
+      .send({
+        code: code_1,
+        email: 'ww@w.com',
+      });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { email: 'ww@w.com' },
@@ -318,9 +361,7 @@ describe.skip('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.active_account).toEqual(true);
 
     expect(response.body.token.length).toBeGreaterThan(20);
-
+    expect(response.body.utilisateur.email).toEqual('ww@w.com');
     expect(response.body.utilisateur.id.length).toBeGreaterThan(10);
-    expect(response.body.utilisateur.nom).toEqual('NOM');
-    expect(response.body.utilisateur.prenom).toEqual('PRENOM');
   });
 });
