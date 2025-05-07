@@ -8,17 +8,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiQuery,
+  ApiBody,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger';
-import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
-import { GenericControler } from './genericControler';
-import { MagicLinkUsecase } from '../../usecase/magicLink.usecase';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { MagicLinkUsecase } from '../../usecase/magicLink.usecase';
+import { GenericControler } from './genericControler';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
+import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
+import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 
 @Controller()
 @ApiTags('Magic Link')
@@ -31,10 +33,14 @@ export class MagicLinkController extends GenericControler {
   @ApiOperation({
     summary: 'envoie une lien de connexion au mail argument',
   })
+  @ApiBody({
+    type: ProspectSubmitAPI,
+  })
   @UseGuards(ThrottlerGuard)
   async sendMagicLink(@Body() body: ProspectSubmitAPI) {
     await this.magicLinkUsecase.sendLink(body.email);
   }
+
   @ApiParam({
     name: 'email',
     type: String,
@@ -47,7 +53,7 @@ export class MagicLinkController extends GenericControler {
   })
   @ApiOkResponse({ type: LoggedUtilisateurAPI })
   @ApiOperation({
-    summary: 'envoie une lien de connexion au mail argument',
+    summary: `Crée et/ou connect l'utilisateur`,
   })
   @UseGuards(ThrottlerGuard)
   @Get('utilisateurs/:email/login')
@@ -56,6 +62,23 @@ export class MagicLinkController extends GenericControler {
     @Param('email') email: string,
   ) {
     const loggedUser = await this.magicLinkUsecase.validateLink(email, code);
+    return LoggedUtilisateurAPI.mapToAPI(
+      loggedUser.token,
+      loggedUser.utilisateur,
+    );
+  }
+
+  @ApiOkResponse({ type: LoggedUtilisateurAPI })
+  @ApiOperation({
+    summary: `Crée et/ou connect l'utilisateur`,
+  })
+  @UseGuards(ThrottlerGuard)
+  @Post('utilisateurs/magic_link_login')
+  async post_validateMagicLink(@Body() body: ValidateCodeAPI) {
+    const loggedUser = await this.magicLinkUsecase.validateLink(
+      body.email,
+      body.code,
+    );
     return LoggedUtilisateurAPI.mapToAPI(
       loggedUser.token,
       loggedUser.utilisateur,
