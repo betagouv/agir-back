@@ -74,7 +74,7 @@ export class Logement_v0 extends Versioned_v0 {
   chauffage: Chauffage;
   plus_de_15_ans: boolean;
   dpe: DPE;
-  risques: Risques_v0;
+  risques: Risques_v0 | undefined;
 
   static serialise(domain: Logement): Logement_v0 {
     return {

@@ -202,7 +202,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: undefined,
+      code_commune: '12345',
 
       risques: {
         nombre_catnat_commune: 1,
@@ -222,7 +222,10 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       },
     };
 
-    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '99999',
+    });
     // WHEN
     const response = await TestUtil.GET(
       '/utilisateurs/utilisateur-id/logement',
@@ -248,8 +251,182 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
+      code_commune: '12345',
     });
   });
+
+  it('GET /utilisateurs/id/logement - absence de risque', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      chauffage: 'bois',
+      code_postal: '91120',
+      commune: 'PALAISEAU',
+      commune_label: 'Palaiseau',
+      dpe: 'B',
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: 'superficie_150',
+      type: 'maison',
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '12345',
+    });
+  });
+
+  it('GET /utilisateurs/id/logement - pousse code_commune niveau utilisateur si celui de logement est absent', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+
+      risques: {
+        nombre_catnat_commune: 1,
+
+        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
+        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
+        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
+        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
+        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
+        pourcent_exposition_commune_inondation_zone_1: 1,
+        pourcent_exposition_commune_inondation_zone_2: 2,
+        pourcent_exposition_commune_inondation_zone_3: 3,
+        pourcent_exposition_commune_inondation_zone_4: 4,
+        pourcent_exposition_commune_inondation_zone_5: 5,
+        pourcent_exposition_commune_inondation_total_a_risque: 12,
+        pourcent_exposition_commune_secheresse_total_a_risque: 23,
+      },
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '23456',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toEqual('23456');
+  });
+  it('GET /utilisateurs/id/logement - pousse code_commune niveau utilisateur si celui de logement est absent', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: '23456',
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toEqual('23456');
+  });
+
+  it('GET /utilisateurs/id/logement - aucun code commune', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      risques: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      code_commune: undefined,
+    });
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/logement',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.code_commune).toBeNull();
+  });
+
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {

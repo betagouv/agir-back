@@ -132,7 +132,7 @@ export class ProfileController extends GenericControler {
     if (utilisateur == null) {
       throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
     }
-    return LogementAPI.mapToAPI(utilisateur.logement);
+    return LogementAPI.mapToAPI(utilisateur);
   }
 
   @Patch('utilisateurs/:utilisateurId/profile')
