@@ -163,7 +163,7 @@ export class MaifRepository implements FinderInterface {
     });
     result.push({
       id: SCORE_API_NAME.score_tempete,
-      titre: `Risques de tempetes`,
+      titre: `Risques de tempêtes`,
       niveau_risque: this.getNiveauRisqueFromScore(
         score_tempete?.actuel?.score,
       ),
@@ -184,7 +184,7 @@ export class MaifRepository implements FinderInterface {
     }
     result.push({
       id: SCORE_API_NAME.score_argile,
-      titre: `Risques retrait/gonflement des sols argileux`,
+      titre: `Risques retrait-gonflement des sols argileux`,
       niveau_risque: this.getNiveauRisqueFromScore(score_argile_value),
       type_risque: TypeRisqueLogement.argile,
       description: `La sécheresse géotechnique est le nom donné au phénomène de retrait-gonflement des argiles, processus naturel où les sols argileux gonflent lorsqu'ils sont humides et se rétractent lorsqu'ils sont secs, ce qui peut causer des dégradations sur les structures construites sur ces sols.`,
