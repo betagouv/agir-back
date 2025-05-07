@@ -49,6 +49,9 @@ export class AidesVeloUsecase {
     );
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
     const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+    const age = utilisateur.annee_naissance
+      ? new Date().getFullYear() - utilisateur.annee_naissance
+      : undefined;
 
     return this.aidesVeloRepository.getSummaryVelos({
       'localisation . code insee': code_insee,
@@ -63,6 +66,7 @@ export class AidesVeloUsecase {
       'revenu fiscal de référence par part . nombre de parts': PARTS,
       'vélo . état': etat_velo,
       'demandeur . en situation de handicap': situation_handicap,
+      'demandeur . âge': age,
     });
   }
 

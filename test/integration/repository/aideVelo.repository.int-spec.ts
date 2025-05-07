@@ -39,6 +39,7 @@ describe('AideVeloRepository', () => {
     // 'aides . pays de la loire . abonné TER': false,
     'vélo . état': 'neuf',
     'demandeur . en situation de handicap': false,
+    'demandeur . âge': 30,
   };
 
   describe('getSummaryVelos', () => {
@@ -214,6 +215,33 @@ describe('AideVeloRepository', () => {
       forEachAide(result, (aide: AideVelo) => {
         expect(aide.montant).toBeGreaterThanOrEqual(0);
       });
+    });
+
+    test("seul les personnes de 15 à 25 ans sont éligibles à l'aide pour l'achat d'un vélo mécanique en Ile-de-France", () => {
+      // WHEN
+      let result = aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '91477', // Palaiseau
+        'localisation . epci': 'CA Communauté Paris-Saclay',
+        'localisation . région': '11',
+        'localisation . département': '91',
+      });
+
+      // THEN
+      console.log(result['mécanique simple']);
+      expect(result['mécanique simple'].length).toBe(1);
+
+      result = aidesVeloRepository.getSummaryVelos({
+        ...baseParams,
+        'localisation . code insee': '91477', // Palaiseau
+        'localisation . epci': 'CA Communauté Paris-Saclay',
+        'localisation . région': '11',
+        'localisation . département': '91',
+        'demandeur . âge': 20,
+      });
+
+      // THEN
+      expect(result['mécanique simple'].length).toBe(2);
     });
   });
 
