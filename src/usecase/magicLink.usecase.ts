@@ -108,14 +108,12 @@ export class MagicLinkUsecase {
       email,
       'name',
       `Bonjour !<br>
-Voici votre code pour accédder à l'application J'agis !<br><br>
+Voici le lien pour accéder au service !<br><br>
     
-CODE : <strong>${code}</strong><br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien pour un accès directe, sans même saisir le code !!! : <a href="${App.getBaseURLBack()}/utilisateurs/${email}/login?code=${code}">Accès à l'application J'agis</a><br><br>
+<a href="${App.getBaseURLFront()}/authentification/validation-lien-magique?email=${email}&code=${code} ">Accès à l'application J'agis</a><br><br>
     
 À très vite !`,
-      `Votre code J'agis : ${code}`,
+      `Lien d'accès à Jagis`,
     );
   }
 }
