@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -30,6 +32,13 @@ export class MagicLinkController extends GenericControler {
   }
 
   @Post('utilisateurs/send_magic_link')
+  @ApiHeader({
+    name: 'origin',
+    required: false,
+
+    description:
+      'Base url qui va être utilisée pour générer le lien présent dans le mail, pour test en DEV seulement',
+  })
   @ApiOperation({
     summary: 'envoie une lien de connexion au mail argument',
   })
@@ -37,8 +46,15 @@ export class MagicLinkController extends GenericControler {
     type: ProspectSubmitAPI,
   })
   @UseGuards(ThrottlerGuard)
-  async sendMagicLink(@Body() body: ProspectSubmitAPI) {
-    await this.magicLinkUsecase.sendLink(body.email, body.source_inscription);
+  async sendMagicLink(
+    @Body() body: ProspectSubmitAPI,
+    @Headers('origin') origin?: string,
+  ) {
+    await this.magicLinkUsecase.sendLink(
+      body.email,
+      body.source_inscription,
+      origin,
+    );
   }
 
   @ApiParam({

@@ -71,7 +71,11 @@ export class MagicLinkUsecase {
     return { token: token, utilisateur: utilisateur };
   }
 
-  async sendLink(email: string, source: SourceInscription): Promise<void> {
+  async sendLink(
+    email: string,
+    source: SourceInscription,
+    origin: string,
+  ): Promise<void> {
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
     }
@@ -100,17 +104,26 @@ export class MagicLinkUsecase {
 
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
-    this.sendValidationCode(email, utilisateur.code);
+    let front_base_url = App.getBaseURLFront();
+    if (!App.isProd() && !!origin) {
+      front_base_url = origin;
+    }
+
+    this.sendValidationCode(email, utilisateur.code, front_base_url);
   }
 
-  private async sendValidationCode(email: string, code: string) {
+  private async sendValidationCode(
+    email: string,
+    code: string,
+    front_base_url: string,
+  ) {
     this.emailSender.sendEmail(
       email,
       'name',
       `Bonjour !<br>
 Voici le lien pour accéder au service !<br><br>
     
-<a href="${App.getBaseURLFront()}/authentification/validation-lien-magique?email=${email}&code=${code} ">Accès à l'application J'agis</a><br><br>
+<a href="${front_base_url}/authentification/validation-lien-magique?email=${email}&code=${code} ">Accès à l'application J'agis</a><br><br>
     
 À très vite !`,
       `Lien d'accès à Jagis`,
