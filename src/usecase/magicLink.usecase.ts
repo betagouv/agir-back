@@ -107,7 +107,7 @@ export class MagicLinkUsecase {
     }
 
     if (utilisateur.isMagicLinkCodeExpired()) {
-      utilisateur.setNew6DigitCode();
+      utilisateur.setNewUUIDCode();
     }
 
     await this.utilisateurRespository.updateUtilisateur(utilisateur);

@@ -84,7 +84,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.source_inscription).toEqual(SourceInscription.magic_link);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
-    expect(userDB.code.length).toEqual(6);
+    expect(userDB.code.length).toEqual(36);
   });
   it(`POST /utilisateurs/send_magic_link - prend en compte la source`, async () => {
     // GIVEN
@@ -107,7 +107,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
-    expect(userDB.code.length).toEqual(6);
+    expect(userDB.code.length).toEqual(36);
   });
   it(`POST /utilisateurs/send_magic_link - 2 génération de magic link successive conserve le meme code`, async () => {
     // GIVEN

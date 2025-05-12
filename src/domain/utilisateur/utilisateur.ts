@@ -349,6 +349,11 @@ export class Utilisateur extends UtilisateurData {
     this.code_generation_time = new Date();
   }
 
+  public setNewUUIDCode() {
+    CodeManager.setNewUUIDCode(this);
+    this.code_generation_time = new Date();
+  }
+
   public static checkEmailFormat(email: string) {
     if (!validator.isEmail(email)) {
       ApplicationError.throwBaddEmailFormatError(email);
