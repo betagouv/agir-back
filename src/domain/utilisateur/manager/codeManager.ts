@@ -22,7 +22,11 @@ export class CodeManager {
     }
   }
   public static setNewUUIDCode(utilisateur: CodeAwareUtilisateur) {
-    utilisateur.code = uuidv4();
+    if (App.isProd()) {
+      utilisateur.code = uuidv4();
+    } else {
+      utilisateur.code = App.getFixedOTP_DEVCode();
+    }
   }
 
   public async processInputCodeAndDoActionIfOK(
