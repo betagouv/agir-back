@@ -4,13 +4,13 @@ import {
   TypeCodeAction,
 } from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
+import { KycTagExcluantTranslator } from '../../kyc/synchro/kycTagTranslator';
 import {
   ActionUtilisateur_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
-import { KycTagExcluantTranslator } from './kycTagTranslator';
 import {
   ActionExclue,
   ThematiqueRecommandation,

@@ -58,11 +58,6 @@ export class ProfileRecommandationUtilisateur {
     return array_1.some((v) => array_2.indexOf(v) !== -1);
   }
 
-  private getNombreOccurenceTags(c: TaggedContent) {
-    const liste_tags = c.getInclusionTags();
-
-    return liste_tags.filter((t) => this.set_tags_actifs.has(t)).length;
-  }
   private getOccurenceTags(c: TaggedContent): Tag_v2[] {
     const liste_tags = c.getInclusionTags();
 

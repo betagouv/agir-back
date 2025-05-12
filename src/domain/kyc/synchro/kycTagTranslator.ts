@@ -1,7 +1,7 @@
-import { KYCHistory } from '../../kyc/kycHistory';
-import { KYCID } from '../../kyc/KYCID';
-import { BooleanKYC } from '../../kyc/QuestionKYCData';
 import { TagExcluant } from '../../scoring/tagExcluant';
+import { KYCHistory } from '../kycHistory';
+import { KYCID } from '../KYCID';
+import { BooleanKYC } from '../QuestionKYCData';
 
 export class KycTagExcluantTranslator {
   private hist: KYCHistory;
@@ -70,9 +70,11 @@ export class KycTagExcluantTranslator {
     if (this.is_code(KYCID.KYC_type_logement, 'type_appartement')) {
       result_set.add(TagExcluant.vit_en_appart);
     }
+    // OK
     if (this.est_non(KYCID.KYC_proprietaire)) {
       result_set.add(TagExcluant.est_locataire);
     }
+    // OK
     if (this.est_oui(KYCID.KYC_proprietaire)) {
       result_set.add(TagExcluant.est_proprietaire);
     }
