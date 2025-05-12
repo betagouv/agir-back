@@ -4,7 +4,7 @@ import { KYCID } from '../KYCID';
 import { QuestionChoixUnique } from '../new_interfaces/QuestionChoixUnique';
 import { QuestionKYC } from '../questionKYC';
 
-export class KycToTags {
+export class KycToTags_v2 {
   public static refreshTagState(
     kyc: QuestionKYC,
     profile: ProfileRecommandationUtilisateur,
