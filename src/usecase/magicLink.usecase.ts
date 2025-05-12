@@ -10,6 +10,7 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { BilanCarboneUsecase } from './bilanCarbone.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -25,6 +26,7 @@ export class MagicLinkUsecase {
     private emailSender: EmailSender,
     private tokenRepository: TokenRepository,
     private passwordManager: PasswordManager,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
   ) {}
 
   async validateLink(
@@ -83,6 +85,7 @@ export class MagicLinkUsecase {
     email: string,
     source: SourceInscription,
     origin: string,
+    situation_ngc_id?: string,
   ): Promise<void> {
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
@@ -103,7 +106,13 @@ export class MagicLinkUsecase {
       );
 
       await this.utilisateurRespository.createUtilisateur(utilisateur);
-      utilisateur = await this.utilisateurRespository.findByEmail(email);
+
+      if (situation_ngc_id) {
+        await this.bilanCarboneUsecase.external_inject_situation_to_user_kycs(
+          utilisateur,
+          situation_ngc_id,
+        );
+      }
     }
 
     if (utilisateur.isMagicLinkCodeExpired()) {

@@ -9,8 +9,9 @@ import {
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { MagicLinkUsecase } from '../../usecase/magicLink.usecase';
 import { GenericControler } from './genericControler';
+import { EmailAPI } from './types/utilisateur/EmailAPI';
 import { LoggedUtilisateurAPI } from './types/utilisateur/loggedUtilisateurAPI';
-import { ProspectSubmitAPI } from './types/utilisateur/onboarding/prospectSubmitAPI';
+import { CreateUtilisateurMagicLinkAPI } from './types/utilisateur/onboarding/createUtilisateurMagicLinkAPI';
 import { ValidateCodeAPI } from './types/utilisateur/onboarding/validateCodeAPI';
 
 @Controller()
@@ -32,18 +33,20 @@ export class MagicLinkController extends GenericControler {
     summary: 'envoie une lien de connexion au mail argument',
   })
   @ApiBody({
-    type: ProspectSubmitAPI,
+    type: CreateUtilisateurMagicLinkAPI,
   })
   @UseGuards(ThrottlerGuard)
   async sendMagicLink(
-    @Body() body: ProspectSubmitAPI,
+    @Body() body: CreateUtilisateurMagicLinkAPI,
     @Headers('origin') origin?: string,
-  ) {
+  ): Promise<EmailAPI> {
     await this.magicLinkUsecase.sendLink(
       body.email,
       body.source_inscription,
       origin,
+      body.situation_ngc_id,
     );
+    return EmailAPI.mapToAPI(body.email);
   }
 
   @ApiOkResponse({ type: LoggedUtilisateurAPI })

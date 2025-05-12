@@ -1,10 +1,17 @@
 import { App } from '../../../src/domain/app';
+import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/QuestionKYCData';
 import { SourceInscription } from '../../../src/domain/utilisateur/utilisateur';
+import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('/utilisateurs - Magic link - (API test)', () => {
   const OLD_ENV = process.env;
   const USER_CURRENT_VERSION = App.USER_CURRENT_VERSION;
+  const kycRepository = new KycRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -427,5 +434,146 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(response.body.token.length).toBeGreaterThan(20);
     expect(response.body.utilisateur.email).toEqual('ww@w.com');
     expect(response.body.utilisateur.id.length).toBeGreaterThan(10);
+  });
+
+  it(`POST /utilisateurs/send_magic_link - integration situation NGC à l'inscription`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_km,
+      type: TypeReponseQuestionKYC.entier,
+      is_ngc: true,
+      question: `Km en voiture ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [],
+      ngc_key: 'transport . voiture . km',
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_chauffage_bois,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: true,
+      question: `chauffage bois ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Oui', code: 'oui', ngc_code: 'oui' },
+        { label: 'Non', code: 'non', ngc_code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas', ngc_code: null },
+      ],
+      ngc_key: 'logement . chauffage . bois . présent',
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+          'logement . chauffage . bois . présent': 'oui',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'w@w.com',
+        situation_ngc_id: situtation_id,
+      });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
+
+    const kyc_voiture = user.kyc_history.getQuestionNumerique(
+      KYCID.KYC_transport_voiture_km,
+    );
+    expect(kyc_voiture).not.toBeUndefined();
+    expect(kyc_voiture.isAnswered()).toEqual(true);
+    expect(kyc_voiture.getValue()).toEqual(20000);
+
+    const kyc_bois = user.kyc_history.getQuestion(KYCID.KYC_chauffage_bois);
+    expect(kyc_bois).not.toBeUndefined();
+    expect(kyc_bois.hasAnyResponses()).toEqual(true);
+    expect(kyc_bois.getSelectedCode()).toEqual('oui');
+  });
+
+  it(`POST /utilisateurs/send_magic_link - pas d'integration situation NGC si compte déjà existant`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+    await TestUtil.create(DB.utilisateur, { email: 'w@w.com' });
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_km,
+      type: TypeReponseQuestionKYC.entier,
+      is_ngc: true,
+      question: `Km en voiture ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [],
+      ngc_key: 'transport . voiture . km',
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_chauffage_bois,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: true,
+      question: `chauffage bois ?`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        { label: 'Oui', code: 'oui', ngc_code: 'oui' },
+        { label: 'Non', code: 'non', ngc_code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas', ngc_code: null },
+      ],
+      ngc_key: 'logement . chauffage . bois . présent',
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . km': 20000,
+          'logement . chauffage . bois . présent': 'oui',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'w@w.com',
+        situation_ngc_id: situtation_id,
+      });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
+
+    const kyc_voiture = user.kyc_history.getQuestionNumerique(
+      KYCID.KYC_transport_voiture_km,
+    );
+    expect(kyc_voiture.isAnswered()).toEqual(false);
+
+    const kyc_bois = user.kyc_history.getQuestionChoixUnique(
+      KYCID.KYC_chauffage_bois,
+    );
+    expect(kyc_bois.isAnswered()).toEqual(false);
   });
 });
