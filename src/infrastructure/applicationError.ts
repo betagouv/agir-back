@@ -781,6 +781,12 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `La source d'inscription [${source}] est inconnue`,
     );
   }
+  static throwUserMissingCommune() {
+    this.throwAppError(
+      '146',
+      `L'utilisateur doit déclarer une commune d'habitation dans son profile logement, ou bien fournir un code commune en argument d'API`,
+    );
+  }
 
   private static throwAppError(
     code: string,

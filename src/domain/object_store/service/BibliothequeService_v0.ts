@@ -80,6 +80,7 @@ export class ResultatRecherche_v0 {
   nbr_resultats_max_dispo?: number;
   sources_lvao?: string[];
   surface_km_2?: number;
+  surface_m_2?: number;
 
   static map(res: ResultatRecherche): ResultatRecherche_v0 {
     return {
@@ -117,6 +118,7 @@ export class ResultatRecherche_v0 {
       nbr_resultats_max_dispo: res.nbr_resultats_max_dispo,
       sources_lvao: res.sources_lvao,
       surface_km_2: res.surface_km_2,
+      surface_m_2: res.surface_m_2,
     };
   }
 }

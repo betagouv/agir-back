@@ -67,7 +67,7 @@ export class MaifRepository implements FinderInterface {
     }
   }
 
-  private async findCatnat(
+  public async findCatnat(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
@@ -205,7 +205,7 @@ export class MaifRepository implements FinderInterface {
     return result;
   }
 
-  private async findZonesSecheresse(
+  public async findZonesSecheresse(
     filtre: FiltreRecherche,
   ): Promise<ResultatRecherche[]> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
@@ -226,7 +226,7 @@ export class MaifRepository implements FinderInterface {
     return this.computeSyntheseZonesARisque(result);
   }
 
-  private async findSurfaceCommune(
+  public async findSurfaceCommune(
     filtre: FiltreRecherche,
   ): Promise<number | undefined> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
@@ -247,8 +247,9 @@ export class MaifRepository implements FinderInterface {
     return result.superficie;
   }
 
-  private async findZonesInondation(
+  public async findZonesInondation(
     filtre: FiltreRecherche,
+    surface_totale_km?: number,
   ): Promise<ResultatRecherche[]> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
     if (!code_commmune_globale) {
@@ -264,7 +265,7 @@ export class MaifRepository implements FinderInterface {
     if (!result || !result.actuel) {
       return [];
     }
-    const surface = await this.findSurfaceCommune(filtre);
+    const surface = surface_totale_km | (await this.findSurfaceCommune(filtre));
     return this.computeSyntheseZonesARisque(result, surface);
   }
 
@@ -308,9 +309,19 @@ export class MaifRepository implements FinderInterface {
         pourcentage: (synthese.zone_1 / surface_total_m2) * 100,
       },
       {
+        id: 'zone_1_surface',
+        titre: 'Surface risque très faible',
+        surface_m_2: synthese.zone_1,
+      },
+      {
         id: 'zone_2',
         titre: 'Pourcentage risque faible',
         pourcentage: (synthese.zone_2 / surface_total_m2) * 100,
+      },
+      {
+        id: 'zone_2_surface',
+        titre: 'Surface risque faible',
+        surface_m_2: synthese.zone_2,
       },
       {
         id: 'zone_3',
@@ -318,14 +329,29 @@ export class MaifRepository implements FinderInterface {
         pourcentage: (synthese.zone_3 / surface_total_m2) * 100,
       },
       {
+        id: 'zone_3_surface',
+        titre: 'Surface risque moyen',
+        surface_m_2: synthese.zone_3,
+      },
+      {
         id: 'zone_4',
         titre: 'Pourcentage risque fort',
         pourcentage: (synthese.zone_4 / surface_total_m2) * 100,
       },
       {
+        id: 'zone_4_surface',
+        titre: 'Surface risque fort',
+        surface_m_2: synthese.zone_4,
+      },
+      {
         id: 'zone_5',
         titre: 'Pourcentage risque très fort',
         pourcentage: (synthese.zone_5 / surface_total_m2) * 100,
+      },
+      {
+        id: 'zone_5_surface',
+        titre: 'Surface risque très fort',
+        surface_m_2: synthese.zone_5,
       },
       {
         id: 'zone_total',

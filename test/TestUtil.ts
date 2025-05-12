@@ -9,6 +9,7 @@ import {
   Mission,
   OIDC_STATE,
   Partenaire,
+  RisquesNaturelsCommunes,
   SituationNGC,
   Thematique as ThematiqueDB,
 } from '.prisma/client';
@@ -72,6 +73,7 @@ import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
+import { RisquesNaturelsCommunesRepository } from '../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
@@ -96,6 +98,7 @@ export enum DB {
   universStatistique = 'universStatistique',
   action = 'action',
   OIDC_STATE = 'OIDC_STATE',
+  risquesNaturelsCommunes = 'risquesNaturelsCommunes',
 }
 
 export class TestUtil {
@@ -120,6 +123,7 @@ export class TestUtil {
     kYC: TestUtil.kycData,
     universStatistique: TestUtil.universStatistiqueData,
     OIDC_STATE: TestUtil.OIDC_STATEData,
+    risquesNaturelsCommunes: TestUtil.risquesNaturelsCommunesData,
   };
 
   constructor() {}
@@ -222,6 +226,7 @@ export class TestUtil {
     await this.prisma.compteurActions.deleteMany();
     await this.prisma.blockText.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
+    await this.prisma.risquesNaturelsCommunes.deleteMany();
 
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
@@ -244,6 +249,7 @@ export class TestUtil {
     ThematiqueRepository.resetCache();
     AideRepository.resetCache();
     QuizzRepository.resetCache();
+    RisquesNaturelsCommunesRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -742,6 +748,29 @@ export class TestUtil {
       code: '456',
       titre: 'titre',
       texte: 'texte',
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
+  static risquesNaturelsCommunesData(
+    override?: Partial<RisquesNaturelsCommunes>,
+  ): RisquesNaturelsCommunes {
+    return {
+      code_commune: '12345',
+      nom_commune: 'city',
+      surface_totale: 100,
+      nombre_cat_nat: 44,
+      inondation_surface_zone1: 10,
+      inondation_surface_zone2: 20,
+      inondation_surface_zone3: 30,
+      inondation_surface_zone4: 40,
+      inondation_surface_zone5: 50,
+      secheresse_surface_zone1: 11,
+      secheresse_surface_zone2: 12,
+      secheresse_surface_zone3: 13,
+      secheresse_surface_zone4: 14,
+      secheresse_surface_zone5: 15,
       created_at: undefined,
       updated_at: undefined,
       ...override,

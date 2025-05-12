@@ -27,6 +27,7 @@ import './api/questionKYC_v2.controller.int-spec';
 import './api/questionKYC_v2Enchainement.controller.int-spec';
 import './api/recherchServices.controller.int-spec';
 import './api/recommandation.controller.int-spec';
+import './api/risques.controller.int-spec';
 import './api/simulateurVoiture.controller.int-spec';
 import './api/thematique.controller.int-spec';
 import './migrations/cartographieStatistique.view.int-spec';
