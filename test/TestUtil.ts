@@ -47,7 +47,9 @@ import { History_v0 } from '../src/domain/object_store/history/history_v0';
 import { KYCHistory_v2 } from '../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
+import { ProfileRecommandationUtilisateur_v0 } from '../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
@@ -576,6 +578,11 @@ export class TestUtil {
       badges: [],
     };
 
+    const recommandation: ProfileRecommandationUtilisateur_v0 = {
+      version: 0,
+      liste_tags_actifs: [Tag_v2.a_une_voiture],
+    };
+
     const logement: Logement_v0 = {
       version: 0,
       superficie: Superficie.superficie_150,
@@ -672,6 +679,7 @@ export class TestUtil {
       cache_bilan_carbone: cache_bilan_carbone as any,
       global_user_version: GlobalUserVersion.V2,
       activity_dates_log: [],
+      recommandation: recommandation as any,
       ...override,
     };
   }

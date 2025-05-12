@@ -41,6 +41,7 @@ model Utilisateur {
   notification_history       Json       @default("{}") // versioné
   thematique_history         Json       @default("{}") // versioné
   cache_bilan_carbone        Json       @default("{}") // versioné
+  recommandation             Json       @default("{}") // versioné
   created_at                 DateTime   @default(now()) @db.Timestamptz(3)
   updated_at                 DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
   failed_login_count         Int        @default(0)

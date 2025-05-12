@@ -1,4 +1,6 @@
 import { ArticleHistory } from '../history/articleHistory';
+import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
@@ -7,6 +9,7 @@ import { ArticleDefinition } from './articleDefinition';
 export class Article extends ArticleDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  explicationScore: ExplicationScore;
   favoris: boolean;
   read_date?: Date;
   like_level?: number;
@@ -17,6 +20,7 @@ export class Article extends ArticleDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.explicationScore = new ExplicationScore();
     this.favoris = false;
     this.read_date = null;
     this.like_level = null;
@@ -38,6 +42,12 @@ export class Article extends ArticleDefinition implements TaggedContent {
       this.tags_utilisateur,
       this.tags_rubriques,
     );
+  }
+  public getInclusionTags(): Tag_v2[] {
+    return [];
+  }
+  public getExclusionTags(): Tag_v2[] {
+    return [];
   }
 
   public getDistinctText(): string {

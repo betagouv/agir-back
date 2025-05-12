@@ -1,5 +1,7 @@
 import { Categorie } from '../contenu/categorie';
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
+import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { Thematique } from '../thematique/thematique';
@@ -91,6 +93,7 @@ export class QuestionKYCData implements TaggedContent {
   reponse_simple: KYCReponseSimple;
   reponse_complexe: KYCReponseComplexe[];
   protected conditions: AndConditionSet[];
+  explicationScore: ExplicationScore;
 
   constructor(data?: QuestionKYC_v2) {
     if (!data) return;
@@ -109,6 +112,7 @@ export class QuestionKYCData implements TaggedContent {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
+    this.explicationScore = new ExplicationScore();
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
     this.last_update = data.last_update;
@@ -130,6 +134,13 @@ export class QuestionKYCData implements TaggedContent {
 
   public getTags(): Tag[] {
     return this.tags.concat(this.thematique);
+  }
+
+  public getInclusionTags(): Tag_v2[] {
+    return [];
+  }
+  public getExclusionTags(): Tag_v2[] {
+    return [];
   }
 
   public getDistinctText(): string {
