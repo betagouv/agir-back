@@ -1,20 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBody,
   ApiHeader,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -54,33 +43,6 @@ export class MagicLinkController extends GenericControler {
       body.email,
       body.source_inscription,
       origin,
-    );
-  }
-
-  @ApiParam({
-    name: 'email',
-    type: String,
-    required: true,
-  })
-  @ApiQuery({
-    name: 'code',
-    type: String,
-    required: true,
-  })
-  @ApiOkResponse({ type: LoggedUtilisateurAPI })
-  @ApiOperation({
-    summary: `Crée et/ou connect l'utilisateur`,
-  })
-  @UseGuards(ThrottlerGuard)
-  @Get('utilisateurs/:email/login')
-  async validateMagicLink(
-    @Query('code') code: string,
-    @Param('email') email: string,
-  ) {
-    const loggedUser = await this.magicLinkUsecase.validateLink(email, code);
-    return LoggedUtilisateurAPI.mapToAPI(
-      loggedUser.token,
-      loggedUser.utilisateur,
     );
   }
 

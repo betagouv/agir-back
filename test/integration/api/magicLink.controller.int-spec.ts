@@ -184,27 +184,32 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.code).not.toEqual(code_1);
   });
 
-  it(`GET /utilisateurs/:email/login -  code manquant`, async () => {
+  it(`POST /utilisateurs/magic_link_login -  code manquant`, async () => {
     // GIVEN
     process.env.IS_PROD = 'true';
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/toto@tutu.com/login`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'toto@tutu.com',
+      });
 
     // THEN
     expect(response.status).toBe(400);
 
     expect(response.body.message).toEqual('Code obligatoire');
   });
-  it(`GET /utilisateurs/:email/login - email inconnu`, async () => {
+  it(`POST /utilisateurs/magic_link_login - email inconnu`, async () => {
     // GIVEN
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/toto@tutu.com/login?code=123`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'toto@tutu.com',
+        code: '123',
+      });
 
     // THEN
     expect(response.status).toBe(400);
@@ -213,7 +218,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       'Mauvais code, code expiré, ou mauvaise adresse électronique',
     );
   });
-  it(`GET /utilisateurs/:email/login - mauvais code`, async () => {
+  it(`POST /utilisateurs/magic_link_login`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
@@ -221,16 +226,19 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=123`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
 
     // THEN
     expect(response.status).toBe(400);
 
     expect(response.body.message).toEqual('Mauvais code');
   });
-  it(`GET /utilisateurs/:email/login - code OK, login OK`, async () => {
+  it(`POST /utilisateurs/magic_link_login - code OK, login OK`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
@@ -238,12 +246,15 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=12345`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '12345',
+      });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     expect(response.body.token.length).toBeGreaterThan(20);
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
@@ -255,7 +266,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.active_account).toEqual(true);
     expect(userDB.force_connexion).toEqual(false);
   });
-  it(`GET /utilisateurs/:email/login - code OK, login OK, reset force_connexion`, async () => {
+  it(`POST /utilisateurs/magic_link_login - code OK, login OK, reset force_connexion`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
@@ -265,12 +276,15 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=12345`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '12345',
+      });
 
     // THEN
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
 
     expect(response.body.token.length).toBeGreaterThan(20);
     expect(response.body.utilisateur.id).toEqual('utilisateur-id');
@@ -283,21 +297,27 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.force_connexion).toEqual(false);
     expect(userDB.failed_login_count).toEqual(0);
   });
-  it(`GET /utilisateurs/:email/login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
+  it(`POST /utilisateurs/magic_link_login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
       code: '12345',
     });
-    let response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=12345`,
-    );
-    expect(response.status).toBe(200);
+    let response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '12345',
+      });
+    expect(response.status).toBe(201);
 
     // WHEN
-    response = await TestUtil.GET(
-      `/utilisateurs/email@www.com/login?code=12345`,
-    );
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '12345',
+      });
 
     // THEN
     expect(response.status).toBe(400);
@@ -306,7 +326,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       `Lien de connexion déjà utilisé ou trop d'essais`,
     );
   });
-  it(`GET /utilisateurs/:email/login - un mauvais code 3 fois et le code est re-initialisé`, async () => {
+  it(`POST /utilisateurs/magic_link_login - un mauvais code 3 fois et le code est re-initialisé`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
@@ -314,33 +334,45 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     //THEN
-    let response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=123`,
-    );
+    let response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Mauvais code');
 
-    response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=123`,
-    );
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Mauvais code');
 
-    response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=123`,
-    );
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Mauvais code');
 
-    response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=123`,
-    );
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       `Lien de connexion déjà utilisé ou trop d'essais`,
     );
   });
-  it(`GET /utilisateurs/:email/login - code expiré (>1h)`, async () => {
+  it(`POST /utilisateurs/magic_link_login - code expiré (>1h)`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
       email: 'email@www.com',
@@ -349,9 +381,12 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     // WHEN
-    const response = await TestUtil.getServer().get(
-      `/utilisateurs/email@www.com/login?code=12345`,
-    );
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '12345',
+      });
 
     // THEN
     expect(response.status).toBe(400);
