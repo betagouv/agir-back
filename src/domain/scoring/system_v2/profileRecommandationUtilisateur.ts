@@ -13,25 +13,33 @@ export class ProfileRecommandationUtilisateur {
     }
   }
 
-  public trierRecommandations<T extends TaggedContent>(content_list: T[]): T[] {
+  public trierEtFiltrerRecommandations<T extends TaggedContent>(
+    content_list: T[],
+  ): T[] {
     const result: T[] = [];
 
     const CURRENT_TAGS = Array.from(this.set_tags_actifs.values());
     for (const content of content_list) {
       if (this.hasIntersect(content.getExclusionTags(), CURRENT_TAGS)) {
-        // skip
+        const exlusion_tags = this.getIntersect(
+          content.getExclusionTags(),
+          CURRENT_TAGS,
+        );
+        for (const tag of exlusion_tags) {
+          content.explicationScore.addExclusionTag(tag);
+        }
       } else {
         result.push(content);
       }
     }
 
-    result.forEach((c) => (c.score = 0));
+    result.forEach((c) => (c.score = 0)); // juste in case
 
     for (const content of result) {
       const match_tags = this.getOccurenceTags(content);
       for (const tag of match_tags) {
         content.score += 10;
-        content.explicationScore.addTag(tag, 10);
+        content.explicationScore.addInclusionTag(tag, 10);
       }
 
       if (content.isLocal()) {
@@ -56,6 +64,9 @@ export class ProfileRecommandationUtilisateur {
 
   private hasIntersect(array_1: any[], array_2: any[]): boolean {
     return array_1.some((v) => array_2.indexOf(v) !== -1);
+  }
+  private getIntersect(array_1: any[], array_2: any[]): any[] {
+    return array_1.filter((v) => array_2.indexOf(v) !== -1);
   }
 
   private getOccurenceTags(c: TaggedContent): Tag_v2[] {
