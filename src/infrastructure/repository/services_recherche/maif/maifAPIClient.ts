@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { App } from '../../../../domain/app';
-import { ApplicationError } from '../../../applicationError';
 
 const API_URL_CATNAT =
   'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/catnat';
@@ -323,10 +322,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_secheresse,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPIInondationScore(
@@ -341,10 +337,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_inondation,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPIRadonScore(
@@ -359,10 +352,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_radon,
-      );
+    if (!result) return undefined;
     return result as RadonScoreResponseAPI;
   }
   public async callAPISubmersionScore(
@@ -377,10 +367,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_submersion,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPITempeteScore(
@@ -395,10 +382,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_tempete,
-      );
+    if (!result) return undefined;
     return result as GenericScoreResponseAPI;
   }
   public async callAPISeismeScore(
@@ -413,10 +397,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_seisme,
-      );
+    if (!result) return undefined;
     return result as SeismeScoreResponseAPI;
   }
 
@@ -432,10 +413,7 @@ export class MaifAPIClient {
         lon: longitude,
       },
     );
-    if (!result)
-      ApplicationError.throwErrorCallingExterneAPI(
-        'maif/' + SCORE_API_NAME.score_argile,
-      );
+    if (!result) return undefined;
     return result as ArgileScoreResponseAPI;
   }
 

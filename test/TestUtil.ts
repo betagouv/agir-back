@@ -606,6 +606,7 @@ export class TestUtil {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
+      score_risques_adresse: undefined,
 
       risques: {
         nombre_catnat_commune: 1,

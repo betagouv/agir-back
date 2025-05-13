@@ -1,5 +1,6 @@
 import { Logement_v0, Risques_v0 } from '../object_store/logement/logement_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { NiveauRisqueLogement } from './NiveauRisque';
 
 export enum TypeLogement {
   maison = 'maison',
@@ -29,6 +30,16 @@ export enum DPE {
   F = 'F',
   G = 'G',
   ne_sais_pas = 'ne_sais_pas',
+}
+
+export class ScoreRisquesAdresse {
+  secheresse: NiveauRisqueLogement;
+  inondation: NiveauRisqueLogement;
+  submersion: NiveauRisqueLogement;
+  tempete: NiveauRisqueLogement;
+  seisme: NiveauRisqueLogement;
+  argile: NiveauRisqueLogement;
+  radon: NiveauRisqueLogement;
 }
 
 export class Risques {
@@ -98,12 +109,14 @@ export class Logement {
   plus_de_15_ans: boolean;
   dpe: DPE;
   risques: Risques;
+  score_risques_adresse: ScoreRisquesAdresse;
 
   commune_label?: string;
 
   constructor(log?: Logement_v0) {
     if (!log) {
       this.risques = new Risques();
+      this.score_risques_adresse = undefined;
       return;
     }
     this.nombre_adultes = log.nombre_adultes;
@@ -122,6 +135,7 @@ export class Logement {
     this.latitude = log.latitude;
     this.longitude = log.longitude;
     this.code_commune = log.code_commune;
+    this.score_risques_adresse = log.score_risques_adresse;
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {

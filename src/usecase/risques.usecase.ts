@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
+import { NiveauRisqueLogement } from '../domain/logement/NiveauRisque';
 import { RisquesNaturelsCommunesDefinition } from '../domain/logement/RisquesNaturelsCommuneDefinition';
+import { TypeRisqueLogement } from '../domain/logement/TypeRisque';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
@@ -20,6 +22,54 @@ export class RisquesUsecase {
     private communeRepository: CommuneRepository,
     private maifRepository: MaifRepository,
   ) {}
+
+  public async getRisquesAdresseUtilisateur(
+    utilisateurId: string,
+    longitude?: number,
+    latitude?: number,
+  ): Promise<Record<TypeRisqueLogement, NiveauRisqueLogement>> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    if (
+      (!utilisateur.logement.longitude || !utilisateur.logement.latitude) &&
+      !(longitude || latitude)
+    ) {
+      ApplicationError.throwUserMissingAdresse();
+    }
+
+    if ((!latitude && longitude) || (latitude && !longitude)) {
+      ApplicationError.throwIncompleteCoordonnees();
+    }
+
+    if (latitude && longitude) {
+      return await this.maifRepository.findScoreRisque_2(longitude, latitude);
+    }
+
+    if (utilisateur.logement.score_risques_adresse) {
+      return utilisateur.logement.score_risques_adresse;
+    }
+
+    if (utilisateur.logement.longitude) {
+      return await this.maifRepository.findScoreRisque_2(
+        utilisateur.logement.longitude,
+        utilisateur.logement.latitude,
+      );
+    }
+
+    return {
+      argile: undefined,
+      inondation: undefined,
+      radon: undefined,
+      secheresse: undefined,
+      seisme: undefined,
+      submersion: undefined,
+      tempete: undefined,
+    };
+  }
 
   public async getRisquesCommuneUtilisateur(
     utilisateurId: string,

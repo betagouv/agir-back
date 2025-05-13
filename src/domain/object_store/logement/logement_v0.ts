@@ -3,10 +3,37 @@ import {
   DPE,
   Logement,
   Risques,
+  ScoreRisquesAdresse,
   Superficie,
   TypeLogement,
 } from '../../logement/logement';
+import { NiveauRisqueLogement } from '../../logement/NiveauRisque';
 import { Versioned_v0 } from '../versioned';
+
+export class ScoreRisquesAdresse_v0 {
+  secheresse: NiveauRisqueLogement;
+  inondation: NiveauRisqueLogement;
+  submersion: NiveauRisqueLogement;
+  tempete: NiveauRisqueLogement;
+  seisme: NiveauRisqueLogement;
+  argile: NiveauRisqueLogement;
+  radon: NiveauRisqueLogement;
+
+  static serialise(score: ScoreRisquesAdresse): ScoreRisquesAdresse_v0 {
+    if (!score) {
+      return undefined;
+    }
+    return {
+      argile: score.argile,
+      inondation: score.inondation,
+      radon: score.radon,
+      secheresse: score.secheresse,
+      seisme: score.seisme,
+      submersion: score.submersion,
+      tempete: score.tempete,
+    };
+  }
+}
 
 export class Risques_v0 {
   nombre_catnat_commune: number;
@@ -75,6 +102,7 @@ export class Logement_v0 extends Versioned_v0 {
   plus_de_15_ans: boolean;
   dpe: DPE;
   risques: Risques_v0 | undefined;
+  score_risques_adresse: ScoreRisquesAdresse_v0;
 
   static serialise(domain: Logement): Logement_v0 {
     return {
@@ -95,6 +123,9 @@ export class Logement_v0 extends Versioned_v0 {
       numero_rue: domain.numero_rue,
       rue: domain.rue,
       code_commune: domain.code_commune,
+      score_risques_adresse: ScoreRisquesAdresse_v0.serialise(
+        domain.score_risques_adresse,
+      ),
     };
   }
 }

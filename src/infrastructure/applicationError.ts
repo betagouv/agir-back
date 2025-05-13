@@ -787,6 +787,18 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `L'utilisateur doit déclarer une commune d'habitation dans son profile logement, ou bien fournir un code commune en argument d'API`,
     );
   }
+  static throwUserMissingAdresse() {
+    this.throwAppError(
+      '147',
+      `L'utilisateur doit déclarer une adresse précise dans son profile logement, ou bien fournir des coordonnées géo à l'API`,
+    );
+  }
+  static throwIncompleteCoordonnees() {
+    this.throwAppError(
+      '148',
+      `Les coordonnée géographique passées en argument doivent être complète : latitude ET longitude`,
+    );
+  }
 
   private static throwAppError(
     code: string,
