@@ -85,13 +85,11 @@ export class ThematiqueUsecase {
     const thema = detailThematique.thematique;
     const history = utilisateur.thematique_history;
 
-    const stock_actions_eligibles = await this.getActionEligiblesUtilisateur(
-      utilisateur,
-      {
+    const stock_actions_eligibles =
+      await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
         type_codes_exclus: history.getActionsExclues(thema),
         thematique: thema,
-      },
-    );
+      });
 
     if (history.existeDesPropositions(thema)) {
       this.refreshActionProposeesWhenMissingInCMS(
@@ -157,15 +155,13 @@ export class ThematiqueUsecase {
     const history = utilisateur.thematique_history;
 
     if (history.doesActionsProposeesInclude(thema, action_to_remove)) {
-      const new_action_list = await this.getActionEligiblesUtilisateur(
-        utilisateur,
-        {
+      const new_action_list =
+        await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
           thematique: thema,
           type_codes_exclus: history
             .getActionsProposees(thema)
             .concat(history.getActionsExclues(thema)),
-        },
-      );
+        });
       if (new_action_list.length === 0) {
         history.removeActionAndShift(thema, action_to_remove);
       } else {
@@ -265,7 +261,7 @@ export class ThematiqueUsecase {
     return undefined;
   }
 
-  private async getActionEligiblesUtilisateur(
+  private async getActionEligiblesEtRecommandeesUtilisateur(
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {

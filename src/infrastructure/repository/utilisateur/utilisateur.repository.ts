@@ -13,6 +13,7 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../domain/object_store/upgrader';
+import { ProfileRecommandationUtilisateur } from '../../../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { ThematiqueHistory } from '../../../domain/thematique/history/thematiqueHistory';
 import {
   GlobalUserVersion,
@@ -598,6 +599,15 @@ export class UtilisateurRepository {
         )
       : undefined;
 
+    const recommandation = user.recommandation
+      ? new ProfileRecommandationUtilisateur(
+          Upgrader.upgradeRaw(
+            user.recommandation,
+            SerialisableDomain.ProfileRecommandationUtilisateur,
+          ),
+        )
+      : undefined;
+
     const result = new Utilisateur({
       id: user.id,
       nom: user.nom,
@@ -657,6 +667,7 @@ export class UtilisateurRepository {
       pseudo: user.pseudo,
       cache_bilan_carbone: cache_bilan_carbone,
       global_user_version: GlobalUserVersion[user.global_user_version],
+      recommandation: recommandation,
     });
 
     if (result.kyc_history) {
@@ -727,6 +738,7 @@ export class UtilisateurRepository {
       notification_history: undefined,
       thematique_history: undefined,
       cache_bilan_carbone: undefined,
+      recommandation: undefined,
       code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
@@ -790,6 +802,12 @@ export class UtilisateurRepository {
         ? Upgrader.serialiseToLastVersion(
             user.thematique_history,
             SerialisableDomain.ThematiqueHistory,
+          )
+        : undefined,
+      recommandation: scopes.includes(Scope.recommandation)
+        ? Upgrader.serialiseToLastVersion(
+            user.recommandation,
+            SerialisableDomain.ProfileRecommandationUtilisateur,
           )
         : undefined,
     };

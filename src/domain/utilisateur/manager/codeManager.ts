@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { ApplicationError } from '../../../../src/infrastructure/applicationError';
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
-import { CodeAwareUtilisateur } from './codeAwareUtilisateur';
 import { App } from '../../app';
+import { CodeAwareUtilisateur } from './codeAwareUtilisateur';
 var crypto = require('crypto');
 
 @Injectable()
@@ -16,6 +17,13 @@ export class CodeManager {
   public static setNew6DigitCode(utilisateur: CodeAwareUtilisateur) {
     if (App.isProd()) {
       utilisateur.code = CodeManager.random6Digit();
+    } else {
+      utilisateur.code = App.getFixedOTP_DEVCode();
+    }
+  }
+  public static setNewUUIDCode(utilisateur: CodeAwareUtilisateur) {
+    if (App.isProd()) {
+      utilisateur.code = uuidv4();
     } else {
       utilisateur.code = App.getFixedOTP_DEVCode();
     }

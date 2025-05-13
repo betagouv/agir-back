@@ -178,7 +178,7 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.contactUsecase.batchUpdate();
   }
-
+  /*
   @Post('admin/update_all_communes_risques')
   @ApiOperation({
     summary:
@@ -188,6 +188,7 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.updateAllCommuneRisques();
   }
+    */
 
   @Post('/admin/article-statistique')
   @ApiOperation({

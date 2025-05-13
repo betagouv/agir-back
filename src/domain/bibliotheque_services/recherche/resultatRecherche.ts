@@ -77,6 +77,8 @@ export class ResultatRecherche {
   pourcentage?: number;
   niveau_risque?: NiveauRisqueLogement;
   type_risque?: TypeRisqueLogement;
+  surface_km_2?: number;
+  surface_m_2?: number;
 
   constructor(res: ResultatRecherche_v0) {
     this.id = res.id;
@@ -114,5 +116,7 @@ export class ResultatRecherche {
       : [];
     this.nbr_resultats_max_dispo = res.nbr_resultats_max_dispo;
     this.sources_lvao = res.sources_lvao;
+    this.surface_km_2 = res.surface_km_2;
+    this.surface_m_2 = res.surface_m_2;
   }
 }

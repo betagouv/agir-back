@@ -4,13 +4,13 @@ import {
   TypeCodeAction,
 } from '../../actions/actionDefinition';
 import { KYCHistory } from '../../kyc/kycHistory';
+import { KycTagExcluantTranslator } from '../../kyc/synchro/kycTagTranslator';
 import {
   ActionUtilisateur_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
-import { KycTagExcluantTranslator } from './kycTagTranslator';
 import {
   ActionExclue,
   ThematiqueRecommandation,
@@ -29,6 +29,7 @@ export class ActionUtilisateur {
   like_level: number;
   feedback: string;
   liste_questions: Question[];
+  liste_partages: Date[];
 
   constructor(data?: ActionUtilisateur_v0) {
     if (data) {
@@ -38,8 +39,10 @@ export class ActionUtilisateur {
       this.like_level = data.like_level;
       this.feedback = data.feedback;
       this.liste_questions = data.liste_questions ? data.liste_questions : [];
+      this.liste_partages = data.liste_partages ? data.liste_partages : [];
     } else {
       this.liste_questions = [];
+      this.liste_partages = [];
     }
   }
 }
@@ -188,6 +191,7 @@ export class ThematiqueHistory {
         like_level: null,
         feedback: null,
         liste_questions: [],
+        liste_partages: [],
       });
     }
   }
@@ -203,6 +207,7 @@ export class ThematiqueHistory {
         like_level: null,
         feedback: null,
         liste_questions: [],
+        liste_partages: [],
       });
     }
   }
@@ -223,6 +228,23 @@ export class ThematiqueHistory {
         like_level: like_level ? like_level : null,
         feedback: feedback ? feedback : null,
         liste_questions: [],
+        liste_partages: [],
+      });
+    }
+  }
+  public shareAction(action: TypeCodeAction) {
+    const found = this.findAction(action);
+    if (found) {
+      found.liste_partages.push(new Date());
+    } else {
+      this.liste_actions_utilisateur.push({
+        action: ActionDefinition.extractTypeCodeFrom(action),
+        vue_le: null,
+        faite_le: null,
+        like_level: null,
+        feedback: null,
+        liste_questions: [],
+        liste_partages: [new Date()],
       });
     }
   }
@@ -242,6 +264,7 @@ export class ThematiqueHistory {
         faite_le: null,
         like_level: null,
         feedback: null,
+        liste_partages: [],
         liste_questions: [
           {
             date: new Date(),

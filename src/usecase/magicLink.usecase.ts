@@ -1,14 +1,16 @@
+import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
+import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  Scope,
   SourceInscription,
   Utilisateur,
 } from '../domain/utilisateur/utilisateur';
-import { Injectable } from '@nestjs/common';
-import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { EmailSender } from '../infrastructure/email/emailSender';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { App } from '../domain/app';
-import { Connexion_v2_Usecase } from './connexion.usecase';
+import { EmailSender } from '../infrastructure/email/emailSender';
 import { TokenRepository } from '../infrastructure/repository/token.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { BilanCarboneUsecase } from './bilanCarbone.usecase';
 
 export type Phrase = {
   phrase: string;
@@ -23,6 +25,8 @@ export class MagicLinkUsecase {
     private utilisateurRespository: UtilisateurRepository,
     private emailSender: EmailSender,
     private tokenRepository: TokenRepository,
+    private passwordManager: PasswordManager,
+    private bilanCarboneUsecase: BilanCarboneUsecase,
   ) {}
 
   async validateLink(
@@ -36,7 +40,10 @@ export class MagicLinkUsecase {
       ApplicationError.throwCodeObligatoireMagicLinkError();
     }
 
-    let utilisateur = await this.utilisateurRespository.findByEmail(email);
+    let utilisateur = await this.utilisateurRespository.findByEmail(
+      email,
+      'full',
+    );
 
     if (!utilisateur) {
       ApplicationError.throwBadCodeOrEmailError();
@@ -60,19 +67,33 @@ export class MagicLinkUsecase {
       ApplicationError.throwBadCodError();
     }
 
+    await this.passwordManager.initLoginStateAfterSuccess(utilisateur);
+
     utilisateur.code = null;
     utilisateur.active_account = true;
-    await this.utilisateurRespository.updateUtilisateur(utilisateur);
+    await this.utilisateurRespository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
 
     const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
 
     return { token: token, utilisateur: utilisateur };
   }
 
-  async sendLink(email: string): Promise<void> {
+  async sendLink(
+    email: string,
+    source: SourceInscription,
+    origin: string,
+    situation_ngc_id?: string,
+  ): Promise<void> {
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
     }
+    if (source && !SourceInscription[source]) {
+      ApplicationError.throwSourceInscriptionInconnue(source);
+    }
+
     Utilisateur.checkEmailFormat(email);
 
     let utilisateur = await this.utilisateurRespository.findByEmail(email);
@@ -81,35 +102,48 @@ export class MagicLinkUsecase {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
         true,
-        SourceInscription.inconnue,
+        source || SourceInscription.magic_link,
       );
 
       await this.utilisateurRespository.createUtilisateur(utilisateur);
-      utilisateur = await this.utilisateurRespository.findByEmail(email);
+
+      if (situation_ngc_id) {
+        await this.bilanCarboneUsecase.external_inject_situation_to_user_kycs(
+          utilisateur,
+          situation_ngc_id,
+        );
+      }
     }
 
     if (utilisateur.isMagicLinkCodeExpired()) {
-      utilisateur.setNew6DigitCode();
+      utilisateur.setNewUUIDCode();
     }
 
     await this.utilisateurRespository.updateUtilisateur(utilisateur);
 
-    this.sendValidationCode(email, utilisateur.code);
+    let front_base_url = App.getBaseURLFront();
+    if (!App.isProd() && !!origin) {
+      front_base_url = origin;
+    }
+
+    this.sendValidationCode(email, utilisateur.code, front_base_url);
   }
 
-  private async sendValidationCode(email: string, code: string) {
+  private async sendValidationCode(
+    email: string,
+    code: string,
+    front_base_url: string,
+  ) {
     this.emailSender.sendEmail(
       email,
       'name',
       `Bonjour !<br>
-Voici votre code pour accédder à l'application J'agis !<br><br>
+Voici le lien pour accéder au service !<br><br>
     
-CODE : <strong>${code}</strong><br><br>
-
-Si vous n'avez plus la page ouverte pour saisir le code, ici le lien pour un accès directe, sans même saisir le code !!! : <a href="${App.getBaseURLBack()}/utilisateurs/${email}/login?code=${code}">Accès à l'application J'agis</a><br><br>
+<a href="${front_base_url}/authentification/validation-lien-magique?email=${email}&code=${code} ">Accès à l'application J'agis</a><br><br>
     
 À très vite !`,
-      `Votre code J'agis : ${code}`,
+      `Lien d'accès à Jagis`,
     );
   }
 }

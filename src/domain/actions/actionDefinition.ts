@@ -1,6 +1,7 @@
 import { Besoin } from '../aides/besoin';
 import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
 import { Source } from '../contenu/source';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { TagExcluant } from '../scoring/tagExcluant';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
@@ -40,6 +41,8 @@ export class ActionDefinitionData {
   type: TypeAction;
   thematique: Thematique;
   tags_excluants: TagExcluant[];
+  tags_a_cibler?: Tag_v2[]; // NEW !!!!
+  tags_a_exclure?: Tag_v2[]; // NEW !!!!
   sources: Source[];
 }
 

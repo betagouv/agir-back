@@ -260,6 +260,34 @@ export class ActionUsecase {
     ]);
   }
 
+  async shareAction(
+    code: string,
+    type: TypeAction,
+    utilisateurId: string,
+  ): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      type: type,
+      code: code,
+    });
+
+    if (!action_def) {
+      ApplicationError.throwActionNotFound(code, type);
+    }
+
+    utilisateur.thematique_history.shareAction(action_def);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+  }
+
   async feedbackAction(
     code: string,
     type: TypeAction,

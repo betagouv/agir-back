@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
-import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
-import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
-import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -19,6 +15,7 @@ import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
+import { MaifRepository } from '../infrastructure/repository/services_recherche/maif/maif.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ContactUsecase } from './contact.usecase';
 import { FranceConnectUsecase } from './franceConnect.usecase';
@@ -43,6 +40,7 @@ export class ProfileUsecase {
     private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
     private rechercheServiceManager: RechercheServiceManager,
+    private maifRepository: MaifRepository,
   ) {}
 
   @Retryable({
@@ -232,7 +230,7 @@ export class ProfileUsecase {
 
     if (
       (input.commune && !input.code_postal) ||
-      (!input.commune && input.code_postal)
+      (!input.commune && !input.code_commune && input.code_postal)
     ) {
       ApplicationError.throwCodePostalCommuneMandatory();
     }
@@ -257,6 +255,12 @@ export class ProfileUsecase {
       const commune = this.communeRepository.getCommuneByCodeINSEE(
         input.code_commune,
       );
+      if (!commune.codesPostaux.includes(input.code_postal)) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          input.code_postal,
+          input.code_commune,
+        );
+      }
       if (commune) {
         utilisateur.code_commune = commune.code;
         data_to_update.code_commune = commune.code;
@@ -318,7 +322,9 @@ export class ProfileUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.setRisquesFromCodeCommune(utilisateur);
+    if (input.longitude && input.latitude) {
+      this.setRisqueFromCoordonnees(utilisateur);
+    }
   }
 
   async findUtilisateurById(id: string): Promise<Utilisateur> {
@@ -385,6 +391,7 @@ export class ProfileUsecase {
     }
   }
 
+  /*
   async updateAllCommuneRisques(block_size: number = 50): Promise<string[]> {
     const result: string[] = [];
     const total_user_count = await this.utilisateurRepository.countAll();
@@ -424,6 +431,7 @@ export class ProfileUsecase {
     }
     return result;
   }
+    */
 
   async updateAllUserCouvertureAides(): Promise<{
     couvert: number;
@@ -484,70 +492,17 @@ export class ProfileUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
-  private async setRisquesFromCodeCommune(
-    utilisateur: Utilisateur,
-    silent_error = true,
-  ) {
-    if (!utilisateur.code_commune) return;
-
-    const finder = this.rechercheServiceManager.getFinderById(
-      ServiceRechercheID.maif,
-    );
-
-    const filtre: FiltreRecherche = {
-      code_commune: utilisateur.code_commune,
-      silent_error: silent_error,
-    };
-
-    const risques_catnat = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.catnat,
-    });
-    const risques_zones_secheresse = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.zones_secheresse,
-    });
-    const risques_zones_inondation = await finder.find({
-      ...filtre,
-      categorie: CategorieRecherche.zones_inondation,
-    });
-
-    utilisateur.logement.risques.nombre_catnat_commune = risques_catnat.length;
-
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_1 =
-      this.zone_pourcent_value('1', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_2 =
-      this.zone_pourcent_value('2', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_3 =
-      this.zone_pourcent_value('3', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_4 =
-      this.zone_pourcent_value('4', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_zone_5 =
-      this.zone_pourcent_value('5', risques_zones_secheresse);
-    utilisateur.logement.risques.pourcent_exposition_commune_secheresse_geotech_total_a_risque =
-      this.zone_pourcent_value('total', risques_zones_secheresse);
-
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_1 =
-      this.zone_pourcent_value('1', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_2 =
-      this.zone_pourcent_value('2', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_3 =
-      this.zone_pourcent_value('3', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_4 =
-      this.zone_pourcent_value('4', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_zone_5 =
-      this.zone_pourcent_value('5', risques_zones_inondation);
-    utilisateur.logement.risques.pourcent_exposition_commune_inondation_total_a_risque =
-      this.zone_pourcent_value('total', risques_zones_inondation);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.logement],
-    );
-  }
-
-  private zone_pourcent_value(zone: string, resultats: ResultatRecherche[]) {
-    const found = resultats.find((a) => a.id === `zone_${zone}`);
-    return found ? found.pourcentage : 0;
+  private async setRisqueFromCoordonnees(utilisateur: Utilisateur) {
+    if (utilisateur.logement.longitude && utilisateur.logement.latitude) {
+      const scoring = await this.maifRepository.findScoreRisque_2(
+        utilisateur.logement.longitude,
+        utilisateur.logement.latitude,
+      );
+      utilisateur.logement.score_risques_adresse = scoring;
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        utilisateur,
+        [Scope.logement],
+      );
+    }
   }
 }

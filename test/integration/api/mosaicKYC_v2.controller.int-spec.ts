@@ -12,6 +12,7 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ExplicationScore } from '../../../src/domain/scoring/system_v2/ExplicationScore';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -429,6 +430,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       thematique: 'alimentation',
       tags: ['possede_voiture'],
       score: 0,
+      explicationScore: {
+        liste_explications: [],
+      },
       id_cms: 1,
       short_question: 'short',
       image_url: 'AAA',
@@ -487,6 +491,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       emoji: '🔥',
       unite: { abreviation: 'kg' },
+      explicationScore: {
+        liste_explications: [],
+      },
     });
   });
 
@@ -690,6 +697,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       unite: { abreviation: 'kg' },
       emoji: '🔥',
+      explicationScore: new ExplicationScore(),
     });
     expect(dbUser.kyc_history.getAnsweredKYCs()[1]).toEqual({
       code: '_2',
@@ -716,6 +724,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       conditions: [],
       unite: { abreviation: 'kg' },
       emoji: '🔥',
+      explicationScore: new ExplicationScore(),
     });
   });
 

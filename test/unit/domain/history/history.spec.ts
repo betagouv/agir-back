@@ -41,6 +41,7 @@ describe('History', () => {
           like_level: 2,
           read_date: new Date(123),
           favoris: true,
+          liste_partages: [],
         },
       ],
       aide_interactions: [
@@ -82,6 +83,7 @@ describe('History', () => {
           like_level: 2,
           read_date: new Date(123),
           favoris: undefined,
+          liste_partages: [],
         },
       ],
       aide_interactions: [
@@ -170,18 +172,21 @@ describe('History', () => {
           content_id: '1',
           read_date: new Date(),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: null,
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(),
           favoris: false,
+          liste_partages: [],
         },
-        { content_id: '4', favoris: false },
+        { content_id: '4', favoris: false, liste_partages: [] },
       ],
       aide_interactions: [],
     });
@@ -201,10 +206,10 @@ describe('History', () => {
       quizz_interactions: [],
       aide_interactions: [],
       article_interactions: [
-        { content_id: '1', favoris: true },
-        { content_id: '2', favoris: null },
-        { content_id: '3', favoris: false },
-        { content_id: '4', favoris: false },
+        { content_id: '1', favoris: true, liste_partages: [] },
+        { content_id: '2', favoris: null, liste_partages: [] },
+        { content_id: '3', favoris: false, liste_partages: [] },
+        { content_id: '4', favoris: false, liste_partages: [] },
       ],
     });
 
@@ -286,22 +291,26 @@ describe('History', () => {
           content_id: '1',
           read_date: new Date(1),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: null,
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(2),
           favoris: false,
+          liste_partages: [],
         },
-        { content_id: '4', favoris: false },
+        { content_id: '4', favoris: false, liste_partages: [] },
         {
           content_id: '5',
           read_date: new Date(0),
           favoris: false,
+          liste_partages: [],
         },
       ],
     });
@@ -331,21 +340,25 @@ describe('History', () => {
           content_id: '1',
           read_date: new Date(1),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(2),
           favoris: true,
+          liste_partages: [],
         },
         {
           content_id: '3',
           read_date: new Date(3),
           favoris: false,
+          liste_partages: [],
         },
         {
           content_id: '4',
           read_date: new Date(4),
           favoris: false,
+          liste_partages: [],
         },
       ],
     });
@@ -378,12 +391,14 @@ describe('History', () => {
           read_date: new Date(1),
           favoris: false,
           like_level: 1,
+          liste_partages: [],
         },
         {
           content_id: '2',
           read_date: new Date(2),
           favoris: true,
           like_level: 2,
+          liste_partages: [],
         },
       ],
     });

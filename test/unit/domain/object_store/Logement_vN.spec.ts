@@ -5,6 +5,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../../src/domain/logement/logement';
+import { NiveauRisqueLogement } from '../../../../src/domain/logement/NiveauRisque';
 import { Logement_v0 } from '../../../../src/domain/object_store/logement/logement_v0';
 import {
   SerialisableDomain,
@@ -54,6 +55,15 @@ describe('Logement vN ', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: '91477',
+      score_risques_adresse: {
+        argile: NiveauRisqueLogement.faible,
+        inondation: NiveauRisqueLogement.fort,
+        radon: NiveauRisqueLogement.nul,
+        secheresse: NiveauRisqueLogement.tres_fort,
+        seisme: NiveauRisqueLogement.inconnu,
+        submersion: NiveauRisqueLogement.faible,
+        tempete: NiveauRisqueLogement.moyen,
+      },
     });
 
     // WHEN
@@ -97,6 +107,15 @@ describe('Logement vN ', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: '91477',
+      score_risques_adresse: {
+        argile: NiveauRisqueLogement.faible,
+        inondation: NiveauRisqueLogement.fort,
+        radon: NiveauRisqueLogement.nul,
+        secheresse: NiveauRisqueLogement.tres_fort,
+        seisme: NiveauRisqueLogement.inconnu,
+        submersion: NiveauRisqueLogement.faible,
+        tempete: NiveauRisqueLogement.moyen,
+      },
     });
 
     // WHEN

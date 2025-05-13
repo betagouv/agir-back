@@ -177,6 +177,7 @@ describe('Aide Velo (API test)', () => {
     expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
     expect(response.body['électrique'][0].montant).toEqual(400);
   });
+
   it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 2', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -285,6 +286,49 @@ describe('Aide Velo (API test)', () => {
     expect(
       response_occasion.body['électrique'].find(
         (a) => a.libelle === 'Montpellier Méditerranée Métropole',
+      ),
+    ).toBeDefined();
+  });
+
+  it(`POST /utilisateurs/:utilisateurId/simulerAideVelo prise en compte de l'age du demandeur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    let res = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
+    });
+
+    // THEN
+    expect(res.status).toBe(201);
+    expect(
+      res.body['mécanique simple'].find(
+        (a) => a.libelle === 'Île-de-France Mobilités',
+      ),
+    ).toBeUndefined();
+
+    await TestUtil.create(DB.utilisateur, {
+      id: 'utilisateur-id-2',
+      email: 'test@mail.fr',
+      annee_naissance: 2002,
+    });
+    await TestUtil.generateAuthorizationToken('utilisateur-id-2');
+    // WHEN
+    res = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id-2/simulerAideVelo',
+    ).send({
+      prix_du_velo: 1000,
+      etat_du_velo: 'neuf',
+    });
+
+    // THEN
+    expect(res.status).toBe(201);
+    expect(
+      res.body['mécanique simple'].find(
+        (a) => a.libelle === 'Île-de-France Mobilités',
       ),
     ).toBeDefined();
   });

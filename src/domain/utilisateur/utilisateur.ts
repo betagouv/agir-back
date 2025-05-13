@@ -11,6 +11,7 @@ import { KYCHistory } from '../kyc/kycHistory';
 import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
 import { Logement } from '../logement/logement';
 import { NotificationHistory } from '../notification/notificationHistory';
+import { ProfileRecommandationUtilisateur } from '../scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag } from '../scoring/tag';
 import { TagPonderationSet } from '../scoring/tagPonderationSet';
 import { UserTagEvaluator } from '../scoring/userTagEvaluator';
@@ -31,6 +32,7 @@ export enum SourceInscription {
   mobile = 'mobile',
   web_ngc = 'web_ngc',
   france_connect = 'france_connect',
+  magic_link = 'magic_link',
   inconnue = 'inconnue',
 }
 export enum GlobalUserVersion {
@@ -48,6 +50,7 @@ export enum Scope {
   notification_history = 'notification_history',
   thematique_history = 'thematique_history',
   cache_bilan_carbone = 'cache_bilan_carbone',
+  recommandation = 'recommandation',
 }
 
 export class UtilisateurData {
@@ -108,6 +111,7 @@ export class UtilisateurData {
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;
+  recommandation: ProfileRecommandationUtilisateur;
   global_user_version: GlobalUserVersion;
 
   constructor(data?: UtilisateurData) {
@@ -194,6 +198,7 @@ export class Utilisateur extends UtilisateurData {
       france_connect_sub: null,
       external_stat_id: uuidv4(),
       cache_bilan_carbone: new CacheBilanCarbone(),
+      recommandation: new ProfileRecommandationUtilisateur(),
       global_user_version: GlobalUserVersion.V2,
     });
   }
@@ -292,7 +297,8 @@ export class Utilisateur extends UtilisateurData {
 
   public isMagicLinkCodeExpired(): boolean {
     return (
-      this.code === null ||
+      !this.code ||
+      !this.code_generation_time ||
       this.code_generation_time.getTime() < Date.now() - 1000 * 60 * 60
     );
   }
@@ -344,6 +350,11 @@ export class Utilisateur extends UtilisateurData {
 
   public setNew6DigitCode() {
     CodeManager.setNew6DigitCode(this);
+    this.code_generation_time = new Date();
+  }
+
+  public setNewUUIDCode() {
+    CodeManager.setNewUUIDCode(this);
     this.code_generation_time = new Date();
   }
 

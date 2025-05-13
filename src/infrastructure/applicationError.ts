@@ -394,7 +394,7 @@ export class ApplicationError {
   ) {
     this.throwAppError(
       '079',
-      `Le code postal '${code_postal}' ne correspond pas à la commune ${commune}`,
+      `Le code postal [${code_postal}] ne correspond pas à la commune [${commune}]`,
     );
   }
   static throwUnkownEnchainement(id: string) {
@@ -773,6 +773,30 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError(
       '144',
       `Le type du champ [${field}] doit être décimal, reçu : [${value}]`,
+    );
+  }
+  static throwSourceInscriptionInconnue(source: string) {
+    this.throwAppError(
+      '145',
+      `La source d'inscription [${source}] est inconnue`,
+    );
+  }
+  static throwUserMissingCommune() {
+    this.throwAppError(
+      '146',
+      `L'utilisateur doit déclarer une commune d'habitation dans son profile logement, ou bien fournir un code commune en argument d'API`,
+    );
+  }
+  static throwUserMissingAdresse() {
+    this.throwAppError(
+      '147',
+      `L'utilisateur doit déclarer une adresse précise dans son profile logement, ou bien fournir des coordonnées géo à l'API`,
+    );
+  }
+  static throwIncompleteCoordonnees() {
+    this.throwAppError(
+      '148',
+      `Les coordonnée géographique passées en argument doivent être complète : latitude ET longitude`,
     );
   }
 

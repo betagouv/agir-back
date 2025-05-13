@@ -1,3 +1,5 @@
+import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
@@ -7,6 +9,7 @@ import { QuizzDefinition } from './quizzDefinition';
 export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  explicationScore: ExplicationScore;
   article?: ArticleDefinition;
   premier_coup_ok?: boolean;
   date_premier_coup?: Date;
@@ -18,6 +21,7 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.explicationScore = new ExplicationScore();
 
     if (!this.mois) {
       this.mois = [];
@@ -37,6 +41,13 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
       this.tags_utilisateur,
       this.tags_rubriques,
     );
+  }
+
+  public getInclusionTags(): Tag_v2[] {
+    return [];
+  }
+  public getExclusionTags(): Tag_v2[] {
+    return [];
   }
 
   public getDistinctText(): string {

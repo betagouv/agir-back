@@ -1,8 +1,8 @@
+import { App } from '../app';
+import { ScoredContent } from './scoredContent';
+import { TagApplicatif } from './tagApplicatif';
 import { TagPonderationSet } from './tagPonderationSet';
 import { TaggedContent } from './taggedContent';
-import { TagApplicatif } from './tagApplicatif';
-import { ScoredContent } from './scoredContent';
-import { App } from '../app';
 
 export enum ApplicativePonderationSetName {
   neutre = 'neutre',

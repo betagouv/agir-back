@@ -55,6 +55,7 @@ describe('UtilisateurView', () => {
         longitude: 1,
         latitude: 43.7,
         code_commune: '91477',
+        score_risques_adresse: undefined,
       }) as any,
       gamification: new Gamification({
         version: 0,

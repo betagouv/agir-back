@@ -117,6 +117,7 @@ export class StatistiqueExternalRepository {
         vue_le: action.vue_le,
         feedback: action.feedback,
         like_level: action.like_level,
+        dates_partages: action.liste_partages,
       },
     });
   }
@@ -130,6 +131,7 @@ export class StatistiqueExternalRepository {
         lu_le: article.read_date,
         est_favoris: article.favoris,
         like_level: article.like_level,
+        dates_partages: article.liste_partages,
       },
     });
   }
