@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
+  GlobalUserVersion,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -113,21 +114,23 @@ export class FranceConnectUsecase {
     );
 
     if (standard_user) {
-      if (standard_user.getDateNaissanceString() !== user_info.birthdate) {
+      if (
+        standard_user.getDateNaissanceString() !== user_info.birthdate &&
+        standard_user.global_user_version !== GlobalUserVersion.V1
+      ) {
         ApplicationError.throwErreurRapporchementCompte();
-      } else {
-        await this.utilisateurRepository.setFranceConnectSub(
-          standard_user.id,
-          user_info.sub,
-        );
-        this.setFCUserInfoToUser(standard_user, user_info);
-
-        await this.utilisateurRepository.updateUtilisateurNoConcurency(
-          standard_user,
-          [Scope.core],
-        );
-        return await this.log_ok_fc_user(oidc_state, standard_user);
       }
+      await this.utilisateurRepository.setFranceConnectSub(
+        standard_user.id,
+        user_info.sub,
+      );
+      this.setFCUserInfoToUser(standard_user, user_info);
+
+      await this.utilisateurRepository.updateUtilisateurNoConcurency(
+        standard_user,
+        [Scope.core],
+      );
+      return await this.log_ok_fc_user(oidc_state, standard_user);
     }
 
     // NEW UTILISATEUR CREATION
