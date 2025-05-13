@@ -113,7 +113,7 @@ export class RisquesUsecase {
         ((risques.secheresse_surface_zone5 +
           risques.secheresse_surface_zone4 +
           risques.secheresse_surface_zone3) /
-          risques.surface_totale) *
+          (risques.surface_totale * 1000 * 1000)) *
           100,
       );
     } else {
