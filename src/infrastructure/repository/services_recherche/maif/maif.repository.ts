@@ -4,6 +4,7 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { ScoreRisquesAdresse } from '../../../../domain/logement/logement';
 import { NiveauRisqueLogement } from '../../../../domain/logement/NiveauRisque';
 import { TypeRisqueLogement } from '../../../../domain/logement/TypeRisque';
 import { ApplicationError } from '../../../applicationError';
@@ -224,7 +225,7 @@ export class MaifRepository implements FinderInterface {
   public async findScoreRisque_2(
     longitude: number,
     latitude: number,
-  ): Promise<Record<TypeRisqueLogement, NiveauRisqueLogement>> {
+  ): Promise<ScoreRisquesAdresse> {
     const [
       score_secheresse,
       score_inondation,
@@ -243,7 +244,7 @@ export class MaifRepository implements FinderInterface {
       this.maifAPIClient.callAPIRadonScore(longitude, latitude),
     ]);
 
-    const result: Record<TypeRisqueLogement, NiveauRisqueLogement> = {
+    const result: ScoreRisquesAdresse = new ScoreRisquesAdresse({
       argile: undefined,
       inondation: undefined,
       radon: undefined,
@@ -251,7 +252,7 @@ export class MaifRepository implements FinderInterface {
       seisme: undefined,
       submersion: undefined,
       tempete: undefined,
-    };
+    });
 
     if (score_secheresse) {
       result.secheresse = this.getNiveauRisqueFromScore(

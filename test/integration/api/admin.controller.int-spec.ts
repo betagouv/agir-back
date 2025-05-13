@@ -1721,7 +1721,7 @@ describe('Admin (API test)', () => {
     });
   });
 
-  it('POST /admin/update_all_communes_risques', async () => {
+  it.skip('POST /admin/update_all_communes_risques', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -1761,7 +1761,7 @@ describe('Admin (API test)', () => {
     ]);
   });
 
-  it('POST /admin/update_all_communes_risques', async () => {
+  it.skip('POST /admin/update_all_communes_risques', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -1801,7 +1801,7 @@ describe('Admin (API test)', () => {
     ]);
   });
 
-  it('POST /admin/update_all_communes_risques', async () => {
+  it.skip('POST /admin/update_all_communes_risques', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 

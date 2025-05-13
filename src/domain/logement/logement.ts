@@ -1,6 +1,11 @@
-import { Logement_v0, Risques_v0 } from '../object_store/logement/logement_v0';
+import {
+  Logement_v0,
+  Risques_v0,
+  ScoreRisquesAdresse_v0,
+} from '../object_store/logement/logement_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { NiveauRisqueLogement } from './NiveauRisque';
+import { TypeRisqueLogement } from './TypeRisque';
 
 export enum TypeLogement {
   maison = 'maison',
@@ -32,7 +37,9 @@ export enum DPE {
   ne_sais_pas = 'ne_sais_pas',
 }
 
-export class ScoreRisquesAdresse {
+export class ScoreRisquesAdresse
+  implements Record<TypeRisqueLogement, NiveauRisqueLogement>
+{
   secheresse: NiveauRisqueLogement;
   inondation: NiveauRisqueLogement;
   submersion: NiveauRisqueLogement;
@@ -40,6 +47,22 @@ export class ScoreRisquesAdresse {
   seisme: NiveauRisqueLogement;
   argile: NiveauRisqueLogement;
   radon: NiveauRisqueLogement;
+
+  constructor(data: ScoreRisquesAdresse_v0) {
+    Object.assign(this, data);
+  }
+
+  public isDefined(): boolean {
+    return (
+      !!this.secheresse ||
+      !!this.inondation ||
+      !!this.submersion ||
+      !!this.tempete ||
+      !!this.seisme ||
+      !!this.argile ||
+      !!this.radon
+    );
+  }
 }
 
 export class Risques {
@@ -135,7 +158,9 @@ export class Logement {
     this.latitude = log.latitude;
     this.longitude = log.longitude;
     this.code_commune = log.code_commune;
-    this.score_risques_adresse = log.score_risques_adresse;
+    this.score_risques_adresse = new ScoreRisquesAdresse(
+      log.score_risques_adresse,
+    );
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {

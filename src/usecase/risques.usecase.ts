@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
-import { NiveauRisqueLogement } from '../domain/logement/NiveauRisque';
+import { ScoreRisquesAdresse } from '../domain/logement/logement';
 import { RisquesNaturelsCommunesDefinition } from '../domain/logement/RisquesNaturelsCommuneDefinition';
-import { TypeRisqueLogement } from '../domain/logement/TypeRisque';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
@@ -27,7 +26,7 @@ export class RisquesUsecase {
     utilisateurId: string,
     longitude?: number,
     latitude?: number,
-  ): Promise<Record<TypeRisqueLogement, NiveauRisqueLogement>> {
+  ): Promise<ScoreRisquesAdresse> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.logement],
@@ -60,7 +59,7 @@ export class RisquesUsecase {
       );
     }
 
-    return {
+    return new ScoreRisquesAdresse({
       argile: undefined,
       inondation: undefined,
       radon: undefined,
@@ -68,7 +67,7 @@ export class RisquesUsecase {
       seisme: undefined,
       submersion: undefined,
       tempete: undefined,
-    };
+    });
   }
 
   public async getRisquesCommuneUtilisateur(
