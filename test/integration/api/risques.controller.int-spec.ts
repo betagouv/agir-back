@@ -102,8 +102,8 @@ describe('Risques (API test)', () => {
       code_commune: '91477',
       nom_commune: 'city',
       nombre_catastrophes_naturels: 44,
-      pourcentage_commune_risque_inondation: 80,
-      pourcentage_commune_risque_secheresse_geotechnique: 42,
+      pourcentage_commune_risque_inondation: 120,
+      pourcentage_commune_risque_secheresse_geotechnique: 65,
     });
   });
   it('GET /utilisateurs/id/risques_commune utilisateur  calcul des pourcentages OK', async () => {
@@ -155,8 +155,8 @@ describe('Risques (API test)', () => {
       code_commune: '91477',
       nom_commune: 'city',
       nombre_catastrophes_naturels: 44,
-      pourcentage_commune_risque_inondation: 60,
-      pourcentage_commune_risque_secheresse_geotechnique: 10,
+      pourcentage_commune_risque_inondation: 30,
+      pourcentage_commune_risque_secheresse_geotechnique: 30,
     });
   });
   it('GET /utilisateurs/id/risques_commune utilisateur  force la commune via query param', async () => {

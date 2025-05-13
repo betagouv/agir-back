@@ -341,7 +341,7 @@ export class MaifRepository implements FinderInterface {
 
   public async findZonesInondation(
     filtre: FiltreRecherche,
-    surface_totale_km?: number,
+    surface_totale_m2?: number,
   ): Promise<ResultatRecherche[]> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
     if (!code_commmune_globale) {
@@ -357,7 +357,9 @@ export class MaifRepository implements FinderInterface {
     if (!result || !result.actuel) {
       return [];
     }
-    const surface = surface_totale_km | (await this.findSurfaceCommune(filtre));
+    const surface =
+      surface_totale_m2 |
+      ((await this.findSurfaceCommune(filtre)) * 1000 * 1000);
     return this.computeSyntheseZonesARisque(result, surface);
   }
 
