@@ -862,6 +862,8 @@ export class TestUtil {
       tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
+      tags_a_exclure_v2: [],
+      tags_a_inclure_v2: [],
       ...override,
     };
   }

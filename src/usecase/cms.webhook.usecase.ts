@@ -358,6 +358,12 @@ export class CMSWebhookUsecase {
       codes_departement: this.split(hook.entry.codes_departement),
       codes_region: this.split(hook.entry.codes_region),
       tag_article: hook.entry.tag_article ? hook.entry.tag_article.code : null,
+      tags_a_exclure: hook.entry.tag_v2_excluants
+        ? hook.entry.tag_v2_excluants.map((elem) => elem.code)
+        : [],
+      tags_a_inclure: hook.entry.tag_v2_incluants
+        ? hook.entry.tag_v2_incluants.map((elem) => elem.code)
+        : [],
     };
   }
 

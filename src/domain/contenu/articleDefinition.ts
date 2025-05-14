@@ -34,4 +34,6 @@ export class ArticleDefinition implements ContenuLocal {
   codes_region: string[];
   tag_article: string;
   derniere_maj: Date;
+  tags_a_inclure: string[]; // NEW !!!!
+  tags_a_exclure: string[]; // NEW !!!!
 }
