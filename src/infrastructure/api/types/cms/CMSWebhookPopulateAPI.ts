@@ -160,6 +160,24 @@ export type CMSWebhookPopulateAPI = {
         },
       ];
     };
+    tag_v2_incluants: {
+      data: [
+        {
+          attributes: {
+            code: string;
+          };
+        },
+      ];
+    };
+    tag_v2_excluants: {
+      data: [
+        {
+          attributes: {
+            code: string;
+          };
+        },
+      ];
+    };
     faqs: {
       data: [
         {

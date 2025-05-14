@@ -502,6 +502,12 @@ export class CMSWebhookUsecase {
       sources: entry.sources
         ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
         : [],
+      tags_a_exclure: entry.tag_v2_excluants
+        ? entry.tag_v2_excluants.map((elem) => elem.code)
+        : [],
+      tags_a_inclure: entry.tag_v2_incluants
+        ? entry.tag_v2_incluants.map((elem) => elem.code)
+        : [],
     });
   }
 

@@ -416,6 +416,8 @@ export class TestUtil {
       type: TypeAction.classique,
       thematique: Thematique.consommation,
       tags_excluants: [],
+      tags_a_exclure_v2: [],
+      tags_a_inclure_v2: [],
       sources: [],
       created_at: undefined,
       updated_at: undefined,

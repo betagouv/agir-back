@@ -16,6 +16,11 @@ export class CMSWebhookBesoinAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookTagAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+  @ApiProperty() description: string;
+}
 export class CMSWebhookSourceAPI {
   @ApiProperty() id: number;
   @ApiProperty() libelle: string;
@@ -145,6 +150,12 @@ export class CMSWebhookEntryAPI {
 
   @ApiProperty({ type: [CMSWebhookBesoinAPI] })
   besoins: CMSWebhookBesoinAPI[];
+
+  @ApiProperty({ type: [CMSWebhookTagAPI] })
+  tag_v2_excluants: CMSWebhookTagAPI[];
+
+  @ApiProperty({ type: [CMSWebhookTagAPI] })
+  tag_v2_incluants: CMSWebhookTagAPI[];
 
   @ApiProperty({ type: [IDAPI] })
   quizzes: IDAPI[];
