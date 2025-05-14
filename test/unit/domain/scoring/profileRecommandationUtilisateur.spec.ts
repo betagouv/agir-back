@@ -96,7 +96,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       liste_explications: [],
     });
   });
-  it.only('trierEtFiltrerRecommandations : exclusion de contenu', () => {
+  it('trierEtFiltrerRecommandations : exclusion de contenu', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
@@ -199,12 +199,36 @@ describe('ProfileRecommandationUtilisateur', () => {
       ],
     });
   });
+  it('trierEtFiltrerRecommandations : local = +10 pts', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => true,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(result).toHaveLength(1);
+    expect(result[0].score).toEqual(10);
+  });
   it('trierEtFiltrerRecommandations : trie le contenu', () => {
     // GIVEN
     const content1: TaggedContent = {
       score: 0,
       getTags: () => [],
-      getDistinctText: () => 'abc',
+      getDistinctText: () => 'A',
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
@@ -214,7 +238,7 @@ describe('ProfileRecommandationUtilisateur', () => {
     const content2: TaggedContent = {
       score: 0,
       getTags: () => [],
-      getDistinctText: () => 'abc',
+      getDistinctText: () => 'B',
       isLocal: () => false,
       getInclusionTags: () => [Tag_v2.a_une_voiture],
       getExclusionTags: () => [],
@@ -224,7 +248,7 @@ describe('ProfileRecommandationUtilisateur', () => {
     const content3: TaggedContent = {
       score: 0,
       getTags: () => [],
-      getDistinctText: () => 'abc',
+      getDistinctText: () => 'C',
       isLocal: () => false,
       getInclusionTags: () => [
         Tag_v2.prends_l_avion,
@@ -253,17 +277,10 @@ describe('ProfileRecommandationUtilisateur', () => {
 
     expect(result).toHaveLength(3);
     expect(result[0].score).toEqual(20);
-    expect(result[0].explicationScore).toEqual({
-      liste_explications: [
-        {
-          inclusion_tag: 'a_une_voiture',
-          valeur: 10,
-        },
-        {
-          inclusion_tag: 'est_locataire',
-          valeur: 10,
-        },
-      ],
-    });
+    expect(result[0].getDistinctText()).toEqual('C');
+    expect(result[1].score).toEqual(10);
+    expect(result[1].getDistinctText()).toEqual('B');
+    expect(result[2].score).toEqual(0);
+    expect(result[2].getDistinctText()).toEqual('A');
   });
 });

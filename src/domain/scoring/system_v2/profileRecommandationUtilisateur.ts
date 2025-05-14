@@ -33,8 +33,6 @@ export class ProfileRecommandationUtilisateur {
       }
     }
 
-    result.forEach((c) => (c.score = 0)); // juste in case
-
     for (const content of result) {
       const match_tags = this.getOccurenceTags(content);
       for (const tag of match_tags) {
@@ -47,6 +45,8 @@ export class ProfileRecommandationUtilisateur {
         content.explicationScore.setLocal();
       }
     }
+
+    result.sort((a, b) => b.score - a.score);
 
     return result;
   }
