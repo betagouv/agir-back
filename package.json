@@ -32,6 +32,7 @@
     "test:api": "dotenv -e .env.test -- jest --config ./test/jest-api.json --runInBand --bail",
     "test:ext": "dotenv -e .env.test -- jest --config ./test/jest-ext.json --runInBand --bail",
     "test:repo": "dotenv -e .env.test -- jest --config ./test/jest-repo.json --runInBand --bail",
+    "check:kycs": "dotenv -e .env.run -- node scripts/check-questions-ngc.mjs",
     "test": "npm run test:unit && npm run test:int",
     "load": "npm run loadtest",
     "prepare": "husky install",

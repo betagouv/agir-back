@@ -1,4 +1,4 @@
-import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json';
+import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json' with { type: 'json' };
 import axios from 'axios';
 import Engine from 'publicodes';
 
@@ -90,14 +90,14 @@ kycs
   });
 
 if (questions.length > 0) {
+  console.warn(
+    `\n\x1b[0;33m[WARN] ${questions.length} questions missing in KYC:\x1b[0m`,
+  );
   questions.forEach(({ dottedName, rawNode }) => {
-    console.warn(
-      `\x1b[0;33m[WARN] Missing [${dottedName}] (${rawNode['question']})\x1b[0m`,
+    console.log(
+      `  - "${rawNode['question']}" (${dottedName})`,
     );
   });
-  console.warn(
-    `\n\x1b[0;33m[WARN] ${questions.length} questions missing in KYC`,
-  );
 }
 
 if (nbInvalidKYC > 0) {
