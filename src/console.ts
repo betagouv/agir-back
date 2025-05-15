@@ -254,6 +254,12 @@ async function bootstrap() {
         .migrateSourceVersListeSourcesSurArticles(process.argv[3]);
       break;
 
+    case 'cms_migrate_echelle_aides':
+      await application
+        .get(CMSDataHelperUsecase)
+        .migrateEchelleAides(process.argv[3]);
+      break;
+
     case 'cms_migrate_aides_partenaires':
       await application
         .get(CMSDataHelperUsecase)
