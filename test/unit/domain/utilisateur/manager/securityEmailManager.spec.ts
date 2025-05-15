@@ -1,6 +1,6 @@
+import { SecurityEmailManager } from '../../../../../src/domain/utilisateur/manager/securityEmailManager';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurSecurityRepository } from '../../../../../src/infrastructure/repository/utilisateur/utilisateurSecurity.repository';
-import { SecurityEmailManager } from '../../../../../src/domain/utilisateur/manager/securityEmailManager';
 
 const fakeSecurityRepository = new UtilisateurSecurityRepository({
   utilisateur: { update: jest.fn() },
@@ -68,10 +68,10 @@ describe('Objet SecurityEmailManager', () => {
       ),
     ).toEqual(300);
   });
-  it('attemptSecurityEmailEmission : si compteur deja à 4 , mais compte pas bloqué alors re init', async () => {
+  it('attemptSecurityEmailEmission : si compteur deja à 5 , mais compte pas bloqué alors re init', async () => {
     // GIVEN
     const utilisateur = new Utilisateur();
-    utilisateur.sent_email_count = 4;
+    utilisateur.sent_email_count = 5;
     utilisateur.prevent_sendemail_before = new Date(
       new Date().getTime() - 10000,
     );

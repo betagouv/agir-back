@@ -210,6 +210,7 @@ export class Connexion_v2_Usecase {
     await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.connexion_code,
       utilisateur,
+      {},
     );
   }
 
@@ -217,6 +218,7 @@ export class Connexion_v2_Usecase {
     await this.mailerUsecase.external_send_user_email_of_type(
       TypeNotification.change_mot_de_passe_code,
       utilisateur,
+      {},
     );
   }
 }

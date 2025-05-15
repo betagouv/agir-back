@@ -319,7 +319,7 @@ export class ApplicationError {
   static throwMagicLinkExpiredError() {
     this.throwAppError('060', 'Lien de connexion expiré');
   }
-  static throwBadCodError() {
+  static throwBadCodeError() {
     this.throwAppError('061', `Mauvais code`);
   }
   static throwBadResponseValue(reponse: string, kyc_code: string) {

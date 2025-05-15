@@ -91,7 +91,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.source_inscription).toEqual(SourceInscription.magic_link);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
-    expect(userDB.code.length).toEqual(36);
+    expect(userDB.code.length).toEqual(6);
   });
   it(`POST /utilisateurs/send_magic_link - prend en compte la source`, async () => {
     // GIVEN
@@ -114,9 +114,10 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
-    expect(userDB.code.length).toEqual(36);
+    expect(userDB.code.length).toEqual(6);
   });
-  it(`POST /utilisateurs/send_magic_link - 2 génération de magic link successive conserve le meme code`, async () => {
+
+  it(`POST /utilisateurs/send_magic_link - le code change à chaque fois`, async () => {
     // GIVEN
     process.env.IS_PROD = 'true';
 
@@ -141,48 +142,8 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       .send({
         email: 'ww@w.com',
       });
-    const userDB = await TestUtil.prisma.utilisateur.findFirst({
-      where: { email: 'ww@w.com' },
-    });
-
-    // THEN
-    expect(userDB.code).toEqual(code_1);
-  });
-  it(`POST /utilisateurs/send_magic_link - après une heure code change`, async () => {
-    // GIVEN
-    process.env.IS_PROD = 'true';
-
-    // WHEN
-    let response = await TestUtil.getServer()
-      .post('/utilisateurs/send_magic_link')
-      .send({
-        email: 'ww@w.com',
-      });
-    // THEN
     expect(response.status).toBe(201);
 
-    const code_1 = (
-      await TestUtil.prisma.utilisateur.findFirst({
-        where: { email: 'ww@w.com' },
-      })
-    ).code;
-
-    // WHEN
-    await TestUtil.prisma.utilisateur.update({
-      where: {
-        email: 'ww@w.com',
-      },
-      data: {
-        code_generation_time: new Date(Date.now() - 1000 * 60 * 61),
-      },
-    });
-
-    // WHEN
-    response = await TestUtil.getServer()
-      .post('/utilisateurs/send_magic_link')
-      .send({
-        email: 'ww@w.com',
-      });
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { email: 'ww@w.com' },
     });
@@ -243,7 +204,9 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
 
-    expect(response.body.message).toEqual('Mauvais code');
+    expect(response.body.message).toEqual(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
   });
   it(`POST /utilisateurs/magic_link_login - code OK, login OK`, async () => {
     // GIVEN
@@ -279,7 +242,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       email: 'email@www.com',
       code: '12345',
       force_connexion: true,
-      failed_login_count: 2,
+      failed_checkcode_count: 2,
     });
 
     // WHEN
@@ -302,7 +265,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
 
     expect(userDB.active_account).toEqual(true);
     expect(userDB.force_connexion).toEqual(false);
-    expect(userDB.failed_login_count).toEqual(0);
+    expect(userDB.failed_checkcode_count).toEqual(0);
   });
   it(`POST /utilisateurs/magic_link_login - un magic link ne peut pas servir 2 fois après un premier succès`, async () => {
     // GIVEN
@@ -348,25 +311,9 @@ describe('/utilisateurs - Magic link - (API test)', () => {
         code: '123',
       });
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Mauvais code');
-
-    response = await TestUtil.getServer()
-      .post('/utilisateurs/magic_link_login')
-      .send({
-        email: 'email@www.com',
-        code: '123',
-      });
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Mauvais code');
-
-    response = await TestUtil.getServer()
-      .post('/utilisateurs/magic_link_login')
-      .send({
-        email: 'email@www.com',
-        code: '123',
-      });
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Mauvais code');
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
 
     response = await TestUtil.getServer()
       .post('/utilisateurs/magic_link_login')
@@ -376,7 +323,29 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       });
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
-      `Lien de connexion déjà utilisé ou trop d'essais`,
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
+
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Mauvais code, code expiré, ou mauvaise adresse électronique',
+    );
+
+    response = await TestUtil.getServer()
+      .post('/utilisateurs/magic_link_login')
+      .send({
+        email: 'email@www.com',
+        code: '123',
+      });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain(
+      `Trop d'essais successifs, attendez jusqu'à`,
     );
   });
   it(`POST /utilisateurs/magic_link_login - code expiré (>1h)`, async () => {

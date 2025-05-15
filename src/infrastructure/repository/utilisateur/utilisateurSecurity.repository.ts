@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CodeAwareUtilisateur } from '../../../domain/utilisateur/manager/codeAwareUtilisateur';
-import { SecurityEmailAwareUtilisateur } from '../../../../src/domain/utilisateur/manager/securityEmailAwareUtilisateur';
 import { PasswordAwareUtilisateur } from '../../../../src/domain/utilisateur/manager/passwordAwareUtilisateur';
+import { SecurityEmailAwareUtilisateur } from '../../../../src/domain/utilisateur/manager/securityEmailAwareUtilisateur';
+import { CodeAwareUtilisateur } from '../../../domain/utilisateur/manager/codeAwareUtilisateur';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class UtilisateurSecurityRepository {

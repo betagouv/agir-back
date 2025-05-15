@@ -11,6 +11,7 @@ export class EmailTemplateRepository {
   private email_inscription_code: HandlebarsTemplateDelegate;
   private email_change_mot_de_passe_code: HandlebarsTemplateDelegate;
   private email_connexion_code: HandlebarsTemplateDelegate;
+  private email_magic_link: HandlebarsTemplateDelegate;
   private email_welcome: HandlebarsTemplateDelegate;
   private email_existing_account: HandlebarsTemplateDelegate;
 
@@ -28,6 +29,9 @@ export class EmailTemplateRepository {
       );
       this.email_connexion_code = Handlebars.compile(
         await this.readTemplate('email_connexion_code.hbs'),
+      );
+      this.email_magic_link = Handlebars.compile(
+        await this.readTemplate('email_magic_link.hbs'),
       );
       this.email_change_mot_de_passe_code = Handlebars.compile(
         await this.readTemplate('email_change_mot_de_passe_code.hbs'),
@@ -78,6 +82,7 @@ export class EmailTemplateRepository {
   public generateUserEmailByType(
     emailType: TypeNotification,
     utilisateur: Utilisateur,
+    extra_data: any,
     unsubscribe_token?: string,
   ): { subject: string; body: string } | null {
     let unsubscribe_URL: string;
@@ -94,6 +99,14 @@ export class EmailTemplateRepository {
             URL_CODE: `${App.getBaseURLFront()}/validation-authentification?email=${
               utilisateur.email
             }`,
+          }),
+        };
+      case TypeNotification.magic_link:
+        return {
+          subject: `Lien d'accès à Jagis`,
+          body: this.email_magic_link({
+            CODE: utilisateur.code,
+            URL_CODE: `${extra_data.front_base_url}/authentification/validation-lien-magique?email=${utilisateur.email}&code=${utilisateur.code}`,
           }),
         };
       case TypeNotification.inscription_code:

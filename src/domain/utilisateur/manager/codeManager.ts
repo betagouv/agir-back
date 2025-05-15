@@ -53,7 +53,7 @@ export class CodeManager {
     utilisateur: CodeAwareUtilisateur,
     code: string,
   ): Promise<boolean> {
-    let ok;
+    let ok: boolean;
     if (utilisateur.email === App.getGoogleTestEmail()) {
       ok = App.getGoogleTestOTP() === code;
     } else if (utilisateur.email === App.getAppleTestEmail()) {
@@ -72,6 +72,13 @@ export class CodeManager {
       await this.securityRepository.updateCodeValidationData(utilisateur);
     }
     return ok;
+  }
+
+  public async initCodeStateAfterSuccess(utilisateur: CodeAwareUtilisateur) {
+    utilisateur.failed_checkcode_count = 0;
+    utilisateur.prevent_checkcode_before = new Date();
+    utilisateur.code = null;
+    await this.securityRepository.updateCodeValidationData(utilisateur);
   }
 
   private static checkCodeLocked(utilisateur: CodeAwareUtilisateur) {
