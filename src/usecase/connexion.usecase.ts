@@ -195,15 +195,11 @@ export class Connexion_v2_Usecase {
     utilisateur.force_connexion = true;
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    if (App.isProd()) {
-      return {}; // PAS de FC encore en PROD
-    } else {
-      const result =
-        await this.franceConnectUsecase.external_logout_france_connect(
-          utilisateurId,
-        );
-      return { fc_logout_url: result.fc_logout_url };
-    }
+    const result =
+      await this.franceConnectUsecase.external_logout_france_connect(
+        utilisateurId,
+      );
+    return { fc_logout_url: result.fc_logout_url };
   }
 
   async logout_all_users() {
