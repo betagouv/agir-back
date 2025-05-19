@@ -147,32 +147,6 @@ export class MagicLinkUsecase {
       utilisateur,
       codeOkAction,
     );
-    /*
-    if (utilisateur.code !== code) {
-      utilisateur.failed_checkcode_count++;
-      if (utilisateur.failed_checkcode_count > MAX_CODE_ATTEMPT) {
-        utilisateur.failed_checkcode_count = 0;
-        utilisateur.code = null;
-        await this.utilisateurRespository.updateUtilisateur(utilisateur);
-        ApplicationError.throwMagicLinkUsedError();
-      }
-      await this.utilisateurRespository.updateUtilisateur(utilisateur);
-      ApplicationError.throwBadCodeError();
-    }
-
-    await this.passwordManager.initLoginStateAfterSuccess(utilisateur);
-
-    utilisateur.code = null;
-    utilisateur.active_account = true;
-    await this.utilisateurRespository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.core],
-    );
-
-    const token = await this.tokenRepository.createNewAppToken(utilisateur.id);
-
-    return { token: token, utilisateur: utilisateur };
-    */
   }
 
   private async sendMagiclink(

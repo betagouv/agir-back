@@ -171,11 +171,11 @@ function getControllers(): any[] {
     FranceConnectController,
     MesAidesRenoController,
     RisqesController,
+    MagicLinkController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
-    controllers.push(MagicLinkController);
     controllers.push(CmsPreviewController);
   }
   return controllers;
