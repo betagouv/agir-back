@@ -67,6 +67,9 @@ export class ProfileUsecase {
     const char_regexp = new RegExp(
       "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
     );
+    const char_regexp_plus_chiffres = new RegExp(
+      "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-0123456789]+$",
+    );
     if (profile.nom) {
       if (!utilisateur.isDataFranceConnectModifiable()) {
         ApplicationError.throwMajImpossibleFC();
@@ -80,7 +83,7 @@ export class ProfileUsecase {
     }
 
     if (profile.pseudo) {
-      if (!char_regexp.test(profile.pseudo)) {
+      if (!char_regexp_plus_chiffres.test(profile.pseudo)) {
         ApplicationError.throwNotAlhpaPseudo();
       }
       if (profile.pseudo.length > FIELD_MAX_LENGTH) {

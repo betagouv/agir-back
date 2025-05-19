@@ -541,6 +541,31 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('068');
   });
+  it('PATCH /utilisateurs/id/profile - pseudo pas alpha ni num => erreur', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      pseudo: 'haha45!!!',
+    });
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.code).toEqual('118');
+  });
+  it('PATCH /utilisateurs/id/profile - pseudo pas alpha & num OK', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/profile',
+    ).send({
+      pseudo: 'haha45',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+  });
   it('PATCH /utilisateurs/id/profile - RFR non entier => erreur', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

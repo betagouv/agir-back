@@ -627,7 +627,10 @@ export class ApplicationError {
   }
 
   static throwNotAlhpaPseudo() {
-    this.throwAppError('118', `Le pseudo ne doit contenir que des lettres`);
+    this.throwAppError(
+      '118',
+      `Le pseudo ne doit contenir que des lettres ou des chiffres`,
+    );
   }
 
   static throwBadSituationID(id: string) {
