@@ -13,6 +13,7 @@ export enum EmailNotification {
   inscription_code = 'inscription_code',
   change_mot_de_passe_code = 'change_mot_de_passe_code',
   connexion_code = 'connexion_code',
+  magic_link = 'magic_link',
 
   //AUTO toutes les 10 min
   welcome = 'welcome',

@@ -7,11 +7,19 @@ export class ApplicationError {
   @ApiProperty()
   message: string;
   http_status: number;
+  @ApiProperty()
+  message_tech: string;
 
-  private constructor(code: string, message: string, http_status?: number) {
+  private constructor(
+    code: string,
+    message: string,
+    http_status?: number,
+    message_tech?: string,
+  ) {
     this.code = code;
     this.message = message;
     this.http_status = http_status ? http_status : 400;
+    this.message_tech = message_tech;
   }
 
   static throwInactiveAccountError() {
@@ -311,7 +319,7 @@ export class ApplicationError {
   static throwMagicLinkExpiredError() {
     this.throwAppError('060', 'Lien de connexion expiré');
   }
-  static throwBadCodError() {
+  static throwBadCodeError() {
     this.throwAppError('061', `Mauvais code`);
   }
   static throwBadResponseValue(reponse: string, kyc_code: string) {
@@ -558,10 +566,12 @@ export class ApplicationError {
       404,
     );
   }
-  static throwSecurityTechnicalProblemDetected() {
+  static throwSecurityTechnicalProblemDetected(tech_reason: string) {
     this.throwAppError(
       '107',
-      `Problème de sécurité détecté au cours de l'authentification, c'est pas bien d'essayer de nous pirater ^^`,
+      `Problème de sécurité détecté au cours de l'authentification`,
+      400,
+      tech_reason,
     );
   }
   static throwBadActionCodeFormat(code: string) {
@@ -617,7 +627,10 @@ export class ApplicationError {
   }
 
   static throwNotAlhpaPseudo() {
-    this.throwAppError('118', `Le pseudo ne doit contenir que des lettres`);
+    this.throwAppError(
+      '118',
+      `Le pseudo ne doit contenir que des lettres ou des chiffres`,
+    );
   }
 
   static throwBadSituationID(id: string) {
@@ -804,7 +817,8 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     code: string,
     message: string,
     http_status?: number,
+    message_tech?: string,
   ) {
-    throw new ApplicationError(code, message, http_status);
+    throw new ApplicationError(code, message, http_status, message_tech);
   }
 }

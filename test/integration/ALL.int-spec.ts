@@ -50,5 +50,6 @@ import './repository/utilisateurBoard.repository.int-spec';
 import './usecase/bilanCarbone.usecase.int-spec';
 import './usecase/contact.usecase.int-spec';
 import './usecase/duplicate.usecase.int-spec';
+import './usecase/franceConnect.usecase.int-spec';
 import './usecase/mesAidesReno.usecase.int-spec';
 import './usecase/notificationMobile.usecase.int-spec';

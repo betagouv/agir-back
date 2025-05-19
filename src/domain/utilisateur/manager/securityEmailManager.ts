@@ -3,12 +3,12 @@ import { ApplicationError } from '../../../../src/infrastructure/applicationErro
 import { UtilisateurSecurityRepository } from '../../../infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { SecurityEmailAwareUtilisateur } from './securityEmailAwareUtilisateur';
 
+const MAX_CODE_EMAIL_ATTEMPT = 4;
+const BLOCKED_CODE_EMAIL_DURATION_MIN = 5;
+
 @Injectable()
 export class SecurityEmailManager {
   constructor(private securityRepository: UtilisateurSecurityRepository) {}
-
-  private static MAX_CODE_EMAIL_ATTEMPT = 3;
-  private static BLOCKED_CODE_EMAIL_DURATION_MIN = 5;
 
   public async attemptSecurityEmailEmission(
     utilisateur: SecurityEmailAwareUtilisateur,
@@ -52,8 +52,7 @@ export class SecurityEmailManager {
     utilisateur: SecurityEmailAwareUtilisateur,
   ) {
     if (
-      utilisateur.sent_email_count >
-        SecurityEmailManager.MAX_CODE_EMAIL_ATTEMPT &&
+      utilisateur.sent_email_count > MAX_CODE_EMAIL_ATTEMPT &&
       utilisateur.prevent_sendemail_before.getTime() < Date.now()
     ) {
       utilisateur.sent_email_count = 0;
@@ -64,13 +63,10 @@ export class SecurityEmailManager {
     utilisateur: SecurityEmailAwareUtilisateur,
   ) {
     utilisateur.sent_email_count++;
-    if (
-      utilisateur.sent_email_count >=
-      SecurityEmailManager.MAX_CODE_EMAIL_ATTEMPT
-    ) {
+    if (utilisateur.sent_email_count >= MAX_CODE_EMAIL_ATTEMPT) {
       utilisateur.prevent_sendemail_before.setMinutes(
         utilisateur.prevent_sendemail_before.getMinutes() +
-          SecurityEmailManager.BLOCKED_CODE_EMAIL_DURATION_MIN,
+          BLOCKED_CODE_EMAIL_DURATION_MIN,
       );
     }
   }

@@ -1,10 +1,10 @@
-import { TestUtil } from '../../TestUtil';
-import { EmailTemplateRepository } from '../../../src/infrastructure/email/emailTemplate.repository';
 import { TypeNotification } from '../../../src/domain/notification/notificationHistory';
 import {
   SourceInscription,
   Utilisateur,
 } from '../../../src/domain/utilisateur/utilisateur';
+import { EmailTemplateRepository } from '../../../src/infrastructure/email/emailTemplate.repository';
+import { TestUtil } from '../../TestUtil';
 
 describe('EmailTemplateRepository', () => {
   const OLD_ENV = process.env;
@@ -40,6 +40,7 @@ describe('EmailTemplateRepository', () => {
     const result = await emailTemplateRepository.generateUserEmailByType(
       TypeNotification.inscription_code,
       utilisateur,
+      {},
     );
 
     // THEN
@@ -68,6 +69,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     const result = await emailTemplateRepository.generateUserEmailByType(
       TypeNotification.connexion_code,
       utilisateur,
+      {},
     );
 
     // THEN
@@ -99,6 +101,7 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     const result = await emailTemplateRepository.generateUserEmailByType(
       TypeNotification.change_mot_de_passe_code,
       utilisateur,
+      {},
     );
 
     // THEN

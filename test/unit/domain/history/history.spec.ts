@@ -14,6 +14,8 @@ const BASIC_ARTICLE: Article = new Article({
   source: 'source',
   sources: [{ label: 'source 1', url: 'https//sources1' }],
   echelle: Echelle.National,
+  tags_a_exclure: [],
+  tags_a_inclure: [],
 });
 
 describe('History', () => {

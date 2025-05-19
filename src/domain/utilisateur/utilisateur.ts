@@ -25,6 +25,7 @@ export enum UtilisateurStatus {
   creation_compte_etape_1 = 'creation_compte_etape_1',
   connexion_etape_1 = 'connexion_etape_1',
   mot_de_passe_oublie_etape_1 = 'mot_de_passe_oublie_etape_1',
+  magic_link_etape_1 = 'magic_link_etape_1',
 }
 
 export enum SourceInscription {
@@ -161,7 +162,7 @@ export class Utilisateur extends UtilisateurData {
       failed_login_count: 0,
       prevent_login_before: new Date(),
       prevent_checkcode_before: new Date(),
-      sent_email_count: 1,
+      sent_email_count: 0,
       prevent_sendemail_before: new Date(),
       gamification: new Gamification(),
       history: new History(),
@@ -350,11 +351,6 @@ export class Utilisateur extends UtilisateurData {
 
   public setNew6DigitCode() {
     CodeManager.setNew6DigitCode(this);
-    this.code_generation_time = new Date();
-  }
-
-  public setNewUUIDCode() {
-    CodeManager.setNewUUIDCode(this);
     this.code_generation_time = new Date();
   }
 

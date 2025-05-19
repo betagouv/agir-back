@@ -171,6 +171,26 @@ describe('/api/incoming/cms (API test)', () => {
           description: '',
         },
       ],
+      tag_v2_excluants: [
+        {
+          id: 1,
+          code: 'AA',
+        },
+        {
+          id: 2,
+          code: 'BB',
+        },
+      ],
+      tag_v2_incluants: [
+        {
+          id: 1,
+          code: 'CC',
+        },
+        {
+          id: 2,
+          code: 'DD',
+        },
+      ],
       code: 'code',
       thematique: {
         id: 1,
@@ -360,6 +380,26 @@ describe('/api/incoming/cms (API test)', () => {
       codes_departement: '78',
       codes_region: '25',
       sources: [{ libelle: 'haha', lien: 'hoho' }],
+      tag_v2_excluants: [
+        {
+          id: 1,
+          code: 'AA',
+        },
+        {
+          id: 2,
+          code: 'BB',
+        },
+      ],
+      tag_v2_incluants: [
+        {
+          id: 1,
+          code: 'CC',
+        },
+        {
+          id: 2,
+          code: 'DD',
+        },
+      ],
     } as CMSWebhookEntryAPI,
   };
 
@@ -611,6 +651,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
     expect(articles[0].tag_article).toEqual('composter');
+    expect(articles[0].tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(articles[0].tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
     expect(articles[0].duree).toEqual('pas trop long');
     expect(articles[0].frequence).toEqual('souvent');
@@ -919,6 +961,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.label_compteur).toEqual('tout le monde a déjà fait !');
 
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
+    expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
@@ -1002,6 +1046,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.titre).toEqual('titre');
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
@@ -1226,6 +1272,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].rubrique_ids).toEqual(['1', '2']);
     expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
     expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
+    expect(articles[0].tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(articles[0].tags_a_inclure_v2).toEqual(['CC', 'DD']);
   });
   it('POST /api/incoming/cms - updates existing quizz in quizz table', async () => {
     // GIVEN

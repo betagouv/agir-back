@@ -109,11 +109,18 @@ export class RisquesUsecase {
       risques.secheresse_surface_zone4 !== null &&
       risques.secheresse_surface_zone3 !== null
     ) {
+      const surface_totale_secheresse =
+        risques.secheresse_surface_zone5 +
+        risques.secheresse_surface_zone4 +
+        risques.secheresse_surface_zone3 +
+        risques.secheresse_surface_zone2 +
+        risques.secheresse_surface_zone1;
+
       risques.pourcentage_risque_secheresse = Math.round(
         ((risques.secheresse_surface_zone5 +
           risques.secheresse_surface_zone4 +
           risques.secheresse_surface_zone3) /
-          risques.surface_totale) *
+          surface_totale_secheresse) *
           100,
       );
     } else {
@@ -127,18 +134,11 @@ export class RisquesUsecase {
       risques.inondation_surface_zone2 !== null &&
       risques.inondation_surface_zone1 !== null
     ) {
-      const surface_totale_inondation =
-        risques.inondation_surface_zone5 +
-        risques.inondation_surface_zone4 +
-        risques.inondation_surface_zone3 +
-        risques.inondation_surface_zone2 +
-        risques.inondation_surface_zone1;
-
       risques.pourcentage_risque_innondation = Math.round(
         ((risques.inondation_surface_zone5 +
           risques.inondation_surface_zone4 +
           risques.inondation_surface_zone3) /
-          surface_totale_inondation) *
+          risques.surface_totale) *
           100,
       );
     } else {
@@ -165,9 +165,8 @@ export class RisquesUsecase {
       silent_error: true,
     };
 
-    risques.surface_totale = await this.maifRepository.findSurfaceCommune(
-      filtre,
-    );
+    risques.surface_totale =
+      (await this.maifRepository.findSurfaceCommune(filtre)) * 1000 * 1000;
 
     const risques_catnat = await this.maifRepository.findCatnat(filtre);
     risques.nombre_cat_nat = risques_catnat.length;

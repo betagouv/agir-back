@@ -82,7 +82,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     expect(user.prevent_checkcode_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
-    expect(user.sent_email_count).toEqual(1);
+    expect(user.sent_email_count).toEqual(0);
     expect(user.prevent_sendemail_before.getTime()).toBeLessThanOrEqual(
       Date.now(),
     );
@@ -181,11 +181,11 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
 
-    expect(userDB.sent_email_count).toEqual(2);
+    expect(userDB.sent_email_count).toEqual(1);
     expect(userDB.code).not.toEqual(userDB_before.code);
   });
 
-  it('POST /utilisateurs/renvoyer_code - pas derreur di mauvais email', async () => {
+  it('POST /utilisateurs/renvoyer_code - pas derreur si mauvais email', async () => {
     // GIVEN
     await TestUtil.getServer().post('/utilisateurs_v2').send({
       mot_de_passe: '#1234567890HAHAa',
@@ -204,7 +204,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
 
-    expect(userDB.sent_email_count).toEqual(1);
+    expect(userDB.sent_email_count).toEqual(0);
   });
 
   it('POST /utilisateurs/renvoyer_code - PROD false - resend code ok for first time, counter + 1, same code generated', async () => {
@@ -231,7 +231,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
 
-    expect(userDB.sent_email_count).toEqual(2);
+    expect(userDB.sent_email_count).toEqual(1);
     expect(userDB.code).toEqual(userDB_before.code);
   });
 
@@ -249,17 +249,20 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
       .send({ email: 'w@w.com' });
+    await TestUtil.getServer()
+      .post('/utilisateurs/renvoyer_code')
+      .send({ email: 'w@w.com' });
     const response = await TestUtil.getServer()
       .post('/utilisateurs/renvoyer_code')
       .send({ email: 'w@w.com' });
+    expect(response.status).toBe(400);
 
     // THEN
     const userDB = await TestUtil.prisma.utilisateur.findFirst({
       where: { email: 'w@w.com' },
     });
-    expect(response.status).toBe(400);
 
-    expect(userDB.sent_email_count).toEqual(3);
+    expect(userDB.sent_email_count).toEqual(4);
     expect(userDB.prevent_sendemail_before.getTime()).toBeGreaterThan(
       Date.now(),
     );

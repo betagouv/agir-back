@@ -102,6 +102,8 @@ export class ActionRepository {
       tags_excluants: action.tags_excluants,
       sources: action.sources as any,
       pdcn_categorie: action.pdcn_categorie,
+      tags_a_inclure_v2: action.tags_a_inclure,
+      tags_a_exclure_v2: action.tags_a_exclure,
 
       created_at: undefined,
       updated_at: undefined,
@@ -249,6 +251,8 @@ export class ActionRepository {
       label_compteur: action.label_compteur,
       sources: action.sources as any,
       article_ids: action.articles_ids,
+      tags_a_exclure: action.tags_a_exclure_v2,
+      tags_a_inclure: action.tags_a_inclure_v2,
     });
   }
 }
