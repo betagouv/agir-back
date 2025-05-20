@@ -102,11 +102,15 @@ export class EmailTemplateRepository {
           }),
         };
       case TypeNotification.magic_link:
+        let originator = '';
+        if (extra_data.originator) {
+          originator = `&origin=${extra_data.originator}`;
+        }
         return {
           subject: `Lien d'accès à Jagis`,
           body: this.email_magic_link({
             CODE: utilisateur.code,
-            URL_CODE: `${extra_data.front_base_url}/authentification/validation-lien-magique?email=${utilisateur.email}&code=${utilisateur.code}`,
+            URL_CODE: `${extra_data.front_base_url}/authentification/validation-lien-magique?email=${utilisateur.email}&code=${utilisateur.code}${originator}`,
           }),
         };
       case TypeNotification.inscription_code:

@@ -19,6 +19,7 @@ export type Phrase = {
   phrase: string;
   pourcent: number;
 };
+const char_regexp = new RegExp('^[a-zA-Z]+$');
 
 @Injectable()
 export class MagicLinkUsecase {
@@ -34,7 +35,8 @@ export class MagicLinkUsecase {
   async sendLink(
     email: string,
     source: SourceInscription,
-    origin: string,
+    originHost: string,
+    originator: string,
     situation_ngc_id?: string,
   ): Promise<void> {
     if (App.isConnexionDown()) {
@@ -43,6 +45,14 @@ export class MagicLinkUsecase {
 
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
+    }
+    if (originator) {
+      if (!char_regexp.test(originator)) {
+        ApplicationError.throwBadOriginParam(originator);
+      }
+      if (originator.length > 20) {
+        ApplicationError.throwBadOriginLength(originator);
+      }
     }
     if (source && !SourceInscription[source]) {
       ApplicationError.throwSourceInscriptionInconnue(source);
@@ -69,8 +79,8 @@ export class MagicLinkUsecase {
     }
 
     let front_base_url = App.getBaseURLFront();
-    if (!App.isProd() && !!origin) {
-      front_base_url = origin;
+    if (!App.isProd() && !!originHost) {
+      front_base_url = originHost;
     }
 
     const _this = this;
@@ -86,7 +96,7 @@ export class MagicLinkUsecase {
       ]);
       console.log(`CONNEXION :magic_link : [${user.id}] email sending`);
 
-      _this.sendMagiclink(user, front_base_url);
+      _this.sendMagiclink(user, front_base_url, originator);
     };
 
     await this.securityEmailManager.attemptSecurityEmailEmission(
@@ -152,11 +162,12 @@ export class MagicLinkUsecase {
   private async sendMagiclink(
     utilisateur: Utilisateur,
     front_base_url: string,
+    originator: string,
   ) {
     await this.notificationEmailUsecase.external_send_user_email_of_type(
       TypeNotification.magic_link,
       utilisateur,
-      { front_base_url: front_base_url },
+      { front_base_url: front_base_url, originator: originator },
     );
   }
 }

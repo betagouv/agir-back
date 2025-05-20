@@ -71,6 +71,33 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(response.status).toEqual(400);
     expect(response.body.message).toEqual(`Adresse électronique obligatoire`);
   });
+  it(`POST /utilisateurs/send_magic_link - origin avec des chiffres `, async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({ email: 'aaa@bbb.com', origin: '123' });
+    // THEN
+    expect(response.status).toEqual(400);
+    expect(response.body.message).toEqual(
+      `le paramètre 'origin' ne peut contenir que des charactères alphabétiques, reçu : [123]`,
+    );
+  });
+  it(`POST /utilisateurs/send_magic_link - origin trop long `, async () => {
+    // GIVEN
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'aaa@bbb.com',
+        origin: 'aaaaabbbbcccgdjgdhsdkjfgsqfkjgqsfkjqsgfqksjgfqskfjqgsf',
+      });
+    // THEN
+    expect(response.status).toEqual(400);
+    expect(response.body.message).toEqual(
+      "longueur max de 20 char pour le paramètre 'origin', reçu : [54]",
+    );
+  });
   it(`POST /utilisateurs/send_magic_link - génère un magic_link et l'envoie en email, utilisateur créé dans la foulé`, async () => {
     // GIVEN
     process.env.IS_PROD = 'true';
