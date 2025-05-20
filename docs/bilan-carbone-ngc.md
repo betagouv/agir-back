@@ -64,3 +64,27 @@ cette version soit la même que celle utilisée par _J'agis_ à cet instant.
 Il est donc nécessaire de mettre en place un système garantissant que les
 situations provenant de nosgestesclimat.fr soient compatibles avec la version
 du modèle de _J'agis_.
+
+## Les questions "mosaiques"
+
+Le modèle NGC a introduit la notion de question _mosaique_ au-dessus des
+questions (règles ayant comme rôle de paramètres/inputs du programme)
+Publicodes. Elles permettent de regrouper plusieurs questions qui ne font sens
+qu'en étant posées sur le même écran.
+
+Par exemple, plutôt que de demander X questions du style "Avez-vous une pompe à
+chaleur ?", "Vous chauffez-vous au gaz ?", etc... Elles permettent de poser une
+seule question avec des _checkboxes_ pour chaque sous-question.
+
+Pour l'instant il en existe de deux types : _booléen_ et _nombre_.
+
+### Gestion côté _J'agis_
+
+Côté _J'agis_, les mosaiques sont définies en dur dans le fichier
+[`src/domain/kyc/mosaicKYC.ts`](../src/domain/kyc/mosaicKYC.ts)
+
+> [!NOTE]
+>
+> _J'agis_ supporte uniquement les mosaique de type _booléen_ pour le moment.
+
+#### Comportement particuliers
