@@ -1,4 +1,6 @@
+import ngcRules from '@incubateur-ademe/nosgestesclimat/nosgestesclimat.model.json';
 import { KYC } from '@prisma/client';
+import { KYCS_TO_RULE_NAME } from 'src/domain/kyc/publicodesMapping';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -60,7 +62,7 @@ const KYC_DATA: QuestionKYC_v2 = {
 
 describe('/bilan (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const uilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   const OLD_ENV = process.env;
   beforeAll(async () => {
@@ -1137,7 +1139,7 @@ describe('/bilan (API test)', () => {
       NGCCalculator.DEFAULT_TOTAL_KG,
     );
 
-    const userDB = await uilisateurRepository.getById('utilisateur-id', [
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
 
@@ -1264,6 +1266,84 @@ describe('/bilan (API test)', () => {
         { label: 'Vacances', impact_kg_annee: 0, emoji: '🏖️' },
       ],
       emoji: '🚦',
+    });
+  });
+
+  describe('GET /utilisateurs/utilisateur-id/bilans/last_v3', () => {
+    it('should correctly compute the bilan according the NGC situation', async () => {
+      process.env.NGC_API_KEY = '12345';
+
+      await TestUtil.create(DB.kYC, {
+        id_cms: 1,
+        code: KYCID.KYC_transport_voiture_km,
+        type: TypeReponseQuestionKYC.entier,
+        is_ngc: true,
+        question: `Km en voiture ?`,
+        points: 10,
+        categorie: Categorie.test,
+        reponses: [],
+        ngc_key:
+          KYCS_TO_RULE_NAME[KYCID.KYC_transport_voiture_km]['nosgestesclimat'],
+      });
+
+      await kycRepository.loadCache();
+
+      const response_post_situation = await TestUtil.getServer()
+        .post('/bilan/importFromNGC')
+        .set('apikey', '12345')
+        .send({
+          situation: {
+            'transport . voiture . km': 20000,
+            // 'logement . chauffage . bois . présent': 'oui',
+          },
+        });
+
+      const situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+        response_post_situation.body.redirect_url,
+      );
+
+      const response = await TestUtil.getServer()
+        .post('/utilisateurs_v2')
+        .send({
+          mot_de_passe: '#1234567890HAHAa',
+          email: 'w@w.com',
+          source_inscription: 'mobile',
+          situation_ngc_id: situtation_id,
+        });
+
+      expect(response.status).toBe(201);
+
+      const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
+
+      await TestUtil.generateAuthorizationToken(user.id);
+
+      let last_res = await TestUtil.GET(
+        `/utilisateurs/${user.id}/bilans/last_v3?force=true`,
+      );
+
+      expect(last_res.status).toBe(200);
+      expect(last_res.body.bilan_complet.impact_kg_annee).toBeGreaterThan(
+        NGCCalculator.DEFAULT_TOTAL_KG,
+      );
+
+      const question_res = await TestUtil.PUT(
+        `/utilisateurs/${user.id}/questionsKYC_v2/KYC_transport_voiture_km`,
+      ).send([
+        {
+          value: ngcRules['transport . voiture . km']['par défaut'],
+        },
+      ]);
+
+      expect(question_res.status).toBe(200);
+
+      last_res = await TestUtil.GET(
+        `/utilisateurs/${user.id}/bilans/last_v3?force=true`,
+      );
+
+      expect(last_res.status).toBe(200);
+      expect(last_res.body.bilan_complet.impact_kg_annee).toEqual(
+        NGCCalculator.DEFAULT_TOTAL_KG,
+      );
     });
   });
 });

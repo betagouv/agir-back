@@ -70,4 +70,14 @@ export class SituationNGCRepository {
       },
     });
   }
+
+  async getSituationByUtilisateurId(
+    id: string,
+  ): Promise<SituationNGC | undefined> {
+    return this.prisma.situationNGC.findFirst({
+      where: {
+        utilisateurId: id,
+      },
+    });
+  }
 }
