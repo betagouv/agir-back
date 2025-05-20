@@ -17,7 +17,7 @@ let nbInvalidKYC = 0;
 const kycs = await getKYCs();
 
 kycs
-  .filter(({ attributes }) => attributes.is_ngc)
+  .filter(({ attributes }) => attributes.is_ngc && attributes.A_SUPPRIMER !== true)
   .forEach(({ attributes }) => {
     const ruleName = attributes.ngc_key;
 
@@ -43,7 +43,7 @@ kycs
 
       if (possibilities === null && !isBooleanChoixUnique(responses)) {
         ++nbInvalidKYC;
-        console.error(`\n[ERR] KYC is no longer of type choix_unique`);
+        console.error(`\n[ERR] KYC should no longer be of type 'choix_unique'`);
         console.dir(
           {
             KYC: {
@@ -55,7 +55,7 @@ kycs
             },
             NGC: {
               name: ruleName,
-              type: engine.getRule(ruleName)?.type,
+              type: getRuleType(ruleName),
             },
           },
           { depth: null },
@@ -63,9 +63,10 @@ kycs
       }
 
       if (possibilities && !isBooleanChoixUnique(responses)) {
-        const unknown_reponses = responses.filter(({ ngc_code }) => {
-          return !possibilities?.some(
-            (pos) => pos.publicodesValue === ngc_code,
+        const unknown_reponses = responses.filter(({ ngc_code, reponse }) => {
+          return (
+            !possibilities?.some((pos) => pos.publicodesValue === ngc_code) &&
+            reponse !== 'Je ne sais pas'
           );
         });
         if (unknown_reponses.length > 0) {
@@ -80,7 +81,7 @@ kycs
             },
             NGC: {
               name: ruleName,
-              type: engine.getRule(ruleName)?.type,
+              type: getRuleType(ruleName),
             },
             unknown_reponses,
           });
@@ -94,9 +95,7 @@ if (questions.length > 0) {
     `\n\x1b[0;33m[WARN] ${questions.length} questions missing in KYC:\x1b[0m`,
   );
   questions.forEach(({ dottedName, rawNode }) => {
-    console.log(
-      `  - "${rawNode['question']}" (${dottedName})`,
-    );
+    console.log(`  - "${rawNode['question']}" (${dottedName})`);
   });
 }
 
@@ -108,10 +107,19 @@ if (nbInvalidKYC > 0) {
 }
 
 function isBooleanChoixUnique(responses) {
+  const responses_contains = (ngc_code) =>
+    responses.some((r) => r.ngc_code === ngc_code);
+  const responses_contains_dont_know = responses.some(
+    (r) =>
+      r.reponse === 'Je ne sais pas' ||
+      r.reponse === 'Je ne souhaite pas répondre',
+  );
+
   return (
-    responses.length >= 2 &&
-    responses.find((r) => r.ngc_code === 'non') &&
-    responses.find((r) => r.ngc_code === 'oui')
+    responses_contains('non') &&
+    responses_contains('oui') &&
+    (responses.length === 2 ||
+      (responses.length === 3 && responses_contains_dont_know))
   );
 }
 
@@ -139,4 +147,12 @@ async function getKYCs() {
   }
 
   return result;
+}
+
+function getRuleType(ruleName) {
+  const rule = engine.getRule(ruleName);
+
+  if (rule) {
+    return engine.baseContext.nodesTypes.get(rule)?.type;
+  }
 }
