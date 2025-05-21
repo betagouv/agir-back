@@ -62,6 +62,44 @@ export class DuplicateBDDForStatsUsecase {
     }
   }
 
+  async duplicateUtilisateurNotifications(block_size: number = 100) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllUserNotifData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.notification_history],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        for (const notif of user.notification_history.sent_notifications) {
+          let data;
+          try {
+            data = {
+              user_ext_id: user.external_stat_id,
+              type: notif.type,
+              canal: notif.canal,
+              date: notif.date_envoie,
+            };
+            await this.statistiqueExternalRepository.createUserNotificationData(
+              data,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(`Error Creating Notif : ${JSON.stringify(data)}`);
+          }
+        }
+      }
+    }
+  }
+
   async duplicateQuestionsUtilisateur(block_size: number = 200) {
     const total_user_count = await this.utilisateurRepository.countAll();
 

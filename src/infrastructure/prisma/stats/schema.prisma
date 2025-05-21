@@ -87,6 +87,14 @@ model KYCCopy {
   @@unique([user_id, code_kyc])
 }
 
+model Notifications {
+  id                 String    @id
+  user_id            String
+  type_notification  String
+  canal_notification String
+  date_notification  DateTime? @db_stats.Timestamptz(3)
+}
+
 model ActionCopy {
   type_code_id   String
   code_action    String

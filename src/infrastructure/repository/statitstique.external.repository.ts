@@ -29,6 +29,9 @@ export class StatistiqueExternalRepository {
   public async deleteAllUserData() {
     await this.prismaStats.utilisateurCopy.deleteMany();
   }
+  public async deleteAllUserNotifData() {
+    await this.prismaStats.notifications.deleteMany();
+  }
   public async deleteAllKYCData() {
     await this.prismaStats.kYCCopy.deleteMany();
   }
@@ -99,6 +102,23 @@ export class StatistiqueExternalRepository {
         date_inscription: utilisateur.created_at,
         version_utilisateur: utilisateur.global_user_version,
         actif_le: activity_log,
+      },
+    });
+  }
+
+  public async createUserNotificationData(data: {
+    user_ext_id: string;
+    type: string;
+    canal: string;
+    date: Date;
+  }) {
+    await this.prismaStats.notifications.create({
+      data: {
+        id: uuidv4(),
+        user_id: data.user_ext_id,
+        canal_notification: data.canal,
+        type_notification: data.type,
+        date_notification: data.date,
       },
     });
   }
