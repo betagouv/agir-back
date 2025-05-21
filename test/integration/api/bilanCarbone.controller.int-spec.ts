@@ -1271,8 +1271,7 @@ describe('/bilan (API test)', () => {
 
   describe('GET /utilisateurs/utilisateur-id/bilans/last_v3', () => {
     it('should correctly compute the bilan according the NGC situation', async () => {
-      process.env.NGC_API_KEY = '12345';
-
+      await TestUtil.create(DB.utilisateur);
       await TestUtil.create(DB.kYC, {
         id_cms: 1,
         code: KYCID.KYC_transport_voiture_km,
@@ -1288,37 +1287,15 @@ describe('/bilan (API test)', () => {
 
       await kycRepository.loadCache();
 
-      const response_post_situation = await TestUtil.getServer()
-        .post('/bilan/importFromNGC')
-        .set('apikey', '12345')
-        .send({
-          situation: {
-            'transport . voiture . km': 20000,
-            // 'logement . chauffage . bois . présent': 'oui',
-          },
-        });
-
-      const situtation_id = TestUtil.getSitutationIdFromRedirectURL(
-        response_post_situation.body.redirect_url,
-      );
-
-      const response = await TestUtil.getServer()
-        .post('/utilisateurs_v2')
-        .send({
-          mot_de_passe: '#1234567890HAHAa',
-          email: 'w@w.com',
-          source_inscription: 'mobile',
-          situation_ngc_id: situtation_id,
-        });
-
-      expect(response.status).toBe(201);
-
-      const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
-
-      await TestUtil.generateAuthorizationToken(user.id);
+      await TestUtil.create(DB.situationNGC, {
+        utilisateurId: 'utilisateur-id',
+        situation: {
+          'transport . voiture . km': 200000,
+        },
+      });
 
       let last_res = await TestUtil.GET(
-        `/utilisateurs/${user.id}/bilans/last_v3?force=true`,
+        `/utilisateurs/utilisateur-id/bilans/last_v3?force=true`,
       );
 
       expect(last_res.status).toBe(200);
@@ -1327,7 +1304,7 @@ describe('/bilan (API test)', () => {
       );
 
       const question_res = await TestUtil.PUT(
-        `/utilisateurs/${user.id}/questionsKYC_v2/KYC_transport_voiture_km`,
+        `/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_transport_voiture_km`,
       ).send([
         {
           value: ngcRules['transport . voiture . km']['par défaut'],
@@ -1337,7 +1314,7 @@ describe('/bilan (API test)', () => {
       expect(question_res.status).toBe(200);
 
       last_res = await TestUtil.GET(
-        `/utilisateurs/${user.id}/bilans/last_v3?force=true`,
+        `/utilisateurs/utilisateur-id/bilans/last_v3?force=true`,
       );
 
       expect(last_res.status).toBe(200);
