@@ -92,8 +92,6 @@ export class ThematiqueUsecase {
         thematique: thema,
       });
 
-    console.log(stock_actions_eligibles);
-
     if (history.existeDesPropositions(thema)) {
       this.refreshActionProposeesWhenMissingInCMS(
         utilisateur,
