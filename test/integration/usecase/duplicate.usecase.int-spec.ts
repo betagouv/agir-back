@@ -8,8 +8,9 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../../../src/infrastructure/ngc/NGCCalculator';
@@ -222,7 +223,6 @@ describe('Duplicate Usecase', () => {
           liste_partages: [new Date(456)],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -569,7 +569,6 @@ describe('Duplicate Usecase', () => {
           liste_partages: [new Date(789)],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -1156,7 +1155,6 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_tags_excluants: [TagExcluant.a_un_jardin, TagExcluant.a_un_velo],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1187,10 +1185,15 @@ describe('Duplicate Usecase', () => {
       ],
       liste_actions_utilisateur: [],
     };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin, Tag_v2.a_un_velo],
+      version: 0,
+    };
 
     await TestUtil.create(DB.utilisateur, {
       thematique_history: thematique_history as any,
       external_stat_id: '123',
+      recommandation: reco as any,
     });
 
     // WHEN
@@ -1212,7 +1215,7 @@ describe('Duplicate Usecase', () => {
       perso_consommation_done_once: false,
       perso_logement_done_once: false,
       perso_transport_done_once: false,
-      tags_exclusion: ['a_un_jardin', 'a_un_velo'],
+      tags: ['a_un_jardin', 'a_un_velo'],
       user_id: '123',
     });
   });

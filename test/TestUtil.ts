@@ -50,7 +50,6 @@ import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
-import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
@@ -575,7 +574,6 @@ export class TestUtil {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -588,7 +586,7 @@ export class TestUtil {
 
     const recommandation: ProfileRecommandationUtilisateur_v0 = {
       version: 0,
-      liste_tags_actifs: [Tag_v2.a_une_voiture],
+      liste_tags_actifs: [],
     };
 
     const logement: Logement_v0 = {

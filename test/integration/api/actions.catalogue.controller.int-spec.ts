@@ -278,7 +278,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -372,7 +371,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -467,7 +465,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -511,7 +508,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
-      liste_tags_excluants: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },

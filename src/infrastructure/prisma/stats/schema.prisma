@@ -36,7 +36,7 @@ model Personnalisation {
   perso_transport_done_once     Boolean  @default(false)
   perso_logement_done_once      Boolean  @default(false)
   perso_consommation_done_once  Boolean  @default(false)
-  tags_exclusion                String[]
+  tags                          String[]
   actions_rejetees_all          String[]
   actions_alimentation_rejetees String[]
   actions_logement_rejetees     String[]

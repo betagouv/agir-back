@@ -348,7 +348,7 @@ export class DuplicateBDDForStatsUsecase {
         await this.utilisateurRepository.listePaginatedUsers(
           index,
           block_size,
-          [Scope.thematique_history],
+          [Scope.thematique_history, Scope.recommandation],
           {},
         );
 

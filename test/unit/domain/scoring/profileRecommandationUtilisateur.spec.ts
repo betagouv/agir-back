@@ -250,10 +250,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       getTags: () => [],
       getDistinctText: () => 'C',
       isLocal: () => false,
-      getInclusionTags: () => [
-        Tag_v2.prends_l_avion,
-        Tag_v2.mange_de_la_viande,
-      ],
+      getInclusionTags: () => [Tag_v2.prend_l_avion, Tag_v2.mange_de_la_viande],
       getExclusionTags: () => [],
       explicationScore: new ExplicationScore(),
     };
@@ -262,7 +259,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       liste_tags_actifs: [
         Tag_v2.a_une_voiture,
         Tag_v2.mange_de_la_viande,
-        Tag_v2.prends_l_avion,
+        Tag_v2.prend_l_avion,
       ],
       version: 0,
     });
