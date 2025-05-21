@@ -2,12 +2,17 @@ import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  CanalNotification,
+  EmailNotification,
+} from '../../../src/domain/notification/notificationHistory';
 import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
 import { History_v0 } from '../../../src/domain/object_store/history/history_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { NotificationHistory_v0 } from '../../../src/domain/object_store/notification/NotificationHistory_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
@@ -156,6 +161,60 @@ describe('Duplicate Usecase', () => {
     await TestUtil.appclose();
   });
 
+  it('duplicateUtilisateurNotifications : copy les notifs', async () => {
+    // GIVEN
+    const notifs: NotificationHistory_v0 = {
+      enabled_canals: [],
+      sent_notifications: [
+        {
+          canal: CanalNotification.email,
+          date_envoie: new Date(123),
+          type: EmailNotification.email_utilisateur_inactif_j30,
+        },
+        {
+          canal: CanalNotification.mobile,
+          date_envoie: new Date(456),
+          type: EmailNotification.connexion_code,
+        },
+      ],
+      version: 0,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      external_stat_id: '123',
+      notification_history: notifs as any,
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicateUtilisateurNotifications(5);
+
+    // THEN
+    const stats_users = await TestUtil.prisma_stats.notifications.findMany({
+      orderBy: {
+        date_notification: 'asc',
+      },
+      omit: {
+        id: true,
+      },
+    });
+
+    expect(stats_users).toHaveLength(2);
+
+    expect(stats_users).toEqual([
+      {
+        canal_notification: 'email',
+        date_notification: new Date(123),
+        type_notification: 'email_utilisateur_inactif_j30',
+        user_id: '123',
+      },
+      {
+        canal_notification: 'mobile',
+        date_notification: new Date(456),
+        type_notification: 'connexion_code',
+        user_id: '123',
+      },
+    ]);
+  });
+
   it('duplicateUtilisateur : copy ok si moins de user que block size', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -196,6 +255,8 @@ describe('Duplicate Usecase', () => {
       date_inscription: new Date(2),
       version_utilisateur: 'V2',
       actif_le: [new Date(456)],
+      notifications_email_actives: true,
+      notifications_mobile_actives: false,
     });
   });
 
