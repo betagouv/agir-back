@@ -74,7 +74,7 @@ export class TestDataController extends GenericControler {
           user.annee_naissance
         : null,
       tags_ponderation: user.tag_ponderation_set,
-      tags_exlusion: user.thematique_history.getListeTagsExcluants(),
+      tags_actifs: user.recommandation.getListeTagsActifs(),
       personnalisations_dones: {
         alimentation: user.thematique_history.isPersonnalisationDone(
           Thematique.alimentation,

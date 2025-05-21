@@ -10,4 +10,10 @@ export class CreateUtilisateurMagicLinkAPI {
 
   @ApiProperty({ required: false })
   situation_ngc_id?: string;
+
+  @ApiProperty({
+    required: false,
+    description: `Paramètre optionnel qui sera ajouté à l'URL de connexion magiclink, que des charactères [a-zA-Z] autorisés`,
+  })
+  origin: string;
 }

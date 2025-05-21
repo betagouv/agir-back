@@ -54,6 +54,11 @@ export class ProfileRecommandationUtilisateur {
   public getListeTagsActifs(): Tag_v2[] {
     return Array.from(this.set_tags_actifs.values());
   }
+  public addListeTagActifs(liste: string[]) {
+    for (const tag of liste) {
+      if (Tag_v2[tag]) this.set_tags_actifs.add(Tag_v2[tag]);
+    }
+  }
 
   public setTag(tag: Tag_v2) {
     this.set_tags_actifs.add(tag);

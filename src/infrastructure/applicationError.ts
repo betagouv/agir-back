@@ -813,6 +813,19 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwBadOriginParam(origin: string) {
+    this.throwAppError(
+      '149',
+      `le paramètre 'origin' ne peut contenir que des charactères alphabétiques, reçu : [${origin}]`,
+    );
+  }
+  static throwBadOriginLength(origin: string) {
+    this.throwAppError(
+      '150',
+      `longueur max de 20 char pour le paramètre 'origin', reçu : [${origin.length}]`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

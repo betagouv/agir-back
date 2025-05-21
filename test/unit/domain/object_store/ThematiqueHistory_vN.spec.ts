@@ -5,7 +5,6 @@ import {
   SerialisableDomain,
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
-import { TagExcluant } from '../../../../src/domain/scoring/tagExcluant';
 import { ThematiqueHistory } from '../../../../src/domain/thematique/history/thematiqueHistory';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 
@@ -35,7 +34,6 @@ describe('ThematiqueHistory vN ', () => {
           liste_partages: [new Date(123)],
         },
       ],
-      liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -77,7 +75,6 @@ describe('ThematiqueHistory vN ', () => {
           liste_partages: [new Date(132)],
         },
       ],
-      liste_tags_excluants: [TagExcluant.a_fait_travaux_recents],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,

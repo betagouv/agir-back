@@ -254,7 +254,6 @@ export class ProfileUsecase {
     }
 
     if (input.code_commune) {
-      console.log(input.code_commune);
       const commune = this.communeRepository.getCommuneByCodeINSEE(
         input.code_commune,
       );

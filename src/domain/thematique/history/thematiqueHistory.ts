@@ -3,8 +3,6 @@ import {
   ActionDefinition,
   TypeCodeAction,
 } from '../../actions/actionDefinition';
-import { KYCHistory } from '../../kyc/kycHistory';
-import { KycTagExcluantTranslator } from '../../kyc/synchro/kycTagTranslator';
 import {
   ActionUtilisateur_v0,
   ThematiqueHistory_v0,
@@ -50,7 +48,7 @@ export class ActionUtilisateur {
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
-  private liste_tags_excluants: TagExcluant[];
+  private liste_tags_excluants?: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
@@ -86,11 +84,6 @@ export class ThematiqueHistory {
     return result;
   }
 
-  public recomputeTagExcluant(history: KYCHistory) {
-    const set = KycTagExcluantTranslator.extractTagsFromKycs(history);
-    this.liste_tags_excluants = Array.from(set.values());
-  }
-
   public declarePersonnalisationDone(thematique: Thematique) {
     const reco_existante =
       this.getOrCreateNewThematiqueRecommandation(thematique);
@@ -113,6 +106,11 @@ export class ThematiqueHistory {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
     this.liste_tags_excluants = [];
+  }
+  public getRecommandationByThematique(
+    thematique: Thematique,
+  ): ThematiqueRecommandation {
+    return this.liste_thematiques.find((t) => t.thematique === thematique);
   }
 
   public resetPersonnalisation(thematique: Thematique) {
@@ -274,12 +272,6 @@ export class ThematiqueHistory {
         ],
       });
     }
-  }
-
-  public getRecommandationByThematique(
-    thematique: Thematique,
-  ): ThematiqueRecommandation {
-    return this.liste_thematiques.find((t) => t.thematique === thematique);
   }
 
   public getNombreActionProposees(thematique: Thematique): number {

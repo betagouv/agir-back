@@ -184,7 +184,7 @@ export class StatistiqueExternalRepository {
     await this.prismaStats.personnalisation.create({
       data: {
         user_id: utilisateur.external_stat_id,
-        tags_exclusion: utilisateur.thematique_history.getListeTagsExcluants(),
+        tags: utilisateur.recommandation.getListeTagsActifs(),
         perso_alimentation_done_once:
           utilisateur.thematique_history.isPersonnalisationDoneOnce(
             Thematique.alimentation,

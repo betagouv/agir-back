@@ -89,7 +89,7 @@ export class ThematiqueRecommandation_v0 {
 export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
   liste_actions_utilisateur: ActionUtilisateur_v0[];
-  liste_tags_excluants: TagExcluant[];
+  liste_tags_excluants?: TagExcluant[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {
     return {

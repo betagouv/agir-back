@@ -228,7 +228,6 @@ describe('AideVeloRepository', () => {
       });
 
       // THEN
-      console.log(result['mécanique simple']);
       expect(result['mécanique simple'].length).toBe(1);
 
       result = aidesVeloRepository.getSummaryVelos({

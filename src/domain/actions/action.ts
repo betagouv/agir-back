@@ -5,6 +5,10 @@ import { Article } from '../contenu/article';
 import { Quizz } from '../contenu/quizz';
 import { FAQDefinition } from '../faq/FAQDefinition';
 import { QuestionKYC } from '../kyc/questionKYC';
+import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
+import { Tag } from '../scoring/tag';
+import { TaggedContent } from '../scoring/taggedContent';
 import { ActionUtilisateur } from '../thematique/history/thematiqueHistory';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { ActionDefinition } from './actionDefinition';
@@ -15,7 +19,7 @@ export class ActionService {
   categorie: CategorieRecherche;
 }
 
-export class Action extends ActionDefinition {
+export class Action extends ActionDefinition implements TaggedContent {
   private aides: AideDefinition[];
   nombre_aides: number;
   nombre_actions_faites: number;
@@ -33,6 +37,8 @@ export class Action extends ActionDefinition {
   feedback?: string;
   enchainement_id?: string;
   liste_partages?: Date[];
+  score: number;
+  explicationScore: ExplicationScore;
 
   constructor(action_def: ActionDefinition) {
     super(action_def);
@@ -43,12 +49,29 @@ export class Action extends ActionDefinition {
     this.article_liste = [];
     this.nombre_aides = 0;
     this.nombre_actions_faites = 0;
+    this.score = 0;
+    this.explicationScore = new ExplicationScore();
     if (
       action_def.type === TypeAction.bilan ||
       action_def.type === TypeAction.simulateur
     ) {
       this.enchainement_id = action_def.getTypeCodeAsString();
     }
+  }
+  getTags(): Tag[] {
+    return [];
+  }
+  getInclusionTags(): Tag_v2[] {
+    return this.tags_a_inclure.map((t) => Tag_v2[t]);
+  }
+  getExclusionTags(): Tag_v2[] {
+    return this.tags_a_exclure.map((t) => Tag_v2[t]);
+  }
+  getDistinctText(): string {
+    return this.cms_id;
+  }
+  isLocal(): boolean {
+    return false;
   }
 
   public static newAction(

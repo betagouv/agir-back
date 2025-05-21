@@ -343,6 +343,34 @@ export class MigrationUsecase {
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
     const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.thematique_history,
+      Scope.recommandation,
+    ]);
+
+    // DO SOMETHING
+    utilisateur.recommandation.addListeTagActifs(
+      utilisateur.thematique_history.getListeTagsExcluants(),
+    );
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.recommandation, Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `reco tags imported OK`,
+    };
+  }
+  private async migrate_18(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
       Scope.core,
     ]);
 

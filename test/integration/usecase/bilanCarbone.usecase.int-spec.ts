@@ -121,8 +121,6 @@ describe('BilanCarboneUsecase', () => {
     expect(kyc.getKyc().last_update.getTime()).toBeGreaterThan(
       Date.now() - 200,
     );
-
-    console.log(kyc);
   });
   it('external_inject_situation_to_user_kycs : integration OK,  n écrase PAS une question déjà répondu', async () => {
     // GIVEN

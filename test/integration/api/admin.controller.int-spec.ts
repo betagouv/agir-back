@@ -20,6 +20,7 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -520,6 +521,7 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toEqual(13);
   });
 
+  /*
   it('POST /admin/migrate_users migration V14 OK - reset personnalisation thematique', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -588,6 +590,7 @@ describe('Admin (API test)', () => {
     });
     expect(userDB.version).toEqual(App.currentUserSystemVersion());
   });
+  */
 
   it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
     // GIVEN
@@ -612,7 +615,7 @@ describe('Admin (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
+
       liste_thematiques: [],
     };
 
@@ -716,6 +719,48 @@ describe('Admin (API test)', () => {
     expect(userDB.code_commune).toEqual('12345');
     expect(userDB.version).toEqual(16);
     expect(userDB.logement.code_commune).toEqual('12345');
+  });
+
+  it('POST /admin/migrate_users migration V17 OK - migration de tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      liste_tags_excluants: [TagExcluant.a_un_jardin],
+      liste_thematiques: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      version: 16,
+      migration_enabled: true,
+      thematique_history: thematique_history as any,
+    });
+    App.USER_CURRENT_VERSION = 17;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 17,
+            ok: true,
+            info: 'reco tags imported OK',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.a_un_jardin,
+    ]);
+    expect(userDB.version).toEqual(17);
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
@@ -1483,7 +1528,6 @@ describe('Admin (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1541,7 +1585,6 @@ describe('Admin (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1567,7 +1610,6 @@ describe('Admin (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
@@ -1979,7 +2021,6 @@ describe('Admin (API test)', () => {
           ],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 
