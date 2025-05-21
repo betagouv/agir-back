@@ -760,6 +760,7 @@ describe('Admin (API test)', () => {
     expect(userDB.recommandation.getListeTagsActifs()).toEqual([
       Tag_v2.a_un_jardin,
     ]);
+    expect(userDB.version).toEqual(17);
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {

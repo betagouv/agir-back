@@ -357,7 +357,7 @@ export class MigrationUsecase {
 
     await _this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
-      [Scope.recommandation],
+      [Scope.recommandation, Scope.core],
     );
 
     return {
