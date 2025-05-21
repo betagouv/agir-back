@@ -1,4 +1,4 @@
-import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json' with { type: 'json' };
+import rules from '@incubateur-ademe/nosgestesclimat/public/co2-model.FR-lang.fr.json' with {type: 'json'}
 import axios from 'axios';
 import Engine from 'publicodes';
 
@@ -12,26 +12,28 @@ let questions = Object.values(parsedRules).filter(
     !dottedName.startsWith('futureco-data'),
 );
 
-let nbInvalidKYC = 0;
-
 const kycs = await getKYCs();
+const errors = [];
 
 kycs
-  .filter(({ attributes }) => attributes.is_ngc && attributes.A_SUPPRIMER !== true)
+  .filter(
+    ({ attributes }) => attributes.is_ngc && attributes.A_SUPPRIMER !== true,
+  )
   .forEach(({ attributes }) => {
     const ruleName = attributes.ngc_key;
 
     if (ruleName in parsedRules) {
       questions = questions.filter(({ dottedName }) => dottedName !== ruleName);
     } else {
-      ++nbInvalidKYC;
-      console.error('\n[ERR] KYC with invalid NGC key:');
-      console.log({
-        code: attributes.code,
-        type: attributes.type,
-        question: attributes.question,
-        ngc_key: attributes.ngc_key,
-      });
+      errors.push([
+        'KYC with invalid NGC key:',
+        {
+          code: attributes.code,
+          type: attributes.type,
+          question: attributes.question,
+          ngc_key: attributes.ngc_key,
+        },
+      ]);
     }
 
     if (attributes.type === 'choix_unique') {
@@ -42,9 +44,8 @@ kycs
       }));
 
       if (possibilities === null && !isBooleanChoixUnique(responses)) {
-        ++nbInvalidKYC;
-        console.error(`\n[ERR] KYC should no longer be of type 'choix_unique'`);
-        console.dir(
+        errors.push([
+          "KYC should no longer be of type 'choix_unique'",
           {
             KYC: {
               code: attributes.code,
@@ -58,8 +59,7 @@ kycs
               type: getRuleType(ruleName),
             },
           },
-          { depth: null },
-        );
+        ]);
       }
 
       if (possibilities && !isBooleanChoixUnique(responses)) {
@@ -70,40 +70,48 @@ kycs
           );
         });
         if (unknown_reponses.length > 0) {
-          ++nbInvalidKYC;
-          console.error(`\n[ERR] KYC has unknown responses`);
-          console.log({
-            KYC: {
-              code: attributes.code,
-              type: attributes.type,
-              question: attributes.question,
-              ngc_key: attributes.ngc_key,
+          errors.push([
+            'KYC has unknown responses',
+            {
+              KYC: {
+                code: attributes.code,
+                type: attributes.type,
+                question: attributes.question,
+                ngc_key: attributes.ngc_key,
+              },
+              NGC: {
+                name: ruleName,
+                type: getRuleType(ruleName),
+              },
+              unknown_reponses,
             },
-            NGC: {
-              name: ruleName,
-              type: getRuleType(ruleName),
-            },
-            unknown_reponses,
-          });
+          ]);
         }
       }
     }
   });
 
 if (questions.length > 0) {
-  console.warn(
-    `\n\x1b[0;33m[WARN] ${questions.length} questions missing in KYC:\x1b[0m`,
-  );
+  console.log(`[WARN] ${questions.length} questions missing in KYC:`);
   questions.forEach(({ dottedName, rawNode }) => {
     console.log(`  - "${rawNode['question']}" (${dottedName})`);
   });
 }
 
-if (nbInvalidKYC > 0) {
-  console.error(`\n[ERR] ${nbInvalidKYC} invalid KYC found`);
+if (errors.length > 0) {
+  errors.forEach(([msg, obj]) =>
+    console.log(`\n[ERR] ${msg}\n${JSON.stringify(obj, null, 2)}`),
+  );
+  console.error(`\n[ERR] ${errors.length} invalid KYC found`);
+  if (questions.length > 0) {
+    console.log(`[WARN] ${questions.length} questions missing in KYC`);
+  }
   process.exit(1);
 } else {
   console.log(`\n\n[OK] All KYC are valid`);
+  if (questions.length > 0) {
+    console.log(`[WARN] ${questions.length} questions missing in KYCs`);
+  }
 }
 
 function isBooleanChoixUnique(responses) {
@@ -153,6 +161,6 @@ function getRuleType(ruleName) {
   const rule = engine.getRule(ruleName);
 
   if (rule) {
-    return engine.baseContext.nodesTypes.get(rule)?.type;
+    return engine.context.nodesTypes.get(rule)?.type;
   }
 }
