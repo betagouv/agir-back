@@ -274,7 +274,6 @@ model Action {
   pdcn_categorie      String?
   lvo_action          String?
   lvo_objet           String?
-  tags_excluants      String[] @default([])
   tags_a_inclure_v2   String[] @default([])
   tags_a_exclure_v2   String[] @default([])
   sources             Json?    @default("[]")

@@ -15,7 +15,6 @@ import {
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
-import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -597,7 +596,7 @@ describe('Thematique (API test)', () => {
       code: '4',
       cms_id: '4',
       thematique: Thematique.alimentation,
-      tags_a_exclure_v2: [TagExcluant.a_un_velo],
+      tags_a_exclure_v2: [Tag_v2.a_un_velo],
     });
 
     await actionRepository.onApplicationBootstrap();

@@ -6,7 +6,6 @@ export enum Tag_v2 {
   prend_l_avion = 'prend_l_avion',
   a_une_voiture = 'a_une_voiture',
   n_a_pas_de_voiture = 'n_a_pas_de_voiture',
-
   ne_prend_pas_avion = 'ne_prend_pas_avion',
   a_un_velo = 'a_un_velo',
   a_une_voiture_thermique = 'a_une_voiture_thermique',

@@ -360,7 +360,10 @@ export class CmsPreviewController extends GenericControler {
       result.push(`Besoins manquants 🔥🔥🔥`);
     }
 
-    result.push(`Action exclue à l'utilisateur qui : ${action.tags_excluants}`);
+    result.push(`Action exclue à l'utilisateur qui : ${action.tags_a_exclure}`);
+    result.push(
+      `Action poussée à l'utilisateur qui : ${action.tags_a_inclure}`,
+    );
 
     result.push(
       `############################################################################################################`,

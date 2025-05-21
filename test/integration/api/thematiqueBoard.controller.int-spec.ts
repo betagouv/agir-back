@@ -176,7 +176,6 @@ describe('Thematique Board (API test)', () => {
           liste_partages: [],
         },
       ],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     };
 

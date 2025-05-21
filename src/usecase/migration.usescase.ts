@@ -337,6 +337,7 @@ export class MigrationUsecase {
       info: `updated logement.code_commune`,
     };
   }
+  /*
   private async migrate_17(
     user_id: string,
     version: number,
@@ -365,6 +366,7 @@ export class MigrationUsecase {
       info: `reco tags imported OK`,
     };
   }
+    */
   private async migrate_18(
     user_id: string,
     version: number,
