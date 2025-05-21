@@ -12,22 +12,24 @@ datasource db_stats {
 }
 
 model UtilisateurCopy {
-  user_id                String     @id
-  compte_actif           Boolean
-  revenu_fiscal          Int?
-  nombre_parts_fiscales  Decimal?   @db_stats.Decimal(4, 2)
-  date_derniere_activite DateTime?  @db_stats.Timestamptz(3)
-  nombre_points          Int?       @default(0)
-  code_postal            String?
-  nom_commune            String?
-  code_insee_commune     String?
-  code_departement       String?
-  source_inscription     String?
-  rang_national          Int?
-  rang_commune           Int?
-  date_inscription       DateTime?  @db_stats.Timestamptz(3)
-  actif_le               DateTime[] @default([])
-  version_utilisateur    String?
+  user_id                      String     @id
+  compte_actif                 Boolean
+  revenu_fiscal                Int?
+  nombre_parts_fiscales        Decimal?   @db_stats.Decimal(4, 2)
+  date_derniere_activite       DateTime?  @db_stats.Timestamptz(3)
+  nombre_points                Int?       @default(0)
+  code_postal                  String?
+  nom_commune                  String?
+  code_insee_commune           String?
+  code_departement             String?
+  source_inscription           String?
+  rang_national                Int?
+  rang_commune                 Int?
+  notifications_mobile_actives Boolean?
+  notifications_email_actives  Boolean?
+  date_inscription             DateTime?  @db_stats.Timestamptz(3)
+  actif_le                     DateTime[] @default([])
+  version_utilisateur          String?
 }
 
 model Personnalisation {

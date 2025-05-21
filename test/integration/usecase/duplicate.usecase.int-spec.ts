@@ -255,6 +255,8 @@ describe('Duplicate Usecase', () => {
       date_inscription: new Date(2),
       version_utilisateur: 'V2',
       actif_le: [new Date(456)],
+      notifications_email_actives: true,
+      notifications_mobile_actives: false,
     });
   });
 
