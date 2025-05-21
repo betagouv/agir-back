@@ -20,8 +20,6 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
-import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
-import { TagExcluant } from '../../../src/domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -652,7 +650,6 @@ describe('Admin (API test)', () => {
     ]);
     expect(userDB.thematique_history).toEqual({
       liste_actions_utilisateur: [],
-      liste_tags_excluants: [],
       liste_thematiques: [],
     });
     expect(userDB.version).toEqual(15);
@@ -721,6 +718,7 @@ describe('Admin (API test)', () => {
     expect(userDB.logement.code_commune).toEqual('12345');
   });
 
+  /*
   it('POST /admin/migrate_users migration V17 OK - migration de tags de reco', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -762,6 +760,7 @@ describe('Admin (API test)', () => {
     ]);
     expect(userDB.version).toEqual(17);
   });
+  */
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN

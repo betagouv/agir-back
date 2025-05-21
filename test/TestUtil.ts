@@ -414,7 +414,6 @@ export class TestUtil {
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
-      tags_excluants: [],
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
       sources: [],

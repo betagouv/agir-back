@@ -7,7 +7,6 @@ import {
   ActionUtilisateur_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
-import { TagExcluant } from '../../scoring/tagExcluant';
 import { Thematique } from '../thematique';
 import {
   ActionExclue,
@@ -48,12 +47,10 @@ export class ActionUtilisateur {
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
-  private liste_tags_excluants?: TagExcluant[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
-    this.liste_tags_excluants = [];
     if (data) {
       if (data.liste_thematiques) {
         this.liste_thematiques = data.liste_thematiques.map(
@@ -66,9 +63,6 @@ export class ThematiqueHistory {
         );
       } else {
         data.liste_actions_utilisateur = [];
-      }
-      if (data.liste_tags_excluants) {
-        this.liste_tags_excluants = data.liste_tags_excluants;
       }
     }
   }
@@ -105,7 +99,6 @@ export class ThematiqueHistory {
   public reset() {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
-    this.liste_tags_excluants = [];
   }
   public getRecommandationByThematique(
     thematique: Thematique,
@@ -135,9 +128,6 @@ export class ThematiqueHistory {
 
   public getListeThematiques(): ThematiqueRecommandation[] {
     return this.liste_thematiques;
-  }
-  public getListeTagsExcluants(): TagExcluant[] {
-    return this.liste_tags_excluants;
   }
   public getListeActionsUtilisateur(): ActionUtilisateur[] {
     return this.liste_actions_utilisateur;

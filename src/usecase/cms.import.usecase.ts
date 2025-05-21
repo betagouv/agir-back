@@ -21,7 +21,6 @@ import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -901,9 +900,6 @@ export class CMSImportUsecase {
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : null,
-      tags_excluants: entry.attributes.tags_excluants.map(
-        (t) => TagExcluant[t.valeur],
-      ),
       sources: entry.attributes.sources
         ? entry.attributes.sources.map((s) => ({
             label: s.libelle,

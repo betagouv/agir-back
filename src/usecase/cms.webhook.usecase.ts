@@ -13,7 +13,6 @@ import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { TagExcluant } from '../domain/scoring/tagExcluant';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -504,7 +503,6 @@ export class CMSWebhookUsecase {
         : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
-      tags_excluants: entry.tags_excluants.map((t) => TagExcluant[t.valeur]),
       sources: entry.sources
         ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
         : [],
