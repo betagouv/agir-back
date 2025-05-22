@@ -131,7 +131,7 @@ export class RecommandationUsecase {
 
     const dept_region =
       await this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.code_commune,
+        utilisateur.logement.code_commune,
       );
 
     const filtre: ArticleFilter = {
@@ -139,7 +139,7 @@ export class RecommandationUsecase {
       exclude_ids: articles_lus,
       categorie: Categorie.recommandation,
       date: new Date(),
-      code_commune: utilisateur.code_commune,
+      code_commune: utilisateur.logement.code_commune,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     };

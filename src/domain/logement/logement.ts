@@ -168,10 +168,8 @@ export class Logement {
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
 
     this.code_postal = this.AorB(input.code_postal, this.code_postal);
-    utilisateur.code_postal_classement = this.code_postal;
 
     this.commune = this.AorB(input.commune, this.commune);
-    utilisateur.commune_classement = this.commune;
 
     this.type = this.AorB(input.type, this.type);
     this.superficie = this.AorB(input.superficie, this.superficie);
@@ -185,6 +183,10 @@ export class Logement {
     this.longitude = this.AorB(input.longitude, this.longitude);
     this.latitude = this.AorB(input.latitude, this.latitude);
     this.code_commune = this.AorB(input.code_commune, this.code_commune);
+    utilisateur.code_commune_classement = this.AorB(
+      input.code_commune,
+      this.code_commune,
+    );
   }
 
   private AorB?<T>(a: T, b: T): T {

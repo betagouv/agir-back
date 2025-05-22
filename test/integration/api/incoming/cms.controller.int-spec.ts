@@ -116,6 +116,7 @@ describe('/api/incoming/cms (API test)', () => {
       categorie_recettes: 'vegan',
       categorie_pdcn: CategorieRecherche.circuit_court,
       sources: [{ libelle: 'haha', lien: 'hoho' }],
+      VISIBLE_PROD: true,
       quizzes: [
         {
           id: 1,
@@ -330,6 +331,7 @@ describe('/api/incoming/cms (API test)', () => {
       sousTitre: 'soustitre 222',
       derniere_maj: new Date(123),
       contenu: 'Un long article très intéressant',
+      VISIBLE_PROD: true,
       thematique_gamification: {
         id: 1,
         titre: 'Alimentation',
@@ -658,6 +660,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].codes_departement).toEqual(['78']);
     expect(articles[0].codes_region).toEqual(['25']);
     expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
+    expect(articles[0].VISIBLE_PROD).toEqual(true);
   });
 
   it('POST /api/incoming/cms - create a new partenaire in partenaire table', async () => {
@@ -695,9 +698,9 @@ describe('/api/incoming/cms (API test)', () => {
       '21481',
       '21605',
       '21263',
-      '21473',
       '21003',
       '21223',
+      '21473',
       '21315',
       '21105',
       '21106',
@@ -771,32 +774,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide).toEqual({
       besoin: 'broyer_vege',
       besoin_desc: 'Broyer ses végétaux',
-      codes_commune_from_partenaire: [
-        '91477',
-        '21231',
-        '21166',
-        '21617',
-        '21171',
-        '21515',
-        '21278',
-        '21355',
-        '21540',
-        '21390',
-        '21452',
-        '21485',
-        '21481',
-        '21605',
-        '21263',
-        '21473',
-        '21003',
-        '21223',
-        '21315',
-        '21105',
-        '21106',
-        '21370',
-        '21192',
-        '21270',
-      ],
+      codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
       codes_departement_from_partenaire: ['91', '21'],
       codes_postaux: ['91120', '75002'],
@@ -818,6 +796,7 @@ describe('/api/incoming/cms (API test)', () => {
       url_demande: 'hihi',
       url_simulateur: '/aide/velo',
       url_source: 'haha',
+      VISIBLE_PROD: true,
     });
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
@@ -964,6 +943,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
+    expect(action.VISIBLE_PROD).toEqual(true);
     expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
   });
 
@@ -1075,32 +1055,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(aide).toEqual({
       besoin: 'broyer_vege',
       besoin_desc: 'Broyer ses végétaux',
-      codes_commune_from_partenaire: [
-        '91477',
-        '21231',
-        '21166',
-        '21617',
-        '21171',
-        '21515',
-        '21278',
-        '21355',
-        '21540',
-        '21390',
-        '21452',
-        '21485',
-        '21481',
-        '21605',
-        '21263',
-        '21473',
-        '21003',
-        '21223',
-        '21315',
-        '21105',
-        '21106',
-        '21370',
-        '21192',
-        '21270',
-      ],
+      codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
       codes_departement_from_partenaire: ['91', '21'],
       codes_postaux: ['91120', '75002'],
@@ -1122,6 +1077,7 @@ describe('/api/incoming/cms (API test)', () => {
       url_demande: 'hihi',
       url_simulateur: '/aide/velo',
       url_source: 'haha',
+      VISIBLE_PROD: true,
     });
   });
 

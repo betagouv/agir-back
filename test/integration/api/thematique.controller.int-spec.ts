@@ -7,11 +7,18 @@ import {
   BooleanKYC,
   TypeReponseQuestionKYC,
 } from '../../../src/domain/kyc/QuestionKYCData';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
@@ -21,6 +28,27 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const logement: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '21231',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -63,7 +91,7 @@ describe('Thematique (API test)', () => {
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     const response = await TestUtil.GET(
@@ -107,7 +135,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -161,7 +189,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       gamification: gamification as any,
       recommandation: reco as any,
@@ -235,7 +263,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       gamification: gamification as any,
       recommandation: reco as any,
@@ -319,7 +347,7 @@ describe('Thematique (API test)', () => {
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
-      code_commune: '21231',
+      logement: logement as any,
     });
 
     // WHEN
@@ -361,7 +389,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
 
@@ -410,7 +438,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -484,7 +512,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -533,7 +561,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -579,7 +607,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -643,7 +671,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -705,7 +733,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -754,7 +782,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -812,7 +840,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -904,7 +932,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -978,7 +1006,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -1060,7 +1088,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -1125,7 +1153,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -1195,7 +1223,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });
@@ -1275,7 +1303,7 @@ describe('Thematique (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       recommandation: reco as any,
     });

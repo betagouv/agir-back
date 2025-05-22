@@ -1,6 +1,55 @@
 import { Pourcentile } from '../../../src/domain/gamification/board';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { UtilisateurBoardRepository } from '../../../src/infrastructure/repository/utilisateurBoard.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const logement_palaiseau: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '91477',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
+
+const logement_dijon: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '21000',
+  chauffage: Chauffage.bois,
+  commune: 'DIJON',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '21231',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
 
 describe('UtilisateurBoardRepository', () => {
   let repo = new UtilisateurBoardRepository(TestUtil.prisma);
@@ -23,26 +72,31 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
+      logement: logement_palaiseau as any,
     });
 
     // WHEN
@@ -52,8 +106,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -61,8 +114,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 25,
         pseudo: 'pseudo',
         utilisateurId: '4',
@@ -70,8 +122,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -86,27 +137,32 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
       est_valide_pour_classement: false,
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
+      logement: logement_palaiseau as any,
     });
 
     // WHEN
@@ -116,8 +172,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -125,8 +180,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 25,
         pseudo: 'pseudo',
         utilisateurId: '4',
@@ -134,8 +188,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -150,27 +203,32 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
+      logement: logement_palaiseau as any,
       est_valide_pour_classement: false,
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
+      logement: logement_palaiseau as any,
     });
 
     // WHEN
@@ -180,8 +238,7 @@ describe('UtilisateurBoardRepository', () => {
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -189,8 +246,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -198,8 +254,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 15,
         pseudo: 'pseudo',
         utilisateurId: '5',
@@ -215,58 +270,53 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 100,
       id: '6',
       email: '6',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     // WHEN
-    const liste = await repo.top_trois_commune_user(
-      '91120',
-      'PALAISEAU',
-      'user',
-    );
+    const liste = await repo.top_trois_commune_user('91477', 'user');
 
     // THEN
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -274,8 +324,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 25,
         pseudo: 'pseudo',
         utilisateurId: '4',
@@ -283,8 +332,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -299,59 +347,54 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
       est_valide_pour_classement: false,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 100,
       id: '6',
       email: '6',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     // WHEN
-    const liste = await repo.top_trois_commune_user(
-      '91120',
-      'PALAISEAU',
-      'user',
-    );
+    const liste = await repo.top_trois_commune_user('91477', 'user');
 
     // THEN
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -359,8 +402,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 25,
         pseudo: 'pseudo',
         utilisateurId: '4',
@@ -368,8 +410,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -384,59 +425,54 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: 'user',
       email: '3',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 25,
       id: '4',
       email: '4',
       est_valide_pour_classement: false,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 15,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 100,
       id: '6',
       email: '6',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     // WHEN
-    const liste = await repo.top_trois_commune_user(
-      '91120',
-      'PALAISEAU',
-      'user',
-    );
+    const liste = await repo.top_trois_commune_user('91477', 'user');
 
     // THEN
     expect(liste).toHaveLength(3);
     expect(liste).toEqual([
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 30,
         pseudo: 'pseudo',
         utilisateurId: 'user',
@@ -444,8 +480,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 20,
         pseudo: 'pseudo',
         utilisateurId: '2',
@@ -453,8 +488,7 @@ describe('UtilisateurBoardRepository', () => {
         rank_commune: null,
       },
       {
-        code_postal: '91120',
-        commune: 'PALAISEAU',
+        code_commune: '91477',
         points: 15,
         pseudo: 'pseudo',
         utilisateurId: '5',
@@ -474,7 +508,6 @@ describe('UtilisateurBoardRepository', () => {
       'rank_avant_strict',
       'national',
       undefined,
-      undefined,
     );
 
     // THEN
@@ -490,7 +523,6 @@ describe('UtilisateurBoardRepository', () => {
       'rank_avant_strict',
       'national',
       undefined,
-      undefined,
     );
 
     // THEN
@@ -501,8 +533,8 @@ describe('UtilisateurBoardRepository', () => {
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
       id: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
       pseudo: 'toto',
     });
     await repo.update_rank_user_france();
@@ -514,14 +546,12 @@ describe('UtilisateurBoardRepository', () => {
       'rank_avant_strict',
       'national',
       undefined,
-      undefined,
     );
 
     // THEN
     expect(liste).toHaveLength(1);
     expect(liste[0].utilisateurId).toEqual('1');
-    expect(liste[0].code_postal).toEqual('91120');
-    expect(liste[0].commune).toEqual('PALAISEAU');
+    expect(liste[0].code_commune).toEqual('91477');
     expect(liste[0].pseudo).toEqual('toto');
     expect(liste[0].points).toEqual(10);
     expect(liste[0].rank).toEqual(1);
@@ -532,8 +562,8 @@ describe('UtilisateurBoardRepository', () => {
     await TestUtil.create(DB.utilisateur, {
       points_classement: 10,
       id: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
       pseudo: 'toto',
     });
 
@@ -550,8 +580,7 @@ describe('UtilisateurBoardRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
     expect(liste[0].utilisateurId).toEqual('1');
-    expect(liste[0].code_postal).toEqual('91120');
-    expect(liste[0].commune).toEqual('PALAISEAU');
+    expect(liste[0].code_commune).toEqual('91477');
     expect(liste[0].pseudo).toEqual('toto');
     expect(liste[0].points).toEqual(10);
   });
@@ -601,7 +630,6 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_apres_ou_egal',
       'national',
-      undefined,
       undefined,
       '5',
     );
@@ -658,7 +686,6 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_apres_ou_egal',
       'national',
-      undefined,
       undefined,
       '5',
     );
@@ -724,7 +751,6 @@ describe('UtilisateurBoardRepository', () => {
       'rank_apres_ou_egal',
       'national',
       undefined,
-      undefined,
       '5',
     );
 
@@ -787,7 +813,6 @@ describe('UtilisateurBoardRepository', () => {
       'rank_apres_ou_egal',
       'national',
       undefined,
-      undefined,
       '5',
     );
 
@@ -843,7 +868,6 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_avant_strict',
       'national',
-      undefined,
       undefined,
       '2',
     );
@@ -901,7 +925,6 @@ describe('UtilisateurBoardRepository', () => {
       'rank_avant_strict',
       'national',
       undefined,
-      undefined,
       '2',
     );
 
@@ -939,7 +962,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_avant_strict',
         'national',
         undefined,
-        undefined,
         '3',
       ),
     ).toHaveLength(0);
@@ -951,7 +973,6 @@ describe('UtilisateurBoardRepository', () => {
         2,
         'rank_avant_strict',
         'national',
-        undefined,
         undefined,
       ),
     ).toHaveLength(0);
@@ -983,7 +1004,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_avant_strict',
         'national',
         undefined,
-        undefined,
         '3',
       ),
     ).toHaveLength(0);
@@ -995,7 +1015,6 @@ describe('UtilisateurBoardRepository', () => {
         2,
         'rank_avant_strict',
         'national',
-        undefined,
         undefined,
       ),
     ).toHaveLength(0);
@@ -1029,7 +1048,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_apres_ou_egal',
         'national',
         undefined,
-        undefined,
       ),
     ).toHaveLength(1);
 
@@ -1041,7 +1059,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_apres_ou_egal',
         'national',
         undefined,
-        undefined,
         '1',
       ),
     ).toHaveLength(0);
@@ -1052,7 +1069,6 @@ describe('UtilisateurBoardRepository', () => {
         2,
         'rank_apres_ou_egal',
         'national',
-        undefined,
         undefined,
       ),
     ).toHaveLength(0);
@@ -1084,7 +1100,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_apres_ou_egal',
         'national',
         undefined,
-        undefined,
       ),
     ).toHaveLength(2);
 
@@ -1095,7 +1110,6 @@ describe('UtilisateurBoardRepository', () => {
         2,
         'rank_apres_ou_egal',
         'national',
-        undefined,
         undefined,
         '1',
       ),
@@ -1108,7 +1122,6 @@ describe('UtilisateurBoardRepository', () => {
         'rank_apres_ou_egal',
         'national',
         undefined,
-        undefined,
       ),
     ).toHaveLength(0);
   });
@@ -1119,51 +1132,51 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: '3',
       email: '3',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 40,
       id: '4',
       email: '4',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 60,
       id: '6',
       email: '6',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 70,
       id: '7',
       email: '7',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
 
     await repo.update_rank_user_france();
@@ -1175,8 +1188,7 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_apres_ou_egal',
       'local',
-      '21000',
-      'DIJON',
+      '21231',
     );
 
     // THEN
@@ -1193,51 +1205,51 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: '3',
       email: '3',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 40,
       id: '4',
       email: '4',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 60,
       id: '6',
       email: '6',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 70,
       id: '7',
       email: '7',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
 
     // WHEN
@@ -1246,8 +1258,7 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_apres_ou_egal',
       'local',
-      '21000',
-      'DIJON',
+      '21231',
     );
 
     // THEN
@@ -1371,44 +1382,44 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: '3',
       email: '3',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 40,
       id: '4',
       email: '4',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,
       id: '5',
       email: '5',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 60,
       id: '6',
       email: '6',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     // WHEN
@@ -1417,7 +1428,7 @@ describe('UtilisateurBoardRepository', () => {
     // THEN
     let db_list = await TestUtil.prisma.utilisateur.findMany({
       where: {
-        code_postal_classement: '91120',
+        code_commune_classement: '91477',
       },
       orderBy: {
         id: 'desc',
@@ -1433,7 +1444,7 @@ describe('UtilisateurBoardRepository', () => {
 
     db_list = await TestUtil.prisma.utilisateur.findMany({
       where: {
-        code_postal_classement: '21000',
+        code_commune_classement: '21231',
       },
       orderBy: {
         id: 'desc',
@@ -1454,44 +1465,44 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: '3',
       email: '3',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 40,
       id: '4',
       email: '4',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,
       id: '5',
       email: '5',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 60,
       id: '6',
       email: '6',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
 
     // WHEN
@@ -1500,7 +1511,7 @@ describe('UtilisateurBoardRepository', () => {
     // THEN
     let db_list = await TestUtil.prisma.utilisateur.findMany({
       where: {
-        code_postal_classement: '91120',
+        code_commune_classement: '91477',
       },
       orderBy: {
         id: 'desc',
@@ -1516,7 +1527,7 @@ describe('UtilisateurBoardRepository', () => {
 
     db_list = await TestUtil.prisma.utilisateur.findMany({
       where: {
-        code_postal_classement: '21000',
+        code_commune_classement: '21231',
       },
       orderBy: {
         id: 'desc',
@@ -1582,7 +1593,6 @@ describe('UtilisateurBoardRepository', () => {
       2,
       'rank_apres_ou_egal',
       'national',
-      undefined,
       undefined,
       '5',
     );
@@ -1798,82 +1808,82 @@ describe('UtilisateurBoardRepository', () => {
       points_classement: 10,
       id: '1',
       email: '1',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 20,
       id: '2',
       email: '2',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 30,
       id: '3',
       email: '3',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 40,
       id: '4',
       email: '4',
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      logement: logement_dijon as any,
+      code_commune_classement: '21231',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 50,
       id: '5',
       email: '5',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 60,
       id: '6',
       email: '6',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 70,
       id: '7',
       email: '7',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 80,
       id: '8',
       email: '8',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 90,
       id: '9',
       email: '9',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 100,
       id: '10',
       email: '10',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
     await TestUtil.create(DB.utilisateur, {
       points_classement: 110,
       id: '11',
       email: '11',
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      logement: logement_palaiseau as any,
+      code_commune_classement: '91477',
     });
 
     // WHEN
-    const result = await repo.getPourcentile(35, '21000', 'DIJON');
+    const result = await repo.getPourcentile(35, '21231');
 
     // THEN
     expect(result).toEqual(Pourcentile.pourcent_25);

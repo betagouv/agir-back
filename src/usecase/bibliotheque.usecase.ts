@@ -99,7 +99,7 @@ export class BibliothequeUsecase {
     }
     const dept_region =
       this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.code_commune,
+        utilisateur.logement.code_commune,
       );
 
     const articles = await this.articleRepository.searchArticles({
@@ -108,7 +108,7 @@ export class BibliothequeUsecase {
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
       code_postal: utilisateur.logement.code_postal,
-      code_commune: utilisateur.code_commune,
+      code_commune: utilisateur.logement.code_commune,
       code_departement: dept_region ? dept_region.code_departement : undefined,
       code_region: dept_region ? dept_region.code_region : undefined,
     });

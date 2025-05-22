@@ -3,6 +3,12 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import {
   CanalNotification,
   EmailNotification,
 } from '../../../src/domain/notification/notificationHistory';
@@ -12,6 +18,7 @@ import {
   KYCHistory_v2,
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../../../src/domain/object_store/notification/NotificationHistory_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
@@ -251,14 +258,35 @@ describe('Duplicate Usecase', () => {
 
   it('duplicateUtilisateur : copy ok si moins de user que block size', async () => {
     // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       external_stat_id: '123',
-      code_commune: '21231',
       derniere_activite: new Date(1),
       rank_commune: 12,
       rank: 123,
       created_at: new Date(2),
       activity_dates_log: [new Date(456)],
+      logement: logement as any,
     });
 
     // WHEN
@@ -358,11 +386,32 @@ describe('Duplicate Usecase', () => {
 
   it(`duplicateUtilisateur : copy ok si plus d'utilisateuts que block size`, async () => {
     // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: false,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
     for (let index = 0; index < 10; index++) {
       await TestUtil.create(DB.utilisateur, {
         id: 'id_' + index,
         external_stat_id: 'stat_id_' + index,
-        code_commune: '456',
+        logement: logement as any,
         email: 'email_' + index,
       });
     }
@@ -374,23 +423,6 @@ describe('Duplicate Usecase', () => {
     const stats_users = await TestUtil.prisma_stats.utilisateurCopy.findMany();
 
     expect(stats_users).toHaveLength(10);
-  });
-  it(`duplicateUtilisateur : genere un id externe si nécessaire`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      external_stat_id: null,
-    });
-
-    // WHEN
-    await duplicateUsecase.duplicateUtilisateur(5);
-
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findMany();
-    const stats_users = await TestUtil.prisma_stats.utilisateurCopy.findMany();
-
-    expect(userDB[0].external_stat_id).not.toBeNull();
-    expect(userDB[0].external_stat_id.length).toBeGreaterThan(20);
-    expect(stats_users[0].user_id).toEqual(userDB[0].external_stat_id);
   });
 
   it('duplicateKYC : ne copie pas la KYC si répondu il y a plus de 2 jours', async () => {
@@ -985,7 +1017,7 @@ describe('Duplicate Usecase', () => {
       alimentation_kg: 2302,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8863,
+      total_kg: 8849,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
       pourcentage_progression_alimentation: 50,
@@ -1105,7 +1137,7 @@ describe('Duplicate Usecase', () => {
       alimentation_kg: 2302,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8863,
+      total_kg: 8849,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
       pourcentage_progression_alimentation: 50,

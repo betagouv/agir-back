@@ -30,23 +30,30 @@ export class ThematiqueBoardUsecase {
   }> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [],
+      [Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.buildSyntheseFromCodeCommune(utilisateur.code_commune);
+    return await this.buildSyntheseFromCodeCommune(
+      utilisateur.logement.code_commune,
+    );
   }
 
   public async buildHomeBoard(utilisateurId: string): Promise<HomeBoard> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc, Scope.cache_bilan_carbone],
+      [
+        Scope.thematique_history,
+        Scope.kyc,
+        Scope.cache_bilan_carbone,
+        Scope.logement,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
     const result = new HomeBoard();
     const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.code_commune,
+      utilisateur.logement.code_commune,
     );
     result.nom_commune = commune?.nom;
 
@@ -70,7 +77,7 @@ export class ThematiqueBoardUsecase {
 
     const nombre_aides = await this.aidesUsecase.external_count_aides(
       undefined,
-      utilisateur.code_commune,
+      utilisateur.logement.code_commune,
     );
     result.nombre_aides = nombre_aides;
     result.nombre_recettes = 1150;

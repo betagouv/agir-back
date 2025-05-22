@@ -2,8 +2,15 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
@@ -17,6 +24,27 @@ import { KycRepository } from '../../../src/infrastructure/repository/kyc.reposi
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const logement: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '21231',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
@@ -97,7 +125,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
 
@@ -191,7 +219,7 @@ describe('Actions (API test)', () => {
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '123',
       besoins: ['composter'],
@@ -232,7 +260,7 @@ describe('Actions (API test)', () => {
 
   it(`GET /utilisateurs/id/actions/id - accorche les faqs`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '123',
       faq_ids: ['456'],
@@ -263,7 +291,7 @@ describe('Actions (API test)', () => {
 
   it(`GET /utilisateurs/id/actions/id - consultation track une action comme vue`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '123',
       type: TypeAction.classique,
@@ -344,7 +372,7 @@ describe('Actions (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       kyc: kyc as any,
     });
     await TestUtil.create(DB.action, {
@@ -396,7 +424,7 @@ describe('Actions (API test)', () => {
       ],
     };
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       kyc: kyc as any,
     });
     await TestUtil.create(DB.action, {
@@ -421,7 +449,7 @@ describe('Actions (API test)', () => {
 
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '123',
       quizz_ids: ['456'],
@@ -529,7 +557,7 @@ describe('Actions (API test)', () => {
     await TestUtil.create(DB.quizz, { content_id: '3' });
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       history: {
         quizz_interactions: [
           { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
@@ -575,7 +603,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       history: {
         quizz_interactions: [
           { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
@@ -629,7 +657,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       history: {
         quizz_interactions: [
           { content_id: '1', attempts: [{ date: new Date(), score: 0 }] },
@@ -683,7 +711,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       history: {
         quizz_interactions: [
           { content_id: '1', attempts: [{ date: new Date(), score: 100 }] },
@@ -735,7 +763,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       gamification: gamification as any,
       points_classement: 0,
@@ -791,7 +819,7 @@ describe('Actions (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
       gamification: gamification as any,
       points_classement: 0,

@@ -216,6 +216,7 @@ export class MigrationUsecase {
     */
     return { ok: true, info: 'Migration already done' };
   }
+  /*
   private async migrate_12(
     user_id: string,
     version: number,
@@ -241,6 +242,7 @@ export class MigrationUsecase {
       info: `Set commune ${utilisateur.code_commune}`,
     };
   }
+    */
   private async migrate_13(
     user_id: string,
     version: number,
@@ -310,6 +312,7 @@ export class MigrationUsecase {
       info: `reset national OK`,
     };
   }
+  /*
   private async migrate_16(
     user_id: string,
     version: number,
@@ -337,6 +340,7 @@ export class MigrationUsecase {
       info: `updated logement.code_commune`,
     };
   }
+    */
   /*
   private async migrate_17(
     user_id: string,

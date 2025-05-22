@@ -4,12 +4,40 @@ import {
 } from '../../../src/domain/actions/catalogueAction';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const logement: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '21231',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
 
 describe('Actions Catalogue Utilisateur (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
@@ -33,7 +61,9 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -80,9 +110,71 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     expect(response.body.nombre_resultats_disponibles).toEqual(1);
   });
 
+  it(`GET /utilisateurs/id/actions - action pas visible en PROD`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: true,
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_2',
+      code: '2',
+      cms_id: '2',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: false,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+  });
+  it(`GET /utilisateurs/id/actions - action visible en DEV`, async () => {
+    // GIVEN
+    logement.code_commune = '21231';
+
+    process.env.IS_PROD = 'false';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: true,
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_2',
+      code: '2',
+      cms_id: '2',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: false,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+  });
+
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - skip/take absent`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
         type_code_id: 'classique_' + index,
@@ -105,7 +197,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
   });
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - take`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
         type_code_id: 'classique_' + index,
@@ -131,7 +224,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - skip take`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     for (let index = 1; index <= 10; index++) {
       await TestUtil.create(DB.action, {
         type_code_id: 'classique_' + index,
@@ -157,7 +251,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre thematique`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '1',
       cms_id: '1',
@@ -232,7 +327,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre titre textuel`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.action, {
       code: '1',
       cms_id: '1',
@@ -265,6 +361,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - filtre consultation`, async () => {
     // GIVEN
+    logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [
@@ -282,7 +379,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
     await TestUtil.create(DB.action, {
@@ -358,6 +455,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - filtre realisation`, async () => {
     // GIVEN
+    logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [
@@ -375,7 +473,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
     await TestUtil.create(DB.action, {
@@ -452,6 +550,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - filtre realisation+consultation`, async () => {
     // GIVEN
+    logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [
@@ -469,7 +568,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     };
 
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
     await TestUtil.create(DB.action, {
@@ -506,6 +605,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
   it(`GET /utilisateurs/id/actions - boolean action deja vue / deja faite`, async () => {
     // GIVEN
+    logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [
@@ -522,7 +622,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       liste_thematiques: [],
     };
     await TestUtil.create(DB.utilisateur, {
-      code_commune: '21231',
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
 

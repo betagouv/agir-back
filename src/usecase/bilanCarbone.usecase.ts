@@ -164,7 +164,7 @@ export class BilanCarboneUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const situation = this.external_compute_situation(utilisateur);
+    const situation = await this.external_compute_situation(utilisateur);
 
     return this.nGCCalculator.computeBilanCarboneThematiqueFromSituation(
       situation,
@@ -189,7 +189,7 @@ export class BilanCarboneUsecase {
       return utilisateur.cache_bilan_carbone.total_kg;
     }
 
-    const situation = this.external_compute_situation(utilisateur);
+    const situation = await this.external_compute_situation(utilisateur);
 
     const bilan = this.nGCCalculator.computeBasicBilanFromSituation(situation);
 
@@ -391,7 +391,7 @@ export class BilanCarboneUsecase {
       utilisateur.cache_bilan_carbone.est_bilan_complet ||
       utilisateur.vientDeNGC();
 
-    const situation = this.external_compute_situation(utilisateur);
+    const situation = await this.external_compute_situation(utilisateur);
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 
@@ -401,8 +401,15 @@ export class BilanCarboneUsecase {
     };
   }
 
-  public external_compute_situation(utilisateur: Utilisateur): SituationNGC {
-    const situation = {};
+  public async external_compute_situation(
+    utilisateur: Utilisateur,
+  ): Promise<SituationNGC> {
+    const situation =
+      ((
+        await this.situationRepository.getSituationByUtilisateurId(
+          utilisateur.id,
+        )
+      )?.situation as SituationNGC) ?? {};
 
     const kyc_liste = utilisateur.kyc_history.getAllKycs();
     for (const kyc of kyc_liste) {

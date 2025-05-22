@@ -30,15 +30,13 @@ export class UtilisateurBoardRepository {
   }
 
   async top_trois_commune_user(
-    code_postal: string,
-    commune: string,
+    code_commune: string,
     utilisateurId: string,
   ): Promise<Classement[]> {
     const top = await this.prisma.utilisateur.findMany({
       take: 3,
       where: {
-        code_postal_classement: code_postal,
-        commune_classement: commune,
+        code_commune_classement: code_commune,
         OR: [
           {
             est_valide_pour_classement: true,
@@ -101,7 +99,7 @@ export class UtilisateurBoardRepository {
     WITH tmp as (
       SELECT
         "id",  
-        DENSE_RANK() OVER ( PARTITION BY "code_postal_classement", "commune_classement" ORDER BY points_classement DESC) AS rnk
+        DENSE_RANK() OVER ( PARTITION BY "code_commune_classement" ORDER BY points_classement DESC) AS rnk
       FROM
         "Utilisateur"
       WHERE
@@ -123,7 +121,7 @@ export class UtilisateurBoardRepository {
     WITH tmp as (
       SELECT
         "id",  
-        ROW_NUMBER() OVER ( PARTITION BY "code_postal_classement", "commune_classement" ORDER BY points_classement DESC) AS rnk
+        ROW_NUMBER() OVER ( PARTITION BY "code_commune_classement" ORDER BY points_classement DESC) AS rnk
       FROM
         "Utilisateur"
     )
@@ -143,8 +141,7 @@ export class UtilisateurBoardRepository {
     nombre: number,
     position: 'rank_avant_strict' | 'rank_apres_ou_egal',
     scope: 'national' | 'local',
-    code_postal: string,
-    commune: string,
+    code_commune: string,
     exclude_user_id?: string,
   ): Promise<Classement[]> {
     let rank_cond;
@@ -187,8 +184,7 @@ export class UtilisateurBoardRepository {
     let filtre_commune = {};
     if (scope === 'local') {
       filtre_commune = {
-        code_postal_classement: code_postal,
-        commune_classement: commune,
+        code_commune_classement: code_commune,
       };
     }
 
@@ -217,8 +213,7 @@ export class UtilisateurBoardRepository {
     nombre: number,
     position: 'rank_avant_strict' | 'rank_apres_ou_egal',
     scope: 'national' | 'local',
-    code_postal: string,
-    commune: string,
+    code_commune: string,
     exclude_user_id?: string,
   ): Promise<Classement[]> {
     let rank_cond;
@@ -252,8 +247,7 @@ export class UtilisateurBoardRepository {
     let filtre_commune = {};
     if (scope === 'local') {
       filtre_commune = {
-        code_postal_classement: code_postal,
-        commune_classement: commune,
+        code_commune_classement: code_commune,
       };
     }
 
@@ -294,23 +288,20 @@ export class UtilisateurBoardRepository {
 
   async getPourcentile(
     points: number,
-    code_postal?: string,
-    commune?: string,
+    code_commune?: string,
   ): Promise<Pourcentile> {
     let count_total;
     let count_better_than_user;
-    if (code_postal) {
+    if (code_commune) {
       count_total = await this.prisma.utilisateur.count({
         where: {
-          code_postal_classement: code_postal,
-          commune_classement: commune,
+          code_commune_classement: code_commune,
           est_valide_pour_classement: true,
         },
       });
       count_better_than_user = await this.prisma.utilisateur.count({
         where: {
-          code_postal_classement: code_postal,
-          commune_classement: commune,
+          code_commune_classement: code_commune,
           points_classement: {
             gt: points,
           },
@@ -338,8 +329,7 @@ export class UtilisateurBoardRepository {
 
   private mapUserDbToDomain(ub: Utilisateur): Classement {
     return new Classement({
-      code_postal: (ub.logement as any).code_postal,
-      commune: (ub.logement as any).commune,
+      code_commune: (ub.logement as any).code_commune,
       points: ub.points_classement,
       pseudo: ub.pseudo,
       utilisateurId: ub.id,

@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { Aide as AideDB } from '@prisma/client';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Echelle } from '../../domain/aides/echelle';
+import { App } from '../../domain/app';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -40,7 +41,17 @@ export class AideRepository {
   @Cron('* * * * *')
   public async loadCache() {
     const new_map: Map<string, AideDefinition> = new Map();
-    const liste_aides = await this.prisma.aide.findMany();
+    let liste_aides;
+    if (App.isProd()) {
+      liste_aides = await this.prisma.aide.findMany({
+        where: {
+          VISIBLE_PROD: true,
+        },
+      });
+    } else {
+      liste_aides = await this.prisma.aide.findMany();
+    }
+
     for (const aide of liste_aides) {
       new_map.set(aide.content_id, this.buildAideFromDB(aide));
     }
@@ -105,13 +116,6 @@ export class AideRepository {
     });
   }
 
-  async exists(content_id: string): Promise<boolean> {
-    const result = await this.prisma.aide.count({
-      where: { content_id: content_id },
-    });
-    return result === 1;
-  }
-
   async getByContentIdFromDB(content_id: string): Promise<AideDefinition> {
     const result = await this.prisma.aide.findUnique({
       where: { content_id: content_id },
@@ -120,8 +124,8 @@ export class AideRepository {
   }
 
   async listAll(): Promise<AideDefinition[]> {
-    const result = await this.prisma.aide.findMany();
-    return result.map((a) => this.buildAideFromDB(a));
+    const liste_aides = await this.prisma.aide.findMany();
+    return liste_aides.map((a) => this.buildAideFromDB(a));
   }
 
   async countAll(): Promise<number> {
@@ -141,9 +145,16 @@ export class AideRepository {
   }
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
     if (!code_postal) return false;
-    const count = await this.prisma.aide.count({
-      where: { codes_postaux: { has: code_postal } },
-    });
+    let count;
+    if (App.isProd()) {
+      count = await this.prisma.aide.count({
+        where: { codes_postaux: { has: code_postal }, VISIBLE_PROD: true },
+      });
+    } else {
+      count = await this.prisma.aide.count({
+        where: { codes_postaux: { has: code_postal } },
+      });
+    }
     return count > 0;
   }
 
@@ -160,6 +171,12 @@ export class AideRepository {
 
   public buildSearchQuery(filter: AideFilter): any {
     const main_filter = [];
+
+    if (App.isProd()) {
+      main_filter.push({
+        VISIBLE_PROD: true,
+      });
+    }
 
     if (filter.code_postal) {
       main_filter.push({
@@ -289,6 +306,7 @@ export class AideRepository {
       codes_departement_from_partenaire:
         aideDB.codes_departement_from_partenaire,
       codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
+      VISIBLE_PROD: aideDB.VISIBLE_PROD,
     };
   }
 }

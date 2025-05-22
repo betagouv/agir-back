@@ -377,6 +377,7 @@ export class TestUtil {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
       est_gratuit: false,
+      VISIBLE_PROD: true,
       ...override,
     };
   }
@@ -421,6 +422,7 @@ export class TestUtil {
       sources: [],
       created_at: undefined,
       updated_at: undefined,
+      VISIBLE_PROD: true,
       ...override,
     };
   }
@@ -664,8 +666,6 @@ export class TestUtil {
       db_version: 0,
       is_magic_link_user: false,
       points_classement: 0,
-      code_postal_classement: null,
-      commune_classement: null,
       rank: null,
       rank_commune: null,
       status: UtilisateurStatus.default,
@@ -680,7 +680,7 @@ export class TestUtil {
       brevo_update_disabled: false,
       mobile_token: null,
       mobile_token_updated_at: null,
-      code_commune: null,
+      code_commune_classement: null,
       france_connect_sub: null,
       external_stat_id: null,
       pseudo: 'pseudo',
@@ -863,6 +863,7 @@ export class TestUtil {
       sources: [{ label: 'label', url: 'url' }],
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
+      VISIBLE_PROD: true,
       ...override,
     };
   }
@@ -947,4 +948,31 @@ export class TestUtil {
       }),
     ]);
   }
+
+  static CODE_COMMUNE_FROM_PARTENAIRE = [
+    '91477',
+    '21231',
+    '21166',
+    '21617',
+    '21171',
+    '21515',
+    '21278',
+    '21355',
+    '21540',
+    '21390',
+    '21452',
+    '21485',
+    '21481',
+    '21605',
+    '21263',
+    '21003',
+    '21223',
+    '21473',
+    '21315',
+    '21105',
+    '21106',
+    '21370',
+    '21192',
+    '21270',
+  ];
 }

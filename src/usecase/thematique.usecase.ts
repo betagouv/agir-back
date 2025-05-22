@@ -38,7 +38,12 @@ export class ThematiqueUsecase {
   ): Promise<DetailThematique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.recommandation, Scope.kyc],
+      [
+        Scope.thematique_history,
+        Scope.recommandation,
+        Scope.kyc,
+        Scope.logement,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -53,13 +58,13 @@ export class ThematiqueUsecase {
     result.personnalisation_necessaire = !personnalisation_done;
 
     result.nom_commune = this.communeRepository.getLibelleCommuneLowerCase(
-      utilisateur.code_commune,
+      utilisateur.logement.code_commune,
     );
 
     const detailThematique =
       await this.thematiqueBoardUsecase.external_thematique_synthese(
         thematique,
-        utilisateur.code_commune,
+        utilisateur.logement.code_commune,
       );
 
     result.nombre_actions = detailThematique.nombre_actions;
@@ -129,7 +134,7 @@ export class ThematiqueUsecase {
   ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.recommandation],
+      [Scope.thematique_history, Scope.recommandation, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
     const action: TypeCodeAction = { type: type_action, code: code_action };

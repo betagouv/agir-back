@@ -104,6 +104,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() Titre: string;
   @ApiProperty() introduction: string;
   @ApiProperty() code: string;
+  @ApiProperty() VISIBLE_PROD: boolean;
   @ApiProperty() code_commune: string;
   @ApiProperty() code_epci: string;
   @ApiProperty() texte: string;

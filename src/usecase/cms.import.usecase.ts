@@ -692,6 +692,7 @@ export class CMSImportUsecase {
               (elem) => elem.attributes.code,
             )
           : [],
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
     };
   }
 
@@ -808,6 +809,7 @@ export class CMSImportUsecase {
       url_source: entry.attributes.url_source,
       url_demande: entry.attributes.url_demande,
       est_gratuit: !!entry.attributes.est_gratuit,
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
     };
 
     const computed =
@@ -920,6 +922,7 @@ export class CMSImportUsecase {
               (elem) => elem.attributes.code,
             )
           : [],
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
     });
   }
 
@@ -969,5 +972,10 @@ export class CMSImportUsecase {
 
   private static split(list: string) {
     return list ? list.split(',').map((c) => c.trim()) : [];
+  }
+
+  private trueIfUndefinedOrNull(value: boolean) {
+    if (value === undefined || value === null) return true;
+    return value;
   }
 }
