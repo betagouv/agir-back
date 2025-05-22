@@ -33,6 +33,10 @@ export class StatistiqueExternalRepository {
   public async deleteAllUserNotifData() {
     await this.prismaStats.notifications.deleteMany();
   }
+
+  public async deleteAllUserVisiteData() {
+    await this.prismaStats.visites.deleteMany();
+  }
   public async deleteAllKYCData() {
     await this.prismaStats.kYCCopy.deleteMany();
   }
@@ -76,7 +80,7 @@ export class StatistiqueExternalRepository {
     });
   }
 
-  public async createUserData(utilisateur: Utilisateur, activity_log: Date[]) {
+  public async createUserData(utilisateur: Utilisateur) {
     const code_depart =
       this.communeRepository.findDepartementRegionByCodeCommune(
         utilisateur.code_commune,
@@ -107,7 +111,6 @@ export class StatistiqueExternalRepository {
           utilisateur.notification_history.isCanalEnabled(
             CanalNotification.email,
           ),
-        actif_le: activity_log,
       },
     });
   }
@@ -125,6 +128,16 @@ export class StatistiqueExternalRepository {
         canal_notification: data.canal,
         type_notification: data.type,
         date_notification: data.date,
+      },
+    });
+  }
+
+  public async createUserVisiteData(user_ext_id: string, date: Date) {
+    await this.prismaStats.visites.create({
+      data: {
+        id: uuidv4(),
+        user_id: user_ext_id,
+        heure_premiere_visite_du_jour: date,
       },
     });
   }

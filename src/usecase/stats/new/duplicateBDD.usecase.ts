@@ -46,14 +46,8 @@ export class DuplicateBDDForStatsUsecase {
 
       for (const user of current_user_list) {
         await this.updateExternalStatIdIfNeeded(user);
-        const activity_log = await this.utilisateurRepository.getActivityLog(
-          user.id,
-        );
         try {
-          await this.statistiqueExternalRepository.createUserData(
-            user,
-            activity_log,
-          );
+          await this.statistiqueExternalRepository.createUserData(user);
         } catch (error) {
           console.error(error);
           console.error(`Error Creating User : ${JSON.stringify(user)}`);
@@ -94,6 +88,41 @@ export class DuplicateBDDForStatsUsecase {
           } catch (error) {
             console.error(error);
             console.error(`Error Creating Notif : ${JSON.stringify(data)}`);
+          }
+        }
+      }
+    }
+  }
+  async duplicateUtilisateurVistes(block_size: number = 200) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    await this.statistiqueExternalRepository.deleteAllUserVisiteData();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.core],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        await this.updateExternalStatIdIfNeeded(user);
+
+        const activity_log = await this.utilisateurRepository.getActivityLog(
+          user.id,
+        );
+
+        for (const date of activity_log) {
+          try {
+            await this.statistiqueExternalRepository.createUserVisiteData(
+              user.external_stat_id,
+              date,
+            );
+          } catch (error) {
+            console.error(error);
+            console.error(`Error Creating Visite at date [${date}]`);
           }
         }
       }
