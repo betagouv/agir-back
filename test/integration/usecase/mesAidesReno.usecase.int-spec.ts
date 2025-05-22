@@ -127,7 +127,7 @@ describe('Mes Aides Réno', () => {
           .getValue(),
       ).toEqual(30);
 
-      expect(utilisateur.code_commune).toEqual('31555');
+      expect(utilisateur.logement.code_commune).toEqual('31555');
       expect(utilisateur.logement.commune).toEqual('TOULOUSE');
       expect(utilisateur.logement.code_postal).toEqual('31000');
     });
@@ -150,13 +150,12 @@ describe('Mes Aides Réno', () => {
         numero_rue: undefined,
         risques: undefined,
         rue: undefined,
-        code_commune: undefined,
+        code_commune: '91477',
         score_risques_adresse: undefined,
       };
 
       await TestUtil.create(DB.utilisateur, {
         revenu_fiscal: 20000,
-        code_commune: '91120',
         logement: logement as any,
       });
       await TestUtil.createKYCLogement();
@@ -203,7 +202,7 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.logement.plus_de_15_ans).toBeFalsy();
       expect(utilisateur.logement.type).toBe(TypeLogement.appartement);
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_150);
-      expect(utilisateur.code_commune).toEqual('91120');
+      expect(utilisateur.logement.code_commune).toEqual('91477');
       expect(utilisateur.logement.commune).toEqual('PALAISEAU');
       expect(utilisateur.logement.code_postal).toEqual('91120');
     });

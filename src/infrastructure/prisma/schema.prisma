@@ -64,8 +64,6 @@ model Utilisateur {
   db_version                 Int        @default(0)
   is_magic_link_user         Boolean    @default(false)
   points_classement          Int        @default(0)
-  code_postal_classement     String?
-  commune_classement         String?
   rank                       Int?
   rank_commune               Int?
   status                     String?
@@ -78,7 +76,7 @@ model Utilisateur {
   brevo_update_disabled      Boolean    @default(false)
   mobile_token               String?    @unique
   mobile_token_updated_at    DateTime?  @db.Timestamptz(3)
-  code_commune               String?
+  code_commune_classement    String?
   france_connect_sub         String?    @unique
   external_stat_id           String?    @unique
   global_user_version        String     @default("V1")

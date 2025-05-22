@@ -225,7 +225,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: '99999',
     });
     // WHEN
     const response = await TestUtil.GET(
@@ -327,7 +326,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: undefined,
+      code_commune: '23456',
       score_risques_adresse: undefined,
 
       risques: {
@@ -350,42 +349,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: '23456',
-    });
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/logement',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.code_commune).toEqual('23456');
-  });
-  it('GET /utilisateurs/id/logement - pousse code_commune niveau utilisateur si celui de logement est absent', async () => {
-    // GIVEN
-    const logement: Logement_v0 = {
-      version: 0,
-      superficie: Superficie.superficie_150,
-      type: TypeLogement.maison,
-      code_postal: '91120',
-      chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      nombre_enfants: 2,
-      plus_de_15_ans: true,
-      proprietaire: true,
-      latitude: 48,
-      longitude: 2,
-      numero_rue: '12',
-      rue: 'avenue de la Paix',
-      code_commune: undefined,
-      risques: undefined,
-      score_risques_adresse: undefined,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      code_commune: '23456',
     });
     // WHEN
     const response = await TestUtil.GET(
@@ -421,7 +384,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: undefined,
     });
     // WHEN
     const response = await TestUtil.GET(
@@ -429,7 +391,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.code_commune).toBeNull();
+    expect(response.body.code_commune).toBeUndefined();
   });
 
   it('GET /utilisateurs/id/profile - default to 1 when no logement data', async () => {
@@ -1102,6 +1064,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       chauffage: Chauffage.electricite,
       plus_de_15_ans: false,
       dpe: DPE.E,
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(200);
@@ -1109,7 +1072,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
     expect(dbUser.logement.code_postal).toEqual('21000');
-    expect(dbUser.logement.commune).toEqual('DIJON');
+    expect(dbUser.logement.commune).toEqual('Dijon');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
     expect(dbUser.logement.nombre_enfants).toEqual(1);
     expect(dbUser.logement.type).toEqual(TypeLogement.appartement);
@@ -1118,8 +1081,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.plus_de_15_ans).toEqual(false);
     expect(dbUser.logement.chauffage).toEqual(Chauffage.electricite);
     expect(dbUser.logement.dpe).toEqual(DPE.E);
-    expect(dbUser.commune_classement).toEqual('DIJON');
-    expect(dbUser.code_postal_classement).toEqual('21000');
+    expect(dbUser.code_commune_classement).toEqual('21231');
 
     // KYCs
     expect(
@@ -1288,7 +1250,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.code_commune).toEqual('21231');
     expect(dbUser.logement.code_commune).toEqual('21231');
   });
   it('PATCH /utilisateurs/id/logement - maj code commune surcharge le reste', async () => {
@@ -1309,7 +1270,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
 
-    expect(dbUser.code_commune).toEqual('21231');
     expect(dbUser.logement.code_commune).toEqual('21231');
     expect(dbUser.logement.commune).toEqual('Dijon');
     expect(dbUser.logement.code_postal).toEqual('21000'); // code postal lui pas touché car on peut pas retoruver un unique code postal à partir d'un code commune

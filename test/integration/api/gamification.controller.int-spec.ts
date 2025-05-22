@@ -1,10 +1,58 @@
 import { Pourcentile } from '../../../src/domain/gamification/board';
 import { TypeBadge } from '../../../src/domain/gamification/typeBadge';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
+const logement_palaiseau: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '91120',
+  chauffage: Chauffage.bois,
+  commune: 'PALAISEAU',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '91477',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
+
+const logement_dijon: Logement_v0 = {
+  version: 0,
+  superficie: Superficie.superficie_150,
+  type: TypeLogement.maison,
+  code_postal: '21000',
+  chauffage: Chauffage.bois,
+  commune: 'DIJON',
+  dpe: DPE.B,
+  nombre_adultes: 2,
+  nombre_enfants: 2,
+  plus_de_15_ans: true,
+  proprietaire: true,
+  latitude: 48,
+  longitude: 2,
+  numero_rue: '12',
+  rue: 'avenue de la Paix',
+  code_commune: '21231',
+  risques: undefined,
+  score_risques_adresse: undefined,
+};
 describe('Gamification  (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
@@ -229,24 +277,24 @@ describe('Gamification  (API test)', () => {
       pseudo: 'palaiseau_1',
       email: '1',
       points_classement: 10,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       pseudo: 'palaiseau_2',
       email: '2',
       points_classement: 20,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       pseudo: 'palaiseau_3',
       email: '3',
       points_classement: 30,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -254,24 +302,24 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_1',
       email: '4',
       points_classement: 10,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '41',
       pseudo: 'dijon_11',
       email: '41',
       points_classement: 19,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
       pseudo: 'utilisateur',
       email: '5',
       points_classement: 20,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
       gamification: gamification as any,
     });
     await TestUtil.create(DB.utilisateur, {
@@ -279,8 +327,8 @@ describe('Gamification  (API test)', () => {
       pseudo: 'insulter',
       email: '444',
       points_classement: 40,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
       est_valide_pour_classement: false,
     });
     await TestUtil.create(DB.utilisateur, {
@@ -288,16 +336,16 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_6',
       email: '6',
       points_classement: 50,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '7',
       pseudo: 'dijon_7',
       email: '7',
       points_classement: 10,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
 
     // WHEN
@@ -389,24 +437,24 @@ describe('Gamification  (API test)', () => {
       pseudo: 'palaiseau_1',
       email: '1',
       points_classement: 10,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       pseudo: 'palaiseau_2',
       email: '2',
       points_classement: 20,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       pseudo: 'palaiseau_3',
       email: '3',
       points_classement: 30,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -414,32 +462,32 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_1',
       email: '4',
       points_classement: 10,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '41',
       pseudo: 'dijon_11',
       email: '41',
       points_classement: 19,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
       pseudo: 'utilisateur',
       email: '5',
       points_classement: 20,
-      code_postal_classement: null,
-      commune_classement: null,
+      code_commune_classement: null,
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '444',
       pseudo: 'insulter',
       email: '444',
       points_classement: 40,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
       est_valide_pour_classement: false,
     });
     await TestUtil.create(DB.utilisateur, {
@@ -447,16 +495,16 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_6',
       email: '6',
       points_classement: 50,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '7',
       pseudo: 'dijon_7',
       email: '7',
       points_classement: 10,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
 
     // WHEN
@@ -483,8 +531,7 @@ describe('Gamification  (API test)', () => {
           id: 'ceddc0d114c8db1dc4bde88f1e29231f',
         },
       ],
-      code_postal: null,
-      commune_label: null,
+      code_postal: '21000',
       pourcentile: null,
       badges: [],
     });
@@ -498,24 +545,24 @@ describe('Gamification  (API test)', () => {
       pseudo: 'palaiseau_1',
       email: '1',
       points_classement: 10,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       pseudo: 'palaiseau_2',
       email: '2',
       points_classement: 20,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       pseudo: 'palaiseau_3',
       email: '3',
       points_classement: 30,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -523,16 +570,16 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_1',
       email: '4',
       points_classement: 11,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
       pseudo: 'dijon_2',
       email: '5',
       points_classement: 21,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
 
     // WHEN
@@ -681,24 +728,24 @@ describe('Gamification  (API test)', () => {
       pseudo: 'palaiseau_1',
       email: '1',
       points_classement: 10,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '2',
       pseudo: 'palaiseau_2',
       email: '2',
       points_classement: 20,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: '3',
       pseudo: 'palaiseau_3',
       email: '3',
       points_classement: 30,
-      code_postal_classement: '91120',
-      commune_classement: 'PALAISEAU',
+      code_commune_classement: '91477',
+      logement: logement_palaiseau as any,
     });
 
     await TestUtil.create(DB.utilisateur, {
@@ -706,16 +753,16 @@ describe('Gamification  (API test)', () => {
       pseudo: 'dijon_1',
       email: '4',
       points_classement: 11,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
     });
     await TestUtil.create(DB.utilisateur, {
       id: 'utilisateur-id',
       pseudo: 'insulte',
       email: '5',
       points_classement: 21,
-      code_postal_classement: '21000',
-      commune_classement: 'DIJON',
+      code_commune_classement: '21231',
+      logement: logement_dijon as any,
       est_valide_pour_classement: false,
     });
 

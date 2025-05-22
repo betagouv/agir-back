@@ -45,16 +45,15 @@ export class GamificationUsecase {
 
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.gamification],
+      [Scope.gamification, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
     let top_trois_commune: Classement[] = null;
-    if (utilisateur.code_postal_classement) {
+    if (utilisateur.code_commune_classement) {
       top_trois_commune =
         await this.utilisateurBoardRepository.top_trois_commune_user(
-          utilisateur.code_postal_classement,
-          utilisateur.commune_classement,
+          utilisateur.code_commune_classement,
           utilisateur.id,
         );
       this.fixTop3Ranks(top_trois_commune);
@@ -66,11 +65,10 @@ export class GamificationUsecase {
         top_trois: top_trois_commune,
         utilisateur: null,
         classement_utilisateur: null,
-        code_postal: utilisateur.code_postal_classement,
-        commune_label: this.communeRepository.formatCommune(
-          utilisateur.code_postal_classement,
-          utilisateur.commune_classement,
-        ),
+        code_postal: utilisateur.logement.code_postal,
+        commune_label: this.communeRepository.getCommuneByCodeINSEE(
+          utilisateur.code_commune_classement,
+        )?.nom,
         badges: utilisateur.gamification.getBadges(),
       };
     }
@@ -81,8 +79,7 @@ export class GamificationUsecase {
         4,
         'rank_avant_strict',
         'local',
-        utilisateur.code_postal_classement,
-        utilisateur.commune_classement,
+        utilisateur.code_commune_classement,
         utilisateur.id,
       );
     const users_apres_local =
@@ -91,16 +88,14 @@ export class GamificationUsecase {
         4,
         'rank_apres_ou_egal',
         'local',
-        utilisateur.code_postal_classement,
-        utilisateur.commune_classement,
+        utilisateur.code_commune_classement,
         utilisateur.id,
       );
 
-    const pourcentile_local = utilisateur.code_postal_classement
+    const pourcentile_local = utilisateur.code_commune_classement
       ? await this.utilisateurBoardRepository.getPourcentile(
           utilisateur.points_classement,
-          utilisateur.code_postal_classement,
-          utilisateur.commune_classement,
+          utilisateur.code_commune_classement,
         )
       : null;
 
@@ -129,11 +124,10 @@ export class GamificationUsecase {
         [classement_utilisateur],
         users_apres_local,
       ),
-      code_postal: utilisateur.code_postal_classement,
-      commune_label: this.communeRepository.formatCommune(
-        utilisateur.code_postal_classement,
-        utilisateur.commune_classement,
-      ),
+      code_postal: utilisateur.logement.code_postal,
+      commune_label: this.communeRepository.getCommuneByCodeINSEE(
+        utilisateur.code_commune_classement,
+      )?.nom,
       badges: utilisateur.gamification.getBadges(),
     };
   }
@@ -172,7 +166,6 @@ export class GamificationUsecase {
         'rank_avant_strict',
         'national',
         undefined,
-        undefined,
         utilisateur.id,
       );
     const users_apres_national =
@@ -181,7 +174,6 @@ export class GamificationUsecase {
         4,
         'rank_apres_ou_egal',
         'national',
-        undefined,
         undefined,
         utilisateur.id,
       );
@@ -224,8 +216,7 @@ export class GamificationUsecase {
 
   private buildClassementFromUtilisateur(utilisateur: Utilisateur): Classement {
     return new Classement({
-      code_postal: utilisateur.code_postal_classement,
-      commune: utilisateur.commune_classement,
+      code_commune: utilisateur.code_commune_classement,
       points: utilisateur.points_classement,
       pseudo: utilisateur.pseudo,
       utilisateurId: utilisateur.id,

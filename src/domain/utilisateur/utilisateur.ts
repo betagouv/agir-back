@@ -92,8 +92,7 @@ export class UtilisateurData {
   bilbiotheque_services: BibliothequeServices;
   is_magic_link_user: boolean;
   points_classement: number;
-  code_postal_classement: string;
-  commune_classement: string;
+  code_commune_classement: string;
   rank: number;
   rank_commune: number;
   status: UtilisateurStatus;
@@ -108,7 +107,6 @@ export class UtilisateurData {
   brevo_update_disabled: boolean;
   mobile_token: string;
   mobile_token_updated_at: Date;
-  code_commune: string; // FIXME : deprecated , à supprimer dès que celui de logement est mis en service
   france_connect_sub: string;
   external_stat_id: string;
   cache_bilan_carbone: CacheBilanCarbone;
@@ -180,8 +178,6 @@ export class Utilisateur extends UtilisateurData {
       is_magic_link_user: is_magic_link,
       rank: null,
       rank_commune: null,
-      code_postal_classement: null,
-      commune_classement: null,
       points_classement: 0,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
@@ -195,12 +191,12 @@ export class Utilisateur extends UtilisateurData {
       brevo_update_disabled: false,
       mobile_token_updated_at: null,
       mobile_token: null,
-      code_commune: null,
       france_connect_sub: null,
       external_stat_id: uuidv4(),
       cache_bilan_carbone: new CacheBilanCarbone(),
       recommandation: new ProfileRecommandationUtilisateur(),
       global_user_version: GlobalUserVersion.V2,
+      code_commune_classement: null,
     });
   }
 
@@ -213,8 +209,6 @@ export class Utilisateur extends UtilisateurData {
 
   public resetAllHistory() {
     this.points_classement = 0;
-    this.commune_classement = null;
-    this.code_postal_classement = null;
     this.tag_ponderation_set = {};
     this.gamification.reset();
     this.history.reset();

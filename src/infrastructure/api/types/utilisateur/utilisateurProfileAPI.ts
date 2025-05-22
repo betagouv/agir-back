@@ -54,7 +54,7 @@ export class LogementAPI {
       pourcentage_surface_secheresse_geotech:
         log.risques
           .pourcent_exposition_commune_secheresse_geotech_total_a_risque,
-      code_commune: log.code_commune || user.code_commune,
+      code_commune: log.code_commune,
     };
   }
 }

@@ -12,7 +12,6 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { CacheBilanCarbone_v0 } from '../../../src/domain/object_store/bilan/cacheBilanCarbone_v0';
-import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import {
   KYCHistory_v2,
   QuestionKYC_v2,
@@ -338,6 +337,7 @@ describe('Admin (API test)', () => {
     ]);
     expect(userDB.kyc_history.getAnsweredKYCs()[0].id_cms).toEqual(1);
   });
+  /*
   it.skip('POST /admin/migrate_users migration V10 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -372,7 +372,9 @@ describe('Admin (API test)', () => {
     expect(userDB.commune_classement).toEqual('PALAISEAU');
     expect(userDB.points_classement).toEqual(10);
   });
+  */
 
+  /*
   it('POST /admin/migrate_users migration V12 OK - calcul code commune pour user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -425,9 +427,12 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.code_commune).toEqual('91477');
+    expect(userDB.logement.code_commune).toEqual('91477');
+    expect(userDB.getCachedCodeCommune()).toEqual('91477');
     expect(userDB.version).toEqual(12);
   });
+  */
+  /*
   it('POST /admin/migrate_users migration V12 OK - ras si pas de code postal sur user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -480,9 +485,11 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.code_commune).toEqual(null);
+    expect(userDB.logement.code_commune).toEqual(null);
+    expect(userDB.getCachedCodeCommune()).toEqual(null);
     expect(userDB.version).toEqual(12);
   });
+  */
   it('POST /admin/migrate_users migration V13 OK - prenom => pseudo', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -590,6 +597,7 @@ describe('Admin (API test)', () => {
   });
   */
 
+  /*
   it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -660,7 +668,9 @@ describe('Admin (API test)', () => {
     expect(userDB.commune_classement).toEqual('1234');
     expect(userDB.code_postal_classement).toEqual('45664');
   });
+  */
 
+  /*
   it('POST /admin/migrate_users migration V16 OK - inject code_commune dans logement', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -713,10 +723,12 @@ describe('Admin (API test)', () => {
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(userDB.code_commune).toEqual('12345');
+    expect(userDB.getCachedCodeCommune()).toEqual('12345');
+    expect(userDB.logement.code_commune).toEqual('12345');
     expect(userDB.version).toEqual(16);
     expect(userDB.logement.code_commune).toEqual('12345');
   });
+  */
 
   /*
   it('POST /admin/migrate_users migration V17 OK - migration de tags de reco', async () => {
@@ -1733,13 +1745,12 @@ describe('Admin (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
       score_risques_adresse: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: '91477',
     });
 
     // WHEN
@@ -1779,7 +1790,6 @@ describe('Admin (API test)', () => {
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: null,
     });
 
     // WHEN
@@ -1827,13 +1837,12 @@ describe('Admin (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
       score_risques_adresse: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
-      code_commune: '91477',
     });
 
     // WHEN

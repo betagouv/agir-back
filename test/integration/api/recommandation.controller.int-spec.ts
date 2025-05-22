@@ -1,7 +1,14 @@
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,
@@ -131,10 +138,31 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
 
   it('GET /utilisateurs/id/recommandations - liste articles filtrés par departement', async () => {
     // GIVEN
+
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      commune: 'DIJON',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+      risques: undefined,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      logement: {},
-      code_commune: '21231',
+      logement: logement as any,
     });
     await TestUtil.create(DB.article, {
       content_id: '1',

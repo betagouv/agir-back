@@ -249,7 +249,6 @@ export class ProfileUsecase {
           input.commune,
         );
       }
-      utilisateur.code_commune = code_commune;
       data_to_update.code_commune = code_commune;
     }
 
@@ -264,7 +263,6 @@ export class ProfileUsecase {
         );
       }
       if (commune) {
-        utilisateur.code_commune = commune.code;
         data_to_update.code_commune = commune.code;
         data_to_update.commune = commune.nom;
       } else {

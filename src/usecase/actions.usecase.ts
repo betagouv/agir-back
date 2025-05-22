@@ -138,7 +138,7 @@ export class ActionUsecase {
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -440,7 +440,7 @@ export class ActionUsecase {
   ): Promise<Action> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc],
+      [Scope.thematique_history, Scope.kyc, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -456,7 +456,7 @@ export class ActionUsecase {
     const action = Action.newActionFromUser(action_def, utilisateur);
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.code_commune,
+      utilisateur.logement.code_commune,
     );
     action.nom_commune = commune.nom;
 
@@ -613,7 +613,7 @@ export class ActionUsecase {
 
     let result: Action[] = [];
     const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.code_commune,
+      utilisateur.logement.code_commune,
     );
 
     for (const action_def of liste_actions) {

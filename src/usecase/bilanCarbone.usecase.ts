@@ -392,7 +392,6 @@ export class BilanCarboneUsecase {
       utilisateur.vientDeNGC();
 
     const situation = await this.external_compute_situation(utilisateur);
-    console.log('situation', situation);
     const bilan_complet =
       this.nGCCalculator.computeBilanCarboneFromSituation(situation);
 

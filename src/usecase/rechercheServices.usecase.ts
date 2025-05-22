@@ -70,7 +70,7 @@ export class RechercheServicesUsecase {
       }
     }
     if (!filtre.code_commune) {
-      filtre.code_commune = utilisateur.code_commune;
+      filtre.code_commune = utilisateur.logement.code_commune;
     }
 
     const result = await finder.find(filtre);

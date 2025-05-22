@@ -6,8 +6,7 @@ export class Classement {
   utilisateurId: string;
   points: number;
   pseudo: string;
-  code_postal: string;
-  commune: string;
+  code_commune: string;
 
   rank?: number;
   rank_commune?: number;

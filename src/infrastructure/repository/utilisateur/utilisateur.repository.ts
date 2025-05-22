@@ -192,29 +192,33 @@ export class UtilisateurRepository {
   }
 
   async countByCodesCommune(liste_codes_commune: string[]): Promise<number> {
-    const count = await this.prisma.utilisateur.count({
-      where: {
-        code_commune: {
-          in: liste_codes_commune,
-        },
-      },
-    });
-    return count;
+    const query = `
+    SELECT
+      count(*)
+    FROM
+      "Utilisateur"
+    WHERE
+      logement ->> 'code_commune' IN (${liste_codes_commune
+        .map((c) => "'" + c + "'")
+        .join(',')});`;
+    const result = await this.prisma.$queryRawUnsafe(query);
+    return parseInt((result as any)[0].count);
   }
+
   async findUserIdsByCodesCommune(
     liste_codes_commune: string[],
   ): Promise<string[]> {
-    const users = await this.prisma.utilisateur.findMany({
-      where: {
-        code_commune: {
-          in: liste_codes_commune,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-    return users.map((u) => u.id);
+    const query = `
+    SELECT
+      id
+    FROM
+      "Utilisateur"
+    WHERE
+      logement ->> 'code_commune' IN (${liste_codes_commune
+        .map((c) => "'" + c + "'")
+        .join(',')});`;
+    const result = await this.prisma.$queryRawUnsafe(query);
+    return (result as any).map((u) => u.id);
   }
 
   async disconnectAll(): Promise<void> {
@@ -644,8 +648,6 @@ export class UtilisateurRepository {
       db_version: user.db_version,
       bilbiotheque_services: bibliotheque_services,
       is_magic_link_user: user.is_magic_link_user,
-      code_postal_classement: user.code_postal_classement,
-      commune_classement: user.commune_classement,
       points_classement: user.points_classement,
       rank: user.rank,
       rank_commune: user.rank_commune,
@@ -661,13 +663,13 @@ export class UtilisateurRepository {
       brevo_update_disabled: user.brevo_update_disabled,
       mobile_token: user.mobile_token,
       mobile_token_updated_at: user.mobile_token_updated_at,
-      code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
       cache_bilan_carbone: cache_bilan_carbone,
       global_user_version: GlobalUserVersion[user.global_user_version],
       recommandation: recommandation,
+      code_commune_classement: user.code_commune_classement,
     });
 
     if (result.kyc_history) {
@@ -713,8 +715,6 @@ export class UtilisateurRepository {
       jour_naissance: user.jour_naissance,
       db_version: user.db_version,
       is_magic_link_user: user.is_magic_link_user,
-      code_postal_classement: user.code_postal_classement,
-      commune_classement: user.commune_classement,
       points_classement: user.points_classement,
       rank: user.rank,
       rank_commune: user.rank_commune,
@@ -739,12 +739,12 @@ export class UtilisateurRepository {
       thematique_history: undefined,
       cache_bilan_carbone: undefined,
       recommandation: undefined,
-      code_commune: user.code_commune,
       france_connect_sub: user.france_connect_sub,
       external_stat_id: user.external_stat_id,
       pseudo: user.pseudo,
       global_user_version: user.global_user_version,
       activity_dates_log: undefined,
+      code_commune_classement: user.code_commune_classement,
     };
   }
 
