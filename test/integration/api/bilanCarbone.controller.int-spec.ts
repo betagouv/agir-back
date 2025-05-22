@@ -1,4 +1,6 @@
+import ngcRules from '@incubateur-ademe/nosgestesclimat/nosgestesclimat.model.json';
 import { KYC } from '@prisma/client';
+import { KYCS_TO_RULE_NAME } from 'src/domain/kyc/publicodesMapping';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
@@ -60,7 +62,7 @@ const KYC_DATA: QuestionKYC_v2 = {
 
 describe('/bilan (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const uilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
 
   const OLD_ENV = process.env;
   beforeAll(async () => {
@@ -317,8 +319,6 @@ describe('/bilan (API test)', () => {
               impact_kg_annee: 0,
               emoji: '🚲',
             },
-            // FIXME: Les vacances sont à la fois comptées dans la thématique
-            // transport et à la fois dans la thématique logement.
             // FIXME: Est-ce que l'on ne devrait pas rajouter un test qui
             // vérifie que la somme de tous les pourcentages = 100% ?
             {
@@ -356,13 +356,13 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 991.5498010903609,
+          impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
           details: [
             {
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 327.79344827586203,
+              pourcentage_categorie: 32,
+              impact_kg_annee: 313.92953517652757,
               emoji: '👕',
             },
             {
@@ -375,7 +375,7 @@ describe('/bilan (API test)', () => {
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 13,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
@@ -659,7 +659,7 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8863.759021558264,
+      impact_kg_annee: 8849.895108458928,
       top_3: [
         {
           label: 'Voiture',
@@ -873,13 +873,13 @@ describe('/bilan (API test)', () => {
         {
           pourcentage: 11,
           thematique: 'consommation',
-          impact_kg_annee: 991.5498010903609,
+          impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
           details: [
             {
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 327.79344827586203,
+              pourcentage_categorie: 32,
+              impact_kg_annee: 313.92953517652757,
               emoji: '👕',
             },
             {
@@ -892,7 +892,7 @@ describe('/bilan (API test)', () => {
             {
               label: 'Autres produits',
               pourcentage: 1,
-              pourcentage_categorie: 12,
+              pourcentage_categorie: 13,
               impact_kg_annee: 123.01123396773932,
               emoji: '📦',
             },
@@ -982,7 +982,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11217.986711969339,
+      11204.122798870005,
     );
   });
 
@@ -1139,7 +1139,7 @@ describe('/bilan (API test)', () => {
       NGCCalculator.DEFAULT_TOTAL_KG,
     );
 
-    const userDB = await uilisateurRepository.getById('utilisateur-id', [
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
 
@@ -1266,6 +1266,61 @@ describe('/bilan (API test)', () => {
         { label: 'Vacances', impact_kg_annee: 0, emoji: '🏖️' },
       ],
       emoji: '🚦',
+    });
+  });
+
+  describe('GET /utilisateurs/utilisateur-id/bilans/last_v3', () => {
+    it('should correctly compute the bilan according the NGC situation', async () => {
+      await TestUtil.create(DB.utilisateur);
+      await TestUtil.create(DB.kYC, {
+        id_cms: 1,
+        code: KYCID.KYC_transport_voiture_km,
+        type: TypeReponseQuestionKYC.entier,
+        is_ngc: true,
+        question: `Km en voiture ?`,
+        points: 10,
+        categorie: Categorie.test,
+        reponses: [],
+        ngc_key:
+          KYCS_TO_RULE_NAME[KYCID.KYC_transport_voiture_km]['nosgestesclimat'],
+      });
+
+      await kycRepository.loadCache();
+
+      await TestUtil.create(DB.situationNGC, {
+        utilisateurId: 'utilisateur-id',
+        situation: {
+          'transport . voiture . km': 200000,
+        },
+      });
+
+      let last_res = await TestUtil.GET(
+        `/utilisateurs/utilisateur-id/bilans/last_v3?force=true`,
+      );
+
+      expect(last_res.status).toBe(200);
+      expect(last_res.body.bilan_complet.impact_kg_annee).toBeGreaterThan(
+        NGCCalculator.DEFAULT_TOTAL_KG,
+      );
+
+      const question_res = await TestUtil.PUT(
+        `/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_transport_voiture_km`,
+      ).send([
+        {
+          value: ngcRules['transport . voiture . km']['par défaut'],
+        },
+      ]);
+
+      expect(question_res.status).toBe(200);
+
+      last_res = await TestUtil.GET(
+        `/utilisateurs/utilisateur-id/bilans/last_v3?force=true`,
+      );
+
+      expect(last_res.status).toBe(200);
+      expect(last_res.body.bilan_complet.impact_kg_annee).toEqual(
+        NGCCalculator.DEFAULT_TOTAL_KG,
+      );
     });
   });
 });

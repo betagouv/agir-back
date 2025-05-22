@@ -472,7 +472,7 @@ export class DuplicateBDDForStatsUsecase {
         }
 
         const situation =
-          this.bilanCarboneUsecase.external_compute_situation(user);
+          await this.bilanCarboneUsecase.external_compute_situation(user);
 
         const progression =
           this.bilanCarboneUsecase.external_build_enchainement_bilan_recap(
