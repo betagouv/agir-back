@@ -446,6 +446,7 @@ export class ProfileUsecase {
       const utilisateur = await this.utilisateurRepository.getById(id, [
         Scope.logement,
       ]);
+
       utilisateur.couverture_aides_ok =
         await this.aideRepository.isCodePostalCouvert(
           utilisateur.logement.code_postal,

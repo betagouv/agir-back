@@ -1,6 +1,6 @@
-import { DB, TestUtil } from '../../TestUtil';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
+import { DB, TestUtil } from '../../TestUtil';
 
 describe('AideRepository', () => {
   const OLD_ENV = process.env;
@@ -42,6 +42,27 @@ describe('AideRepository', () => {
     result = await aideRepository.isCodePostalCouvert('C');
     // THEN
     expect(result).toEqual(false);
+  });
+
+  it('isCodePostalCouvert : cas du code postal null ou undefined', async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['A', 'B'],
+    });
+
+    // WHEN
+    let result = await aideRepository.isCodePostalCouvert(undefined);
+
+    // THEN
+    expect(result).toEqual(false);
+
+    // WHEN
+    let result2 = await aideRepository.isCodePostalCouvert(null);
+
+    // THEN
+    expect(result2).toEqual(false);
   });
 
   it('searchsearch : liste aide par code postal parmi plusieurs', async () => {
