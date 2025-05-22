@@ -2,6 +2,8 @@ npm run execute dump_utilisateur_copy_for_stats
 
 npm run execute dump_utilisateur_notif_copy_for_stats
 
+npm run execute dump_utilisateur_visites_copy_for_stats
+
 npm run execute dump_utilisateur_question_for_stats
 
 npm run execute dump_kyc_copy_for_stats
