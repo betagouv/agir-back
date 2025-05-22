@@ -80,6 +80,64 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     expect(response.body.nombre_resultats_disponibles).toEqual(1);
   });
 
+  it(`GET /utilisateurs/id/actions - action pas visible en PROD`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: true,
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_2',
+      code: '2',
+      cms_id: '2',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: false,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('1');
+  });
+  it(`GET /utilisateurs/id/actions - action visible en DEV`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'false';
+    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: true,
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_2',
+      code: '2',
+      cms_id: '2',
+      thematique: Thematique.alimentation,
+      VISIBLE_PROD: false,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+  });
+
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action  - skip/take absent`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, { code_commune: '21231' });

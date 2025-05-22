@@ -1733,6 +1733,7 @@ describe('Admin (API test)', () => {
       url_demande: 'c',
       url_simulateur: 'a',
       url_source: 'b',
+      VISIBLE_PROD: true,
     });
   });
 

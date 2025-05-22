@@ -142,7 +142,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_exist = await this.aideRepository.exists(id_cms);
+    const aide_exist = this.aideRepository.getAide(id_cms);
     if (!aide_exist) {
       ApplicationError.throwAideNotFound(id_cms);
     }
@@ -203,7 +203,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_exist = await this.aideRepository.exists(id_cms);
+    const aide_exist = this.aideRepository.getAide(id_cms);
     if (!aide_exist) {
       ApplicationError.throwAideNotFound(id_cms);
     }
@@ -223,7 +223,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_exist = await this.aideRepository.exists(id_cms);
+    const aide_exist = this.aideRepository.getAide(id_cms);
     if (!aide_exist) {
       ApplicationError.throwAideNotFound(id_cms);
     }
@@ -242,7 +242,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const aide_exist = await this.aideRepository.exists(id_cms);
+    const aide_exist = this.aideRepository.getAide(id_cms);
     if (!aide_exist) {
       ApplicationError.throwAideNotFound(id_cms);
     }

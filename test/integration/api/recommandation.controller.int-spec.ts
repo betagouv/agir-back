@@ -198,6 +198,59 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
   });
+  it('GET /utilisateurs/id/recommandations - article non visible en PROD', async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      VISIBLE_PROD: false,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      VISIBLE_PROD: true,
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations_v3',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].content_id).toEqual('2');
+  });
+  it('GET /utilisateurs/id/recommandations - article visible en DEV', async () => {
+    // GIVEN
+    process.env.IS_PROD = 'false';
+
+    await TestUtil.create(DB.utilisateur, {
+      history: {},
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      VISIBLE_PROD: false,
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      VISIBLE_PROD: true,
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/recommandations_v3',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+  });
   it('GET /utilisateurs/id/recommandations - ponderations des articles ET prio aux contenus locaux', async () => {
     // GIVEN
     //CatalogueQuestionsKYC.setCatalogue([]);

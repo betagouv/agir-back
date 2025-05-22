@@ -93,6 +93,47 @@ describe('Aide (API test)', () => {
     expect(aideBody.est_gratuit).toEqual(false);
   });
 
+  it(`GET /utilisateurs/:utilisateurId/aides n'affiche pas une aide en PROD`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+
+    await partenaireRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, { content_id: '1', VISIBLE_PROD: true });
+    await TestUtil.create(DB.aide, { content_id: '2', VISIBLE_PROD: false });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+
+    expect(response.body.liste_aides[0].content_id).toEqual('1');
+  });
+  it(`GET /utilisateurs/:utilisateurId/aides n'affiche pas une aide en DEV`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'false';
+
+    await partenaireRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.aide, { content_id: '1', VISIBLE_PROD: true });
+    await TestUtil.create(DB.aide, { content_id: '2', VISIBLE_PROD: false });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(2);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/aides/id consultation d'une aide à partir de son ID, non connecté`, async () => {
     // GIVEN
 
@@ -366,6 +407,7 @@ describe('Aide (API test)', () => {
       content_id: '1',
       codes_postaux: undefined,
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -401,6 +443,7 @@ describe('Aide (API test)', () => {
       content_id: '1',
       codes_postaux: undefined,
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(
@@ -434,6 +477,7 @@ describe('Aide (API test)', () => {
       content_id: '1',
       codes_postaux: undefined,
     });
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST(

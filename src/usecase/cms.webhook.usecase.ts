@@ -363,6 +363,7 @@ export class CMSWebhookUsecase {
       tags_a_inclure: hook.entry.tag_v2_incluants
         ? hook.entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(hook.entry.VISIBLE_PROD),
     };
   }
 
@@ -445,6 +446,7 @@ export class CMSWebhookUsecase {
       codes_commune_from_partenaire: [],
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
     };
 
     const computed =
@@ -512,6 +514,7 @@ export class CMSWebhookUsecase {
       tags_a_inclure: entry.tag_v2_incluants
         ? entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
+      VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
     });
   }
 
@@ -613,5 +616,10 @@ export class CMSWebhookUsecase {
 
   private split(list: string) {
     return list ? list.split(',').map((c) => c.trim()) : [];
+  }
+
+  private trueIfUndefinedOrNull(value: boolean) {
+    if (value === undefined || value === null) return true;
+    return value;
   }
 }

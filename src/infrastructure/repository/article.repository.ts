@@ -4,6 +4,7 @@ import { Article as ArticleDB } from '@prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Echelle } from '../../domain/aides/echelle';
+import { App } from '../../domain/app';
 import { Article } from '../../domain/contenu/article';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
 import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
@@ -50,7 +51,17 @@ export class ArticleRepository {
   @Cron('* * * * *')
   public async loadCache() {
     const new_map: Map<string, ArticleDefinition> = new Map();
-    const liste_articles = await this.prisma.article.findMany();
+
+    let liste_articles;
+    if (App.isProd()) {
+      liste_articles = await this.prisma.article.findMany({
+        where: {
+          VISIBLE_PROD: true,
+        },
+      });
+    } else {
+      liste_articles = await this.prisma.article.findMany();
+    }
     for (const article of liste_articles) {
       new_map.set(article.content_id, this.buildArticleFromDB(article));
     }
@@ -99,6 +110,7 @@ export class ArticleRepository {
       tags_a_inclure_v2: article_def.tags_a_inclure,
       created_at: undefined,
       updated_at: undefined,
+      VISIBLE_PROD: article_def.VISIBLE_PROD,
     };
 
     await this.prisma.article.upsert({
@@ -115,6 +127,12 @@ export class ArticleRepository {
 
   async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {
     const main_filter = [];
+
+    if (App.isProd()) {
+      main_filter.push({
+        VISIBLE_PROD: true,
+      });
+    }
 
     if (filter.date) {
       main_filter.push({
@@ -266,6 +284,7 @@ export class ArticleRepository {
       echelle: Echelle[articleDB.echelle],
       tags_a_exclure: articleDB.tags_a_exclure_v2,
       tags_a_inclure: articleDB.tags_a_inclure_v2,
+      VISIBLE_PROD: articleDB.VISIBLE_PROD,
     });
   }
 }

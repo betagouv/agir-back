@@ -41,6 +41,7 @@ export class ActionDefinitionData {
   tags_a_inclure: string[];
   tags_a_exclure: string[];
   sources: Source[];
+  VISIBLE_PROD: boolean;
 }
 
 export class ActionDefinition extends ActionDefinitionData {

@@ -57,6 +57,7 @@ export type CMSWebhookPopulateAPI = {
     is_examen: boolean;
     ngc_key: string;
     code: string;
+    VISIBLE_PROD: boolean;
     niveau: number;
     question: string;
     reponse: string;

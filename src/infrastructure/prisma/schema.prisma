@@ -249,6 +249,7 @@ model Aide {
   derniere_maj                      DateTime? @db.Timestamptz(3)
   created_at                        DateTime  @default(now()) @db.Timestamptz(3)
   updated_at                        DateTime  @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD                      Boolean   @default(true)
 }
 
 model Action {
@@ -279,6 +280,7 @@ model Action {
   sources             Json?    @default("[]")
   created_at          DateTime @default(now()) @db.Timestamptz(3)
   updated_at          DateTime @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD        Boolean  @default(true)
 
   @@unique([code, type])
   @@unique([cms_id, type])
@@ -345,6 +347,7 @@ model Article {
   tags_a_exclure_v2     String[]  @default([])
   created_at            DateTime  @default(now()) @db.Timestamptz(3)
   updated_at            DateTime  @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD          Boolean   @default(true)
 }
 
 model Partenaire {

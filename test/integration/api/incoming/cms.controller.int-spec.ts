@@ -116,6 +116,7 @@ describe('/api/incoming/cms (API test)', () => {
       categorie_recettes: 'vegan',
       categorie_pdcn: CategorieRecherche.circuit_court,
       sources: [{ libelle: 'haha', lien: 'hoho' }],
+      VISIBLE_PROD: true,
       quizzes: [
         {
           id: 1,
@@ -330,6 +331,7 @@ describe('/api/incoming/cms (API test)', () => {
       sousTitre: 'soustitre 222',
       derniere_maj: new Date(123),
       contenu: 'Un long article très intéressant',
+      VISIBLE_PROD: true,
       thematique_gamification: {
         id: 1,
         titre: 'Alimentation',
@@ -658,6 +660,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].codes_departement).toEqual(['78']);
     expect(articles[0].codes_region).toEqual(['25']);
     expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
+    expect(articles[0].VISIBLE_PROD).toEqual(true);
   });
 
   it('POST /api/incoming/cms - create a new partenaire in partenaire table', async () => {
@@ -818,6 +821,7 @@ describe('/api/incoming/cms (API test)', () => {
       url_demande: 'hihi',
       url_simulateur: '/aide/velo',
       url_source: 'haha',
+      VISIBLE_PROD: true,
     });
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
@@ -964,6 +968,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
+    expect(action.VISIBLE_PROD).toEqual(true);
     expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
   });
 
@@ -1122,6 +1127,7 @@ describe('/api/incoming/cms (API test)', () => {
       url_demande: 'hihi',
       url_simulateur: '/aide/velo',
       url_source: 'haha',
+      VISIBLE_PROD: true,
     });
   });
 

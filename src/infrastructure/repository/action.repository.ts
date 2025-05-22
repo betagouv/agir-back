@@ -6,6 +6,7 @@ import {
   TypeCodeAction,
 } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { App } from '../../domain/app';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
@@ -41,7 +42,17 @@ export class ActionRepository {
   async loadCache(): Promise<void> {
     const new_map: Map<string, ActionDefinition> = new Map();
 
-    const liste = await this.prisma.action.findMany();
+    let liste;
+    if (App.isProd()) {
+      liste = await this.prisma.action.findMany({
+        where: {
+          VISIBLE_PROD: true,
+        },
+      });
+    } else {
+      liste = await this.prisma.action.findMany();
+    }
+
     for (const action_db of liste) {
       const action_def = this.buildActionDefinitionFromDB(action_db);
       new_map.set(action_db.type_code_id, action_def);
@@ -102,6 +113,7 @@ export class ActionRepository {
       pdcn_categorie: action.pdcn_categorie,
       tags_a_inclure_v2: action.tags_a_inclure,
       tags_a_exclure_v2: action.tags_a_exclure,
+      VISIBLE_PROD: action.VISIBLE_PROD,
 
       created_at: undefined,
       updated_at: undefined,
@@ -148,6 +160,12 @@ export class ActionRepository {
 
   private buildActionQuery(filtre: ActionFilter): any {
     const main_filter = [];
+
+    if (App.isProd()) {
+      main_filter.push({
+        VISIBLE_PROD: true,
+      });
+    }
 
     if (filtre.thematique) {
       main_filter.push({ thematique: filtre.thematique });
@@ -250,6 +268,7 @@ export class ActionRepository {
       article_ids: action.articles_ids,
       tags_a_exclure: action.tags_a_exclure_v2,
       tags_a_inclure: action.tags_a_inclure_v2,
+      VISIBLE_PROD: action.VISIBLE_PROD,
     });
   }
 }

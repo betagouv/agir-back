@@ -377,6 +377,7 @@ export class TestUtil {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
       est_gratuit: false,
+      VISIBLE_PROD: true,
       ...override,
     };
   }
@@ -421,6 +422,7 @@ export class TestUtil {
       sources: [],
       created_at: undefined,
       updated_at: undefined,
+      VISIBLE_PROD: true,
       ...override,
     };
   }
@@ -863,6 +865,7 @@ export class TestUtil {
       sources: [{ label: 'label', url: 'url' }],
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
+      VISIBLE_PROD: true,
       ...override,
     };
   }
