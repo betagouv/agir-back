@@ -215,6 +215,40 @@ describe('Duplicate Usecase', () => {
     ]);
   });
 
+  it('duplicateUtilisateurVistes : copy les visites', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      external_stat_id: '123',
+      activity_dates_log: [new Date(123), new Date(456)],
+    });
+
+    // WHEN
+    await duplicateUsecase.duplicateUtilisateurVistes(5);
+
+    // THEN
+    const stats_users = await TestUtil.prisma_stats.visites.findMany({
+      orderBy: {
+        heure_premiere_visite_du_jour: 'asc',
+      },
+      omit: {
+        id: true,
+      },
+    });
+
+    expect(stats_users).toHaveLength(2);
+
+    expect(stats_users).toEqual([
+      {
+        heure_premiere_visite_du_jour: new Date(123),
+        user_id: '123',
+      },
+      {
+        heure_premiere_visite_du_jour: new Date(456),
+        user_id: '123',
+      },
+    ]);
+  });
+
   it('duplicateUtilisateur : copy ok si moins de user que block size', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
@@ -254,7 +288,6 @@ describe('Duplicate Usecase', () => {
       rang_national: 123,
       date_inscription: new Date(2),
       version_utilisateur: 'V2',
-      actif_le: [new Date(456)],
       notifications_email_actives: true,
       notifications_mobile_actives: false,
     });
