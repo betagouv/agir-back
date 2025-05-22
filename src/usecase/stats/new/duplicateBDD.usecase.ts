@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import { Action } from '../../../domain/actions/action';
 import { Aide } from '../../../domain/aides/aide';
 import { Article } from '../../../domain/contenu/article';
@@ -45,7 +44,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
         try {
           await this.statistiqueExternalRepository.createUserData(user);
         } catch (error) {
@@ -71,8 +69,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         for (const notif of user.notification_history.sent_notifications) {
           let data;
           try {
@@ -108,8 +104,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const activity_log = await this.utilisateurRepository.getActivityLog(
           user.id,
         );
@@ -144,8 +138,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_questions = user.thematique_history.getAllQuestions();
         for (const question of liste_questions) {
           const action_def =
@@ -195,8 +187,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_kyc = user.kyc_history.getAnsweredKYCsAfter(start_date);
         for (const kyc of liste_kyc) {
           try {
@@ -228,8 +218,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_actions =
           user.thematique_history.getListeActionsUtilisateur();
 
@@ -276,8 +264,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_articles = user.history.article_interactions;
 
         for (const article_utilisateur of liste_articles) {
@@ -322,8 +308,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_aides = user.history.aide_interactions;
 
         for (const aide_utilisateur of liste_aides) {
@@ -369,8 +353,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         const liste_qizz = user.history.quizz_interactions;
 
         for (const quizz_utilisateur of liste_qizz) {
@@ -420,8 +402,6 @@ export class DuplicateBDDForStatsUsecase {
         );
 
       for (const user of current_user_list) {
-        await this.updateExternalStatIdIfNeeded(user);
-
         try {
           await this.statistiqueExternalRepository.createPersonnalisationData(
             user,
@@ -528,16 +508,6 @@ export class DuplicateBDDForStatsUsecase {
       `Skipped = [${skipped}]`,
       `Errors = [${errors}]`,
     ].concat(error_liste);
-  }
-
-  private async updateExternalStatIdIfNeeded(utilisateur: Utilisateur) {
-    if (!utilisateur.external_stat_id) {
-      utilisateur.external_stat_id = uuidv4();
-      await this.utilisateurRepository.updateUtilisateurExternalStatId(
-        utilisateur.id,
-        utilisateur.external_stat_id,
-      );
-    }
   }
 
   private async estBilanAJour(utilisateur: Utilisateur): Promise<boolean> {

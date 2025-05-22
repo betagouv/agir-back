@@ -424,23 +424,6 @@ describe('Duplicate Usecase', () => {
 
     expect(stats_users).toHaveLength(10);
   });
-  it(`duplicateUtilisateur : genere un id externe si nécessaire`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      external_stat_id: null,
-    });
-
-    // WHEN
-    await duplicateUsecase.duplicateUtilisateur(5);
-
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findMany();
-    const stats_users = await TestUtil.prisma_stats.utilisateurCopy.findMany();
-
-    expect(userDB[0].external_stat_id).not.toBeNull();
-    expect(userDB[0].external_stat_id.length).toBeGreaterThan(20);
-    expect(stats_users[0].user_id).toEqual(userDB[0].external_stat_id);
-  });
 
   it('duplicateKYC : ne copie pas la KYC si répondu il y a plus de 2 jours', async () => {
     // GIVEN
