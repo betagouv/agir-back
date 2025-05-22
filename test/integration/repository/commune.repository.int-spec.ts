@@ -155,7 +155,7 @@ describe('CommuneRepository', () => {
       );
 
     // THEN
-    expect(result).toEqual(['CA Haut - Bugey Agglomération']);
+    expect(result).toEqual(['CA Haut-Bugey Agglomération']);
   });
   it('findRaisonSocialeDeNatureJuridiqueByCodePostal : liste vide si pas de match CA', async () => {
     // WHEN
