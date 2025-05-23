@@ -1117,10 +1117,12 @@ describe('/bilan (API test)', () => {
       'C est vraiement pas bon': 'dfsgsdg',
     });
 
+    // NOTE: for now invalid situations are ignored, therefore, the default
+    // value (~8.9) is calculated.
     expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
-      }&bilan_tonnes=8`,
+      }&bilan_tonnes=8.9`,
     );
   });
 

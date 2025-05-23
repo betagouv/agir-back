@@ -157,7 +157,12 @@ export class NGCCalculator {
     const nbRules = Object.keys(rules).length;
     console.time(`Parsing ${nbRules} rules`);
     const engine = new Engine(rules, {
-      strict: { noOrphanRule: false },
+      strict: {
+        noOrphanRule: false,
+        // Ignore unknown rule/values instead of throwing an error.
+        // Needed until https://github.com/incubateur-ademe/nosgestesclimat/pull/2567 is published.
+        situation: false,
+      },
       logger: {
         log(_message: string) {},
         warn(_message: string) {},
