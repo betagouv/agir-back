@@ -189,7 +189,7 @@ async function bootstrap() {
       );
       await application
         .get(DuplicateBDDForStatsUsecase)
-        .duplicateUtilisateurNotifications();
+        .duplicateUtilisateurVistes();
       console.log(
         `STOP dump_utilisateur_visites_copy_for_stats after ${
           Date.now() - start_time
