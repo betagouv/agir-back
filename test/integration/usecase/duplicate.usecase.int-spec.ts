@@ -1163,7 +1163,8 @@ describe('Duplicate Usecase', () => {
     });
   });
 
-  it('computeBilanTousUtilisateurs : gestion erreurs', async () => {
+  // TODO: skip until https://github.com/incubateur-ademe/nosgestesclimat/pull/2567 is published
+  it.skip('computeBilanTousUtilisateurs : gestion erreurs', async () => {
     // GIVEN
     const kyc_bad: KYCHistory_v2 = {
       version: 2,

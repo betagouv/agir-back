@@ -10,6 +10,21 @@ describe('NGCCalculator', () => {
     expect(calculator).toBeDefined();
   });
 
+  // Needed until https://github.com/incubateur-ademe/nosgestesclimat/pull/2567 is published.
+  it('computeSingleEntry : bug with logement . type', () => {
+    //GIVEN
+    const situation = {
+      'logement . type': "'maison'",
+    };
+    const entry = 'bilan';
+
+    //WHEN
+    const response = calculator.computeSingleEntryValue(situation, entry);
+
+    //THEN
+    expect(response).toEqual(9339.435610669258);
+  });
+
   it('computeSingleEntry : compute ok single entry, empty situation', () => {
     //GIVEN
     const situation = {};
@@ -173,7 +188,9 @@ describe('NGCCalculator', () => {
       });
     });
 
-    test('situation avec clé inconnue', () => {
+    // Skip this test as now unknown rules/values in the situation are simply
+    // ignored instead of throwing an errors.
+    test.skip('situation avec clé inconnue', () => {
       try {
         NGCCalculator.setSituationAvecMigration(engine.shallowCopy(), {
           // @ts-ignore : les clés sont volontairement incorrectes pour tester le comportement
