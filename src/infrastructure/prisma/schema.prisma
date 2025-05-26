@@ -338,7 +338,6 @@ model Article {
   exclude_codes_commune String[]  @default([])
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
-  tag_article           String?
   echelle               String?
   derniere_maj          DateTime? @db.Timestamptz(3)
   tags_a_inclure_v2     String[]  @default([])

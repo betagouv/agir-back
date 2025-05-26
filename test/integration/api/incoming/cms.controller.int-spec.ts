@@ -638,7 +638,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
-    expect(articles[0].tag_article).toEqual('composter');
     expect(articles[0].tags_a_exclure_v2).toEqual(['AA', 'BB']);
     expect(articles[0].tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);

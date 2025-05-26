@@ -675,9 +675,6 @@ export class CMSImportUsecase {
         entry.attributes.codes_departement,
       ),
       codes_region: CMSImportUsecase.split(entry.attributes.codes_region),
-      tag_article: entry.attributes.tag_article.data
-        ? entry.attributes.tag_article.data.attributes.code
-        : undefined,
       tags_a_exclure:
         entry.attributes.tag_v2_excluants &&
         entry.attributes.tag_v2_excluants.data.length > 0

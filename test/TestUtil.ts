@@ -858,7 +858,6 @@ export class TestUtil {
       codes_departement: [],
       codes_region: [],
       echelle: Echelle.National,
-      tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
       tags_a_exclure_v2: [],

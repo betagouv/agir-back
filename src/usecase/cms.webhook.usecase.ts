@@ -356,7 +356,6 @@ export class CMSWebhookUsecase {
       exclude_codes_commune: this.split(hook.entry.exclude_codes_commune),
       codes_departement: this.split(hook.entry.codes_departement),
       codes_region: this.split(hook.entry.codes_region),
-      tag_article: hook.entry.tag_article ? hook.entry.tag_article.code : null,
       tags_a_exclure: hook.entry.tag_v2_excluants
         ? hook.entry.tag_v2_excluants.map((elem) => elem.code)
         : [],

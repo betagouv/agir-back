@@ -24,7 +24,6 @@ export type ArticleFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
-  tag_article?: string;
   skip?: number;
   take?: number;
 };
@@ -81,7 +80,6 @@ export class ArticleRepository {
     const article_to_save: ArticleDB = {
       source: article_def.source,
       soustitre: article_def.soustitre,
-      tag_article: article_def.tag_article,
       partenaire_id: article_def.partenaire_id,
       tags_utilisateur: article_def.tags_utilisateur,
       thematique_principale: article_def.thematique_principale,
@@ -221,12 +219,6 @@ export class ArticleRepository {
       });
     }
 
-    if (filter.tag_article) {
-      main_filter.push({
-        tag_article: filter.tag_article,
-      });
-    }
-
     if (filter.thematiques) {
       main_filter.push({
         thematiques: {
@@ -277,7 +269,6 @@ export class ArticleRepository {
       codes_region: articleDB.codes_region,
       exclude_codes_commune: articleDB.exclude_codes_commune,
       include_codes_commune: articleDB.include_codes_commune,
-      tag_article: articleDB.tag_article,
       contenu: articleDB.contenu,
       sources: articleDB.sources as any,
       derniere_maj: articleDB.derniere_maj,
