@@ -42,7 +42,14 @@ export class ProfileRecommandationUtilisateur {
 
       if (content.isLocal()) {
         content.score += 10;
-        content.explicationScore.setLocal();
+        content.explicationScore.setLocal(10);
+      }
+
+      const tag_thematique =
+        Tag_v2[`appetence_thematique_${content.getThematique()}`];
+      if (this.set_tags_actifs.has(tag_thematique)) {
+        content.score += 10;
+        content.explicationScore.addInclusionTag(tag_thematique, 10);
       }
     }
 

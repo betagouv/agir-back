@@ -1861,4 +1861,49 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     expect(userDB.tag_ponderation_set.transport).toEqual(50);
   });
+
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC_preference - met à jour les tags appentence', async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_preference,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'La consommation', code: Thematique.consommation },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+        { label: 'Comment je bouge', code: Thematique.transport },
+      ],
+    });
+    await kycRepository.loadCache();
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_preference',
+    ).send([
+      { code: Thematique.consommation, selected: true },
+      { code: Thematique.logement, selected: false },
+      { code: Thematique.alimentation, selected: false },
+      { code: Thematique.transport, selected: true },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      'appetence_thematique_transport',
+      'appetence_thematique_consommation',
+    ]);
+  });
 });

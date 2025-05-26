@@ -3,6 +3,7 @@ import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
+import { Thematique } from '../thematique/thematique';
 import { ArticleDefinition } from './articleDefinition';
 import { QuizzDefinition } from './quizzDefinition';
 
@@ -33,6 +34,10 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     } else {
       this.tags_rubriques = [];
     }
+  }
+
+  public getThematique(): Thematique {
+    return this.thematique_principale;
   }
 
   public getTags(): Tag[] {

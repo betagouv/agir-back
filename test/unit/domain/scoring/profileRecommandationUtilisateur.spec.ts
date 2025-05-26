@@ -2,6 +2,7 @@ import { ExplicationScore } from '../../../../src/domain/scoring/system_v2/Expli
 import { ProfileRecommandationUtilisateur } from '../../../../src/domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../../../src/domain/scoring/system_v2/Tag_v2';
 import { TaggedContent } from '../../../../src/domain/scoring/taggedContent';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 describe('ProfileRecommandationUtilisateur', () => {
   const OLD_ENV = process.env;
@@ -21,6 +22,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -49,6 +51,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [Tag_v2.a_une_voiture],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -77,6 +80,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [Tag_v2.a_une_voiture],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -105,6 +109,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [Tag_v2.a_une_voiture],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -136,6 +141,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [Tag_v2.a_une_voiture],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -159,6 +165,41 @@ describe('ProfileRecommandationUtilisateur', () => {
       ],
     });
   });
+
+  it('trierEtFiltrerRecommandations : inclusion de thematique, augmentation de score', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.appetence_thematique_alimentation],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(result).toHaveLength(1);
+    expect(result[0].score).toEqual(10);
+    expect(result[0].explicationScore).toEqual({
+      liste_explications: [
+        {
+          inclusion_tag: 'appetence_thematique_alimentation',
+          valeur: 10,
+        },
+      ],
+    });
+  });
+
   it('trierEtFiltrerRecommandations : double match => score supérieur', () => {
     // GIVEN
     const content: TaggedContent = {
@@ -172,6 +213,7 @@ describe('ProfileRecommandationUtilisateur', () => {
         Tag_v2.mange_de_la_viande,
       ],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -208,6 +250,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => true,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -232,6 +275,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -242,6 +286,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [Tag_v2.a_une_voiture],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 
@@ -252,6 +297,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       isLocal: () => false,
       getInclusionTags: () => [Tag_v2.prend_l_avion, Tag_v2.mange_de_la_viande],
       getExclusionTags: () => [],
+      getThematique: () => Thematique.alimentation,
       explicationScore: new ExplicationScore(),
     };
 

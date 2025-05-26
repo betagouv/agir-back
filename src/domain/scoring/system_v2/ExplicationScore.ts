@@ -25,9 +25,10 @@ export class ExplicationScore {
       exclusion_tag: tag,
     });
   }
-  public setLocal() {
+  public setLocal(valeur: number) {
     this.liste_explications.push({
       est_local: true,
+      valeur: valeur,
     });
   }
 }

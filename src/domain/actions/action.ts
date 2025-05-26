@@ -10,6 +10,7 @@ import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { ActionUtilisateur } from '../thematique/history/thematiqueHistory';
+import { Thematique } from '../thematique/thematique';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { ActionDefinition } from './actionDefinition';
 import { TypeAction } from './typeAction';
@@ -57,6 +58,10 @@ export class Action extends ActionDefinition implements TaggedContent {
     ) {
       this.enchainement_id = action_def.getTypeCodeAsString();
     }
+  }
+
+  getThematique(): Thematique {
+    return this.thematique;
   }
   getTags(): Tag[] {
     return [];

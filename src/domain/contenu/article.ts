@@ -4,6 +4,7 @@ import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
+import { Thematique } from '../thematique/thematique';
 import { ArticleDefinition } from './articleDefinition';
 
 export class Article extends ArticleDefinition implements TaggedContent {
@@ -34,6 +35,10 @@ export class Article extends ArticleDefinition implements TaggedContent {
     } else {
       this.tags_rubriques = [];
     }
+  }
+
+  public getThematique(): Thematique {
+    return this.thematique_principale;
   }
 
   public getTags(): Tag[] {
