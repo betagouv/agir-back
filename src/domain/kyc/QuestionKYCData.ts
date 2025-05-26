@@ -132,8 +132,8 @@ export class QuestionKYCData implements TaggedContent {
       : [];
   }
 
-  public getThematique(): Thematique {
-    return this.thematique;
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
   }
 
   public getTags(): Tag[] {

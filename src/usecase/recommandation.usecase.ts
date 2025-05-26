@@ -8,6 +8,7 @@ import { Article } from '../domain/contenu/article';
 import { Quizz } from '../domain/contenu/quizz';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { ProfileRecommandationUtilisateur } from '../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CLE_PERSO,
@@ -43,7 +44,11 @@ export class RecommandationUsecase {
       ContentType.kyc,
     ],
   ): Promise<Recommandation[]> {
-    let scope = [Scope.history_article_quizz_aides, Scope.logement];
+    let scope = [
+      Scope.history_article_quizz_aides,
+      Scope.logement,
+      Scope.recommandation,
+    ];
     if (types.length === 0) {
       types = [ContentType.article, ContentType.quizz, ContentType.kyc];
     }
@@ -80,7 +85,7 @@ export class RecommandationUsecase {
     content.push(...quizzes);
     content.push(...kycs);
 
-    PonderationApplicativeManager.sortContent(content);
+    ProfileRecommandationUtilisateur.sortScoredContent(content);
 
     content = content.slice(0, nombre);
 
@@ -149,13 +154,10 @@ export class RecommandationUsecase {
 
     const articles_defs = await this.articleRepository.searchArticles(filtre);
 
-    const articles = articles_defs.map(
-      (article_def) => new Article(article_def),
-    );
-    PonderationApplicativeManager.increaseScoreContentOfList(
-      articles,
-      utilisateur.tag_ponderation_set,
-    );
+    let articles = articles_defs.map((article_def) => new Article(article_def));
+
+    articles =
+      utilisateur.recommandation.trierEtFiltrerRecommandations(articles);
 
     return articles.map((e) => ({
       ...e,

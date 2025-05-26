@@ -29,7 +29,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
-      getThematique: () => Thematique.alimentation,
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -48,7 +48,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => true,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
-      getThematique: () => Thematique.alimentation,
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -68,7 +68,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
-      getThematique: () => Thematique.alimentation,
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -88,7 +88,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
-      getThematique: () => Thematique.alimentation,
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -110,7 +110,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
-      getThematique: () => Thematique.alimentation,
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 

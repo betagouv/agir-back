@@ -6,7 +6,6 @@ import { Quizz } from '../contenu/quizz';
 import { FAQDefinition } from '../faq/FAQDefinition';
 import { QuestionKYC } from '../kyc/questionKYC';
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
-import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { ActionUtilisateur } from '../thematique/history/thematiqueHistory';
@@ -60,17 +59,17 @@ export class Action extends ActionDefinition implements TaggedContent {
     }
   }
 
-  getThematique(): Thematique {
-    return this.thematique;
+  getThematiques(): Thematique[] {
+    return [this.thematique];
   }
   getTags(): Tag[] {
     return [];
   }
-  getInclusionTags(): Tag_v2[] {
-    return this.tags_a_inclure.map((t) => Tag_v2[t]);
+  getInclusionTags(): string[] {
+    return this.tags_a_inclure;
   }
-  getExclusionTags(): Tag_v2[] {
-    return this.tags_a_exclure.map((t) => Tag_v2[t]);
+  getExclusionTags(): string[] {
+    return this.tags_a_exclure;
   }
   getDistinctText(): string {
     return this.cms_id;

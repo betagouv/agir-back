@@ -1,6 +1,5 @@
 import { ArticleHistory } from '../history/articleHistory';
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
-import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
@@ -37,8 +36,8 @@ export class Article extends ArticleDefinition implements TaggedContent {
     }
   }
 
-  public getThematique(): Thematique {
-    return this.thematique_principale;
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
   }
 
   public getTags(): Tag[] {
@@ -48,11 +47,11 @@ export class Article extends ArticleDefinition implements TaggedContent {
       this.tags_rubriques,
     );
   }
-  public getInclusionTags(): Tag_v2[] {
-    return [];
+  public getInclusionTags(): string[] {
+    return this.tags_a_inclure;
   }
-  public getExclusionTags(): Tag_v2[] {
-    return [];
+  public getExclusionTags(): string[] {
+    return this.tags_a_exclure;
   }
 
   public getDistinctText(): string {

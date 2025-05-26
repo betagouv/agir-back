@@ -19,6 +19,7 @@ import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { Thematique } from '../domain/thematique/thematique';
@@ -32,6 +33,7 @@ import { BlockTextRepository } from '../infrastructure/repository/blockText.repo
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
 
@@ -43,10 +45,11 @@ const FULL_POPULATE_URL =
   '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
-  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants';
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants&populate[45]=tag_v2_incluants';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
+  'tag-v2s' = 'tag-v2s',
   quizzes = 'quizzes',
   aides = 'aides',
   kycs = 'kycs',
@@ -76,7 +79,36 @@ export class CMSImportUsecase {
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
     private aidesUsecase: AidesUsecase,
+    private tagRepository: TagRepository,
   ) {}
+
+  async loadTagsV2FromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_tags: TagDefinition[] = [];
+    const CMS_TAG_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['tag-v2s'],
+    );
+
+    for (let index = 0; index < CMS_TAG_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_TAG_DATA[index];
+      let tag_def: TagDefinition;
+      try {
+        tag_def = this.buildTagFromCMSPopulateData(element);
+        liste_tags.push(tag_def);
+        loading_result.push(`loaded tag def : ${tag_def.cms_id}`);
+      } catch (error) {
+        console.log(error);
+        loading_result.push(
+          `Could not load tag def ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const tag_def of liste_tags) {
+      await this.tagRepository.upsert(tag_def);
+    }
+    return loading_result;
+  }
 
   async loadArticlesFromCMS(): Promise<string[]> {
     const loading_result: string[] = [];
@@ -690,6 +722,18 @@ export class CMSImportUsecase {
             )
           : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
+    };
+  }
+
+  private buildTagFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): TagDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      tag: entry.attributes.code,
+      boost: entry.attributes.boost_absolu,
+      ponderation: entry.attributes.ponderation,
+      description: entry.attributes.description,
     };
   }
 

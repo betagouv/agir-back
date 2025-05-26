@@ -10,6 +10,7 @@ import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -32,6 +33,7 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
 
@@ -48,6 +50,7 @@ export class CMSWebhookUsecase {
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
+    private tagRepository: TagRepository,
     private aidesUsecase: AidesUsecase,
   ) {}
 
@@ -145,6 +148,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateBlockTexte(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel['tag-v2']) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteTag(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteTag(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateTag(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateTag(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.conformite) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -180,6 +195,9 @@ export class CMSWebhookUsecase {
   async deleteBlockTexte(cmsWebhookAPI: CMSWebhookAPI) {
     await this.blockTextRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+  async deleteTag(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.tagRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -206,6 +224,13 @@ export class CMSWebhookUsecase {
 
     await this.blockTextRepository.upsert(
       this.buildBlockTexteFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+  async createOrUpdateTag(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.tagRepository.upsert(
+      this.buildTagFromCMSData(cmsWebhookAPI.entry),
     );
   }
   async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
@@ -554,6 +579,16 @@ export class CMSWebhookUsecase {
       code: entry.code,
       titre: entry.titre,
       texte: entry.texte,
+    };
+  }
+
+  private buildTagFromCMSData(entry: CMSWebhookEntryAPI): TagDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      tag: entry.code,
+      description: entry.description,
+      boost: entry.boost_absolu,
+      ponderation: entry.ponderation,
     };
   }
 
