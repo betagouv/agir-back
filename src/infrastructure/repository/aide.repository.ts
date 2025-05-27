@@ -235,16 +235,8 @@ export class AideRepository {
     if (filter.commune_pour_partenaire) {
       main_filter.push({
         OR: [
-          { codes_departement: { isEmpty: false } },
-          { codes_region: { isEmpty: false } },
-          {
-            AND: [
-              { codes_departement: { isEmpty: true } },
-              { codes_region: { isEmpty: true } },
-              { codes_postaux: { isEmpty: true } },
-            ],
-          },
           { codes_commune_from_partenaire: { has: filter.code_commune } },
+          { codes_commune_from_partenaire: { isEmpty: true } },
         ],
       });
     }
