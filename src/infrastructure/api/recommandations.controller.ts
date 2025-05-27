@@ -15,6 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { RecommandationUsecase } from '../../../src/usecase/recommandation.usecase';
 import { ContentType } from '../../domain/contenu/contentType';
+import { Thematique } from '../../domain/thematique/thematique';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { RecommandationAPI } from './types/contenu/recommandationAPI';
@@ -63,6 +64,13 @@ export class RecommandationsController extends GenericControler {
     required: false,
     description: `les types attendu, kyc/article/quizz par défaut, les autres sont ignorés. Plusieurs types possible avec la notation ?type=XXX&type=YYY`,
   })
+  @ApiQuery({
+    name: 'thematique',
+    enum: Thematique,
+    enumName: 'thematique',
+    required: false,
+    description: `filtrage par thematiques`,
+  })
   @ApiOkResponse({ type: [RecommandationAPI] })
   @UseGuards(AuthGuard)
   @ApiOperation({
@@ -71,11 +79,16 @@ export class RecommandationsController extends GenericControler {
   async getUserRecommandationV3(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Query('nombre_max') nombre_max?: number,
+    @Query('nombre_max') nombre_max: number,
+    @Query('thematique') thematique: string,
     @Query('type') type?: string[] | String,
   ): Promise<RecommandationAPI[]> {
     this.checkCallerId(req, utilisateurId);
 
+    let them;
+    if (thematique) {
+      them = this.castThematiqueOrException(thematique);
+    }
     const liste_types_input = this.getStringListFromStringArrayAPIInput(type);
 
     const liste_types: ContentType[] = [];
@@ -86,7 +99,7 @@ export class RecommandationsController extends GenericControler {
 
     const list = await this.recommandationUsecase.listRecommandationsV2(
       utilisateurId,
-      undefined,
+      them,
       nombre_max,
       liste_types,
     );
