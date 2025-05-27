@@ -360,6 +360,16 @@ model Partenaire {
   updated_at               DateTime @updatedAt @db.Timestamptz(3)
 }
 
+model ClassificationCommune {
+  code_commune   String   @id
+  classification String?
+  CATEAAV2020    Int?
+  TAAV2017       Int?
+  est_drom       Boolean
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
+}
+
 model AideExpirationWarning {
   aide_cms_id     String   @id
   last_month      Boolean  @default(false)
