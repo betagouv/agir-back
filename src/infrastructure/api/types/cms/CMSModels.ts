@@ -1,6 +1,7 @@
 export enum CMSModel {
   quizz = 'quizz',
   article = 'article',
+  'tag-v2' = 'tag-v2',
   aide = 'aide',
   faq = 'faq',
   text = 'text',

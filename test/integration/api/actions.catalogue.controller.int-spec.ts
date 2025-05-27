@@ -104,6 +104,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       titre: '**The titre**',
       type: 'classique',
       points: 100,
+      explications_recommandation: [],
     });
 
     expect(response.body.nombre_resultats).toEqual(1);

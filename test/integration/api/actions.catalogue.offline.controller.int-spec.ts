@@ -288,6 +288,7 @@ describe('Actions Catalogue Offline (API test)', () => {
       titre: '**The titre**',
       type: 'classique',
       points: 100,
+      explications_recommandation: [],
     });
   });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {

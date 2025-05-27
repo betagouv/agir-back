@@ -774,6 +774,96 @@ describe('Admin (API test)', () => {
   });
   */
 
+  it('POST /admin/migrate_users migration V18 OK - recalcul des tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC_preference,
+          id_cms: 1,
+          question: `Quel est votre sujet principal d'intéret ????`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_complexe: [
+            {
+              label: 'Le logement',
+              code: Thematique.logement,
+              selected: true,
+            },
+            {
+              label: 'Bouff',
+              code: Thematique.alimentation,
+              selected: false,
+            },
+            {
+              label: 'transport',
+              code: Thematique.transport,
+              selected: true,
+            },
+            {
+              label: 'conso',
+              code: Thematique.consommation,
+              selected: false,
+            },
+          ],
+          reponse_simple: undefined,
+        },
+      ],
+    };
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_preference,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'La consommation', code: Thematique.consommation },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+        { label: 'Comment je bouge', code: Thematique.transport },
+      ],
+    });
+    await kycRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+      version: 17,
+      migration_enabled: true,
+    });
+    App.USER_CURRENT_VERSION = 18;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 18,
+            ok: true,
+            info: 'updated reco tags',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      'appetence_thematique_transport',
+      'appetence_thematique_logement',
+    ]);
+    expect(userDB.version).toEqual(18);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

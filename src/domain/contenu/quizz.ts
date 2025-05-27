@@ -1,8 +1,8 @@
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
-import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
+import { Thematique } from '../thematique/thematique';
 import { ArticleDefinition } from './articleDefinition';
 import { QuizzDefinition } from './quizzDefinition';
 
@@ -35,6 +35,10 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     }
   }
 
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
+  }
+
   public getTags(): Tag[] {
     return [].concat(
       this.thematiques,
@@ -43,10 +47,10 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     );
   }
 
-  public getInclusionTags(): Tag_v2[] {
+  public getInclusionTags(): string[] {
     return [];
   }
-  public getExclusionTags(): Tag_v2[] {
+  public getExclusionTags(): string[] {
     return [];
   }
 

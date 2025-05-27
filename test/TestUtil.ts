@@ -11,6 +11,7 @@ import {
   Partenaire,
   RisquesNaturelsCommunes,
   SituationNGC,
+  Tag as TagDB,
   Thematique as ThematiqueDB,
 } from '.prisma/client';
 import { INestApplication } from '@nestjs/common';
@@ -50,6 +51,7 @@ import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
@@ -74,6 +76,7 @@ import { PartenaireRepository } from '../src/infrastructure/repository/partenair
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from '../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
+import { TagRepository } from '../src/infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
@@ -83,6 +86,7 @@ export enum DB {
   aide = 'aide',
   fAQ = 'fAQ',
   blockText = 'blockText',
+  tag = 'tag',
   conformite = 'conformite',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
@@ -116,6 +120,7 @@ export class TestUtil {
     fAQ: TestUtil.fAQData,
     compteurActions: TestUtil.compteurActionsData,
     blockText: TestUtil.blockTextData,
+    tag: TestUtil.tagData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     mission: TestUtil.missionData,
@@ -226,6 +231,7 @@ export class TestUtil {
     await this.prisma.blockText.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.risquesNaturelsCommunes.deleteMany();
+    await this.prisma.tag.deleteMany();
 
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
@@ -251,6 +257,7 @@ export class TestUtil {
     AideRepository.resetCache();
     QuizzRepository.resetCache();
     RisquesNaturelsCommunesRepository.resetCache();
+    TagRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -755,6 +762,18 @@ export class TestUtil {
       ...override,
     };
   }
+  static tagData(override?: Partial<TagDB>): TagDB {
+    return {
+      id_cms: '123',
+      boost: undefined,
+      ponderation: undefined,
+      description: 'desc',
+      tag: Tag_v2.a_un_jardin,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
   static risquesNaturelsCommunesData(
     override?: Partial<RisquesNaturelsCommunes>,
   ): RisquesNaturelsCommunes {
@@ -858,7 +877,6 @@ export class TestUtil {
       codes_departement: [],
       codes_region: [],
       echelle: Echelle.National,
-      tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
       tags_a_exclure_v2: [],

@@ -1,6 +1,10 @@
+import { TagRepository } from '../../../infrastructure/repository/tag.repository';
 import { ProfileRecommandationUtilisateur_v0 } from '../../object_store/recommandation/ProfileRecommandationUtilisateur_v0';
+import { ScoredContent } from '../scoredContent';
 import { TaggedContent } from '../taggedContent';
 import { Tag_v2 } from './Tag_v2';
+
+const BASE_TAG_VALUE = 10;
 
 export class ProfileRecommandationUtilisateur {
   private set_tags_actifs: Set<Tag_v2>;
@@ -18,6 +22,9 @@ export class ProfileRecommandationUtilisateur {
   ): T[] {
     const result: T[] = [];
 
+    // INIT
+    content_list.forEach((c) => (c.score = 0));
+
     const CURRENT_TAGS = Array.from(this.set_tags_actifs.values());
     for (const content of content_list) {
       if (this.hasIntersect(content.getExclusionTags(), CURRENT_TAGS)) {
@@ -34,16 +41,27 @@ export class ProfileRecommandationUtilisateur {
     }
 
     for (const content of result) {
-      const match_tags = this.getOccurenceTags(content);
-      for (const tag of match_tags) {
-        content.score += 10;
-        content.explicationScore.addInclusionTag(tag, 10);
+      const matching_tags = this.getOccurenceTags(content);
+      for (const tag of matching_tags) {
+        this.valoriseTag(tag, content);
       }
 
       if (content.isLocal()) {
-        content.score += 10;
-        content.explicationScore.setLocal();
+        this.valoriseLocal(content);
       }
+
+      for (const thematique of content.getThematiques()) {
+        const tag_thematique = Tag_v2[`appetence_thematique_${thematique}`];
+        if (this.set_tags_actifs.has(tag_thematique)) {
+          this.valoriseTag(tag_thematique, content);
+        }
+      }
+
+      for (const tag of content.getInclusionTags()) {
+        this.valoriseBoost(tag, content);
+      }
+
+      content.score += this.hash(content.getDistinctText());
     }
 
     result.sort((a, b) => b.score - a.score);
@@ -74,9 +92,42 @@ export class ProfileRecommandationUtilisateur {
     return array_1.filter((v) => array_2.indexOf(v) !== -1);
   }
 
-  private getOccurenceTags(c: TaggedContent): Tag_v2[] {
+  private getOccurenceTags(c: TaggedContent): string[] {
     const liste_tags = c.getInclusionTags();
 
-    return liste_tags.filter((t) => this.set_tags_actifs.has(t));
+    return liste_tags.filter((t) => this.set_tags_actifs.has(Tag_v2[t]));
+  }
+
+  public static sortScoredContent(content_liste: ScoredContent[]) {
+    content_liste.sort((a, b) => b.score - a.score);
+  }
+
+  private hash(s: string): number {
+    for (var i = 0, h = 0xdeadbeef; i < s.length; i++)
+      h = Math.imul(h ^ s.charCodeAt(i), 2654435761);
+    const hash = (h ^ (h >>> 16)) >>> 0;
+    return hash / 100000000000;
+  }
+
+  private valoriseTag(tag: string, content: TaggedContent) {
+    const tag_def = TagRepository.getTagDefinition(tag);
+    let ponderation = 1;
+    if (tag_def && tag_def.ponderation) {
+      ponderation = tag_def.ponderation;
+    }
+    const increase = BASE_TAG_VALUE * ponderation;
+    content.score += increase;
+    content.explicationScore.addInclusionTag(tag, increase, ponderation);
+  }
+  private valoriseLocal(content: TaggedContent) {
+    content.score += BASE_TAG_VALUE;
+    content.explicationScore.setLocal(BASE_TAG_VALUE);
+  }
+  private valoriseBoost(tag: string, content: TaggedContent) {
+    const tag_def = TagRepository.getTagDefinition(tag);
+    if (tag_def && tag_def.boost) {
+      content.score += tag_def.boost;
+      content.explicationScore.setBoost(tag, tag_def.boost);
+    }
   }
 }

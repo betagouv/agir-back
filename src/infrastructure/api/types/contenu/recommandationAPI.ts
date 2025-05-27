@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Recommandation } from '../../../../../src/domain/contenu/recommandation';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import { Thematique } from '../../../../domain/thematique/thematique';
+import { ExplicationRecoAPI } from './explicationRecoAPI';
 
 export class RecommandationAPI {
   @ApiProperty() type: string;
@@ -14,8 +15,11 @@ export class RecommandationAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() points: number;
   @ApiProperty() score: number;
+  @ApiProperty() is_local: boolean;
   @ApiProperty() content_id: string;
   @ApiProperty() jours_restants: number;
+  @ApiProperty({ type: [ExplicationRecoAPI] })
+  explications_recommandation: ExplicationRecoAPI[];
 
   public static mapToAPI(recommandation: Recommandation): RecommandationAPI {
     return {
@@ -35,6 +39,12 @@ export class RecommandationAPI {
       points: recommandation.points,
       score: recommandation.score,
       jours_restants: recommandation.jours_restants,
+      explications_recommandation: recommandation.explicationScore
+        ? recommandation.explicationScore.liste_explications.map((e) =>
+            ExplicationRecoAPI.mapToApi(e),
+          )
+        : [],
+      is_local: recommandation.isLocal,
     };
   }
 }

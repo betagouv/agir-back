@@ -477,6 +477,7 @@ describe('Thematique (API test)', () => {
       thematique: 'alimentation',
       titre: '**The titre**',
       type: 'classique',
+      explications_recommandation: [],
     });
   });
 
@@ -644,9 +645,9 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
     ).toEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
       { type: TypeAction.classique, code: '3' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '1' },
     ]);
   });
   it(`GET /utilisateurs/id/thematiques/alimentation - 3 actions si que 3 actions en base`, async () => {
@@ -701,9 +702,9 @@ describe('Thematique (API test)', () => {
     expect(
       user.thematique_history.getActionsProposees(Thematique.alimentation),
     ).toEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
       { type: TypeAction.classique, code: '3' },
+      { type: TypeAction.classique, code: '2' },
+      { type: TypeAction.classique, code: '1' },
     ]);
   });
 
@@ -871,7 +872,7 @@ describe('Thematique (API test)', () => {
     ).toStrictEqual([
       { type: TypeAction.classique, code: '1' },
       { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '7' },
+      { type: TypeAction.classique, code: '8' },
       { type: TypeAction.classique, code: '4' },
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
@@ -1257,7 +1258,7 @@ describe('Thematique (API test)', () => {
     expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
     expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
     expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
-    expect(response.body.liste_actions_recommandees[5].code).toEqual('7');
+    expect(response.body.liste_actions_recommandees[5].code).toEqual('8');
 
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
@@ -1270,7 +1271,7 @@ describe('Thematique (API test)', () => {
       { type: TypeAction.classique, code: '4' },
       { type: TypeAction.classique, code: '5' },
       { type: TypeAction.classique, code: '6' },
-      { type: TypeAction.classique, code: '7' },
+      { type: TypeAction.classique, code: '8' },
     ]);
   });
 

@@ -140,6 +140,8 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() sousTitre: string;
   @ApiProperty() contenu: string;
   @ApiProperty() description: string;
+  @ApiProperty() boost_absolu: number;
+  @ApiProperty() ponderation: number;
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique_gamification: CMSThematiqueAPI;
 

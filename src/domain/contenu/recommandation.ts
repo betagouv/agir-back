@@ -14,5 +14,6 @@ export type Recommandation = {
   jours_restants?: number;
   soustitre?: string;
   duree?: string;
+  isLocal: boolean;
   explicationScore: ExplicationScore;
 };

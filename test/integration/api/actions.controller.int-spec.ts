@@ -11,7 +11,9 @@ import {
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
@@ -22,6 +24,7 @@ import { CompteurActionsRepository } from '../../../src/infrastructure/repositor
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
+import { TagRepository } from '../../../src/infrastructure/repository/tag.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -56,6 +59,7 @@ describe('Actions (API test)', () => {
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const tagRepository = new TagRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -214,7 +218,52 @@ describe('Actions (API test)', () => {
           url: 'haha',
         },
       ],
+      explications_recommandation: [],
     });
+  });
+
+  it(`GET /utilisateurs/id/actions/id - explication reco`, async () => {
+    // GIVEN
+    const recommandation: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      recommandation: recommandation as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      label_compteur: '{NBR_ACTIONS} haha',
+      besoins: ['composter'],
+      pourquoi: 'haha {block_123}',
+      sources: [{ url: 'haha', label: 'hoho' }],
+      articles_ids: ['1'],
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+    await tagRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body.explications_recommandation).toEqual([
+      {
+        inclusion_tag: 'a_un_jardin',
+        ponderation: 1,
+        valeur: 10,
+      },
+    ]);
   });
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {

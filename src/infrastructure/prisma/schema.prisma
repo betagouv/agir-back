@@ -338,7 +338,6 @@ model Article {
   exclude_codes_commune String[]  @default([])
   codes_departement     String[]  @default([])
   codes_region          String[]  @default([])
-  tag_article           String?
   echelle               String?
   derniere_maj          DateTime? @db.Timestamptz(3)
   tags_a_inclure_v2     String[]  @default([])
@@ -359,6 +358,16 @@ model Partenaire {
   liste_communes_calculees String[] @default([])
   created_at               DateTime @default(now()) @db.Timestamptz(3)
   updated_at               DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model ClassificationCommune {
+  code_commune   String   @id
+  classification String?
+  CATEAAV2020    Int?
+  TAAV2017       Int?
+  est_drom       Boolean
+  created_at     DateTime @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model AideExpirationWarning {
@@ -435,6 +444,16 @@ model BlockText {
   texte      String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model Tag {
+  id_cms      String   @id
+  tag         String?  @unique
+  description String?
+  ponderation Decimal?
+  boost       Decimal?
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Mission {

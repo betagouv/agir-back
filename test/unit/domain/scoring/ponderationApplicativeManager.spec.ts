@@ -6,6 +6,7 @@ import { ExplicationScore } from '../../../../src/domain/scoring/system_v2/Expli
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { TaggedContent } from '../../../../src/domain/scoring/taggedContent';
 import { TagRubrique } from '../../../../src/domain/scoring/tagRubrique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 describe('PonderationApplicativeManager', () => {
   const OLD_ENV = process.env;
@@ -28,6 +29,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -46,6 +48,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => true,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -65,6 +68,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -84,6 +88,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -105,6 +110,7 @@ describe('PonderationApplicativeManager', () => {
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 

@@ -95,6 +95,7 @@ import { PresDeChezNousRepository } from './infrastructure/repository/services_r
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
 import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
+import { TagRepository } from './infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { TokenRepository } from './infrastructure/repository/token.repository';
@@ -293,6 +294,7 @@ function getControllers(): any[] {
     MaifAPIClient,
     RisquesNaturelsCommunesRepository,
     RisquesUsecase,
+    TagRepository,
   ],
 })
 export class AppModule {}
