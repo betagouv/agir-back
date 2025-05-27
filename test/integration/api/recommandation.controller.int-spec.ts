@@ -339,6 +339,31 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].content_id).toEqual('2');
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
+    expect(response.body[0].explications_recommandation).toEqual([
+      {
+        est_local: true,
+        valeur: 10,
+      },
+      {
+        est_boost: true,
+        inclusion_tag: 't2',
+        valeur: 10,
+      },
+    ]);
+    expect(response.body[1].explications_recommandation).toEqual([
+      {
+        est_boost: true,
+        inclusion_tag: 't3',
+        valeur: 15,
+      },
+    ]);
+    expect(response.body[2].explications_recommandation).toEqual([
+      {
+        est_boost: true,
+        inclusion_tag: 't1',
+        valeur: 5,
+      },
+    ]);
   });
 
   it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {

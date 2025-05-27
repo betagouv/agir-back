@@ -1,7 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommandation } from '../../../../../src/domain/contenu/recommandation';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
+import { Explication } from '../../../../domain/scoring/system_v2/ExplicationScore';
 import { Thematique } from '../../../../domain/thematique/thematique';
+
+export class ExplicationRecoAPI {
+  @ApiProperty() inclusion_tag?: string;
+  @ApiProperty() exclusion_tag?: string;
+  @ApiProperty() valeur?: number;
+  @ApiProperty() ponderation?: number;
+  @ApiProperty() est_local?: boolean;
+  @ApiProperty() est_boost?: boolean;
+
+  static mapToApi(exp: Explication): ExplicationRecoAPI {
+    return {
+      est_boost: exp.est_boost,
+      est_local: exp.est_local,
+      exclusion_tag: exp.exclusion_tag,
+      inclusion_tag: exp.inclusion_tag,
+      ponderation: exp.ponderation,
+      valeur: exp.valeur,
+    };
+  }
+}
 
 export class RecommandationAPI {
   @ApiProperty() type: string;
@@ -16,6 +37,8 @@ export class RecommandationAPI {
   @ApiProperty() score: number;
   @ApiProperty() content_id: string;
   @ApiProperty() jours_restants: number;
+  @ApiProperty({ type: [ExplicationRecoAPI] })
+  explications_recommandation: ExplicationRecoAPI[];
 
   public static mapToAPI(recommandation: Recommandation): RecommandationAPI {
     return {
@@ -35,6 +58,11 @@ export class RecommandationAPI {
       points: recommandation.points,
       score: recommandation.score,
       jours_restants: recommandation.jours_restants,
+      explications_recommandation: recommandation.explicationScore
+        ? recommandation.explicationScore.liste_explications.map((e) =>
+            ExplicationRecoAPI.mapToApi(e),
+          )
+        : [],
     };
   }
 }
