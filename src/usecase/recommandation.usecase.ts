@@ -123,6 +123,7 @@ export class RecommandationUsecase {
       titre: e.question,
       type: ContentType.kyc,
       explicationScore: undefined,
+      isLocal: false,
     }));
   }
 
@@ -162,6 +163,7 @@ export class RecommandationUsecase {
     return articles.map((e) => ({
       ...e,
       type: ContentType.article,
+      isLocal: e.isLocal(),
     }));
   }
 
@@ -196,6 +198,7 @@ export class RecommandationUsecase {
     return quizzes.map((e) => ({
       ...e,
       type: ContentType.quizz,
+      isLocal: e.isLocal(),
     }));
   }
 }

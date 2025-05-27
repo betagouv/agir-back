@@ -15,6 +15,7 @@ export class RecommandationAPI {
   @ApiProperty() image_url: string;
   @ApiProperty() points: number;
   @ApiProperty() score: number;
+  @ApiProperty() is_local: boolean;
   @ApiProperty() content_id: string;
   @ApiProperty() jours_restants: number;
   @ApiProperty({ type: [ExplicationRecoAPI] })
@@ -43,6 +44,7 @@ export class RecommandationAPI {
             ExplicationRecoAPI.mapToApi(e),
           )
         : [],
+      is_local: recommandation.isLocal,
     };
   }
 }

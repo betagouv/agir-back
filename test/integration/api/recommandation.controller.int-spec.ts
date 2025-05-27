@@ -337,6 +337,8 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(3);
     expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[0].is_local).toEqual(true);
+    expect(response.body[1].is_local).toEqual(false);
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
     expect(response.body[0].explications_recommandation).toEqual([
