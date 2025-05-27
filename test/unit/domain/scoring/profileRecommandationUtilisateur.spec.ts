@@ -409,7 +409,6 @@ describe('ProfileRecommandationUtilisateur', () => {
     // THEN
 
     expect(Math.round(result[0].score)).toEqual(40);
-    console.log(content.explicationScore);
     expect(content.explicationScore).toEqual({
       liste_explications: [
         { inclusion_tag: 'a_un_jardin', valeur: 10, ponderation: 1 },

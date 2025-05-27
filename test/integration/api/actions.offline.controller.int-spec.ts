@@ -117,6 +117,7 @@ describe('Single Actions Offline (API test)', () => {
           url: 'haha',
         },
       ],
+      explications_recommandation: [],
     });
   });
 

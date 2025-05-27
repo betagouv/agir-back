@@ -440,7 +440,12 @@ export class ActionUsecase {
   ): Promise<Action> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.kyc, Scope.logement],
+      [
+        Scope.thematique_history,
+        Scope.kyc,
+        Scope.logement,
+        Scope.recommandation,
+      ],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -454,6 +459,8 @@ export class ActionUsecase {
     }
 
     const action = Action.newActionFromUser(action_def, utilisateur);
+
+    utilisateur.recommandation.trierEtFiltrerRecommandations([action]);
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
