@@ -3,6 +3,7 @@ import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
+import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
@@ -372,6 +373,35 @@ export class MigrationUsecase {
   }
     */
   private async migrate_18(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.kyc,
+      Scope.recommandation,
+    ]);
+
+    // DO SOMETHING
+    new KycToTags_v2(
+      utilisateur.kyc_history,
+      utilisateur.recommandation,
+    ).refreshTagState();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.recommandation],
+    );
+
+    return {
+      ok: true,
+      info: `updated reco tags`,
+    };
+  }
+  private async migrate_19(
     user_id: string,
     version: number,
     _this: MigrationUsecase,
