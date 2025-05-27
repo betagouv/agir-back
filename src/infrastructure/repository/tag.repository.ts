@@ -35,6 +35,10 @@ export class TagRepository {
     // FOR TEST ONLY
     TagRepository.catalogue = new Map();
   }
+  public static addToCache(tag: TagDefinition) {
+    // FOR TEST ONLY
+    TagRepository.catalogue.set(tag.tag, tag);
+  }
 
   public static getTagDefinition(tag: string): TagDefinition {
     return TagRepository.catalogue.get(tag);

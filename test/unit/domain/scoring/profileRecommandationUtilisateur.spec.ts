@@ -164,6 +164,7 @@ describe('ProfileRecommandationUtilisateur', () => {
         {
           inclusion_tag: 'a_une_voiture',
           valeur: 10,
+          ponderation: 1,
         },
       ],
     });
@@ -198,6 +199,7 @@ describe('ProfileRecommandationUtilisateur', () => {
         {
           inclusion_tag: 'appetence_thematique_alimentation',
           valeur: 10,
+          ponderation: 1,
         },
       ],
     });
@@ -236,10 +238,12 @@ describe('ProfileRecommandationUtilisateur', () => {
         {
           inclusion_tag: 'a_une_voiture',
           valeur: 10,
+          ponderation: 1,
         },
         {
           inclusion_tag: 'est_locataire',
           valeur: 10,
+          ponderation: 1,
         },
       ],
     });
@@ -268,6 +272,188 @@ describe('ProfileRecommandationUtilisateur', () => {
 
     expect(result).toHaveLength(1);
     expect(Math.round(result[0].score)).toEqual(10);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [{ est_local: true, valeur: 10 }],
+    });
+  });
+  it(`trierEtFiltrerRecommandations : le local se somme avec le reste`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => true,
+      getInclusionTags: () => [Tag_v2.a_un_jardin],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(Math.round(result[0].score)).toEqual(20);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        { inclusion_tag: 'a_un_jardin', valeur: 10, ponderation: 1 },
+        { est_local: true, valeur: 10 },
+      ],
+    });
+  });
+  it(`trierEtFiltrerRecommandations : appentence XXX s'applique de manière implicite sur les tematiques`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.appetence_thematique_alimentation],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(Math.round(result[0].score)).toEqual(10);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        {
+          inclusion_tag: 'appetence_thematique_alimentation',
+          valeur: 10,
+          ponderation: 1,
+        },
+      ],
+    });
+  });
+  it(`trierEtFiltrerRecommandations : boost via referentiel de tags`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.a_un_jardin],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    TagRepository.resetCache();
+    TagRepository.addToCache({
+      cms_id: '123',
+      boost: 30,
+      description: 'yo',
+      ponderation: undefined,
+      tag: Tag_v2.a_un_jardin,
+    });
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(Math.round(result[0].score)).toEqual(30);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        { est_boost: true, inclusion_tag: 'a_un_jardin', valeur: 30 },
+      ],
+    });
+  });
+  it(`trierEtFiltrerRecommandations : boost s'ajoute au match`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.a_un_jardin],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    TagRepository.resetCache();
+    TagRepository.addToCache({
+      cms_id: '123',
+      boost: 30,
+      description: 'yo',
+      ponderation: undefined,
+      tag: Tag_v2.a_un_jardin,
+    });
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(Math.round(result[0].score)).toEqual(40);
+    console.log(content.explicationScore);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        { inclusion_tag: 'a_un_jardin', valeur: 10, ponderation: 1 },
+        { inclusion_tag: 'a_un_jardin', est_boost: true, valeur: 30 },
+      ],
+    });
+  });
+  it(`trierEtFiltrerRecommandations : ponderation via referentiel de tags`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.a_un_jardin],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    TagRepository.resetCache();
+    TagRepository.addToCache({
+      cms_id: '123',
+      boost: undefined,
+      description: 'yo',
+      ponderation: 5,
+      tag: Tag_v2.a_un_jardin,
+    });
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+
+    // THEN
+    expect(Math.round(result[0].score)).toEqual(50);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        { inclusion_tag: 'a_un_jardin', ponderation: 5, valeur: 50 },
+      ],
+    });
   });
   it('trierEtFiltrerRecommandations : trie le contenu', () => {
     // GIVEN
