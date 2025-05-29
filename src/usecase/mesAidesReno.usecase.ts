@@ -8,7 +8,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const MES_AIDES_RENO_IFRAME_SIMULATION_URL =
-  'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true';
+  "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis";
 
 @Injectable()
 export class MesAidesRenoUsecase {
