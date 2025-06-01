@@ -107,7 +107,7 @@ export class EmailTemplateRepository {
           originator = `&origin=${extra_data.originator}`;
         }
         return {
-          subject: `Lien d'accès à Jagis`,
+          subject: `Lien d'accès à J'agis`,
           body: this.email_magic_link({
             CODE: utilisateur.code,
             URL_CODE: `${extra_data.front_base_url}/authentification/validation-lien-magique?email=${utilisateur.email}&code=${utilisateur.code}${originator}`,
