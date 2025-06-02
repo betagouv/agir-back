@@ -127,8 +127,13 @@ export class MesAidesRenoUsecase {
           utilisateur.logement.code_postal,
           utilisateur.logement.commune,
         );
-      const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
-      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+      const commune =
+        this.communeRepository.getCommunByCodeINSEESansArrondissement(
+          code_insee,
+        );
+      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(
+        commune.code,
+      );
 
       if (commune) {
         situation[MesAidesRenoRuleNames.menageCommune] = `"${commune.code}"`;

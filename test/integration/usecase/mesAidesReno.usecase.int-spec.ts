@@ -337,5 +337,23 @@ describe('Mes Aides Réno', () => {
         "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&DPE.actuel=2*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*",
       );
     });
+
+    test('doit prendre en compte les communes avec arrondissements', async () => {
+      const logement = {
+        code_postal: '69006',
+        commune: 'LYON 06',
+      };
+      await TestUtil.create(DB.utilisateur, {
+        logement: logement as any,
+      });
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result.iframe_url).toBe(
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&m%C3%A9nage.personnes=1&m%C3%A9nage.revenu=10000&m%C3%A9nage.commune=%2269123%22&m%C3%A9nage.code+r%C3%A9gion=%2284%22&m%C3%A9nage.code+d%C3%A9partement=%2269%22&m%C3%A9nage.EPCI=%22200046977%22&logement.commune=%2269123%22&logement.commune+d%C3%A9partement=%2269%22&logement.commune+r%C3%A9gion=%2284%22&logement.commune.nom=%22Lyon%22&logement.code+postal=%2269006%22",
+      );
+      expect(result.iframe_url_deja_faite).toBe(
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&m%C3%A9nage.personnes=1*&m%C3%A9nage.revenu=10000*&m%C3%A9nage.commune=%2269123%22*&m%C3%A9nage.code+r%C3%A9gion=%2284%22*&m%C3%A9nage.code+d%C3%A9partement=%2269%22*&m%C3%A9nage.EPCI=%22200046977%22*&logement.commune=%2269123%22*&logement.commune+d%C3%A9partement=%2269%22*&logement.commune+r%C3%A9gion=%2284%22*&logement.commune.nom=%22Lyon%22*&logement.code+postal=%2269006%22*",
+      );
+    });
   });
 });
