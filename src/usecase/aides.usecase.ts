@@ -499,17 +499,15 @@ export class AidesUsecase {
             all_codes_communes.add(commune);
           }
         }
+        if (partenaire.code_departement) {
+          codes_departement.add(partenaire.code_departement);
+        }
+        if (partenaire.code_region) {
+          codes_region.add(partenaire.code_region);
+        }
       }
     }
 
-    for (const code_commune of all_codes_communes) {
-      const found =
-        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-      if (found) {
-        codes_departement.add(found.code_departement);
-        codes_region.add(found.code_region);
-      }
-    }
     result.codes_commune = Array.from(all_codes_communes);
     result.codes_departement = Array.from(codes_departement);
     result.codes_region = Array.from(codes_region);

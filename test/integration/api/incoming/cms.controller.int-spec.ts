@@ -793,6 +793,8 @@ describe('/api/incoming/cms (API test)', () => {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
     await partenaireRepository.loadCache();
 
@@ -815,10 +817,10 @@ describe('/api/incoming/cms (API test)', () => {
       besoin_desc: 'Broyer ses végétaux',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_departement_from_partenaire: ['123'],
       codes_postaux: ['91120', '75002'],
       codes_region: ['25'],
-      codes_region_from_partenaire: ['11', '27'],
+      codes_region_from_partenaire: ['456'],
       content_id: '123',
       contenu: "Contenu de l'aide",
       date_expiration: new Date(123),
@@ -1074,6 +1076,8 @@ describe('/api/incoming/cms (API test)', () => {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
     await partenaireRepository.loadCache();
 
@@ -1096,10 +1100,10 @@ describe('/api/incoming/cms (API test)', () => {
       besoin_desc: 'Broyer ses végétaux',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_departement_from_partenaire: ['123'],
       codes_postaux: ['91120', '75002'],
       codes_region: ['25'],
-      codes_region_from_partenaire: ['11', '27'],
+      codes_region_from_partenaire: ['456'],
       content_id: '123',
       contenu: "Contenu de l'aide",
       date_expiration: new Date(123),
