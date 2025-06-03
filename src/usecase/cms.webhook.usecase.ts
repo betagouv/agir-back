@@ -552,6 +552,8 @@ export class CMSWebhookUsecase {
       image_url: this.getImageUrlFromImageField(entry.logo[0]),
       echelle: Echelle[entry.echelle],
       code_commune: entry.code_commune,
+      code_departement: entry.code_departement,
+      code_region: entry.code_region,
       code_epci: entry.code_epci,
       liste_codes_commune_from_EPCI:
         this.aidesUsecase.external_compute_communes_from_epci(entry.code_epci),

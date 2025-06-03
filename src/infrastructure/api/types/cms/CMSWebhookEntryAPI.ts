@@ -117,7 +117,9 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() include_codes_commune: string;
   @ApiProperty() exclude_codes_commune: string;
   @ApiProperty() codes_departement: string;
+  @ApiProperty() code_departement: string;
   @ApiProperty() codes_region: string;
+  @ApiProperty() code_region: string;
   @ApiProperty() categorie: string;
   @ApiProperty() type: string;
   @ApiProperty() type_action: string;

@@ -56,6 +56,8 @@ export class PartenaireRepository {
         code_commune: partenaire.code_commune,
         code_epci: partenaire.code_epci,
         liste_codes_commune_from_EPCI: partenaire.liste_communes_calculees,
+        code_departement: partenaire.code_departement,
+        code_region: partenaire.code_region,
       });
     }
     PartenaireRepository.catalogue_partenaires = new_map;
@@ -75,6 +77,8 @@ export class PartenaireRepository {
       code_commune: partenaire.code_commune,
       code_epci: partenaire.code_epci,
       liste_communes_calculees: partenaire.liste_codes_commune_from_EPCI,
+      code_departement: partenaire.code_departement,
+      code_region: partenaire.code_region,
       created_at: undefined,
       updated_at: undefined,
     };
