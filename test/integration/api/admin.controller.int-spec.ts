@@ -1772,6 +1772,8 @@ describe('Admin (API test)', () => {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
 
     // WHEN
@@ -1791,8 +1793,8 @@ describe('Admin (API test)', () => {
       besoin: 'acheter_velo',
       besoin_desc: 'hihi',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
-      codes_region_from_partenaire: ['11', '27'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_region_from_partenaire: ['456'],
+      codes_departement_from_partenaire: ['123'],
       codes_departement: [],
       codes_postaux: [],
       codes_region: [],
