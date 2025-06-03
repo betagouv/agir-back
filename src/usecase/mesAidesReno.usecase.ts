@@ -8,7 +8,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const MES_AIDES_RENO_IFRAME_SIMULATION_URL =
-  "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis";
+  "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr";
 
 @Injectable()
 export class MesAidesRenoUsecase {
@@ -127,8 +127,13 @@ export class MesAidesRenoUsecase {
           utilisateur.logement.code_postal,
           utilisateur.logement.commune,
         );
-      const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
-      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
+      const commune =
+        this.communeRepository.getCommunByCodeINSEESansArrondissement(
+          code_insee,
+        );
+      const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(
+        commune.code,
+      );
 
       if (commune) {
         situation[MesAidesRenoRuleNames.menageCommune] = `"${commune.code}"`;

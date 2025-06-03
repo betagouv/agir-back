@@ -104,7 +104,9 @@ export type CMSWebhookPopulateAPI = {
     include_codes_commune: string;
     exclude_codes_commune: string;
     codes_departement: string;
+    code_departement: string;
     codes_region: string;
+    code_region: string;
     duree: string;
     frequence: string;
     points: number;

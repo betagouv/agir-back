@@ -614,6 +614,8 @@ export class CMSImportUsecase {
       echelle: Echelle[entry.attributes.echelle],
       code_commune: entry.attributes.code_commune,
       code_epci: entry.attributes.code_epci,
+      code_departement: entry.attributes.code_departement,
+      code_region: entry.attributes.code_region,
       liste_codes_commune_from_EPCI:
         this.aidesUsecase.external_compute_communes_from_epci(
           entry.attributes.code_epci,

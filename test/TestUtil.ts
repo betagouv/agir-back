@@ -721,6 +721,8 @@ export class TestUtil {
       code_epci: '002',
       echelle: Echelle.National,
       liste_communes_calculees: [],
+      code_departement: undefined,
+      code_region: undefined,
       created_at: undefined,
       updated_at: undefined,
       ...override,
