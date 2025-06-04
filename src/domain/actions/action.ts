@@ -38,6 +38,7 @@ export class Action extends ActionDefinition implements TaggedContent {
   enchainement_id?: string;
   liste_partages?: Date[];
   score: number;
+  pourcent_match: number;
   explicationScore: ExplicationScore;
 
   constructor(action_def: ActionDefinition) {
@@ -50,6 +51,7 @@ export class Action extends ActionDefinition implements TaggedContent {
     this.nombre_aides = 0;
     this.nombre_actions_faites = 0;
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
     if (
       action_def.type === TypeAction.bilan ||

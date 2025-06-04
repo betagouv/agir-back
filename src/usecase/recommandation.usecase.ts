@@ -120,6 +120,7 @@ export class RecommandationUsecase {
       points: e.points,
       thematique_principale: e.thematique ? e.thematique : Thematique.climat,
       score: e.score,
+      pourcent_match: e.pourcent_match,
       titre: e.question,
       type: ContentType.kyc,
       explicationScore: undefined,

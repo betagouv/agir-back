@@ -310,7 +310,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     await TestUtil.create(DB.tag, {
       id_cms: '4',
-      tag: Tag_v2.est_une_action_locale,
+      tag: Tag_v2.est_un_contenu_local,
       label_explication: `c'est proche de vous`,
     });
     await tagRepository.loadCache();
@@ -350,7 +350,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       est_exclu: false,
       liste_explications: [
         {
-          tag: 'est_une_action_locale',
+          tag: 'est_un_contenu_local',
           label_explication: `c'est proche de vous`,
         },
         { label_explication: 'explication', tag: 't2' },

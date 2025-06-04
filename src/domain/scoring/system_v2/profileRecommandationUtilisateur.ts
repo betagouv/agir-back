@@ -23,7 +23,7 @@ export class ProfileRecommandationUtilisateur {
     const result: T[] = [];
 
     // INIT
-    content_list.forEach((c) => (c.score = 0));
+    content_list.forEach((c) => ((c.score = 0), (c.pourcent_match = 0)));
 
     const CURRENT_TAGS = Array.from(this.set_tags_actifs.values());
     for (const content of content_list) {
@@ -61,10 +61,22 @@ export class ProfileRecommandationUtilisateur {
         this.valoriseBoost(tag, content);
       }
 
-      content.score += this.hash(content.getDistinctText());
+      let total_ponderation = 0;
+      for (const tag of content.getInclusionTags()) {
+        const tag_def = TagRepository.getTagDefinition(tag);
+        total_ponderation += tag_def?.ponderation ? tag_def.ponderation : 1;
+      }
+      if (total_ponderation !== 0) {
+        content.pourcent_match =
+          (content.score / (BASE_TAG_VALUE * total_ponderation)) * 100;
+      } else {
+        content.pourcent_match = 0;
+      }
+
+      content.pourcent_match += this.hash(content.getDistinctText());
     }
 
-    result.sort((a, b) => b.score - a.score);
+    result.sort((a, b) => b.pourcent_match - a.pourcent_match);
 
     return result;
   }
