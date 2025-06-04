@@ -69,7 +69,8 @@ model Utilisateur {
   rank_commune               Int?
   status                     String?
   couverture_aides_ok        Boolean    @default(false)
-  source_inscription         String     @default("web")
+  source_inscription         String     @default("inconnue")
+  mode_inscription           String?
   unsubscribe_mail_token     String?    @unique
   est_valide_pour_classement Boolean    @default(true)
   brevo_created_at           DateTime?  @db.Timestamptz(3)

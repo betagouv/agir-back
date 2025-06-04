@@ -3,6 +3,7 @@ import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
   GlobalUserVersion,
+  ModeInscription,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -138,8 +139,8 @@ export class FranceConnectUsecase {
     // NEW UTILISATEUR CREATION
     const new_utilisateur = Utilisateur.createNewUtilisateur(
       user_info.email,
-      false,
       SourceInscription[state.source_inscription] || SourceInscription.inconnue,
+      ModeInscription.france_connect,
     );
 
     this.setFCUserInfoToUser(new_utilisateur, user_info);

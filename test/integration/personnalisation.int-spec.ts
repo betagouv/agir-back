@@ -1,4 +1,5 @@
 import {
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../src/domain/utilisateur/utilisateur';
@@ -30,8 +31,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
 
     const test_data = { yo: '123' };
@@ -46,8 +47,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
 
     const test_data = { yo: undefined, yi: null, ya: true };
@@ -62,8 +63,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -83,8 +84,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -103,8 +104,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -125,8 +126,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -145,8 +146,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
 
     const test_data = { a: 'Comment ça va ?' };
@@ -163,8 +164,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
 
     const test_data = { a: 'Comment ça va ?' };
@@ -183,8 +184,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -203,8 +204,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -227,8 +228,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';
@@ -245,8 +246,8 @@ describe('Personalisation', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'g@www.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
     user.logement.commune = 'SENNECEY LES DIJON';

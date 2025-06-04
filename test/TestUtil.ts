@@ -57,6 +57,7 @@ import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
+  ModeInscription,
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
@@ -696,6 +697,7 @@ export class TestUtil {
       global_user_version: GlobalUserVersion.V2,
       activity_dates_log: [],
       recommandation: recommandation as any,
+      mode_inscription: ModeInscription.france_connect,
       ...override,
     };
   }

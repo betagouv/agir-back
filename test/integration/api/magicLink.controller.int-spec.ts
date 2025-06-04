@@ -2,7 +2,10 @@ import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/QuestionKYCData';
-import { SourceInscription } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  SourceInscription,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -117,7 +120,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
-    expect(userDB.is_magic_link_user).toEqual(true);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
   });
@@ -140,7 +143,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     });
 
     expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
-    expect(userDB.is_magic_link_user).toEqual(true);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
   });

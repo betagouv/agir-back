@@ -5,6 +5,7 @@ import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import {
+  ModeInscription,
   SourceInscription,
   Utilisateur,
   UtilisateurStatus,
@@ -56,8 +57,8 @@ export class InscriptionUsecase {
 
     const utilisateurToCreate = Utilisateur.createNewUtilisateur(
       utilisateurInput.email,
-      false,
       utilisateurInput.source_inscription || SourceInscription.inconnue,
+      ModeInscription.mot_de_passe,
     );
 
     utilisateurToCreate.setNew6DigitCode();

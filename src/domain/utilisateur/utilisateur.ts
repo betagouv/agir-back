@@ -34,6 +34,12 @@ export enum SourceInscription {
   web_ngc = 'web_ngc',
   inconnue = 'inconnue',
 }
+export enum ModeInscription {
+  magic_link = 'magic_link',
+  france_connect = 'france_connect',
+  mot_de_passe = 'mot_de_passe',
+  inconnue = 'inconnue',
+}
 export enum GlobalUserVersion {
   V1 = 'V1',
   V2 = 'V2',
@@ -88,7 +94,6 @@ export class UtilisateurData {
   derniere_activite: Date;
   db_version: number;
   bilbiotheque_services: BibliothequeServices;
-  is_magic_link_user: boolean;
   points_classement: number;
   code_commune_classement: string;
   rank: number;
@@ -96,6 +101,7 @@ export class UtilisateurData {
   status: UtilisateurStatus;
   couverture_aides_ok: boolean;
   source_inscription: SourceInscription;
+  mode_inscription: ModeInscription;
   notification_history: NotificationHistory;
   thematique_history: ThematiqueHistory;
   unsubscribe_mail_token: string;
@@ -135,8 +141,8 @@ export class Utilisateur extends UtilisateurData {
 
   public static createNewUtilisateur(
     email: string,
-    is_magic_link: boolean,
     source_inscription: SourceInscription,
+    mode_inscription: ModeInscription,
   ): Utilisateur {
     return new Utilisateur({
       id: uuidv4(),
@@ -173,13 +179,13 @@ export class Utilisateur extends UtilisateurData {
       jour_naissance: null,
       db_version: 0,
       bilbiotheque_services: new BibliothequeServices(),
-      is_magic_link_user: is_magic_link,
       rank: null,
       rank_commune: null,
       points_classement: 0,
       status: UtilisateurStatus.default,
       couverture_aides_ok: false,
       source_inscription: source_inscription,
+      mode_inscription: mode_inscription,
       notification_history: new NotificationHistory(),
       thematique_history: new ThematiqueHistory(),
       unsubscribe_mail_token: Utilisateur.generateEmailToken(),

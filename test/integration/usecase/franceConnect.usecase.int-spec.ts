@@ -1,6 +1,7 @@
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import {
   GlobalUserVersion,
+  ModeInscription,
   Scope,
   SourceInscription,
 } from '../../../src/domain/utilisateur/utilisateur';
@@ -117,6 +118,9 @@ describe('FranceConnectUsecase', () => {
     expect(result.utilisateur.france_connect_sub).toEqual('sub');
     expect(result.utilisateur.source_inscription).toEqual(
       SourceInscription.mobile,
+    );
+    expect(result.utilisateur.mode_inscription).toEqual(
+      ModeInscription.france_connect,
     );
   });
 
