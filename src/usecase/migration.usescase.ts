@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  Scope,
+  Utilisateur,
+} from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
@@ -402,6 +406,40 @@ export class MigrationUsecase {
     };
   }
   private async migrate_19(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+
+    // DO SOMETHING
+
+    if (utilisateur.is_magic_link) {
+      utilisateur.mode_inscription = ModeInscription.magic_link;
+    } else if (utilisateur.passwordHash !== null) {
+      utilisateur.mode_inscription = ModeInscription.mot_de_passe;
+    } else if (utilisateur.france_connect_sub !== null) {
+      utilisateur.mode_inscription = ModeInscription.france_connect;
+    } else {
+      utilisateur.mode_inscription = ModeInscription.inconnue;
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `mode = [${utilisateur.mode_inscription}]`,
+    };
+  }
+  private async migrate_20(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

@@ -4,6 +4,7 @@ import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
+  ModeInscription,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -46,8 +47,8 @@ describe('BilanCarboneUsecase', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'yo',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
 
     await TestUtil.create(DB.situationNGC, {
@@ -77,8 +78,8 @@ describe('BilanCarboneUsecase', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'yo',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
 
     await TestUtil.create(DB.situationNGC, {

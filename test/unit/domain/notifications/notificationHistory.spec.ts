@@ -7,6 +7,7 @@ import {
 } from '../../../../src/domain/notification/notificationHistory';
 import {
   GlobalUserVersion,
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
@@ -55,8 +56,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
     utilisateur.active_account = true;
@@ -78,8 +79,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
     utilisateur.active_account = false;
@@ -102,8 +103,8 @@ describe('NotificationHistory', () => {
     process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
     utilisateur.active_account = true;
@@ -124,8 +125,8 @@ describe('NotificationHistory', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(
       Date.now() - Math.round(1000 * 60 * 60 * 24 * 32),
@@ -148,8 +149,8 @@ describe('NotificationHistory', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 20);
     utilisateur.active_account = true;
@@ -178,8 +179,8 @@ describe('NotificationHistory', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 5);
     utilisateur.active_account = true;
@@ -202,8 +203,8 @@ describe('NotificationHistory', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
     utilisateur.active_account = false;
@@ -227,8 +228,8 @@ describe('NotificationHistory', () => {
     process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 5);
     utilisateur.active_account = true;
@@ -251,8 +252,8 @@ describe('NotificationHistory', () => {
     process.env.NOTIFICATIONS_MAIL_INACTIVES = 'welcome';
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - 1000 * 60 * 60 * 24 * 9);
     utilisateur.active_account = true;
@@ -278,8 +279,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
     utilisateur.active_account = true;
@@ -305,8 +306,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 9);
     utilisateur.active_account = true;
@@ -332,8 +333,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 15);
     utilisateur.active_account = true;
@@ -360,8 +361,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
     utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 31);
@@ -389,8 +390,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 100);
     utilisateur.derniere_activite = new Date(Date.now() - DAY_IN_MS * 61);
@@ -417,8 +418,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 3);
     utilisateur.active_account = true;
@@ -444,8 +445,8 @@ describe('NotificationHistory', () => {
 
     const utilisateur = Utilisateur.createNewUtilisateur(
       'toto@dev.com',
-      false,
       SourceInscription.mobile,
+      ModeInscription.magic_link,
     );
     utilisateur.created_at = new Date(Date.now() - DAY_IN_MS * 10);
     utilisateur.active_account = true;

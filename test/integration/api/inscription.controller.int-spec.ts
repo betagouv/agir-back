@@ -5,7 +5,10 @@ import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import { UtilisateurStatus } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  SourceInscription,
+  UtilisateurStatus,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -104,7 +107,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(18);
+    expect(user.version).toEqual(19);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {
@@ -795,5 +798,79 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     expect(
       user.kyc_history.isMosaicAnswered(KYCMosaicID.MOSAIC_CHAUFFAGE),
     ).toEqual(true);
+  });
+
+  it(`GET /login_france_connect stock source souscription et id de situation NGC`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_AUTH = 'https://fc_auth.com';
+    process.env.OIDC_CLIENT_ID = 'client_id_123';
+    process.env.OIDC_URL_LOGIN_CALLBACK = 'https://jagis/callback';
+
+    await TestUtil.create(DB.situationNGC, {
+      id: '123456789012345678901234567890123456',
+      situation: { a: 6666 },
+    });
+
+    // WHEN
+    const reponse = await TestUtil.getServer().get(
+      '/login_france_connect?situation_ngc_id=123456789012345678901234567890123456&source_inscription=mobile',
+    );
+
+    // THEN
+    expect(reponse.status).toBe(302);
+    const states = await TestUtil.prisma.oIDC_STATE.findMany();
+    expect(states).toHaveLength(1);
+    const state = states[0];
+    expect(state.situation_ngc_id).toEqual(
+      '123456789012345678901234567890123456',
+    );
+    expect(state.source_inscription).toEqual('mobile');
+
+    expect(reponse.headers['location']).toEqual(
+      `https://fc_auth.com/?response_type=code&client_id=client_id_123&redirect_uri=https%3A%2F%2Fjagis%2Fcallback&scope=openid+email+given_name+family_name+birthdate&acr_values=eidas1&state=${state.state}&nonce=${state.nonce}`,
+    );
+  });
+  it(`GET /login_france_connect missing source`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_AUTH = 'https://fc_auth.com';
+    process.env.OIDC_CLIENT_ID = 'client_id_123';
+    process.env.OIDC_URL_LOGIN_CALLBACK = 'https://jagis/callback';
+
+    await TestUtil.create(DB.situationNGC, {
+      id: '123456789012345678901234567890123456',
+      situation: { a: 6666 },
+    });
+
+    // WHEN
+    const reponse = await TestUtil.getServer().get(
+      '/login_france_connect?situation_ngc_id=123456789012345678901234567890123456',
+    );
+
+    // THEN
+    expect(reponse.status).toBe(302);
+    const states = await TestUtil.prisma.oIDC_STATE.findMany();
+    expect(states[0].source_inscription).toEqual(SourceInscription.inconnue);
+  });
+
+  it(`GET /login_france_connect bad source`, async () => {
+    // GIVEN
+    process.env.OIDC_URL_AUTH = 'https://fc_auth.com';
+    process.env.OIDC_CLIENT_ID = 'client_id_123';
+    process.env.OIDC_URL_LOGIN_CALLBACK = 'https://jagis/callback';
+
+    await TestUtil.create(DB.situationNGC, {
+      id: '123456789012345678901234567890123456',
+      situation: { a: 6666 },
+    });
+
+    // WHEN
+    const reponse = await TestUtil.getServer().get(
+      '/login_france_connect?situation_ngc_id=123456789012345678901234567890123456&source_inscription=bad',
+    );
+
+    // THEN
+    expect(reponse.status).toBe(302);
+    const states = await TestUtil.prisma.oIDC_STATE.findMany();
+    expect(states[0].source_inscription).toEqual(SourceInscription.inconnue);
   });
 });

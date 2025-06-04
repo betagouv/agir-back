@@ -18,6 +18,8 @@ export type AideFilter = {
   echelle?: Echelle;
   date_expiration?: Date;
   commune_pour_partenaire?: string;
+  region_pour_partenaire?: string;
+  departement_pour_partenaire?: string;
 };
 
 @Injectable()
@@ -237,6 +239,32 @@ export class AideRepository {
         OR: [
           { codes_commune_from_partenaire: { has: filter.code_commune } },
           { codes_commune_from_partenaire: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.departement_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          {
+            codes_departement_from_partenaire: {
+              has: filter.departement_pour_partenaire,
+            },
+          },
+          { codes_departement_from_partenaire: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.region_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          {
+            codes_region_from_partenaire: {
+              has: filter.region_pour_partenaire,
+            },
+          },
+          { codes_region_from_partenaire: { isEmpty: true } },
         ],
       });
     }

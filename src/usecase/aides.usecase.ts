@@ -60,8 +60,12 @@ export class AidesUsecase {
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
     };
     if (utilisateur.isAdmin()) {
-      delete filtre.code_postal;
       filtre.commune_pour_partenaire = utilisateur.logement.code_commune;
+      filtre.departement_pour_partenaire = filtre.code_departement;
+      filtre.region_pour_partenaire = filtre.code_region;
+      delete filtre.code_postal;
+      delete filtre.code_departement;
+      delete filtre.code_region;
     }
     const aide_def_liste = await this.aideRepository.search(filtre);
 

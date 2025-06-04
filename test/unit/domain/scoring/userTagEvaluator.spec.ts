@@ -6,7 +6,11 @@ import { ApplicativePonderationSetName } from '../../../../src/domain/scoring/po
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { UserTagEvaluator } from '../../../../src/domain/scoring/userTagEvaluator';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 
 describe('UseragEvaluator', () => {
   const OLD_ENV = process.env;
@@ -22,7 +26,11 @@ describe('UseragEvaluator', () => {
 
   it('recomputeRecoTags : kyc_001 : tout à zero', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
+    const user = Utilisateur.createNewUtilisateur(
+      'a@a.com',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,
@@ -74,7 +82,11 @@ describe('UseragEvaluator', () => {
   });
   it('recomputeRecoTags : kyc_001 : tout à 50', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
+    const user = Utilisateur.createNewUtilisateur(
+      'a@a.com',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,
@@ -134,7 +146,11 @@ describe('UseragEvaluator', () => {
 
   it('recomputeRecoTags : KYC_preference : tout à 50', () => {
     // GIVEN
-    const user = Utilisateur.createNewUtilisateur('a@a.com', false, null);
+    const user = Utilisateur.createNewUtilisateur(
+      'a@a.com',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     user.kyc_history.setCatalogue([
       new KycDefinition({
         id_cms: 1,

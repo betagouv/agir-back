@@ -4,6 +4,7 @@ import { TypeNotification } from '../domain/notification/notificationHistory';
 import { CodeManager } from '../domain/utilisateur/manager/codeManager';
 import { SecurityEmailManager } from '../domain/utilisateur/manager/securityEmailManager';
 import {
+  ModeInscription,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -54,9 +55,6 @@ export class MagicLinkUsecase {
         ApplicationError.throwBadOriginLength(originator);
       }
     }
-    if (source && !SourceInscription[source]) {
-      ApplicationError.throwSourceInscriptionInconnue(source);
-    }
 
     Utilisateur.checkEmailFormat(email);
 
@@ -65,8 +63,8 @@ export class MagicLinkUsecase {
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
-        true,
-        source || SourceInscription.magic_link,
+        SourceInscription[source] || SourceInscription.inconnue,
+        ModeInscription.magic_link,
       );
 
       if (situation_ngc_id) {

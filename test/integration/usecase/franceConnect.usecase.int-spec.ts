@@ -1,6 +1,7 @@
 import { PasswordManager } from '../../../src/domain/utilisateur/manager/passwordManager';
 import {
   GlobalUserVersion,
+  ModeInscription,
   Scope,
   SourceInscription,
 } from '../../../src/domain/utilisateur/utilisateur';
@@ -62,6 +63,7 @@ describe('FranceConnectUsecase', () => {
       idtoken: null,
       utilisateurId: null,
       situation_ngc_id: null,
+      source_inscription: SourceInscription.mobile,
     });
 
     oidcService.getAccessAndIdTokens.mockImplementation(() => {
@@ -115,7 +117,10 @@ describe('FranceConnectUsecase', () => {
     expect(result.utilisateur.prenom).toEqual('George');
     expect(result.utilisateur.france_connect_sub).toEqual('sub');
     expect(result.utilisateur.source_inscription).toEqual(
-      SourceInscription.france_connect,
+      SourceInscription.mobile,
+    );
+    expect(result.utilisateur.mode_inscription).toEqual(
+      ModeInscription.france_connect,
     );
   });
 
