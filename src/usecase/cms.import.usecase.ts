@@ -293,27 +293,6 @@ export class CMSImportUsecase {
         partenaire_def = this.buildPartenaireFromCMSPopulateData(element);
         liste_partenaires.push(partenaire_def);
         loading_result.push(`loaded partenaire : ${partenaire_def.id_cms}`);
-
-        const liste_aides = await this.aideRepository.findAidesByPartenaireId(
-          partenaire_def.id_cms,
-        );
-
-        for (const aide of liste_aides) {
-          const computed =
-            this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-              aide.partenaires_supp_ids,
-            );
-
-          await this.aideRepository.updateAideCodesFromPartenaire(
-            aide.content_id,
-            computed.codes_commune,
-            computed.codes_departement,
-            computed.codes_region,
-          );
-          loading_result.push(
-            `loaded_partenaire updating_aide: ${aide.content_id}`,
-          );
-        }
       } catch (error) {
         loading_result.push(
           `Could not load partenaire ${element.id} : ${error.message}`,
@@ -321,8 +300,33 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
-    for (let index = 0; index < liste_partenaires.length; index++) {
-      await this.partenaireRepository.upsert(liste_partenaires[index]);
+    for (const part_def of liste_partenaires) {
+      await this.partenaireRepository.upsert(part_def);
+    }
+
+    await this.partenaireRepository.loadCache();
+
+    for (const part_def of liste_partenaires) {
+      const liste_aides = await this.aideRepository.findAidesByPartenaireId(
+        part_def.id_cms,
+      );
+
+      for (const aide of liste_aides) {
+        const computed =
+          this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+            aide.partenaires_supp_ids,
+          );
+
+        await this.aideRepository.updateAideCodesFromPartenaire(
+          aide.content_id,
+          computed.codes_commune,
+          computed.codes_departement,
+          computed.codes_region,
+        );
+        loading_result.push(
+          `loaded_partenaire updating_aide: ${aide.content_id}`,
+        );
+      }
     }
     return loading_result;
   }
@@ -484,9 +488,25 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
-    for (let index = 0; index < liste_aides.length; index++) {
-      await this.aideRepository.upsert(liste_aides[index]);
+    /*
+    for (const aide of liste_aides) {
+      await this.aideRepository.upsert(aide);
+      const computed =
+        this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+          aide.partenaires_supp_ids,
+        );
+
+      await this.aideRepository.updateAideCodesFromPartenaire(
+        aide.content_id,
+        computed.codes_commune,
+        computed.codes_departement,
+        computed.codes_region,
+      );
+      loading_result.push(
+        `loaded_partenaire updating_aide: ${aide.content_id}`,
+      );
     }
+      */
     return loading_result;
   }
 
