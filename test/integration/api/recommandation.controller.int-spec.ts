@@ -308,6 +308,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       tag: 't3',
       boost: new Prisma.Decimal(15),
     });
+    await TestUtil.create(DB.tag, {
+      id_cms: '4',
+      tag: Tag_v2.est_une_action_locale,
+      label_explication: `c'est proche de vous`,
+    });
     await tagRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur, {
@@ -343,7 +348,13 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[2].content_id).toEqual('1');
     expect(response.body[0].explications_recommandation).toEqual({
       est_exclu: false,
-      liste_explications: [{ label_explication: 'explication', tag: 't2' }],
+      liste_explications: [
+        {
+          tag: 'est_une_action_locale',
+          label_explication: `c'est proche de vous`,
+        },
+        { label_explication: 'explication', tag: 't2' },
+      ],
     });
     expect(response.body[1].explications_recommandation).toEqual({
       est_exclu: false,

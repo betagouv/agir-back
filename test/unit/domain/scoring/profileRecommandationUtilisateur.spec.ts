@@ -273,7 +273,13 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(result).toHaveLength(1);
     expect(Math.round(result[0].score)).toEqual(10);
     expect(content.explicationScore).toEqual({
-      liste_explications: [{ est_local: true, valeur: 10 }],
+      liste_explications: [
+        {
+          est_local: true,
+          valeur: 10,
+          inclusion_tag: Tag_v2.est_une_action_locale,
+        },
+      ],
     });
   });
   it(`trierEtFiltrerRecommandations : le local se somme avec le reste`, () => {
@@ -302,7 +308,11 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(content.explicationScore).toEqual({
       liste_explications: [
         { inclusion_tag: 'a_un_jardin', valeur: 10, ponderation: 1 },
-        { est_local: true, valeur: 10 },
+        {
+          est_local: true,
+          valeur: 10,
+          inclusion_tag: Tag_v2.est_une_action_locale,
+        },
       ],
     });
   });
