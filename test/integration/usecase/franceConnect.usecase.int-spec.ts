@@ -62,6 +62,7 @@ describe('FranceConnectUsecase', () => {
       idtoken: null,
       utilisateurId: null,
       situation_ngc_id: null,
+      source_inscription: SourceInscription.mobile,
     });
 
     oidcService.getAccessAndIdTokens.mockImplementation(() => {
@@ -115,7 +116,7 @@ describe('FranceConnectUsecase', () => {
     expect(result.utilisateur.prenom).toEqual('George');
     expect(result.utilisateur.france_connect_sub).toEqual('sub');
     expect(result.utilisateur.source_inscription).toEqual(
-      SourceInscription.france_connect,
+      SourceInscription.mobile,
     );
   });
 

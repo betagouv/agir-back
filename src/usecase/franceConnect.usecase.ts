@@ -26,7 +26,10 @@ export class FranceConnectUsecase {
     private bilanCarboneUseCase: BilanCarboneUsecase,
   ) {}
 
-  async genererConnexionFranceConnect(situation_ngc_id?: string): Promise<URL> {
+  async genererConnexionFranceConnect(
+    source_inscription: SourceInscription,
+    situation_ngc_id?: string,
+  ): Promise<URL> {
     if (App.isFranceConnectDown()) {
       ApplicationError.throwConnexionDown(App.getEmailContact());
     }
@@ -40,6 +43,7 @@ export class FranceConnectUsecase {
     await this.oIDCStateRepository.createNewState(
       redirect_infos.state,
       redirect_infos.nonce,
+      source_inscription,
       situation_ngc_id,
     );
 
@@ -135,7 +139,7 @@ export class FranceConnectUsecase {
     const new_utilisateur = Utilisateur.createNewUtilisateur(
       user_info.email,
       false,
-      SourceInscription.france_connect,
+      SourceInscription[state.source_inscription] || SourceInscription.inconnue,
     );
 
     this.setFCUserInfoToUser(new_utilisateur, user_info);

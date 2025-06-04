@@ -15,6 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { SourceInscription } from '../../domain/utilisateur/utilisateur';
 import { FranceConnectUsecase } from '../../usecase/franceConnect.usecase';
 import { GenericControler } from './genericControler';
 import {
@@ -43,9 +44,22 @@ export class FranceConnectController extends GenericControler {
     required: false,
     description: `id d'une situation NGC en attente de liaison avec le futur compte utilisateur`,
   })
-  async login(@Query('situation_ngc_id') situation_ngc_id: string) {
+  @ApiQuery({
+    name: 'source_inscription',
+    enum: SourceInscription,
+    required: false,
+    description: `indique la source de souscription au service`,
+  })
+  async login(
+    @Query('situation_ngc_id') situation_ngc_id: string,
+    @Query('source_inscription') source_inscription: string,
+  ) {
+    const source =
+      SourceInscription[source_inscription] || SourceInscription.inconnue;
+
     const redirect_url =
       await this.franceConnectUsecase.genererConnexionFranceConnect(
+        source,
         situation_ngc_id,
       );
     return { url: redirect_url };

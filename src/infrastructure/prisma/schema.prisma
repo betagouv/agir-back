@@ -12,13 +12,14 @@ datasource db {
 }
 
 model OIDC_STATE {
-  state            String   @id
-  utilisateurId    String?  @unique
-  situation_ngc_id String?
-  nonce            String?  @unique
-  idtoken          String?
-  created_at       DateTime @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  state              String   @id
+  utilisateurId      String?  @unique
+  situation_ngc_id   String?
+  source_inscription String?
+  nonce              String?  @unique
+  idtoken            String?
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Utilisateur {
