@@ -674,6 +674,7 @@ export class UtilisateurRepository {
       global_user_version: GlobalUserVersion[user.global_user_version],
       recommandation: recommandation,
       code_commune_classement: user.code_commune_classement,
+      is_magic_link: user.is_magic_link_user,
     });
 
     if (result.kyc_history) {

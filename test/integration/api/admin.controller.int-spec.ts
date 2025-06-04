@@ -21,7 +21,10 @@ import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematiqu
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  Scope,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -862,6 +865,111 @@ describe('Admin (API test)', () => {
       'appetence_thematique_logement',
     ]);
     expect(userDB.version).toEqual(18);
+  });
+
+  it('POST /admin/migrate_users migration V19 init le mode inscription', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: true,
+      france_connect_sub: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: null,
+      passwordHash: '1234',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: '3',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: '1233',
+      passwordHash: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      email: '4',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: '45678',
+      passwordHash: '123',
+    });
+    App.USER_CURRENT_VERSION = 19;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: '1',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [magic_link]`,
+          },
+        ],
+      },
+      {
+        user_id: '2',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [mot_de_passe]`,
+          },
+        ],
+      },
+      {
+        user_id: '3',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [france_connect]`,
+          },
+        ],
+      },
+      {
+        user_id: '4',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [mot_de_passe]`,
+          },
+        ],
+      },
+    ]);
+    let userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('2', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.france_connect);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('4', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+    expect(userDB.version).toEqual(19);
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
