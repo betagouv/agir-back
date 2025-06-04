@@ -20,6 +20,7 @@ export type AideFilter = {
   commune_pour_partenaire?: string;
   region_pour_partenaire?: string;
   departement_pour_partenaire?: string;
+  cu_ca_cc_mode?: boolean;
 };
 
 @Injectable()
@@ -180,15 +181,6 @@ export class AideRepository {
       });
     }
 
-    if (filter.code_postal) {
-      main_filter.push({
-        OR: [
-          { codes_postaux: { has: filter.code_postal } },
-          { codes_postaux: { isEmpty: true } },
-        ],
-      });
-    }
-
     if (filter.code_region) {
       main_filter.push({
         OR: [
@@ -205,6 +197,37 @@ export class AideRepository {
           { codes_departement: { isEmpty: true } },
         ],
       });
+    }
+
+    if (filter.cu_ca_cc_mode) {
+      if (filter.code_postal) {
+        main_filter.push({
+          OR: [
+            { codes_postaux: { has: filter.code_postal } },
+            { codes_postaux: { isEmpty: true } },
+            {
+              echelle: {
+                not: {
+                  in: [
+                    'Communauté de communes',
+                    'Communauté urbaine',
+                    "Communauté d'agglomération",
+                  ],
+                },
+              },
+            },
+          ],
+        });
+      }
+    } else {
+      if (filter.code_postal) {
+        main_filter.push({
+          OR: [
+            { codes_postaux: { has: filter.code_postal } },
+            { codes_postaux: { isEmpty: true } },
+          ],
+        });
+      }
     }
 
     if (filter.besoins) {
@@ -239,6 +262,15 @@ export class AideRepository {
         OR: [
           { codes_commune_from_partenaire: { has: filter.code_commune } },
           { codes_commune_from_partenaire: { isEmpty: true } },
+          {
+            echelle: {
+              in: [
+                'Communauté de communes',
+                'Communauté urbaine',
+                "Communauté d'agglomération",
+              ],
+            },
+          },
         ],
       });
     }

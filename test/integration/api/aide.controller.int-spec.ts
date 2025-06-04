@@ -183,6 +183,92 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(1);
   });
 
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires si ADMIN - sauf si CA_CU_CC, no match`, async () => {
+    // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.appartement,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: false,
+      proprietaire: false,
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      risques: undefined,
+      rue: undefined,
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_commune_from_partenaire: ['91477'],
+      codes_postaux: ['21000'],
+      echelle: Echelle.Métropole,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(0);
+  });
+
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires si ADMIN - sauf si CA_CU_CC, match`, async () => {
+    // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.appartement,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: false,
+      proprietaire: false,
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      risques: undefined,
+      rue: undefined,
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_commune_from_partenaire: ['91477'],
+      codes_postaux: ['21000'],
+      echelle: Echelle["Communauté d'agglomération"],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par departement via partenaires si ADMIN`, async () => {
     // GIVEN
     process.env.ADMIN_IDS = 'utilisateur-id';
