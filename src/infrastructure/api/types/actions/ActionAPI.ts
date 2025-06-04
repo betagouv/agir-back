@@ -8,6 +8,7 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
+import { ExplicationScore } from '../../../../domain/scoring/system_v2/ExplicationScore';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { ArticleLightAPI } from '../contenu/articleLightAPI';
@@ -122,6 +123,8 @@ export class ActionAPI {
   @ApiProperty({ type: ExplicationRecoAPI })
   explications_recommandation: ExplicationRecoAPI;
 
+  explications_recommandation_raw: ExplicationScore;
+
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
@@ -154,6 +157,7 @@ export class ActionAPI {
       explications_recommandation: ExplicationRecoAPI.mapToApi(
         action.explicationScore,
       ),
+      explications_recommandation_raw: action.explicationScore,
     };
   }
 }

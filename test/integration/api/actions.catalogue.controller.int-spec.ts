@@ -92,6 +92,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
     const action: ActionLightAPI = response.body.actions[0];
 
+    delete action.explications_recommandation_raw;
+
     expect(action).toEqual({
       code: '123',
       deja_faite: false,

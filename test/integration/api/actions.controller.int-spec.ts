@@ -164,6 +164,8 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
+    delete response.body.explications_recommandation_raw;
+
     expect(response.body).toEqual({
       aides: [],
       besoins: ['composter'],

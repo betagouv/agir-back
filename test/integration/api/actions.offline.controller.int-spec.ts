@@ -76,6 +76,8 @@ describe('Single Actions Offline (API test)', () => {
 
     const action: ActionAPI = response.body;
 
+    delete action.explications_recommandation_raw;
+
     expect(action).toEqual({
       aides: [],
       besoins: [],

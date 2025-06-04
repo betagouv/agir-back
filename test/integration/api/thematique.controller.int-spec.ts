@@ -465,6 +465,9 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    delete response.body.liste_actions_recommandees[0]
+      .explications_recommandation_raw;
+
     expect(response.body.liste_actions_recommandees[0]).toEqual({
       code: '123',
       deja_faite: false,
