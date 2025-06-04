@@ -357,6 +357,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: 30,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: undefined,
       tag: Tag_v2.a_un_jardin,
     });
@@ -395,6 +396,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: 30,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: undefined,
       tag: Tag_v2.a_un_jardin,
     });
@@ -434,6 +436,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: undefined,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: 5,
       tag: Tag_v2.a_un_jardin,
     });

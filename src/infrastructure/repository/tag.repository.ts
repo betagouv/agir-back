@@ -53,6 +53,7 @@ export class TagRepository {
         ? new Prisma.Decimal(tag_def.ponderation)
         : null,
       boost: tag_def.boost ? new Prisma.Decimal(tag_def.boost) : null,
+      label_explication: tag_def.label_explication,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -84,6 +85,7 @@ export class TagRepository {
       description: ponderation.description,
       ponderation: ponderation.ponderation?.toNumber(),
       boost: ponderation.boost?.toNumber(),
+      label_explication: ponderation.label_explication,
     });
   }
 }

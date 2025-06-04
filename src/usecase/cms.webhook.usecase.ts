@@ -606,6 +606,7 @@ export class CMSWebhookUsecase {
       description: entry.description,
       boost: entry.boost_absolu,
       ponderation: entry.ponderation,
+      label_explication: entry.label_explication,
     };
   }
 

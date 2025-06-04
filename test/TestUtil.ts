@@ -773,6 +773,7 @@ export class TestUtil {
       boost: undefined,
       ponderation: undefined,
       description: 'desc',
+      label_explication: 'explication',
       tag: Tag_v2.a_un_jardin,
       created_at: undefined,
       updated_at: undefined,

@@ -451,13 +451,14 @@ model BlockText {
 }
 
 model Tag {
-  id_cms      String   @id
-  tag         String?  @unique
-  description String?
-  ponderation Decimal?
-  boost       Decimal?
-  created_at  DateTime @default(now()) @db.Timestamptz(3)
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  id_cms            String   @id
+  tag               String?  @unique
+  description       String?
+  label_explication String?
+  ponderation       Decimal?
+  boost             Decimal?
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Mission {

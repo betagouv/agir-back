@@ -756,6 +756,7 @@ export class CMSImportUsecase {
       boost: entry.attributes.boost_absolu,
       ponderation: entry.attributes.ponderation,
       description: entry.attributes.description,
+      label_explication: entry.attributes.label_explication,
     };
   }
 
