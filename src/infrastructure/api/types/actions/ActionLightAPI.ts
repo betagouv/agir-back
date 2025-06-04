@@ -16,8 +16,8 @@ export class ActionLightAPI {
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
-  @ApiProperty({ type: [ExplicationRecoAPI] })
-  explications_recommandation: ExplicationRecoAPI[];
+  @ApiProperty({ type: ExplicationRecoAPI })
+  explications_recommandation: ExplicationRecoAPI;
 
   public static mapToAPI(action: Action): ActionLightAPI {
     return {
@@ -32,11 +32,9 @@ export class ActionLightAPI {
       deja_vue: action.deja_vue,
       deja_faite: action.deja_faite,
       points: action.getNombrePoints(),
-      explications_recommandation: action.explicationScore
-        ? action.explicationScore.liste_explications.map((e) =>
-            ExplicationRecoAPI.mapToApi(e),
-          )
-        : [],
+      explications_recommandation: ExplicationRecoAPI.mapToApi(
+        action.explicationScore,
+      ),
     };
   }
 }

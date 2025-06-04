@@ -119,8 +119,8 @@ export class ActionAPI {
 
   @ApiProperty() enchainement_id: string;
 
-  @ApiProperty({ type: [ExplicationRecoAPI] })
-  explications_recommandation: ExplicationRecoAPI[];
+  @ApiProperty({ type: ExplicationRecoAPI })
+  explications_recommandation: ExplicationRecoAPI;
 
   public static mapToAPI(action: Action): ActionAPI {
     return {
@@ -151,11 +151,9 @@ export class ActionAPI {
       articles: action.article_liste.map((a) => ArticleLightAPI.mapToAPI(a)),
       like_level: action.like_level,
       enchainement_id: action.enchainement_id,
-      explications_recommandation: action.explicationScore
-        ? action.explicationScore.liste_explications.map((e) =>
-            ExplicationRecoAPI.mapToApi(e),
-          )
-        : [],
+      explications_recommandation: ExplicationRecoAPI.mapToApi(
+        action.explicationScore,
+      ),
     };
   }
 }

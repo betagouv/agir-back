@@ -477,7 +477,10 @@ describe('Thematique (API test)', () => {
       thematique: 'alimentation',
       titre: '**The titre**',
       type: 'classique',
-      explications_recommandation: [],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
 

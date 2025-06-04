@@ -218,7 +218,10 @@ describe('Actions (API test)', () => {
           url: 'haha',
         },
       ],
-      explications_recommandation: [],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
 
@@ -257,13 +260,10 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    expect(response.body.explications_recommandation).toEqual([
-      {
-        inclusion_tag: 'a_un_jardin',
-        ponderation: 1,
-        valeur: 10,
-      },
-    ]);
+    expect(response.body.explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [{ tag: 'a_un_jardin' }],
+    });
   });
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {
