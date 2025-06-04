@@ -32,8 +32,6 @@ export enum SourceInscription {
   web = 'web',
   mobile = 'mobile',
   web_ngc = 'web_ngc',
-  france_connect = 'france_connect',
-  magic_link = 'magic_link',
   inconnue = 'inconnue',
 }
 export enum GlobalUserVersion {

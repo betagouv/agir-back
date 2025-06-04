@@ -56,10 +56,10 @@ describe('/utilisateurs - Magic link - (API test)', () => {
         source_inscription: 'bad',
       });
     // THEN
-    expect(response.status).toEqual(400);
-    expect(response.body.message).toEqual(
-      `La source d'inscription [bad] est inconnue`,
-    );
+    expect(response.status).toEqual(201);
+
+    const user = await utilisateurRepository.findByEmail('aaa@bbb.com');
+    expect(user.source_inscription).toEqual(SourceInscription.inconnue);
   });
   it(`POST /utilisateurs/send_magic_link - email absent `, async () => {
     // GIVEN
@@ -107,6 +107,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       .post('/utilisateurs/send_magic_link')
       .send({
         email: 'ww@w.com',
+        source_inscription: SourceInscription.mobile,
       });
     // THEN
     expect(response.status).toBe(201);
@@ -115,7 +116,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       where: { email: 'ww@w.com' },
     });
 
-    expect(userDB.source_inscription).toEqual(SourceInscription.magic_link);
+    expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
     expect(userDB.is_magic_link_user).toEqual(true);
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);

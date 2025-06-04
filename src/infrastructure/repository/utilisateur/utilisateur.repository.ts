@@ -653,7 +653,9 @@ export class UtilisateurRepository {
       rank_commune: user.rank_commune,
       status: UtilisateurStatus[user.status],
       couverture_aides_ok: user.couverture_aides_ok,
-      source_inscription: SourceInscription[user.source_inscription],
+      source_inscription:
+        SourceInscription[user.source_inscription] ||
+        SourceInscription.inconnue,
       notification_history: notification_history,
       thematique_history: thematique_history,
       unsubscribe_mail_token: user.unsubscribe_mail_token,

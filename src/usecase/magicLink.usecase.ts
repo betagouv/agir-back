@@ -54,9 +54,6 @@ export class MagicLinkUsecase {
         ApplicationError.throwBadOriginLength(originator);
       }
     }
-    if (source && !SourceInscription[source]) {
-      ApplicationError.throwSourceInscriptionInconnue(source);
-    }
 
     Utilisateur.checkEmailFormat(email);
 
@@ -66,7 +63,7 @@ export class MagicLinkUsecase {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
         true,
-        source || SourceInscription.magic_link,
+        SourceInscription[source] || SourceInscription.inconnue,
       );
 
       if (situation_ngc_id) {
