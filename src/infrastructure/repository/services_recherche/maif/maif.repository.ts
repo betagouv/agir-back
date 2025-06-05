@@ -76,7 +76,7 @@ export class MaifRepository implements FinderInterface {
     }
 
     let pourcent_inondation = 0;
-    for (const element of result.naturels.inondations.score.actuel) {
+    for (const element of result.naturels.inondations.scores.actuel) {
       pourcent_inondation += element.percentage;
     }
     let pourcent_secheresse = 0;

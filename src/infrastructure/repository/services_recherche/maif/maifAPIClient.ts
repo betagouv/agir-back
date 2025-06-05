@@ -70,7 +70,7 @@ export type ScoringCommuneAPI = {
       ];
     };
     inondations: {
-      score: {
+      scores: {
         actuel: [
           {
             score: number; //2,
