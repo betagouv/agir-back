@@ -862,6 +862,10 @@ export class TestUtil {
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
       VISIBLE_PROD: true,
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
+
       ...override,
     };
   }

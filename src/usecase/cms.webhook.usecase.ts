@@ -403,6 +403,9 @@ export class CMSWebhookUsecase {
         ? hook.entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(hook.entry.VISIBLE_PROD),
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     };
   }
 

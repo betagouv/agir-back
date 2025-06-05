@@ -109,6 +109,10 @@ export class ArticleRepository {
       created_at: undefined,
       updated_at: undefined,
       VISIBLE_PROD: article_def.VISIBLE_PROD,
+      codes_commune_from_partenaire: article_def.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        article_def.codes_departement_from_partenaire,
+      codes_region_from_partenaire: article_def.codes_region_from_partenaire,
     };
 
     await this.prisma.article.upsert({
@@ -276,6 +280,10 @@ export class ArticleRepository {
       tags_a_exclure: articleDB.tags_a_exclure_v2,
       tags_a_inclure: articleDB.tags_a_inclure_v2,
       VISIBLE_PROD: articleDB.VISIBLE_PROD,
+      codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        articleDB.codes_departement_from_partenaire,
+      codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
     });
   }
 }

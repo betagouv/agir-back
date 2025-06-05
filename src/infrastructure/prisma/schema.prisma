@@ -307,37 +307,40 @@ model Defi {
 }
 
 model Article {
-  content_id            String    @id
-  titre                 String
-  soustitre             String?
-  source                String?
-  sources               Json?     @default("[]")
-  image_url             String?
-  partenaire_id         String?
-  contenu               String?
-  tags_utilisateur      String[]  @default([])
-  rubrique_ids          String[]  @default([])
-  rubrique_labels       String[]  @default([])
-  codes_postaux         String[]  @default([])
-  duree                 String?
-  frequence             String?
-  difficulty            Int       @default(1)
-  points                Int       @default(0)
-  thematique_principale String?
-  thematiques           String[]  @default([])
-  categorie             String    @default("recommandation")
-  mois                  Int[]     @default([])
-  include_codes_commune String[]  @default([])
-  exclude_codes_commune String[]  @default([])
-  codes_departement     String[]  @default([])
-  codes_region          String[]  @default([])
-  echelle               String?
-  derniere_maj          DateTime? @db.Timestamptz(3)
-  tags_a_inclure_v2     String[]  @default([])
-  tags_a_exclure_v2     String[]  @default([])
-  created_at            DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
-  VISIBLE_PROD          Boolean   @default(true)
+  content_id                        String    @id
+  titre                             String
+  soustitre                         String?
+  source                            String?
+  sources                           Json?     @default("[]")
+  image_url                         String?
+  partenaire_id                     String?
+  contenu                           String?
+  tags_utilisateur                  String[]  @default([])
+  rubrique_ids                      String[]  @default([])
+  rubrique_labels                   String[]  @default([])
+  codes_postaux                     String[]  @default([])
+  duree                             String?
+  frequence                         String?
+  difficulty                        Int       @default(1)
+  points                            Int       @default(0)
+  thematique_principale             String?
+  thematiques                       String[]  @default([])
+  categorie                         String    @default("recommandation")
+  mois                              Int[]     @default([])
+  include_codes_commune             String[]  @default([])
+  exclude_codes_commune             String[]  @default([])
+  codes_departement                 String[]  @default([])
+  codes_region                      String[]  @default([])
+  echelle                           String?
+  derniere_maj                      DateTime? @db.Timestamptz(3)
+  tags_a_inclure_v2                 String[]  @default([])
+  tags_a_exclure_v2                 String[]  @default([])
+  created_at                        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at                        DateTime  @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD                      Boolean   @default(true)
+  codes_commune_from_partenaire     String[]  @default([])
+  codes_departement_from_partenaire String[]  @default([])
+  codes_region_from_partenaire      String[]  @default([])
 }
 
 model Partenaire {

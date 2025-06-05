@@ -744,6 +744,9 @@ export class CMSImportUsecase {
             )
           : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     };
   }
 
