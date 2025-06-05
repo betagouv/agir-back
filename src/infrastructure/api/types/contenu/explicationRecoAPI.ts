@@ -10,7 +10,8 @@ export class ExplicationRecoElementaireAPI {
 
 export class ExplicationRecoAPI {
   @ApiProperty() est_exclu: boolean;
-  @ApiProperty() liste_explications: ExplicationRecoElementaireAPI[];
+  @ApiProperty({ type: [ExplicationRecoElementaireAPI] })
+  liste_explications: ExplicationRecoElementaireAPI[];
 
   static mapToApi(exp: ExplicationScore): ExplicationRecoAPI {
     if (!exp) return undefined;
