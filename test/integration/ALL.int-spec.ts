@@ -53,3 +53,4 @@ import './usecase/duplicate.usecase.int-spec';
 import './usecase/franceConnect.usecase.int-spec';
 import './usecase/mesAidesReno.usecase.int-spec';
 import './usecase/notificationMobile.usecase.int-spec';
+import './usecase/risque.usecase.int-spec';

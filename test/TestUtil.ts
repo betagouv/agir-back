@@ -619,23 +619,6 @@ export class TestUtil {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     return {
@@ -786,18 +769,9 @@ export class TestUtil {
     return {
       code_commune: '12345',
       nom_commune: 'city',
-      surface_totale: 100,
       nombre_cat_nat: 44,
-      inondation_surface_zone1: 10,
-      inondation_surface_zone2: 20,
-      inondation_surface_zone3: 30,
-      inondation_surface_zone4: 40,
-      inondation_surface_zone5: 50,
-      secheresse_surface_zone1: 11,
-      secheresse_surface_zone2: 12,
-      secheresse_surface_zone3: 13,
-      secheresse_surface_zone4: 14,
-      secheresse_surface_zone5: 15,
+      pourcentage_inondation: 10,
+      pourcentage_secheresse: 20,
       created_at: undefined,
       updated_at: undefined,
       ...override,

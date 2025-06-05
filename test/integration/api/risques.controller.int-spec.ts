@@ -50,7 +50,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -82,7 +81,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: '91477',
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -102,8 +100,8 @@ describe('Risques (API test)', () => {
       code_commune: '91477',
       nom_commune: 'city',
       nombre_catastrophes_naturels: 44,
-      pourcentage_commune_risque_inondation: 120,
-      pourcentage_commune_risque_secheresse_geotechnique: 65,
+      pourcentage_commune_risque_inondation: 10,
+      pourcentage_commune_risque_secheresse_geotechnique: 20,
     });
   });
   it('GET /utilisateurs/id/risques_commune utilisateur  calcul des pourcentages OK', async () => {
@@ -125,22 +123,14 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: '91477',
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
       code_commune: '91477',
-
-      surface_totale: 100,
-      inondation_surface_zone1: 10,
-      inondation_surface_zone2: 10,
-      inondation_surface_zone3: 10,
-      inondation_surface_zone4: 10,
-      inondation_surface_zone5: 10,
-      secheresse_surface_zone3: 2,
-      secheresse_surface_zone4: 3,
-      secheresse_surface_zone5: 5,
+      nombre_cat_nat: 10,
+      pourcentage_inondation: 20,
+      pourcentage_secheresse: 30,
     });
     await risquesNaturelsCommunesRepository.loadCache();
 
@@ -154,8 +144,8 @@ describe('Risques (API test)', () => {
     expect(response.body).toEqual({
       code_commune: '91477',
       nom_commune: 'city',
-      nombre_catastrophes_naturels: 44,
-      pourcentage_commune_risque_inondation: 30,
+      nombre_catastrophes_naturels: 10,
+      pourcentage_commune_risque_inondation: 20,
       pourcentage_commune_risque_secheresse_geotechnique: 30,
     });
   });
@@ -178,7 +168,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: '91477',
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -194,71 +183,6 @@ describe('Risques (API test)', () => {
     expect(response.body).toEqual({
       code_commune: '21231',
       nom_commune: 'Dijon',
-      nombre_catastrophes_naturels: 0,
-      pourcentage_commune_risque_inondation: null,
-      pourcentage_commune_risque_secheresse_geotechnique: null,
-    });
-  });
-
-  it(`GET /utilisateurs/id/risques_commune utilisateur  pas de cache, calcul, est mise en cache, cas de test donc pas d'appel API`, async () => {
-    // GIVEN
-    const logement: Logement_v0 = {
-      version: 0,
-      superficie: Superficie.superficie_150,
-      type: TypeLogement.maison,
-      code_postal: '91120',
-      chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
-      latitude: 48,
-      longitude: 2,
-      numero_rue: '12',
-      rue: 'avenue de la Paix',
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      nombre_enfants: 2,
-      plus_de_15_ans: true,
-      proprietaire: true,
-      code_commune: '91477',
-      risques: undefined,
-      score_risques_adresse: undefined,
-    };
-    await TestUtil.create(DB.utilisateur, { logement: logement as any });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/risques_commune',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      code_commune: '91477',
-      nom_commune: 'Palaiseau',
-      nombre_catastrophes_naturels: 0,
-      pourcentage_commune_risque_inondation: null,
-      pourcentage_commune_risque_secheresse_geotechnique: null,
-    });
-
-    const cacheDB = (
-      await TestUtil.prisma.risquesNaturelsCommunes.findMany()
-    )[0];
-    delete cacheDB.updated_at;
-    delete cacheDB.created_at;
-    expect(cacheDB).toEqual({
-      code_commune: '91477',
-      inondation_surface_zone1: null,
-      inondation_surface_zone2: null,
-      inondation_surface_zone3: null,
-      inondation_surface_zone4: null,
-      inondation_surface_zone5: null,
-      nom_commune: 'Palaiseau',
-      nombre_cat_nat: 0,
-      secheresse_surface_zone1: null,
-      secheresse_surface_zone2: null,
-      secheresse_surface_zone3: null,
-      secheresse_surface_zone4: null,
-      secheresse_surface_zone5: null,
-      surface_totale: null,
     });
   });
 
@@ -281,7 +205,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -313,7 +236,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: {
         argile: NiveauRisqueLogement.faible,
         inondation: NiveauRisqueLogement.fort,
@@ -390,7 +312,6 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

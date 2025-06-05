@@ -46,7 +46,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 

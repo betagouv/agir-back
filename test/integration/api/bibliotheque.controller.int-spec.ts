@@ -1131,7 +1131,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       superficie: Superficie.superficie_150_et_plus,
       type: TypeLogement.appartement,
       version: 0,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',

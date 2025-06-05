@@ -29,18 +29,9 @@ export class RisquesNaturelsCommunesRepository {
       new_map.set(risque.code_commune, {
         code_commune: risque.code_commune,
         nom_commune: risque.nom_commune,
-        surface_totale: risque.surface_totale,
-        inondation_surface_zone1: risque.inondation_surface_zone1,
-        inondation_surface_zone2: risque.inondation_surface_zone2,
-        inondation_surface_zone3: risque.inondation_surface_zone3,
-        inondation_surface_zone4: risque.inondation_surface_zone4,
-        inondation_surface_zone5: risque.inondation_surface_zone5,
-        secheresse_surface_zone1: risque.secheresse_surface_zone1,
-        secheresse_surface_zone2: risque.secheresse_surface_zone2,
-        secheresse_surface_zone3: risque.secheresse_surface_zone3,
-        secheresse_surface_zone4: risque.secheresse_surface_zone4,
-        secheresse_surface_zone5: risque.secheresse_surface_zone5,
         nombre_cat_nat: risque.nombre_cat_nat,
+        pourcentage_risque_innondation: risque.pourcentage_inondation,
+        pourcentage_risque_secheresse: risque.pourcentage_secheresse,
       });
     }
     RisquesNaturelsCommunesRepository.catalogue = new_map;
@@ -60,19 +51,10 @@ export class RisquesNaturelsCommunesRepository {
   async upsert(risque: RisquesNaturelsCommunesDefinition): Promise<void> {
     const data: RisquesNaturelsCommunes = {
       code_commune: risque.code_commune,
-      surface_totale: risque.surface_totale,
-      inondation_surface_zone1: risque.inondation_surface_zone1,
-      inondation_surface_zone2: risque.inondation_surface_zone2,
-      inondation_surface_zone3: risque.inondation_surface_zone3,
-      inondation_surface_zone4: risque.inondation_surface_zone4,
-      inondation_surface_zone5: risque.inondation_surface_zone5,
-      secheresse_surface_zone1: risque.secheresse_surface_zone1,
-      secheresse_surface_zone2: risque.secheresse_surface_zone2,
-      secheresse_surface_zone3: risque.secheresse_surface_zone3,
-      secheresse_surface_zone4: risque.secheresse_surface_zone4,
-      secheresse_surface_zone5: risque.secheresse_surface_zone5,
       nom_commune: risque.nom_commune,
       nombre_cat_nat: risque.nombre_cat_nat,
+      pourcentage_inondation: risque.pourcentage_risque_innondation,
+      pourcentage_secheresse: risque.pourcentage_risque_secheresse,
       created_at: undefined,
       updated_at: undefined,
     };

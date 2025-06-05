@@ -2,17 +2,8 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { App } from '../../../../domain/app';
 
-const API_URL_CATNAT =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/catnat';
-
-const API_URL_ZONES_SECHERESSE =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/secheresses/scores/CODE_COMMUNE/zones';
-
-const API_URL_DETAIL_COMMUNE =
-  'https://api.aux-alentours.dev.1934.io/v1/territoires/communes/COM/CODE_COMMUNE';
-
-const API_URL_ZONES_INONDATION =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/inondations/scores/CODE_COMMUNE/zones';
+const API_URL_COMMUNE_SYNTHESE =
+  'https://api.aux-alentours.dev.1934.io/v1/risques/CODE_COMMUNE?fields=naturels.catnat,naturels.argiles,naturels.inondations.scores';
 
 export enum SCORE_API_NAME {
   'score_seisme' = 'score_seisme',
@@ -58,6 +49,41 @@ export type RadonScoreResponseAPI = {
   color: string; //"#941C34",
   numInsee: string; //"79091"
 };
+
+export type ScoringCommuneAPI = {
+  naturels: {
+    argiles: [
+      {
+        score: number; //2,
+        label: string; //"Moyen",
+        color: string; //"#f5cd7f",
+        percentage: number; //90.62
+      },
+    ];
+    catnat: {
+      total: number; //8;
+      groups: [
+        {
+          name: string; //"Inondations et/ou Coulées de Boue",
+          total: number; //6
+        },
+      ];
+    };
+    inondations: {
+      score: {
+        actuel: [
+          {
+            score: number; //2,
+            color: string; //"#fffd55",
+            label: string; //"Faible",
+            percentage: number; //13.35
+          },
+        ];
+      };
+    };
+  };
+};
+
 export type SeismeScoreResponseAPI = {
   codeCommune: string; //'91661';
   libelleCommune: string; //'VILLEBON-SUR-YVETTE';
@@ -264,52 +290,6 @@ export type ZonesReponseAPI = {
 export class MaifAPIClient {
   constructor() {}
 
-  public async callAPICatnatByCodeCommune(
-    code_commune: string,
-  ): Promise<CatnatResponseElementAPI[]> {
-    const result = await this.callAPI(API_URL_CATNAT, 'maif/catnat', {
-      codeInsee: code_commune,
-    });
-    if (!result) return null;
-    return result as CatnatResponseElementAPI[];
-  }
-
-  public async callAPIZonesSecheresseByCodeCommune(
-    code_commune: string,
-  ): Promise<ZonesReponseAPI> {
-    const result = await this.callAPI(
-      API_URL_ZONES_SECHERESSE.replace('CODE_COMMUNE', code_commune),
-      'zones_secheresse',
-      {},
-    );
-    if (!result) return null;
-    return result as ZonesReponseAPI;
-  }
-
-  public async callAPIDetailCommuneByCodeCommune(
-    code_commune: string,
-  ): Promise<DetailCommuneAPI> {
-    const result = await this.callAPI(
-      API_URL_DETAIL_COMMUNE.replace('CODE_COMMUNE', code_commune),
-      'detail_commune',
-      {},
-    );
-    if (!result) return null;
-    return result as DetailCommuneAPI;
-  }
-
-  public async callAPIZonesinondationByCodeCommune(
-    code_commune: string,
-  ): Promise<ZonesReponseAPI> {
-    const result = await this.callAPI(
-      API_URL_ZONES_INONDATION.replace('CODE_COMMUNE', code_commune),
-      'zones_inondation',
-      {},
-    );
-    if (!result) return null;
-    return result as ZonesReponseAPI;
-  }
-
   public async callAPISecheresseScore(
     longitude: number,
     latitude: number,
@@ -415,6 +395,17 @@ export class MaifAPIClient {
     );
     if (!result) return undefined;
     return result as ArgileScoreResponseAPI;
+  }
+  public async callAPISyntheseCommune(
+    code_commune: string,
+  ): Promise<ScoringCommuneAPI> {
+    const result = await this.callAPI(
+      API_URL_COMMUNE_SYNTHESE.replace('CODE_COMMUNE', code_commune),
+      'synthese_risques_communes',
+      {},
+    );
+    if (!result) return undefined;
+    return result as ScoringCommuneAPI;
   }
 
   private async callAPI(
