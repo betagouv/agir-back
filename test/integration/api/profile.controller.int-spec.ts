@@ -204,23 +204,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -239,11 +222,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       commune_label: 'Palaiseau',
       dpe: 'B',
       nombre_adultes: 2,
-      nombre_arrets_catnat: 1,
       nombre_enfants: 2,
       plus_de_15_ans: true,
-      pourcentage_surface_inondation: 12,
-      pourcentage_surface_secheresse_geotech: 23,
       proprietaire: true,
       superficie: 'superficie_150',
       type: 'maison',
@@ -275,7 +255,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
 
-      risques: undefined,
       score_risques_adresse: undefined,
     };
 
@@ -328,23 +307,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '23456',
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -378,7 +340,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: undefined,
     };
 
@@ -1586,7 +1547,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -1606,7 +1566,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',

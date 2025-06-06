@@ -447,6 +447,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       code: '456',
       description: 'The desc',
+      label_explication: 'expli',
       boost_absolu: 20,
       ponderation: 3,
     } as CMSWebhookEntryAPI,
@@ -783,6 +784,7 @@ describe('/api/incoming/cms (API test)', () => {
       description: 'The desc',
       id_cms: '123',
       ponderation: new Prisma.Decimal(3),
+      label_explication: 'expli',
       tag: '456',
     });
   });

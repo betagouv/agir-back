@@ -45,7 +45,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -164,6 +163,8 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
+    delete response.body.explications_recommandation_raw;
+
     expect(response.body).toEqual({
       aides: [],
       besoins: ['composter'],
@@ -218,7 +219,10 @@ describe('Actions (API test)', () => {
           url: 'haha',
         },
       ],
-      explications_recommandation: [],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
 
@@ -257,13 +261,10 @@ describe('Actions (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
 
-    expect(response.body.explications_recommandation).toEqual([
-      {
-        inclusion_tag: 'a_un_jardin',
-        ponderation: 1,
-        valeur: 10,
-      },
-    ]);
+    expect(response.body.explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [{ tag: 'a_un_jardin' }],
+    });
   });
 
   it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune de l'utilisateur`, async () => {

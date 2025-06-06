@@ -35,7 +35,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -92,6 +91,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
     const action: ActionLightAPI = response.body.actions[0];
 
+    delete action.explications_recommandation_raw;
+
     expect(action).toEqual({
       code: '123',
       deja_faite: false,
@@ -104,7 +105,10 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       titre: '**The titre**',
       type: 'classique',
       points: 100,
-      explications_recommandation: [],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
 
     expect(response.body.nombre_resultats).toEqual(1);

@@ -208,9 +208,22 @@ export class CMSWebhookUsecase {
   async createOrUpdateAide(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
-    await this.aideRepository.upsert(
-      this.buildAideFromCMSData(cmsWebhookAPI.entry),
+    const aide_to_upsert = this.buildAideFromCMSData(cmsWebhookAPI.entry);
+    await this.aideRepository.upsert(aide_to_upsert);
+
+    /*
+    const computed =
+      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+        aide_to_upsert.partenaires_supp_ids,
+      );
+
+    await this.aideRepository.updateAideCodesFromPartenaire(
+      aide_to_upsert.content_id,
+      computed.codes_commune,
+      computed.codes_departement,
+      computed.codes_region,
     );
+    */
   }
   async createOrUpdateFAQ(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
@@ -247,6 +260,8 @@ export class CMSWebhookUsecase {
     await this.partenaireRepository.upsert(
       this.buildPartenaireFromCMSData(cmsWebhookAPI.entry),
     );
+
+    await this.partenaireRepository.loadCache();
 
     const liste_aides = await this.aideRepository.findAidesByPartenaireId(
       '' + cmsWebhookAPI.entry.id,
@@ -388,6 +403,9 @@ export class CMSWebhookUsecase {
         ? hook.entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(hook.entry.VISIBLE_PROD),
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
     };
   }
 
@@ -591,6 +609,7 @@ export class CMSWebhookUsecase {
       description: entry.description,
       boost: entry.boost_absolu,
       ponderation: entry.ponderation,
+      label_explication: entry.label_explication,
     };
   }
 

@@ -9,6 +9,7 @@ import { ArticleDefinition } from './articleDefinition';
 export class Article extends ArticleDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  pourcent_match: number;
   explicationScore: ExplicationScore;
   favoris: boolean;
   read_date?: Date;
@@ -20,6 +21,7 @@ export class Article extends ArticleDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
     this.favoris = false;
     this.read_date = null;

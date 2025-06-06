@@ -20,6 +20,7 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -49,6 +50,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -78,6 +81,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -107,6 +112,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -139,6 +146,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -174,6 +183,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -209,6 +220,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -233,6 +246,7 @@ describe('ProfileRecommandationUtilisateur', () => {
 
     expect(result).toHaveLength(1);
     expect(Math.round(result[0].score)).toEqual(20);
+    expect(Math.round(result[0].pourcent_match)).toEqual(67);
     expect(result[0].explicationScore).toEqual({
       liste_explications: [
         {
@@ -252,6 +266,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => true,
@@ -273,13 +289,22 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(result).toHaveLength(1);
     expect(Math.round(result[0].score)).toEqual(10);
     expect(content.explicationScore).toEqual({
-      liste_explications: [{ est_local: true, valeur: 10 }],
+      liste_explications: [
+        {
+          est_local: true,
+          valeur: 10,
+          inclusion_tag: Tag_v2.est_un_contenu_local,
+          ponderation: 1,
+        },
+      ],
     });
   });
   it(`trierEtFiltrerRecommandations : le local se somme avec le reste`, () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => true,
@@ -302,7 +327,12 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(content.explicationScore).toEqual({
       liste_explications: [
         { inclusion_tag: 'a_un_jardin', valeur: 10, ponderation: 1 },
-        { est_local: true, valeur: 10 },
+        {
+          est_local: true,
+          valeur: 10,
+          inclusion_tag: Tag_v2.est_un_contenu_local,
+          ponderation: 1,
+        },
       ],
     });
   });
@@ -310,6 +340,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -343,6 +375,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -357,6 +391,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: 30,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: undefined,
       tag: Tag_v2.a_un_jardin,
     });
@@ -381,6 +416,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -395,6 +432,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: 30,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: undefined,
       tag: Tag_v2.a_un_jardin,
     });
@@ -420,6 +458,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'abc',
       isLocal: () => false,
@@ -434,6 +474,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       cms_id: '123',
       boost: undefined,
       description: 'yo',
+      label_explication: 'expli',
       ponderation: 5,
       tag: Tag_v2.a_un_jardin,
     });
@@ -458,6 +499,8 @@ describe('ProfileRecommandationUtilisateur', () => {
     // GIVEN
     const content1: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'A',
       isLocal: () => false,
@@ -469,6 +512,8 @@ describe('ProfileRecommandationUtilisateur', () => {
 
     const content2: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'B',
       isLocal: () => false,
@@ -480,6 +525,8 @@ describe('ProfileRecommandationUtilisateur', () => {
 
     const content3: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
+
       getTags: () => [],
       getDistinctText: () => 'C',
       isLocal: () => false,
@@ -507,10 +554,10 @@ describe('ProfileRecommandationUtilisateur', () => {
     // THEN
 
     expect(result).toHaveLength(3);
-    expect(Math.round(result[0].score)).toEqual(20);
-    expect(result[0].getDistinctText()).toEqual('C');
-    expect(Math.round(result[1].score)).toEqual(10);
-    expect(result[1].getDistinctText()).toEqual('B');
+    expect(Math.round(result[0].score)).toEqual(10);
+    expect(result[0].getDistinctText()).toEqual('B');
+    expect(Math.round(result[1].score)).toEqual(20);
+    expect(result[1].getDistinctText()).toEqual('C');
     expect(Math.round(result[2].score)).toEqual(0);
     expect(result[2].getDistinctText()).toEqual('A');
   });

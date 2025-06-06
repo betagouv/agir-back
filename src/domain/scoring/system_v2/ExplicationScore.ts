@@ -32,6 +32,8 @@ export class ExplicationScore {
     this.liste_explications.push({
       est_local: true,
       valeur: valeur,
+      inclusion_tag: Tag_v2.est_un_contenu_local,
+      ponderation: 1,
     });
   }
   public setBoost(tag: string, valeur: number) {

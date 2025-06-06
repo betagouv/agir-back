@@ -27,6 +27,7 @@ export enum Tag_v2 {
   achete_peu_et_occasion = 'achete_peu_et_occasion',
   vit_en_appart = 'vit_en_appart',
   vit_en_maison = 'vit_en_maison',
+  est_un_contenu_local = 'est_un_contenu_local',
 
   appetence_thematique_logement = 'appetence_thematique_logement',
   appetence_thematique_transport = 'appetence_thematique_transport',

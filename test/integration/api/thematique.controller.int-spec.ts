@@ -46,7 +46,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -465,6 +464,9 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    delete response.body.liste_actions_recommandees[0]
+      .explications_recommandation_raw;
+
     expect(response.body.liste_actions_recommandees[0]).toEqual({
       code: '123',
       deja_faite: false,
@@ -477,7 +479,10 @@ describe('Thematique (API test)', () => {
       thematique: 'alimentation',
       titre: '**The titre**',
       type: 'classique',
-      explications_recommandation: [],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
 

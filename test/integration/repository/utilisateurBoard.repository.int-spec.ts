@@ -26,7 +26,6 @@ const logement_palaiseau: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '91477',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -47,7 +46,6 @@ const logement_dijon: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 

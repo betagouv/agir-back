@@ -34,6 +34,7 @@ export type CMSWebhookPopulateAPI = {
     Titre: string;
     introduction: string;
     label: string;
+    label_explication: string;
     sousTitre: string;
     sous_titre: string;
     comment: string;

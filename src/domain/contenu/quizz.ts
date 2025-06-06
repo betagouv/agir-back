@@ -9,6 +9,7 @@ import { QuizzDefinition } from './quizzDefinition';
 export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  pourcent_match: number;
   explicationScore: ExplicationScore;
   article?: ArticleDefinition;
   premier_coup_ok?: boolean;
@@ -21,6 +22,7 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
 
     if (!this.mois) {

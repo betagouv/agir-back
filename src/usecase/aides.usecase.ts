@@ -53,20 +53,15 @@ export class AidesUsecase {
     const filtre: AideFilter = {
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
-      code_departement: dept_region?.code_departement,
-      code_region: dept_region?.code_region,
       date_expiration: new Date(),
       thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
+      cu_ca_cc_mode: true,
+      commune_pour_partenaire: utilisateur.logement.code_commune,
+      departement_pour_partenaire: dept_region?.code_departement,
+      region_pour_partenaire: dept_region?.code_region,
     };
-    if (utilisateur.isAdmin()) {
-      filtre.commune_pour_partenaire = utilisateur.logement.code_commune;
-      filtre.departement_pour_partenaire = filtre.code_departement;
-      filtre.region_pour_partenaire = filtre.code_region;
-      delete filtre.code_postal;
-      delete filtre.code_departement;
-      delete filtre.code_region;
-    }
+
     const aide_def_liste = await this.aideRepository.search(filtre);
 
     const aides_nationales: Aide[] = [];

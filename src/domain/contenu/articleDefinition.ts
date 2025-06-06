@@ -36,4 +36,7 @@ export class ArticleDefinition implements ContenuLocal {
   tags_a_inclure: string[];
   tags_a_exclure: string[];
   VISIBLE_PROD: boolean;
+  codes_commune_from_partenaire: string[];
+  codes_departement_from_partenaire: string[];
+  codes_region_from_partenaire: string[];
 }
