@@ -127,7 +127,7 @@ export class AidesVeloRepository {
         lien: aide.url,
         collectivite: aide.collectivity,
         description: getDescription(aide.description),
-        logo: getLogo(aide.id),
+        logo: getLogo(aide.id as string),
       }));
   }
 
@@ -156,7 +156,7 @@ export class AidesVeloRepository {
           description: getDescription(aide.description),
           lien: aide.url,
           collectivite: aide.collectivity,
-          logo: getLogo(aide.id),
+          logo: getLogo(aide.id as string),
           // NOTE: this is legacy behavior, the plafond is the same as the
           // amount we should consider removing this field or implementing it
           // correctly.
