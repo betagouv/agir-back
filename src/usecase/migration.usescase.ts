@@ -390,6 +390,8 @@ export class MigrationUsecase {
     new KycToTags_v2(
       utilisateur.kyc_history,
       utilisateur.recommandation,
+      utilisateur.logement,
+      _this.communeRepository,
     ).refreshTagState();
 
     // VALIDATE VERSION VALUE
@@ -440,6 +442,39 @@ export class MigrationUsecase {
     };
   }
   private async migrate_20(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+      Scope.logement,
+      Scope.kyc,
+      Scope.recommandation,
+    ]);
+
+    // DO SOMETHING
+    new KycToTags_v2(
+      utilisateur.kyc_history,
+      utilisateur.recommandation,
+      utilisateur.logement,
+      _this.communeRepository,
+    ).refreshTagState();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.recommandation],
+    );
+
+    return {
+      ok: true,
+      info: `updated recos tags`,
+    };
+  }
+  private async migrate_21(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

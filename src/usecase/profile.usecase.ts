@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
 import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
+import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
@@ -211,7 +212,7 @@ export class ProfileUsecase {
   async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.logement, Scope.kyc],
+      [Scope.logement, Scope.kyc, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
     const data_to_update: Partial<Logement> = { ...input };
@@ -305,6 +306,15 @@ export class ProfileUsecase {
     }
 
     utilisateur.logement.patch(data_to_update, utilisateur);
+
+    if (data_to_update.code_commune) {
+      new KycToTags_v2(
+        utilisateur.kyc_history,
+        utilisateur.recommandation,
+        utilisateur.logement,
+        this.communeRepository,
+      ).refreshTagState();
+    }
 
     try {
       LogementToKycSync.synchronize(input, utilisateur.kyc_history);

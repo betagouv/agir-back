@@ -336,6 +336,7 @@ describe('ProfileRecommandationUtilisateur', () => {
       ],
     });
   });
+
   it(`trierEtFiltrerRecommandations : appentence XXX s'applique de manière implicite sur les tematiques`, () => {
     // GIVEN
     const content: TaggedContent = {

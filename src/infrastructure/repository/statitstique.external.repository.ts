@@ -111,6 +111,9 @@ export class StatistiqueExternalRepository {
           utilisateur.notification_history.isCanalEnabled(
             CanalNotification.email,
           ),
+        urbain: this.communeRepository.getNiveauUrbainCommune(
+          utilisateur.logement?.code_commune,
+        ),
       },
     });
   }

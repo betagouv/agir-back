@@ -6,6 +6,12 @@ import { Injectable } from '@nestjs/common';
 import { CommunesAndEPCI } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import _codes_postaux from './codes_postaux.json';
+import _typologie_communes from './typologie_communes.json';
+
+const typologie_communes_by_code_insee = _typologie_communes as Record<
+  string,
+  TypologieCommune
+>;
 
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];
@@ -14,6 +20,19 @@ const epci = _epci as EPCI[];
 const communesEPCI = Object.fromEntries(
   _epci.flatMap((epci) => epci.membres.map(({ code }) => [code, epci.code])),
 );
+
+export enum TypeCommune {
+  Urbain = 'Urbain',
+  Rural = 'Rural',
+  'Péri-urbain' = 'Péri-urbain',
+}
+export type TypologieCommune = {
+  Ville: string;
+  Classification: TypeCommune;
+  CATEAAV2020: number;
+  TAAV2017: number;
+  DROM: number;
+};
 
 export type CommuneParCodePostal = {
   // NOTE: Le code INSEE peut correspondre dans certains cas au code INSEE de
@@ -169,6 +188,10 @@ export class CommuneRepository {
         une_commune.codesPostaux,
       );
     }
+  }
+
+  public getNiveauUrbainCommune(code_commune: string): TypeCommune {
+    return typologie_communes_by_code_insee[code_commune]?.Classification;
   }
 
   private async upsertCommune(

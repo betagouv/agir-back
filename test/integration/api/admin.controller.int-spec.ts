@@ -19,6 +19,7 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import {
@@ -970,6 +971,62 @@ describe('Admin (API test)', () => {
     userDB = await utilisateurRepository.getById('4', [Scope.ALL]);
     expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
     expect(userDB.version).toEqual(19);
+  });
+
+  it('POST /admin/migrate_users migration V20 OK - recalcul des tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 19,
+      migration_enabled: true,
+      logement: logement as any,
+    });
+    App.USER_CURRENT_VERSION = 20;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 20,
+            ok: true,
+            info: 'updated recos tags',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+    ]);
+    expect(userDB.version).toEqual(20);
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {

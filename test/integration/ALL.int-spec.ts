@@ -30,6 +30,7 @@ import './api/recommandation.controller.int-spec';
 import './api/risques.controller.int-spec';
 import './api/simulateurVoiture.controller.int-spec';
 import './api/thematique.controller.int-spec';
+import './KycToTags_v2.int-spec';
 import './migrations/cartographieStatistique.view.int-spec';
 import './migrations/utilisateurStatistique.view.int-spec';
 import './personnalisation.int-spec';

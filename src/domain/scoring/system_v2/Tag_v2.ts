@@ -33,4 +33,8 @@ export enum Tag_v2 {
   appetence_thematique_transport = 'appetence_thematique_transport',
   appetence_thematique_consommation = 'appetence_thematique_consommation',
   appetence_thematique_alimentation = 'appetence_thematique_alimentation',
+
+  habite_zone_peri_urbaine = 'habite_zone_peri_urbaine',
+  habite_zone_urbaine = 'habite_zone_urbaine',
+  habite_zone_rurale = 'habite_zone_rurale',
 }

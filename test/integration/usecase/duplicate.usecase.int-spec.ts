@@ -317,6 +317,7 @@ describe('Duplicate Usecase', () => {
       version_utilisateur: 'V2',
       notifications_email_actives: true,
       notifications_mobile_actives: false,
+      urbain: 'Urbain',
     });
   });
 

@@ -18,6 +18,7 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 const FIELD_MAX_LENGTH = 280;
 
@@ -25,6 +26,7 @@ const FIELD_MAX_LENGTH = 280;
 export class QuestionKYCUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
+    private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
   ) {}
 
@@ -111,6 +113,8 @@ export class QuestionKYCUsecase {
     new KycToTags_v2(
       utilisateur.kyc_history,
       utilisateur.recommandation,
+      utilisateur.logement,
+      this.communeRepository,
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
@@ -218,6 +222,8 @@ export class QuestionKYCUsecase {
     new KycToTags_v2(
       utilisateur.kyc_history,
       utilisateur.recommandation,
+      utilisateur.logement,
+      this.communeRepository,
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
