@@ -29,6 +29,7 @@ model UtilisateurCopy {
   notifications_email_actives  Boolean?
   date_inscription             DateTime? @db_stats.Timestamptz(3)
   version_utilisateur          String?
+  urbain                       String?
 }
 
 model Personnalisation {

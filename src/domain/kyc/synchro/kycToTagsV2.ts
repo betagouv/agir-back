@@ -1,3 +1,8 @@
+import {
+  CommuneRepository,
+  TypeCommune,
+} from '../../../infrastructure/repository/commune/commune.repository';
+import { Logement } from '../../logement/logement';
 import { ProfileRecommandationUtilisateur } from '../../scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../scoring/system_v2/Tag_v2';
 import { KYCHistory } from '../kycHistory';
@@ -33,13 +38,59 @@ type code_tag = Record<string, Tag_v2>;
 export class KycToTags_v2 {
   private hist: KYCHistory;
   private profile: ProfileRecommandationUtilisateur;
+  private logement: Logement;
+  private commune_repo: CommuneRepository;
 
-  constructor(hist: KYCHistory, profile: ProfileRecommandationUtilisateur) {
+  constructor(
+    hist: KYCHistory,
+    profile: ProfileRecommandationUtilisateur,
+    logement: Logement,
+    commune_repo: CommuneRepository,
+  ) {
     this.hist = hist;
     this.profile = profile;
+    this.logement = logement;
+    this.commune_repo = commune_repo;
   }
 
   public refreshTagState() {
+    if (this.logement && this.logement.code_commune) {
+      const niveau = this.commune_repo.getNiveauUrbainCommune(
+        this.logement.code_commune,
+      );
+      switch (niveau) {
+        case TypeCommune.Rural:
+          this.setTags([Tag_v2.habite_zone_rurale]);
+          this.removeTags([
+            Tag_v2.habite_zone_peri_urbaine,
+            Tag_v2.habite_zone_urbaine,
+          ]);
+          break;
+        case TypeCommune.Urbain:
+          this.setTags([Tag_v2.habite_zone_urbaine]);
+          this.removeTags([
+            Tag_v2.habite_zone_peri_urbaine,
+            Tag_v2.habite_zone_rurale,
+          ]);
+          break;
+        case TypeCommune['Péri-urbain']:
+          this.setTags([Tag_v2.habite_zone_peri_urbaine]);
+          this.removeTags([
+            Tag_v2.habite_zone_rurale,
+            Tag_v2.habite_zone_urbaine,
+          ]);
+          break;
+
+        default:
+          this.removeTags([
+            Tag_v2.habite_zone_rurale,
+            Tag_v2.habite_zone_urbaine,
+            Tag_v2.habite_zone_peri_urbaine,
+          ]);
+          break;
+      }
+    }
+
     this.distribuerChoixMultiple(KYCID.KYC_preference, {
       alimentation: Tag_v2.appetence_thematique_alimentation,
       transport: Tag_v2.appetence_thematique_transport,

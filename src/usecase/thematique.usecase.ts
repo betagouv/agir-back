@@ -188,6 +188,7 @@ export class ThematiqueUsecase {
         Scope.kyc,
         Scope.gamification,
         Scope.recommandation,
+        Scope.logement,
       ],
     );
     Utilisateur.checkState(utilisateur);
@@ -202,6 +203,8 @@ export class ThematiqueUsecase {
     new KycToTags_v2(
       utilisateur.kyc_history,
       utilisateur.recommandation,
+      utilisateur.logement,
+      this.communeRepository,
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
