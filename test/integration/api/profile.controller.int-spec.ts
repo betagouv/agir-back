@@ -8,6 +8,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -1107,6 +1108,29 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .getQuestionNumerique(KYCID.KYC_logement_age)
         .getValue(),
     ).toEqual(5);
+  });
+  it('PATCH /utilisateurs/id/logement - update code_commune => update tag urbain', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_commune: '91477',
+      code_postal: '91120',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(dbUser.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+    ]);
   });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
     // GIVEN
