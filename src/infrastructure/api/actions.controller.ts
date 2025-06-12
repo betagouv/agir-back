@@ -21,6 +21,7 @@ import {
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   Consultation,
+  Ordre,
   Realisation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
@@ -145,6 +146,12 @@ export class ActionsController extends GenericControler {
     description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
   })
   @ApiQuery({
+    name: 'ordre',
+    enum: Ordre,
+    required: false,
+    description: `indique si on veut les recommandée par ordre de reco (et donc sans les actions exclues), ou toutes les action sans ordre particulier`,
+  })
+  @ApiQuery({
     name: 'skip',
     type: Number,
     required: false,
@@ -162,6 +169,7 @@ export class ActionsController extends GenericControler {
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
     @Query('realisation') realisation: string,
+    @Query('ordre') ordre: string,
     @Query('skip') skip: string,
     @Query('take') take: string,
     @Request() req,
@@ -182,12 +190,15 @@ export class ActionsController extends GenericControler {
     const type_realisation =
       this.castTypeRealisationActionOrException(realisation);
 
+    const type_ordre = this.castTypeOrdreActionOrException(ordre);
+
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
       titre,
       type_consulation,
       type_realisation,
+      type_ordre,
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
     );
