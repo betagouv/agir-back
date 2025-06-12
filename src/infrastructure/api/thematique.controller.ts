@@ -18,6 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { TypeAction } from '../../domain/actions/typeAction';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from '../../usecase/thematiqueBoard.usecase';
@@ -208,6 +209,11 @@ export class ThematiqueController extends GenericControler {
     type: String,
     description: `Code de l'action à supprimer de la selection`,
   })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `Type de l'action à supprimer de la selection`,
+  })
   async removeAction(
     @Param('utilisateurId') utilisateurId: string,
     @Param('code_thematique') code_thematique: string,
@@ -227,5 +233,30 @@ export class ThematiqueController extends GenericControler {
       code_action,
       type,
     );
+  }
+  @Delete(
+    'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/first_block_of_six',
+  )
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de propositions les 6 premieres actions recommandées`,
+  })
+  @ApiParam({
+    name: 'code_thematique',
+    enum: Thematique,
+    description: `code thématique`,
+  })
+  async remove6Actions(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('code_thematique') code_thematique: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let them;
+    if (code_thematique) {
+      them = this.castThematiqueOrException(code_thematique);
+    }
+
+    await this.thematiqueUsecase.remove6FirstActions(utilisateurId, them);
   }
 }

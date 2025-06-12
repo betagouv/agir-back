@@ -76,16 +76,16 @@ export class TestDataController extends GenericControler {
       tags_ponderation: user.tag_ponderation_set,
       tags_actifs: user.recommandation.getListeTagsActifs(),
       personnalisations_dones: {
-        alimentation: user.thematique_history.isPersonnalisationDone(
+        alimentation: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.alimentation,
         ),
-        transport: user.thematique_history.isPersonnalisationDone(
+        transport: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.transport,
         ),
-        logement: user.thematique_history.isPersonnalisationDone(
+        logement: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.logement,
         ),
-        consommation: user.thematique_history.isPersonnalisationDone(
+        consommation: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.consommation,
         ),
       },
