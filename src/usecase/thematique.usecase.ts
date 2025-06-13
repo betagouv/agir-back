@@ -73,7 +73,10 @@ export class ThematiqueUsecase {
     result.nombre_simulateurs = detailThematique.nombre_simulateurs;
 
     if (personnalisation_done_once) {
-      await this.buildThematiquePostPersonnalisation(result, utilisateur);
+      result.liste_actions = await this.buildThematiquePostPersonnalisation(
+        utilisateur,
+        thematique,
+      );
 
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
@@ -85,10 +88,9 @@ export class ThematiqueUsecase {
   }
 
   private async buildThematiquePostPersonnalisation(
-    detailThematique: DetailThematique,
     utilisateur: Utilisateur,
-  ): Promise<void> {
-    const thema = detailThematique.thematique;
+    thematique?: Thematique,
+  ): Promise<Action[]> {
     const history = utilisateur.thematique_history;
 
     const action_faites_par_utilisateur = history.getListeActionsFaites();
@@ -100,17 +102,19 @@ export class ThematiqueUsecase {
     const stock_actions_eligibles =
       await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
         type_codes_exclus: total_a_exclure,
-        thematique: thema,
+        thematique: thematique,
       });
 
-    detailThematique.liste_actions = stock_actions_eligibles.slice(0, 6);
+    const liste_actions = stock_actions_eligibles.slice(0, 6);
 
-    for (const action of detailThematique.liste_actions) {
+    for (const action of liste_actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       action.nombre_actions_faites =
         this.compteurActionsRepository.getNombreFaites(action);
     }
+
+    return liste_actions;
   }
 
   public async removeAction(
@@ -133,24 +137,22 @@ export class ThematiqueUsecase {
     );
   }
 
-  public async remove6FirstActions(utilisateurId: string, thema: Thematique) {
+  public async remove6FirstActions(
+    utilisateurId: string,
+    thematique?: Thematique,
+  ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.thematique_history, Scope.recommandation, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    const detail_thematique = new DetailThematique();
-    detail_thematique.thematique = thema;
-
-    await this.buildThematiquePostPersonnalisation(
-      detail_thematique,
+    const liste_actions = await this.buildThematiquePostPersonnalisation(
       utilisateur,
+      thematique,
     );
 
-    utilisateur.thematique_history.exclureAllActions(
-      detail_thematique.liste_actions,
-    );
+    utilisateur.thematique_history.exclureAllActions(liste_actions);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,

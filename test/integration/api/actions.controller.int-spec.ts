@@ -1473,4 +1473,55 @@ describe('Actions (API test)', () => {
       code: '3',
     });
   });
+
+  it(`DELETE /utilisateurs/id/actions/XXX supprime 6 action `, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
+
+      liste_thematiques: [],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/actions/first_block_of_six',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(6);
+    expect(
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
+  });
 });

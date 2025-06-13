@@ -262,6 +262,20 @@ export class ActionsController extends GenericControler {
     await this.thematiqueUsecase.removeAction(utilisateurId, code_action, type);
   }
 
+  @Delete('utilisateurs/:utilisateurId/actions/first_block_of_six')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de propositions les 6 premieres actions recommandées`,
+  })
+  async remove6Actions(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.thematiqueUsecase.remove6FirstActions(utilisateurId);
+  }
+
   @Post(
     'utilisateurs/:utilisateurId/actions/:type_action/:code_action/feedback',
   )
