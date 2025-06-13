@@ -373,6 +373,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -467,6 +468,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -562,6 +564,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -617,6 +620,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     logement.code_commune = '21231';
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -718,15 +722,16 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          date: new Date(1),
+        },
+      ],
       liste_actions_utilisateur: [],
       liste_thematiques: [
         {
-          codes_actions_exclues: [
-            {
-              action: { code: '1', type: TypeAction.classique },
-              date: new Date(1),
-            },
-          ],
+          codes_actions_exclues: [],
           first_personnalisation_date: null,
           personnalisation_done_once: false,
           thematique: Thematique.alimentation,

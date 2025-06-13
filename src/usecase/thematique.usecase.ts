@@ -92,7 +92,7 @@ export class ThematiqueUsecase {
     const history = utilisateur.thematique_history;
 
     const action_faites_par_utilisateur = history.getListeActionsFaites();
-    const action_exclues = history.getActionsExclues(thema);
+    const action_exclues = history.getAllTypeCodeActionsExclues();
     const total_a_exclure = action_exclues.concat(
       action_faites_par_utilisateur,
     );
@@ -115,7 +115,6 @@ export class ThematiqueUsecase {
 
   public async removeAction(
     utilisateurId: string,
-    thema: Thematique,
     code_action: string,
     type_action: TypeAction,
   ) {
@@ -126,7 +125,7 @@ export class ThematiqueUsecase {
     Utilisateur.checkState(utilisateur);
     const action: TypeCodeAction = { type: type_action, code: code_action };
 
-    utilisateur.thematique_history.exclureAction(thema, action);
+    utilisateur.thematique_history.exclureAction(action);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
@@ -149,8 +148,7 @@ export class ThematiqueUsecase {
       utilisateur,
     );
 
-    utilisateur.thematique_history.exclureActions(
-      thema,
+    utilisateur.thematique_history.exclureAllActions(
       detail_thematique.liste_actions,
     );
 

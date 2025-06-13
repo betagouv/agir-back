@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
 import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBilanMappingEnchainements';
-import {
-  ActionDefinition,
-  TypeCodeAction,
-} from '../domain/actions/actionDefinition';
+import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
   Consultation,
@@ -151,13 +148,8 @@ export class ActionUsecase {
 
     const filtre: ActionFilter = {};
     if (ordre === Ordre.recommandee_filtre_perso) {
-      let action_exclues: TypeCodeAction[] = [];
-      for (const thematique of Object.values(Thematique)) {
-        action_exclues = action_exclues.concat(
-          utilisateur.thematique_history.getActionsExclues(thematique),
-        );
-      }
-      filtre.type_codes_exclus = action_exclues;
+      filtre.type_codes_exclus =
+        utilisateur.thematique_history.getAllTypeCodeActionsExclues();
     }
     filtre.ordre = ordre;
     filtre.liste_thematiques =

@@ -3,7 +3,14 @@ import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { HomeBoardAPI } from '../../../src/infrastructure/api/types/thematiques/HomeBoardAPI';
@@ -126,7 +133,27 @@ describe('Thematique Board (API test)', () => {
 
   it(`GET /utilisateurs/id/thematiques - filtrage des aides par commune`, async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, { code_commune: '21231' });
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
@@ -165,6 +192,7 @@ describe('Thematique Board (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -193,8 +221,28 @@ describe('Thematique Board (API test)', () => {
       type_code_id: 'bilan_2',
       faites: 3,
     });
-    await TestUtil.create(DB.utilisateur, {
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
       code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
       thematique_history: thematique_history as any,
     });
 
@@ -364,8 +412,28 @@ describe('Thematique Board (API test)', () => {
 
     await kycRepository.loadCache();
 
-    await TestUtil.create(DB.utilisateur, {
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
       code_commune: '21231',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
       kyc: kyc as any,
     });
 

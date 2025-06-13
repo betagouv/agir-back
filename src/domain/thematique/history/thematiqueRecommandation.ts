@@ -44,21 +44,4 @@ export class ThematiqueRecommandation {
   public isPersonnalisationDoneOnce(): boolean {
     return this.personnalisation_done_once;
   }
-
-  public addActionToExclusionList(action: TypeCodeAction) {
-    if (!this.doesActionsExcluesInclude(action)) {
-      this.actions_exclues.push({
-        action: { type: action.type, code: action.code },
-        date: new Date(),
-      });
-    }
-  }
-
-  public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
-    const index = this.actions_exclues.findIndex(
-      (a) =>
-        a.action.code === type_code.code && a.action.type === type_code.type,
-    );
-    return index !== -1;
-  }
 }

@@ -21,6 +21,12 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      codes_actions_exclues: [
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          date: new Date(),
+        },
+      ],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -60,6 +66,13 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      codes_actions_exclues: [
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          date: new Date(),
+        },
+      ],
+
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },

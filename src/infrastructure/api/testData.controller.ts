@@ -90,18 +90,7 @@ export class TestDataController extends GenericControler {
         ),
       },
       action_rejetees: {
-        alimentation: user.thematique_history
-          .getActionsExclues(Thematique.alimentation)
-          .map((a) => a.type + '_' + a.code),
-        transport: user.thematique_history
-          .getActionsExclues(Thematique.transport)
-          .map((a) => a.type + '_' + a.code),
-        Logement: user.thematique_history
-          .getActionsExclues(Thematique.logement)
-          .map((a) => a.type + '_' + a.code),
-        consommation: user.thematique_history
-          .getActionsExclues(Thematique.consommation)
-          .map((a) => a.type + '_' + a.code),
+        all: user.thematique_history.getAllTypeCodeActionsExclues(),
       },
     };
   }

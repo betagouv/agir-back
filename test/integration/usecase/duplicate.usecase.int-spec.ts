@@ -325,6 +325,7 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -683,6 +684,7 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -1281,26 +1283,26 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [
+        {
+          action: { code: 'abc', type: TypeAction.classique },
+          date: new Date(1),
+        },
+        {
+          action: { code: 'def', type: TypeAction.bilan },
+          date: new Date(1),
+        },
+      ],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { code: 'abc', type: TypeAction.classique },
-              date: new Date(1),
-            },
-          ],
+          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: true,
         },
         {
           thematique: Thematique.logement,
-          codes_actions_exclues: [
-            {
-              action: { code: 'def', type: TypeAction.bilan },
-              date: new Date(1),
-            },
-          ],
+          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: false,
         },
@@ -1328,11 +1330,7 @@ describe('Duplicate Usecase', () => {
 
     const stat = stats[0];
     expect(stat).toEqual({
-      actions_alimentation_rejetees: ['abc'],
-      actions_consommation_rejetees: [],
-      actions_logement_rejetees: ['def'],
       actions_rejetees_all: ['abc', 'def'],
-      actions_transport_rejetees: [],
       perso_alimentation_done_once: true,
       perso_consommation_done_once: false,
       perso_logement_done_once: false,

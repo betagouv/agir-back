@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Param,
@@ -27,6 +28,7 @@ import {
 import { TypeAction } from '../../domain/actions/typeAction';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
+import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
@@ -39,7 +41,10 @@ import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
 @ApiBearerAuth()
 @ApiTags('Actions')
 export class ActionsController extends GenericControler {
-  constructor(private readonly actionUsecase: ActionUsecase) {
+  constructor(
+    private readonly actionUsecase: ActionUsecase,
+    private readonly thematiqueUsecase: ThematiqueUsecase,
+  ) {
     super();
   }
 
@@ -229,6 +234,32 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     let type = this.castTypeActionOrException(type_action);
     await this.actionUsecase.faireAction(code_action, type, utilisateurId);
+  }
+
+  @Delete('utilisateurs/:utilisateurId/actions/:type_action/:code_action')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de proposition une action de code donné, l'utilisateur n'est pas intéressé par cette action`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `Code de l'action à supprimer de la selection`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `Type de l'action à supprimer de la selection`,
+  })
+  async removeAction(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('type_action') type_action: string,
+    @Param('code_action') code_action: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.thematiqueUsecase.removeAction(utilisateurId, code_action, type);
   }
 
   @Post(

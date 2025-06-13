@@ -18,6 +18,7 @@ describe('ThematiqueHistory', () => {
       version: 0,
       liste_actions_utilisateur: [],
       liste_thematiques: [],
+      codes_actions_exclues: [],
     });
 
     // WHEN
@@ -34,6 +35,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -57,6 +59,7 @@ describe('ThematiqueHistory', () => {
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [],
     });
 

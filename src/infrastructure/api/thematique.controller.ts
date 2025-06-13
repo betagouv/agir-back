@@ -227,13 +227,9 @@ export class ThematiqueController extends GenericControler {
     if (code_thematique) {
       them = this.castThematiqueOrException(code_thematique);
     }
-    await this.thematiqueUsecase.removeAction(
-      utilisateurId,
-      them,
-      code_action,
-      type,
-    );
+    await this.thematiqueUsecase.removeAction(utilisateurId, code_action, type);
   }
+
   @Delete(
     'utilisateurs/:utilisateurId/thematiques/:code_thematique/actions/first_block_of_six',
   )

@@ -1029,6 +1029,80 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toEqual(20);
   });
 
+  it('POST /admin/migrate_users migration V21 OK - fusionne les actions exclues dans une liste globale', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 21;
+
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: undefined,
+      liste_actions_utilisateur: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            {
+              action: { code: '1', type: TypeAction.classique },
+              date: new Date(1),
+            },
+          ],
+          first_personnalisation_date: new Date(2),
+          personnalisation_done_once: true,
+        },
+        {
+          thematique: Thematique.logement,
+          codes_actions_exclues: [
+            {
+              action: { code: '2', type: TypeAction.bilan },
+              date: new Date(3),
+            },
+          ],
+          first_personnalisation_date: new Date(4),
+          personnalisation_done_once: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 20,
+      migration_enabled: true,
+      thematique_history: thematique_history1 as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 21,
+            ok: true,
+            info: 'fusion actions exclues',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history.getAllTypeCodeActionsExclues()).toEqual([
+      {
+        code: '1',
+        type: 'classique',
+      },
+      {
+        code: '2',
+        type: 'bilan',
+      },
+    ]);
+    expect(userDB.version).toEqual(21);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1748,6 +1822,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1814,6 +1889,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1830,6 +1906,7 @@ describe('Admin (API test)', () => {
 
     const thematique_history2: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -2200,6 +2277,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {

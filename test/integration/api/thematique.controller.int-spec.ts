@@ -117,6 +117,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -162,6 +163,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -219,6 +221,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -350,6 +353,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -386,9 +390,7 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(true);
-    expect(
-      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toEqual([]);
+    expect(user_after.thematique_history.getAllActionsExclues()).toEqual([]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {
@@ -396,6 +398,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -464,6 +467,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { code: '123', type: TypeAction.classique },
@@ -522,6 +526,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -566,6 +571,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -628,6 +634,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -683,6 +690,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -732,6 +740,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
 
       liste_thematiques: [
         {
@@ -774,23 +783,21 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(1);
     expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toHaveLength(1);
-    expect(
-      user.thematique_history
-        .getActionsExcluesEtDates(Thematique.alimentation)[0]
-        .date.getTime(),
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation)[0],
-    ).toEqual({ type: TypeAction.classique, code: '3' });
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
   });
   it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/first_block_of_six les 6 première recommandations`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
 
       liste_thematiques: [
         {
@@ -833,16 +840,9 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(6);
     expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toHaveLength(6);
-    console.log(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    );
-    expect(
-      user.thematique_history
-        .getActionsExcluesEtDates(Thematique.alimentation)[0]
-        .date.getTime(),
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
   });
 });
