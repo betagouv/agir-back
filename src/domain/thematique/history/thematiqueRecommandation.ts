@@ -44,4 +44,12 @@ export class ThematiqueRecommandation {
   public isPersonnalisationDoneOnce(): boolean {
     return this.personnalisation_done_once;
   }
+
+  public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
+    const index = this.actions_exclues.findIndex(
+      (a) =>
+        a.action.code === type_code.code && a.action.type === type_code.type,
+    );
+    return index !== -1;
+  }
 }

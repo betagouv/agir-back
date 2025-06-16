@@ -353,7 +353,16 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      codes_actions_exclues: [],
+      codes_actions_exclues: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          date: new Date(123),
+        },
+        {
+          action: { code: '2', type: TypeAction.classique },
+          date: new Date(456),
+        },
+      ],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -390,7 +399,15 @@ describe('Thematique (API test)', () => {
         Thematique.alimentation,
       ),
     ).toEqual(true);
-    expect(user_after.thematique_history.getAllActionsExclues()).toEqual([]);
+    expect(user_after.thematique_history.getAllActionsExclues()).toEqual([
+      {
+        action: { code: '2', type: TypeAction.classique },
+        date: new Date(456),
+      },
+    ]);
+    expect(
+      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
+    ).toEqual([]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {

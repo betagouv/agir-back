@@ -113,7 +113,26 @@ export class ThematiqueHistory {
   public resetPersonnalisation(thematique: Thematique) {
     const reco_existante =
       this.getOrCreateNewThematiqueRecommandation(thematique);
+
+    this.re_inclure_actions(reco_existante);
     reco_existante.resetPersonnalisation();
+  }
+
+  private re_inclure_actions(reco_existante: ThematiqueRecommandation) {
+    const liste_filtree: ActionExclue[] = [];
+    for (const action of this.actions_exclues) {
+      if (
+        reco_existante.doesActionsExcluesInclude({
+          code: action.action.code,
+          type: action.action.type,
+        })
+      ) {
+        // rien a faire
+      } else {
+        liste_filtree.push(action);
+      }
+    }
+    this.actions_exclues = liste_filtree;
   }
 
   public isPersonnalisationDoneOnce(thematique: Thematique): boolean {
