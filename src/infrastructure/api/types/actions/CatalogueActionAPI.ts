@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   CatalogueAction,
   Consultation,
+  Ordre,
   Realisation,
 } from '../../../../domain/actions/catalogueAction';
 import { ThematiqueFiltereAPI } from '../contenu/contenuBiblioAPI';
@@ -16,6 +17,7 @@ export class CatalogueActionAPI {
 
   @ApiProperty({ enum: Consultation }) consultation: Consultation;
   @ApiProperty({ enum: Realisation }) realisation: Realisation;
+  @ApiProperty({ enum: Ordre }) ordre: Ordre;
 
   @ApiProperty() nombre_resultats: number;
   @ApiProperty() nombre_resultats_disponibles: number;
@@ -28,6 +30,7 @@ export class CatalogueActionAPI {
       realisation: catalogue.realisation,
       nombre_resultats: catalogue.getNombreResultats(),
       nombre_resultats_disponibles: catalogue.getNombreResultatsDispo(),
+      ordre: catalogue.ordre,
     };
   }
 }

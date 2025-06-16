@@ -5,6 +5,8 @@ export class PartenaireDefinition {
   nom: string;
   url: string;
   code_commune: string;
+  code_departement: string;
+  code_region: string;
   code_epci: string;
   image_url: string;
   echelle: Echelle;

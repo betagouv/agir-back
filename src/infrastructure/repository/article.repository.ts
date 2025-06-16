@@ -24,7 +24,6 @@ export type ArticleFilter = {
   code_region?: string;
   code_departement?: string;
   code_commune?: string;
-  tag_article?: string;
   skip?: number;
   take?: number;
 };
@@ -81,7 +80,6 @@ export class ArticleRepository {
     const article_to_save: ArticleDB = {
       source: article_def.source,
       soustitre: article_def.soustitre,
-      tag_article: article_def.tag_article,
       partenaire_id: article_def.partenaire_id,
       tags_utilisateur: article_def.tags_utilisateur,
       thematique_principale: article_def.thematique_principale,
@@ -111,6 +109,10 @@ export class ArticleRepository {
       created_at: undefined,
       updated_at: undefined,
       VISIBLE_PROD: article_def.VISIBLE_PROD,
+      codes_commune_from_partenaire: article_def.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        article_def.codes_departement_from_partenaire,
+      codes_region_from_partenaire: article_def.codes_region_from_partenaire,
     };
 
     await this.prisma.article.upsert({
@@ -221,12 +223,6 @@ export class ArticleRepository {
       });
     }
 
-    if (filter.tag_article) {
-      main_filter.push({
-        tag_article: filter.tag_article,
-      });
-    }
-
     if (filter.thematiques) {
       main_filter.push({
         thematiques: {
@@ -277,7 +273,6 @@ export class ArticleRepository {
       codes_region: articleDB.codes_region,
       exclude_codes_commune: articleDB.exclude_codes_commune,
       include_codes_commune: articleDB.include_codes_commune,
-      tag_article: articleDB.tag_article,
       contenu: articleDB.contenu,
       sources: articleDB.sources as any,
       derniere_maj: articleDB.derniere_maj,
@@ -285,6 +280,10 @@ export class ArticleRepository {
       tags_a_exclure: articleDB.tags_a_exclure_v2,
       tags_a_inclure: articleDB.tags_a_inclure_v2,
       VISIBLE_PROD: articleDB.VISIBLE_PROD,
+      codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
+      codes_departement_from_partenaire:
+        articleDB.codes_departement_from_partenaire,
+      codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
     });
   }
 }

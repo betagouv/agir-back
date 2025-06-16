@@ -12,6 +12,7 @@ import { Tag } from '../../../../src/domain/scoring/tag';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
@@ -284,8 +285,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'w@w.com',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     user.tag_ponderation_set = {};
 
@@ -340,8 +341,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     // THEN
@@ -351,8 +352,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -367,8 +368,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.pseudo = 'yoyo';
@@ -382,8 +383,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -399,8 +400,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -415,8 +416,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -431,8 +432,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -448,8 +449,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -464,8 +465,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -483,8 +484,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.kyc_history = new KYCHistory(kyc);
@@ -502,8 +503,8 @@ describe('Objet Utilisateur', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(
       'A',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
 
     utilisateur.annee_naissance = 1978;

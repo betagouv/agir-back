@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  Scope,
+  Utilisateur,
+} from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { App } from '../domain/app';
+import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
+import { Thematique } from '../domain/thematique/thematique';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
@@ -372,6 +379,136 @@ export class MigrationUsecase {
   }
     */
   private async migrate_18(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.kyc,
+      Scope.recommandation,
+    ]);
+
+    // DO SOMETHING
+    new KycToTags_v2(
+      utilisateur.kyc_history,
+      utilisateur.recommandation,
+      utilisateur.logement,
+      _this.communeRepository,
+    ).refreshTagState();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.recommandation],
+    );
+
+    return {
+      ok: true,
+      info: `updated reco tags`,
+    };
+  }
+  private async migrate_19(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+
+    // DO SOMETHING
+
+    if (utilisateur.is_magic_link) {
+      utilisateur.mode_inscription = ModeInscription.magic_link;
+    } else if (utilisateur.passwordHash !== null) {
+      utilisateur.mode_inscription = ModeInscription.mot_de_passe;
+    } else if (utilisateur.france_connect_sub !== null) {
+      utilisateur.mode_inscription = ModeInscription.france_connect;
+    } else {
+      utilisateur.mode_inscription = ModeInscription.inconnue;
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `mode = [${utilisateur.mode_inscription}]`,
+    };
+  }
+  private async migrate_20(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+      Scope.logement,
+      Scope.kyc,
+      Scope.recommandation,
+    ]);
+
+    // DO SOMETHING
+    new KycToTags_v2(
+      utilisateur.kyc_history,
+      utilisateur.recommandation,
+      utilisateur.logement,
+      _this.communeRepository,
+    ).refreshTagState();
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.recommandation],
+    );
+
+    return {
+      ok: true,
+      info: `updated recos tags`,
+    };
+  }
+  private async migrate_21(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+      Scope.thematique_history,
+    ]);
+
+    // DO SOMETHING
+    let liste_actions_exclues: TypeCodeAction[] = [];
+    for (const thematique of Object.values(Thematique)) {
+      liste_actions_exclues = liste_actions_exclues.concat(
+        utilisateur.thematique_history.getActionsExclues(thematique),
+      );
+    }
+    utilisateur.thematique_history.exclureAllActions(liste_actions_exclues);
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.thematique_history],
+    );
+
+    return {
+      ok: true,
+      info: `fusion actions exclues`,
+    };
+  }
+  private async migrate_22(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

@@ -23,28 +23,6 @@ describe('ArticleRepository', () => {
     await TestUtil.appclose();
   });
 
-  it('searchArticles : liste articles par tag article', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      tag_article: '123',
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '2',
-      tag_article: '456',
-    });
-    await articleRepository.loadCache();
-
-    // WHEN
-    const liste = await articleRepository.searchArticles({
-      tag_article: '123',
-    });
-
-    // THEN
-    expect(liste).toHaveLength(1);
-    expect(liste[0].content_id).toEqual('1');
-  });
   it('searchArticles : liste articles du mois courant si pas de condition sur mois', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

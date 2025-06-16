@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SphericalUtil } from 'node-geometry-library';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
@@ -13,7 +12,6 @@ import {
   MaifAPIClient,
   NiveauRisqueNat_Value,
   SCORE_API_NAME,
-  ZonesReponseAPI,
 } from './maifAPIClient';
 
 const mapping_score_risque_label: Record<
@@ -41,62 +39,56 @@ export class MaifRepository implements FinderInterface {
   }
 
   public getManagedCategories(): CategorieRecherche[] {
-    return [
-      CategorieRecherche.catnat,
-      CategorieRecherche.zones_secheresse,
-      CategorieRecherche.score_risque,
-      CategorieRecherche.zones_inondation,
-    ];
+    return [CategorieRecherche.score_risque];
   }
 
   public async find(filtre: FiltreRecherche): Promise<ResultatRecherche[]> {
-    if (filtre.categorie === CategorieRecherche.catnat) {
-      if (!filtre.code_commune) return [];
-      return this.findCatnat(filtre);
-    }
-    if (filtre.categorie === CategorieRecherche.zones_secheresse) {
-      if (!filtre.code_commune) return [];
-      return this.findZonesSecheresse(filtre);
-    }
-    if (filtre.categorie === CategorieRecherche.zones_inondation) {
-      if (!filtre.code_commune) return [];
-      return this.findZonesInondation(filtre);
-    }
     if (filtre.categorie === CategorieRecherche.score_risque) {
       if (!filtre.hasPoint()) ApplicationError.throwMissingLogitudeLatitude();
       return this.findScoreRisque(filtre);
     }
   }
 
-  public async findCatnat(
-    filtre: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
+  public async findRisqueCommuneSynthese(filtre: FiltreRecherche): Promise<{
+    catnat: number;
+    pourcent_secheresse: number;
+    pourcent_inondation: number;
+  }> {
     const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
     if (!code_commmune_globale) {
       if (filtre.silent_error) {
-        return [];
+        return undefined;
       } else {
         ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
       }
     }
-    const result = await this.maifAPIClient.callAPICatnatByCodeCommune(
+    const result = await this.maifAPIClient.callAPISyntheseCommune(
       code_commmune_globale,
     );
     if (!result) {
       if (filtre.silent_error) {
-        return [];
+        return undefined;
       } else {
-        ApplicationError.throwExternalServiceError('Alentours / Catnat');
+        ApplicationError.throwExternalServiceError(
+          'Alentours / synthese commune',
+        );
       }
     }
-    return result.map(
-      (r) =>
-        new ResultatRecherche({
-          id: r.codNatCatnat,
-          nbr_resultats_max_dispo: result.length,
-          titre: r.libRisqueJo,
-        }),
-    );
+
+    let pourcent_inondation = 0;
+    for (const element of result.naturels.inondations.scores.actuel) {
+      pourcent_inondation += element.percentage;
+    }
+    let pourcent_secheresse = 0;
+    for (const element of result.naturels.argiles) {
+      pourcent_secheresse += element.percentage;
+    }
+
+    return {
+      catnat: result.naturels.catnat.total,
+      pourcent_inondation: pourcent_inondation,
+      pourcent_secheresse: pourcent_secheresse,
+    };
   }
 
   public async findScoreRisque(
@@ -295,177 +287,6 @@ export class MaifRepository implements FinderInterface {
     }
 
     return result;
-  }
-
-  public async findZonesSecheresse(
-    filtre: FiltreRecherche,
-  ): Promise<ResultatRecherche[]> {
-    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
-    if (!code_commmune_globale) {
-      if (filtre.silent_error) {
-        return [];
-      } else {
-        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
-      }
-    }
-    const result = await this.maifAPIClient.callAPIZonesSecheresseByCodeCommune(
-      code_commmune_globale,
-    );
-    if (!result || !result.actuel) {
-      return [];
-    }
-
-    return this.computeSyntheseZonesARisque(result);
-  }
-
-  public async findSurfaceCommune(
-    filtre: FiltreRecherche,
-  ): Promise<number | undefined> {
-    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
-    if (!code_commmune_globale) {
-      if (filtre.silent_error) {
-        return undefined;
-      } else {
-        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
-      }
-    }
-    const result = await this.maifAPIClient.callAPIDetailCommuneByCodeCommune(
-      code_commmune_globale,
-    );
-    if (!result) {
-      return undefined;
-    }
-
-    return result.superficie;
-  }
-
-  public async findZonesInondation(
-    filtre: FiltreRecherche,
-    surface_totale_m2?: number,
-  ): Promise<ResultatRecherche[]> {
-    const code_commmune_globale = this.getCommuneGlobale(filtre.code_commune);
-    if (!code_commmune_globale) {
-      if (filtre.silent_error) {
-        return [];
-      } else {
-        ApplicationError.throwCodeCommuneNotFound(filtre.code_commune);
-      }
-    }
-    const result = await this.maifAPIClient.callAPIZonesinondationByCodeCommune(
-      code_commmune_globale,
-    );
-    if (!result || !result.actuel) {
-      return [];
-    }
-    const surface =
-      surface_totale_m2 |
-      ((await this.findSurfaceCommune(filtre)) * 1000 * 1000);
-    return this.computeSyntheseZonesARisque(result, surface);
-  }
-
-  private computeSyntheseZonesARisque(
-    zones: ZonesReponseAPI,
-    surface_total?: number,
-  ): ResultatRecherche[] {
-    let synthese = {
-      zone_1: 0,
-      zone_2: 0,
-      zone_3: 0,
-      zone_4: 0,
-      zone_5: 0,
-    };
-
-    for (const feature of zones.actuel.features) {
-      let area = 0;
-      for (const polygone of feature.geometry.coordinates) {
-        area += this.computeAreaOfClosedPath(polygone);
-      }
-      synthese[`zone_${feature.properties.score}`] =
-        synthese[`zone_${feature.properties.score}`] + area;
-    }
-
-    let surface_total_m2: number;
-    if (surface_total) {
-      surface_total_m2 = surface_total * 1000 * 1000;
-    } else {
-      surface_total_m2 =
-        synthese.zone_1 +
-        synthese.zone_2 +
-        synthese.zone_3 +
-        synthese.zone_4 +
-        synthese.zone_5;
-    }
-
-    return [
-      {
-        id: 'zone_1',
-        titre: 'Pourcentage risque très faible',
-        pourcentage: (synthese.zone_1 / surface_total_m2) * 100,
-      },
-      {
-        id: 'zone_1_surface',
-        titre: 'Surface risque très faible',
-        surface_m_2: synthese.zone_1,
-      },
-      {
-        id: 'zone_2',
-        titre: 'Pourcentage risque faible',
-        pourcentage: (synthese.zone_2 / surface_total_m2) * 100,
-      },
-      {
-        id: 'zone_2_surface',
-        titre: 'Surface risque faible',
-        surface_m_2: synthese.zone_2,
-      },
-      {
-        id: 'zone_3',
-        titre: 'Pourcentage risque moyen',
-        pourcentage: (synthese.zone_3 / surface_total_m2) * 100,
-      },
-      {
-        id: 'zone_3_surface',
-        titre: 'Surface risque moyen',
-        surface_m_2: synthese.zone_3,
-      },
-      {
-        id: 'zone_4',
-        titre: 'Pourcentage risque fort',
-        pourcentage: (synthese.zone_4 / surface_total_m2) * 100,
-      },
-      {
-        id: 'zone_4_surface',
-        titre: 'Surface risque fort',
-        surface_m_2: synthese.zone_4,
-      },
-      {
-        id: 'zone_5',
-        titre: 'Pourcentage risque très fort',
-        pourcentage: (synthese.zone_5 / surface_total_m2) * 100,
-      },
-      {
-        id: 'zone_5_surface',
-        titre: 'Surface risque très fort',
-        surface_m_2: synthese.zone_5,
-      },
-      {
-        id: 'zone_total',
-        titre: 'Total considéré à risque',
-        pourcentage: Math.ceil(
-          ((synthese.zone_5 + synthese.zone_4 + synthese.zone_3) /
-            surface_total_m2) *
-            100,
-        ),
-      },
-    ];
-  }
-
-  private computeAreaOfClosedPath(path: number[][]): number {
-    const converted_format = path.map((point) => ({
-      lat: point[1],
-      lng: point[0],
-    }));
-
-    return SphericalUtil.computeArea(converted_format);
   }
 
   private getCommuneGlobale(code_commune: string): string {

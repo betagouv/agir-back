@@ -29,7 +29,6 @@ const logement_palaiseau: Logement_v0 = {
   nombre_enfants: 2,
   plus_de_15_ans: true,
   proprietaire: true,
-  risques: undefined,
   latitude: 48,
   longitude: 2,
   numero_rue: '12',

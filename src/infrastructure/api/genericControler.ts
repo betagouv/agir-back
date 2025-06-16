@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { App } from '../../../src/domain/app';
 import {
   Consultation,
+  Ordre,
   Realisation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
@@ -147,6 +148,14 @@ export class GenericControler {
     const type = Realisation[realisation];
     if (!type) {
       ApplicationError.throwTypeRealisationNotFound(realisation);
+    }
+    return type;
+  }
+  public castTypeOrdreActionOrException(ordre: string): Ordre {
+    if (!ordre) return Ordre.random;
+    const type = Ordre[ordre];
+    if (!type) {
+      ApplicationError.throwTypeOrdreNotFound(ordre);
     }
     return type;
   }

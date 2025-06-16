@@ -1,4 +1,4 @@
-import { KYC } from '.prisma/client';
+import { KYC, Prisma } from '.prisma/client';
 import { CMSWebhookEntryAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../../src/domain/aides/echelle';
@@ -399,6 +399,8 @@ describe('/api/incoming/cms (API test)', () => {
       nom: 'part',
       lien: 'the lien',
       code_commune: '456',
+      code_departement: '789',
+      code_region: '111',
       code_epci: '242100410',
       echelle: Echelle.Département,
       logo: [
@@ -435,6 +437,19 @@ describe('/api/incoming/cms (API test)', () => {
       code: '456',
       titre: 'The titre',
       texte: 'The texte',
+    } as CMSWebhookEntryAPI,
+  };
+
+  const CMS_DATA_TAG: CMSWebhookAPI = {
+    model: CMSModel['tag-v2'],
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      code: '456',
+      description: 'The desc',
+      label_explication: 'expli',
+      boost_absolu: 20,
+      ponderation: 3,
     } as CMSWebhookEntryAPI,
   };
 
@@ -638,7 +653,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(articles[0].derniere_maj).toEqual(new Date(123));
     expect(articles[0].soustitre).toEqual('soustitre 222');
     expect(articles[0].thematique_principale).toEqual('alimentation');
-    expect(articles[0].tag_article).toEqual('composter');
     expect(articles[0].tags_a_exclure_v2).toEqual(['AA', 'BB']);
     expect(articles[0].tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
@@ -679,6 +693,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(partenaire[0].content_id).toEqual('123');
     expect(partenaire[0].nom).toEqual('part');
     expect(partenaire[0].code_commune).toEqual('456');
+    expect(partenaire[0].code_departement).toEqual('789');
+    expect(partenaire[0].code_region).toEqual('111');
     expect(partenaire[0].code_epci).toEqual('242100410');
     expect(partenaire[0].url).toEqual('the lien');
     expect(partenaire[0].echelle).toEqual(Echelle.Département);
@@ -748,12 +764,39 @@ describe('/api/incoming/cms (API test)', () => {
     expect(faq[0].texte).toEqual('The texte');
   });
 
+  it('POST /api/incoming/cms - create a new tag', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_TAG,
+    );
+
+    // THEN
+    const tag = await TestUtil.prisma.tag.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(tag).toHaveLength(1);
+    delete tag[0].updated_at;
+    delete tag[0].created_at;
+    expect(tag[0]).toEqual({
+      boost: new Prisma.Decimal(20),
+      description: 'The desc',
+      id_cms: '123',
+      ponderation: new Prisma.Decimal(3),
+      label_explication: 'expli',
+      tag: '456',
+    });
+  });
+
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
     // GIVEN
     await TestUtil.create(DB.partenaire, {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
     await partenaireRepository.loadCache();
 
@@ -776,10 +819,10 @@ describe('/api/incoming/cms (API test)', () => {
       besoin_desc: 'Broyer ses végétaux',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_departement_from_partenaire: ['123'],
       codes_postaux: ['91120', '75002'],
       codes_region: ['25'],
-      codes_region_from_partenaire: ['11', '27'],
+      codes_region_from_partenaire: ['456'],
       content_id: '123',
       contenu: "Contenu de l'aide",
       date_expiration: new Date(123),
@@ -1035,6 +1078,8 @@ describe('/api/incoming/cms (API test)', () => {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
     await partenaireRepository.loadCache();
 
@@ -1057,10 +1102,10 @@ describe('/api/incoming/cms (API test)', () => {
       besoin_desc: 'Broyer ses végétaux',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
       codes_departement: ['78'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_departement_from_partenaire: ['123'],
       codes_postaux: ['91120', '75002'],
       codes_region: ['25'],
-      codes_region_from_partenaire: ['11', '27'],
+      codes_region_from_partenaire: ['456'],
       content_id: '123',
       contenu: "Contenu de l'aide",
       date_expiration: new Date(123),

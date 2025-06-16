@@ -1,5 +1,6 @@
 import { Gamification } from '../../../../src/domain/gamification/gamification';
 import {
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
@@ -10,8 +11,8 @@ describe('Gamification', () => {
     const gamification = new Gamification();
     const user = Utilisateur.createNewUtilisateur(
       'c',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     // WHEN
     gamification.ajoutePoints(5, user);
@@ -37,8 +38,8 @@ describe('Gamification', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'c',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
 
     // THEN

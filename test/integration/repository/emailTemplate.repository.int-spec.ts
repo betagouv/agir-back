@@ -1,5 +1,6 @@
 import { TypeNotification } from '../../../src/domain/notification/notificationHistory';
 import {
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../../src/domain/utilisateur/utilisateur';
@@ -29,8 +30,8 @@ describe('EmailTemplateRepository', () => {
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'g@c.com',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
     utilisateur.code = '123456';
     process.env.BASE_URL_FRONT = 'https://agir-front';
@@ -58,8 +59,8 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'g@c.com',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
     utilisateur.code = '123456';
     process.env.BASE_URL_FRONT = 'https://agir-front';
@@ -90,8 +91,8 @@ Si vous n'avez plus la page ouverte pour saisir le code, ici le lien : <a href="
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'g@c.com',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
     utilisateur.code = '123456';
     process.env.BASE_URL_FRONT = 'https://agir-front';
@@ -122,8 +123,8 @@ Si vous n'avez plus la page ouverte pour saisir le code et modifier le mot de pa
     // GIVEN
     const utilisateur = Utilisateur.createNewUtilisateur(
       'g@c.com',
-      false,
       SourceInscription.web,
+      ModeInscription.magic_link,
     );
     utilisateur.code = '123456';
     process.env.BASE_URL_FRONT = 'https://agir-front';

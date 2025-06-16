@@ -1,14 +1,15 @@
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
-import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { TagRubrique } from '../scoring/tagRubrique';
+import { Thematique } from '../thematique/thematique';
 import { ArticleDefinition } from './articleDefinition';
 import { QuizzDefinition } from './quizzDefinition';
 
 export class Quizz extends QuizzDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  pourcent_match: number;
   explicationScore: ExplicationScore;
   article?: ArticleDefinition;
   premier_coup_ok?: boolean;
@@ -21,6 +22,7 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
 
     if (!this.mois) {
@@ -35,6 +37,10 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     }
   }
 
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
+  }
+
   public getTags(): Tag[] {
     return [].concat(
       this.thematiques,
@@ -43,10 +49,10 @@ export class Quizz extends QuizzDefinition implements TaggedContent {
     );
   }
 
-  public getInclusionTags(): Tag_v2[] {
+  public getInclusionTags(): string[] {
     return [];
   }
-  public getExclusionTags(): Tag_v2[] {
+  public getExclusionTags(): string[] {
     return [];
   }
 

@@ -29,20 +29,17 @@ model UtilisateurCopy {
   notifications_email_actives  Boolean?
   date_inscription             DateTime? @db_stats.Timestamptz(3)
   version_utilisateur          String?
+  urbain                       String?
 }
 
 model Personnalisation {
-  user_id                       String   @id
-  perso_alimentation_done_once  Boolean  @default(false)
-  perso_transport_done_once     Boolean  @default(false)
-  perso_logement_done_once      Boolean  @default(false)
-  perso_consommation_done_once  Boolean  @default(false)
-  tags                          String[]
-  actions_rejetees_all          String[]
-  actions_alimentation_rejetees String[]
-  actions_logement_rejetees     String[]
-  actions_transport_rejetees    String[]
-  actions_consommation_rejetees String[]
+  user_id                      String   @id
+  perso_alimentation_done_once Boolean  @default(false)
+  perso_transport_done_once    Boolean  @default(false)
+  perso_logement_done_once     Boolean  @default(false)
+  perso_consommation_done_once Boolean  @default(false)
+  tags                         String[]
+  actions_rejetees_all         String[]
 }
 
 model BilanCarbone {

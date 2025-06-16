@@ -26,6 +26,16 @@ export class LoadCMSController extends GenericControler {
     return await this.cmsUsecase.loadArticlesFromCMS();
   }
 
+  @Post('/admin/load_tags_from_cms')
+  @ApiOperation({
+    summary: 'Upsert tous les tags v2 publiés du CMS',
+  })
+  @ApiOkResponse({ type: [String] })
+  async upsertAllCMStags(@Request() req): Promise<string[]> {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.cmsUsecase.loadTagsV2FromCMS();
+  }
+
   @Post('/admin/load_actions_bilan_from_cms')
   @ApiOperation({
     summary: 'Upsert tous les actions de type bilan publiées du CMS',

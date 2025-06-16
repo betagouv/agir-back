@@ -11,7 +11,9 @@ import {
 import { Gamification_v0 } from '../../../src/domain/object_store/gamification/gamification_v0';
 import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
@@ -22,6 +24,7 @@ import { CompteurActionsRepository } from '../../../src/infrastructure/repositor
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
+import { TagRepository } from '../../../src/infrastructure/repository/tag.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -42,7 +45,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -56,6 +58,7 @@ describe('Actions (API test)', () => {
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
+  const tagRepository = new TagRepository(TestUtil.prisma);
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -110,6 +113,7 @@ describe('Actions (API test)', () => {
     await blockTextRepository.loadCache();
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -159,6 +163,8 @@ describe('Actions (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+
+    delete response.body.explications_recommandation_raw;
 
     expect(response.body).toEqual({
       aides: [],
@@ -214,6 +220,51 @@ describe('Actions (API test)', () => {
           url: 'haha',
         },
       ],
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
+    });
+  });
+
+  it(`GET /utilisateurs/id/actions/id - explication reco`, async () => {
+    // GIVEN
+    const recommandation: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      recommandation: recommandation as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      label_compteur: '{NBR_ACTIONS} haha',
+      besoins: ['composter'],
+      pourquoi: 'haha {block_123}',
+      sources: [{ url: 'haha', label: 'hoho' }],
+      articles_ids: ['1'],
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+    await tagRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    expect(response.body.explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [{ tag: 'a_un_jardin' }],
     });
   });
 
@@ -752,6 +803,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -808,6 +860,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -867,6 +920,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -932,6 +986,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -986,6 +1041,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1027,6 +1083,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -1087,6 +1144,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1134,6 +1192,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1185,6 +1244,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1236,6 +1296,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1360,5 +1421,107 @@ describe('Actions (API test)', () => {
     expect(response.body.message).toBe(
       `le texte ne peut pas contenir de caractères spéciaux comme [^#&*<>/{|}$%@+]`,
     );
+  });
+
+  it(`DELETE /utilisateurs/id/actions/XXX supprime une action `, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
+
+      liste_thematiques: [],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/actions/classique/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(1);
+    expect(
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
+  });
+
+  it(`DELETE /utilisateurs/id/actions/XXX supprime 6 action `, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
+
+      liste_thematiques: [],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/actions/first_block_of_six',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(6);
+    expect(
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
   });
 });

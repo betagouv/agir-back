@@ -278,6 +278,7 @@ describe('Actions Catalogue Offline (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.actions.length).toBe(1);
 
+    delete response.body.actions[0].explications_recommandation_raw;
     expect(response.body.actions[0]).toEqual({
       code: 'code_fonct',
       nombre_actions_en_cours: 45,
@@ -288,6 +289,10 @@ describe('Actions Catalogue Offline (API test)', () => {
       titre: '**The titre**',
       type: 'classique',
       points: 100,
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {

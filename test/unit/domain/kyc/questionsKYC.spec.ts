@@ -10,7 +10,11 @@ import { Chauffage, DPE } from '../../../../src/domain/logement/logement';
 import { QuestionKYC_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
-import { Utilisateur } from '../../../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  SourceInscription,
+  Utilisateur,
+} from '../../../../src/domain/utilisateur/utilisateur';
 
 const QUESTION_TEST: QuestionKYC_v2 = {
   id_cms: 1,
@@ -879,7 +883,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok si la situtation ne match rien', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -901,7 +909,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -938,7 +950,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok pour un kyc ngc de type entier et input entier as string', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -975,7 +991,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input entier ', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1012,7 +1032,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ok pour un kyc ngc de type decimal et input decimal ', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1049,7 +1073,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ignore pour un kyc ngc de type entier et input pas entier ', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1083,7 +1111,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ignore pour un kyc ngc de type decimal et input pas decimal ', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1117,7 +1149,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : ignore pour un kyc non ngc ', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1151,7 +1187,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it('injectSituationNGC : integre une reponse string pour une question a choix unique', () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],
@@ -1213,7 +1253,11 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it(`injectSituationNGC : maj d'une KYC deja renseignée => pas de maj`, () => {
     // GIVEN
-    const utilisateur = Utilisateur.createNewUtilisateur('yo', false, null);
+    const utilisateur = Utilisateur.createNewUtilisateur(
+      'yo',
+      SourceInscription.inconnue,
+      ModeInscription.magic_link,
+    );
     const history = new KYCHistory({
       version: 2,
       answered_mosaics: [],

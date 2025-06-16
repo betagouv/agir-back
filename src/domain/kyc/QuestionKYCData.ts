@@ -88,6 +88,7 @@ export class QuestionKYCData implements TaggedContent {
   is_answered?: boolean;
   tags: Tag[];
   score: number;
+  pourcent_match: number;
   // TODO: should use the generated DottedName instead of string
   ngc_key?: string;
   reponse_simple: KYCReponseSimple;
@@ -112,6 +113,7 @@ export class QuestionKYCData implements TaggedContent {
     this.thematique = data.thematique;
     this.tags = data.tags ? data.tags : [];
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
@@ -130,6 +132,10 @@ export class QuestionKYCData implements TaggedContent {
           unite: undefined,
         }))
       : [];
+  }
+
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
   }
 
   public getTags(): Tag[] {

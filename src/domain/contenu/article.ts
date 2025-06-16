@@ -1,14 +1,15 @@
 import { ArticleHistory } from '../history/articleHistory';
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
-import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TagRubrique } from '../scoring/tagRubrique';
 import { TaggedContent } from '../scoring/taggedContent';
+import { Thematique } from '../thematique/thematique';
 import { ArticleDefinition } from './articleDefinition';
 
 export class Article extends ArticleDefinition implements TaggedContent {
   tags_rubriques: TagRubrique[];
   score: number;
+  pourcent_match: number;
   explicationScore: ExplicationScore;
   favoris: boolean;
   read_date?: Date;
@@ -20,6 +21,7 @@ export class Article extends ArticleDefinition implements TaggedContent {
     Object.assign(this, data);
 
     this.score = 0;
+    this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
     this.favoris = false;
     this.read_date = null;
@@ -36,6 +38,10 @@ export class Article extends ArticleDefinition implements TaggedContent {
     }
   }
 
+  public getThematiques(): Thematique[] {
+    return this.thematiques;
+  }
+
   public getTags(): Tag[] {
     return [].concat(
       this.thematiques,
@@ -43,11 +49,11 @@ export class Article extends ArticleDefinition implements TaggedContent {
       this.tags_rubriques,
     );
   }
-  public getInclusionTags(): Tag_v2[] {
-    return [];
+  public getInclusionTags(): string[] {
+    return this.tags_a_inclure;
   }
-  public getExclusionTags(): Tag_v2[] {
-    return [];
+  public getExclusionTags(): string[] {
+    return this.tags_a_exclure;
   }
 
   public getDistinctText(): string {

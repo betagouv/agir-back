@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Param,
@@ -21,11 +22,13 @@ import {
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   Consultation,
+  Ordre,
   Realisation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
+import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
@@ -38,7 +41,10 @@ import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
 @ApiBearerAuth()
 @ApiTags('Actions')
 export class ActionsController extends GenericControler {
-  constructor(private readonly actionUsecase: ActionUsecase) {
+  constructor(
+    private readonly actionUsecase: ActionUsecase,
+    private readonly thematiqueUsecase: ThematiqueUsecase,
+  ) {
     super();
   }
 
@@ -145,6 +151,12 @@ export class ActionsController extends GenericControler {
     description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
   })
   @ApiQuery({
+    name: 'ordre',
+    enum: Ordre,
+    required: false,
+    description: `indique si on veut les recommandée par ordre de reco (et donc sans les actions exclues), ou toutes les action sans ordre particulier`,
+  })
+  @ApiQuery({
     name: 'skip',
     type: Number,
     required: false,
@@ -162,6 +174,7 @@ export class ActionsController extends GenericControler {
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
     @Query('realisation') realisation: string,
+    @Query('ordre') ordre: string,
     @Query('skip') skip: string,
     @Query('take') take: string,
     @Request() req,
@@ -182,12 +195,15 @@ export class ActionsController extends GenericControler {
     const type_realisation =
       this.castTypeRealisationActionOrException(realisation);
 
+    const type_ordre = this.castTypeOrdreActionOrException(ordre);
+
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
       titre,
       type_consulation,
       type_realisation,
+      type_ordre,
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
     );
@@ -218,6 +234,46 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     let type = this.castTypeActionOrException(type_action);
     await this.actionUsecase.faireAction(code_action, type, utilisateurId);
+  }
+
+  @Delete('utilisateurs/:utilisateurId/actions/:type_action/:code_action')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de proposition une action de code donné, l'utilisateur n'est pas intéressé par cette action`,
+  })
+  @ApiParam({
+    name: 'code_action',
+    type: String,
+    description: `Code de l'action à supprimer de la selection`,
+  })
+  @ApiParam({
+    name: 'type_action',
+    enum: TypeAction,
+    description: `Type de l'action à supprimer de la selection`,
+  })
+  async removeAction(
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('type_action') type_action: string,
+    @Param('code_action') code_action: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    let type = this.castTypeActionOrException(type_action);
+    await this.thematiqueUsecase.removeAction(utilisateurId, code_action, type);
+  }
+
+  @Delete('utilisateurs/:utilisateurId/actions/first_block_of_six')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: `Supprime de la liste de propositions les 6 premieres actions recommandées`,
+  })
+  async remove6Actions(
+    @Param('utilisateurId') utilisateurId: string,
+    @Request() req,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.thematiqueUsecase.remove6FirstActions(utilisateurId);
   }
 
   @Post(

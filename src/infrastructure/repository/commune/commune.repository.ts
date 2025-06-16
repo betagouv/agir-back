@@ -6,6 +6,12 @@ import { Injectable } from '@nestjs/common';
 import { CommunesAndEPCI } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import _codes_postaux from './codes_postaux.json';
+import _typologie_communes from './typologie_communes.json';
+
+const typologie_communes_by_code_insee = _typologie_communes as Record<
+  string,
+  TypologieCommune
+>;
 
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];
@@ -15,7 +21,22 @@ const communesEPCI = Object.fromEntries(
   _epci.flatMap((epci) => epci.membres.map(({ code }) => [code, epci.code])),
 );
 
+export enum TypeCommune {
+  Urbain = 'Urbain',
+  Rural = 'Rural',
+  'Péri-urbain' = 'Péri-urbain',
+}
+export type TypologieCommune = {
+  Ville: string;
+  Classification: TypeCommune;
+  CATEAAV2020: number;
+  TAAV2017: number;
+  DROM: number;
+};
+
 export type CommuneParCodePostal = {
+  // NOTE: Le code INSEE peut correspondre dans certains cas au code INSEE de
+  // l'arrondissement et non de la commune (ex. Lyon 06).
   INSEE: string;
   commune: string;
   acheminement: string;
@@ -167,6 +188,10 @@ export class CommuneRepository {
         une_commune.codesPostaux,
       );
     }
+  }
+
+  public getNiveauUrbainCommune(code_commune: string): TypeCommune {
+    return typologie_communes_by_code_insee[code_commune]?.Classification;
   }
 
   private async upsertCommune(
@@ -404,7 +429,7 @@ export class CommuneRepository {
   }
 
   /**
-   * Get the commune by its INSEE code.
+   * Get the commune OR A DISTRICT by its INSEE code.
    *
    * @param inseeCode The INSEE code of the commune (e.g. "75056").
    * @returns The commune if found, `undefined` otherwise.
@@ -418,10 +443,39 @@ export class CommuneRepository {
   }
 
   /**
+   * Returns the commune by its INSEE code. If the INSEE code refers to an
+   * arrondissement municipal, it will return the corresponding
+   * commune.
+   *
+   * @param code_insee The INSEE code of the commune (e.g. "75056").
+   * @returns The commune if found, `undefined` otherwise.
+   *
+   * @example
+   * const commune = getCommuneByCodeINSEE('69386'); // 'Lyon 6e arrondissement'
+   * commune.code; // '69123' (lyon)
+   */
+  getCommunByCodeINSEESansArrondissement(
+    code_insee: string,
+  ): Commune | undefined {
+    const commune = this.getCommuneByCodeINSEE(code_insee);
+    if (commune === undefined) {
+      return undefined;
+    }
+
+    return commune.type === 'arrondissement-municipal'
+      ? this.getCommuneByCodeINSEE(commune.commune)
+      : commune;
+  }
+
+  /**
    * Returns the EPCI of the commune identified by its INSEE code.
    *
    * @param code_insee The INSEE code of the commune (e.g. "75056").
    * @returns The EPCI if found, `undefined` otherwise.
+   *
+   * @note This method expects that the INSEE code corresponds to a commune and
+   * not an arrondissement. Use {@link getCommunByCodeINSEESansArrondissement}
+   * if you want to get the commune without arrondissement.
    */
   getEPCIByCommuneCodeINSEE(code_insee: string): EPCI | undefined {
     const epciCode = communesEPCI[code_insee];

@@ -49,7 +49,6 @@ describe('UtilisateurView', () => {
         superficie: Superficie.superficie_100,
         type: TypeLogement.appartement,
         chauffage: Chauffage.electricite,
-        risques: undefined,
         rue: 'rue du soleil',
         numero_rue: '13bis',
         longitude: 1,

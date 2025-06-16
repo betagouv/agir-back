@@ -10,9 +10,11 @@ export type Recommandation = {
   image_url: string;
   points: number;
   score: number;
+  pourcent_match: number;
 
   jours_restants?: number;
   soustitre?: string;
   duree?: string;
+  isLocal: boolean;
   explicationScore: ExplicationScore;
 };

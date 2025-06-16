@@ -8,9 +8,11 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
+import { ExplicationScore } from '../../../../domain/scoring/system_v2/ExplicationScore';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { ArticleLightAPI } from '../contenu/articleLightAPI';
+import { ExplicationRecoAPI } from '../contenu/explicationRecoAPI';
 import { QuizzBibliothequeAPI } from '../contenu/quizzAPI';
 import { QuestionKYCAPI_v2 } from '../kyc/questionsKYCAPI_v2';
 
@@ -118,6 +120,11 @@ export class ActionAPI {
 
   @ApiProperty() enchainement_id: string;
 
+  @ApiProperty({ type: ExplicationRecoAPI })
+  explications_recommandation: ExplicationRecoAPI;
+
+  explications_recommandation_raw: ExplicationScore;
+
   public static mapToAPI(action: Action): ActionAPI {
     return {
       nombre_actions_en_cours: action.nombre_actions_faites,
@@ -147,6 +154,10 @@ export class ActionAPI {
       articles: action.article_liste.map((a) => ArticleLightAPI.mapToAPI(a)),
       like_level: action.like_level,
       enchainement_id: action.enchainement_id,
+      explications_recommandation: ExplicationRecoAPI.mapToApi(
+        action.explicationScore,
+      ),
+      explications_recommandation_raw: action.explicationScore,
     };
   }
 }

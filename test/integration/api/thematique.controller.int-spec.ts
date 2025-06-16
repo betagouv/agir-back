@@ -46,7 +46,6 @@ const logement: Logement_v0 = {
   numero_rue: '12',
   rue: 'avenue de la Paix',
   code_commune: '21231',
-  risques: undefined,
   score_risques_adresse: undefined,
 };
 
@@ -118,12 +117,11 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -165,12 +163,11 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: false,
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -195,16 +192,6 @@ describe('Thematique (API test)', () => {
       recommandation: reco as any,
     });
 
-    // THEN
-    const user_before = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user_before.thematique_history.isPersonnalisationDone(
-        Thematique.alimentation,
-      ),
-    ).toEqual(false);
-
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/thematiques/alimentation/personnalisation_ok',
@@ -216,11 +203,6 @@ describe('Thematique (API test)', () => {
     const user_after = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(
-      user_after.thematique_history.isPersonnalisationDone(
-        Thematique.alimentation,
-      ),
-    ).toEqual(true);
     expect(
       user_after.thematique_history.isPersonnalisationDoneOnce(
         Thematique.alimentation,
@@ -239,12 +221,11 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: false,
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -362,7 +343,8 @@ describe('Thematique (API test)', () => {
       Scope.ALL,
     ]);
     expect(user_after.recommandation.getListeTagsActifs()).toEqual([
-      'est_proprietaire',
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.est_proprietaire,
     ]);
   });
 
@@ -371,6 +353,7 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -380,8 +363,6 @@ describe('Thematique (API test)', () => {
               date: new Date(123),
             },
           ],
-          codes_actions_proposees: [{ code: '2', type: TypeAction.classique }],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -405,15 +386,11 @@ describe('Thematique (API test)', () => {
       Scope.ALL,
     ]);
     expect(
-      user_after.thematique_history.isPersonnalisationDone(
-        Thematique.alimentation,
-      ),
-    ).toEqual(false);
-    expect(
       user_after.thematique_history.isPersonnalisationDoneOnce(
         Thematique.alimentation,
       ),
     ).toEqual(true);
+    expect(user_after.thematique_history.getAllActionsExclues()).toEqual([]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {
@@ -421,12 +398,11 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -465,6 +441,9 @@ describe('Thematique (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    delete response.body.liste_actions_recommandees[0]
+      .explications_recommandation_raw;
+
     expect(response.body.liste_actions_recommandees[0]).toEqual({
       code: '123',
       deja_faite: false,
@@ -477,6 +456,10 @@ describe('Thematique (API test)', () => {
       thematique: 'alimentation',
       titre: '**The titre**',
       type: 'classique',
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
     });
   });
 
@@ -484,6 +467,7 @@ describe('Thematique (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { code: '123', type: TypeAction.classique },
@@ -499,8 +483,6 @@ describe('Thematique (API test)', () => {
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -544,12 +526,11 @@ describe('Thematique (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -585,17 +566,79 @@ describe('Thematique (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.liste_actions_recommandees).toHaveLength(6);
   });
+
+  it(`GET /utilisateurs/id/thematiques/alimentation - ne propose pas une action faite`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: [],
+      liste_actions_utilisateur: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          faite_le: new Date(456),
+          feedback: undefined,
+          like_level: undefined,
+          liste_partages: [],
+          liste_questions: [],
+          vue_le: new Date(123),
+        },
+      ],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [],
+          personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
+        },
+      ],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 6; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(5);
+    expect(
+      response.body.liste_actions_recommandees.findIndex((a) => a.code === '1'),
+    ).toEqual(-1);
+    expect(
+      response.body.liste_actions_recommandees.findIndex((a) => a.code === '2'),
+    ).toBeGreaterThan(-1);
+  });
+
   it(`GET /utilisateurs/id/thematiques/alimentation - exfiltre les actions no eligibles pour cause de tag excluant`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -641,25 +684,17 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '3' },
-    ]);
   });
   it(`GET /utilisateurs/id/thematiques/alimentation - 3 actions si que 3 actions en base`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -698,137 +733,19 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '3' },
-    ]);
   });
 
-  it(`GET /utilisateurs/id/thematiques/alimentation - ne propose que celles dans le bloc proposition`, async () => {
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action `, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 10; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.liste_actions_recommandees).toHaveLength(3);
-    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
-    expect(response.body.liste_actions_recommandees[1].code).toEqual('3');
-    expect(response.body.liste_actions_recommandees[2].code).toEqual('6');
-  });
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/1 supprime la seul action proposable`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [{ type: TypeAction.classique, code: '1' }],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    await TestUtil.create(DB.action, {
-      code: '1',
-      cms_id: '1',
-      type_code_id: 'classique_1',
-      thematique: Thematique.alimentation,
-    });
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/1',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toEqual([]);
-  });
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
 
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -866,61 +783,26 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(1);
     expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '7' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-    ]);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toHaveLength(1);
-    expect(
-      user.thematique_history
-        .getActionsExcluesEtDates(Thematique.alimentation)[0]
-        .date.getTime(),
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
     ).toBeGreaterThan(Date.now() - 200);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation)[0],
-    ).toEqual({ type: TypeAction.classique, code: '3' });
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
   });
-
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action à une position la remplace par une nouvelle, prends en compte les actions exclues`, async () => {
+  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/first_block_of_six les 6 première recommandations`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
 
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { type: TypeAction.classique, code: '7' },
-              date: new Date(1),
-            },
-            {
-              action: { type: TypeAction.classique, code: '8' },
-              date: new Date(2),
-            },
-            {
-              action: { type: TypeAction.classique, code: '9' },
-              date: new Date(3),
-            },
-          ],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
+          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -949,7 +831,7 @@ describe('Thematique (API test)', () => {
 
     // WHEN
     const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
+      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/first_block_of_six',
     );
 
     // THEN
@@ -958,397 +840,9 @@ describe('Thematique (API test)', () => {
     const user = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(6);
     expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '10' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-    ]);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '7' },
-      { type: TypeAction.classique, code: '8' },
-      { type: TypeAction.classique, code: '9' },
-      { type: TypeAction.classique, code: '3' },
-    ]);
-  });
-
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles, partant de 5 actions dispo`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 5; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    let user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-    ]);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toStrictEqual([{ code: '3', type: TypeAction.classique }]);
-
-    // WHEN
-    const lecture = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation',
-    );
-
-    // THEN
-    expect(lecture.status).toBe(200);
-    expect(lecture.body.liste_actions_recommandees).toHaveLength(4);
-    expect(lecture.body.liste_actions_recommandees[0].code).toEqual('1');
-    expect(lecture.body.liste_actions_recommandees[1].code).toEqual('2');
-    expect(lecture.body.liste_actions_recommandees[2].code).toEqual('4');
-    expect(lecture.body.liste_actions_recommandees[3].code).toEqual('5');
-  });
-
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/3 supprime une action, shift car plus de nouvelles`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 6; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/3',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-    ]);
-  });
-  it(`DELETE /utilisateurs/id/thematiques/alimentation/actions/7 supprime une action hors de la liste de propositions`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 7; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    await actionRepository.onApplicationBootstrap();
-
-    // WHEN
-    const response = await TestUtil.DELETE(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation/actions/classique/7',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '3' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-    ]);
-    expect(
-      user.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toStrictEqual([{ type: TypeAction.classique, code: '7' }]);
-  });
-
-  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste et en piochant une nouvelle action`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 10; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    // WHEN
-    await TestUtil.prisma.action.delete({
-      where: {
-        type_code_id: 'classique_' + 3,
-      },
-    });
-    await actionRepository.onApplicationBootstrap();
-
-    // THEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.liste_actions_recommandees).toHaveLength(6);
-    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
-    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
-    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
-    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
-    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
-    expect(response.body.liste_actions_recommandees[5].code).toEqual('7');
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-      { type: TypeAction.classique, code: '7' },
-    ]);
-  });
-
-  it(`GET /utilisateurs/id/thematiques/alimentation : remplace une action manquante dans le CMS en décallant la liste, place vide si plus d'actions`, async () => {
-    // GIVEN
-    const thematique_history: ThematiqueHistory_v0 = {
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { type: TypeAction.classique, code: '1' },
-            { type: TypeAction.classique, code: '2' },
-            { type: TypeAction.classique, code: '3' },
-            { type: TypeAction.classique, code: '4' },
-            { type: TypeAction.classique, code: '5' },
-            { type: TypeAction.classique, code: '6' },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    };
-    const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
-      version: 0,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
-      thematique_history: thematique_history as any,
-      recommandation: reco as any,
-    });
-    for (let index = 1; index <= 6; index++) {
-      await TestUtil.create(DB.action, {
-        type_code_id: 'classique_' + index,
-        code: index.toString(),
-        cms_id: index.toString(),
-        thematique: Thematique.alimentation,
-      });
-    }
-
-    // WHEN
-    await TestUtil.prisma.action.delete({
-      where: {
-        type_code_id: 'classique_' + 3,
-      },
-    });
-    await actionRepository.onApplicationBootstrap();
-
-    // THEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/alimentation',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.liste_actions_recommandees).toHaveLength(5);
-    expect(response.body.liste_actions_recommandees[0].code).toEqual('1');
-    expect(response.body.liste_actions_recommandees[1].code).toEqual('2');
-    expect(response.body.liste_actions_recommandees[2].code).toEqual('4');
-    expect(response.body.liste_actions_recommandees[3].code).toEqual('5');
-    expect(response.body.liste_actions_recommandees[4].code).toEqual('6');
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(
-      user.thematique_history.getActionsProposees(Thematique.alimentation),
-    ).toStrictEqual([
-      { type: TypeAction.classique, code: '1' },
-      { type: TypeAction.classique, code: '2' },
-      { type: TypeAction.classique, code: '4' },
-      { type: TypeAction.classique, code: '5' },
-      { type: TypeAction.classique, code: '6' },
-    ]);
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
   });
 });

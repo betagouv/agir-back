@@ -826,6 +826,10 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwTypeOrdreNotFound(type: string) {
+    this.throwAppError('151', `Type d'ordre [${type}] inconnu`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

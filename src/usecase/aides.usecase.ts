@@ -53,16 +53,15 @@ export class AidesUsecase {
     const filtre: AideFilter = {
       code_postal: utilisateur.logement.code_postal,
       code_commune: code_commune ? code_commune : undefined,
-      code_departement: dept_region?.code_departement,
-      code_region: dept_region?.code_region,
       date_expiration: new Date(),
       thematiques:
         filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
+      cu_ca_cc_mode: true,
+      commune_pour_partenaire: utilisateur.logement.code_commune,
+      departement_pour_partenaire: dept_region?.code_departement,
+      region_pour_partenaire: dept_region?.code_region,
     };
-    if (utilisateur.isAdmin()) {
-      delete filtre.code_postal;
-      filtre.commune_pour_partenaire = utilisateur.logement.code_commune;
-    }
+
     const aide_def_liste = await this.aideRepository.search(filtre);
 
     const aides_nationales: Aide[] = [];
@@ -499,17 +498,15 @@ export class AidesUsecase {
             all_codes_communes.add(commune);
           }
         }
+        if (partenaire.code_departement) {
+          codes_departement.add(partenaire.code_departement);
+        }
+        if (partenaire.code_region) {
+          codes_region.add(partenaire.code_region);
+        }
       }
     }
 
-    for (const code_commune of all_codes_communes) {
-      const found =
-        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-      if (found) {
-        codes_departement.add(found.code_departement);
-        codes_region.add(found.code_region);
-      }
-    }
     result.codes_commune = Array.from(all_codes_communes);
     result.codes_departement = Array.from(codes_departement);
     result.codes_region = Array.from(codes_region);

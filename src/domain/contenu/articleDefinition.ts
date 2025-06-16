@@ -32,9 +32,11 @@ export class ArticleDefinition implements ContenuLocal {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
-  tag_article: string;
   derniere_maj: Date;
   tags_a_inclure: string[];
   tags_a_exclure: string[];
   VISIBLE_PROD: boolean;
+  codes_commune_from_partenaire: string[];
+  codes_departement_from_partenaire: string[];
+  codes_region_from_partenaire: string[];
 }

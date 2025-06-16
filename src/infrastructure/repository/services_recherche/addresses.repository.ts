@@ -5,7 +5,7 @@ import { FiltreRecherche } from '../../../domain/bibliotheque_services/recherche
 import { FinderInterface } from '../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../domain/bibliotheque_services/recherche/resultatRecherche';
 
-const API_URL = 'https://api-adresse.data.gouv.fr/search';
+const API_URL = 'https://data.geopf.fr/geocodage/search';
 
 export type AddresseResponse = {
   type: string;

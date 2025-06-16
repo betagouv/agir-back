@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Action } from '../../../../domain/actions/action';
 import { TypeAction } from '../../../../domain/actions/typeAction';
+import { ExplicationScore } from '../../../../domain/scoring/system_v2/ExplicationScore';
 import { Thematique } from '../../../../domain/thematique/thematique';
+import { ExplicationRecoAPI } from '../contenu/explicationRecoAPI';
 
 export class ActionLightAPI {
   @ApiProperty() code: string;
@@ -15,6 +17,10 @@ export class ActionLightAPI {
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
+  @ApiProperty({ type: ExplicationRecoAPI })
+  explications_recommandation: ExplicationRecoAPI;
+
+  explications_recommandation_raw: ExplicationScore;
 
   public static mapToAPI(action: Action): ActionLightAPI {
     return {
@@ -29,6 +35,10 @@ export class ActionLightAPI {
       deja_vue: action.deja_vue,
       deja_faite: action.deja_faite,
       points: action.getNombrePoints(),
+      explications_recommandation: ExplicationRecoAPI.mapToApi(
+        action.explicationScore,
+      ),
+      explications_recommandation_raw: action.explicationScore,
     };
   }
 }

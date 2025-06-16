@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
@@ -9,20 +10,24 @@ import {
 } from '../../../src/domain/logement/logement';
 import { KYCHistory_v0 } from '../../../src/domain/object_store/kyc/kycHistory_v0';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import {
   ApplicativePonderationSetName,
   PonderationApplicativeManager,
 } from '../../../src/domain/scoring/ponderationApplicative';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { TagRepository } from '../../../src/infrastructure/repository/tag.repository';
 import { DB, TestUtil } from '../../TestUtil';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 describe('/utilisateurs/id/recommandations (API test)', () => {
   const kycRepository = new KycRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const tagRepository = new TagRepository(TestUtil.prisma);
   const OLD_ENV = process.env;
 
   beforeAll(async () => {
@@ -151,7 +156,6 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       superficie: Superficie.superficie_150_et_plus,
       type: TypeLogement.appartement,
       version: 0,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -191,27 +195,34 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     await TestUtil.create(DB.utilisateur, {
       history: {},
     });
-    PonderationApplicativeManager.setCatalogue({
-      neutre: {
-        R1: 10,
-        R2: 20,
-        R3: 30,
-      },
-      noel: {},
-      exp: {},
+    await TestUtil.create(DB.tag, {
+      id_cms: '1',
+      tag: 't1',
+      boost: new Prisma.Decimal(10),
     });
+    await TestUtil.create(DB.tag, {
+      id_cms: '2',
+      tag: 't2',
+      boost: new Prisma.Decimal(20),
+    });
+    await TestUtil.create(DB.tag, {
+      id_cms: '3',
+      tag: 't3',
+      boost: new Prisma.Decimal(30),
+    });
+    await tagRepository.loadCache();
 
     await TestUtil.create(DB.article, {
       content_id: '1',
-      rubrique_ids: ['1'],
+      tags_a_inclure_v2: ['t1'],
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
-      rubrique_ids: ['3'],
+      tags_a_inclure_v2: ['t3'],
     });
     await TestUtil.create(DB.article, {
       content_id: '3',
-      rubrique_ids: ['2'],
+      tags_a_inclure_v2: ['t2'],
     });
     await articleRepository.loadCache();
 
@@ -281,33 +292,44 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
   });
   it('GET /utilisateurs/id/recommandations - ponderations des articles ET prio aux contenus locaux', async () => {
     // GIVEN
-    //CatalogueQuestionsKYC.setCatalogue([]);
+    await TestUtil.create(DB.tag, {
+      id_cms: '1',
+      tag: 't1',
+      boost: new Prisma.Decimal(5),
+    });
+    await TestUtil.create(DB.tag, {
+      id_cms: '2',
+      tag: 't2',
+      boost: new Prisma.Decimal(10),
+    });
+    await TestUtil.create(DB.tag, {
+      id_cms: '3',
+      tag: 't3',
+      boost: new Prisma.Decimal(15),
+    });
+    await TestUtil.create(DB.tag, {
+      id_cms: '4',
+      tag: Tag_v2.est_un_contenu_local,
+      label_explication: `c'est proche de vous`,
+    });
+    await tagRepository.loadCache();
 
     await TestUtil.create(DB.utilisateur, {
       history: {},
     });
-    PonderationApplicativeManager.setCatalogue({
-      neutre: {
-        R1: 5,
-        R2: 10,
-        R3: 15,
-      },
-      noel: {},
-      exp: {},
-    });
 
     await TestUtil.create(DB.article, {
       content_id: '1',
-      rubrique_ids: ['1'],
+      tags_a_inclure_v2: ['t1'],
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
-      rubrique_ids: ['2'],
+      tags_a_inclure_v2: ['t2'],
       codes_postaux: ['91120'],
     });
     await TestUtil.create(DB.article, {
       content_id: '3',
-      rubrique_ids: ['3'],
+      tags_a_inclure_v2: ['t3'],
     });
     await articleRepository.loadCache();
 
@@ -319,8 +341,28 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(3);
     expect(response.body[0].content_id).toEqual('2');
+    expect(response.body[0].is_local).toEqual(true);
+    expect(response.body[1].is_local).toEqual(false);
     expect(response.body[1].content_id).toEqual('3');
     expect(response.body[2].content_id).toEqual('1');
+    expect(response.body[0].explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [
+        {
+          tag: 'est_un_contenu_local',
+          label_explication: `c'est proche de vous`,
+        },
+        { label_explication: 'explication', tag: 't2' },
+      ],
+    });
+    expect(response.body[1].explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [{ label_explication: 'explication', tag: 't3' }],
+    });
+    expect(response.body[2].explications_recommandation).toEqual({
+      est_exclu: false,
+      liste_explications: [{ label_explication: 'explication', tag: 't1' }],
+    });
   });
 
   it('GET /utilisateurs/id/recommandations - renvoie qu une KYC, la mieux notée', async () => {
@@ -416,26 +458,28 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[2].content_id).toEqual('1');
   });
 
-  it('GET /utilisateurs/id/recommandations - tag climat 2 fois renforce le score', async () => {
+  it('GET /utilisateurs/id/recommandations - tag logement en boost renforce le score', async () => {
     // GIVEN
     //CatalogueQuestionsKYC.setCatalogue([]);
+    const recommandation: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      tag_ponderation_set: { transport: 50 },
+      recommandation: recommandation as any,
     });
-    PonderationApplicativeManager.setCatalogue({
-      neutre: {
-        logement: 100,
-        transport: 300,
-        dechet: 200,
-      },
-      noel: {},
-      exp: {},
+    await TestUtil.create(DB.tag, {
+      tag: Tag_v2.a_un_jardin,
+      boost: new Prisma.Decimal(50),
     });
+    await tagRepository.loadCache();
+
     await TestUtil.create(DB.article, {
       content_id: '1',
       rubrique_ids: [],
-      thematiques: [Thematique.transport],
+      thematiques: [Thematique.logement],
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
     });
     await articleRepository.loadCache();
 
@@ -447,85 +491,9 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].content_id).toEqual('1');
-    expect(Math.round(response.body[0].score)).toEqual(350);
+    expect(Math.round(response.body[0].score)).toEqual(60);
   });
 
-  it('GET /utilisateurs/id/recommandations v2 - filtrage par univers (anciennement thémaiques)', async () => {
-    // GIVEN
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._1,
-      type: TypeReponseQuestionKYC.choix_multiple,
-      categorie: Categorie.recommandation,
-      points: 10,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      thematique: Thematique.consommation,
-      reponses: [
-        { label: 'AAA', code: Thematique.climat },
-        { label: 'BBB', code: Thematique.logement },
-        { label: 'CCC', code: Thematique.alimentation },
-        { label: 'DDD', code: Thematique.transport },
-      ],
-      tags: [Tag.R6],
-    });
-
-    await TestUtil.create(DB.kYC, {
-      id_cms: 2,
-      code: KYCID._2,
-      type: TypeReponseQuestionKYC.choix_unique,
-      categorie: Categorie.recommandation,
-      points: 10,
-      question: `question hors recos`,
-      thematique: Thematique.logement,
-      reponses: [{ label: 'AAA', code: Thematique.climat }],
-      tags: [Tag.R6, Tag.R1],
-    });
-
-    const kyc: KYCHistory_v0 = {
-      version: 0,
-      answered_mosaics: [],
-      answered_questions: [],
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      kyc: kyc as any,
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '11',
-      codes_postaux: [],
-      thematiques: [Thematique.climat],
-    });
-    await TestUtil.create(DB.quizz, {
-      content_id: '22',
-      codes_postaux: [],
-      thematiques: [Thematique.logement],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '44',
-      codes_postaux: [],
-      thematiques: [Thematique.climat],
-    });
-    await TestUtil.create(DB.article, {
-      content_id: '55',
-      codes_postaux: [],
-      thematiques: [Thematique.logement],
-    });
-    await articleRepository.loadCache();
-    await kycRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/thematiques/logement/recommandations',
-    );
-    // THEN
-    expect(response.status).toBe(200);
-
-    expect(response.body).toHaveLength(3);
-    expect(response.body[0].content_id).toEqual('_2');
-    expect(response.body[1].content_id).toEqual('55');
-    expect(response.body[2].content_id).toEqual('22');
-  });
   it('GET /utilisateurs/id/recommandations v2 - pas de contenu de categorie non recommandation', async () => {
     // GIVEN
 

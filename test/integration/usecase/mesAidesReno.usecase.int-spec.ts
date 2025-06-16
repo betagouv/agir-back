@@ -51,7 +51,6 @@ describe('Mes Aides Réno', () => {
         latitude: undefined,
         longitude: undefined,
         numero_rue: undefined,
-        risques: undefined,
         rue: undefined,
         code_commune: undefined,
         score_risques_adresse: undefined,
@@ -148,7 +147,6 @@ describe('Mes Aides Réno', () => {
         latitude: undefined,
         longitude: undefined,
         numero_rue: undefined,
-        risques: undefined,
         rue: undefined,
         code_commune: '91477',
         score_risques_adresse: undefined,
@@ -212,10 +210,10 @@ describe('Mes Aides Réno', () => {
     test("should return the url without params if the user doesn't exist", async () => {
       const result = await usecase.getIframeUrl('non_existant_id');
       expect(result.iframe_url).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr",
       );
       expect(result.iframe_url_deja_faite).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr",
       );
     });
 
@@ -234,7 +232,6 @@ describe('Mes Aides Réno', () => {
         longitude: undefined,
         nombre_enfants: undefined,
         numero_rue: undefined,
-        risques: undefined,
         rue: undefined,
         version: 0,
         code_commune: undefined,
@@ -247,10 +244,10 @@ describe('Mes Aides Réno', () => {
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result.iframe_url).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=125&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22",
       );
       expect(result.iframe_url_deja_faite).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=125*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=125*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*",
       );
     });
 
@@ -269,7 +266,6 @@ describe('Mes Aides Réno', () => {
         longitude: undefined,
         nombre_enfants: undefined,
         numero_rue: undefined,
-        risques: undefined,
         rue: undefined,
         version: 0,
         code_commune: undefined,
@@ -296,10 +292,10 @@ describe('Mes Aides Réno', () => {
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result.iframe_url).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=50&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&logement.surface=50&logement.type=%22appartement%22&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000&m%C3%A9nage.commune=%2231555%22&m%C3%A9nage.code+r%C3%A9gion=%2276%22&m%C3%A9nage.code+d%C3%A9partement=%2231%22&m%C3%A9nage.EPCI=%22243100518%22&logement.commune=%2231555%22&logement.commune+d%C3%A9partement=%2231%22&logement.commune+r%C3%A9gion=%2276%22&logement.commune.nom=%22Toulouse%22&logement.code+postal=%2231500%22",
       );
       expect(result.iframe_url_deja_faite).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=50*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2*&logement.p%C3%A9riode+de+construction=%22au+moins+15+ans%22*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&logement.surface=50*&logement.type=%22appartement%22*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*&m%C3%A9nage.commune=%2231555%22*&m%C3%A9nage.code+r%C3%A9gion=%2276%22*&m%C3%A9nage.code+d%C3%A9partement=%2231%22*&m%C3%A9nage.EPCI=%22243100518%22*&logement.commune=%2231555%22*&logement.commune+d%C3%A9partement=%2231%22*&logement.commune+r%C3%A9gion=%2276%22*&logement.commune.nom=%22Toulouse%22*&logement.code+postal=%2231500%22*",
       );
     });
 
@@ -318,7 +314,6 @@ describe('Mes Aides Réno', () => {
         longitude: undefined,
         nombre_enfants: undefined,
         numero_rue: undefined,
-        risques: undefined,
         rue: undefined,
         version: 0,
         code_commune: undefined,
@@ -331,10 +326,28 @@ describe('Mes Aides Réno', () => {
 
       const result = await usecase.getIframeUrl('utilisateur-id');
       expect(result.iframe_url).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2&logement.propri%C3%A9taire+occupant=oui&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui&m%C3%A9nage.personnes=2&m%C3%A9nage.revenu=20000",
       );
       expect(result.iframe_url_deja_faite).toBe(
-        'https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&DPE.actuel=2*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*',
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&DPE.actuel=2*&logement.propri%C3%A9taire+occupant=oui*&vous.propri%C3%A9taire.statut=%22propri%C3%A9taire%22*&logement.r%C3%A9sidence+principale+propri%C3%A9taire=oui*&m%C3%A9nage.personnes=2*&m%C3%A9nage.revenu=20000*",
+      );
+    });
+
+    test('doit prendre en compte les communes avec arrondissements', async () => {
+      const logement = {
+        code_postal: '69006',
+        commune: 'LYON 06',
+      };
+      await TestUtil.create(DB.utilisateur, {
+        logement: logement as any,
+      });
+
+      const result = await usecase.getIframeUrl('utilisateur-id');
+      expect(result.iframe_url).toBe(
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&m%C3%A9nage.personnes=1&m%C3%A9nage.revenu=10000&m%C3%A9nage.commune=%2269123%22&m%C3%A9nage.code+r%C3%A9gion=%2284%22&m%C3%A9nage.code+d%C3%A9partement=%2269%22&m%C3%A9nage.EPCI=%22200046977%22&logement.commune=%2269123%22&logement.commune+d%C3%A9partement=%2269%22&logement.commune+r%C3%A9gion=%2284%22&logement.commune.nom=%22Lyon%22&logement.code+postal=%2269006%22",
+      );
+      expect(result.iframe_url_deja_faite).toBe(
+        "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr&m%C3%A9nage.personnes=1*&m%C3%A9nage.revenu=10000*&m%C3%A9nage.commune=%2269123%22*&m%C3%A9nage.code+r%C3%A9gion=%2284%22*&m%C3%A9nage.code+d%C3%A9partement=%2269%22*&m%C3%A9nage.EPCI=%22200046977%22*&logement.commune=%2269123%22*&logement.commune+d%C3%A9partement=%2269%22*&logement.commune+r%C3%A9gion=%2284%22*&logement.commune.nom=%22Lyon%22*&logement.code+postal=%2269006%22*",
       );
     });
   });

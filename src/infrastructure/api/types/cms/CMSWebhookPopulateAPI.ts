@@ -34,6 +34,7 @@ export type CMSWebhookPopulateAPI = {
     Titre: string;
     introduction: string;
     label: string;
+    label_explication: string;
     sousTitre: string;
     sous_titre: string;
     comment: string;
@@ -57,6 +58,8 @@ export type CMSWebhookPopulateAPI = {
     is_examen: boolean;
     ngc_key: string;
     code: string;
+    boost_absolu: number;
+    ponderation: number;
     VISIBLE_PROD: boolean;
     niveau: number;
     question: string;
@@ -102,7 +105,9 @@ export type CMSWebhookPopulateAPI = {
     include_codes_commune: string;
     exclude_codes_commune: string;
     codes_departement: string;
+    code_departement: string;
     codes_region: string;
+    code_region: string;
     duree: string;
     frequence: string;
     points: number;

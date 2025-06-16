@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { FiltreRecherche } from '../domain/bibliotheque_services/recherche/filtreRecherche';
-import { ResultatRecherche } from '../domain/bibliotheque_services/recherche/resultatRecherche';
 import { ScoreRisquesAdresse } from '../domain/logement/logement';
 import { RisquesNaturelsCommunesDefinition } from '../domain/logement/RisquesNaturelsCommuneDefinition';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -99,58 +98,12 @@ export class RisquesUsecase {
     let risques = this.risqueRepository.getRisquesCommune(commune.code);
     if (!risques) {
       risques = await this.computeRisquesCommuneFromExternalAPI(commune);
-
-      await this.risqueRepository.upsert(risques);
-    }
-
-    if (
-      risques.surface_totale &&
-      risques.secheresse_surface_zone5 !== null &&
-      risques.secheresse_surface_zone4 !== null &&
-      risques.secheresse_surface_zone3 !== null
-    ) {
-      const surface_totale_secheresse =
-        risques.secheresse_surface_zone5 +
-        risques.secheresse_surface_zone4 +
-        risques.secheresse_surface_zone3 +
-        risques.secheresse_surface_zone2 +
-        risques.secheresse_surface_zone1;
-
-      risques.pourcentage_risque_secheresse = Math.round(
-        ((risques.secheresse_surface_zone5 +
-          risques.secheresse_surface_zone4 +
-          risques.secheresse_surface_zone3) /
-          surface_totale_secheresse) *
-          100,
-      );
-    } else {
-      risques.pourcentage_risque_secheresse = null;
-    }
-
-    if (
-      risques.inondation_surface_zone5 !== null &&
-      risques.inondation_surface_zone4 !== null &&
-      risques.inondation_surface_zone3 !== null &&
-      risques.inondation_surface_zone2 !== null &&
-      risques.inondation_surface_zone1 !== null
-    ) {
-      risques.pourcentage_risque_innondation = Math.round(
-        ((risques.inondation_surface_zone5 +
-          risques.inondation_surface_zone4 +
-          risques.inondation_surface_zone3) /
-          risques.surface_totale) *
-          100,
-      );
-    } else {
-      risques.pourcentage_risque_innondation = null;
+      if (risques.nombre_cat_nat !== undefined) {
+        await this.risqueRepository.upsert(risques);
+      }
     }
 
     return risques;
-  }
-
-  private zone_surface_value(zone: string, resultats: ResultatRecherche[]) {
-    const found = resultats.find((a) => a.id === `zone_${zone}_surface`);
-    return found ? found.surface_m_2 : 0;
   }
 
   private async computeRisquesCommuneFromExternalAPI(
@@ -165,79 +118,20 @@ export class RisquesUsecase {
       silent_error: true,
     };
 
-    risques.surface_totale =
-      (await this.maifRepository.findSurfaceCommune(filtre)) * 1000 * 1000;
+    const synthese = await this.maifRepository.findRisqueCommuneSynthese(
+      filtre,
+    );
 
-    const risques_catnat = await this.maifRepository.findCatnat(filtre);
-    risques.nombre_cat_nat = risques_catnat.length;
-
-    const risques_zones_secheresse =
-      await this.maifRepository.findZonesSecheresse(filtre);
-
-    if (risques_zones_secheresse.length > 0) {
-      risques.secheresse_surface_zone1 = this.zone_surface_value(
-        '1',
-        risques_zones_secheresse,
+    if (synthese) {
+      risques.nombre_cat_nat = synthese.catnat;
+      risques.pourcentage_risque_innondation = Math.round(
+        synthese.pourcent_inondation,
       );
-      risques.secheresse_surface_zone2 = this.zone_surface_value(
-        '2',
-        risques_zones_secheresse,
+      risques.pourcentage_risque_secheresse = Math.round(
+        synthese.pourcent_secheresse,
       );
-      risques.secheresse_surface_zone3 = this.zone_surface_value(
-        '3',
-        risques_zones_secheresse,
-      );
-      risques.secheresse_surface_zone4 = this.zone_surface_value(
-        '4',
-        risques_zones_secheresse,
-      );
-      risques.secheresse_surface_zone5 = this.zone_surface_value(
-        '5',
-        risques_zones_secheresse,
-      );
-    } else {
-      risques.secheresse_surface_zone1 = null;
-      risques.secheresse_surface_zone2 = null;
-      risques.secheresse_surface_zone3 = null;
-      risques.secheresse_surface_zone4 = null;
-      risques.secheresse_surface_zone5 = null;
-      risques.pourcentage_risque_secheresse = null;
     }
 
-    const risques_zones_inondation =
-      await this.maifRepository.findZonesInondation(
-        filtre,
-        risques.surface_totale,
-      );
-    if (risques_zones_inondation.length > 0) {
-      risques.inondation_surface_zone1 = this.zone_surface_value(
-        '1',
-        risques_zones_inondation,
-      );
-      risques.inondation_surface_zone2 = this.zone_surface_value(
-        '2',
-        risques_zones_inondation,
-      );
-      risques.inondation_surface_zone3 = this.zone_surface_value(
-        '3',
-        risques_zones_inondation,
-      );
-      risques.inondation_surface_zone4 = this.zone_surface_value(
-        '4',
-        risques_zones_inondation,
-      );
-      risques.inondation_surface_zone5 = this.zone_surface_value(
-        '5',
-        risques_zones_inondation,
-      );
-    } else {
-      risques.inondation_surface_zone1 = null;
-      risques.inondation_surface_zone2 = null;
-      risques.inondation_surface_zone3 = null;
-      risques.inondation_surface_zone4 = null;
-      risques.inondation_surface_zone5 = null;
-      risques.pourcentage_risque_innondation = null;
-    }
     return risques;
   }
 }

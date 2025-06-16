@@ -6,6 +6,7 @@ import { ExplicationScore } from '../../../../src/domain/scoring/system_v2/Expli
 import { Tag } from '../../../../src/domain/scoring/tag';
 import { TaggedContent } from '../../../../src/domain/scoring/taggedContent';
 import { TagRubrique } from '../../../../src/domain/scoring/tagRubrique';
+import { Thematique } from '../../../../src/domain/thematique/thematique';
 
 describe('PonderationApplicativeManager', () => {
   const OLD_ENV = process.env;
@@ -23,11 +24,13 @@ describe('PonderationApplicativeManager', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -41,11 +44,13 @@ describe('PonderationApplicativeManager', () => {
     // GIVEN
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => true,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -60,11 +65,13 @@ describe('PonderationApplicativeManager', () => {
     process.env.PONDERATION_RUBRIQUES = 'noel';
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [TagRubrique.R32, TagRubrique.R33, TagRubrique.R1],
       getDistinctText: () => 'abc',
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -79,11 +86,13 @@ describe('PonderationApplicativeManager', () => {
     process.env.PONDERATION_RUBRIQUES = 'exp';
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [Tag.transport],
       getDistinctText: () => 'abc',
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 
@@ -100,11 +109,13 @@ describe('PonderationApplicativeManager', () => {
     process.env.PONDERATION_RUBRIQUES = 'exp';
     const content: TaggedContent = {
       score: 0,
+      pourcent_match: 0,
       getTags: () => [TagRubrique.R1, TagRubrique.R2],
       getDistinctText: () => 'abc',
       isLocal: () => false,
       getInclusionTags: () => [],
       getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
       explicationScore: new ExplicationScore(),
     };
 

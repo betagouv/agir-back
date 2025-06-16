@@ -19,9 +19,13 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  ModeInscription,
+  Scope,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -774,6 +778,331 @@ describe('Admin (API test)', () => {
   });
   */
 
+  it('POST /admin/migrate_users migration V18 OK - recalcul des tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...KYC_DATA,
+          code: KYCID.KYC_preference,
+          id_cms: 1,
+          question: `Quel est votre sujet principal d'intéret ????`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_complexe: [
+            {
+              label: 'Le logement',
+              code: Thematique.logement,
+              selected: true,
+            },
+            {
+              label: 'Bouff',
+              code: Thematique.alimentation,
+              selected: false,
+            },
+            {
+              label: 'transport',
+              code: Thematique.transport,
+              selected: true,
+            },
+            {
+              label: 'conso',
+              code: Thematique.consommation,
+              selected: false,
+            },
+          ],
+          reponse_simple: undefined,
+        },
+      ],
+    };
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_preference,
+      question: `Quel est votre sujet principal d'intéret ?`,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'La consommation', code: Thematique.consommation },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+        { label: 'Comment je bouge', code: Thematique.transport },
+      ],
+    });
+    await kycRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+      version: 17,
+      migration_enabled: true,
+    });
+    App.USER_CURRENT_VERSION = 18;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 18,
+            ok: true,
+            info: 'updated reco tags',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      'appetence_thematique_transport',
+      'appetence_thematique_logement',
+    ]);
+    expect(userDB.version).toEqual(18);
+  });
+
+  it('POST /admin/migrate_users migration V19 init le mode inscription', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: '1',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: true,
+      france_connect_sub: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: '2',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: null,
+      passwordHash: '1234',
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '3',
+      email: '3',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: '1233',
+      passwordHash: null,
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '4',
+      email: '4',
+      version: 18,
+      migration_enabled: true,
+      is_magic_link_user: false,
+      france_connect_sub: '45678',
+      passwordHash: '123',
+    });
+    App.USER_CURRENT_VERSION = 19;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: '1',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [magic_link]`,
+          },
+        ],
+      },
+      {
+        user_id: '2',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [mot_de_passe]`,
+          },
+        ],
+      },
+      {
+        user_id: '3',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [france_connect]`,
+          },
+        ],
+      },
+      {
+        user_id: '4',
+        migrations: [
+          {
+            version: 19,
+            ok: true,
+            info: `mode = [mot_de_passe]`,
+          },
+        ],
+      },
+    ]);
+    let userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('2', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.france_connect);
+    expect(userDB.version).toEqual(19);
+
+    userDB = await utilisateurRepository.getById('4', [Scope.ALL]);
+    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+    expect(userDB.version).toEqual(19);
+  });
+
+  it('POST /admin/migrate_users migration V20 OK - recalcul des tags de reco', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'DIJON',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 19,
+      migration_enabled: true,
+      logement: logement as any,
+    });
+    App.USER_CURRENT_VERSION = 20;
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 20,
+            ok: true,
+            info: 'updated recos tags',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+    ]);
+    expect(userDB.version).toEqual(20);
+  });
+
+  it('POST /admin/migrate_users migration V21 OK - fusionne les actions exclues dans une liste globale', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 21;
+
+    const thematique_history1: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: undefined,
+      liste_actions_utilisateur: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          codes_actions_exclues: [
+            {
+              action: { code: '1', type: TypeAction.classique },
+              date: new Date(1),
+            },
+          ],
+          first_personnalisation_date: new Date(2),
+          personnalisation_done_once: true,
+        },
+        {
+          thematique: Thematique.logement,
+          codes_actions_exclues: [
+            {
+              action: { code: '2', type: TypeAction.bilan },
+              date: new Date(3),
+            },
+          ],
+          first_personnalisation_date: new Date(4),
+          personnalisation_done_once: true,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 20,
+      migration_enabled: true,
+      thematique_history: thematique_history1 as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        user_id: 'utilisateur-id',
+        migrations: [
+          {
+            version: 21,
+            ok: true,
+            info: 'fusion actions exclues',
+          },
+        ],
+      },
+    ]);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(userDB.thematique_history.getAllTypeCodeActionsExclues()).toEqual([
+      {
+        code: '1',
+        type: 'classique',
+      },
+      {
+        code: '2',
+        type: 'bilan',
+      },
+    ]);
+    expect(userDB.version).toEqual(21);
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -1493,6 +1822,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1559,6 +1889,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1575,6 +1906,7 @@ describe('Admin (API test)', () => {
 
     const thematique_history2: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1682,6 +2014,8 @@ describe('Admin (API test)', () => {
       content_id: '1',
       code_epci: '242100410',
       code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
     });
 
     // WHEN
@@ -1701,8 +2035,8 @@ describe('Admin (API test)', () => {
       besoin: 'acheter_velo',
       besoin_desc: 'hihi',
       codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
-      codes_region_from_partenaire: ['11', '27'],
-      codes_departement_from_partenaire: ['91', '21'],
+      codes_region_from_partenaire: ['456'],
+      codes_departement_from_partenaire: ['123'],
       codes_departement: [],
       codes_postaux: [],
       codes_region: [],
@@ -1740,7 +2074,6 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -1779,7 +2112,6 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -1818,21 +2150,7 @@ describe('Admin (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: {
-        nombre_catnat_commune: 2,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_total_a_risque: 2,
-        pourcent_exposition_commune_inondation_zone_2: 3,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_secheresse_total_a_risque: 123,
-      },
+
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -1959,6 +2277,7 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
       liste_actions_utilisateur: [
         {
           action: {

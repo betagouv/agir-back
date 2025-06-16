@@ -6,6 +6,7 @@ import {
   Upgrader,
 } from '../../../../src/domain/object_store/upgrader';
 import {
+  ModeInscription,
   SourceInscription,
   Utilisateur,
 } from '../../../../src/domain/utilisateur/utilisateur';
@@ -26,8 +27,8 @@ describe('Gamification vN ', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'c',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     let domain_start = new Gamification({
       badges: [TypeBadge.pionnier],
@@ -47,8 +48,8 @@ describe('Gamification vN ', () => {
     // GIVEN
     const user = Utilisateur.createNewUtilisateur(
       'c',
-      false,
       SourceInscription.inconnue,
+      ModeInscription.magic_link,
     );
     let domain_start = new Gamification({
       badges: [TypeBadge.pionnier],

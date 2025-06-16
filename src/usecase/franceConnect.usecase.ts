@@ -3,6 +3,7 @@ import { App } from '../domain/app';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import {
   GlobalUserVersion,
+  ModeInscription,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -26,7 +27,10 @@ export class FranceConnectUsecase {
     private bilanCarboneUseCase: BilanCarboneUsecase,
   ) {}
 
-  async genererConnexionFranceConnect(situation_ngc_id?: string): Promise<URL> {
+  async genererConnexionFranceConnect(
+    source_inscription: SourceInscription,
+    situation_ngc_id?: string,
+  ): Promise<URL> {
     if (App.isFranceConnectDown()) {
       ApplicationError.throwConnexionDown(App.getEmailContact());
     }
@@ -40,6 +44,7 @@ export class FranceConnectUsecase {
     await this.oIDCStateRepository.createNewState(
       redirect_infos.state,
       redirect_infos.nonce,
+      source_inscription,
       situation_ngc_id,
     );
 
@@ -134,8 +139,8 @@ export class FranceConnectUsecase {
     // NEW UTILISATEUR CREATION
     const new_utilisateur = Utilisateur.createNewUtilisateur(
       user_info.email,
-      false,
-      SourceInscription.france_connect,
+      SourceInscription[state.source_inscription] || SourceInscription.inconnue,
+      ModeInscription.france_connect,
     );
 
     this.setFCUserInfoToUser(new_utilisateur, user_info);

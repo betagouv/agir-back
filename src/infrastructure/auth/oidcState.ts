@@ -4,4 +4,5 @@ export type OIDCState = {
   idtoken?: string;
   nonce?: string;
   situation_ngc_id?: string;
+  source_inscription?: string;
 };

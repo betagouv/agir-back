@@ -11,6 +11,7 @@ import {
   Partenaire,
   RisquesNaturelsCommunes,
   SituationNGC,
+  Tag as TagDB,
   Thematique as ThematiqueDB,
 } from '.prisma/client';
 import { INestApplication } from '@nestjs/common';
@@ -50,11 +51,13 @@ import { Logement_v0 } from '../src/domain/object_store/logement/logement_v0';
 import { NotificationHistory_v0 } from '../src/domain/object_store/notification/NotificationHistory_v0';
 import { ProfileRecommandationUtilisateur_v0 } from '../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
+  ModeInscription,
   SourceInscription,
   UtilisateurStatus,
 } from '../src/domain/utilisateur/utilisateur';
@@ -74,6 +77,7 @@ import { PartenaireRepository } from '../src/infrastructure/repository/partenair
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from '../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
+import { TagRepository } from '../src/infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
 
 export enum DB {
@@ -83,6 +87,7 @@ export enum DB {
   aide = 'aide',
   fAQ = 'fAQ',
   blockText = 'blockText',
+  tag = 'tag',
   conformite = 'conformite',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
@@ -116,6 +121,7 @@ export class TestUtil {
     fAQ: TestUtil.fAQData,
     compteurActions: TestUtil.compteurActionsData,
     blockText: TestUtil.blockTextData,
+    tag: TestUtil.tagData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     mission: TestUtil.missionData,
@@ -226,6 +232,7 @@ export class TestUtil {
     await this.prisma.blockText.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.risquesNaturelsCommunes.deleteMany();
+    await this.prisma.tag.deleteMany();
 
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
@@ -251,6 +258,7 @@ export class TestUtil {
     AideRepository.resetCache();
     QuizzRepository.resetCache();
     RisquesNaturelsCommunesRepository.resetCache();
+    TagRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -434,6 +442,7 @@ export class TestUtil {
       utilisateurId: 'utilisateur-id',
       nonce: '789',
       situation_ngc_id: '94cfcd83-487c-4e7a-b944-d38165eb36e5',
+      source_inscription: SourceInscription.mobile,
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -578,6 +587,7 @@ export class TestUtil {
       version: 0,
       liste_actions_utilisateur: [],
       liste_thematiques: [],
+      codes_actions_exclues: [],
     };
 
     const gamification: Gamification_v0 = {
@@ -610,23 +620,6 @@ export class TestUtil {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     return {
@@ -688,6 +681,7 @@ export class TestUtil {
       global_user_version: GlobalUserVersion.V2,
       activity_dates_log: [],
       recommandation: recommandation as any,
+      mode_inscription: ModeInscription.france_connect,
       ...override,
     };
   }
@@ -714,6 +708,8 @@ export class TestUtil {
       code_epci: '002',
       echelle: Echelle.National,
       liste_communes_calculees: [],
+      code_departement: undefined,
+      code_region: undefined,
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -755,24 +751,28 @@ export class TestUtil {
       ...override,
     };
   }
+  static tagData(override?: Partial<TagDB>): TagDB {
+    return {
+      id_cms: '123',
+      boost: undefined,
+      ponderation: undefined,
+      description: 'desc',
+      label_explication: 'explication',
+      tag: Tag_v2.a_un_jardin,
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
   static risquesNaturelsCommunesData(
     override?: Partial<RisquesNaturelsCommunes>,
   ): RisquesNaturelsCommunes {
     return {
       code_commune: '12345',
       nom_commune: 'city',
-      surface_totale: 100,
       nombre_cat_nat: 44,
-      inondation_surface_zone1: 10,
-      inondation_surface_zone2: 20,
-      inondation_surface_zone3: 30,
-      inondation_surface_zone4: 40,
-      inondation_surface_zone5: 50,
-      secheresse_surface_zone1: 11,
-      secheresse_surface_zone2: 12,
-      secheresse_surface_zone3: 13,
-      secheresse_surface_zone4: 14,
-      secheresse_surface_zone5: 15,
+      pourcentage_inondation: 10,
+      pourcentage_secheresse: 20,
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -858,12 +858,15 @@ export class TestUtil {
       codes_departement: [],
       codes_region: [],
       echelle: Echelle.National,
-      tag_article: 'composter',
       contenu: 'un long article',
       sources: [{ label: 'label', url: 'url' }],
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
       VISIBLE_PROD: true,
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: [],
+      codes_region_from_partenaire: [],
+
       ...override,
     };
   }

@@ -26,10 +26,6 @@ export class LogementAPI {
   @ApiProperty({ required: false }) plus_de_15_ans: boolean;
   @ApiProperty({ enum: DPE }) dpe: DPE;
 
-  @ApiProperty() nombre_arrets_catnat: number;
-  @ApiProperty() pourcentage_surface_secheresse_geotech: number;
-  @ApiProperty() pourcentage_surface_inondation: number;
-
   public static mapToAPI(user: Utilisateur): LogementAPI {
     const log = user.logement;
     return {
@@ -48,12 +44,6 @@ export class LogementAPI {
       plus_de_15_ans: log.plus_de_15_ans,
       dpe: log.dpe,
       commune_label: log.commune_label,
-      nombre_arrets_catnat: log.risques.nombre_catnat_commune,
-      pourcentage_surface_inondation:
-        log.risques.pourcent_exposition_commune_inondation_total_a_risque,
-      pourcentage_surface_secheresse_geotech:
-        log.risques
-          .pourcent_exposition_commune_secheresse_geotech_total_a_risque,
       code_commune: log.code_commune,
     };
   }

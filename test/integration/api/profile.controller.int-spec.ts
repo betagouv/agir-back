@@ -8,6 +8,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -204,23 +205,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -239,11 +223,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       commune_label: 'Palaiseau',
       dpe: 'B',
       nombre_adultes: 2,
-      nombre_arrets_catnat: 1,
       nombre_enfants: 2,
       plus_de_15_ans: true,
-      pourcentage_surface_inondation: 12,
-      pourcentage_surface_secheresse_geotech: 23,
       proprietaire: true,
       superficie: 'superficie_150',
       type: 'maison',
@@ -275,7 +256,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
 
-      risques: undefined,
       score_risques_adresse: undefined,
     };
 
@@ -328,23 +308,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '23456',
       score_risques_adresse: undefined,
-
-      risques: {
-        nombre_catnat_commune: 1,
-
-        pourcent_exposition_commune_secheresse_geotech_zone_1: 1,
-        pourcent_exposition_commune_secheresse_geotech_zone_2: 2,
-        pourcent_exposition_commune_secheresse_geotech_zone_3: 3,
-        pourcent_exposition_commune_secheresse_geotech_zone_4: 4,
-        pourcent_exposition_commune_secheresse_geotech_zone_5: 5,
-        pourcent_exposition_commune_inondation_zone_1: 1,
-        pourcent_exposition_commune_inondation_zone_2: 2,
-        pourcent_exposition_commune_inondation_zone_3: 3,
-        pourcent_exposition_commune_inondation_zone_4: 4,
-        pourcent_exposition_commune_inondation_zone_5: 5,
-        pourcent_exposition_commune_inondation_total_a_risque: 12,
-        pourcent_exposition_commune_secheresse_total_a_risque: 23,
-      },
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -378,7 +341,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: undefined,
-      risques: undefined,
       score_risques_adresse: undefined,
     };
 
@@ -1147,6 +1109,29 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         .getValue(),
     ).toEqual(5);
   });
+  it('PATCH /utilisateurs/id/logement - update code_commune => update tag urbain', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_commune: '91477',
+      code_postal: '91120',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(dbUser.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+    ]);
+  });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1586,7 +1571,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -1606,7 +1590,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      risques: undefined,
       latitude: 48,
       longitude: 2,
       numero_rue: '12',

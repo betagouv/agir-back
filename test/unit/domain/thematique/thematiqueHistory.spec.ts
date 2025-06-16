@@ -1,4 +1,3 @@
-import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { ThematiqueHistory } from '../../../../src/domain/thematique/history/thematiqueHistory';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 
@@ -13,90 +12,34 @@ describe('ThematiqueHistory', () => {
     process.env = OLD_ENV;
   });
 
-  it(`doesActionsProposeesInclude : true si type code inclu`, () => {
-    // GIVEN
-    const thematique_history = new ThematiqueHistory({
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [
-            { code: '123', type: TypeAction.classique },
-          ],
-          personnalisation_done: true,
-          personnalisation_done_once: true,
-          first_personnalisation_date: new Date(123),
-        },
-      ],
-    });
-
-    // WHEN
-    const result = thematique_history.doesActionsProposeesInclude(
-      Thematique.alimentation,
-      {
-        code: '123',
-        type: TypeAction.classique,
-      },
-    );
-
-    // THEN
-    expect(result).toEqual(true);
-  });
-
-  it(`declarePersonnalisationDone : la thematique done`, () => {
+  it(`declarePersonnalisationDoneOnce : la thematique done`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_actions_utilisateur: [],
       liste_thematiques: [],
+      codes_actions_exclues: [],
     });
 
     // WHEN
-    thematique_history.declarePersonnalisationDone(Thematique.alimentation);
+    thematique_history.declarePersonnalisationDoneOnce(Thematique.alimentation);
 
     // THEN
     expect(
-      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+      thematique_history.isPersonnalisationDoneOnce(Thematique.alimentation),
     ).toEqual(true);
   });
-  it(`declarePersonnalisationDone : la thematique done`, () => {
-    // GIVEN
-    const thematique_history = new ThematiqueHistory({
-      version: 0,
-      liste_actions_utilisateur: [],
-      liste_thematiques: [
-        {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: false,
-          personnalisation_done_once: false,
-          first_personnalisation_date: null,
-        },
-      ],
-    });
 
-    // WHEN
-    thematique_history.declarePersonnalisationDone(Thematique.alimentation);
-
-    // THEN
-    expect(
-      thematique_history.isPersonnalisationDone(Thematique.alimentation),
-    ).toEqual(true);
-  });
   it(`resetPersonnalisation : supprime thematique OK`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
           codes_actions_exclues: [],
-          codes_actions_proposees: [],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -108,14 +51,15 @@ describe('ThematiqueHistory', () => {
 
     // THEN
     expect(
-      thematique_history.isPersonnalisationDone(Thematique.alimentation),
-    ).toEqual(false);
+      thematique_history.isPersonnalisationDoneOnce(Thematique.alimentation),
+    ).toEqual(true);
   });
   it(`resetPersonnalisation : supprime OK même si absent`, () => {
     // GIVEN
     const thematique_history = new ThematiqueHistory({
       version: 0,
       liste_actions_utilisateur: [],
+      codes_actions_exclues: [],
       liste_thematiques: [],
     });
 
@@ -124,7 +68,7 @@ describe('ThematiqueHistory', () => {
 
     // THEN
     expect(
-      thematique_history.isPersonnalisationDone(Thematique.alimentation),
+      thematique_history.isPersonnalisationDoneOnce(Thematique.alimentation),
     ).toEqual(false);
   });
 });

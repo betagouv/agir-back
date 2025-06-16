@@ -17,6 +17,7 @@ import { ProfileRecommandationUtilisateur } from '../../../domain/scoring/system
 import { ThematiqueHistory } from '../../../domain/thematique/history/thematiqueHistory';
 import {
   GlobalUserVersion,
+  ModeInscription,
   Scope,
   SourceInscription,
   Utilisateur,
@@ -647,13 +648,16 @@ export class UtilisateurRepository {
       jour_naissance: user.jour_naissance,
       db_version: user.db_version,
       bilbiotheque_services: bibliotheque_services,
-      is_magic_link_user: user.is_magic_link_user,
       points_classement: user.points_classement,
       rank: user.rank,
       rank_commune: user.rank_commune,
       status: UtilisateurStatus[user.status],
       couverture_aides_ok: user.couverture_aides_ok,
-      source_inscription: SourceInscription[user.source_inscription],
+      source_inscription:
+        SourceInscription[user.source_inscription] ||
+        SourceInscription.inconnue,
+      mode_inscription:
+        ModeInscription[user.mode_inscription] || ModeInscription.inconnue,
       notification_history: notification_history,
       thematique_history: thematique_history,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
@@ -670,6 +674,7 @@ export class UtilisateurRepository {
       global_user_version: GlobalUserVersion[user.global_user_version],
       recommandation: recommandation,
       code_commune_classement: user.code_commune_classement,
+      is_magic_link: user.is_magic_link_user,
     });
 
     if (result.kyc_history) {
@@ -714,13 +719,13 @@ export class UtilisateurRepository {
       mois_naissance: user.mois_naissance,
       jour_naissance: user.jour_naissance,
       db_version: user.db_version,
-      is_magic_link_user: user.is_magic_link_user,
       points_classement: user.points_classement,
       rank: user.rank,
       rank_commune: user.rank_commune,
       status: user.status,
       couverture_aides_ok: user.couverture_aides_ok,
       source_inscription: user.source_inscription,
+      mode_inscription: user.mode_inscription,
       unsubscribe_mail_token: user.unsubscribe_mail_token,
       est_valide_pour_classement: user.est_valide_pour_classement,
       brevo_created_at: user.brevo_created_at,
@@ -745,6 +750,7 @@ export class UtilisateurRepository {
       global_user_version: user.global_user_version,
       activity_dates_log: undefined,
       code_commune_classement: user.code_commune_classement,
+      is_magic_link_user: undefined,
     };
   }
 

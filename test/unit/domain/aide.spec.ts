@@ -41,6 +41,8 @@ const part_def = {
   image_url: 'aaa',
   nom: 'bbb',
   url: 'ccc',
+  code_departement: undefined,
+  code_region: undefined,
 };
 describe('Classe Aide', () => {
   it(`setPartenairePourUtilisateur  - cas liste null`, () => {
@@ -73,7 +75,12 @@ describe('Classe Aide', () => {
 
     const liste_part: PartenaireDefinition[] = [
       part_def,
-      { ...part_def, nom: 'HHHH' },
+      {
+        ...part_def,
+        nom: 'HHHH',
+        code_departement: undefined,
+        code_region: undefined,
+      },
     ];
 
     // WHEN
@@ -95,8 +102,16 @@ describe('Classe Aide', () => {
         code_commune: null,
         liste_codes_commune_from_EPCI: ['123', '456'],
         nom: 'FIRST',
+        code_departement: undefined,
+        code_region: undefined,
       },
-      { ...part_def, code_commune: '123', nom: 'SECOND' },
+      {
+        ...part_def,
+        code_commune: '123',
+        nom: 'SECOND',
+        code_departement: undefined,
+        code_region: undefined,
+      },
     ];
 
     // WHEN
@@ -115,18 +130,24 @@ describe('Classe Aide', () => {
         code_commune: null,
         liste_codes_commune_from_EPCI: ['4', '5', '6'],
         nom: 'AAAAAA',
+        code_departement: undefined,
+        code_region: undefined,
       },
       {
         ...part_def,
         code_commune: null,
         liste_codes_commune_from_EPCI: ['123', '2', '3'],
         nom: 'BBBBBB',
+        code_departement: undefined,
+        code_region: undefined,
       },
       {
         ...part_def,
         code_commune: null,
         liste_codes_commune_from_EPCI: ['123', '7', '9'],
         nom: 'CCCCCC',
+        code_departement: undefined,
+        code_region: undefined,
       },
     ];
 
@@ -146,12 +167,16 @@ describe('Classe Aide', () => {
         code_commune: null,
         liste_codes_commune_from_EPCI: ['4', '5', '6'],
         nom: 'AAAAAA',
+        code_departement: undefined,
+        code_region: undefined,
       },
       {
         ...part_def,
         code_commune: '456',
         liste_codes_commune_from_EPCI: [],
         nom: 'BBBBBB',
+        code_departement: undefined,
+        code_region: undefined,
       },
     ];
 
