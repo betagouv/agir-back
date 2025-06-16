@@ -55,6 +55,7 @@ import { SimulateurVoitureController } from './infrastructure/api/simulateurVoit
 import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
 import { ThematiqueController } from './infrastructure/api/thematique.controller';
+import { WinterController } from './infrastructure/api/winter.controller';
 import { OidcService } from './infrastructure/auth/oidc.service';
 import { BrevoRepository } from './infrastructure/contact/brevoRepository';
 import { EmailSender } from './infrastructure/email/emailSender';
@@ -137,6 +138,7 @@ import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.us
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
+import { WinterUsecase } from './usecase/winter.usecase';
 
 const SESSION_LIFETIME = '30 days';
 
@@ -173,6 +175,7 @@ function getControllers(): any[] {
     MesAidesRenoController,
     RisqesController,
     MagicLinkController,
+    WinterController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
@@ -295,6 +298,7 @@ function getControllers(): any[] {
     RisquesNaturelsCommunesRepository,
     RisquesUsecase,
     TagRepository,
+    WinterUsecase,
   ],
 })
 export class AppModule {}
