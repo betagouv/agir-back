@@ -1,3 +1,4 @@
+import { ActionRepository } from '../../../infrastructure/repository/action.repository';
 import {
   ActionDefinition,
   TypeCodeAction,
@@ -103,6 +104,7 @@ export class ThematiqueHistory {
   public reset() {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
+    this.actions_exclues = [];
   }
   public getRecommandationByThematique(
     thematique: Thematique,
@@ -111,28 +113,13 @@ export class ThematiqueHistory {
   }
 
   public resetPersonnalisation(thematique: Thematique) {
-    const reco_existante =
-      this.getOrCreateNewThematiqueRecommandation(thematique);
-
-    this.re_inclure_actions(reco_existante);
-    reco_existante.resetPersonnalisation();
-  }
-
-  private re_inclure_actions(reco_existante: ThematiqueRecommandation) {
-    const liste_filtree: ActionExclue[] = [];
-    for (const action of this.actions_exclues) {
-      if (
-        reco_existante.doesActionsExcluesInclude({
-          code: action.action.code,
-          type: action.action.type,
-        })
-      ) {
-        // rien a faire
-      } else {
-        liste_filtree.push(action);
+    const filtered_actions_exclues: ActionExclue[] = [];
+    for (const action_exclue of this.actions_exclues) {
+      if (!ActionRepository.isOfThematique(action_exclue.action, thematique)) {
+        filtered_actions_exclues.push(action_exclue);
       }
     }
-    this.actions_exclues = liste_filtree;
+    this.actions_exclues = filtered_actions_exclues;
   }
 
   public isPersonnalisationDoneOnce(thematique: Thematique): boolean {
@@ -294,9 +281,9 @@ export class ThematiqueHistory {
   }
 
   public exclureAction(type_code_action: TypeCodeAction) {
-    this.exclureAllActions([type_code_action]);
+    this.exclureManyActions([type_code_action]);
   }
-  public exclureAllActions(type_code_action_liste: TypeCodeAction[]) {
+  public exclureManyActions(type_code_action_liste: TypeCodeAction[]) {
     for (const type_code_action of type_code_action_liste) {
       this.addActionToExclusionList(type_code_action);
     }

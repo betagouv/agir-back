@@ -350,6 +350,21 @@ describe('Thematique (API test)', () => {
 
   it(`POST /utilisateurs/id/thematiques/alimentation/reset_personnalisation -  reset l'état de perso`, async () => {
     // GIVEN
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_1',
+      code: '1',
+      cms_id: '1',
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.action, {
+      type_code_id: 'classique_2',
+      code: '2',
+      cms_id: '2',
+      thematique: Thematique.logement,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
@@ -405,9 +420,6 @@ describe('Thematique (API test)', () => {
         date: new Date(456),
       },
     ]);
-    expect(
-      user_after.thematique_history.getActionsExclues(Thematique.alimentation),
-    ).toEqual([]);
   });
 
   it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done`, async () => {

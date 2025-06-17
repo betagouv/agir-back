@@ -88,6 +88,17 @@ export class ActionRepository {
     return Array.from(ActionRepository.catalogue.values());
   }
 
+  public static isOfThematique(
+    action: TypeCodeAction,
+    thematique: Thematique,
+  ): boolean {
+    const cached_action = ActionRepository.catalogue.get(
+      ActionDefinition.getIdFromTypeCode(action),
+    );
+    if (!cached_action) return false;
+    return cached_action.thematique === thematique;
+  }
+
   async upsert(action: ActionDefinition): Promise<void> {
     const action_db: Action = {
       cms_id: action.cms_id,

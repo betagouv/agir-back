@@ -152,7 +152,7 @@ export class ThematiqueUsecase {
       thematique,
     );
 
-    utilisateur.thematique_history.exclureAllActions(liste_actions);
+    utilisateur.thematique_history.exclureManyActions(liste_actions);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,

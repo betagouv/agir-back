@@ -493,7 +493,7 @@ export class MigrationUsecase {
         utilisateur.thematique_history.getActionsExclues(thematique),
       );
     }
-    utilisateur.thematique_history.exclureAllActions(liste_actions_exclues);
+    utilisateur.thematique_history.exclureManyActions(liste_actions_exclues);
 
     // VALIDATE VERSION VALUE
     utilisateur.version = version;
