@@ -52,6 +52,7 @@ describe('Winter (API test)', () => {
       '/utilisateurs/utilisateur-id/winter/inscription_par_adresse',
     )
       .set('user-agent', `TheChrome`)
+      .set('X-Forwarded-For', `MyIP`)
       .send({
         nom: 'SMITH',
         adresse: '20 rue de la paix',
@@ -69,7 +70,7 @@ describe('Winter (API test)', () => {
     expect(user.logement.prm).toEqual('12345678901234');
     const consent = (await TestUtil.prisma.linkyConsentement.findMany())[0];
 
-    expect(consent.ip_address).toContain('::');
+    expect(consent.ip_address).toEqual('MyIP');
     expect(consent.email).toEqual('yo@truc.com');
     expect(consent.user_agent).toEqual('TheChrome');
   });

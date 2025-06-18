@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Headers,
-  Ip,
   Param,
   Post,
   Request,
@@ -36,14 +35,9 @@ export class WinterController extends GenericControler {
     @Body() body: ConnectPRMByAddressAPI,
     @Param('utilisateurId') utilisateurId: string,
     @Headers('user-agent') user_agent: string,
-    @Headers('X-Forwarded-For') x_forward: string,
-    @Ip() ip,
+    @Headers('X-Forwarded-For') x_forwarded_for: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-
-    const remote_IP = req.connection.remoteAddress;
-    console.log(remote_IP);
-    console.log(x_forward);
 
     await this.winterUsecase.inscrireAdresse(
       utilisateurId,
@@ -51,7 +45,7 @@ export class WinterController extends GenericControler {
       body.adresse,
       body.code_postal,
       body.code_commune,
-      ip,
+      x_forwarded_for,
       user_agent,
     );
   }
@@ -69,20 +63,15 @@ export class WinterController extends GenericControler {
     @Body() body: ConnectPRMByPRMAPI,
     @Param('utilisateurId') utilisateurId: string,
     @Headers('user-agent') user_agent: string,
-    @Ip() ip,
-    @Headers('X-Forwarded-For') x_forward: string,
+    @Headers('X-Forwarded-For') x_forwarded_for: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-
-    const remote_IP = req.connection.remoteAddress;
-    console.log(remote_IP);
-    console.log(x_forward);
 
     await this.winterUsecase.inscrirePRM(
       utilisateurId,
       body.nom,
       body.prm,
-      ip,
+      x_forwarded_for,
       user_agent,
     );
   }
