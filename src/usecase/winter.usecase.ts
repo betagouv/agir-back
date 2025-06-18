@@ -63,8 +63,9 @@ export class WinterUsecase {
 
     utilisateur.logement.prm = target_prm;
 
-    this.utilisateurRepository.updateUtilisateurNoConcurency(utilisateur, [
-      Scope.logement,
-    ]);
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.logement],
+    );
   }
 }
