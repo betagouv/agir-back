@@ -620,6 +620,7 @@ export class TestUtil {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     return {

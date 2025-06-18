@@ -276,6 +276,7 @@ describe('Duplicate Usecase', () => {
       rue: 'avenue de la Paix',
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -405,6 +406,7 @@ describe('Duplicate Usecase', () => {
       rue: 'avenue de la Paix',
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     for (let index = 0; index < 10; index++) {

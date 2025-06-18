@@ -6,13 +6,14 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WinterUsecase } from '../../usecase/winter.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ConnectPRMByAddressAPI } from './types/winter/connectPRMByAddressAPI';
 
 @Controller()
+@ApiBearerAuth()
 @ApiTags('Winter')
 export class WinterController extends GenericControler {
   constructor(private winterUsecase: WinterUsecase) {
@@ -33,7 +34,7 @@ export class WinterController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    return this.winterUsecase.connect_by_address(
+    await this.winterUsecase.connect_by_address(
       utilisateurId,
       body.nom,
       body.adresse,
@@ -56,7 +57,7 @@ export class WinterController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
   ) {
     this.checkCallerId(req, utilisateurId);
-    return this.winterUsecase.connect_by_address(
+    await this.winterUsecase.connect_by_address(
       utilisateurId,
       body.nom,
       body.adresse,

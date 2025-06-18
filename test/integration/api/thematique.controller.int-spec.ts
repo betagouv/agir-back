@@ -47,6 +47,7 @@ const logement: Logement_v0 = {
   rue: 'avenue de la Paix',
   code_commune: '21231',
   score_risques_adresse: undefined,
+  prm: undefined,
 };
 
 const KYC_DATA: QuestionKYC_v2 = {

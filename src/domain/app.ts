@@ -48,9 +48,6 @@ export class App {
   public static getWinterAPIKey(): string {
     return process.env.WINTER_API_KEY;
   }
-  public static getWinterApiURL(): string {
-    return process.env.WINTER_URL;
-  }
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;
   }

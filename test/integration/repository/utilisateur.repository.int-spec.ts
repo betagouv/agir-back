@@ -439,6 +439,7 @@ describe('UtilisateurRepository', () => {
       rue: 'avenue de la Paix',
       code_commune: '123',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     const count = await utilisateurRepository.countByCodesCommune([
@@ -467,6 +468,7 @@ describe('UtilisateurRepository', () => {
       rue: 'avenue de la Paix',
       code_commune: '123',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     const logement2: Logement_v0 = {
       version: 0,
@@ -486,6 +488,7 @@ describe('UtilisateurRepository', () => {
       rue: 'avenue de la Paix',
       code_commune: '456',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     const logement3: Logement_v0 = {
       version: 0,
@@ -505,6 +508,7 @@ describe('UtilisateurRepository', () => {
       rue: 'avenue de la Paix',
       code_commune: '789',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, {
       id: '1',

@@ -23,7 +23,7 @@ describe('Winter (API test)', () => {
     process.env = OLD_ENV;
   });
 
-  it('POST /utilisateurs/utilisateur-id/winter/inscription_par_adresse - adresse OK', async () => {
+  it('POST /utilisateurs/utilisateur-id/winter/inscription_par_adresse - service non actif', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
@@ -38,6 +38,7 @@ describe('Winter (API test)', () => {
     });
 
     // THEN
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('le service winter est désactivé');
   });
 });

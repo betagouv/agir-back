@@ -44,7 +44,7 @@ export class ApplicationError {
     this.throwAppError('006', `Ce compte est déjà actif`);
   }
   static throwNomObligatoireError() {
-    this.throwAppError('007', 'Nom obligatoire pour créer un utilisateur');
+    this.throwAppError('007', 'Nom obligatoire');
   }
   static throwPrenomObligatoireError() {
     this.throwAppError('008', 'Prénom obligatoire pour créer un utilisateur');
@@ -828,6 +828,29 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
 
   static throwTypeOrdreNotFound(type: string) {
     this.throwAppError('151', `Type d'ordre [${type}] inconnu`);
+  }
+
+  static throwNoPRMFoundAtAddress(adresse: string) {
+    this.throwAppError(
+      '152',
+      `Pas de PRM ou de PRM unique trouvé à cette adresse : [${adresse}]`,
+      404,
+    );
+  }
+
+  static throwUserMissingAdresseForPrmSearch() {
+    this.throwAppError(
+      '153',
+      `Adresse (numéro de rue et rue) manquante pour la recherche de PRM`,
+    );
+  }
+
+  static throwErrorInscriptionPRM() {
+    this.throwAppError('154', `Erreur à l'inscription du PRM de l'utilisateur`);
+  }
+
+  static throwWinterDisabled() {
+    this.throwAppError('154', `le service winter est désactivé`);
   }
 
   private static throwAppError(

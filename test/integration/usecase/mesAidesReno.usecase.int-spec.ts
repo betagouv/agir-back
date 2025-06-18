@@ -54,6 +54,7 @@ describe('Mes Aides Réno', () => {
         rue: undefined,
         code_commune: undefined,
         score_risques_adresse: undefined,
+        prm: undefined,
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -150,6 +151,7 @@ describe('Mes Aides Réno', () => {
         rue: undefined,
         code_commune: '91477',
         score_risques_adresse: undefined,
+        prm: undefined,
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -236,6 +238,7 @@ describe('Mes Aides Réno', () => {
         version: 0,
         code_commune: undefined,
         score_risques_adresse: undefined,
+        prm: undefined,
       };
       await TestUtil.create(DB.utilisateur, {
         logement: logement as any,
@@ -270,6 +273,7 @@ describe('Mes Aides Réno', () => {
         version: 0,
         code_commune: undefined,
         score_risques_adresse: undefined,
+        prm: undefined,
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -318,6 +322,7 @@ describe('Mes Aides Réno', () => {
         version: 0,
         code_commune: undefined,
         score_risques_adresse: undefined,
+        prm: undefined,
       };
       await TestUtil.create(DB.utilisateur, {
         logement: logement as any,

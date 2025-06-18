@@ -994,6 +994,7 @@ describe('Admin (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2080,6 +2081,7 @@ describe('Admin (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2118,6 +2120,7 @@ describe('Admin (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2157,6 +2160,7 @@ describe('Admin (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

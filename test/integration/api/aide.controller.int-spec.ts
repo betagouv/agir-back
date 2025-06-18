@@ -163,6 +163,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -204,6 +205,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -246,6 +248,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -288,6 +291,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -330,6 +334,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -373,6 +378,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -415,6 +421,7 @@ describe('Aide (API test)', () => {
       rue: undefined,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

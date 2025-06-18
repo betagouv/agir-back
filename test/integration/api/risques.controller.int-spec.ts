@@ -51,6 +51,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -82,6 +83,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -124,6 +126,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -169,6 +172,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: '91477',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await risquesNaturelsCommunesRepository.loadCache();
@@ -206,6 +210,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -236,6 +241,7 @@ describe('Risques (API test)', () => {
       plus_de_15_ans: true,
       proprietaire: true,
       code_commune: undefined,
+      prm: undefined,
       score_risques_adresse: {
         argile: NiveauRisqueLogement.faible,
         inondation: NiveauRisqueLogement.fort,
@@ -313,6 +319,7 @@ describe('Risques (API test)', () => {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 

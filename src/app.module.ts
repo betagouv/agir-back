@@ -103,6 +103,8 @@ import { TokenRepository } from './infrastructure/repository/token.repository';
 import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
+import { WinterRepository } from './infrastructure/repository/winter/winter.repository';
+import { WinterAPIClient } from './infrastructure/repository/winter/winterAPIClient';
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
@@ -299,6 +301,8 @@ function getControllers(): any[] {
     RisquesUsecase,
     TagRepository,
     WinterUsecase,
+    WinterAPIClient,
+    WinterRepository,
   ],
 })
 export class AppModule {}
