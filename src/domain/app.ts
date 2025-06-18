@@ -45,6 +45,9 @@ export class App {
   public static isWinterAPIEnabled(): boolean {
     return process.env.WINTER_API_ENABLED === 'true';
   }
+  public static isWinterFaked(): boolean {
+    return process.env.WINTER_API_ENABLED === 'fake';
+  }
   public static getWinterAPIKey(): string {
     return process.env.WINTER_API_KEY;
   }

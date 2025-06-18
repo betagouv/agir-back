@@ -1,14 +1,16 @@
-import { DPE } from '../../../src/domain/logement/logement';
-import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
+const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
+
 describe('WinterUsecase', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let communeRepository = new CommuneRepository(TestUtil.prisma);
+  let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
 
   let winterRepository = {
     rechercherPRMParAdresse: jest.fn(),
@@ -18,6 +20,7 @@ describe('WinterUsecase', () => {
   let winterUsecase = new WinterUsecase(
     utilisateurRepository,
     winterRepository as any,
+    linkyConsentRepository,
   );
 
   beforeAll(async () => {
@@ -44,12 +47,14 @@ describe('WinterUsecase', () => {
     });
 
     // WHEN
-    await winterUsecase.connect_by_address(
+    await winterUsecase.inscrireAdresse(
       'utilisateur-id',
       'SMITH',
       '20 rue de la paix',
       '91120',
       '91477',
+      '127.0.0.1',
+      'chrome',
     );
 
     // THEN
@@ -65,7 +70,7 @@ describe('WinterUsecase', () => {
       'SMITH',
       'utilisateur-id',
       '127.0.0.1',
-      'agent',
+      'chrome',
       'v1',
     );
 
@@ -74,42 +79,180 @@ describe('WinterUsecase', () => {
     ]);
 
     expect(user.logement.prm).toEqual('12345');
-  });
-  it.skip('connect_by_address : Connexion par adresse', async () => {
-    // GIVEN
-    const logement: Logement_v0 = {
-      proprietaire: true,
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      code_postal: '21000',
-      commune: 'Dijon',
-      plus_de_15_ans: undefined,
-      superficie: undefined,
-      type: undefined,
-      chauffage: undefined,
-      latitude: undefined,
-      longitude: undefined,
-      nombre_enfants: undefined,
-      numero_rue: undefined,
-      rue: undefined,
-      version: 0,
-      code_commune: '21231',
-      score_risques_adresse: undefined,
-      prm: undefined,
-    };
-    await TestUtil.create(DB.utilisateur, {
-      logement: logement as any,
+
+    const consent = (await TestUtil.prisma.linkyConsentement.findMany())[0];
+
+    const date_consentement = consent.date_consentement;
+    const date_fin_consentement = consent.date_fin_consentement;
+    const id = consent.id;
+
+    delete consent.created_at;
+    delete consent.updated_at;
+    delete consent.date_consentement;
+    delete consent.date_fin_consentement;
+    delete consent.id;
+
+    expect(consent).toEqual({
+      email: 'yo@truc.com',
+      ip_address: '127.0.0.1',
+      nom: 'SMITH',
+      prm: '12345',
+      texte_signature: `En activant le suivi,
+je déclare sur l'honneur être titulaire du compteur électrique ou être mandaté par celui-ci.
+J'autorise J'Agis et son partenaire Watt Watchers à recueillir mon historique de consommation d'électricité sur 3 ans (demi-heure, journée et puissance maximum quotidienne),
+ainsi qu'à analyser mes consommations tant que j'ai un compte`,
+      user_agent: 'chrome',
+      utilisateurId: 'utilisateur-id',
     });
 
-    // WHEN
-    const result = await winterUsecase.connect_by_address(
-      'utilisateur-id',
-      'SMITH',
-      '20 rue de la paix',
-      '91120',
-      '91477',
+    expect(id).toHaveLength(36);
+    expect(date_consentement.getTime()).toBeGreaterThan(Date.now() - 200);
+    expect(date_fin_consentement.getTime()).toBeGreaterThan(
+      Date.now() + TROIS_ANS - 200,
     );
+  });
 
-    // THEN
+  it('connect_by_address : missing name', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    try {
+      await winterUsecase.inscrireAdresse(
+        'utilisateur-id',
+        undefined,
+        '20 rue de la paix',
+        '91120',
+        '91477',
+        '127.0.0.1',
+        'chrome',
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual('Nom obligatoire');
+    }
+
+    expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(0);
+    expect(winterRepository.inscrirePRM).toHaveBeenCalledTimes(0);
+
+    const consent = await TestUtil.prisma.linkyConsentement.findMany();
+    expect(consent).toHaveLength(0);
+  });
+  it('connect_by_address : missing adresse', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    try {
+      await winterUsecase.inscrireAdresse(
+        'utilisateur-id',
+        'toto',
+        undefined,
+        '91120',
+        '91477',
+        '127.0.0.1',
+        'chrome',
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Adresse (numéro de rue et rue) manquante pour la recherche de PRM',
+      );
+    }
+
+    expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(0);
+    expect(winterRepository.inscrirePRM).toHaveBeenCalledTimes(0);
+
+    const consent = await TestUtil.prisma.linkyConsentement.findMany();
+    expect(consent).toHaveLength(0);
+  });
+  it('connect_by_address : missing code postal', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    try {
+      await winterUsecase.inscrireAdresse(
+        'utilisateur-id',
+        'toto',
+        '20 rue de la paix',
+        undefined,
+        '91477',
+        '127.0.0.1',
+        'chrome',
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le code postal ET la commune sont obligatoires',
+      );
+    }
+
+    expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(0);
+    expect(winterRepository.inscrirePRM).toHaveBeenCalledTimes(0);
+
+    const consent = await TestUtil.prisma.linkyConsentement.findMany();
+    expect(consent).toHaveLength(0);
+  });
+  it('connect_by_address : missing code commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    try {
+      await winterUsecase.inscrireAdresse(
+        'utilisateur-id',
+        'toto',
+        '20 rue de la paix',
+        '91120',
+        undefined,
+        '127.0.0.1',
+        'chrome',
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual(
+        'Le code postal ET la commune sont obligatoires',
+      );
+    }
+
+    expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(0);
+    expect(winterRepository.inscrirePRM).toHaveBeenCalledTimes(0);
+
+    const consent = await TestUtil.prisma.linkyConsentement.findMany();
+    expect(consent).toHaveLength(0);
+  });
+  it('connect_by_address : pas de PRM trouvé', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {});
+    winterRepository.rechercherPRMParAdresse.mockImplementation(() => {
+      throw { message: 'not found' };
+    });
+    // WHEN
+    try {
+      await winterUsecase.inscrireAdresse(
+        'utilisateur-id',
+        'toto',
+        '20 rue de la paix',
+        '91120',
+        '91477',
+        '127.0.0.1',
+        'chrome',
+      );
+      fail();
+    } catch (error) {
+      // THEN
+      expect(error.message).toEqual('not found');
+    }
+
+    expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(1);
+    expect(winterRepository.inscrirePRM).toHaveBeenCalledTimes(0);
+
+    const consent = await TestUtil.prisma.linkyConsentement.findMany();
+    expect(consent).toHaveLength(0);
   });
 });

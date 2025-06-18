@@ -17,6 +17,10 @@ export class WinterRepository {
     code_commune: string,
     code_postal: string,
   ): Promise<string> {
+    if (App.isWinterFaked()) {
+      return '12345678901234';
+    }
+
     if (!App.isWinterAPIEnabled()) {
       ApplicationError.throwWinterDisabled();
     }
@@ -50,6 +54,10 @@ export class WinterRepository {
     user_agent: string,
     version_consentement: string,
   ): Promise<void> {
+    if (App.isWinterFaked()) {
+      return;
+    }
+
     if (!App.isWinterAPIEnabled()) {
       ApplicationError.throwWinterDisabled();
     }

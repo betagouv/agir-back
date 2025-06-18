@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Headers,
+  Ip,
   Param,
   Post,
   Request,
@@ -11,6 +13,7 @@ import { WinterUsecase } from '../../usecase/winter.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ConnectPRMByAddressAPI } from './types/winter/connectPRMByAddressAPI';
+import { ConnectPRMByPRMAPI } from './types/winter/ConnectPRMByPRMAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -32,14 +35,18 @@ export class WinterController extends GenericControler {
     @Request() req,
     @Body() body: ConnectPRMByAddressAPI,
     @Param('utilisateurId') utilisateurId: string,
+    @Headers('user-agent') user_agent: string,
+    @Ip() ip,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.winterUsecase.connect_by_address(
+    await this.winterUsecase.inscrireAdresse(
       utilisateurId,
       body.nom,
       body.adresse,
       body.code_postal,
       body.code_commune,
+      ip,
+      user_agent,
     );
   }
 
@@ -48,21 +55,23 @@ export class WinterController extends GenericControler {
   })
   @Post('utilisateurs/:utilisateurId/winter/inscription_par_prm')
   @ApiBody({
-    type: ConnectPRMByAddressAPI,
+    type: ConnectPRMByPRMAPI,
   })
   @UseGuards(AuthGuard)
   async connecte_par_RPM(
     @Request() req,
-    @Body() body: ConnectPRMByAddressAPI,
+    @Body() body: ConnectPRMByPRMAPI,
     @Param('utilisateurId') utilisateurId: string,
+    @Headers('user-agent') user_agent: string,
+    @Ip() ip,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.winterUsecase.connect_by_address(
+    await this.winterUsecase.inscrirePRM(
       utilisateurId,
       body.nom,
-      body.adresse,
-      body.code_postal,
-      body.code_commune,
+      body.prm,
+      ip,
+      user_agent,
     );
   }
 }

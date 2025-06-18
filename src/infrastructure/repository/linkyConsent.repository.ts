@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LinkyConsent } from '../../../src/domain/linky/linkyConsent';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class LinkyConsentRepository {
@@ -14,13 +14,12 @@ export class LinkyConsentRepository {
         utilisateurId: consent.utilisateurId,
         date_consentement: consent.date_consentement,
         date_fin_consentement: consent.date_fin_consentement,
-        mention_usage_donnees: consent.mention_usage_donnees,
         texte_signature: consent.texte_signature,
-        type_donnees: consent.type_donnees,
         email: consent.email,
         nom: consent.nom,
-        prenom: consent.prenom,
         prm: consent.prm,
+        ip_address: consent.ip_address,
+        user_agent: consent.user_agent,
         created_at: undefined,
         updated_at: undefined,
       },
