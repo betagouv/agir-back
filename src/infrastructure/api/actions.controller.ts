@@ -104,7 +104,7 @@ export class ActionsController extends GenericControler {
   @Get('compteur_actions')
   @Header('Cache-Control', 'max-age=20')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 20, ttl: 1000 } })
+  @Throttle({ default: { limit: 50, ttl: 1000 } })
   @ApiOkResponse({
     type: CompteutActionAPI,
   })
