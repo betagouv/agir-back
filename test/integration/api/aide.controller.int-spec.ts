@@ -308,7 +308,7 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(0);
   });
 
-  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires - sauf si CC, match`, async () => {
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires - sauf si CA_CU_CC, match`, async () => {
     // GIVEN
     const logement: Logement_v0 = {
       version: 0,
@@ -336,7 +336,7 @@ describe('Aide (API test)', () => {
       content_id: '1',
       codes_commune_from_partenaire: ['91477'],
       codes_postaux: ['21000'],
-      echelle: Echelle['Communauté de communes'],
+      echelle: Echelle["Communauté d'agglomération"],
     });
 
     // WHEN

@@ -260,7 +260,11 @@ export class AideRepository {
           { codes_commune_from_partenaire: { isEmpty: true } },
           {
             echelle: {
-              in: ['Communauté de communes'],
+              in: [
+                'Communauté de communes',
+                'Communauté urbaine',
+                "Communauté d'agglomération",
+              ],
             },
           },
         ],
