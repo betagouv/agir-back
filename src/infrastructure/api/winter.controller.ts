@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Headers,
   Param,
   Post,
@@ -74,5 +75,19 @@ export class WinterController extends GenericControler {
       x_forwarded_for,
       user_agent,
     );
+  }
+
+  @ApiOperation({
+    summary: 'Supprime un souscription de PRM',
+  })
+  @Delete('utilisateurs/:utilisateurId/winter')
+  @UseGuards(AuthGuard)
+  async supprimer_RPM(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+
+    await this.winterUsecase.supprimerPRM(utilisateurId);
   }
 }

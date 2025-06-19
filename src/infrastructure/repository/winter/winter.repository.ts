@@ -71,4 +71,16 @@ export class WinterRepository {
       version_consentement,
     );
   }
+
+  public async supprimerPRM(user_id: string): Promise<void> {
+    if (App.isWinterFaked()) {
+      return;
+    }
+
+    if (!App.isWinterAPIEnabled()) {
+      ApplicationError.throwWinterDisabled();
+    }
+
+    await this.winterAPIClient.supprimerPRM(user_id);
+  }
 }

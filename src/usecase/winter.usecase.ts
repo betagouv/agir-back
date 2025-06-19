@@ -82,6 +82,27 @@ export class WinterUsecase {
     await this.connect_prm(utilisateur, nom, prm, ip, user_agent);
   }
 
+  public async supprimerPRM(utilisateurId: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.logement],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    if (!utilisateur.logement.prm) {
+      return;
+    }
+
+    await this.winterRepository.supprimerPRM(utilisateurId);
+
+    utilisateur.logement.prm = undefined;
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.logement],
+    );
+  }
+
   private async connect_prm(
     utilisateur: Utilisateur,
     nom: string,

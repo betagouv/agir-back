@@ -8,6 +8,9 @@ const SEARCH_PRM_URL =
 
 const INSCRIRE_PRM_URL = 'https://api.winter-energies.fr/api/partner/1.0/user';
 
+const SUPPRIMER_PRM_URL =
+  'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID';
+
 const API_TIMEOUT = 2000;
 
 export type found_prm = {
@@ -91,8 +94,34 @@ export class WinterAPIClient {
           Date.now() - call_time
         } ms`,
       );
+      console.log(error);
       ApplicationError.throwErrorInscriptionPRM();
     }
     console.log(`API_TIME:winter_put_prm/${prm}:${Date.now() - call_time}`);
+  }
+
+  public async supprimerPRM(ext_id: string): Promise<void> {
+    const call_time = Date.now();
+
+    try {
+      await axios.delete(SUPPRIMER_PRM_URL.replace('USER_ID', ext_id), {
+        timeout: API_TIMEOUT,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${App.getWinterAPIKey()}`,
+        },
+      });
+    } catch (error) {
+      console.log(
+        `Error calling [winter_delete_prm user:${ext_id}]  after ${
+          Date.now() - call_time
+        } ms`,
+      );
+      console.log(error);
+      ApplicationError.throwErrorInscriptionPRM();
+    }
+    console.log(
+      `API_TIME:winter_delete_prm:user:${ext_id}:${Date.now() - call_time}`,
+    );
   }
 }
