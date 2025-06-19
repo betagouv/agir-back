@@ -21,6 +21,7 @@ describe('WinterUsecase', () => {
     utilisateurRepository,
     winterRepository as any,
     linkyConsentRepository,
+    undefined,
   );
 
   beforeAll(async () => {

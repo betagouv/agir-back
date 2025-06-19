@@ -11,14 +11,31 @@ const INSCRIRE_PRM_URL = 'https://api.winter-energies.fr/api/partner/1.0/user';
 const SUPPRIMER_PRM_URL =
   'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID';
 
+const LISTER_ACTIONS_URL =
+  'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID/action';
+
 const API_TIMEOUT = 2000;
 
-export type found_prm = {
+export type WinterFoundPRM = {
   prm: string;
   address: string;
   zipcode: string;
   city: string;
   name: string;
+};
+
+export type WinterAction = {
+  slug: string; //"depoussierer-grille-refrigerateur",
+  eligibility: string; //"eligible",
+  economy: number; // 10,
+  status: string; //"not_started",
+  type: string; //"ecogeste",
+  usage: string; //"appliances"
+};
+
+export type WinterActionList = {
+  actionStateProxyResponse: WinterAction[];
+  computingFinished: boolean;
 };
 
 @Injectable()
@@ -30,7 +47,7 @@ export class WinterAPIClient {
     rue: string,
     code_postal: string,
     nom_commune: string,
-  ): Promise<found_prm[]> {
+  ): Promise<WinterFoundPRM[]> {
     let response;
     const call_time = Date.now();
     const params = {
@@ -59,7 +76,7 @@ export class WinterAPIClient {
     }
     console.log(`API_TIME:winter_search_prm/${name}:${Date.now() - call_time}`);
 
-    return response.data as found_prm[];
+    return response.data as WinterFoundPRM[];
   }
 
   public async inscrirePRM(
@@ -118,10 +135,38 @@ export class WinterAPIClient {
         } ms`,
       );
       console.log(error);
-      ApplicationError.throwErrorInscriptionPRM();
+      ApplicationError.throwErrorSuppressionPRM();
     }
     console.log(
       `API_TIME:winter_delete_prm:user:${ext_id}:${Date.now() - call_time}`,
     );
+  }
+  public async listerActions(ext_id: string): Promise<WinterActionList> {
+    const call_time = Date.now();
+    let response;
+    try {
+      response = await axios.get(
+        LISTER_ACTIONS_URL.replace('USER_ID', ext_id),
+        {
+          timeout: API_TIMEOUT,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${App.getWinterAPIKey()}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.log(
+        `Error calling [winter_actions:${ext_id}]  after ${
+          Date.now() - call_time
+        } ms`,
+      );
+      console.log(error);
+      ApplicationError.throwErrorListingWinterActions();
+    }
+    console.log(
+      `API_TIME:winter_actions:user:${ext_id}:${Date.now() - call_time}`,
+    );
+    return response.data;
   }
 }

@@ -21,6 +21,7 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
       codes_actions_exclues: [
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -86,6 +87,8 @@ describe('ThematiqueHistory vN ', () => {
           liste_partages: [new Date(132)],
         },
       ],
+      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,

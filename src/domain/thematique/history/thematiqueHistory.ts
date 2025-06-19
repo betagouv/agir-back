@@ -47,11 +47,13 @@ export class ActionUtilisateur {
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
+  private liste_recommandations_winter: TypeCodeAction[];
   private actions_exclues: ActionExclue[];
 
   constructor(data?: ThematiqueHistory_v0) {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
+    this.liste_recommandations_winter = [];
     this.actions_exclues = [];
     if (data) {
       if (data.liste_thematiques) {
@@ -68,6 +70,10 @@ export class ThematiqueHistory {
       }
       this.actions_exclues = data.codes_actions_exclues
         ? data.codes_actions_exclues
+        : [];
+
+      this.liste_recommandations_winter = data.recommandations_winter
+        ? data.recommandations_winter
         : [];
     }
   }
@@ -105,7 +111,13 @@ export class ThematiqueHistory {
     this.liste_thematiques = [];
     this.liste_actions_utilisateur = [];
     this.actions_exclues = [];
+    this.liste_recommandations_winter = [];
   }
+
+  public getRecommandationsWinter(): TypeCodeAction[] {
+    return this.liste_recommandations_winter;
+  }
+
   public getRecommandationByThematique(
     thematique: Thematique,
   ): ThematiqueRecommandation {
@@ -296,6 +308,10 @@ export class ThematiqueHistory {
         date: new Date(),
       });
     }
+  }
+
+  public setWinterRecommandations(actions: TypeCodeAction[]) {
+    this.liste_recommandations_winter = actions;
   }
 
   public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {

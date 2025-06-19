@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
+import { ThematiqueUsecase } from './thematique.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -22,6 +24,7 @@ export class WinterUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
     private linkyConsentRepository: LinkyConsentRepository,
+    private thematiqueUsecase: ThematiqueUsecase,
   ) {}
 
   public async inscrireAdresse(
@@ -100,6 +103,20 @@ export class WinterUsecase {
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
       [Scope.logement],
+    );
+  }
+
+  public async refreshListeActions(
+    utilisateurId: string,
+  ): Promise<TypeCodeAction[]> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    return await this.thematiqueUsecase.external_update_winter_recommandation(
+      utilisateur,
     );
   }
 

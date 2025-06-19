@@ -375,6 +375,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -470,6 +471,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -566,6 +568,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -622,6 +625,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -730,6 +734,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         },
       ],
       liste_actions_utilisateur: [],
+      recommandations_winter: [],
       liste_thematiques: [
         {
           codes_actions_exclues: [],

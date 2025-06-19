@@ -115,6 +115,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -805,6 +806,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -862,6 +864,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -922,6 +925,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -988,6 +992,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -1043,6 +1048,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1085,6 +1091,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -1146,6 +1153,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1194,6 +1202,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1246,6 +1255,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1298,6 +1308,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1429,6 +1440,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      recommandations_winter: [],
       codes_actions_exclues: [],
 
       liste_thematiques: [],
@@ -1480,6 +1492,7 @@ describe('Actions (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       liste_actions_utilisateur: [],
+      recommandations_winter: [],
       codes_actions_exclues: [],
 
       liste_thematiques: [],

@@ -194,6 +194,7 @@ describe('Thematique Board (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },

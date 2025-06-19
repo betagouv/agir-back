@@ -1039,6 +1039,7 @@ describe('Admin (API test)', () => {
       version: 0,
       codes_actions_exclues: undefined,
       liste_actions_utilisateur: [],
+      recommandations_winter: [],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -1824,6 +1825,7 @@ describe('Admin (API test)', () => {
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1891,6 +1893,7 @@ describe('Admin (API test)', () => {
     const thematique_history1: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -1908,6 +1911,7 @@ describe('Admin (API test)', () => {
     const thematique_history2: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '1' },
@@ -2282,6 +2286,7 @@ describe('Admin (API test)', () => {
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
       codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {

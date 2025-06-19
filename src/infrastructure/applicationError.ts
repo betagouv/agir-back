@@ -850,7 +850,17 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
   }
 
   static throwWinterDisabled() {
-    this.throwAppError('154', `le service winter est désactivé`);
+    this.throwAppError('155', `le service winter est désactivé`);
+  }
+  static throwErrorSuppressionPRM() {
+    this.throwAppError(
+      '156',
+      `Erreur à la suppression du PRM de l'utilisateur`,
+    );
+  }
+
+  static throwErrorListingWinterActions() {
+    this.throwAppError('156', `Erreur à la récupération des actions Winter`);
   }
 
   private static throwAppError(

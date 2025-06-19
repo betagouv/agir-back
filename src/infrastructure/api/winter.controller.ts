@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   Param,
   Post,
@@ -89,5 +90,18 @@ export class WinterController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
 
     await this.winterUsecase.supprimerPRM(utilisateurId);
+  }
+
+  @ApiOperation({
+    summary: `Liste des actions winter, pour test`,
+  })
+  @Get('utilisateurs/:utilisateurId/winter/actions')
+  @UseGuards(AuthGuard)
+  async listerActions(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ) {
+    this.checkCallerId(req, utilisateurId);
+    return await this.winterUsecase.refreshListeActions(utilisateurId);
   }
 }

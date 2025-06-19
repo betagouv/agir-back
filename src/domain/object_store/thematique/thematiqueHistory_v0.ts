@@ -85,6 +85,7 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
   liste_actions_utilisateur: ActionUtilisateur_v0[];
   codes_actions_exclues: ActionExclue_v0[];
+  recommandations_winter: TypeCodeAction[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {
     return {
@@ -99,6 +100,7 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
       codes_actions_exclues: domain
         .getAllActionsExclues()
         .map((a) => ActionExclue_v0.serialise(a)),
+      recommandations_winter: domain.getRecommandationsWinter(),
     };
   }
 }

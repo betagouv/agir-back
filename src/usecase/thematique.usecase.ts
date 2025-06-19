@@ -11,6 +11,7 @@ import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { ActionUsecase } from './actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
@@ -30,6 +31,7 @@ export class ThematiqueUsecase {
     private communeRepository: CommuneRepository,
     private compteurActionsRepository: CompteurActionsRepository,
     private thematiqueBoardUsecase: ThematiqueBoardUsecase,
+    private winterRepository: WinterRepository,
   ) {}
 
   public async getUtilisateurThematique(
@@ -217,6 +219,36 @@ export class ThematiqueUsecase {
       utilisateur,
       [Scope.thematique_history],
     );
+  }
+
+  public async external_update_winter_recommandation(
+    utilisateur: Utilisateur,
+  ): Promise<TypeCodeAction[]> {
+    if (!utilisateur.logement?.prm) {
+      return;
+    }
+
+    const new_reco_set: TypeCodeAction[] = [];
+
+    const liste = await this.winterRepository.listerActionsWinter(
+      utilisateur.id,
+    );
+
+    for (const winter_action of liste) {
+      new_reco_set.push({
+        code: winter_action.slug,
+        type: TypeAction.classique,
+      });
+    }
+
+    utilisateur.thematique_history.setWinterRecommandations(new_reco_set);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+
+    return new_reco_set;
   }
 
   private async getActionEligiblesEtRecommandeesUtilisateur(
