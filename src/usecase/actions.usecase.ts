@@ -5,6 +5,7 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
   CatalogueAction,
   Consultation,
+  Ordre,
   Realisation,
 } from '../domain/actions/catalogueAction';
 import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
@@ -133,22 +134,32 @@ export class ActionUsecase {
     titre: string = undefined,
     consultation: Consultation,
     realisation: Realisation,
+    ordre: Ordre,
     skip: number = 0,
     take: number = 1000000,
   ): Promise<CatalogueAction> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history, Scope.logement],
+      [Scope.thematique_history, Scope.logement, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
 
     let catalogue = new CatalogueAction();
 
-    catalogue.actions = await this.external_get_user_actions(utilisateur, {
-      liste_thematiques:
-        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
-      titre_fragment: titre,
-    });
+    const filtre: ActionFilter = {};
+    if (ordre === Ordre.recommandee_filtre_perso) {
+      filtre.type_codes_exclus =
+        utilisateur.thematique_history.getAllTypeCodeActionsExclues();
+    }
+    filtre.ordre = ordre;
+    filtre.liste_thematiques =
+      filtre_thematiques.length > 0 ? filtre_thematiques : undefined;
+    filtre.titre_fragment = titre;
+
+    catalogue.actions = await this.external_get_user_actions(
+      utilisateur,
+      filtre,
+    );
 
     this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
@@ -637,6 +648,10 @@ export class ActionUsecase {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       result.push(action);
+    }
+
+    if (filtre.ordre === Ordre.recommandee) {
+      result = utilisateur.recommandation.trierEtFiltrerRecommandations(result);
     }
 
     return result;

@@ -162,6 +162,7 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

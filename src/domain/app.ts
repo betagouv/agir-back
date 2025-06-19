@@ -1,7 +1,7 @@
 import metadata from './metadata.json';
 
 export class App {
-  static USER_CURRENT_VERSION = 20;
+  static USER_CURRENT_VERSION = 21;
   static BACK_CURRENT_VERSION = '1';
 
   public static isInscriptionDown(): boolean {
@@ -45,11 +45,11 @@ export class App {
   public static isWinterAPIEnabled(): boolean {
     return process.env.WINTER_API_ENABLED === 'true';
   }
+  public static isWinterFaked(): boolean {
+    return process.env.WINTER_API_ENABLED === 'fake';
+  }
   public static getWinterAPIKey(): string {
     return process.env.WINTER_API_KEY;
-  }
-  public static getWinterApiURL(): string {
-    return process.env.WINTER_URL;
   }
   public static getFruitsLegumesAPIKEY(): string {
     return process.env.FRUITS_LEGUMES_API_KEY;

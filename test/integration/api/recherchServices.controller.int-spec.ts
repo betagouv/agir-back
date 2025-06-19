@@ -35,6 +35,7 @@ const logement_palaiseau: Logement_v0 = {
   rue: 'avenue de la Paix',
   code_commune: undefined,
   score_risques_adresse: undefined,
+  prm: undefined,
 };
 
 describe('RechercheServices (API test)', () => {

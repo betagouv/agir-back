@@ -126,7 +126,7 @@ export class AidesController extends GenericControler {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 10, ttl: 1000 } })
+  @Throttle({ default: { limit: 20, ttl: 1000 } })
   @ApiOkResponse({ type: AideAPI })
   @Get('aides/:aideId')
   async getAideUnique(

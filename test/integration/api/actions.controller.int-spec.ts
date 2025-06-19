@@ -46,6 +46,7 @@ const logement: Logement_v0 = {
   rue: 'avenue de la Paix',
   code_commune: '21231',
   score_risques_adresse: undefined,
+  prm: undefined,
 };
 
 describe('Actions (API test)', () => {
@@ -113,6 +114,8 @@ describe('Actions (API test)', () => {
     await blockTextRepository.loadCache();
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { type: TypeAction.classique, code: '123' },
@@ -802,6 +805,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -858,6 +863,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -917,6 +924,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -982,6 +991,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -1036,6 +1047,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1077,6 +1090,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -1137,6 +1152,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1184,6 +1201,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1235,6 +1254,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1286,6 +1307,8 @@ describe('Actions (API test)', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [],
       liste_thematiques: [],
     };
@@ -1410,5 +1433,109 @@ describe('Actions (API test)', () => {
     expect(response.body.message).toBe(
       `le texte ne peut pas contenir de caractères spéciaux comme [^#&*<>/{|}$%@+]`,
     );
+  });
+
+  it(`DELETE /utilisateurs/id/actions/XXX supprime une action `, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      recommandations_winter: [],
+      codes_actions_exclues: [],
+
+      liste_thematiques: [],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/actions/classique/3',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(1);
+    expect(
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
+  });
+
+  it(`DELETE /utilisateurs/id/actions/XXX supprime 6 action `, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      recommandations_winter: [],
+      codes_actions_exclues: [],
+
+      liste_thematiques: [],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    for (let index = 1; index <= 10; index++) {
+      await TestUtil.create(DB.action, {
+        type_code_id: 'classique_' + index,
+        code: index.toString(),
+        cms_id: index.toString(),
+        thematique: Thematique.alimentation,
+      });
+    }
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.DELETE(
+      '/utilisateurs/utilisateur-id/actions/first_block_of_six',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user.thematique_history.getAllActionsExclues()).toHaveLength(6);
+    expect(
+      user.thematique_history.getActionsExcluesEtDates()[0].date.getTime(),
+    ).toBeGreaterThan(Date.now() - 200);
+    expect(user.thematique_history.getAllTypeCodeActionsExclues()[0]).toEqual({
+      type: TypeAction.classique,
+      code: '3',
+    });
   });
 });

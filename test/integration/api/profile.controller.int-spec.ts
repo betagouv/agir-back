@@ -205,6 +205,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '12345',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -257,6 +258,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: '12345',
 
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -308,6 +310,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: '23456',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -342,6 +345,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1577,6 +1581,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1596,6 +1601,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

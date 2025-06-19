@@ -13,11 +13,18 @@ export enum Realisation {
   tout = 'tout',
 }
 
+export enum Ordre {
+  random = 'random',
+  recommandee = 'recommandee',
+  recommandee_filtre_perso = 'recommandee_filtre_perso',
+}
+
 export class CatalogueAction {
   actions: Action[];
   filtre_thematiques: Map<Thematique, ThematiqueFilter>;
   consultation: Consultation;
   realisation: Realisation;
+  ordre: Ordre;
   nombre_resultats_disponibles: number;
 
   constructor() {

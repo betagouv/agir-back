@@ -941,6 +941,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -995,6 +996,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1056,6 +1058,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1136,6 +1139,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       rue: 'avenue de la Paix',
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {

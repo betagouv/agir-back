@@ -210,18 +210,9 @@ export class StatistiqueExternalRepository {
   }
 
   public async createPersonnalisationData(utilisateur: Utilisateur) {
-    const actions_alimentation_rejetees = utilisateur.thematique_history
-      .getActionsExclues(Thematique.alimentation)
-      .map((a) => a.code);
-    const actions_consommation_rejetees = utilisateur.thematique_history
-      .getActionsExclues(Thematique.consommation)
-      .map((a) => a.code);
-    const actions_logement_rejetees = utilisateur.thematique_history
-      .getActionsExclues(Thematique.logement)
-      .map((a) => a.code);
-    const actions_transport_rejetees = utilisateur.thematique_history
-      .getActionsExclues(Thematique.transport)
-      .map((a) => a.code);
+    const actions_rejetees_all = utilisateur.thematique_history
+      .getAllActionsExclues()
+      .map((a) => a.action.code);
 
     await this.prismaStats.personnalisation.create({
       data: {
@@ -243,16 +234,7 @@ export class StatistiqueExternalRepository {
           utilisateur.thematique_history.isPersonnalisationDoneOnce(
             Thematique.transport,
           ),
-        actions_alimentation_rejetees: actions_alimentation_rejetees,
-        actions_consommation_rejetees: actions_consommation_rejetees,
-        actions_logement_rejetees: actions_logement_rejetees,
-        actions_transport_rejetees: actions_transport_rejetees,
-        actions_rejetees_all: [].concat(
-          actions_alimentation_rejetees,
-          actions_consommation_rejetees,
-          actions_logement_rejetees,
-          actions_transport_rejetees,
-        ),
+        actions_rejetees_all: actions_rejetees_all,
       },
     });
   }

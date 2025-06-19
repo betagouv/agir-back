@@ -276,6 +276,7 @@ describe('Duplicate Usecase', () => {
       rue: 'avenue de la Paix',
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -325,6 +326,8 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: {
@@ -404,6 +407,7 @@ describe('Duplicate Usecase', () => {
       rue: 'avenue de la Paix',
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     for (let index = 0; index < 10; index++) {
@@ -683,6 +687,8 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      codes_actions_exclues: [],
+      recommandations_winter: [],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -1281,31 +1287,28 @@ describe('Duplicate Usecase', () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
+      recommandations_winter: [],
+      codes_actions_exclues: [
+        {
+          action: { code: 'abc', type: TypeAction.classique },
+          date: new Date(1),
+        },
+        {
+          action: { code: 'def', type: TypeAction.bilan },
+          date: new Date(1),
+        },
+      ],
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { code: 'abc', type: TypeAction.classique },
-              date: new Date(1),
-            },
-          ],
-          codes_actions_proposees: [],
+          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
-          personnalisation_done: false,
           personnalisation_done_once: true,
         },
         {
           thematique: Thematique.logement,
-          codes_actions_exclues: [
-            {
-              action: { code: 'def', type: TypeAction.bilan },
-              date: new Date(1),
-            },
-          ],
-          codes_actions_proposees: [],
+          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
-          personnalisation_done: false,
           personnalisation_done_once: false,
         },
       ],
@@ -1332,11 +1335,7 @@ describe('Duplicate Usecase', () => {
 
     const stat = stats[0];
     expect(stat).toEqual({
-      actions_alimentation_rejetees: ['abc'],
-      actions_consommation_rejetees: [],
-      actions_logement_rejetees: ['def'],
       actions_rejetees_all: ['abc', 'def'],
-      actions_transport_rejetees: [],
       perso_alimentation_done_once: true,
       perso_consommation_done_once: false,
       perso_logement_done_once: false,

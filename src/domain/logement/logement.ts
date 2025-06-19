@@ -80,6 +80,7 @@ export class Logement {
   chauffage: Chauffage;
   plus_de_15_ans: boolean;
   dpe: DPE;
+  prm: string;
   score_risques_adresse: ScoreRisquesAdresse;
 
   commune_label?: string;
@@ -94,6 +95,7 @@ export class Logement {
     this.code_postal = log.code_postal;
     this.commune = log.commune;
     this.type = log.type;
+    this.prm = log.prm;
     this.superficie = log.superficie;
     this.proprietaire = log.proprietaire;
     this.chauffage = log.chauffage;
@@ -133,6 +135,10 @@ export class Logement {
       input.code_commune,
       this.code_commune,
     );
+  }
+
+  public possedeAdressePrecise(): boolean {
+    return !!this.numero_rue && !!this.rue;
   }
 
   private AorB?<T>(a: T, b: T): T {

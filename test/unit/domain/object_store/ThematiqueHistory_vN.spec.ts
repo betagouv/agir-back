@@ -21,6 +21,13 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
+      codes_actions_exclues: [
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          date: new Date(),
+        },
+      ],
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -43,8 +50,6 @@ describe('ThematiqueHistory vN ', () => {
               date: new Date(),
             },
           ],
-          codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(),
         },
@@ -62,6 +67,13 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
+      codes_actions_exclues: [
+        {
+          action: { type: TypeAction.classique, code: '2' },
+          date: new Date(),
+        },
+      ],
+
       liste_actions_utilisateur: [
         {
           action: { code: '1', type: TypeAction.classique },
@@ -75,6 +87,8 @@ describe('ThematiqueHistory vN ', () => {
           liste_partages: [new Date(132)],
         },
       ],
+      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
+
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
@@ -84,8 +98,6 @@ describe('ThematiqueHistory vN ', () => {
               date: new Date(),
             },
           ],
-          codes_actions_proposees: [{ type: TypeAction.quizz, code: '3' }],
-          personnalisation_done: true,
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(),
         },

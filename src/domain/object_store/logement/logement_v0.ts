@@ -50,6 +50,7 @@ export class Logement_v0 extends Versioned_v0 {
   chauffage: Chauffage;
   plus_de_15_ans: boolean;
   dpe: DPE;
+  prm: string;
   score_risques_adresse: ScoreRisquesAdresse_v0;
 
   static serialise(domain: Logement): Logement_v0 {
@@ -73,6 +74,7 @@ export class Logement_v0 extends Versioned_v0 {
       score_risques_adresse: ScoreRisquesAdresse_v0.serialise(
         domain.score_risques_adresse,
       ),
+      prm: domain.prm,
     };
   }
 }

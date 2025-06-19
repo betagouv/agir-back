@@ -44,7 +44,7 @@
     "execute": "node dist/src/console.js"
   },
   "dependencies": {
-    "@betagouv/aides-velo": "^2.0.0",
+    "@betagouv/aides-velo": "^2.0.1",
     "@betagouv/publicodes-voiture": "^0.3.8",
     "@etalab/decoupage-administratif": "^5.2.0",
     "@getbrevo/brevo": "^1.0.1",
@@ -65,7 +65,7 @@
     "handlebars": "^4.7.8",
     "markdown-it": "^14.1.0",
     "node-geometry-library": "^1.2.6",
-    "publicodes": "^1.8.5",
+    "publicodes": "^1.9.0",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1",
     "typescript-retry-decorator": "^2.4.2",

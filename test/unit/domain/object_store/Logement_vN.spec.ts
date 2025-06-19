@@ -49,6 +49,7 @@ describe('Logement vN ', () => {
         submersion: NiveauRisqueLogement.faible,
         tempete: NiveauRisqueLogement.moyen,
       },
+      prm: '123',
     });
 
     // WHEN
@@ -86,6 +87,7 @@ describe('Logement vN ', () => {
         submersion: NiveauRisqueLogement.faible,
         tempete: NiveauRisqueLogement.moyen,
       },
+      prm: '123',
     });
 
     // WHEN

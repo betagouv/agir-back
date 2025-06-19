@@ -5,6 +5,7 @@ import {
   ActionDefinition,
   TypeCodeAction,
 } from '../../domain/actions/actionDefinition';
+import { Ordre } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { App } from '../../domain/app';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
@@ -19,6 +20,7 @@ export type ActionFilter = {
   codes_exclus?: string[];
   codes_inclus?: string[];
   titre_fragment?: string;
+  ordre?: Ordre;
 };
 
 @Injectable()
@@ -84,6 +86,17 @@ export class ActionRepository {
 
   public getActionCompleteList(): ActionDefinition[] {
     return Array.from(ActionRepository.catalogue.values());
+  }
+
+  public static isOfThematique(
+    action: TypeCodeAction,
+    thematique: Thematique,
+  ): boolean {
+    const cached_action = ActionRepository.catalogue.get(
+      ActionDefinition.getIdFromTypeCode(action),
+    );
+    if (!cached_action) return false;
+    return cached_action.thematique === thematique;
   }
 
   async upsert(action: ActionDefinition): Promise<void> {

@@ -27,6 +27,7 @@ const logement_palaiseau: Logement_v0 = {
   rue: 'avenue de la Paix',
   code_commune: '91477',
   score_risques_adresse: undefined,
+  prm: undefined,
 };
 
 const logement_dijon: Logement_v0 = {
@@ -47,6 +48,7 @@ const logement_dijon: Logement_v0 = {
   rue: 'avenue de la Paix',
   code_commune: '21231',
   score_risques_adresse: undefined,
+  prm: undefined,
 };
 
 describe('UtilisateurBoardRepository', () => {

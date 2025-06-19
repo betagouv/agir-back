@@ -76,32 +76,21 @@ export class TestDataController extends GenericControler {
       tags_ponderation: user.tag_ponderation_set,
       tags_actifs: user.recommandation.getListeTagsActifs(),
       personnalisations_dones: {
-        alimentation: user.thematique_history.isPersonnalisationDone(
+        alimentation: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.alimentation,
         ),
-        transport: user.thematique_history.isPersonnalisationDone(
+        transport: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.transport,
         ),
-        logement: user.thematique_history.isPersonnalisationDone(
+        logement: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.logement,
         ),
-        consommation: user.thematique_history.isPersonnalisationDone(
+        consommation: user.thematique_history.isPersonnalisationDoneOnce(
           Thematique.consommation,
         ),
       },
       action_rejetees: {
-        alimentation: user.thematique_history
-          .getActionsExclues(Thematique.alimentation)
-          .map((a) => a.type + '_' + a.code),
-        transport: user.thematique_history
-          .getActionsExclues(Thematique.transport)
-          .map((a) => a.type + '_' + a.code),
-        Logement: user.thematique_history
-          .getActionsExclues(Thematique.logement)
-          .map((a) => a.type + '_' + a.code),
-        consommation: user.thematique_history
-          .getActionsExclues(Thematique.consommation)
-          .map((a) => a.type + '_' + a.code),
+        all: user.thematique_history.getAllTypeCodeActionsExclues(),
       },
     };
   }

@@ -587,6 +587,8 @@ export class TestUtil {
       version: 0,
       liste_actions_utilisateur: [],
       liste_thematiques: [],
+      codes_actions_exclues: [],
+      recommandations_winter: [],
     };
 
     const gamification: Gamification_v0 = {
@@ -619,6 +621,7 @@ export class TestUtil {
       proprietaire: true,
       code_commune: undefined,
       score_risques_adresse: undefined,
+      prm: undefined,
     };
 
     return {

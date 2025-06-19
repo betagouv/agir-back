@@ -58,6 +58,7 @@ describe('NotificationMobileUsecase', () => {
       version: 0,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -119,6 +120,7 @@ describe('NotificationMobileUsecase', () => {
       version: 0,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -170,6 +172,7 @@ describe('NotificationMobileUsecase', () => {
       version: 0,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -221,6 +224,7 @@ describe('NotificationMobileUsecase', () => {
       version: 0,
       code_commune: '21231',
       score_risques_adresse: undefined,
+      prm: undefined,
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
