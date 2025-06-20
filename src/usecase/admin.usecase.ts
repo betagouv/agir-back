@@ -176,6 +176,7 @@ export class AdminUsecase {
 
     return result;
   }
+
   private getCommuneGlobale(code_commune: string): string {
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
     return commune.commune ? commune.commune : code_commune;

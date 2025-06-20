@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { KYCID } from '../../src/domain/kyc/KYCID';
 import {
   ModeInscription,
   Scope,
@@ -508,7 +509,42 @@ export class MigrationUsecase {
       info: `fusion actions exclues`,
     };
   }
+
   private async migrate_22(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const scopes = [Scope.kyc, Scope.core];
+    const kycId = KYCID.KYC_gaspillage_alimentaire_frequence;
+    const utilisateur = await _this.utilisateurRepository.getById(
+      user_id,
+      scopes,
+    );
+
+    // DO SOMETHING
+
+    const kyc = utilisateur.kyc_history.getQuestionChoixUnique(kycId);
+    if (kyc && kyc.isSelected('peu')) {
+      kyc.selectByCode('zero');
+      utilisateur.kyc_history.updateQuestion(kyc);
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      scopes,
+    );
+
+    return {
+      ok: true,
+      info: `Correctly migrate answers for the KYC: ${kycId}`,
+    };
+  }
+
+  private async migrate_23(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

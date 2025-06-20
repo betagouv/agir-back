@@ -167,182 +167,188 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
   });
-  it('POST /admin/migrate_users retourne une 200 si pas de user en base', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
+  describe('POST /admin/migrate_users', () => {
+    it('retourne une 200 si pas de user en base', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
 
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([]);
-  });
-  it('POST /admin/migrate_users migre pas un user qui a pas besoin', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 2,
-      migration_enabled: true,
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([]);
     });
-    App.USER_CURRENT_VERSION = 2;
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
+    it('migre pas un user qui a pas besoin', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      await TestUtil.create(DB.utilisateur, {
+        version: 2,
+        migration_enabled: true,
+      });
+      App.USER_CURRENT_VERSION = 2;
 
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(userDB.version).toBe(2);
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([]);
-  });
-  it(`POST /admin/migrate_users verifie si migration active pour l'utilisateur`, async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 2,
-      migration_enabled: false,
-    });
-    App.USER_CURRENT_VERSION = 3;
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
 
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
+      // THEN
+      const userDB = await TestUtil.prisma.utilisateur.findUnique({
+        where: { id: 'utilisateur-id' },
+      });
+      expect(userDB.version).toBe(2);
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([]);
     });
-    expect(userDB.version).toBe(2);
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([]);
-  });
-  it('POST /admin/migrate_users migration manquante', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 100,
-      migration_enabled: true,
-    });
-    App.USER_CURRENT_VERSION = 101;
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
 
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
-    });
-    expect(response.status).toBe(201);
-    expect(userDB.version).toBe(100);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 101,
-            ok: false,
-            info: 'Missing migration implementation !',
-          },
-        ],
-      },
-    ]);
-  });
-  it('POST /admin/migrate_users premiere migration bidon OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, {
-      version: 0,
-      migration_enabled: true,
-    });
-    App.USER_CURRENT_VERSION = 1;
+    it(`verifie si migration active pour l'utilisateur`, async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      await TestUtil.create(DB.utilisateur, {
+        version: 2,
+        migration_enabled: false,
+      });
+      App.USER_CURRENT_VERSION = 3;
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    const userDB = await TestUtil.prisma.utilisateur.findUnique({
-      where: { id: 'utilisateur-id' },
+      // THEN
+      const userDB = await TestUtil.prisma.utilisateur.findUnique({
+        where: { id: 'utilisateur-id' },
+      });
+      expect(userDB.version).toBe(2);
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([]);
     });
-    expect(userDB.version).toBe(1);
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 1,
-            ok: true,
-            info: 'dummy migration',
-          },
-        ],
-      },
-    ]);
-  });
 
-  it.skip('POST /admin/migrate_users migration V8 OK', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const kyc = {
-      version: 0,
-      answered_questions: [
+    it('migration manquante', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      await TestUtil.create(DB.utilisateur, {
+        version: 100,
+        migration_enabled: true,
+      });
+      App.USER_CURRENT_VERSION = 101;
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      const userDB = await TestUtil.prisma.utilisateur.findUnique({
+        where: { id: 'utilisateur-id' },
+      });
+      expect(response.status).toBe(201);
+      expect(userDB.version).toBe(100);
+      expect(response.body).toEqual([
         {
-          id: KYCID._2,
-          question: `Quel est votre sujet principal d'intéret ?`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponses: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 101,
+              ok: false,
+              info: 'Missing migration implementation !',
+            },
           ],
-          reponses_possibles: [
-            { label: 'Le climat', code: Thematique.climat },
-            { label: 'Mon logement', code: Thematique.logement },
-            { label: 'Ce que je mange', code: Thematique.alimentation },
-          ],
-          tags: [],
-          universes: [Thematique.climat],
         },
-      ],
-    };
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID._2,
+      ]);
     });
 
-    await TestUtil.create(DB.utilisateur, {
-      version: 7,
-      migration_enabled: true,
-      kyc: kyc,
+    it('premiere migration bidon OK', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      await TestUtil.create(DB.utilisateur, {
+        version: 0,
+        migration_enabled: true,
+      });
+      App.USER_CURRENT_VERSION = 1;
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      const userDB = await TestUtil.prisma.utilisateur.findUnique({
+        where: { id: 'utilisateur-id' },
+      });
+      expect(userDB.version).toBe(1);
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 1,
+              ok: true,
+              info: 'dummy migration',
+            },
+          ],
+        },
+      ]);
     });
-    App.USER_CURRENT_VERSION = 8;
-    await kycRepository.loadCache();
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
+    it.skip('migration V8 OK', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      const kyc = {
+        version: 0,
+        answered_questions: [
           {
-            version: 8,
-            ok: true,
-            info: `CMS IDS injected [1]`,
+            id: KYCID._2,
+            question: `Quel est votre sujet principal d'intéret ?`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: Categorie.test,
+            points: 10,
+            reponses: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+            ],
+            reponses_possibles: [
+              { label: 'Le climat', code: Thematique.climat },
+              { label: 'Mon logement', code: Thematique.logement },
+              { label: 'Ce que je mange', code: Thematique.alimentation },
+            ],
+            tags: [],
+            universes: [Thematique.climat],
           },
         ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.kyc_history.getAnsweredKYCs()[0].id_cms).toEqual(1);
-  });
-  /*
-  it.skip('POST /admin/migrate_users migration V10 OK', async () => {
+      };
+      await TestUtil.create(DB.kYC, {
+        id_cms: 1,
+        code: KYCID._2,
+      });
+
+      await TestUtil.create(DB.utilisateur, {
+        version: 7,
+        migration_enabled: true,
+        kyc: kyc,
+      });
+      App.USER_CURRENT_VERSION = 8;
+      await kycRepository.loadCache();
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 8,
+              ok: true,
+              info: `CMS IDS injected [1]`,
+            },
+          ],
+        },
+      ]);
+      const userDB = await utilisateurRepository.getById('utilisateur-id', [
+        Scope.ALL,
+      ]);
+      expect(userDB.kyc_history.getAnsweredKYCs()[0].id_cms).toEqual(1);
+    });
+    /*
+  it.skip('migration V10 OK', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
 
@@ -378,8 +384,8 @@ describe('Admin (API test)', () => {
   });
   */
 
-  /*
-  it('POST /admin/migrate_users migration V12 OK - calcul code commune pour user', async () => {
+    /*
+  it('migration V12 OK - calcul code commune pour user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const logement: Logement_v0 = {
@@ -436,8 +442,8 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toEqual(12);
   });
   */
-  /*
-  it('POST /admin/migrate_users migration V12 OK - ras si pas de code postal sur user', async () => {
+    /*
+  it('migration V12 OK - ras si pas de code postal sur user', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const logement: Logement_v0 = {
@@ -494,44 +500,44 @@ describe('Admin (API test)', () => {
     expect(userDB.version).toEqual(12);
   });
   */
-  it('POST /admin/migrate_users migration V13 OK - prenom => pseudo', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
+    it('migration V13 OK - prenom => pseudo', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
 
-    await TestUtil.create(DB.utilisateur, {
-      version: 12,
-      migration_enabled: true,
-      prenom: 'yo',
-      pseudo: null,
+      await TestUtil.create(DB.utilisateur, {
+        version: 12,
+        migration_enabled: true,
+        prenom: 'yo',
+        pseudo: null,
+      });
+      App.USER_CURRENT_VERSION = 13;
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 13,
+              ok: true,
+              info: 'pseudo set ok',
+            },
+          ],
+        },
+      ]);
+      const userDB = await utilisateurRepository.getById('utilisateur-id', [
+        Scope.ALL,
+      ]);
+      expect(userDB.pseudo).toEqual('yo');
+      expect(userDB.version).toEqual(13);
     });
-    App.USER_CURRENT_VERSION = 13;
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 13,
-            ok: true,
-            info: 'pseudo set ok',
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.pseudo).toEqual('yo');
-    expect(userDB.version).toEqual(13);
-  });
-
-  /*
-  it('POST /admin/migrate_users migration V14 OK - reset personnalisation thematique', async () => {
+    /*
+  it('migration V14 OK - reset personnalisation thematique', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history: ThematiqueHistory_v0 = {
@@ -601,8 +607,8 @@ describe('Admin (API test)', () => {
   });
   */
 
-  /*
-  it('POST /admin/migrate_users migration V15 OK - reset utilisateur V2', async () => {
+    /*
+  it('migration V15 OK - reset utilisateur V2', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const gamification: Gamification_v0 = {
@@ -674,8 +680,8 @@ describe('Admin (API test)', () => {
   });
   */
 
-  /*
-  it('POST /admin/migrate_users migration V16 OK - inject code_commune dans logement', async () => {
+    /*
+  it('migration V16 OK - inject code_commune dans logement', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const logement: Logement_v0 = {
@@ -734,8 +740,8 @@ describe('Admin (API test)', () => {
   });
   */
 
-  /*
-  it('POST /admin/migrate_users migration V17 OK - migration de tags de reco', async () => {
+    /*
+  it('migration V17 OK - migration de tags de reco', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     const thematique_history: ThematiqueHistory_v0 = {
@@ -778,331 +784,515 @@ describe('Admin (API test)', () => {
   });
   */
 
-  it('POST /admin/migrate_users migration V18 OK - recalcul des tags de reco', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const kyc: KYCHistory_v2 = {
-      version: 2,
-      answered_mosaics: [],
-      answered_questions: [
+    it('migration V18 OK - recalcul des tags de reco', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      const kyc: KYCHistory_v2 = {
+        version: 2,
+        answered_mosaics: [],
+        answered_questions: [
+          {
+            ...KYC_DATA,
+            code: KYCID.KYC_preference,
+            id_cms: 1,
+            question: `Quel est votre sujet principal d'intéret ????`,
+            type: TypeReponseQuestionKYC.choix_multiple,
+            is_NGC: false,
+            categorie: Categorie.test,
+            points: 10,
+            reponse_complexe: [
+              {
+                label: 'Le logement',
+                code: Thematique.logement,
+                selected: true,
+              },
+              {
+                label: 'Bouff',
+                code: Thematique.alimentation,
+                selected: false,
+              },
+              {
+                label: 'transport',
+                code: Thematique.transport,
+                selected: true,
+              },
+              {
+                label: 'conso',
+                code: Thematique.consommation,
+                selected: false,
+              },
+            ],
+            reponse_simple: undefined,
+          },
+        ],
+      };
+      await TestUtil.create(DB.kYC, {
+        id_cms: 1,
+        code: KYCID.KYC_preference,
+        question: `Quel est votre sujet principal d'intéret ?`,
+        type: TypeReponseQuestionKYC.choix_multiple,
+        reponses: [
+          { label: 'La consommation', code: Thematique.consommation },
+          { label: 'Mon logement', code: Thematique.logement },
+          { label: 'Ce que je mange', code: Thematique.alimentation },
+          { label: 'Comment je bouge', code: Thematique.transport },
+        ],
+      });
+      await kycRepository.loadCache();
+
+      await TestUtil.create(DB.utilisateur, {
+        kyc: kyc as any,
+        version: 17,
+        migration_enabled: true,
+      });
+      App.USER_CURRENT_VERSION = 18;
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
         {
-          ...KYC_DATA,
-          code: KYCID.KYC_preference,
-          id_cms: 1,
-          question: `Quel est votre sujet principal d'intéret ????`,
-          type: TypeReponseQuestionKYC.choix_multiple,
-          is_NGC: false,
-          categorie: Categorie.test,
-          points: 10,
-          reponse_complexe: [
+          user_id: 'utilisateur-id',
+          migrations: [
             {
-              label: 'Le logement',
-              code: Thematique.logement,
-              selected: true,
-            },
-            {
-              label: 'Bouff',
-              code: Thematique.alimentation,
-              selected: false,
-            },
-            {
-              label: 'transport',
-              code: Thematique.transport,
-              selected: true,
-            },
-            {
-              label: 'conso',
-              code: Thematique.consommation,
-              selected: false,
+              version: 18,
+              ok: true,
+              info: 'updated reco tags',
             },
           ],
-          reponse_simple: undefined,
         },
-      ],
-    };
-    await TestUtil.create(DB.kYC, {
-      id_cms: 1,
-      code: KYCID.KYC_preference,
-      question: `Quel est votre sujet principal d'intéret ?`,
-      type: TypeReponseQuestionKYC.choix_multiple,
-      reponses: [
-        { label: 'La consommation', code: Thematique.consommation },
-        { label: 'Mon logement', code: Thematique.logement },
-        { label: 'Ce que je mange', code: Thematique.alimentation },
-        { label: 'Comment je bouge', code: Thematique.transport },
-      ],
+      ]);
+      const userDB = await utilisateurRepository.getById('utilisateur-id', [
+        Scope.ALL,
+      ]);
+      expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+        'appetence_thematique_transport',
+        'appetence_thematique_logement',
+      ]);
+      expect(userDB.version).toEqual(18);
     });
-    await kycRepository.loadCache();
 
-    await TestUtil.create(DB.utilisateur, {
-      kyc: kyc as any,
-      version: 17,
-      migration_enabled: true,
-    });
-    App.USER_CURRENT_VERSION = 18;
+    it('migration V19 init le mode inscription', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
+      await TestUtil.create(DB.utilisateur, {
+        id: '1',
+        email: '1',
+        version: 18,
+        migration_enabled: true,
+        is_magic_link_user: true,
+        france_connect_sub: null,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        id: '2',
+        email: '2',
+        version: 18,
+        migration_enabled: true,
+        is_magic_link_user: false,
+        france_connect_sub: null,
+        passwordHash: '1234',
+      });
+      await TestUtil.create(DB.utilisateur, {
+        id: '3',
+        email: '3',
+        version: 18,
+        migration_enabled: true,
+        is_magic_link_user: false,
+        france_connect_sub: '1233',
+        passwordHash: null,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        id: '4',
+        email: '4',
+        version: 18,
+        migration_enabled: true,
+        is_magic_link_user: false,
+        france_connect_sub: '45678',
+        passwordHash: '123',
+      });
+      App.USER_CURRENT_VERSION = 19;
 
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 18,
-            ok: true,
-            info: 'updated reco tags',
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
-      'appetence_thematique_transport',
-      'appetence_thematique_logement',
-    ]);
-    expect(userDB.version).toEqual(18);
-  });
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
 
-  it('POST /admin/migrate_users migration V19 init le mode inscription', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    await TestUtil.create(DB.utilisateur, {
-      id: '1',
-      email: '1',
-      version: 18,
-      migration_enabled: true,
-      is_magic_link_user: true,
-      france_connect_sub: null,
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '2',
-      email: '2',
-      version: 18,
-      migration_enabled: true,
-      is_magic_link_user: false,
-      france_connect_sub: null,
-      passwordHash: '1234',
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '3',
-      email: '3',
-      version: 18,
-      migration_enabled: true,
-      is_magic_link_user: false,
-      france_connect_sub: '1233',
-      passwordHash: null,
-    });
-    await TestUtil.create(DB.utilisateur, {
-      id: '4',
-      email: '4',
-      version: 18,
-      migration_enabled: true,
-      is_magic_link_user: false,
-      france_connect_sub: '45678',
-      passwordHash: '123',
-    });
-    App.USER_CURRENT_VERSION = 19;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: '1',
-        migrations: [
-          {
-            version: 19,
-            ok: true,
-            info: `mode = [magic_link]`,
-          },
-        ],
-      },
-      {
-        user_id: '2',
-        migrations: [
-          {
-            version: 19,
-            ok: true,
-            info: `mode = [mot_de_passe]`,
-          },
-        ],
-      },
-      {
-        user_id: '3',
-        migrations: [
-          {
-            version: 19,
-            ok: true,
-            info: `mode = [france_connect]`,
-          },
-        ],
-      },
-      {
-        user_id: '4',
-        migrations: [
-          {
-            version: 19,
-            ok: true,
-            info: `mode = [mot_de_passe]`,
-          },
-        ],
-      },
-    ]);
-    let userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
-    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
-    expect(userDB.version).toEqual(19);
-
-    userDB = await utilisateurRepository.getById('2', [Scope.ALL]);
-    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
-    expect(userDB.version).toEqual(19);
-
-    userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
-    expect(userDB.mode_inscription).toEqual(ModeInscription.france_connect);
-    expect(userDB.version).toEqual(19);
-
-    userDB = await utilisateurRepository.getById('4', [Scope.ALL]);
-    expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
-    expect(userDB.version).toEqual(19);
-  });
-
-  it('POST /admin/migrate_users migration V20 OK - recalcul des tags de reco', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    const logement: Logement_v0 = {
-      version: 0,
-      superficie: Superficie.superficie_150,
-      type: TypeLogement.maison,
-      code_postal: '21000',
-      chauffage: Chauffage.bois,
-      commune: 'DIJON',
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      nombre_enfants: 2,
-      plus_de_15_ans: true,
-      proprietaire: true,
-      latitude: 48,
-      longitude: 2,
-      numero_rue: '12',
-      rue: 'avenue de la Paix',
-      code_commune: '91477',
-      score_risques_adresse: undefined,
-      prm: undefined,
-    };
-
-    await TestUtil.create(DB.utilisateur, {
-      version: 19,
-      migration_enabled: true,
-      logement: logement as any,
-    });
-    App.USER_CURRENT_VERSION = 20;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
-          {
-            version: 20,
-            ok: true,
-            info: 'updated recos tags',
-          },
-        ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.recommandation.getListeTagsActifs()).toEqual([
-      Tag_v2.habite_zone_urbaine,
-    ]);
-    expect(userDB.version).toEqual(20);
-  });
-
-  it('POST /admin/migrate_users migration V21 OK - fusionne les actions exclues dans une liste globale', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    App.USER_CURRENT_VERSION = 21;
-
-    const thematique_history1: ThematiqueHistory_v0 = {
-      version: 0,
-      codes_actions_exclues: undefined,
-      liste_actions_utilisateur: [],
-      recommandations_winter: [],
-      liste_thematiques: [
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
         {
-          thematique: Thematique.alimentation,
-          codes_actions_exclues: [
+          user_id: '1',
+          migrations: [
             {
-              action: { code: '1', type: TypeAction.classique },
-              date: new Date(1),
+              version: 19,
+              ok: true,
+              info: `mode = [magic_link]`,
             },
           ],
-          first_personnalisation_date: new Date(2),
-          personnalisation_done_once: true,
         },
         {
-          thematique: Thematique.logement,
-          codes_actions_exclues: [
+          user_id: '2',
+          migrations: [
             {
-              action: { code: '2', type: TypeAction.bilan },
-              date: new Date(3),
+              version: 19,
+              ok: true,
+              info: `mode = [mot_de_passe]`,
             },
           ],
-          first_personnalisation_date: new Date(4),
-          personnalisation_done_once: true,
         },
-      ],
-    };
+        {
+          user_id: '3',
+          migrations: [
+            {
+              version: 19,
+              ok: true,
+              info: `mode = [france_connect]`,
+            },
+          ],
+        },
+        {
+          user_id: '4',
+          migrations: [
+            {
+              version: 19,
+              ok: true,
+              info: `mode = [mot_de_passe]`,
+            },
+          ],
+        },
+      ]);
+      let userDB = await utilisateurRepository.getById('1', [Scope.ALL]);
+      expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
+      expect(userDB.version).toEqual(19);
 
-    await TestUtil.create(DB.utilisateur, {
-      version: 20,
-      migration_enabled: true,
-      thematique_history: thematique_history1 as any,
+      userDB = await utilisateurRepository.getById('2', [Scope.ALL]);
+      expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+      expect(userDB.version).toEqual(19);
+
+      userDB = await utilisateurRepository.getById('3', [Scope.ALL]);
+      expect(userDB.mode_inscription).toEqual(ModeInscription.france_connect);
+      expect(userDB.version).toEqual(19);
+
+      userDB = await utilisateurRepository.getById('4', [Scope.ALL]);
+      expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
+      expect(userDB.version).toEqual(19);
     });
 
-    // WHEN
-    const response = await TestUtil.POST('/admin/migrate_users');
+    it('migration V20 OK - recalcul des tags de reco', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      const logement: Logement_v0 = {
+        version: 0,
+        superficie: Superficie.superficie_150,
+        type: TypeLogement.maison,
+        code_postal: '21000',
+        chauffage: Chauffage.bois,
+        commune: 'DIJON',
+        dpe: DPE.B,
+        nombre_adultes: 2,
+        nombre_enfants: 2,
+        plus_de_15_ans: true,
+        proprietaire: true,
+        latitude: 48,
+        longitude: 2,
+        numero_rue: '12',
+        rue: 'avenue de la Paix',
+        code_commune: '91477',
+        score_risques_adresse: undefined,
+        prm: undefined,
+      };
 
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual([
-      {
-        user_id: 'utilisateur-id',
-        migrations: [
+      await TestUtil.create(DB.utilisateur, {
+        version: 19,
+        migration_enabled: true,
+        logement: logement as any,
+      });
+      App.USER_CURRENT_VERSION = 20;
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 20,
+              ok: true,
+              info: 'updated recos tags',
+            },
+          ],
+        },
+      ]);
+      const userDB = await utilisateurRepository.getById('utilisateur-id', [
+        Scope.ALL,
+      ]);
+      expect(userDB.recommandation.getListeTagsActifs()).toEqual([
+        Tag_v2.habite_zone_urbaine,
+      ]);
+      expect(userDB.version).toEqual(20);
+    });
+
+    it('migration V21 OK - fusionne les actions exclues dans une liste globale', async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      App.USER_CURRENT_VERSION = 21;
+
+      const thematique_history1: ThematiqueHistory_v0 = {
+        version: 0,
+        codes_actions_exclues: undefined,
+        liste_actions_utilisateur: [],
+        recommandations_winter: [],
+        liste_thematiques: [
           {
-            version: 21,
-            ok: true,
-            info: 'fusion actions exclues',
+            thematique: Thematique.alimentation,
+            codes_actions_exclues: [
+              {
+                action: { code: '1', type: TypeAction.classique },
+                date: new Date(1),
+              },
+            ],
+            first_personnalisation_date: new Date(2),
+            personnalisation_done_once: true,
+          },
+          {
+            thematique: Thematique.logement,
+            codes_actions_exclues: [
+              {
+                action: { code: '2', type: TypeAction.bilan },
+                date: new Date(3),
+              },
+            ],
+            first_personnalisation_date: new Date(4),
+            personnalisation_done_once: true,
           },
         ],
-      },
-    ]);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    expect(userDB.thematique_history.getAllTypeCodeActionsExclues()).toEqual([
-      {
-        code: '1',
-        type: 'classique',
-      },
-      {
-        code: '2',
-        type: 'bilan',
-      },
-    ]);
-    expect(userDB.version).toEqual(21);
+      };
+
+      await TestUtil.create(DB.utilisateur, {
+        version: 20,
+        migration_enabled: true,
+        thematique_history: thematique_history1 as any,
+      });
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'utilisateur-id',
+          migrations: [
+            {
+              version: 21,
+              ok: true,
+              info: 'fusion actions exclues',
+            },
+          ],
+        },
+      ]);
+      const userDB = await utilisateurRepository.getById('utilisateur-id', [
+        Scope.ALL,
+      ]);
+      expect(userDB.thematique_history.getAllTypeCodeActionsExclues()).toEqual([
+        {
+          code: '1',
+          type: 'classique',
+        },
+        {
+          code: '2',
+          type: 'bilan',
+        },
+      ]);
+      expect(userDB.version).toEqual(21);
+    });
+
+    it.only("migration V22 OK - remplace 'peu' en 'zero'", async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      App.USER_CURRENT_VERSION = 22;
+
+      const reponses = [
+        {
+          label: 'Une poubelle de 50L par semaine',
+          code: '50L',
+          ngc_code: 'base',
+        },
+        {
+          label: 'Une poubelle de 20L par semaine',
+          code: '20L',
+          ngc_code: 'réduction',
+        },
+        {
+          label: "Environ une poignée ou l'équivalent d'un bol par semaine",
+          code: 'peu',
+          ngc_code: 'zéro déchet',
+        },
+        {
+          label: 'Zéro',
+          code: 'zero',
+          ngc_code: 'zéro déchet',
+        },
+        {
+          label: 'Je ne sais pas',
+          code: 'je_ne_sais_pas',
+        },
+      ];
+
+      const kyc_gaspillage_alimentaire = TestUtil.kycData({
+        code: KYCID.KYC_gaspillage_alimentaire_frequence,
+        id_cms: 1,
+        question: `À quelle fréquence jettez-vous des aliments ?`,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_ngc: true,
+        ngc_key: 'alimentation',
+        categorie: Categorie.test,
+        image_url: null,
+        emoji: null,
+        reponses,
+      });
+
+      const answerGaspillageAlimentaire = (
+        code:
+          | 'je_ne_sais_pas'
+          | 'zero'
+          | 'peu'
+          | '20L'
+          | '50L' = 'je_ne_sais_pas',
+      ): QuestionKYC_v2 => ({
+        ...KYC_DATA,
+        code: KYCID.KYC_gaspillage_alimentaire_frequence,
+        id_cms: 1,
+        question: `À quelle fréquence jettez-vous des aliments ?`,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_NGC: true,
+        ngc_key: 'alimentation',
+        image_url: null,
+        reponse_complexe: reponses.map((r: any) => ({
+          label: r.label,
+          code: r.code,
+          selected: r.code === code,
+        })),
+      });
+
+      await TestUtil.create(DB.kYC, kyc_gaspillage_alimentaire as any);
+
+      await TestUtil.create(DB.utilisateur, {
+        version: 21,
+        id: 'user-1',
+        email: 'user-1@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerGaspillageAlimentaire()],
+        } as any,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        version: 21,
+        id: 'user-2',
+        email: 'user-2@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerGaspillageAlimentaire('peu')],
+        } as any,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        version: 21,
+        id: 'user-3',
+        email: 'user-3@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerGaspillageAlimentaire('zero')],
+        } as any,
+      });
+      await kycRepository.loadCache();
+      await TestUtil.create(DB.utilisateur, {
+        version: 21,
+        id: 'user-4',
+        email: 'user-4@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [],
+        } as any,
+      });
+      await kycRepository.loadCache();
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual([
+        {
+          user_id: 'user-1',
+          migrations: [
+            {
+              version: 22,
+              ok: true,
+              info: 'Correctly migrate answers for the KYC: KYC_gaspillage_alimentaire_frequence',
+            },
+          ],
+        },
+        {
+          user_id: 'user-2',
+          migrations: [
+            {
+              version: 22,
+              ok: true,
+              info: 'Correctly migrate answers for the KYC: KYC_gaspillage_alimentaire_frequence',
+            },
+          ],
+        },
+        {
+          user_id: 'user-3',
+          migrations: [
+            {
+              version: 22,
+              ok: true,
+              info: 'Correctly migrate answers for the KYC: KYC_gaspillage_alimentaire_frequence',
+            },
+          ],
+        },
+        {
+          user_id: 'user-4',
+          migrations: [
+            {
+              version: 22,
+              ok: true,
+              info: 'Correctly migrate answers for the KYC: KYC_gaspillage_alimentaire_frequence',
+            },
+          ],
+        },
+      ]);
+
+      const user1 = await utilisateurRepository.getById('user-1', [Scope.ALL]);
+      const kyc = user1.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc.code).toEqual(KYCID.KYC_gaspillage_alimentaire_frequence);
+      expect(kyc.getSelectedCode()).toEqual('je_ne_sais_pas');
+      expect(user1.version).toEqual(22);
+
+      const user2 = await utilisateurRepository.getById('user-2', [Scope.ALL]);
+      const kyc2 = user2.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc2.code).toEqual(KYCID.KYC_gaspillage_alimentaire_frequence);
+      expect(kyc2.getSelectedCode()).toEqual('zero');
+      expect(user2.version).toEqual(22);
+
+      const user3 = await utilisateurRepository.getById('user-3', [Scope.ALL]);
+      const kyc3 = user3.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc3.code).toEqual(KYCID.KYC_gaspillage_alimentaire_frequence);
+      expect(kyc3.getSelectedCode()).toEqual('zero');
+      expect(user3.version).toEqual(22);
+
+      const user4 = await utilisateurRepository.getById('user-4', [Scope.ALL]);
+      expect(user4.kyc_history.getAnsweredKYCs()).toHaveLength(0);
+    });
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
@@ -1129,6 +1319,7 @@ describe('Admin (API test)', () => {
     expect(userDB[0].migration_enabled).toStrictEqual(false);
     expect(userDB[1].migration_enabled).toStrictEqual(false);
   });
+
   it('POST /admin/unlock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
@@ -2177,7 +2368,7 @@ describe('Admin (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toEqual([
-      'Risques commune déjà présents pour [utilisateur-id]',
+      'Risques commune déjà pr�����sents pour [utilisateur-id]',
     ]);
   });
 
