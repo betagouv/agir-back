@@ -562,4 +562,56 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(Math.round(result[2].score)).toEqual(0);
     expect(result[2].getDistinctText()).toEqual('A');
   });
+
+  it(`trierEtFiltrerRecommandations : explications uniques`, () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      pourcent_match: 0,
+
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.appetence_thematique_alimentation],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.appetence_thematique_alimentation],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(Math.round(result[0].score)).toEqual(10);
+    expect(content.explicationScore).toEqual({
+      liste_explications: [
+        {
+          inclusion_tag: 'appetence_thematique_alimentation',
+          valeur: 10,
+          ponderation: 1,
+        },
+      ],
+    });
+  });
+  it(`ExplicationScore.listeUniqueExplications : explications uniques`, () => {
+    // GIVEN
+    const expli = new ExplicationScore();
+    expli.addInclusionTag('AA', 1);
+    expli.addInclusionTag('BB', 1);
+    expli.addInclusionTag('AA', 1);
+
+    // WHEN
+    const result = expli.listeUniqueExplications();
+
+    // THEN
+
+    expect(result).toHaveLength(2);
+    expect(result[0].inclusion_tag).toEqual('AA');
+    expect(result[1].inclusion_tag).toEqual('BB');
+  });
 });

@@ -10,18 +10,34 @@ export type Explication = {
 };
 
 export class ExplicationScore {
-  liste_explications: Explication[];
+  private liste_explications: Explication[];
 
   constructor() {
     this.liste_explications = [];
   }
 
+  public listeUniqueExplications(): Explication[] {
+    const map = new Map<string, Explication>();
+    for (const explication of this.liste_explications) {
+      map.set(
+        explication.exclusion_tag || explication.inclusion_tag,
+        explication,
+      );
+    }
+    return Array.from(map.values());
+  }
   public addInclusionTag(tag: string, valeur: number, ponderation?: number) {
     this.liste_explications.push({
       inclusion_tag: tag,
       valeur: valeur,
       ponderation: ponderation ? ponderation : 1,
     });
+  }
+  public doesAlreadyContainInclusionTag(tag: string) {
+    const foundIndex = this.liste_explications.findIndex(
+      (a) => a.inclusion_tag === tag,
+    );
+    return foundIndex > -1;
   }
   public addExclusionTag(tag: Tag_v2) {
     this.liste_explications.push({
@@ -42,5 +58,8 @@ export class ExplicationScore {
       est_boost: true,
       valeur: valeur,
     });
+  }
+  public doesContainExclusion(): boolean {
+    return this.liste_explications.findIndex((e) => !!e.exclusion_tag) > -1;
   }
 }
