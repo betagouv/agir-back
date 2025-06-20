@@ -122,6 +122,10 @@ export class ProfileRecommandationUtilisateur {
   }
 
   private valoriseTag(tag: string, content: TaggedContent) {
+    if (content.explicationScore.doesAlreadyContainInclusionTag(tag)) {
+      return;
+    }
+
     const tag_def = TagRepository.getTagDefinition(tag);
     let ponderation = 1;
     if (tag_def && tag_def.ponderation) {
@@ -132,6 +136,13 @@ export class ProfileRecommandationUtilisateur {
     content.explicationScore.addInclusionTag(tag, increase, ponderation);
   }
   private valoriseLocal(content: TaggedContent) {
+    if (
+      content.explicationScore.doesAlreadyContainInclusionTag(
+        Tag_v2.est_un_contenu_local,
+      )
+    ) {
+      return;
+    }
     content.score += BASE_TAG_VALUE;
     content.explicationScore.setLocal(BASE_TAG_VALUE);
   }

@@ -21,8 +21,8 @@ export class ExplicationRecoAPI {
       est_exclu: false,
     };
 
-    if (this.containsExclusion(exp)) {
-      for (const element of exp.liste_explications) {
+    if (exp.doesContainExclusion()) {
+      for (const element of exp.listeUniqueExplications()) {
         if (element.exclusion_tag) {
           result.liste_explications.push({
             label_explication: TagRepository.getTagDefinition(
@@ -33,22 +33,18 @@ export class ExplicationRecoAPI {
         }
       }
       result.est_exclu = true;
-      return result;
-    }
-    for (const element of exp.liste_explications) {
-      if (element.inclusion_tag) {
-        result.liste_explications.push({
-          label_explication: TagRepository.getTagDefinition(
-            element.inclusion_tag,
-          )?.label_explication,
-          tag: element.inclusion_tag,
-        });
+    } else {
+      for (const element of exp.listeUniqueExplications()) {
+        if (element.inclusion_tag) {
+          result.liste_explications.push({
+            label_explication: TagRepository.getTagDefinition(
+              element.inclusion_tag,
+            )?.label_explication,
+            tag: element.inclusion_tag,
+          });
+        }
       }
     }
     return result;
-  }
-
-  private static containsExclusion(exp: ExplicationScore): boolean {
-    return exp.liste_explications.findIndex((e) => !!e.exclusion_tag) > -1;
   }
 }
