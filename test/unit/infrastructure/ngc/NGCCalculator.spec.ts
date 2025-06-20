@@ -22,7 +22,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(9339.435610669258);
+    expect(response).toEqual(9055.014135736203);
   });
 
   it('computeSingleEntry : compute ok single entry, empty situation', () => {
@@ -70,7 +70,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(8280.282500850797);
+    expect(response).toEqual(7995.923633915767);
   });
 
   it('computeSingleEntry : Cas du photovlotaique', () => {
@@ -115,13 +115,13 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(8280.282500850797);
-    expect(response.get('divers')).toEqual(977.6858879910264);
-    expect(response.get('logement')).toEqual(2160.200464307907);
+    expect(response.get('bilan')).toEqual(7995.923633915767);
+    expect(response.get('divers')).toEqual(989.0602932841089);
+    expect(response.get('logement')).toEqual(2159.945192079794);
     expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
       1297.8253327911443,
     );
-    expect(response.get('alimentation')).toEqual(2339.1671821);
+    expect(response.get('alimentation')).toEqual(2043.6891821);
     expect(response.get('services sociétaux')).toEqual(1450.9052263863641);
   });
 
