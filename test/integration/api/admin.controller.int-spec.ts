@@ -1111,7 +1111,7 @@ describe('Admin (API test)', () => {
       expect(userDB.version).toEqual(21);
     });
 
-    it.only("migration V22 OK - remplace 'peu' en 'zero'", async () => {
+    it("migration V22 OK - remplace 'peu' en 'zero'", async () => {
       // GIVEN
       TestUtil.token = process.env.CRON_API_KEY;
       App.USER_CURRENT_VERSION = 22;
