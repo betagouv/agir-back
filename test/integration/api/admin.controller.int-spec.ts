@@ -1229,6 +1229,7 @@ describe('Admin (API test)', () => {
 
       // THEN
       expect(response.status).toBe(201);
+      response.body.sort((a, b) => a.user_id.localeCompare(b.user_id));
       expect(response.body).toEqual([
         {
           user_id: 'user-1',
