@@ -1,5 +1,6 @@
 import { QuestionKYC_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Tag } from '../scoring/tag';
+import { Progression } from './Progression';
 import {
   AndConditionSet,
   KYCReponseComplexe,
@@ -116,6 +117,16 @@ export class QuestionKYC extends QuestionKYCData {
       return this.reponse_simple.unite;
     }
     return undefined;
+  }
+
+  public static getProgression(liste: QuestionKYC[]): Progression {
+    let progression = 0;
+    for (const question of liste) {
+      if (question.is_answered) {
+        progression++;
+      }
+    }
+    return new Progression(progression, liste.length);
   }
 
   /**

@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Enchainement } from '../domain/kyc/enchainement';
+import { Progression } from '../domain/kyc/Progression';
+import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { HomeBoard } from '../domain/thematique/homeBoard';
 import { Thematique } from '../domain/thematique/thematique';
 import { ThematiqueSynthese } from '../domain/thematique/thematiqueSynthese';
@@ -10,6 +13,7 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
 import { BilanCarboneUsecase } from './bilanCarbone.usecase';
+import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 @Injectable()
 export class ThematiqueBoardUsecase {
@@ -74,6 +78,51 @@ export class ThematiqueBoardUsecase {
 
     result.pourcentage_bilan_done =
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
+
+    let transport_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+        Enchainement.ENCHAINEMENT_KYC_personnalisation_transport
+      ],
+    );
+    let logement_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+        Enchainement.ENCHAINEMENT_KYC_personnalisation_logement
+      ],
+    );
+    let conso_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
+      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+        Enchainement.ENCHAINEMENT_KYC_personnalisation_consommation
+      ],
+    );
+    let alimentation_reco =
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(
+        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
+          Enchainement.ENCHAINEMENT_KYC_personnalisation_alimentation
+        ],
+      );
+
+    const alimentation_progression =
+      QuestionKYC.getProgression(alimentation_reco);
+
+    const consommation_progression = QuestionKYC.getProgression(conso_reco);
+
+    const logement_progression = QuestionKYC.getProgression(logement_reco);
+
+    const transport_progression = QuestionKYC.getProgression(transport_reco);
+
+    result.pourcentage_global_reco_done = Progression.getPourcentOfList([
+      alimentation_progression,
+      consommation_progression,
+      logement_progression,
+      transport_progression,
+    ]);
+    result.pourcentage_alimentation_reco_done =
+      alimentation_progression.getPourcent();
+    result.pourcentage_consommation_reco_done =
+      consommation_progression.getPourcent();
+    result.pourcentage_logement_reco_done = logement_progression.getPourcent();
+    result.pourcentage_transport_reco_done =
+      transport_progression.getPourcent();
 
     const nombre_aides = await this.aidesUsecase.external_count_aides(
       undefined,
