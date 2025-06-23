@@ -107,7 +107,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(21);
+    expect(user.version).toEqual(22);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {

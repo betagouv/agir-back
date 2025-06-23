@@ -6,10 +6,12 @@ import {
   NiveauImpact,
   SituationNGC,
 } from '../domain/bilan/bilanCarbone';
+import { Enchainement } from '../domain/kyc/enchainement';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
 import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from '../domain/kyc/new_interfaces/QuestionNumerique';
+import { Progression } from '../domain/kyc/Progression';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
 import {
   BooleanKYC,
@@ -33,11 +35,11 @@ export type EnchainementRecap = {
   enchainement_conso: QuestionKYC[];
   enchainement_alimentation: QuestionKYC[];
 
-  enchainement_transport_progression: { current: number; target: number };
-  enchainement_logement_progression: { current: number; target: number };
-  enchainement_conso_progression: { current: number; target: number };
-  enchainement_alimentation_progression: { current: number; target: number };
-  enchainement_minibilan_progression: { current: number; target: number };
+  enchainement_transport_progression: Progression;
+  enchainement_logement_progression: Progression;
+  enchainement_conso_progression: Progression;
+  enchainement_alimentation_progression: Progression;
+  enchainement_minibilan_progression: Progression;
 
   pourcentage_prog_totale_sans_mini_bilan: number;
 };
@@ -216,32 +218,32 @@ export class BilanCarboneUsecase {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          'ENCHAINEMENT_KYC_mini_bilan_carbone'
+          Enchainement.ENCHAINEMENT_KYC_mini_bilan_carbone
         ],
       );
 
     let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          'ENCHAINEMENT_KYC_bilan_transport'
+          Enchainement.ENCHAINEMENT_KYC_bilan_transport
         ],
       );
     let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          'ENCHAINEMENT_KYC_bilan_logement'
+          Enchainement.ENCHAINEMENT_KYC_bilan_logement
         ],
       );
     let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          'ENCHAINEMENT_KYC_bilan_consommation'
+          Enchainement.ENCHAINEMENT_KYC_bilan_consommation
         ],
       );
     let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
         QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          'ENCHAINEMENT_KYC_bilan_alimentation'
+          Enchainement.ENCHAINEMENT_KYC_bilan_alimentation
         ],
       );
 
@@ -253,18 +255,18 @@ export class BilanCarboneUsecase {
       (q) => q !== null,
     );
 
-    const enchainement_transport_progression = this.getProgression(
+    const enchainement_transport_progression = QuestionKYC.getProgression(
       enchainement_transport,
     );
-    const enchainement_logement_progression = this.getProgression(
+    const enchainement_logement_progression = QuestionKYC.getProgression(
       enchainement_logement,
     );
     const enchainement_conso_progression =
-      this.getProgression(enchainement_conso);
-    const enchainement_alimentation_progression = this.getProgression(
+      QuestionKYC.getProgression(enchainement_conso);
+    const enchainement_alimentation_progression = QuestionKYC.getProgression(
       enchainement_alimentation,
     );
-    const enchainement_minibilan_progression = this.getProgression(
+    const enchainement_minibilan_progression = QuestionKYC.getProgression(
       enchainement_mini_bilan,
     );
 
@@ -602,18 +604,5 @@ export class BilanCarboneUsecase {
     if (impact_number <= 4) return NiveauImpact.moyen;
     if (impact_number <= 8) return NiveauImpact.fort;
     return NiveauImpact.tres_fort;
-  }
-
-  private getProgression(liste: QuestionKYC[]): {
-    current: number;
-    target: number;
-  } {
-    let progression = 0;
-    for (const question of liste) {
-      if (question.is_answered) {
-        progression++;
-      }
-    }
-    return { current: progression, target: liste.length };
   }
 }

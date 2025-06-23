@@ -1019,10 +1019,10 @@ describe('Duplicate Usecase', () => {
     delete stat.updated_at;
 
     expect(stat).toEqual({
-      alimentation_kg: 2302,
+      alimentation_kg: 2008,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8849,
+      total_kg: 8567,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
       pourcentage_progression_alimentation: 50,
@@ -1139,10 +1139,10 @@ describe('Duplicate Usecase', () => {
     delete stat.updated_at;
 
     expect(stat).toEqual({
-      alimentation_kg: 2302,
+      alimentation_kg: 2008,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8849,
+      total_kg: 8567,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
       pourcentage_progression_alimentation: 50,
