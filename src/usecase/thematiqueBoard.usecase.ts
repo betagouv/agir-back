@@ -60,6 +60,7 @@ export class ThematiqueBoardUsecase {
       utilisateur.logement.code_commune,
     );
     result.nom_commune = commune?.nom;
+    result.est_utilisateur_ngc = utilisateur.vientDeNGC();
 
     result.total_actions_faites =
       await this.compteurActionsRepository.getTotalFaites();

@@ -12,4 +12,5 @@ export class DetailThematique {
   nombre_actions: number;
   nombre_aides: number;
   nombre_simulateurs: number;
+  est_utilisateur_ngc: boolean;
 }

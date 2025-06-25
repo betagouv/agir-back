@@ -11,4 +11,5 @@ export class HomeBoard {
   bilan_carbone_total_kg: number;
   nombre_aides: number;
   nombre_recettes: number;
+  est_utilisateur_ngc: boolean;
 }

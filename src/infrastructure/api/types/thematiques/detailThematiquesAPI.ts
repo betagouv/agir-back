@@ -6,6 +6,7 @@ import { ActionLightAPI } from '../actions/ActionLightAPI';
 
 export class DetailThematiquesAPI {
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
+  @ApiProperty() est_utilisateur_ngc: boolean;
   @ApiProperty() nom_commune: string;
   @ApiProperty() nombre_recettes: number;
   @ApiProperty() nombre_actions: number;
@@ -38,6 +39,7 @@ export class DetailThematiquesAPI {
       nombre_recettes: detail.nombre_recettes,
       nombre_simulateurs: detail.nombre_simulateurs,
       nom_commune: detail.nom_commune,
+      est_utilisateur_ngc: detail.est_utilisateur_ngc,
     };
   }
 }

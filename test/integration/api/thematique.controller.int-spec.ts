@@ -111,6 +111,7 @@ describe('Thematique (API test)', () => {
       nombre_aides: 0,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
+      est_utilisateur_ngc: false,
     });
   });
   it(`GET /utilisateurs/id/thematiques/alimentation - personnalisation done`, async () => {
@@ -158,6 +159,7 @@ describe('Thematique (API test)', () => {
       nombre_aides: 0,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
+      est_utilisateur_ngc: false,
     });
   });
   it(`POST /utilisateurs/id/thematiques/alimentation/personnaliation_ok - API set l'état de perso`, async () => {

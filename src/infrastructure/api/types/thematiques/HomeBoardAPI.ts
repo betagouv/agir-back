@@ -14,6 +14,7 @@ export class HomeBoardAPI {
   @ApiProperty() pourcentage_consommation_reco_done: number;
   @ApiProperty() pourcentage_logement_reco_done: number;
   @ApiProperty() pourcentage_global_reco_done: number;
+  @ApiProperty() est_utilisateur_ngc: boolean;
 
   public static mapToAPI(board: HomeBoard): HomeBoardAPI {
     return {
@@ -31,6 +32,7 @@ export class HomeBoardAPI {
       pourcentage_logement_reco_done: board.pourcentage_logement_reco_done,
       pourcentage_transport_reco_done: board.pourcentage_transport_reco_done,
       pourcentage_global_reco_done: board.pourcentage_global_reco_done,
+      est_utilisateur_ngc: board.est_utilisateur_ngc,
     };
   }
 }

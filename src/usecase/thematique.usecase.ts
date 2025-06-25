@@ -63,16 +63,18 @@ export class ThematiqueUsecase {
       utilisateur.logement.code_commune,
     );
 
-    const detailThematique =
+    const thematique_synthese =
       await this.thematiqueBoardUsecase.external_thematique_synthese(
         thematique,
         utilisateur.logement.code_commune,
       );
 
-    result.nombre_actions = detailThematique.nombre_actions;
-    result.nombre_aides = detailThematique.nombre_aides;
-    result.nombre_recettes = detailThematique.nombre_recettes;
-    result.nombre_simulateurs = detailThematique.nombre_simulateurs;
+    result.nombre_actions = thematique_synthese.nombre_actions;
+    result.nombre_aides = thematique_synthese.nombre_aides;
+    result.nombre_recettes = thematique_synthese.nombre_recettes;
+    result.nombre_simulateurs = thematique_synthese.nombre_simulateurs;
+
+    result.est_utilisateur_ngc = utilisateur.vientDeNGC();
 
     if (personnalisation_done_once) {
       result.liste_actions = await this.buildThematiquePostPersonnalisation(
