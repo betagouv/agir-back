@@ -6,7 +6,12 @@ import {
   ContenuBibliotheque,
   ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
+import {
+  SousThematique,
+  SousThematiqueHelper,
+} from '../../../../domain/thematique/sousThematique';
 import { Thematique } from '../../../../domain/thematique/thematique';
+import { SousThematiqueRepository } from '../../../repository/sousThematique.repository';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -42,22 +47,64 @@ export class ContenuBibliothequeAPI {
     };
   }
 }
+export class SousThematiqueFiltereAPI {
+  @ApiProperty({ enum: SousThematique }) code: SousThematique;
+  @ApiProperty() label: string;
+  @ApiProperty() selected: boolean;
+
+  public static mapToAPI(
+    filtres: Map<SousThematique, ThematiqueFilter>,
+  ): SousThematiqueFiltereAPI[] {
+    const result: SousThematiqueFiltereAPI[] = [];
+    for (const [key, value] of filtres) {
+      result.push({
+        code: key,
+        label: SousThematiqueRepository.getLabel(key),
+        selected: value.selected,
+      });
+    }
+    return result;
+  }
+}
 
 export class ThematiqueFiltereAPI {
   @ApiProperty({ enum: Thematique }) code: Thematique;
   @ApiProperty() label: string;
   @ApiProperty() selected: boolean;
+  @ApiProperty({ type: [SousThematiqueFiltereAPI] })
+  liste_sous_thematiques: SousThematiqueFiltereAPI[];
 
   public static mapToAPI(
-    filtres: Map<Thematique, ThematiqueFilter>,
+    filtres_thematique: Map<Thematique, ThematiqueFilter>,
+    filtres_sous_thematique: Map<SousThematique, ThematiqueFilter>,
   ): ThematiqueFiltereAPI[] {
     const result: ThematiqueFiltereAPI[] = [];
-    for (const entry of filtres) {
-      result.push({
-        code: entry[0],
-        label: ThematiqueRepository.getTitreThematique(entry[0]),
-        selected: entry[1].selected,
-      });
+    for (const entry of filtres_thematique) {
+      const thematique = entry[0];
+      const them_filter = entry[1];
+      const item = {
+        code: thematique,
+        label: ThematiqueRepository.getTitreThematique(thematique),
+        selected: them_filter.selected,
+        liste_sous_thematiques: [],
+      };
+      if (filtres_sous_thematique) {
+        for (const entry2 of filtres_sous_thematique) {
+          const sous_thematique = entry2[0];
+          const sous_them_filter = entry2[1];
+          const them_parent =
+            SousThematiqueHelper.getThematique(sous_thematique);
+          if (them_parent === thematique) {
+            const sous_them: SousThematiqueFiltereAPI = {
+              code: sous_thematique,
+              label: SousThematiqueRepository.getLabel(sous_thematique),
+              selected: sous_them_filter.selected,
+            };
+            item.liste_sous_thematiques.push(sous_them);
+          }
+        }
+      }
+      result.push(item);
     }
     return result;
   }
@@ -76,7 +123,10 @@ export class BibliothequeAPI {
       contenu: biblio
         .getAllContenu()
         .map((content) => ContenuBibliothequeAPI.mapToAPI(content)),
-      filtres: ThematiqueFiltereAPI.mapToAPI(biblio.filtre_thematiques),
+      filtres: ThematiqueFiltereAPI.mapToAPI(
+        biblio.filtre_thematiques,
+        undefined,
+      ),
       nombre_resultats: biblio.getNombreResultats(),
       nombre_resultats_disponibles: biblio.getNombreResultatsDispo(),
     };

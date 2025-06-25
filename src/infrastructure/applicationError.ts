@@ -860,7 +860,11 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
   }
 
   static throwErrorListingWinterActions() {
-    this.throwAppError('156', `Erreur à la récupération des actions Winter`);
+    this.throwAppError('157', `Erreur à la récupération des actions Winter`);
+  }
+
+  static throwSousThematiqueNotFound(them: string) {
+    this.throwAppError('158', `Sous thematique [${them}] inconnue`);
   }
 
   private static throwAppError(

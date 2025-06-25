@@ -57,36 +57,43 @@ describe('Actions Catalogue Offline (API test)', () => {
         code: 'alimentation',
         label: 'alimentation',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'transport',
         label: 'transport',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'logement',
         label: 'logement',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'consommation',
         label: 'consommation',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'climat',
         label: 'climat',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'dechet',
         label: 'dechet',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'loisir',
         label: 'loisir',
         selected: false,
+        liste_sous_thematiques: [],
       },
     ]);
 
@@ -222,36 +229,43 @@ describe('Actions Catalogue Offline (API test)', () => {
         code: 'alimentation',
         label: 'alimentation',
         selected: true,
+        liste_sous_thematiques: [],
       },
       {
         code: 'transport',
         label: 'transport',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'logement',
         label: 'logement',
         selected: true,
+        liste_sous_thematiques: [],
       },
       {
         code: 'consommation',
         label: 'consommation',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'climat',
         label: 'climat',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'dechet',
         label: 'dechet',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'loisir',
         label: 'loisir',
         selected: false,
+        liste_sous_thematiques: [],
       },
     ]);
   });

@@ -15,6 +15,7 @@ import {
 import { TypeAction } from '../../domain/actions/typeAction';
 import { ContentType } from '../../domain/contenu/contentType';
 import { IncludeArticle } from '../../domain/contenu/includeArticle';
+import { SousThematique } from '../../domain/thematique/sousThematique';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
@@ -95,6 +96,16 @@ export class GenericControler {
     }
     return thematique;
   }
+  public castSousThematiqueOrException(
+    code_thematique: string,
+  ): SousThematique {
+    const thematique = SousThematique[code_thematique];
+    if (!thematique) {
+      ApplicationError.throwSousThematiqueNotFound(code_thematique);
+    }
+    return thematique;
+  }
+
   public castContentTypeOrException(code_type: string): ContentType {
     const type = ContentType[code_type];
     if (!type) {

@@ -16,6 +16,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export type ActionFilter = {
   thematique?: Thematique;
   liste_thematiques?: Thematique[];
+  liste_sous_thematiques?: SousThematique[];
   type_codes_exclus?: TypeCodeAction[];
   type_codes_inclus?: TypeCodeAction[];
   codes_exclus?: string[];
@@ -189,6 +190,13 @@ export class ActionRepository {
       main_filter.push({
         thematique: {
           in: filtre.liste_thematiques,
+        },
+      });
+    }
+    if (filtre.liste_sous_thematiques) {
+      main_filter.push({
+        sous_thematique: {
+          in: filtre.liste_sous_thematiques,
         },
       });
     }

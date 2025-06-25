@@ -26,6 +26,7 @@ import {
   Realisation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { SousThematique } from '../../domain/thematique/sousThematique';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
@@ -133,6 +134,14 @@ export class ActionsController extends GenericControler {
     description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
+    name: 'sous_thematique',
+    enum: SousThematique,
+    enumName: 'sous thematique',
+    isArray: true,
+    required: false,
+    description: `filtrage par sous thematiques, plusieurs sous thematiques possible avec la notation ?sous_thematique=XXX&sous_thematique=YYY`,
+  })
+  @ApiQuery({
     name: 'titre',
     type: String,
     required: false,
@@ -170,6 +179,7 @@ export class ActionsController extends GenericControler {
   })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
+    @Query('sous_thematique') sous_thematique: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
@@ -182,11 +192,20 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const liste_thematiques_input =
       this.getStringListFromStringArrayAPIInput(thematique);
+    const liste_sous_thematiques_input =
+      this.getStringListFromStringArrayAPIInput(sous_thematique);
 
     const liste_thematiques: Thematique[] = [];
+    const liste_sous_thematiques: SousThematique[] = [];
 
     for (const them_string of liste_thematiques_input) {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
+    }
+
+    for (const them_string of liste_sous_thematiques_input) {
+      liste_sous_thematiques.push(
+        this.castSousThematiqueOrException(them_string),
+      );
     }
 
     const type_consulation =
@@ -200,6 +219,7 @@ export class ActionsController extends GenericControler {
     const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
+      liste_sous_thematiques,
       titre,
       type_consulation,
       type_realisation,

@@ -13,6 +13,7 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
+import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -131,6 +132,7 @@ export class ActionUsecase {
   async getUtilisateurCatalogue(
     utilisateurId: string,
     filtre_thematiques: Thematique[],
+    filtre_sous_thematiques: SousThematique[],
     titre: string = undefined,
     consultation: Consultation,
     realisation: Realisation,
@@ -154,6 +156,8 @@ export class ActionUsecase {
     filtre.ordre = ordre;
     filtre.liste_thematiques =
       filtre_thematiques.length > 0 ? filtre_thematiques : undefined;
+    filtre.liste_sous_thematiques =
+      filtre_sous_thematiques.length > 0 ? filtre_sous_thematiques : undefined;
     filtre.titre_fragment = titre;
 
     catalogue.actions = await this.external_get_user_actions(
@@ -162,6 +166,7 @@ export class ActionUsecase {
     );
 
     this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
+    this.setFiltreSousThematiqueToCatalogue(catalogue, filtre_sous_thematiques);
 
     this.filtreParConsultationRealisation(
       catalogue,
@@ -667,6 +672,18 @@ export class ActionUsecase {
           thematique,
           liste_thematiques.includes(thematique),
         );
+    }
+  }
+
+  private setFiltreSousThematiqueToCatalogue(
+    catalogue: CatalogueAction,
+    liste_sous_thematiques: SousThematique[],
+  ) {
+    for (const sous_thematique of Object.values(SousThematique)) {
+      catalogue.addSelectedSousThematique(
+        sous_thematique,
+        liste_sous_thematiques.includes(sous_thematique),
+      );
     }
   }
 

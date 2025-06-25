@@ -1,3 +1,4 @@
+import { SousThematique } from '../thematique/sousThematique';
 import { Thematique } from '../thematique/thematique';
 import { Article } from './article';
 import { ContentType } from './contentType';
@@ -24,12 +25,14 @@ export class Bibliotheque {
   constructor() {
     this.contenu = [];
     this.filtre_thematiques = new Map();
+    this.filtre_sous_thematiques = new Map();
     this.nombre_resultats_dispo = 0;
   }
 
   private contenu: ContenuBibliotheque[];
 
   filtre_thematiques: Map<Thematique, ThematiqueFilter>;
+  filtre_sous_thematiques: Map<SousThematique, ThematiqueFilter>;
 
   private nombre_resultats_dispo: number;
 

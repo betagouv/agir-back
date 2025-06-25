@@ -14,6 +14,7 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
+import { SousThematique } from '../../../src/domain/thematique/sousThematique';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
@@ -301,36 +302,151 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         code: 'alimentation',
         label: 'alimentation',
         selected: true,
+        liste_sous_thematiques: [],
       },
       {
         code: 'transport',
         label: 'transport',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'logement',
         label: 'logement',
         selected: true,
+        liste_sous_thematiques: [
+          {
+            code: 'logement_economie_energie',
+            label: "Faire des économies d'énergie",
+            selected: false,
+          },
+          {
+            code: 'logement_risque_naturel',
+            label: 'Les risques naturels',
+            selected: false,
+          },
+        ],
       },
       {
         code: 'consommation',
         label: 'consommation',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'climat',
         label: 'climat',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'dechet',
         label: 'dechet',
         selected: false,
+        liste_sous_thematiques: [],
       },
       {
         code: 'loisir',
         label: 'loisir',
         selected: false,
+        liste_sous_thematiques: [],
+      },
+    ]);
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre sous thematique`, async () => {
+    // GIVEN
+    logement.code_commune = '21231';
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.logement,
+      sous_thematique: SousThematique.logement_economie_energie,
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      sous_thematique: SousThematique.logement_economie_energie,
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.logement,
+      sous_thematique: SousThematique.logement_risque_naturel,
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?sous_thematique=logement_risque_naturel',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: false,
+        liste_sous_thematiques: [],
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+        liste_sous_thematiques: [],
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: false,
+        liste_sous_thematiques: [
+          {
+            code: 'logement_economie_energie',
+            label: "Faire des économies d'énergie",
+            selected: false,
+          },
+          {
+            code: 'logement_risque_naturel',
+            label: 'Les risques naturels',
+            selected: true,
+          },
+        ],
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+        liste_sous_thematiques: [],
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+        liste_sous_thematiques: [],
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+        liste_sous_thematiques: [],
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+        liste_sous_thematiques: [],
       },
     ]);
   });
