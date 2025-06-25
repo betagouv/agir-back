@@ -208,7 +208,11 @@ export class AideRepository {
             {
               echelle: {
                 not: {
-                  in: ['Communauté de communes'],
+                  in: [
+                    'Communauté de communes',
+                    'Communauté urbaine',
+                    "Communauté d'agglomération",
+                  ],
                 },
               },
             },

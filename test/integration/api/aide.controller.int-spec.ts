@@ -183,88 +183,6 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(1);
   });
 
-  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires niveau CA`, async () => {
-    // GIVEN
-    const logement: Logement_v0 = {
-      version: 0,
-      superficie: Superficie.superficie_150,
-      type: TypeLogement.appartement,
-      code_postal: '91120',
-      chauffage: Chauffage.bois,
-      commune: 'Palaiseau',
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      nombre_enfants: 2,
-      plus_de_15_ans: false,
-      proprietaire: false,
-      latitude: undefined,
-      longitude: undefined,
-      numero_rue: undefined,
-      rue: undefined,
-      code_commune: '91477',
-      score_risques_adresse: undefined,
-      prm: undefined,
-    };
-
-    await TestUtil.create(DB.utilisateur, { logement: logement as any });
-    await TestUtil.create(DB.aide, {
-      content_id: '1',
-      codes_commune_from_partenaire: ['91477'],
-      codes_postaux: ['21000'],
-      echelle: Echelle["Communauté d'agglomération"],
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/aides_v2',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.liste_aides).toHaveLength(1);
-  });
-
-  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires niveau CU`, async () => {
-    // GIVEN
-    const logement: Logement_v0 = {
-      version: 0,
-      superficie: Superficie.superficie_150,
-      type: TypeLogement.appartement,
-      code_postal: '91120',
-      chauffage: Chauffage.bois,
-      commune: 'Palaiseau',
-      dpe: DPE.B,
-      nombre_adultes: 2,
-      nombre_enfants: 2,
-      plus_de_15_ans: false,
-      proprietaire: false,
-      latitude: undefined,
-      longitude: undefined,
-      numero_rue: undefined,
-      rue: undefined,
-      code_commune: '91477',
-      score_risques_adresse: undefined,
-      prm: undefined,
-    };
-
-    await TestUtil.create(DB.utilisateur, { logement: logement as any });
-    await TestUtil.create(DB.aide, {
-      content_id: '1',
-      codes_commune_from_partenaire: ['91477'],
-      codes_postaux: ['21000'],
-      echelle: Echelle['Communauté urbaine'],
-    });
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/aides_v2',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body.liste_aides).toHaveLength(1);
-  });
-
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires  - sauf si CA_CU_CC, no match`, async () => {
     // GIVEN
     process.env.ADMIN_IDS = 'utilisateur-id';
@@ -310,6 +228,8 @@ describe('Aide (API test)', () => {
 
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires - sauf si CA_CU_CC, match`, async () => {
     // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
     const logement: Logement_v0 = {
       version: 0,
       superficie: Superficie.superficie_150,
@@ -351,6 +271,8 @@ describe('Aide (API test)', () => {
 
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par departement via partenaires`, async () => {
     // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
     const logement: Logement_v0 = {
       version: 0,
       superficie: Superficie.superficie_150,
@@ -390,8 +312,9 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(1);
   });
 
-  it(`GET /utilisateurs/:utilisateurId/aides filtrage par region via partenaires`, async () => {
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par region via partenaires si ADMIN`, async () => {
     // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
 
     const logement: Logement_v0 = {
       version: 0,
@@ -663,7 +586,62 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CU', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222' },
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['11111'],
+      echelle: Echelle['Communauté urbaine'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['22222'],
+      echelle: Echelle['Communauté urbaine'],
+    });
 
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+
+    const aideBody = response.body.liste_aides[0] as AideAPI;
+    expect(aideBody.content_id).toEqual('2');
+  });
+  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CA', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222' },
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['11111'],
+      echelle: Echelle["Communauté d'agglomération"],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['22222'],
+      echelle: Echelle["Communauté d'agglomération"],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+
+    const aideBody = response.body.liste_aides[0] as AideAPI;
+    expect(aideBody.content_id).toEqual('2');
+  });
   it('GET /utilisateurs/:utilisateurId/aides filtre par thematique simple', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
