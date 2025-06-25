@@ -184,6 +184,9 @@ export class CMSWebhookEntryAPI {
 
   @ApiProperty({ type: CMSThematiqueAPI })
   thematique: CMSThematiqueAPI;
+  @ApiProperty({ type: CMSThematiqueAPI })
+  sous_thematique: CMSThematiqueAPI;
+
   @ApiProperty({ type: [CMSTagAPI] })
   tags: CMSTagAPI[];
   @ApiProperty({ type: [CMSWebhookRubriqueAPI] })
