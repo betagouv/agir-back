@@ -867,6 +867,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError('158', `Sous thematique [${them}] inconnue`);
   }
 
+  static throwOnboardingNotDone() {
+    this.throwAppError(
+      '159',
+      `Il faut terminer l'onboarding avant de pouvoir utiliser le service`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

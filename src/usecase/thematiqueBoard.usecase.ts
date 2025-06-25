@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { App } from '../domain/app';
 import { Enchainement } from '../domain/kyc/enchainement';
 import { Progression } from '../domain/kyc/Progression';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
@@ -54,6 +55,10 @@ export class ThematiqueBoardUsecase {
       ],
     );
     Utilisateur.checkState(utilisateur);
+
+    if (!utilisateur.isOnboardingDone() && App.isForceOnboarding()) {
+      ApplicationError.throwOnboardingNotDone();
+    }
 
     const result = new HomeBoard();
     const commune = this.communeRepository.getCommuneByCodeINSEE(

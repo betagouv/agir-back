@@ -19,6 +19,7 @@ import { KycRepository } from '../../../src/infrastructure/repository/kyc.reposi
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique Board (API test)', () => {
+  const OLD_ENV = process.env;
   const kycRepository = new KycRepository(TestUtil.prisma);
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -27,10 +28,12 @@ describe('Thematique Board (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('GET /thematiques - liste les 4 thematiques principales', async () => {
@@ -318,6 +321,21 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body.est_utilisateur_ngc).toEqual(true);
+  });
+
+  it(`GET /utilisateurs/id/home_board - force onboarding`, async () => {
+    // GIVEN
+    process.env.FORCE_ONBOARDING = 'true';
+
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
   });
 
   it(`GET /utilisateurs/id/home_board - avancement bilan carbone`, async () => {
