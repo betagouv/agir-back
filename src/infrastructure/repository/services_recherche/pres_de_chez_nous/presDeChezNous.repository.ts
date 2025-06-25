@@ -22,44 +22,45 @@ export enum DaysPresDeChezNous {
   Su = 'Su',
 }
 
+export type PresDeChezVousElementReponse = {
+  id: string; //"AEW"
+  name: string; // "DotSoley : Amap, Gwada Fungi, Jardins partagés, Jardins pédagogiques",
+  geo: {
+    latitude: number;
+    longitude: number;
+  };
+  sourceKey: string; //"Colibris"
+  address: {
+    streetAddress: string; //"centre equestre martingale",
+    addressLocality: string; //"Baie mahault",
+    postalCode: string; //"97122",
+    addressCountry: string; //"FR"
+  };
+  createdAt: string; //"2017-08-01T14:15:08+02:00",
+  updatedAt: string; //"2018-01-16T16:50:03+01:00",
+  status: number; //4,
+  categories: string[]; //[      "Alimentation et Agriculture",      "Circuits courts",      "AMAP / Paniers",      "Autre produit"    ],
+  categoriesFull: {
+    id: number;
+    name: string;
+    description: string;
+    index: number;
+  }[];
+  website: string; //"http://www.dotsoley.asso.gp",
+  commitment: string; //"Promotion de l'agriculture locale",
+  description: string; //"Panier et fruits et légumes",
+  description_more: string; //"Panier et fruits et légumes",
+  openhours: Record<DaysPresDeChezNous, string>;
+  openhours_more_infos: string; //"Lundi à partir de 18h00",
+  telephone: string; //"0590262839",
+  email: string; //"private",
+  subscriberEmails: [];
+  images: string[]; //['https://presdecheznous.gogocarto.fr/uploads/presdecheznous/images/elements/CapOuPasCap/2018/09/logo_amap_arbre_v1.3a.png']
+};
 export type PresDeChezVousResponse = {
   licence: string; //"https://opendatacommons.org/licenses/odbl/summary/",
   ontology: string; //"gogofull",
-  data: {
-    id: string; //"AEW"
-    name: string; // "DotSoley : Amap, Gwada Fungi, Jardins partagés, Jardins pédagogiques",
-    geo: {
-      latitude: number;
-      longitude: number;
-    };
-    sourceKey: string; //"Colibris"
-    address: {
-      streetAddress: string; //"centre equestre martingale",
-      addressLocality: string; //"Baie mahault",
-      postalCode: string; //"97122",
-      addressCountry: string; //"FR"
-    };
-    createdAt: string; //"2017-08-01T14:15:08+02:00",
-    updatedAt: string; //"2018-01-16T16:50:03+01:00",
-    status: number; //4,
-    categories: string[]; //[      "Alimentation et Agriculture",      "Circuits courts",      "AMAP / Paniers",      "Autre produit"    ],
-    categoriesFull: {
-      id: number;
-      name: string;
-      description: string;
-      index: number;
-    }[];
-    website: string; //"http://www.dotsoley.asso.gp",
-    commitment: string; //"Promotion de l'agriculture locale",
-    description: string; //"Panier et fruits et légumes",
-    description_more: string; //"Panier et fruits et légumes",
-    openhours: Record<DaysPresDeChezNous, string>;
-    openhours_more_infos: string; //"Lundi à partir de 18h00",
-    telephone: string; //"0590262839",
-    email: string; //"private",
-    subscriberEmails: [];
-    images: string[]; //['https://presdecheznous.gogocarto.fr/uploads/presdecheznous/images/elements/CapOuPasCap/2018/09/logo_amap_arbre_v1.3a.png']
-  }[];
+  data: PresDeChezVousElementReponse[];
 };
 
 @Injectable()
@@ -123,6 +124,7 @@ export class PresDeChezNousRepository implements FinderInterface {
           adresse_rue: r.address.streetAddress,
           adresse_code_postal: r.address.postalCode,
           adresse_nom_ville: r.address.addressLocality,
+          adresse_complete: this.buildAddress(r),
           image_url: r.images && r.images.length ? r.images[0] : null,
           categories: r.categories,
           commitment: r.commitment,
@@ -150,6 +152,20 @@ export class PresDeChezNousRepository implements FinderInterface {
     );
 
     return subset;
+  }
+
+  private buildAddress(input: PresDeChezVousElementReponse): string {
+    let result = '';
+
+    result += input.address.streetAddress ? input.address.streetAddress : '';
+    if (input.address.postalCode || input.address.addressLocality) {
+      result += ',';
+    }
+    result += input.address.postalCode ? ' ' + input.address.postalCode : '';
+    result += input.address.addressLocality
+      ? ' ' + input.address.addressLocality
+      : '';
+    return result;
   }
 
   public mapOpenHours(hours: Record<DaysPresDeChezNous, string>): OpenHour[] {
