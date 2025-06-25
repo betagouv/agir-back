@@ -13,11 +13,13 @@ import { KYCHistory_v2 } from '../../../src/domain/object_store/kyc/kycHistory_v
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../../../src/domain/thematique/thematique';
+import { SourceInscription } from '../../../src/domain/utilisateur/utilisateur';
 import { HomeBoardAPI } from '../../../src/infrastructure/api/types/thematiques/HomeBoardAPI';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Thematique Board (API test)', () => {
+  const OLD_ENV = process.env;
   const kycRepository = new KycRepository(TestUtil.prisma);
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -26,10 +28,12 @@ describe('Thematique Board (API test)', () => {
 
   beforeEach(async () => {
     await TestUtil.deleteAll();
+    process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
+    process.env = OLD_ENV;
   });
 
   it('GET /thematiques - liste les 4 thematiques principales', async () => {
@@ -278,11 +282,62 @@ describe('Thematique Board (API test)', () => {
       pourcentage_consommation_reco_done: 0,
       pourcentage_logement_reco_done: 0,
       pourcentage_global_reco_done: 0,
-      bilan_carbone_total_kg: 8886.44117300937,
+      bilan_carbone_total_kg: 8602.08230607434,
       nombre_aides: 2,
       nombre_recettes: 1150,
+      est_utilisateur_ngc: false,
     });
   });
+
+  it(`GET /utilisateurs/id/home_board - flag NGC false`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const body: HomeBoardAPI = response.body;
+    expect(body.est_utilisateur_ngc).toEqual(false);
+  });
+
+  it(`GET /utilisateurs/id/home_board - flag NGC true`, async () => {
+    // GIVEN
+
+    await TestUtil.create(DB.utilisateur, {
+      source_inscription: SourceInscription.web_ngc,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const body: HomeBoardAPI = response.body;
+    expect(body.est_utilisateur_ngc).toEqual(true);
+  });
+
+  it(`GET /utilisateurs/id/home_board - force onboarding`, async () => {
+    // GIVEN
+    process.env.FORCE_ONBOARDING = 'true';
+
+    await TestUtil.create(DB.utilisateur, {});
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+  });
+
   it(`GET /utilisateurs/id/home_board - avancement bilan carbone`, async () => {
     // GIVEN
     await TestUtil.create(DB.kYC, {
@@ -457,7 +512,7 @@ describe('Thematique Board (API test)', () => {
     expect(body).toEqual({
       nom_commune: 'Dijon',
       pourcentage_bilan_done: 17,
-      bilan_carbone_total_kg: 8849.895108458928,
+      bilan_carbone_total_kg: 8567.375077543367,
       total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
       pourcentage_consommation_reco_done: 0,
@@ -467,6 +522,7 @@ describe('Thematique Board (API test)', () => {
       total_utilisateur_actions_faites: 0,
       nombre_aides: 0,
       nombre_recettes: 1150,
+      est_utilisateur_ngc: false,
     });
   });
 });

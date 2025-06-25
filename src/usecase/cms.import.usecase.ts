@@ -22,6 +22,7 @@ import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -45,7 +46,8 @@ const FULL_POPULATE_URL =
   '&populate[21]=famille&populate[22]=univers_parent&populate[23]=tag_article&populate[24]=objectifs.tag_article&populate[25]=objectifs.mosaic' +
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
-  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants&populate[45]=tag_v2_incluants';
+  '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants&populate[45]=tag_v2_incluants' +
+  '&populate[46]=sous_thematique';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
@@ -968,6 +970,9 @@ export class CMSImportUsecase {
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
+        : null,
+      sous_thematique: entry.attributes.sous_thematique.data
+        ? SousThematique[entry.attributes.sous_thematique.data.attributes.code]
         : null,
       sources: entry.attributes.sources
         ? entry.attributes.sources.map((s) => ({

@@ -227,6 +227,14 @@ export type CMSWebhookPopulateAPI = {
         };
       };
     };
+    sous_thematique: {
+      data: {
+        id: number;
+        attributes: {
+          code: string;
+        };
+      };
+    };
     famille: {
       data: {
         id: number;

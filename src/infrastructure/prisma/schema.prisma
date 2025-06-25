@@ -256,6 +256,7 @@ model Action {
   pourquoi            String?
   comment             String?
   thematique          String
+  sous_thematique     String?
   besoins             String[] @default([])
   quizz_ids           String[] @default([])
   articles_ids        String[] @default([])

@@ -25,7 +25,10 @@ export class CatalogueActionAPI {
   public static mapToAPI(catalogue: CatalogueAction): CatalogueActionAPI {
     return {
       actions: catalogue.actions.map((a) => ActionLightAPI.mapToAPI(a)),
-      filtres: ThematiqueFiltereAPI.mapToAPI(catalogue.filtre_thematiques),
+      filtres: ThematiqueFiltereAPI.mapToAPI(
+        catalogue.filtre_thematiques,
+        catalogue.filtre_sous_thematiques,
+      ),
       consultation: catalogue.consultation,
       realisation: catalogue.realisation,
       nombre_resultats: catalogue.getNombreResultats(),

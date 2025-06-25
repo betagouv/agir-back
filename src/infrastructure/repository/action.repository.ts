@@ -9,12 +9,14 @@ import { Ordre } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { App } from '../../domain/app';
 import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { SousThematique } from '../../domain/thematique/sousThematique';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
   liste_thematiques?: Thematique[];
+  liste_sous_thematiques?: SousThematique[];
   type_codes_exclus?: TypeCodeAction[];
   type_codes_inclus?: TypeCodeAction[];
   codes_exclus?: string[];
@@ -109,6 +111,7 @@ export class ActionRepository {
       label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
+      sous_thematique: action.sous_thematique,
       besoins: action.besoins,
       comment: action.comment,
       kyc_codes: action.kyc_codes,
@@ -190,6 +193,13 @@ export class ActionRepository {
         },
       });
     }
+    if (filtre.liste_sous_thematiques) {
+      main_filter.push({
+        sous_thematique: {
+          in: filtre.liste_sous_thematiques,
+        },
+      });
+    }
     if (filtre.titre_fragment) {
       main_filter.push({
         titre_recherche: {
@@ -262,6 +272,7 @@ export class ActionRepository {
       titre_recherche: action.titre_recherche,
       code: action.code,
       thematique: Thematique[action.thematique],
+      sous_thematique: SousThematique[action.sous_thematique],
       comment: action.comment,
       pourquoi: action.pourquoi,
       besoins: action.besoins,

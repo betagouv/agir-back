@@ -7,6 +7,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
+import { SousThematique } from '../../../../src/domain/thematique/sousThematique';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
@@ -190,6 +191,10 @@ describe('/api/incoming/cms (API test)', () => {
         titre: 'Alimentation',
         code: Thematique.alimentation,
       },
+      sous_thematique: {
+        id: 1,
+        code: SousThematique.logement_economie_energie,
+      },
     } as CMSWebhookEntryAPI,
   };
 
@@ -216,6 +221,10 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         titre: 'Alimentation',
         code: Thematique.alimentation,
+      },
+      sous_thematique: {
+        id: 1,
+        code: SousThematique.logement_economie_energie,
       },
     } as CMSWebhookEntryAPI,
   };
@@ -986,6 +995,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
+    expect(action.sous_thematique).toEqual(
+      SousThematique.logement_economie_energie,
+    );
     expect(action.VISIBLE_PROD).toEqual(true);
     expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
   });
@@ -1069,6 +1081,9 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
+    expect(action.sous_thematique).toEqual(
+      SousThematique.logement_economie_energie,
+    );
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

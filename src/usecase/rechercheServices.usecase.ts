@@ -77,10 +77,22 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.bilbiotheque_services],
-    );
+    // FIX moche en cas d'appel concurrent à search2
+    try {
+      await this.utilisateurRepository.updateUtilisateur(utilisateur);
+    } catch (error) {
+      if (error.code === '050') {
+        const tmp_user = await this.utilisateurRepository.getById(
+          utilisateurId,
+          [Scope.bilbiotheque_services],
+        );
+        tmp_user.bilbiotheque_services.setDerniereRecherche(serviceId, result);
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(
+          tmp_user,
+          [Scope.bilbiotheque_services],
+        );
+      }
+    }
 
     this.completeFavorisDataToResult(serviceId, result, utilisateur);
 

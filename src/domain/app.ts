@@ -150,6 +150,10 @@ export class App {
     const pwd = this.getBasicPassword();
     return btoa(login + ':' + pwd);
   }
+
+  public static isForceOnboarding(): boolean {
+    return process.env.FORCE_ONBOARDING === 'true';
+  }
   public static getAppVersion(): {
     major: number;
     minor: number;
