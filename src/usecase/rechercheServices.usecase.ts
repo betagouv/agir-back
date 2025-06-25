@@ -77,6 +77,7 @@ export class RechercheServicesUsecase {
 
     utilisateur.bilbiotheque_services.setDerniereRecherche(serviceId, result);
 
+    // FIX moche en cas d'appel concurrent à search2
     try {
       await this.utilisateurRepository.updateUtilisateur(utilisateur);
     } catch (error) {
