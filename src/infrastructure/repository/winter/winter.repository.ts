@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { App } from '../../../domain/app';
 import { ApplicationError } from '../../applicationError';
 import { CommuneRepository } from '../commune/commune.repository';
-import { WinterAction, WinterAPIClient } from './winterAPIClient';
+import {
+  WinterAction,
+  WinterAPIClient,
+  WinterUsageBreakdown,
+} from './winterAPIClient';
 
 @Injectable()
 export class WinterRepository {
@@ -70,6 +74,18 @@ export class WinterRepository {
       user_agent,
       version_consentement,
     );
+  }
+
+  public async getUsage(user_id: string): Promise<WinterUsageBreakdown> {
+    if (App.isWinterFaked()) {
+      return undefined;
+    }
+
+    if (!App.isWinterAPIEnabled()) {
+      ApplicationError.throwWinterDisabled();
+    }
+
+    return await this.winterAPIClient.usage(user_id);
   }
 
   public async supprimerPRM(user_id: string): Promise<void> {

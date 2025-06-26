@@ -14,6 +14,9 @@ const SUPPRIMER_PRM_URL =
 const LISTER_ACTIONS_URL =
   'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID/action';
 
+const USAGE_URL =
+  'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID/housing/usage-breakdown';
+
 const API_TIMEOUT = 2000;
 
 export type WinterFoundPRM = {
@@ -22,6 +25,62 @@ export type WinterFoundPRM = {
   zipcode: string;
   city: string;
   name: string;
+};
+
+export type WinterHousing = {
+  nbAmericanRefrigerator: number;
+  nbClassicRefrigerator: number;
+  nbOneDoorRefrigerator: number;
+  nbFreezer: number;
+  nbPool: number;
+  nbWineCave: number;
+  nbTV: number;
+  nbConsole: number;
+  nbInternetBox: number;
+  hasElectricHotPlate: boolean;
+  hasElectricCooker: boolean;
+  hasElectricOven: boolean;
+  hasGasOven: boolean;
+  hasOvenInWorkingPlan: boolean;
+  hasGasHotPlate: boolean;
+  nbDishwasher: number;
+  nbWashingMachine: number;
+  nbDryer: number;
+  nbMobileAirConditioner: number;
+  hasElectricWaterHeater: boolean;
+  hasElectricHeater: boolean;
+  hasHeatPump: boolean;
+  hasWaterHeaterStorage: boolean;
+};
+
+export enum WinterUsage {
+  heating = 'heating',
+  hotWater = 'hotWater',
+  cooking = 'cooking',
+  appliances = 'appliances',
+  multimedia = 'multimedia',
+  airConditioning = 'airConditioning',
+  lighting = 'lighting',
+  mobility = 'mobility',
+  swimmingPool = 'swimmingPool',
+  other = 'other',
+}
+
+export type WinterUsageBreakdown = {
+  yearlyElectricityTotalConsumption: {
+    unit: string; //"years" "€",
+    value: number;
+  }[];
+  usageBreakdown: Record<
+    WinterUsage,
+    {
+      kWh: number;
+      eur: number;
+      percent: number;
+    }
+  > & { isStatistical: boolean };
+  monthsOfDataAvailable: number;
+  computingFinished: boolean;
 };
 
 export type WinterAction = {
@@ -77,6 +136,31 @@ export class WinterAPIClient {
     console.log(`API_TIME:winter_search_prm/${name}:${Date.now() - call_time}`);
 
     return response.data as WinterFoundPRM[];
+  }
+
+  public async usage(ext_id: string): Promise<WinterUsageBreakdown> {
+    let response;
+    const call_time = Date.now();
+    try {
+      response = await axios.get(USAGE_URL.replace('USER_ID', ext_id), {
+        timeout: API_TIMEOUT,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${App.getWinterAPIKey()}`,
+        },
+      });
+    } catch (error) {
+      console.log(
+        `Error calling [winter_usage ${ext_id}] after ${
+          Date.now() - call_time
+        } ms`,
+      );
+      console.log(error);
+      return undefined;
+    }
+    console.log(`API_TIME:winter_usage/${ext_id}:${Date.now() - call_time}`);
+
+    return response.data as WinterUsageBreakdown;
   }
 
   public async inscrirePRM(

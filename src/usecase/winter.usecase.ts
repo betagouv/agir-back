@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
+import { ConsommationElectrique } from '../domain/linky/consommationElectrique';
 import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -118,6 +119,20 @@ export class WinterUsecase {
     return await this.thematiqueUsecase.external_update_winter_recommandation(
       utilisateur,
     );
+  }
+
+  public async getUsage(
+    utilisateurId: string,
+  ): Promise<ConsommationElectrique> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.core],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const result = this.winterRepository.getUsage(utilisateurId);
+
+    return undefined;
   }
 
   private async connect_prm(
