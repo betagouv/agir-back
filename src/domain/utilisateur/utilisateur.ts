@@ -6,7 +6,6 @@ import { BibliothequeServices } from '../bibliotheque_services/bibliothequeServi
 import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
 import { Gamification } from '../gamification/gamification';
 import { History } from '../history/history';
-import { KYCID } from '../kyc/KYCID';
 import { KYCHistory } from '../kyc/kycHistory';
 import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
 import { Logement } from '../logement/logement';
@@ -274,9 +273,6 @@ export class Utilisateur extends UtilisateurData {
   }
 
   public isOnboardingDone(): boolean {
-    const kyc = this.kyc_history.getQuestionChoixMultiple(KYCID.KYC_preference);
-    const KYC_preference_answered = !!kyc && kyc.isAnswered();
-
     const ok_pseudo = !!this.pseudo && this.pseudo !== '';
     const ok_prenom = !!this.prenom && this.prenom !== '';
 
@@ -288,12 +284,7 @@ export class Utilisateur extends UtilisateurData {
       (!!this.annee_naissance &&
         !!this.mois_naissance &&
         !!this.jour_naissance);
-    return (
-      (ok_pseudo || ok_prenom) &&
-      ok_code_postal &&
-      KYC_preference_answered &&
-      date_naissance_ok
-    );
+    return (ok_pseudo || ok_prenom) && ok_code_postal && date_naissance_ok;
   }
 
   public isMagicLinkCodeExpired(): boolean {
