@@ -38,6 +38,7 @@ export class ResultatRecherche {
   adresse_rue?: string;
   adresse_nom_ville?: string;
   adresse_code_postal?: string;
+  adresse_complete?: string;
 
   site_web?: string;
   siret?: string;
@@ -88,6 +89,7 @@ export class ResultatRecherche {
     this.adresse_rue = res.adresse_rue;
     this.adresse_nom_ville = res.adresse_nom_ville;
     this.adresse_code_postal = res.adresse_code_postal;
+    this.adresse_complete = res.adresse_complete;
     this.site_web = res.site_web;
     this.latitude = res.latitude;
     this.longitude = res.longitude;

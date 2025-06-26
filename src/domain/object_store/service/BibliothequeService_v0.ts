@@ -51,6 +51,7 @@ export class ResultatRecherche_v0 {
   adresse_rue?: string;
   adresse_nom_ville?: string;
   adresse_code_postal?: string;
+  adresse_complete?: string;
 
   site_web?: string;
   siret?: string;
@@ -89,6 +90,7 @@ export class ResultatRecherche_v0 {
       adresse_code_postal: res.adresse_code_postal,
       adresse_nom_ville: res.adresse_nom_ville,
       adresse_rue: res.adresse_rue,
+      adresse_complete: res.adresse_complete,
       site_web: res.site_web,
       longitude: res.longitude,
       latitude: res.latitude,

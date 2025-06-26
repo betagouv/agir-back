@@ -28,6 +28,7 @@ export class ResultatRechercheAPI {
   @ApiProperty() adresse_rue: string;
   @ApiProperty() adresse_nom_ville: string;
   @ApiProperty() adresse_code_postal: string;
+  @ApiProperty() adresse_complete: string;
   @ApiProperty() site_web: string;
   @ApiProperty() est_favoris: boolean;
   @ApiProperty() nombre_favoris: number;
@@ -103,6 +104,7 @@ export class ResultatRechercheAPI {
       pourcentage: res.pourcentage,
       niveau_risque: res.niveau_risque,
       type_risque: res.type_risque,
+      adresse_complete: res.adresse_complete,
     };
   }
 }

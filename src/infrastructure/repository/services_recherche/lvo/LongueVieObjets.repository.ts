@@ -98,6 +98,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
           nbr_resultats_max_dispo: result.count,
           titre: r.nom,
           adresse_rue: r.adresse,
+          adresse_complete: r.adresse,
           siret: r.siret,
           distance_metres: r.distance ? Math.round(r.distance) : undefined,
           latitude: r.latitude,

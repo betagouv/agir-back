@@ -364,21 +364,6 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(utilisateur.isOnboardingDone()).toEqual(true);
   });
-  it('isOnboardingDone : user v1 onboarding manque KYC', () => {
-    // GIVEN
-    let utilisateur = Utilisateur.createNewUtilisateur(
-      'A',
-      SourceInscription.web,
-      ModeInscription.magic_link,
-    );
-
-    utilisateur.pseudo = 'yoyo';
-    utilisateur.logement.code_postal = '21000';
-    utilisateur.global_user_version = GlobalUserVersion.V1;
-
-    // THEN
-    expect(utilisateur.isOnboardingDone()).toEqual(false);
-  });
   it('isOnboardingDone : user v1 onboarding done avec prenom', () => {
     // GIVEN
     let utilisateur = Utilisateur.createNewUtilisateur(

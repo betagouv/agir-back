@@ -327,7 +327,7 @@ describe('Thematique Board (API test)', () => {
     // GIVEN
     process.env.FORCE_ONBOARDING = 'true';
 
-    await TestUtil.create(DB.utilisateur, {});
+    await TestUtil.create(DB.utilisateur, { pseudo: null, prenom: null });
 
     // WHEN
     const response = await TestUtil.GET(
