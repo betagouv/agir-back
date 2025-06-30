@@ -227,7 +227,7 @@ export class ThematiqueUsecase {
     utilisateur: Utilisateur,
   ): Promise<TypeCodeAction[]> {
     if (!utilisateur.logement?.prm) {
-      return;
+      return [];
     }
 
     const new_reco_set: TypeCodeAction[] = [];

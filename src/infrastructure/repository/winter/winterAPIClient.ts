@@ -20,7 +20,7 @@ const USAGE_URL =
 const PUT_HOUSING_URL =
   'https://api.winter-energies.fr/api/partner/1.0/user/USER_ID/housing';
 
-const API_TIMEOUT = 2000;
+const API_TIMEOUT = 5000;
 
 export type WinterFoundPRM = {
   prm: string;
@@ -187,7 +187,7 @@ export class WinterAPIClient {
         timeout: API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${App.getWinterAPIKey()}`,
+          Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
         params: params,
       });
@@ -200,7 +200,7 @@ export class WinterAPIClient {
       console.log(error);
       return [];
     }
-    console.log(`API_TIME:winter_search_prm/${name}:${Date.now() - call_time}`);
+    console.log(`API_TIME:winter_search_prm:${Date.now() - call_time}`);
 
     return response.data as WinterFoundPRM[];
   }
@@ -213,7 +213,7 @@ export class WinterAPIClient {
         timeout: API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${App.getWinterAPIKey()}`,
+          Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
       });
     } catch (error) {
@@ -238,6 +238,7 @@ export class WinterAPIClient {
     user_agent: string,
     version_consentement: string,
   ): Promise<void> {
+    let response;
     const call_time = Date.now();
     const payload = {
       prm: prm,
@@ -248,11 +249,11 @@ export class WinterAPIClient {
       version: version_consentement,
     };
     try {
-      await axios.put(INSCRIRE_PRM_URL, payload, {
+      response = await axios.put(INSCRIRE_PRM_URL, payload, {
         timeout: API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${App.getWinterAPIKey()}`,
+          Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
       });
     } catch (error) {
@@ -262,6 +263,9 @@ export class WinterAPIClient {
         } ms`,
       );
       console.log(error);
+      if (error?.response?.data?.enedisCode === 'SGT570') {
+        ApplicationError.throwErrorAlreadyInscriptionDONE();
+      }
       ApplicationError.throwErrorInscriptionPRM();
     }
     console.log(`API_TIME:winter_put_prm/${prm}:${Date.now() - call_time}`);
@@ -277,7 +281,7 @@ export class WinterAPIClient {
         timeout: API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${App.getWinterAPIKey()}`,
+          Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
       });
     } catch (error) {
@@ -302,7 +306,7 @@ export class WinterAPIClient {
         timeout: API_TIMEOUT,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${App.getWinterAPIKey()}`,
+          Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
       });
     } catch (error) {
@@ -328,7 +332,7 @@ export class WinterAPIClient {
           timeout: API_TIMEOUT,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${App.getWinterAPIKey()}`,
+            Authorization: `Bearer ${App.getWinterAPIKey()}`,
           },
         },
       );

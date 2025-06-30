@@ -874,6 +874,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwErrorAlreadyInscriptionDONE() {
+    this.throwAppError(
+      '160',
+      `L'inscription est déjà réalisée pour cette adresse ou ce PRM`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

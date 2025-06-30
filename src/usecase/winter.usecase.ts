@@ -115,7 +115,7 @@ export class WinterUsecase {
   ): Promise<TypeCodeAction[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
