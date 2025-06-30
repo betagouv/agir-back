@@ -145,4 +145,13 @@ export class Logement {
     if (a === undefined) return b;
     return a;
   }
+
+  public getTailleFoyer(): number | undefined {
+    if (!this.nombre_adultes && !this.nombre_enfants) {
+      return undefined;
+    }
+    const adultes = this.nombre_adultes ? this.nombre_adultes : 0;
+    const enfants = this.nombre_enfants ? this.nombre_enfants : 0;
+    return enfants + adultes;
+  }
 }

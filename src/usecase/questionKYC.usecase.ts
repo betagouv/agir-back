@@ -19,6 +19,7 @@ import {
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 
 const FIELD_MAX_LENGTH = 280;
 
@@ -28,6 +29,7 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
+    private winterRepository: WinterRepository,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -118,6 +120,8 @@ export class QuestionKYCUsecase {
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.winterRepository.putHousingData(utilisateur);
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
@@ -227,6 +231,8 @@ export class QuestionKYCUsecase {
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.winterRepository.putHousingData(utilisateur);
   }
 
   private updateQuestionOfCode_v2(

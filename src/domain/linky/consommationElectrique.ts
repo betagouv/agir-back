@@ -18,13 +18,10 @@ export type SingleUsage = {
   percent: number;
 };
 
-export type WinterUsageBreakdown = {
-  consommation_totale_kwh: number;
+export type ConsommationElectrique = {
   consommation_totale_euros: number;
-  usageBreakdown: SingleUsage[];
+  detail_usages: SingleUsage[];
   isStatistical: boolean;
   monthsOfDataAvailable: number;
   computingFinished: boolean;
 };
-
-export type ConsommationElectrique = {};

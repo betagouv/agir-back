@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
-import { ConsommationElectrique } from '../domain/linky/consommationElectrique';
+import {
+  ConsommationElectrique,
+  TypeUsage,
+} from '../domain/linky/consommationElectrique';
 import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -130,9 +133,34 @@ export class WinterUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const result = this.winterRepository.getUsage(utilisateurId);
+    const usage = await this.winterRepository.getUsage(utilisateurId);
 
-    return undefined;
+    const result: ConsommationElectrique = {
+      computingFinished: usage.computingFinished,
+      consommation_totale_euros:
+        usage.yearlyElectricityTotalConsumption[0].value,
+      isStatistical: usage.usageBreakdown.isStatistical,
+      monthsOfDataAvailable: usage.monthsOfDataAvailable,
+      detail_usages: [],
+    };
+
+    for (const [key, value] of Object.entries(usage.usageBreakdown)) {
+      if (TypeUsage[key]) {
+        const typed_value = value as {
+          kWh: number;
+          eur: number;
+          percent: number;
+        };
+        result.detail_usages.push({
+          type: TypeUsage[key],
+          eur: typed_value.eur,
+          kWh: typed_value.kWh,
+          percent: typed_value.percent,
+        });
+      }
+    }
+
+    return result;
   }
 
   private async connect_prm(
