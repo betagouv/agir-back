@@ -20,6 +20,8 @@ import {
 } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
+import { ThematiqueUsecase } from './thematique.usecase';
+import { WinterUsecase } from './winter.usecase';
 
 const FIELD_MAX_LENGTH = 280;
 
@@ -29,6 +31,8 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
+    private thematiqueUsecase: ThematiqueUsecase,
+    private winterUsecase: WinterUsecase,
     private winterRepository: WinterRepository,
   ) {}
 
@@ -121,7 +125,7 @@ export class QuestionKYCUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.winterRepository.putHousingData(utilisateur);
+    this.updateWinterDataAndRecommandations(utilisateur);
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
@@ -232,7 +236,7 @@ export class QuestionKYCUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.winterRepository.putHousingData(utilisateur);
+    this.updateWinterDataAndRecommandations(utilisateur);
   }
 
   private updateQuestionOfCode_v2(
@@ -380,5 +384,16 @@ export class QuestionKYCUsecase {
       }
       kyc.setCodeState(code_ref, answered_element.selected);
     }
+  }
+
+  private async updateWinterDataAndRecommandations(utilisateur: Utilisateur) {
+    await this.winterUsecase.external_synchroniser_data_logement(utilisateur);
+
+    await this.winterUsecase.external_update_winter_recommandation(utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
   }
 }

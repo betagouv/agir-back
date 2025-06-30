@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { TypeAction } from '../domain/actions/typeAction';
 import {
   ConsommationElectrique,
   TypeUsage,
@@ -119,9 +120,16 @@ export class WinterUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.thematiqueUsecase.external_update_winter_recommandation(
+    const result = await this.external_update_winter_recommandation(
       utilisateur,
     );
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+
+    return result;
   }
 
   public async getUsage(
@@ -165,6 +173,40 @@ export class WinterUsecase {
     }
 
     return result;
+  }
+
+  public async external_update_winter_recommandation(
+    utilisateur: Utilisateur,
+  ): Promise<RecommandationWinter[]> {
+    if (!utilisateur.logement?.prm) {
+      return [];
+    }
+
+    const new_reco_set: RecommandationWinter[] = [];
+
+    const liste = await this.winterRepository.listerActionsWinter(
+      utilisateur.id,
+    );
+
+    for (const winter_action of liste) {
+      new_reco_set.push({
+        action: {
+          code: winter_action.slug,
+          type: TypeAction.classique,
+        },
+        montant_economies_euro: winter_action.economy,
+      });
+    }
+
+    utilisateur.thematique_history.setWinterRecommandations(new_reco_set);
+
+    return new_reco_set;
+  }
+
+  public async external_synchroniser_data_logement(
+    utilisateur: Utilisateur,
+  ): Promise<void> {
+    await this.winterRepository.putHousingData(utilisateur);
   }
 
   private async connect_prm(

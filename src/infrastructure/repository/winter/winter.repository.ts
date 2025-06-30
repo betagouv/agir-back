@@ -136,7 +136,7 @@ export class WinterRepository {
         {
           economy: 12,
           eligibility: 'yes',
-          slug: 'slug_1',
+          slug: 'chauffe_eau_temperature',
           status: 'not_started',
           type: 'ecogeste',
           usage: 'appliances',
