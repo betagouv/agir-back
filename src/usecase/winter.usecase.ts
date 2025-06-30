@@ -129,9 +129,13 @@ export class WinterUsecase {
   ): Promise<ConsommationElectrique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.core],
+      [Scope.core, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
+
+    if (!utilisateur.logement.prm) {
+      ApplicationError.throwMissingPRMSouscription();
+    }
 
     const usage = await this.winterRepository.getUsage(utilisateurId);
 

@@ -138,16 +138,15 @@ export type WinterUsageBreakdown = {
     unit: string; //"years" "€",
     value: number;
   }[];
-  usageBreakdown: Record<
-    WinterUsage,
-    {
+  monthsOfDataAvailable: number;
+  computingFinished: boolean;
+  usageBreakdown: {
+    [key in WinterUsage]?: {
       kWh: number;
       eur: number;
       percent: number;
-    }
-  > & { isStatistical: boolean };
-  monthsOfDataAvailable: number;
-  computingFinished: boolean;
+    };
+  } & { isStatistical: boolean };
 };
 
 export type WinterAction = {

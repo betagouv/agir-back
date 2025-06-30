@@ -210,4 +210,92 @@ describe('Winter (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
   });
+  it(`GET /utilisateurs/utilisateur-id/winter/consommation : erreur si pas de PRM déclaré`, async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/winter/consommation',
+    );
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Pas de décomposition disponible car pas de soucription Winter (par adresse ou PRM)',
+    );
+  });
+
+  it(`GET /utilisateurs/utilisateur-id/winter/consommation : decomposition OK`, async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '12345',
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/winter/consommation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      consommation_totale_euros: 1234567,
+      detail_usages: [
+        {
+          eur: 12,
+          percent: 5,
+          type: 'airConditioning',
+        },
+        {
+          eur: 453,
+          percent: 95,
+          type: 'heating',
+        },
+      ],
+      economies_possibles_euros: 465,
+    });
+  });
 });

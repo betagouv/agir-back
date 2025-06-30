@@ -99,7 +99,16 @@ export class WinterRepository {
 
   public async getUsage(user_id: string): Promise<WinterUsageBreakdown> {
     if (App.isWinterFaked()) {
-      return undefined;
+      return {
+        yearlyElectricityTotalConsumption: [{ unit: 'eur', value: 1234567 }],
+        usageBreakdown: {
+          airConditioning: { eur: 12, percent: 5, kWh: 123 },
+          heating: { eur: 453, percent: 95, kWh: 1200 },
+          isStatistical: false,
+        },
+        computingFinished: true,
+        monthsOfDataAvailable: 12,
+      };
     }
 
     if (!App.isWinterAPIEnabled()) {
@@ -123,7 +132,17 @@ export class WinterRepository {
 
   public async listerActionsWinter(user_id: string): Promise<WinterAction[]> {
     if (App.isWinterFaked()) {
-      return [];
+      const result: WinterAction[] = [
+        {
+          economy: 12,
+          eligibility: 'yes',
+          slug: 'slug_1',
+          status: 'not_started',
+          type: 'ecogeste',
+          usage: 'appliances',
+        },
+      ];
+      return result;
     }
 
     if (!App.isWinterAPIEnabled()) {

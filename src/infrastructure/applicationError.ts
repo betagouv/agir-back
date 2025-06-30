@@ -881,6 +881,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwMissingPRMSouscription() {
+    this.throwAppError(
+      '161',
+      `Pas de décomposition disponible car pas de soucription Winter (par adresse ou PRM)`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
