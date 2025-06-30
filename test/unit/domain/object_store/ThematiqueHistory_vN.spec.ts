@@ -21,7 +21,12 @@ describe('ThematiqueHistory vN ', () => {
     // GIVEN
     const domain_start = new ThematiqueHistory({
       version: 0,
-      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
+      recommandations_winter: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          montant_economies_euros: 12,
+        },
+      ],
       codes_actions_exclues: [
         {
           action: { type: TypeAction.classique, code: '2' },
@@ -87,7 +92,12 @@ describe('ThematiqueHistory vN ', () => {
           liste_partages: [new Date(132)],
         },
       ],
-      recommandations_winter: [{ code: '1', type: TypeAction.classique }],
+      recommandations_winter: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          montant_economies_euros: 12,
+        },
+      ],
 
       liste_thematiques: [
         {

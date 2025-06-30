@@ -5,6 +5,7 @@ import { TypeAction } from '../domain/actions/typeAction';
 import { Enchainement } from '../domain/kyc/enchainement';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
+import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ActionFilter } from '../infrastructure/repository/action.repository';
@@ -225,12 +226,12 @@ export class ThematiqueUsecase {
 
   public async external_update_winter_recommandation(
     utilisateur: Utilisateur,
-  ): Promise<TypeCodeAction[]> {
+  ): Promise<RecommandationWinter[]> {
     if (!utilisateur.logement?.prm) {
       return [];
     }
 
-    const new_reco_set: TypeCodeAction[] = [];
+    const new_reco_set: RecommandationWinter[] = [];
 
     const liste = await this.winterRepository.listerActionsWinter(
       utilisateur.id,
@@ -238,8 +239,11 @@ export class ThematiqueUsecase {
 
     for (const winter_action of liste) {
       new_reco_set.push({
-        code: winter_action.slug,
-        type: TypeAction.classique,
+        action: {
+          code: winter_action.slug,
+          type: TypeAction.classique,
+        },
+        montant_economies_euro: winter_action.economy,
       });
     }
 

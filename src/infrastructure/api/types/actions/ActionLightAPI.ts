@@ -15,6 +15,7 @@ export class ActionLightAPI {
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
   @ApiProperty() nombre_aides_disponibles: number;
+  @ApiProperty() montant_max_economies_euros: number;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty({ type: ExplicationRecoAPI })
@@ -39,6 +40,7 @@ export class ActionLightAPI {
         action.explicationScore,
       ),
       explications_recommandation_raw: action.explicationScore,
+      montant_max_economies_euros: action.montant_max_economies_euros,
     };
   }
 }

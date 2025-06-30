@@ -115,10 +115,55 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      montant_max_economies_euros: 0,
     });
 
     expect(response.body.nombre_resultats).toEqual(1);
     expect(response.body.nombre_resultats_disponibles).toEqual(1);
+  });
+
+  it(`GET /utilisateurs/id/actions - montant euros pour actions winter`, async () => {
+    // GIVEN
+    logement.code_commune = '21231';
+    const thema: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: [],
+      liste_actions_utilisateur: [],
+      liste_thematiques: [],
+      recommandations_winter: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          montant_economies_euros: 12,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      thematique_history: thema as any,
+      logement: logement as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    delete action.explications_recommandation_raw;
+
+    expect(action.montant_max_economies_euros).toEqual(12);
   });
 
   it(`GET /utilisateurs/id/actions - action pas visible en PROD`, async () => {

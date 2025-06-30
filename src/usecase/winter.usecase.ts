@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import {
   ConsommationElectrique,
   TypeUsage,
 } from '../domain/linky/consommationElectrique';
 import { LinkyConsent } from '../domain/linky/linkyConsent';
+import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
@@ -112,7 +112,7 @@ export class WinterUsecase {
 
   public async refreshListeActions(
     utilisateurId: string,
-  ): Promise<TypeCodeAction[]> {
+  ): Promise<RecommandationWinter[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.thematique_history, Scope.logement],
