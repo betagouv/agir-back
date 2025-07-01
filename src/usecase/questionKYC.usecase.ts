@@ -125,7 +125,7 @@ export class QuestionKYCUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.updateWinterDataAndRecommandations(utilisateur);
+    this.updateWinterDataAndRecommandations(utilisateur, [code_question]);
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
@@ -195,17 +195,21 @@ export class QuestionKYCUsecase {
       }
     }
 
+    const target_kycs: string[] = [];
+
     if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const code_selected of reponses_code_selected) {
         const kyc = utilisateur.kyc_history.getQuestion(code_selected.code);
         if (kyc) {
           if (kyc.type === TypeReponseQuestionKYC.entier) {
+            target_kycs.push(kyc.code);
             this.updateQuestionOfCode_v2(
               code_selected.code,
               [{ value: code_selected.selected ? '1' : '0' }],
               utilisateur,
             );
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+            target_kycs.push(kyc.code);
             this.updateQuestionOfCode_v2(
               code_selected.code,
               [
@@ -236,7 +240,7 @@ export class QuestionKYCUsecase {
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
-    this.updateWinterDataAndRecommandations(utilisateur);
+    this.updateWinterDataAndRecommandations(utilisateur, target_kycs);
   }
 
   private updateQuestionOfCode_v2(
@@ -386,7 +390,14 @@ export class QuestionKYCUsecase {
     }
   }
 
-  private async updateWinterDataAndRecommandations(utilisateur: Utilisateur) {
+  private async updateWinterDataAndRecommandations(
+    utilisateur: Utilisateur,
+    kyc_codes: string[],
+  ) {
+    if (!this.winterRepository.isAnyKycMapped(kyc_codes)) {
+      return;
+    }
+
     await this.winterUsecase.external_synchroniser_data_logement(utilisateur);
 
     await this.winterUsecase.external_update_winter_recommandation(utilisateur);

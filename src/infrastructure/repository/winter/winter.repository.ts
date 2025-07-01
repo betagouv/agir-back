@@ -11,6 +11,27 @@ import {
   WinterUsageBreakdown,
 } from './winterAPIClient';
 
+const MAPPED_KYCS: string[] = [
+  KYCID.KYC_electro_refrigerateur,
+  KYCID.KYC_electro_congelateur,
+  KYCID.KYC_electro_petit_refrigerateur,
+  KYCID.KYC_loisir_piscine_type,
+  KYCID.KYC_appareil_television,
+  KYCID.KYC_appareil_console_salon,
+  KYCID.KYC_electro_plaques,
+  KYCID.KYC_electro_lave_vaiselle,
+  KYCID.KYC_electro_lave_linge,
+  KYCID.KYC_electro_seche_linge,
+  KYCID.KYC_chauffage,
+  KYCID.KYC_chauffage_pompe_chaleur,
+  KYCID.KYC_photovoltaiques,
+  KYCID.KYC_transport_voiture_motorisation,
+  KYCID.KYC_transport_vae_possede,
+  KYCID.KYC_2roue_motorisation_type,
+  KYCID.KYC_logement_age,
+  KYCID.KYC_logement_reno_second_oeuvre,
+];
+
 @Injectable()
 export class WinterRepository {
   constructor(
@@ -152,6 +173,15 @@ export class WinterRepository {
     const reponse = await this.winterAPIClient.listerActions(user_id);
 
     return reponse.actionStateProxyResponse;
+  }
+
+  public isAnyKycMapped(kyc_codes: string[]): boolean {
+    for (const code of kyc_codes) {
+      if (MAPPED_KYCS.includes(code)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private generateHousingData(user: Utilisateur): WinterHousingData {
