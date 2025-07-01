@@ -11,7 +11,6 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
-import { ThematiqueUsecase } from './thematique.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -29,7 +28,6 @@ export class WinterUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
     private linkyConsentRepository: LinkyConsentRepository,
-    private thematiqueUsecase: ThematiqueUsecase,
   ) {}
 
   public async inscrireAdresse(
@@ -147,16 +145,17 @@ export class WinterUsecase {
 
     const usage = await this.winterRepository.getUsage(utilisateurId);
 
-    const result: ConsommationElectrique = {
+    const result = new ConsommationElectrique({
       computingFinished: usage.computingFinished,
       consommation_totale_euros:
         usage.yearlyElectricityTotalConsumption[0].value,
-      isStatistical: usage.usageBreakdown.isStatistical,
       monthsOfDataAvailable: usage.monthsOfDataAvailable,
       detail_usages: [],
       nombre_actions_associees:
         utilisateur.thematique_history.getNombreActionsWinter(),
-    };
+      economies_realisees_euros:
+        utilisateur.thematique_history.calculeEconomiesWinterRealisées(),
+    });
 
     for (const [key, value] of Object.entries(usage.usageBreakdown)) {
       if (TypeUsage[key]) {

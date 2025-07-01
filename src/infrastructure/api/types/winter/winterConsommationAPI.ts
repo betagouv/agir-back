@@ -13,17 +13,15 @@ export class WinterUsageAPI {
 export class WinterConsommationAPI {
   @ApiProperty() consommation_totale_euros: number;
   @ApiProperty() economies_possibles_euros: number;
+  @ApiProperty() economies_realisees_euros: number;
   @ApiProperty() nombre_actions_associees: number;
   @ApiProperty({ type: [WinterUsageAPI] }) detail_usages: WinterUsageAPI[];
 
   public static mapToAPI(conso: ConsommationElectrique): WinterConsommationAPI {
-    let eco_total = 0;
-    for (const usage of conso.detail_usages) {
-      eco_total += usage.eur;
-    }
     return {
       consommation_totale_euros: conso.consommation_totale_euros,
-      economies_possibles_euros: eco_total,
+      economies_possibles_euros: conso.getEconomiesPossibles(),
+      economies_realisees_euros: conso.economies_realisees_euros,
       nombre_actions_associees: conso.nombre_actions_associees,
       detail_usages: conso.detail_usages.map((c) => ({
         eur: c.eur,

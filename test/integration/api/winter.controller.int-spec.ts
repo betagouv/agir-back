@@ -299,6 +299,7 @@ describe('Winter (API test)', () => {
         },
       ],
       economies_possibles_euros: 465,
+      economies_realisees_euros: 0,
     });
   });
 
@@ -326,7 +327,26 @@ describe('Winter (API test)', () => {
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],
-      liste_actions_utilisateur: [],
+      liste_actions_utilisateur: [
+        {
+          action: { code: '123', type: TypeAction.classique },
+          faite_le: new Date(3),
+          vue_le: new Date(2),
+          feedback: null,
+          like_level: null,
+          liste_partages: [],
+          liste_questions: [],
+        },
+        {
+          action: { code: '456', type: TypeAction.classique },
+          faite_le: new Date(3),
+          vue_le: new Date(2),
+          feedback: null,
+          like_level: null,
+          liste_partages: [],
+          liste_questions: [],
+        },
+      ],
       liste_thematiques: [],
       recommandations_winter: [
         {
@@ -335,6 +355,13 @@ describe('Winter (API test)', () => {
             type: TypeAction.classique,
           },
           montant_economies_euros: 23,
+        },
+        {
+          action: {
+            code: '456',
+            type: TypeAction.classique,
+          },
+          montant_economies_euros: 10,
         },
       ],
       version: 0,
@@ -354,6 +381,7 @@ describe('Winter (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.nombre_actions_associees).toEqual(1);
+    expect(response.body.nombre_actions_associees).toEqual(2);
+    expect(response.body.economies_realisees_euros).toEqual(33);
   });
 });

@@ -345,4 +345,14 @@ export class ThematiqueHistory {
     const reco = this.getRecommandationByThematique(thematique);
     return reco ? reco.getActionsExclues().map((a) => a.action) : [];
   }
+
+  public calculeEconomiesWinterRealisées(): number {
+    let economies = 0;
+    for (const action_winter of this.liste_recommandations_winter) {
+      if (this.isActionFaite(action_winter.action)) {
+        economies += action_winter.montant_economies_euro;
+      }
+    }
+    return economies;
+  }
 }
