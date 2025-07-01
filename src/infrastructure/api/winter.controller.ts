@@ -100,7 +100,7 @@ export class WinterController extends GenericControler {
   }
 
   @ApiOperation({
-    summary: `Liste des actions winter, pour test`,
+    summary: `API DE TEST pour Lister des actions winter`,
   })
   @Get('utilisateurs/:utilisateurId/winter/actions')
   @UseGuards(AuthGuard)

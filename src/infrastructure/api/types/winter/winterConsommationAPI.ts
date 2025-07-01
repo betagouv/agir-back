@@ -4,16 +4,16 @@ import {
   TypeUsage,
 } from '../../../../domain/linky/consommationElectrique';
 
-export type WinterUsageAPI = {
-  type: TypeUsage;
-  eur: number;
-  percent: number;
-};
+export class WinterUsageAPI {
+  @ApiProperty({ enum: TypeUsage }) type: TypeUsage;
+  @ApiProperty() eur: number;
+  @ApiProperty() percent: number;
+}
 
 export class WinterConsommationAPI {
   @ApiProperty() consommation_totale_euros: number;
   @ApiProperty() economies_possibles_euros: number;
-  @ApiProperty() detail_usages: WinterUsageAPI[];
+  @ApiProperty({ type: [WinterUsageAPI] }) detail_usages: WinterUsageAPI[];
 
   public static mapToAPI(conso: ConsommationElectrique): WinterConsommationAPI {
     let eco_total = 0;
