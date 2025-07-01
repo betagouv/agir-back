@@ -22,6 +22,32 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`;
 
 const CURRENT_VERSION = 'v1';
 
+const USAGE_EMOJI: Record<TypeUsage, string> = {
+  airConditioning: '❄️',
+  appliances: '📠',
+  cooking: '🍕',
+  heating: '🔥',
+  hotWater: '💧',
+  lighting: '💡',
+  mobility: '⚡️🚙',
+  multimedia: '🎮',
+  other: '❓',
+  swimmingPool: '🏊',
+};
+
+const USAGE_COLORS: Record<TypeUsage, string> = {
+  airConditioning: '00809D',
+  appliances: 'FCECDD',
+  cooking: 'FF7601',
+  heating: 'F3A26D',
+  hotWater: 'FCD8CD',
+  lighting: 'FEEBF6',
+  mobility: 'EBD6FB',
+  multimedia: '748873',
+  other: 'D1A980',
+  swimmingPool: 'E5E0D8',
+};
+
 @Injectable()
 export class WinterUsecase {
   constructor(
@@ -158,17 +184,20 @@ export class WinterUsecase {
     });
 
     for (const [key, value] of Object.entries(usage.usageBreakdown)) {
-      if (TypeUsage[key]) {
+      const type = TypeUsage[key];
+      if (type) {
         const typed_value = value as {
           kWh: number;
           eur: number;
           percent: number;
         };
         result.detail_usages.push({
-          type: TypeUsage[key],
+          type: type,
           eur: typed_value.eur,
           kWh: typed_value.kWh,
           percent: typed_value.percent,
+          couleur: this.getTypeUsageCouleur(type),
+          emoji: this.getTypeUsageEmoji(type),
         });
       }
     }
@@ -264,5 +293,12 @@ export class WinterUsecase {
       ip_address: ip,
       user_agent: user_agent,
     };
+  }
+
+  private getTypeUsageEmoji(type: TypeUsage): string {
+    return USAGE_EMOJI[type];
+  }
+  private getTypeUsageCouleur(type: TypeUsage): string {
+    return USAGE_COLORS[type];
   }
 }

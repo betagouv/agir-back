@@ -16,6 +16,8 @@ export type SingleUsage = {
   kWh: number;
   eur: number;
   percent: number;
+  emoji: string;
+  couleur: string;
 };
 
 export class ConsommationElectrique {

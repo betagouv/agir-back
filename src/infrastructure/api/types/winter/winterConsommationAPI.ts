@@ -8,6 +8,8 @@ export class WinterUsageAPI {
   @ApiProperty({ enum: TypeUsage }) type: TypeUsage;
   @ApiProperty() eur: number;
   @ApiProperty() percent: number;
+  @ApiProperty() couleur: string;
+  @ApiProperty() emoji: string;
 }
 
 export class WinterConsommationAPI {
@@ -27,6 +29,8 @@ export class WinterConsommationAPI {
         eur: c.eur,
         percent: c.percent,
         type: c.type,
+        couleur: c.couleur,
+        emoji: c.emoji,
       })),
     };
   }
