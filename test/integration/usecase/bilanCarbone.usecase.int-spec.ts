@@ -133,6 +133,7 @@ describe('BilanCarboneUsecase', () => {
           code: KYCID.KYC_transport_voiture_km,
           id_cms: 1,
           conditions: [],
+          is_skipped: false,
           last_update: new Date(1),
           tags: [],
           thematique: Thematique.alimentation,

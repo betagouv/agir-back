@@ -28,6 +28,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
+  is_skipped: false,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -171,6 +172,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         question: 'quest 1',
         is_answered: false,
+        is_skipped: false,
         reponse_multiple: [
           {
             code: 'oui',
@@ -220,6 +222,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         points: 10,
         type: 'mosaic_boolean',
         is_answered: false,
+        is_skipped: false,
         thematique: 'alimentation',
       },
     ]);
@@ -291,6 +294,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 1',
         reponse_multiple: [
@@ -362,6 +366,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 1',
         reponse_multiple: [
@@ -452,6 +457,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC002',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 2',
         reponse_multiple: [
@@ -564,6 +570,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: true,
+        is_skipped: false,
         points: 20,
         question: 'quest 1',
         reponse_multiple: [
@@ -655,6 +662,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC003',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 3',
         reponse_multiple: [
@@ -753,6 +761,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC003',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 3',
         reponse_multiple: [
@@ -856,6 +865,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 4',
         reponse_multiple: [
@@ -958,6 +968,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 4',
         reponse_multiple: [
@@ -1060,6 +1071,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC002',
         is_NGC: true,
         is_answered: true,
+        is_skipped: false,
         points: 20,
         question: 'quest 2',
         reponse_multiple: [
@@ -1211,6 +1223,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC003',
         is_NGC: true,
         is_answered: true,
+        is_skipped: false,
         points: 20,
         question: 'quest 3',
         reponse_multiple: [
@@ -1302,6 +1315,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: true,
+        is_skipped: false,
         points: 20,
         question: 'quest 1',
         reponse_multiple: [
@@ -1405,6 +1419,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_skipped: false,
         points: 20,
         question: 'quest 4',
         reponse_multiple: [

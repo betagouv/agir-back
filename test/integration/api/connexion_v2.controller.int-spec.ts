@@ -435,6 +435,7 @@ suite à un problème technique, vous ne pouvez pas vous connecter au service J'
           code: KYCID.KYC_preference,
           id_cms: 1,
           last_update: undefined,
+          is_skipped: false,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,

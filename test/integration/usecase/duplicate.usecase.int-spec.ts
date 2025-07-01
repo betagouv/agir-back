@@ -43,6 +43,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   last_update: undefined,
   id_cms: 11,
+  is_skipped: false,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,

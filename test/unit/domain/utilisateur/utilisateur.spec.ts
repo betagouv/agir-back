@@ -65,6 +65,7 @@ const kyc: KYCHistory_v2 = {
       is_NGC: false,
       categorie: Categorie.test,
       last_update: new Date(),
+      is_skipped: false,
       points: 10,
       reponse_complexe: [
         {
@@ -218,6 +219,7 @@ describe('Objet Utilisateur', () => {
       unite: { abreviation: 'euro' },
       emoji: '🔥',
       reponse_simple: undefined,
+      is_skipped: false,
       thematique: Thematique.alimentation,
     });
 
@@ -241,6 +243,7 @@ describe('Objet Utilisateur', () => {
       id_cms: 7,
       last_update: undefined,
       type: TypeReponseQuestionKYC.choix_unique,
+      is_skipped: false,
       is_NGC: false,
       a_supprimer: false,
       reponse_complexe: [
@@ -295,6 +298,7 @@ describe('Objet Utilisateur', () => {
       code: KYCID.KYC007,
       id_cms: 7,
       last_update: undefined,
+      is_skipped: false,
       question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,

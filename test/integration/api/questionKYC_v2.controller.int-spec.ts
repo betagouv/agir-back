@@ -32,6 +32,7 @@ import { DB, TestUtil } from '../../TestUtil';
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   last_update: undefined,
+  is_skipped: false,
   id_cms: 11,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -301,6 +302,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body[0]).toEqual({
       code: '_1',
       is_answered: false,
+      is_skipped: false,
       question: 'quest 1',
       reponse_multiple: [
         {
@@ -351,6 +353,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       points: 10,
       type: 'mosaic_boolean',
       is_answered: false,
+      is_skipped: false,
       thematique: 'alimentation',
     });
   });
@@ -390,6 +393,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         {
           code: KYCID._2,
           last_update: undefined,
+          is_skipped: false,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -1351,6 +1355,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_NGC: false,
       thematique: 'climat',
       is_answered: true,
+      is_skipped: false,
     });
   });
   it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie la question multiple depuis catalogue seul`, async () => {
@@ -1387,6 +1392,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_NGC: true,
       thematique: 'dechet',
       is_answered: false,
+      is_skipped: false,
     });
   });
 
@@ -1426,6 +1432,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_NGC: true,
       thematique: 'dechet',
       is_answered: false,
+      is_skipped: false,
     });
   });
 

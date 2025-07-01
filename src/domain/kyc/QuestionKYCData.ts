@@ -86,6 +86,7 @@ export class QuestionKYCData implements TaggedContent {
   is_NGC: boolean;
   a_supprimer: boolean;
   is_answered?: boolean;
+  is_skipped: boolean;
   tags: Tag[];
   score: number;
   pourcent_match: number;
@@ -118,6 +119,7 @@ export class QuestionKYCData implements TaggedContent {
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
     this.last_update = data.last_update;
+    this.is_skipped = !!data.is_skipped;
 
     this.reponse_simple = data.reponse_simple;
     this.reponse_complexe = data.reponse_complexe
@@ -225,6 +227,7 @@ export class QuestionKYCData implements TaggedContent {
       short_question: def.short_question,
       unite: def.unite,
       last_update: undefined,
+      is_skipped: false,
     });
     result.is_answered = false;
 
@@ -273,6 +276,7 @@ export class QuestionKYCData implements TaggedContent {
       reponse_simple: undefined,
       reponse_complexe: undefined,
       last_update: undefined,
+      is_skipped: false,
     });
     if (def.type === TypeMosaic.mosaic_boolean) {
       result.reponse_complexe = this.buildBooleanResponseListe(liste_kyc);

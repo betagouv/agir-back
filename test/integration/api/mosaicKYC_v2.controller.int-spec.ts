@@ -193,6 +193,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_1',
           question: 'quest 1',
+          is_skipped: false,
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -224,6 +225,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: '_2',
           question: 'quest 2',
           last_update: undefined,
+          is_skipped: false,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
           points: 20,
@@ -268,6 +270,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre test',
       is_answered: true,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -393,6 +396,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -449,6 +453,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -682,6 +687,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
       reponse_simple: {
         value: '1',
         unite: {
@@ -710,6 +716,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
       reponse_simple: {
         value: '0',
         unite: {
@@ -810,6 +817,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_1',
           last_update: undefined,
+          is_skipped: false,
           question: 'quest 1',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
@@ -831,6 +839,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_2',
           last_update: undefined,
+          is_skipped: false,
           question: 'quest 2',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
@@ -867,6 +876,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'Titre test',
       is_NGC: false,
       is_answered: true,
+      is_skipped: false,
       thematique: Thematique.alimentation,
       reponse_multiple: [
         {
@@ -926,6 +936,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     code: '1',
     id_cms: 11,
     last_update: undefined,
+    is_skipped: false,
     question: `question`,
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -1027,6 +1038,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -1142,6 +1154,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -1257,6 +1270,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',

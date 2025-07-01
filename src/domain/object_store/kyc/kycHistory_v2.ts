@@ -53,6 +53,7 @@ export class QuestionKYC_v2 {
   categorie: Categorie;
   points: number;
   is_NGC: boolean;
+  is_skipped: boolean;
   tags: Tag[];
   thematique: Thematique;
   conditions: ConditionKYC[][];
@@ -90,6 +91,7 @@ export class QuestionKYC_v2 {
       conditions: elem.getConditions(),
       unite: elem.unite,
       emoji: elem.emoji,
+      is_skipped: elem.is_skipped,
     };
   }
 }
@@ -144,6 +146,7 @@ export class KYCHistory_v2 extends Versioned_v2 {
           unite: question.unite,
           reponse_simple: question.reponse_simple,
           reponse_complexe: null,
+          is_skipped: false,
         };
 
         if (question.reponse_complexe) {

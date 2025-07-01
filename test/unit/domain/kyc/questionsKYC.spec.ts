@@ -20,6 +20,7 @@ const QUESTION_TEST: QuestionKYC_v2 = {
   id_cms: 1,
   code: KYCID.KYC001,
   question: `question`,
+  is_skipped: false,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,

@@ -420,6 +420,7 @@ describe('Actions (API test)', () => {
           ...KYC2,
           is_NGC: false,
           last_update: undefined,
+          is_skipped: false,
           reponse_complexe: [],
         },
       ],
@@ -471,6 +472,7 @@ describe('Actions (API test)', () => {
         {
           ...KYC2,
           is_NGC: false,
+          is_skipped: false,
           last_update: undefined,
           reponse_complexe: [],
         },

@@ -36,6 +36,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   id_cms: 11,
   last_update: undefined,
+  is_skipped: false,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
@@ -1835,6 +1836,7 @@ describe('Admin (API test)', () => {
           last_update: new Date(),
           reponse_complexe: undefined,
           thematique: Thematique.alimentation,
+          is_skipped: false,
         },
       ],
     };
