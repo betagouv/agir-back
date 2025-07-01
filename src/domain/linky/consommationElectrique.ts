@@ -24,4 +24,5 @@ export type ConsommationElectrique = {
   isStatistical: boolean;
   monthsOfDataAvailable: number;
   computingFinished: boolean;
+  nombre_actions_associees: number;
 };

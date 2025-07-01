@@ -137,7 +137,7 @@ export class WinterUsecase {
   ): Promise<ConsommationElectrique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.core, Scope.logement],
+      [Scope.core, Scope.logement, Scope.thematique_history],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -154,6 +154,8 @@ export class WinterUsecase {
       isStatistical: usage.usageBreakdown.isStatistical,
       monthsOfDataAvailable: usage.monthsOfDataAvailable,
       detail_usages: [],
+      nombre_actions_associees:
+        utilisateur.thematique_history.getNombreActionsWinter(),
     };
 
     for (const [key, value] of Object.entries(usage.usageBreakdown)) {

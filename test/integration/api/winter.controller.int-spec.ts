@@ -1,3 +1,4 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
 import {
   Chauffage,
   DPE,
@@ -5,6 +6,7 @@ import {
   TypeLogement,
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -283,6 +285,7 @@ describe('Winter (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       consommation_totale_euros: 1234567,
+      nombre_actions_associees: 0,
       detail_usages: [
         {
           eur: 12,
@@ -297,5 +300,60 @@ describe('Winter (API test)', () => {
       ],
       economies_possibles_euros: 465,
     });
+  });
+
+  it(`GET /utilisateurs/utilisateur-id/winter/consommation : nombre d'actions winter OK`, async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '12345',
+    };
+    const them: ThematiqueHistory_v0 = {
+      codes_actions_exclues: [],
+      liste_actions_utilisateur: [],
+      liste_thematiques: [],
+      recommandations_winter: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          montant_economies_euros: 23,
+        },
+      ],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: them as any,
+    });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/winter/consommation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nombre_actions_associees).toEqual(1);
   });
 });

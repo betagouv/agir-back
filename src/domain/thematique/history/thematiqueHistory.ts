@@ -329,6 +329,9 @@ export class ThematiqueHistory {
       (r) => r.action.code === action.code && r.action.type === action.type,
     );
   }
+  public getNombreActionsWinter() {
+    return this.liste_recommandations_winter.length;
+  }
 
   public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
     const index = this.actions_exclues.findIndex(
