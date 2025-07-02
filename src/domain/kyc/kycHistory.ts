@@ -127,6 +127,13 @@ export class KYCHistory {
     this.removeQuestionFromList(kyc, this.answered_questions);
   }
 
+  public skipMosaic(id: KYCMosaicID) {
+    if (this.isMosaicAnswered(id)) {
+      return; // skipped une question déjà répondu n'a pas d'effet
+    }
+    this.addSkippedMosaic(id);
+  }
+
   private getUpToDateAnsweredQuestionByNGCKeyCode(
     ngc_key: string,
   ): QuestionKYC {
@@ -298,6 +305,18 @@ export class KYCHistory {
   public addAnsweredMosaic(type: KYCMosaicID) {
     if (!this.answered_mosaics.includes(type)) {
       this.answered_mosaics.push(type);
+    }
+    this.removeSkippedMosaic(type);
+  }
+  public addSkippedMosaic(type: KYCMosaicID) {
+    if (!this.skipped_mosaics.includes(type)) {
+      this.skipped_mosaics.push(type);
+    }
+  }
+  public removeSkippedMosaic(type: KYCMosaicID) {
+    const index = this.skipped_mosaics.findIndex((k) => k === type);
+    if (index > -1) {
+      this.skipped_mosaics.splice(index, 1);
     }
   }
   public isMosaicAnswered(type: KYCMosaicID): boolean {

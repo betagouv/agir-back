@@ -18,7 +18,6 @@ import {
 } from '@nestjs/swagger';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
-import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
@@ -114,7 +113,7 @@ export class QuestionsKYCController extends GenericControler {
   ): Promise<void> {
     this.checkCallerId(req, utilisateurId);
     if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
-      ApplicationError.throwCannotSkipMosaic();
+      await this.questionKYCUsecase.skip_MOSAIC(utilisateurId, questionId);
     } else {
       await this.questionKYCUsecase.skip_KYC(utilisateurId, questionId);
     }

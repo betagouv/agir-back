@@ -144,6 +144,25 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
+  async skip_MOSAIC(utilisateurId: string, mosaicId: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(
+      KYCMosaicID[mosaicId],
+    );
+    if (!mosaic_def) {
+      ApplicationError.throwUnknownMosaicId(mosaicId);
+    }
+
+    utilisateur.kyc_history.skipMosaic(mosaic_def.id);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
   private dispatchKYCUpdateToOtherKYCsPostUpdate(
     question: QuestionKYC,
     utilisateur: Utilisateur,
