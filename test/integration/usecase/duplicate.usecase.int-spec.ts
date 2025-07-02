@@ -1331,13 +1331,11 @@ describe('Duplicate Usecase', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: true,
         },
         {
           thematique: Thematique.logement,
-          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: false,
         },

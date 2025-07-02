@@ -124,7 +124,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -172,7 +171,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -231,7 +229,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -391,12 +388,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { code: '1', type: TypeAction.classique },
-              date: new Date(123),
-            },
-          ],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -442,7 +433,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -524,7 +514,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -573,7 +562,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -630,7 +618,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -683,7 +670,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -740,7 +726,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -792,7 +777,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -850,7 +834,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },

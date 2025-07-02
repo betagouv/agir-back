@@ -341,11 +341,6 @@ export class ThematiqueHistory {
     return index !== -1;
   }
 
-  public getActionsExclues(thematique: Thematique): TypeCodeAction[] {
-    const reco = this.getRecommandationByThematique(thematique);
-    return reco ? reco.getActionsExclues().map((a) => a.action) : [];
-  }
-
   public calculeEconomiesWinterRealisées(): number {
     let economies = 0;
     for (const action_winter of this.liste_recommandations_winter) {

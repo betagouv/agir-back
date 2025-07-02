@@ -1039,6 +1039,7 @@ describe('Admin (API test)', () => {
       expect(userDB.version).toEqual(20);
     });
 
+    /*
     it('migration V21 OK - fusionne les actions exclues dans une liste globale', async () => {
       // GIVEN
       TestUtil.token = process.env.CRON_API_KEY;
@@ -1113,6 +1114,7 @@ describe('Admin (API test)', () => {
       ]);
       expect(userDB.version).toEqual(21);
     });
+    */
 
     it("migration V22 OK - remplace 'peu' en 'zero'", async () => {
       // GIVEN

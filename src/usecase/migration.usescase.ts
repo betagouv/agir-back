@@ -7,11 +7,9 @@ import {
 } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { App } from '../domain/app';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
-import { Thematique } from '../domain/thematique/thematique';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
@@ -477,6 +475,7 @@ export class MigrationUsecase {
       info: `updated recos tags`,
     };
   }
+  /*
   private async migrate_21(
     user_id: string,
     version: number,
@@ -509,6 +508,7 @@ export class MigrationUsecase {
       info: `fusion actions exclues`,
     };
   }
+    */
 
   private async migrate_22(
     user_id: string,

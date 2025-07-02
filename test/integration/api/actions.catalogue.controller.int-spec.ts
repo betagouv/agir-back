@@ -898,7 +898,6 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       recommandations_winter: [],
       liste_thematiques: [
         {
-          codes_actions_exclues: [],
           first_personnalisation_date: null,
           personnalisation_done_once: false,
           thematique: Thematique.alimentation,

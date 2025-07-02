@@ -9,16 +9,13 @@ export type ActionExclue = {
 
 export class ThematiqueRecommandation {
   thematique: Thematique;
-  private actions_exclues: ActionExclue[];
   private personnalisation_done_once: boolean;
   private first_personnalisation_date: Date;
 
   constructor(thematique: Thematique, data?: ThematiqueRecommandation_v0) {
     this.thematique = thematique;
-    this.actions_exclues = [];
     this.personnalisation_done_once = false;
     if (data) {
-      this.actions_exclues = data.codes_actions_exclues;
       this.personnalisation_done_once = !!data.personnalisation_done_once;
       this.first_personnalisation_date = data.first_personnalisation_date;
     }
@@ -33,9 +30,6 @@ export class ThematiqueRecommandation {
 
   public getFirstPersonnalisationDate(): Date {
     return this.first_personnalisation_date;
-  }
-  public getActionsExclues(): ActionExclue[] {
-    return this.actions_exclues;
   }
 
   public isPersonnalisationDoneOnce(): boolean {

@@ -49,12 +49,6 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { type: TypeAction.classique, code: '2' },
-              date: new Date(),
-            },
-          ],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(),
         },
@@ -102,12 +96,6 @@ describe('ThematiqueHistory vN ', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { type: TypeAction.classique, code: '2' },
-              date: new Date(),
-            },
-          ],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(),
         },

@@ -75,7 +75,6 @@ export class ActionUtilisateur_v0 {
 
 export class ThematiqueRecommandation_v0 {
   thematique: Thematique;
-  codes_actions_exclues: ActionExclue_v0[];
   personnalisation_done_once: boolean;
   first_personnalisation_date: Date;
 
@@ -83,9 +82,6 @@ export class ThematiqueRecommandation_v0 {
     domain: ThematiqueRecommandation,
   ): ThematiqueRecommandation_v0 {
     return {
-      codes_actions_exclues: domain
-        .getActionsExclues()
-        .map((a) => ActionExclue_v0.serialise(a)),
       personnalisation_done_once: domain.isPersonnalisationDoneOnce(),
       thematique: domain.thematique,
       first_personnalisation_date: domain.getFirstPersonnalisationDate(),
