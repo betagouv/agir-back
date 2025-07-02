@@ -36,7 +36,6 @@ const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   id_cms: 11,
   last_update: undefined,
-  is_skipped: false,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
@@ -790,6 +789,9 @@ describe('Admin (API test)', () => {
       TestUtil.token = process.env.CRON_API_KEY;
       const kyc: KYCHistory_v2 = {
         version: 2,
+        skipped_mosaics: [],
+        skipped_questions: [],
+
         answered_mosaics: [],
         answered_questions: [
           {
@@ -1818,6 +1820,9 @@ describe('Admin (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           code: KYCID.KYC_transport_voiture_km,
@@ -1836,7 +1841,6 @@ describe('Admin (API test)', () => {
           last_update: new Date(),
           reponse_complexe: undefined,
           thematique: Thematique.alimentation,
-          is_skipped: false,
         },
       ],
     };

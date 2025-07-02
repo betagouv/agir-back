@@ -188,12 +188,14 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
           code: '_1',
           question: 'quest 1',
-          is_skipped: false,
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -225,7 +227,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: '_2',
           question: 'quest 2',
           last_update: undefined,
-          is_skipped: false,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
           points: 20,
@@ -397,6 +398,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       is_skipped: false,
+      is_answered: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -454,6 +456,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       is_skipped: false,
+      is_answered: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -619,7 +622,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     );
   });
 
-  it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic boolean alors que que les question sous jacente sont interger', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic boolean alors que les question sous jacente sont interger', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -688,6 +691,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       is_skipped: false,
+      is_answered: false,
       reponse_simple: {
         value: '1',
         unite: {
@@ -717,6 +721,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: true,
       a_supprimer: false,
       is_skipped: false,
+      is_answered: false,
       reponse_simple: {
         value: '0',
         unite: {
@@ -812,12 +817,14 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
           code: '_1',
           last_update: undefined,
-          is_skipped: false,
           question: 'quest 1',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
@@ -839,7 +846,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_2',
           last_update: undefined,
-          is_skipped: false,
           question: 'quest 2',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
@@ -936,7 +942,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     code: '1',
     id_cms: 11,
     last_update: undefined,
-    is_skipped: false,
     question: `question`,
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
@@ -982,6 +987,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -1082,6 +1090,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1198,6 +1209,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,

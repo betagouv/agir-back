@@ -356,12 +356,13 @@ describe('Thematique Board (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: 'KYC_saison_frequence',
           last_update: undefined,
           id_cms: 21,
-          is_skipped: false,
           question: `À quelle fréquence mangez-vous de saison ? `,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
@@ -403,7 +404,6 @@ describe('Thematique Board (API test)', () => {
           code: 'KYC_alimentation_regime',
           id_cms: 1,
           last_update: undefined,
-          is_skipped: false,
           question: `Votre regime`,
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,

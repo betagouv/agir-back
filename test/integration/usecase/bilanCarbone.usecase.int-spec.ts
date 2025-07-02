@@ -70,6 +70,8 @@ describe('BilanCarboneUsecase', () => {
     expect(user.kyc_history).toEqual({
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       catalogue: [],
     });
   });
@@ -128,12 +130,13 @@ describe('BilanCarboneUsecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: KYCID.KYC_transport_voiture_km,
           id_cms: 1,
           conditions: [],
-          is_skipped: false,
           last_update: new Date(1),
           tags: [],
           thematique: Thematique.alimentation,

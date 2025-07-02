@@ -152,7 +152,7 @@ export class AdminUsecase {
       reponses.proprio =
         KYC_transport_type_utilisateur?.getSelectedCode() === 'proprio';
       reponses.changer_voiture =
-        KYC_changer_voiture?.hasAnyResponses() &&
+        KYC_changer_voiture?.is_answered &&
         KYC_changer_voiture?.getSelectedCode() !== 'non';
 
       if (

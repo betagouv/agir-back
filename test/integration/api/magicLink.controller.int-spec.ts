@@ -503,7 +503,7 @@ describe('/utilisateurs - Magic link - (API test)', () => {
 
     const kyc_bois = user.kyc_history.getQuestion(KYCID.KYC_chauffage_bois);
     expect(kyc_bois).not.toBeUndefined();
-    expect(kyc_bois.hasAnyResponses()).toEqual(true);
+    expect(kyc_bois.is_answered).toEqual(true);
     expect(kyc_bois.getSelectedCode()).toEqual('oui');
   });
 

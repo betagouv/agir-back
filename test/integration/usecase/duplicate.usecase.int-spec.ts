@@ -43,7 +43,6 @@ const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   last_update: undefined,
   id_cms: 11,
-  is_skipped: false,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
@@ -65,6 +64,9 @@ const KYC_DATA: QuestionKYC_v2 = {
 const kyc_histo: KYCHistory_v2 = {
   version: 2,
   answered_mosaics: [],
+  skipped_mosaics: [],
+  skipped_questions: [],
+
   answered_questions: [
     {
       ...KYC_DATA,
@@ -434,6 +436,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -477,6 +482,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -530,6 +538,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -581,6 +592,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -617,6 +631,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -653,6 +670,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -939,6 +959,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1175,6 +1198,9 @@ describe('Duplicate Usecase', () => {
     const kyc_bad: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1194,6 +1220,9 @@ describe('Duplicate Usecase', () => {
     const kyc_ok: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,

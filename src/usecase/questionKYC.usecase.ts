@@ -20,7 +20,6 @@ import {
 } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
-import { ThematiqueUsecase } from './thematique.usecase';
 import { WinterUsecase } from './winter.usecase';
 
 const FIELD_MAX_LENGTH = 280;
@@ -31,7 +30,6 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
-    private thematiqueUsecase: ThematiqueUsecase,
     private winterUsecase: WinterUsecase,
     private winterRepository: WinterRepository,
   ) {}
@@ -106,7 +104,6 @@ export class QuestionKYCUsecase {
       [
         Scope.kyc,
         Scope.gamification,
-        Scope.gamification,
         Scope.logement,
         Scope.thematique_history,
         Scope.recommandation,
@@ -126,6 +123,25 @@ export class QuestionKYCUsecase {
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     this.updateWinterDataAndRecommandations(utilisateur, [code_question]);
+  }
+
+  async skip_KYC(utilisateurId: string, code_question: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const question_to_update =
+      utilisateur.kyc_history.getQuestion(code_question);
+
+    if (!question_to_update) {
+      ApplicationError.throwQuestionInconnue(code_question);
+    }
+
+    utilisateur.kyc_history.skipQuestion(question_to_update);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private dispatchKYCUpdateToOtherKYCsPostUpdate(

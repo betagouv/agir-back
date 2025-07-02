@@ -431,7 +431,7 @@ export class BilanCarboneUsecase {
             kyc.type === TypeReponseQuestionKYC.entier ||
             kyc.type === TypeReponseQuestionKYC.decimal
           ) {
-            if (kyc.hasAnySimpleResponse()) {
+            if (kyc.is_answered) {
               const value = new QuestionNumerique(kyc).getValue();
               situation[kyc.ngc_key] = Number.isNaN(value) ? 0 : value;
             }
@@ -486,7 +486,7 @@ export class BilanCarboneUsecase {
       KYCID.KYC_alimentation_regime,
     );
     if (!kyc_regime) return null;
-    if (!kyc_regime.hasAnyResponses()) return null;
+    if (!kyc_regime.is_answered) return null;
 
     const regime_code = kyc_regime.getSelectedCode();
     switch (regime_code) {
@@ -503,11 +503,11 @@ export class BilanCarboneUsecase {
   }
 
   private computeImpactConsommation(utilisateur: Utilisateur): NiveauImpact {
-    const kyc_type_conso = utilisateur.kyc_history.getQuestion(
+    const kyc_type_conso = utilisateur.kyc_history.getQuestionChoixUnique(
       KYCID.KYC_consommation_type_consommateur,
     );
     if (!kyc_type_conso) return null;
-    if (!kyc_type_conso.hasAnyResponses()) return null;
+    if (!kyc_type_conso.isAnswered()) return null;
 
     const code = kyc_type_conso.getSelectedCode();
     switch (code) {
@@ -546,25 +546,25 @@ export class BilanCarboneUsecase {
       KYCID.KYC_chauffage_bois,
     );
     if (!kyc_bois) return null;
-    if (!kyc_bois.hasAnyResponses()) return null;
+    if (!kyc_bois.is_answered) return null;
 
     const kyc_elec = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_elec,
     );
     if (!kyc_elec) return null;
-    if (!kyc_elec.hasAnyResponses()) return null;
+    if (!kyc_elec.is_answered) return null;
 
     const kyc_gaz = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_gaz,
     );
     if (!kyc_gaz) return null;
-    if (!kyc_gaz.hasAnyResponses()) return null;
+    if (!kyc_gaz.is_answered) return null;
 
     const kyc_fioul = utilisateur.kyc_history.getQuestion(
       KYCID.KYC_chauffage_fioul,
     );
     if (!kyc_fioul) return null;
-    if (!kyc_fioul.hasAnyResponses()) return null;
+    if (!kyc_fioul.is_answered) return null;
 
     const is_fioul = kyc_fioul.getSelectedCode() === 'oui';
     const is_gaz = kyc_gaz.getSelectedCode() === 'oui';

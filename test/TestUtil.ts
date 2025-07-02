@@ -534,11 +534,12 @@ export class TestUtil {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: KYCID._2,
           last_update: undefined,
-          is_skipped: false,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,

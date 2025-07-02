@@ -415,12 +415,13 @@ describe('Actions (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           ...KYC2,
           is_NGC: false,
           last_update: undefined,
-          is_skipped: false,
           reponse_complexe: [],
         },
       ],
@@ -468,11 +469,12 @@ describe('Actions (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           ...KYC2,
           is_NGC: false,
-          is_skipped: false,
           last_update: undefined,
           reponse_complexe: [],
         },

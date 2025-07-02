@@ -32,7 +32,6 @@ import { DB, TestUtil } from '../../TestUtil';
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
   last_update: undefined,
-  is_skipped: false,
   id_cms: 11,
   question: `question`,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -118,6 +117,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -389,11 +391,13 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           code: KYCID._2,
           last_update: undefined,
-          is_skipped: false,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
@@ -496,6 +500,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, {
@@ -559,6 +565,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -637,6 +646,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -729,6 +741,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
@@ -766,6 +781,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -818,6 +835,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -868,6 +887,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -924,6 +945,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -979,6 +1002,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -1041,6 +1066,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
 
       answered_questions: [],
     };
@@ -1124,6 +1151,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     const logement: Logement_v0 = {
       version: 0,
@@ -1185,6 +1214,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1293,6 +1324,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1364,6 +1398,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1402,6 +1438,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1442,6 +1480,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1480,6 +1520,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1516,6 +1558,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       version: 2,
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
       kyc: kyc as any,
@@ -1671,6 +1715,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1846,6 +1893,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
@@ -1888,6 +1938,9 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
@@ -1912,5 +1965,121 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       'appetence_thematique_transport',
       'appetence_thematique_consommation',
     ]);
+  });
+
+  it('POST /utilisateurs/id/questionsKYC_v2/1/skip - passe une question', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2/skip',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    const kyc_ = user.kyc_history.getQuestion('_2');
+
+    expect(kyc_.is_skipped).toStrictEqual(true);
+    expect(kyc_.is_answered).toStrictEqual(false);
+  });
+  it('POST /utilisateurs/id/questionsKYC_v2/1/skip - question dejà répondu ne se passe pas', async () => {
+    // GIVEN
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+      answered_questions: [
+        {
+          code: KYCID._2,
+          last_update: undefined,
+          id_cms: 2,
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              selected: true,
+            },
+            {
+              label: 'Mon logement',
+              code: Thematique.logement,
+              selected: true,
+              ngc_code: '123',
+            },
+          ],
+          tags: [],
+          short_question: 'short',
+          image_url: 'URL',
+          conditions: [],
+          unite: { abreviation: 'euro' },
+          emoji: '🎉',
+          ngc_key: '1223',
+          thematique: Thematique.climat,
+          reponse_simple: undefined,
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID._2,
+      type: TypeReponseQuestionKYC.choix_multiple,
+      reponses: [
+        { label: 'Le climat', code: Thematique.climat },
+        { label: 'Mon logement', code: Thematique.logement },
+        { label: 'Ce que je mange', code: Thematique.alimentation },
+      ],
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/_2/skip',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    const kyc_ = user.kyc_history.getQuestion('_2');
+
+    expect(kyc_.is_skipped).toStrictEqual(false);
+    expect(kyc_.is_answered).toStrictEqual(true);
   });
 });

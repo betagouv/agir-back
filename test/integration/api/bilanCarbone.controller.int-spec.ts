@@ -21,7 +21,6 @@ import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: 'KYC_saison_frequence',
-  is_skipped: false,
   id_cms: 21,
   question: `À quelle fréquence mangez-vous de saison ? `,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -440,6 +439,9 @@ describe('/bilan (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -450,7 +452,6 @@ describe('/bilan (API test)', () => {
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
           a_supprimer: false,
-          is_skipped: false,
           categorie: Categorie.mission,
           points: 10,
           reponse_complexe: [
@@ -492,7 +493,6 @@ describe('/bilan (API test)', () => {
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
           a_supprimer: false,
-          is_skipped: false,
           categorie: Categorie.mission,
           points: 10,
           reponse_complexe: [
@@ -1005,6 +1005,9 @@ describe('/bilan (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {

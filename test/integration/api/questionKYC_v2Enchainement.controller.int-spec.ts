@@ -28,7 +28,6 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
-  is_skipped: false,
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -400,6 +399,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -491,6 +493,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -604,6 +609,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -696,6 +704,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -800,6 +811,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -904,6 +918,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1007,6 +1024,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1149,6 +1169,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1257,6 +1280,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -1354,6 +1380,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {

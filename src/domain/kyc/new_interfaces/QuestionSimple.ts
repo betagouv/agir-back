@@ -15,7 +15,7 @@ export class QuestionSimple {
   }
 
   public isAnswered(): boolean {
-    return this.kyc.hasAnySimpleResponse();
+    return this.kyc.is_answered;
   }
 
   public setStringValue(value: string) {

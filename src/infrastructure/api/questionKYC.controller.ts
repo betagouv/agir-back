@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Put,
   Request,
   UseGuards,
@@ -17,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { QuestionKYCUsecase } from '../../../src/usecase/questionKYC.usecase';
 import { MosaicKYC_CATALOGUE } from '../../domain/kyc/mosaicKYC';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { QuestionKYCAPI_v2 } from './types/kyc/questionsKYCAPI_v2';
@@ -98,6 +100,23 @@ export class QuestionsKYCController extends GenericControler {
         questionId,
         body,
       );
+    }
+  }
+  @ApiOperation({
+    summary: `Déclare une question comme passée par l'utilisateur`,
+  })
+  @Post('utilisateurs/:utilisateurId/questionsKYC_v2/:questionId/skip')
+  @UseGuards(AuthGuard)
+  async skip(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('questionId') questionId: string,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
+      ApplicationError.throwCannotSkipMosaic();
+    } else {
+      await this.questionKYCUsecase.skip_KYC(utilisateurId, questionId);
     }
   }
 }

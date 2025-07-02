@@ -283,7 +283,6 @@ describe('Winter (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    console.log(response.body);
     expect(response.body).toEqual({
       consommation_totale_euros: 1234567,
       economies_possibles_euros: 3345,

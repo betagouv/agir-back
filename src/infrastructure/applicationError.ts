@@ -888,6 +888,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwCannotSkipMosaic() {
+    this.throwAppError(
+      '162',
+      `Il n'est pas possible de passer une question de type mosaic`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
