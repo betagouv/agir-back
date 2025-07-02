@@ -283,27 +283,84 @@ describe('Winter (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+    console.log(response.body);
     expect(response.body).toEqual({
       consommation_totale_euros: 1234567,
+      economies_possibles_euros: 3345,
+      economies_realisees_euros: 0,
       nombre_actions_associees: 0,
       detail_usages: [
         {
-          eur: 12,
-          percent: 5,
+          eur: 130,
+          percent: 15,
           type: 'airConditioning',
           couleur: '00809D',
           emoji: '❄️',
         },
         {
-          eur: 453,
-          percent: 95,
+          eur: 1000,
+          percent: 20,
           type: 'heating',
           couleur: 'F3A26D',
           emoji: '🔥',
         },
+        {
+          eur: 453,
+          percent: 10,
+          type: 'appliances',
+          couleur: 'FCECDD',
+          emoji: '📠',
+        },
+        {
+          eur: 200,
+          percent: 7,
+          type: 'cooking',
+          couleur: 'FF7601',
+          emoji: '🍕',
+        },
+        {
+          eur: 220,
+          percent: 8,
+          type: 'hotWater',
+          couleur: 'FCD8CD',
+          emoji: '💧',
+        },
+        {
+          eur: 120,
+          percent: 5,
+          type: 'lighting',
+          couleur: 'FEEBF6',
+          emoji: '💡',
+        },
+        {
+          eur: 70,
+          percent: 5,
+          type: 'mobility',
+          couleur: 'EBD6FB',
+          emoji: '⚡️🚙',
+        },
+        {
+          eur: 42,
+          percent: 10,
+          type: 'multimedia',
+          couleur: '748873',
+          emoji: '🎮',
+        },
+        {
+          eur: 987,
+          percent: 15,
+          type: 'other',
+          couleur: 'D1A980',
+          emoji: '❓',
+        },
+        {
+          eur: 123,
+          percent: 5,
+          type: 'swimmingPool',
+          couleur: 'E5E0D8',
+          emoji: '🏊',
+        },
       ],
-      economies_possibles_euros: 465,
-      economies_realisees_euros: 0,
     });
   });
 
