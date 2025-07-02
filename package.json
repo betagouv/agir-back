@@ -44,7 +44,7 @@
     "execute": "node dist/src/console.js"
   },
   "dependencies": {
-    "@betagouv/aides-velo": "^2.0.1",
+    "@betagouv/aides-velo": "^2.2.0",
     "@betagouv/publicodes-voiture": "^0.3.8",
     "@etalab/decoupage-administratif": "^5.2.0",
     "@getbrevo/brevo": "^1.0.1",
