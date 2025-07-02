@@ -123,8 +123,16 @@ export class WinterRepository {
       return {
         yearlyElectricityTotalConsumption: [{ unit: 'eur', value: 1234567 }],
         usageBreakdown: {
-          airConditioning: { eur: 12, percent: 5, kWh: 123 },
-          heating: { eur: 453, percent: 95, kWh: 1200 },
+          airConditioning: { eur: 130, percent: 15, kWh: 10 },
+          heating: { eur: 1000, percent: 20, kWh: 20 },
+          appliances: { eur: 453, percent: 10, kWh: 30 },
+          cooking: { eur: 200, percent: 7, kWh: 40 },
+          hotWater: { eur: 220, percent: 8, kWh: 1200 },
+          lighting: { eur: 120, percent: 5, kWh: 1200 },
+          mobility: { eur: 70, percent: 5, kWh: 1200 },
+          multimedia: { eur: 42, percent: 10, kWh: 1200 },
+          other: { eur: 987, percent: 15, kWh: 1200 },
+          swimmingPool: { eur: 123, percent: 5, kWh: 1200 },
           isStatistical: false,
         },
         computingFinished: true,
