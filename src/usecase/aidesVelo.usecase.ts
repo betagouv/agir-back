@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { AidesVeloRepository } from '../infrastructure/repository/aidesVelo.repository';
+import {
+  AidesVeloRepository,
+  SummaryVelosParams,
+} from '../infrastructure/repository/aidesVelo.repository';
 
 import {
   Commune,
@@ -34,40 +37,39 @@ export class AidesVeloUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const RFR =
+    const revenu_reference =
       utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;
-    const PARTS = utilisateur.getNombrePartsFiscalesOuEstimee();
-    // NOTE: l'aide pays de la loire a été désactivée.
-    // const ABONNEMENT =
-    //   utilisateur.abonnement_ter_loire === null
-    //     ? false
-    //     : utilisateur.abonnement_ter_loire;
+    const nb_parts_fiscales = utilisateur.getNombrePartsFiscalesOuEstimee();
+    const code_insee =
+      utilisateur.logement.code_commune ??
+      this.communeRepository.getCommuneCodeInsee(
+        utilisateur.logement.code_postal,
+        utilisateur.logement.commune,
+      );
 
-    const code_insee = this.communeRepository.getCommuneCodeInsee(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
     const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
     const age = utilisateur.annee_naissance
       ? new Date().getFullYear() - utilisateur.annee_naissance
       : undefined;
 
-    return this.aidesVeloRepository.getSummaryVelos({
+    const inputs: SummaryVelosParams = {
       'localisation . code insee': code_insee,
       'localisation . epci': epci?.nom,
       'localisation . région': commune?.region,
       'localisation . département': commune?.departement,
       'vélo . prix': prix_velo,
-      // NOTE: l'aide pays de la loire a été désactivée.
-      // 'aides . pays de la loire . abonné TER': ABONNEMENT,
       'foyer . personnes': utilisateur.getNombrePersonnesDansLogement(),
-      'revenu fiscal de référence par part . revenu de référence': RFR,
-      'revenu fiscal de référence par part . nombre de parts': PARTS,
+      'revenu fiscal de référence par part . revenu de référence':
+        revenu_reference,
+      'revenu fiscal de référence par part . nombre de parts':
+        nb_parts_fiscales,
       'vélo . état': etat_velo,
       'demandeur . en situation de handicap': situation_handicap,
       'demandeur . âge': age,
-    });
+    };
+
+    return this.aidesVeloRepository.getSummaryVelos(inputs);
   }
 
   /**
