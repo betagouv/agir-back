@@ -1299,6 +1299,187 @@ describe('Admin (API test)', () => {
       const user4 = await utilisateurRepository.getById('user-4', [Scope.ALL]);
       expect(user4.kyc_history.getAnsweredKYCs()).toHaveLength(0);
     });
+
+    it("migration V23 OK - remplace 'hybride' en 'hybride_non_rechargeable'", async () => {
+      // GIVEN
+      TestUtil.token = process.env.CRON_API_KEY;
+      App.USER_CURRENT_VERSION = 23;
+
+      const reponses = [
+        {
+          label: 'Thermique',
+          code: 'thermique',
+          ngc_code: 'thermique',
+        },
+        {
+          label: 'Hybride rechargeable',
+          code: 'hybride_rechargeable',
+          ngc_code: 'hybride rechargeable',
+        },
+        {
+          label: 'Hybride non rechargeable',
+          code: 'hybride_non_rechargeable',
+          ngc_code: 'hybride non rechargeable',
+        },
+        // outdated
+        {
+          label: 'Hybride',
+          code: 'hybride',
+          ngc_code: 'hybride',
+        },
+        {
+          label: 'Électrique',
+          code: 'electrique',
+          ngc_code: 'électrique',
+        },
+      ];
+
+      const kyc_voiture_motorisation = TestUtil.kycData({
+        code: KYCID.KYC_transport_voiture_motorisation,
+        id_cms: 1,
+        question: `Quelle est la motorisation de votre voiture ?`,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_ngc: true,
+        ngc_key: 'transport . voiture . motorisation',
+        categorie: Categorie.test,
+        image_url: null,
+        emoji: null,
+        reponses,
+      });
+
+      const answerVoitureMotorisation = (
+        code: 'thermique' | 'hybride' | 'electrique' = 'thermique',
+      ): QuestionKYC_v2 => ({
+        ...KYC_DATA,
+        code: KYCID.KYC_transport_voiture_motorisation,
+        id_cms: 1,
+        question: `Quelle est la motorisation de votre voiture ?`,
+        type: TypeReponseQuestionKYC.choix_unique,
+        is_NGC: true,
+        ngc_key: 'transport . voiture . motorisation',
+        image_url: null,
+        reponse_complexe: reponses.map((r: any) => ({
+          label: r.label,
+          code: r.code,
+          selected: r.code === code,
+        })),
+      });
+
+      await TestUtil.create(DB.kYC, kyc_voiture_motorisation as any);
+
+      await TestUtil.create(DB.utilisateur, {
+        version: 22,
+        id: 'user-1',
+        email: 'user-1@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerVoitureMotorisation()],
+        } as any,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        version: 22,
+        id: 'user-2',
+        email: 'user-2@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerVoitureMotorisation('hybride')],
+        } as any,
+      });
+      await TestUtil.create(DB.utilisateur, {
+        version: 22,
+        id: 'user-3',
+        email: 'user-3@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [answerVoitureMotorisation('electrique')],
+        } as any,
+      });
+      await kycRepository.loadCache();
+      await TestUtil.create(DB.utilisateur, {
+        version: 22,
+        id: 'user-4',
+        email: 'user-4@mail',
+        migration_enabled: true,
+        kyc: {
+          version: 2,
+          answered_questions: [],
+        } as any,
+      });
+      await kycRepository.loadCache();
+
+      // WHEN
+      const response = await TestUtil.POST('/admin/migrate_users');
+
+      // THEN
+      expect(response.status).toBe(201);
+      response.body.sort((a, b) => a.user_id.localeCompare(b.user_id));
+      expect(response.body).toEqual([
+        {
+          user_id: 'user-1',
+          migrations: [
+            {
+              info: 'Correctly migrate answers for the KYC: KYC_transport_voiture_motorisation',
+              ok: true,
+              version: 23,
+            },
+          ],
+        },
+        {
+          user_id: 'user-2',
+          migrations: [
+            {
+              info: 'Correctly migrate answers for the KYC: KYC_transport_voiture_motorisation',
+              ok: true,
+              version: 23,
+            },
+          ],
+        },
+        {
+          user_id: 'user-3',
+          migrations: [
+            {
+              info: 'Correctly migrate answers for the KYC: KYC_transport_voiture_motorisation',
+              ok: true,
+              version: 23,
+            },
+          ],
+        },
+        {
+          user_id: 'user-4',
+          migrations: [
+            {
+              info: 'Correctly migrate answers for the KYC: KYC_transport_voiture_motorisation',
+              ok: true,
+              version: 23,
+            },
+          ],
+        },
+      ]);
+
+      const user1 = await utilisateurRepository.getById('user-1', [Scope.ALL]);
+      const kyc = user1.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc.code).toEqual(KYCID.KYC_transport_voiture_motorisation);
+      expect(kyc.getSelectedCode()).toEqual('thermique');
+      expect(user1.version).toEqual(23);
+
+      const user2 = await utilisateurRepository.getById('user-2', [Scope.ALL]);
+      const kyc2 = user2.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc2.code).toEqual(KYCID.KYC_transport_voiture_motorisation);
+      expect(kyc2.getSelectedCode()).toEqual('hybride_non_rechargeable');
+      expect(user2.version).toEqual(23);
+
+      const user3 = await utilisateurRepository.getById('user-3', [Scope.ALL]);
+      const kyc3 = user3.kyc_history.getAnsweredKYCs()[0];
+      expect(kyc3.code).toEqual(KYCID.KYC_transport_voiture_motorisation);
+      expect(kyc3.getSelectedCode()).toEqual('electrique');
+      expect(user3.version).toEqual(23);
+
+      const user4 = await utilisateurRepository.getById('user-4', [Scope.ALL]);
+      expect(user4.kyc_history.getAnsweredKYCs()).toHaveLength(0);
+    });
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
