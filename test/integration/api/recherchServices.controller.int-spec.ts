@@ -868,7 +868,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.resultats).toHaveLength(324);
+    expect(response.body.resultats).toHaveLength(275);
     expect(response.body.encore_plus_resultats_dispo).toEqual(false);
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search flag encore_plus_resultats_dispo volaile`, async () => {
