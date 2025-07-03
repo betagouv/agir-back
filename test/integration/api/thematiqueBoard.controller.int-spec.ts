@@ -273,19 +273,19 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      nom_commune: 'Dijon',
-      total_national_actions_faites: 13,
-      total_utilisateur_actions_faites: 1,
-      pourcentage_bilan_done: 0,
-      pourcentage_alimentation_reco_done: 0,
-      pourcentage_transport_reco_done: 0,
-      pourcentage_consommation_reco_done: 0,
-      pourcentage_logement_reco_done: 0,
-      pourcentage_global_reco_done: 0,
-      bilan_carbone_total_kg: 8602.08230607434,
+      bilan_carbone_total_kg: 8719.070172621903,
+      est_utilisateur_ngc: false,
       nombre_aides: 2,
       nombre_recettes: 1150,
-      est_utilisateur_ngc: false,
+      nom_commune: 'Dijon',
+      pourcentage_alimentation_reco_done: 0,
+      pourcentage_bilan_done: 0,
+      pourcentage_consommation_reco_done: 0,
+      pourcentage_global_reco_done: 0,
+      pourcentage_logement_reco_done: 0,
+      pourcentage_transport_reco_done: 0,
+      total_national_actions_faites: 13,
+      total_utilisateur_actions_faites: 1,
     });
   });
 
@@ -512,19 +512,19 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
+      bilan_carbone_total_kg: 8684.36294409093,
+      est_utilisateur_ngc: false,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
       nom_commune: 'Dijon',
-      pourcentage_bilan_done: 17,
-      bilan_carbone_total_kg: 8567.375077543367,
-      total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
+      pourcentage_bilan_done: 17,
       pourcentage_consommation_reco_done: 0,
       pourcentage_global_reco_done: 40,
       pourcentage_logement_reco_done: 0,
       pourcentage_transport_reco_done: 0,
+      total_national_actions_faites: 0,
       total_utilisateur_actions_faites: 0,
-      nombre_aides: 0,
-      nombre_recettes: 1150,
-      est_utilisateur_ngc: false,
     });
   });
 });

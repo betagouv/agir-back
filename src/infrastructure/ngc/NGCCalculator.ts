@@ -127,9 +127,9 @@ export type ValeursServicesSocietaux = {
 export class NGCCalculator {
   private engine: Engine;
 
-  public static DEFAULT_TOTAL_KG = 8602.08230607434;
+  public static DEFAULT_TOTAL_KG = 8719.070172621903;
   public static DEFAULT_ALIMENTATION_KG = 2043.6891821;
-  public static DEFAULT_TRANSPORT_KG = 1958.482412224074;
+  public static DEFAULT_TRANSPORT_KG = 2075.470278771637;
   public static DEFAULT_CONSOMMATION_KG = 989.0602932841089;
   public static DEFAULT_LOGEMENT_KG = 2159.945192079794;
 
