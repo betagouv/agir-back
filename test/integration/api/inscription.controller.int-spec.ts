@@ -610,6 +610,77 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
 
     expect(user.logement.superficie).toEqual(Superficie.superficie_150);
   });
+
+  it(`POST /utilisateurs_v2 - integration situation NGC => prise en compte de l'hybride`, async () => {
+    // GIVEN
+    process.env.NGC_API_KEY = '12345';
+
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_voiture_motorisation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      is_ngc: true,
+      question: `transport . voiture . motorisation`,
+      points: 10,
+      categorie: Categorie.test,
+      reponses: [
+        {
+          label: 'Électrique',
+          code: 'electrique',
+          ngc_code: 'électrique',
+        },
+        {
+          label: 'Thermique',
+          code: 'thermique',
+          ngc_code: 'thermique',
+        },
+        {
+          label: 'Hybride rechargeable',
+          code: 'hybride_rechargeable',
+          ngc_code: 'hybride rechargeable',
+        },
+        {
+          label: 'Hybride non rechargeable',
+          code: 'hybride_non_rechargeable',
+          ngc_code: 'hybride non rechargeable',
+        },
+      ],
+      ngc_key: 'transport . voiture . motorisation',
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response_post_situation = await TestUtil.getServer()
+      .post('/bilan/importFromNGC')
+      .set('apikey', `12345`)
+      .send({
+        situation: {
+          'transport . voiture . motorisation': 'hybride',
+        },
+      });
+
+    let situtation_id = TestUtil.getSitutationIdFromRedirectURL(
+      response_post_situation.body.redirect_url,
+    );
+
+    const response = await TestUtil.getServer().post('/utilisateurs_v2').send({
+      mot_de_passe: '#1234567890HAHAa',
+      email: 'w@w.com',
+      source_inscription: 'mobile',
+      situation_ngc_id: situtation_id,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user = await utilisateurRepository.findByEmail('w@w.com', 'full');
+    user.kyc_history.getQuestion(KYCID.KYC_transport_voiture_motorisation);
+    expect(
+      user.kyc_history
+        .getQuestion(KYCID.KYC_transport_voiture_motorisation)
+        .getSelectedCode(),
+    ).toEqual('hybride_non_rechargeable');
+  });
+
   it(`POST /utilisateurs_v2 - test situtation "complete"`, async () => {
     // GIVEN
     process.env.NGC_API_KEY = '12345';
