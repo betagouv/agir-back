@@ -19,6 +19,8 @@ import {
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
+import { WinterUsecase } from './winter.usecase';
 
 const FIELD_MAX_LENGTH = 280;
 
@@ -28,6 +30,8 @@ export class QuestionKYCUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
+    private winterUsecase: WinterUsecase,
+    private winterRepository: WinterRepository,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -100,7 +104,6 @@ export class QuestionKYCUsecase {
       [
         Scope.kyc,
         Scope.gamification,
-        Scope.gamification,
         Scope.logement,
         Scope.thematique_history,
         Scope.recommandation,
@@ -116,6 +119,46 @@ export class QuestionKYCUsecase {
       utilisateur.logement,
       this.communeRepository,
     ).refreshTagState();
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.updateWinterDataAndRecommandations(utilisateur, [code_question]);
+  }
+
+  async skip_KYC(utilisateurId: string, code_question: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const question_to_update =
+      utilisateur.kyc_history.getQuestion(code_question);
+
+    if (!question_to_update) {
+      ApplicationError.throwQuestionInconnue(code_question);
+    }
+
+    utilisateur.kyc_history.skipQuestion(question_to_update);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
+  }
+
+  async skip_MOSAIC(utilisateurId: string, mosaicId: string): Promise<void> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.kyc],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(
+      KYCMosaicID[mosaicId],
+    );
+    if (!mosaic_def) {
+      ApplicationError.throwUnknownMosaicId(mosaicId);
+    }
+
+    utilisateur.kyc_history.skipMosaic(mosaic_def.id);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -187,17 +230,21 @@ export class QuestionKYCUsecase {
       }
     }
 
+    const target_kycs: string[] = [];
+
     if (mosaic.type === TypeMosaic.mosaic_boolean) {
       for (const code_selected of reponses_code_selected) {
         const kyc = utilisateur.kyc_history.getQuestion(code_selected.code);
         if (kyc) {
           if (kyc.type === TypeReponseQuestionKYC.entier) {
+            target_kycs.push(kyc.code);
             this.updateQuestionOfCode_v2(
               code_selected.code,
               [{ value: code_selected.selected ? '1' : '0' }],
               utilisateur,
             );
           } else if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+            target_kycs.push(kyc.code);
             this.updateQuestionOfCode_v2(
               code_selected.code,
               [
@@ -227,6 +274,8 @@ export class QuestionKYCUsecase {
     ).refreshTagState();
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
+
+    this.updateWinterDataAndRecommandations(utilisateur, target_kycs);
   }
 
   private updateQuestionOfCode_v2(
@@ -374,5 +423,23 @@ export class QuestionKYCUsecase {
       }
       kyc.setCodeState(code_ref, answered_element.selected);
     }
+  }
+
+  private async updateWinterDataAndRecommandations(
+    utilisateur: Utilisateur,
+    kyc_codes: string[],
+  ) {
+    if (!this.winterRepository.isAnyKycMapped(kyc_codes)) {
+      return;
+    }
+
+    await this.winterUsecase.external_synchroniser_data_logement(utilisateur);
+
+    await this.winterUsecase.external_update_winter_recommandation(utilisateur);
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
   }
 }

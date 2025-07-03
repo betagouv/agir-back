@@ -298,6 +298,8 @@ export class CommuneRepository {
     return null;
   }
 
+  // FIXME: the [utilisateur.logement.commune] doesn't correspond anymore to the
+  // "commune" field in `_codes_postaux`.
   getCommuneCodeInsee(code_postal: string, nom_commune: string): string | null {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (!liste) {

@@ -534,6 +534,8 @@ export class TestUtil {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: KYCID._2,

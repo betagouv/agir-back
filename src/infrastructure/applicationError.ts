@@ -874,6 +874,27 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwErrorAlreadyInscriptionDONE() {
+    this.throwAppError(
+      '160',
+      `L'inscription est déjà réalisée pour cette adresse ou ce PRM`,
+    );
+  }
+
+  static throwMissingPRMSouscription() {
+    this.throwAppError(
+      '161',
+      `Pas de décomposition disponible car pas de soucription Winter (par adresse ou PRM)`,
+    );
+  }
+
+  static throwCannotSkipMosaic() {
+    this.throwAppError(
+      '162',
+      `Il n'est pas possible de passer une question de type mosaic`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

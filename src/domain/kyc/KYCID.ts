@@ -129,6 +129,7 @@ export enum KYCID {
   KYC_transport_voiture_gabarit = 'KYC_transport_voiture_gabarit',
   /** Quel type de voiture utilisez vous ? */
   KYC_transport_voiture_motorisation = 'KYC_transport_voiture_motorisation',
+  KYC_transport_vae_possede = 'KYC_transport_vae_possede',
   /** Quel type de carburant votre voiture consomme-t-elle ? */
   KYC_transport_voiture_thermique_carburant = 'KYC_transport_voiture_thermique_carburant',
   KYC_transport_voiture_nbr_voyageurs = 'KYC_transport_voiture_nbr_voyageurs',
@@ -150,4 +151,8 @@ export enum KYCID {
   KYC_transport_voiture_couts_stationnement = 'KYC_transport_voiture_couts_stationnement',
   KYC_transport_voiture_couts_peage = 'KYC_transport_voiture_couts_peage',
   KYC_possede_voiture_oui_non = 'KYC_possede_voiture_oui_non',
+  KYC_electro_refrigerateur = 'KYC_electro_refrigerateur',
+  KYC_electro_petit_refrigerateur = 'KYC_electro_petit_refrigerateur',
+  KYC_electro_congelateur = 'KYC_electro_congelateur',
+  KYC_loisir_piscine_type = 'KYC_loisir_piscine_type',
 }

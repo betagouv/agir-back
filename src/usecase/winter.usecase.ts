@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { TypeCodeAction } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
+import {
+  ConsommationElectrique,
+  TypeUsage,
+} from '../domain/linky/consommationElectrique';
 import { LinkyConsent } from '../domain/linky/linkyConsent';
+import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
-import { ThematiqueUsecase } from './thematique.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -18,13 +22,38 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`;
 
 const CURRENT_VERSION = 'v1';
 
+const USAGE_EMOJI: Record<TypeUsage, string> = {
+  airConditioning: '❄️',
+  appliances: '📠',
+  cooking: '🍕',
+  heating: '🔥',
+  hotWater: '💧',
+  lighting: '💡',
+  mobility: '🚙',
+  multimedia: '🎮',
+  other: '❓',
+  swimmingPool: '🏊',
+};
+
+const USAGE_COLORS: Record<TypeUsage, string> = {
+  airConditioning: '00809D',
+  appliances: 'FCECDD',
+  cooking: 'FF7601',
+  heating: 'F3A26D',
+  hotWater: 'FCD8CD',
+  lighting: 'FEEBF6',
+  mobility: 'EBD6FB',
+  multimedia: '748873',
+  other: 'D1A980',
+  swimmingPool: 'E5E0D8',
+};
+
 @Injectable()
 export class WinterUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
     private linkyConsentRepository: LinkyConsentRepository,
-    private thematiqueUsecase: ThematiqueUsecase,
   ) {}
 
   public async inscrireAdresse(
@@ -108,16 +137,106 @@ export class WinterUsecase {
 
   public async refreshListeActions(
     utilisateurId: string,
-  ): Promise<TypeCodeAction[]> {
+  ): Promise<RecommandationWinter[]> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.thematique_history],
+      [Scope.thematique_history, Scope.logement],
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.thematiqueUsecase.external_update_winter_recommandation(
+    const result = await this.external_update_winter_recommandation(
       utilisateur,
     );
+
+    await this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.thematique_history],
+    );
+
+    return result;
+  }
+
+  public async getUsage(
+    utilisateurId: string,
+  ): Promise<ConsommationElectrique> {
+    const utilisateur = await this.utilisateurRepository.getById(
+      utilisateurId,
+      [Scope.core, Scope.logement, Scope.thematique_history],
+    );
+    Utilisateur.checkState(utilisateur);
+
+    if (!utilisateur.logement.prm) {
+      ApplicationError.throwMissingPRMSouscription();
+    }
+
+    const usage = await this.winterRepository.getUsage(utilisateurId);
+
+    const result = new ConsommationElectrique({
+      computingFinished: usage.computingFinished,
+      consommation_totale_euros:
+        usage.yearlyElectricityTotalConsumption[0].value,
+      monthsOfDataAvailable: usage.monthsOfDataAvailable,
+      detail_usages: [],
+      nombre_actions_associees:
+        utilisateur.thematique_history.getNombreActionsWinter(),
+      economies_realisees_euros:
+        utilisateur.thematique_history.calculeEconomiesWinterRealisées(),
+    });
+
+    for (const [key, value] of Object.entries(usage.usageBreakdown)) {
+      const type = TypeUsage[key];
+      if (type) {
+        const typed_value = value as {
+          kWh: number;
+          eur: number;
+          percent: number;
+        };
+        result.detail_usages.push({
+          type: type,
+          eur: typed_value.eur,
+          kWh: typed_value.kWh,
+          percent: typed_value.percent,
+          couleur: this.getTypeUsageCouleur(type),
+          emoji: this.getTypeUsageEmoji(type),
+        });
+      }
+    }
+
+    return result;
+  }
+
+  public async external_update_winter_recommandation(
+    utilisateur: Utilisateur,
+  ): Promise<RecommandationWinter[]> {
+    if (!utilisateur.logement?.prm) {
+      return [];
+    }
+
+    const new_reco_set: RecommandationWinter[] = [];
+
+    const liste = await this.winterRepository.listerActionsWinter(
+      utilisateur.id,
+    );
+
+    for (const winter_action of liste) {
+      new_reco_set.push({
+        action: {
+          code: winter_action.slug,
+          type: TypeAction.classique,
+        },
+        montant_economies_euro: winter_action.economy,
+      });
+    }
+
+    utilisateur.thematique_history.setWinterRecommandations(new_reco_set);
+
+    return new_reco_set;
+  }
+
+  public async external_synchroniser_data_logement(
+    utilisateur: Utilisateur,
+  ): Promise<void> {
+    await this.winterRepository.putHousingData(utilisateur);
   }
 
   private async connect_prm(
@@ -174,5 +293,12 @@ export class WinterUsecase {
       ip_address: ip,
       user_agent: user_agent,
     };
+  }
+
+  private getTypeUsageEmoji(type: TypeUsage): string {
+    return USAGE_EMOJI[type];
+  }
+  private getTypeUsageCouleur(type: TypeUsage): string {
+    return USAGE_COLORS[type];
   }
 }

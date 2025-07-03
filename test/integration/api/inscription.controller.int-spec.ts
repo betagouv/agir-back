@@ -107,7 +107,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       where: { email: 'w@w.com' },
     });
     expect(response.status).toBe(201);
-    expect(user.version).toEqual(22);
+    expect(user.version).toEqual(23);
   });
 
   it('POST /utilisateurs_v2 - bad password', async () => {
@@ -491,7 +491,7 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
 
     const kyc_bois = user.kyc_history.getQuestion(KYCID.KYC_chauffage_bois);
     expect(kyc_bois).not.toBeUndefined();
-    expect(kyc_bois.hasAnyResponses()).toEqual(true);
+    expect(kyc_bois.is_answered).toEqual(true);
     expect(kyc_bois.getSelectedCode()).toEqual('oui');
   });
 

@@ -28,6 +28,41 @@ describe('KYC vN ', () => {
     // GIVEN
     const domain_start = new KYCHistory({
       version: 2,
+      skipped_mosaics: [KYCMosaicID.MOSAIC_APPAREIL_NUM],
+      skipped_questions: [
+        {
+          code: KYCID.KYC001,
+          id_cms: 1,
+          last_update: new Date(123),
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_simple: {
+            unite: { abreviation: 'kg' },
+            value: 'fafa',
+          },
+          reponse_complexe: [
+            {
+              code: 'code',
+              ngc_code: 'ngc_code',
+              label: 'label',
+              value: '123',
+              selected: true,
+            },
+          ],
+          tags: [Tag.consommation],
+          short_question: 'short',
+          image_url: 'AAA',
+          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
+          unite: { abreviation: 'euro' },
+          emoji: '🔥',
+          ngc_key: '87654',
+          thematique: Thematique.consommation,
+        },
+      ],
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -77,11 +112,47 @@ describe('KYC vN ', () => {
     const domain_start = new KYCHistory({
       version: 2,
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
+      skipped_mosaics: [KYCMosaicID.MOSAIC_APPAREIL_NUM],
+      skipped_questions: [
+        {
+          code: KYCID.KYC001,
+          id_cms: 1,
+          last_update: new Date(123),
+          question: `Quel est votre sujet principal d'intéret ?`,
+          type: TypeReponseQuestionKYC.choix_multiple,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.test,
+          points: 10,
+          reponse_simple: {
+            unite: { abreviation: 'kg' },
+            value: 'fafa',
+          },
+          reponse_complexe: [
+            {
+              code: 'code',
+              ngc_code: 'ngc_code',
+              label: 'label',
+              value: '123',
+              selected: true,
+            },
+          ],
+          tags: [Tag.consommation],
+          short_question: 'short',
+          image_url: 'AAA',
+          conditions: [[{ id_kyc: 1, code_reponse: 'oui' }]],
+          unite: { abreviation: 'euro' },
+          emoji: '🔥',
+          ngc_key: '87654',
+          thematique: Thematique.consommation,
+        },
+      ],
       answered_questions: [
         {
           code: KYCID.KYC001,
           id_cms: 1,
           last_update: new Date(123),
+
           question: `Quel est votre sujet principal d'intéret ?`,
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
@@ -672,6 +743,8 @@ describe('KYC vN ', () => {
     expect(upgraded).toStrictEqual({
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: 'KYC_logement_age',
@@ -756,6 +829,8 @@ describe('KYC vN ', () => {
     expect(upgraded).toStrictEqual({
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: 'KYC_bilan',
@@ -869,6 +944,8 @@ describe('KYC vN ', () => {
     expect(upgraded).toStrictEqual({
       version: 2,
       answered_mosaics: [KYCMosaicID.MOSAIC_APPAREIL_NUM],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: 'KYC_preference',

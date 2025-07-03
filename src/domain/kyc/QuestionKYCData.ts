@@ -85,7 +85,8 @@ export class QuestionKYCData implements TaggedContent {
   points: number;
   is_NGC: boolean;
   a_supprimer: boolean;
-  is_answered?: boolean;
+  is_answered: boolean;
+  is_skipped: boolean;
   tags: Tag[];
   score: number;
   pourcent_match: number;
@@ -118,6 +119,8 @@ export class QuestionKYCData implements TaggedContent {
     this.conditions = data.conditions ? data.conditions : [];
     this.a_supprimer = !!data.a_supprimer;
     this.last_update = data.last_update;
+    this.is_answered = false;
+    this.is_skipped = false;
 
     this.reponse_simple = data.reponse_simple;
     this.reponse_complexe = data.reponse_complexe
@@ -160,14 +163,14 @@ export class QuestionKYCData implements TaggedContent {
     this.last_update = new Date();
   }
 
-  public hasAnySimpleResponse(): boolean {
+  protected hasAnySimpleResponse(): boolean {
     if (this.reponse_simple && this.reponse_simple.value) {
       return true;
     }
     return false;
   }
 
-  public hasAnyComplexeResponse(): boolean {
+  protected hasAnyComplexeResponse(): boolean {
     if (this.reponse_complexe) {
       for (const reponse of this.reponse_complexe) {
         if (!!reponse.value) return true;
@@ -227,6 +230,7 @@ export class QuestionKYCData implements TaggedContent {
       last_update: undefined,
     });
     result.is_answered = false;
+    result.is_skipped = false;
 
     if (
       def.type === TypeReponseQuestionKYC.choix_unique ||
@@ -348,7 +352,7 @@ export class QuestionKYCData implements TaggedContent {
         }
       }
       if (kyc.type === TypeReponseQuestionKYC.entier) {
-        if (kyc.hasAnySimpleResponse()) {
+        if (kyc.is_answered) {
           value = kyc.getReponseSimpleValue() === '1' ? 'oui' : 'non';
           selected = kyc.getReponseSimpleValue() === '1';
         } else {

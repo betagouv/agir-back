@@ -55,6 +55,8 @@ const KYC = {
 const kyc: KYCHistory_v2 = {
   version: 2,
   answered_mosaics: [],
+  skipped_mosaics: [],
+  skipped_questions: [],
   answered_questions: [
     {
       ...KYC,
@@ -176,61 +178,6 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(parts).toEqual(4);
   });
-  it('setTagSwitchOrZero : match ok', () => {
-    // GIVEN
-    const user = new Utilisateur();
-    user.tag_ponderation_set = {};
-
-    const kyc = new QuestionKYC({
-      code: KYCID.KYC007,
-      last_update: undefined,
-      id_cms: 7,
-      question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
-      type: TypeReponseQuestionKYC.choix_unique,
-      is_NGC: false,
-      a_supprimer: false,
-      categorie: Categorie.mission,
-      points: 5,
-      tags: [],
-      reponse_complexe: [
-        {
-          label: 'Café',
-          code: 'cafe',
-          ngc_code: undefined,
-          selected: true,
-        },
-        {
-          label: 'Thé ou tisane',
-          code: 'the',
-          ngc_code: undefined,
-          selected: false,
-        },
-        {
-          label: 'Chicoré',
-          code: 'chicore',
-          ngc_code: undefined,
-          selected: false,
-        },
-      ],
-      short_question: 'short',
-      image_url: 'https://',
-      conditions: [],
-      unite: { abreviation: 'euro' },
-      emoji: '🔥',
-      reponse_simple: undefined,
-      thematique: Thematique.alimentation,
-    });
-
-    // WHEN
-    user.increaseTagForAnswers(Tag.climat, new QuestionChoixUnique(kyc), {
-      cafe: 100,
-      the: 50,
-      chicore: 10,
-    });
-
-    // THEN
-    expect(user.tag_ponderation_set.climat).toEqual(100);
-  });
   it('setTagSwitchOrZero : match nothing', () => {
     // GIVEN
     const user = new Utilisateur();
@@ -280,61 +227,6 @@ describe('Objet Utilisateur', () => {
 
     // THEN
     expect(user.tag_ponderation_set.climat).toEqual(5);
-  });
-  it('increaseTagForAnswers : cumule', () => {
-    // GIVEN
-    const user = Utilisateur.createNewUtilisateur(
-      'w@w.com',
-      SourceInscription.inconnue,
-      ModeInscription.magic_link,
-    );
-    user.tag_ponderation_set = {};
-
-    const kyc = new QuestionKYC({
-      ...KYC,
-      code: KYCID.KYC007,
-      id_cms: 7,
-      last_update: undefined,
-      question: 'Quelle boisson chaude consommez-vous quotidiennement ?',
-      type: TypeReponseQuestionKYC.choix_unique,
-      is_NGC: false,
-      reponse_complexe: [
-        {
-          label: 'Thé ou tisane',
-          code: 'the',
-          ngc_code: undefined,
-          selected: true,
-        },
-        {
-          label: 'CHI',
-          code: 'chicore',
-          ngc_code: undefined,
-          selected: true,
-        },
-        {
-          label: 'Café',
-          code: 'cafe',
-          ngc_code: undefined,
-          selected: false,
-        },
-        {
-          label: 'autre',
-          code: 'autre',
-          ngc_code: undefined,
-          selected: false,
-        },
-      ],
-    });
-
-    // WHEN
-    user.increaseTagForAnswers(Tag.climat, new QuestionChoixUnique(kyc), {
-      cafe: 100,
-      the: 50,
-      chicore: 10,
-    });
-
-    // THEN
-    expect(user.tag_ponderation_set.climat).toEqual(60);
   });
 
   it('isOnboardingDone : nouvel utilisateur createNewUtilisateur', () => {

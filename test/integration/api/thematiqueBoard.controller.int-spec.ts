@@ -273,19 +273,19 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      nom_commune: 'Dijon',
-      total_national_actions_faites: 13,
-      total_utilisateur_actions_faites: 1,
-      pourcentage_bilan_done: 0,
-      pourcentage_alimentation_reco_done: 0,
-      pourcentage_transport_reco_done: 0,
-      pourcentage_consommation_reco_done: 0,
-      pourcentage_logement_reco_done: 0,
-      pourcentage_global_reco_done: 0,
-      bilan_carbone_total_kg: 8602.08230607434,
+      bilan_carbone_total_kg: 8719.070172621903,
+      est_utilisateur_ngc: false,
       nombre_aides: 2,
       nombre_recettes: 1150,
-      est_utilisateur_ngc: false,
+      nom_commune: 'Dijon',
+      pourcentage_alimentation_reco_done: 0,
+      pourcentage_bilan_done: 0,
+      pourcentage_consommation_reco_done: 0,
+      pourcentage_global_reco_done: 0,
+      pourcentage_logement_reco_done: 0,
+      pourcentage_transport_reco_done: 0,
+      total_national_actions_faites: 13,
+      total_utilisateur_actions_faites: 1,
     });
   });
 
@@ -356,6 +356,8 @@ describe('Thematique Board (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: 'KYC_saison_frequence',
@@ -510,9 +512,154 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
+      bilan_carbone_total_kg: 8684.36294409093,
+      est_utilisateur_ngc: false,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
+      nom_commune: 'Dijon',
+      pourcentage_alimentation_reco_done: 67,
+      pourcentage_bilan_done: 17,
+      pourcentage_consommation_reco_done: 0,
+      pourcentage_global_reco_done: 40,
+      pourcentage_logement_reco_done: 0,
+      pourcentage_transport_reco_done: 0,
+      total_national_actions_faites: 0,
+      total_utilisateur_actions_faites: 0,
+    });
+  });
+
+  it(`GET /utilisateurs/id/home_board - avancement bilan carbone compte aussi les questions skipped`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_alimentation_regime,
+      question: `YOP`,
+      reponses: [
+        { code: 'vegetalien', label: 'Vegetalien', ngc_code: null },
+        { code: 'vegetarien', label: 'Vegetarien', ngc_code: null },
+        { code: 'peu_viande', label: 'Peu de viande', ngc_code: null },
+        { code: 'chaque_jour_viande', label: 'Tous les jours', ngc_code: null },
+      ],
+      type: TypeReponseQuestionKYC.choix_unique,
+    });
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [
+        {
+          code: 'KYC_saison_frequence',
+          last_update: undefined,
+          id_cms: 21,
+          question: `À quelle fréquence mangez-vous de saison ? `,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: true,
+          a_supprimer: false,
+          categorie: Categorie.mission,
+          points: 10,
+          reponse_complexe: undefined,
+          tags: [],
+          ngc_key: 'alimentation . de saison . consommation',
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+          reponse_simple: undefined,
+          thematique: Thematique.alimentation,
+        },
+        {
+          code: 'KYC_alimentation_regime',
+          id_cms: 1,
+          last_update: undefined,
+          question: `Votre regime`,
+          type: TypeReponseQuestionKYC.choix_unique,
+          is_NGC: false,
+          a_supprimer: false,
+          categorie: Categorie.mission,
+          points: 10,
+          reponse_complexe: undefined,
+          tags: [],
+          ngc_key: null,
+          image_url: '111',
+          short_question: 'short',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+          thematique: Thematique.alimentation,
+          reponse_simple: undefined,
+        },
+      ],
+      answered_questions: [],
+    };
+
+    await TestUtil.create(DB.kYC, {
+      code: 'KYC_saison_frequence',
+      id_cms: 21,
+      question: `À quelle fréquence mangez-vous de saison ? `,
+      type: TypeReponseQuestionKYC.choix_unique,
+      categorie: Categorie.mission,
+      points: 10,
+      reponses: [
+        { label: 'Souvent', code: 'souvent', ngc_code: '"souvent"' },
+        { label: 'Jamais', code: 'jamais', ngc_code: '"bof"' },
+        { label: 'Parfois', code: 'parfois', ngc_code: '"burp"' },
+      ],
+      tags: [],
+      ngc_key: 'alimentation . de saison . consommation',
+      image_url: '111',
+      short_question: 'short',
+      conditions: [],
+      unite: { abreviation: 'kg' },
+      created_at: undefined,
+      is_ngc: true,
+      a_supprimer: false,
+      thematique: 'alimentation',
+      updated_at: undefined,
+      emoji: '🔥',
+    } as KYC);
+
+    await kycRepository.loadCache();
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      kyc: kyc as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/home_board',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    const body: HomeBoardAPI = response.body;
+    expect(body).toEqual({
       nom_commune: 'Dijon',
       pourcentage_bilan_done: 17,
-      bilan_carbone_total_kg: 8567.375077543367,
+      bilan_carbone_total_kg: 8719.070172621903,
       total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
       pourcentage_consommation_reco_done: 0,

@@ -41,7 +41,6 @@ describe('ThematiqueHistory', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },

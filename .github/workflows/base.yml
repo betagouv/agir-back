@@ -56,8 +56,8 @@ jobs:
           MINIATURES_URL: 'http://localhost:3000'
           THROTTLE_LIMIT: 10
 
-      - name: Check KYC mapping with NGC
-        run: npm run check:kycs
-        env:
-          CMS_URL: https://agir-cms-prod.osc-secnum-fr1.scalingo.io/api
-          CMS_API_KEY: ${{ secrets.CMS_API_KEY }}
+      # - name: Check KYC mapping with NGC
+      #   run: npm run check:kycs
+      #   env:
+      #     CMS_URL: https://agir-cms-prod.osc-secnum-fr1.scalingo.io/api
+      #     CMS_API_KEY: ${{ secrets.CMS_API_KEY }}

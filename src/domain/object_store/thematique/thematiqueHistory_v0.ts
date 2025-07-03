@@ -2,6 +2,7 @@ import { TypeCodeAction } from '../../actions/actionDefinition';
 import {
   ActionUtilisateur,
   Question,
+  RecommandationWinter,
   ThematiqueHistory,
 } from '../../thematique/history/thematiqueHistory';
 import {
@@ -36,6 +37,17 @@ export class ActionExclue_v0 {
     };
   }
 }
+export class RecommandationWinter_v0 {
+  action: TypeCodeAction;
+  montant_economies_euros: number;
+
+  static serialise(domain: RecommandationWinter): RecommandationWinter_v0 {
+    return {
+      action: domain.action,
+      montant_economies_euros: domain.montant_economies_euro,
+    };
+  }
+}
 
 export class ActionUtilisateur_v0 {
   action: TypeCodeAction;
@@ -63,7 +75,6 @@ export class ActionUtilisateur_v0 {
 
 export class ThematiqueRecommandation_v0 {
   thematique: Thematique;
-  codes_actions_exclues: ActionExclue_v0[];
   personnalisation_done_once: boolean;
   first_personnalisation_date: Date;
 
@@ -71,9 +82,6 @@ export class ThematiqueRecommandation_v0 {
     domain: ThematiqueRecommandation,
   ): ThematiqueRecommandation_v0 {
     return {
-      codes_actions_exclues: domain
-        .getActionsExclues()
-        .map((a) => ActionExclue_v0.serialise(a)),
       personnalisation_done_once: domain.isPersonnalisationDoneOnce(),
       thematique: domain.thematique,
       first_personnalisation_date: domain.getFirstPersonnalisationDate(),
@@ -85,7 +93,7 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
   liste_thematiques: ThematiqueRecommandation_v0[];
   liste_actions_utilisateur: ActionUtilisateur_v0[];
   codes_actions_exclues: ActionExclue_v0[];
-  recommandations_winter: TypeCodeAction[];
+  recommandations_winter: RecommandationWinter_v0[];
 
   static serialise(domain: ThematiqueHistory): ThematiqueHistory_v0 {
     return {
@@ -100,7 +108,9 @@ export class ThematiqueHistory_v0 extends Versioned_v0 {
       codes_actions_exclues: domain
         .getAllActionsExclues()
         .map((a) => ActionExclue_v0.serialise(a)),
-      recommandations_winter: domain.getRecommandationsWinter(),
+      recommandations_winter: domain
+        .getRecommandationsWinter()
+        .map((r) => RecommandationWinter_v0.serialise(r)),
     };
   }
 }

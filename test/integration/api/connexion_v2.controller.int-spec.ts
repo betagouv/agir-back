@@ -430,6 +430,8 @@ suite à un problème technique, vous ne pouvez pas vous connecter au service J'
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       answered_questions: [
         {
           code: KYCID.KYC_preference,

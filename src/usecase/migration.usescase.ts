@@ -7,11 +7,9 @@ import {
 } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { App } from '../domain/app';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
-import { Thematique } from '../domain/thematique/thematique';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
 export type UserMigrationReport = {
@@ -477,6 +475,7 @@ export class MigrationUsecase {
       info: `updated recos tags`,
     };
   }
+  /*
   private async migrate_21(
     user_id: string,
     version: number,
@@ -509,6 +508,7 @@ export class MigrationUsecase {
       info: `fusion actions exclues`,
     };
   }
+    */
 
   private async migrate_22(
     user_id: string,
@@ -545,6 +545,40 @@ export class MigrationUsecase {
   }
 
   private async migrate_23(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const scopes = [Scope.kyc, Scope.core];
+    const kycId = KYCID.KYC_transport_voiture_motorisation;
+    const utilisateur = await _this.utilisateurRepository.getById(
+      user_id,
+      scopes,
+    );
+
+    // DO SOMETHING
+
+    const kyc = utilisateur.kyc_history.getQuestionChoixUnique(kycId);
+    if (kyc && kyc.isSelected('hybride')) {
+      kyc.selectByCode('hybride_non_rechargeable');
+      utilisateur.kyc_history.updateQuestion(kyc);
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      scopes,
+    );
+
+    return {
+      ok: true,
+      info: `Correctly migrate answers for the KYC: ${kycId}`,
+    };
+  }
+
+  private async migrate_24(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

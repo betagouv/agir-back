@@ -64,6 +64,9 @@ const KYC_DATA: QuestionKYC_v2 = {
 const kyc_histo: KYCHistory_v2 = {
   version: 2,
   answered_mosaics: [],
+  skipped_mosaics: [],
+  skipped_questions: [],
+
   answered_questions: [
     {
       ...KYC_DATA,
@@ -433,6 +436,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -476,6 +482,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -529,6 +538,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -580,6 +592,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -616,6 +631,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -652,6 +670,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -938,6 +959,9 @@ describe('Duplicate Usecase', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1022,7 +1046,7 @@ describe('Duplicate Usecase', () => {
       alimentation_kg: 2008,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8567,
+      total_kg: 8684,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
       pourcentage_progression_alimentation: 50,
@@ -1142,14 +1166,14 @@ describe('Duplicate Usecase', () => {
       alimentation_kg: 2008,
       consommation_kg: NGCCalculator.DEFAULT_CONSOMMATION_KG_ROUND,
       logement_kg: NGCCalculator.DEFAULT_LOGEMENT_KG_ROUND,
-      total_kg: 8567,
-      transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
-      user_id: '123',
       pourcentage_progression_alimentation: 50,
       pourcentage_progression_consommation: 0,
       pourcentage_progression_logement: 0,
       pourcentage_progression_total: 9,
       pourcentage_progression_transport: 0,
+      total_kg: 8684,
+      transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
+      user_id: '123',
     });
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
@@ -1174,6 +1198,9 @@ describe('Duplicate Usecase', () => {
     const kyc_bad: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1193,6 +1220,9 @@ describe('Duplicate Usecase', () => {
     const kyc_ok: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1301,13 +1331,11 @@ describe('Duplicate Usecase', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: true,
         },
         {
           thematique: Thematique.logement,
-          codes_actions_exclues: [],
           first_personnalisation_date: new Date(1),
           personnalisation_done_once: false,
         },

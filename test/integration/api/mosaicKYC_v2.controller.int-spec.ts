@@ -188,6 +188,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -268,6 +271,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre test',
       is_answered: true,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -393,6 +397,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
+      is_answered: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -449,6 +455,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
+      is_answered: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -614,7 +622,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     );
   });
 
-  it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic boolean alors que que les question sous jacente sont interger', async () => {
+  it('PUT /utilisateurs/id/questionsKYC_v2/id - maj mosaic boolean alors que les question sous jacente sont interger', async () => {
     // GIVEN
 
     const dbKYC: KYC = {
@@ -682,6 +690,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
+      is_answered: false,
       reponse_simple: {
         value: '1',
         unite: {
@@ -710,6 +720,8 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       points: 20,
       is_NGC: true,
       a_supprimer: false,
+      is_skipped: false,
+      is_answered: false,
       reponse_simple: {
         value: '0',
         unite: {
@@ -805,6 +817,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
 
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
       answered_questions: [
         {
@@ -867,6 +882,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'Titre test',
       is_NGC: false,
       is_answered: true,
+      is_skipped: false,
       thematique: Thematique.alimentation,
       reponse_multiple: [
         {
@@ -971,6 +987,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [],
     };
     await TestUtil.create(DB.utilisateur, {
@@ -1027,6 +1046,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -1070,6 +1090,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1142,6 +1165,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -1185,6 +1209,9 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_questions: [
         {
           ...KYC_DATA,
@@ -1257,6 +1284,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_skipped: false,
       reponse_multiple: [
         {
           code: '_1',
@@ -1281,5 +1309,317 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       is_NGC: false,
       thematique: 'alimentation',
     });
+  });
+
+  it('POST /utilisateurs/id/questionsKYC_v2/1/skip - passe une mosaic', async () => {
+    // GIVEN
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre mosaic',
+        type: TypeMosaic.mosaic_boolean,
+        question_kyc_codes: [KYCID._1, KYCID._2],
+        thematique: Thematique.alimentation,
+      },
+    ];
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...KYC_DB_DATA,
+      id_cms: 1,
+      code: KYCID._1,
+      emoji: 'a',
+      image_url: 'img_a',
+      points: 123,
+      short_question: 'short_a',
+      unite: { abreviation: 'kg' },
+      type: TypeReponseQuestionKYC.choix_unique,
+      question: `question 1`,
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...KYC_DB_DATA,
+      id_cms: 2,
+      code: KYCID._2,
+      emoji: 'b',
+      image_url: 'img_b',
+      points: 456,
+      short_question: 'short_b',
+      unite: { abreviation: 'euro' },
+      type: TypeReponseQuestionKYC.choix_unique,
+      question: `question 2`,
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    });
+    await kycRepository.loadCache();
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/TEST_MOSAIC_ID/skip',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(201);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    const kyc_ = user.kyc_history.getUpToDateMosaicById(
+      KYCMosaicID.TEST_MOSAIC_ID,
+    );
+
+    expect(kyc_.is_skipped).toStrictEqual(true);
+    expect(kyc_.is_answered).toStrictEqual(false);
+  });
+
+  it(`POST /utilisateurs/id/questionsKYC_v2/1/skip - mosaic skipped perd l'état une fois répondu`, async () => {
+    // GIVEN
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
+      {
+        id: KYCMosaicID.TEST_MOSAIC_ID,
+        categorie: Categorie.test,
+        points: 10,
+        titre: 'Titre mosaic',
+        type: TypeMosaic.mosaic_boolean,
+        question_kyc_codes: [KYCID._1, KYCID._2],
+        thematique: Thematique.alimentation,
+      },
+    ];
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
+      skipped_questions: [],
+
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, {
+      kyc: kyc as any,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...KYC_DB_DATA,
+      id_cms: 1,
+      code: KYCID._1,
+      emoji: 'a',
+      image_url: 'img_a',
+      points: 123,
+      short_question: 'short_a',
+      unite: { abreviation: 'kg' },
+      type: TypeReponseQuestionKYC.choix_unique,
+      question: `question 1`,
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...KYC_DB_DATA,
+      id_cms: 2,
+      code: KYCID._2,
+      emoji: 'b',
+      image_url: 'img_b',
+      points: 456,
+      short_question: 'short_b',
+      unite: { abreviation: 'euro' },
+      type: TypeReponseQuestionKYC.choix_unique,
+      question: `question 2`,
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/TEST_MOSAIC_ID',
+    ).send([
+      { code: '_1', selected: true },
+      { code: '_2', selected: false },
+    ]);
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    const kyc_ = user.kyc_history.getUpToDateMosaicById(
+      KYCMosaicID.TEST_MOSAIC_ID,
+    );
+
+    expect(kyc_.is_skipped).toStrictEqual(false);
+    expect(kyc_.is_answered).toStrictEqual(true);
+  });
+
+  it('POST /utilisateurs/id/questionsKYC_v2/1/skip - passe une mosaic deja répondu => passe pas', async () => {
+    const dbKYC: KYC = {
+      id_cms: 1,
+      categorie: Categorie.recommandation,
+      code: '1',
+      is_ngc: true,
+      a_supprimer: false,
+      points: 20,
+      question: 'The question !',
+      tags: [Tag.possede_voiture],
+      thematique: Thematique.alimentation,
+      type: TypeReponseQuestionKYC.choix_unique,
+      ngc_key: 'a . b . c',
+      reponses: [
+        { label: 'Oui', code: 'oui' },
+        { label: 'Non', code: 'non' },
+        { label: 'Je sais pas', code: 'sais_pas' },
+      ],
+      short_question: 'short',
+      image_url: 'AAA',
+      conditions: [],
+      created_at: undefined,
+      updated_at: undefined,
+      unite: { abreviation: 'kg' },
+      emoji: '🔥',
+    };
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      question: 'quest 1',
+      code: '_1',
+      short_question: 'short_1',
+      image_url: 'AAA_1',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      question: 'quest 2',
+      code: '_2',
+      short_question: 'short_2',
+      image_url: 'AAA_2',
+    });
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_mosaics: [KYCMosaicID.TEST_MOSAIC_ID],
+      answered_questions: [
+        {
+          code: '_1',
+          question: 'quest 1',
+          last_update: undefined,
+          type: TypeReponseQuestionKYC.choix_unique,
+          categorie: Categorie.recommandation,
+          points: 20,
+          is_NGC: true,
+          a_supprimer: false,
+          reponse_complexe: [
+            { code: 'oui', label: 'Oui', selected: true },
+            { code: 'non', label: 'Non', selected: false },
+            {
+              code: 'sais_pas',
+              label: 'Je sais pas',
+              ngc_code: undefined,
+              selected: false,
+            },
+          ],
+          ngc_key: 'a . b . c',
+          thematique: Thematique.alimentation,
+          tags: [Tag.possede_voiture],
+          reponse_simple: undefined,
+          id_cms: 1,
+          short_question: 'short 1',
+          image_url: 'AAA',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+        },
+        {
+          code: '_2',
+          question: 'quest 2',
+          last_update: undefined,
+          type: TypeReponseQuestionKYC.choix_unique,
+          categorie: Categorie.recommandation,
+          points: 20,
+          is_NGC: true,
+          a_supprimer: false,
+          reponse_complexe: [
+            { code: 'non', label: 'Non', selected: true },
+            { code: 'oui', label: 'Oui', selected: false },
+            {
+              code: 'sais_pas',
+              label: 'Je sais pas',
+              ngc_code: undefined,
+              selected: false,
+            },
+          ],
+          ngc_key: 'a . b . c',
+          thematique: Thematique.alimentation,
+          tags: [Tag.possede_voiture],
+          reponse_simple: undefined,
+          id_cms: 2,
+          short_question: 'short 2',
+          image_url: 'BBB',
+          conditions: [],
+          unite: { abreviation: 'kg' },
+          emoji: '🔥',
+        },
+      ],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+
+    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/TEST_MOSAIC_ID/skip',
+    );
+
+    // THEN
+    console.log(response.body);
+    expect(response.status).toBe(201);
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    user.kyc_history.setCatalogue(KycRepository.getCatalogue());
+    const kyc_ = user.kyc_history.getUpToDateMosaicById(
+      KYCMosaicID.TEST_MOSAIC_ID,
+    );
+
+    expect(kyc_.is_skipped).toStrictEqual(false);
+    expect(kyc_.is_answered).toStrictEqual(true);
   });
 });

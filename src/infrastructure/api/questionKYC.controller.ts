@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Put,
   Request,
   UseGuards,
@@ -98,6 +99,23 @@ export class QuestionsKYCController extends GenericControler {
         questionId,
         body,
       );
+    }
+  }
+  @ApiOperation({
+    summary: `Déclare une question comme passée par l'utilisateur`,
+  })
+  @Post('utilisateurs/:utilisateurId/questionsKYC_v2/:questionId/skip')
+  @UseGuards(AuthGuard)
+  async skip(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+    @Param('questionId') questionId: string,
+  ): Promise<void> {
+    this.checkCallerId(req, utilisateurId);
+    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
+      await this.questionKYCUsecase.skip_MOSAIC(utilisateurId, questionId);
+    } else {
+      await this.questionKYCUsecase.skip_KYC(utilisateurId, questionId);
     }
   }
 }

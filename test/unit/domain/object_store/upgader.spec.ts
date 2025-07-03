@@ -21,6 +21,9 @@ describe('Upgrader ', () => {
     expect(result).toEqual({
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       version: 2,
     });
     expect(result['version']).toEqual(2);
@@ -40,6 +43,9 @@ describe('Upgrader ', () => {
     expect(result).toEqual({
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       version: 2,
     });
     expect(result['version']).toEqual(2);
@@ -48,6 +54,9 @@ describe('Upgrader ', () => {
     // GIVEN
     const input: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [],
     };
@@ -59,6 +68,8 @@ describe('Upgrader ', () => {
     expect(result).toEqual({
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
       version: 2,
     });
     expect(result['version']).toEqual(2);
@@ -77,6 +88,9 @@ describe('Upgrader ', () => {
     expect(result).toEqual({
       answered_mosaics: [],
       answered_questions: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       version: 2,
     });
     expect(result['version']).toEqual(2);

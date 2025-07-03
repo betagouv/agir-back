@@ -15,7 +15,7 @@ export class QuestionChoix {
   }
 
   public isAnswered(): boolean {
-    return this.kyc.hasAnyComplexeResponse();
+    return this.kyc.is_answered;
   }
 
   public isSelected(code_reponse: string): boolean {

@@ -179,6 +179,9 @@ export class ActionUsecase {
       action.nombre_actions_faites =
         this.compteurActionsRepository.getNombreFaites(action);
     }
+
+    this.setMontantEconomiesEuros(catalogue.actions, utilisateur);
+
     catalogue.setNombreResultatsDispo(catalogue.actions.length);
 
     catalogue.actions = catalogue.actions.slice(skip, skip + take);
@@ -811,6 +814,19 @@ export class ActionUsecase {
         value.vues,
         value.faites,
       );
+    }
+  }
+
+  private setMontantEconomiesEuros(
+    action_liste: Action[],
+    utilisateur: Utilisateur,
+  ) {
+    for (const action of action_liste) {
+      const reco_winter =
+        utilisateur.thematique_history.getWinterRecommandation(action);
+      if (reco_winter) {
+        action.montant_max_economies_euros = reco_winter.montant_economies_euro;
+      }
     }
   }
 }

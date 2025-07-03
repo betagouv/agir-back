@@ -307,6 +307,7 @@ describe('Actions Catalogue Offline (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      montant_max_economies_euros: 0,
     });
   });
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {

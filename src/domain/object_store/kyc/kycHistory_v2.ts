@@ -97,6 +97,9 @@ export class QuestionKYC_v2 {
 export class KYCHistory_v2 extends Versioned_v2 {
   answered_questions: QuestionKYC_v2[];
   answered_mosaics: KYCMosaicID[];
+
+  skipped_questions: QuestionKYC_v2[];
+  skipped_mosaics: KYCMosaicID[];
   constructor() {
     super();
     this.answered_mosaics = [];
@@ -109,7 +112,14 @@ export class KYCHistory_v2 extends Versioned_v2 {
       answered_questions: domain
         .getAnsweredKYCs()
         .map((e) => QuestionKYC_v2.map(e)),
+
+      skipped_questions: domain
+        .getSkippedKYCs()
+        .map((e) => QuestionKYC_v2.map(e)),
+
       answered_mosaics: domain.getAnsweredMosaics(),
+
+      skipped_mosaics: domain.getSkippedMosaics(),
     };
   }
 
@@ -121,6 +131,8 @@ export class KYCHistory_v2 extends Versioned_v2 {
       version: 2,
       answered_questions: [],
       answered_mosaics: source.answered_mosaics,
+      skipped_mosaics: [],
+      skipped_questions: [],
     };
     if (source.answered_questions) {
       for (const question of source.answered_questions) {

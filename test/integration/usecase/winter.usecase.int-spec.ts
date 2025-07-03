@@ -1,5 +1,4 @@
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
-import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
@@ -9,7 +8,6 @@ const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
 
 describe('WinterUsecase', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  let communeRepository = new CommuneRepository(TestUtil.prisma);
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
 
   let winterRepository = {
@@ -21,7 +19,6 @@ describe('WinterUsecase', () => {
     utilisateurRepository,
     winterRepository as any,
     linkyConsentRepository,
-    undefined,
   );
 
   beforeAll(async () => {

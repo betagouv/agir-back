@@ -5,6 +5,7 @@ import {
 } from '../../actions/actionDefinition';
 import {
   ActionUtilisateur_v0,
+  RecommandationWinter_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
 import { Thematique } from '../thematique';
@@ -18,6 +19,15 @@ export type Question = {
   question: string;
   est_action_faite: boolean;
 };
+
+export class RecommandationWinter {
+  action: TypeCodeAction;
+  montant_economies_euro: number;
+  constructor(data: RecommandationWinter_v0) {
+    this.action = data.action;
+    this.montant_economies_euro = data.montant_economies_euros;
+  }
+}
 
 export class ActionUtilisateur {
   action: TypeCodeAction;
@@ -47,7 +57,7 @@ export class ActionUtilisateur {
 export class ThematiqueHistory {
   private liste_thematiques: ThematiqueRecommandation[];
   private liste_actions_utilisateur: ActionUtilisateur[];
-  private liste_recommandations_winter: TypeCodeAction[];
+  private liste_recommandations_winter: RecommandationWinter[];
   private actions_exclues: ActionExclue[];
 
   constructor(data?: ThematiqueHistory_v0) {
@@ -73,7 +83,7 @@ export class ThematiqueHistory {
         : [];
 
       this.liste_recommandations_winter = data.recommandations_winter
-        ? data.recommandations_winter
+        ? data.recommandations_winter.map((r) => new RecommandationWinter(r))
         : [];
     }
   }
@@ -114,7 +124,7 @@ export class ThematiqueHistory {
     this.liste_recommandations_winter = [];
   }
 
-  public getRecommandationsWinter(): TypeCodeAction[] {
+  public getRecommandationsWinter(): RecommandationWinter[] {
     return this.liste_recommandations_winter;
   }
 
@@ -310,8 +320,17 @@ export class ThematiqueHistory {
     }
   }
 
-  public setWinterRecommandations(actions: TypeCodeAction[]) {
+  public setWinterRecommandations(actions: RecommandationWinter[]) {
     this.liste_recommandations_winter = actions;
+  }
+
+  public getWinterRecommandation(action: TypeCodeAction) {
+    return this.liste_recommandations_winter.find(
+      (r) => r.action.code === action.code && r.action.type === action.type,
+    );
+  }
+  public getNombreActionsWinter() {
+    return this.liste_recommandations_winter.length;
   }
 
   public doesActionsExcluesInclude(type_code: TypeCodeAction): boolean {
@@ -322,8 +341,13 @@ export class ThematiqueHistory {
     return index !== -1;
   }
 
-  public getActionsExclues(thematique: Thematique): TypeCodeAction[] {
-    const reco = this.getRecommandationByThematique(thematique);
-    return reco ? reco.getActionsExclues().map((a) => a.action) : [];
+  public calculeEconomiesWinterRealisées(): number {
+    let economies = 0;
+    for (const action_winter of this.liste_recommandations_winter) {
+      if (this.isActionFaite(action_winter.action)) {
+        economies += action_winter.montant_economies_euro;
+      }
+    }
+    return economies;
   }
 }

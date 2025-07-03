@@ -34,6 +34,7 @@ export class Action extends ActionDefinition implements TaggedContent {
   vue_le?: Date;
   faite_le?: Date;
   like_level?: number;
+  montant_max_economies_euros?: number;
   feedback?: string;
   enchainement_id?: string;
   liste_partages?: Date[];
@@ -53,6 +54,7 @@ export class Action extends ActionDefinition implements TaggedContent {
     this.score = 0;
     this.pourcent_match = 0;
     this.explicationScore = new ExplicationScore();
+    this.montant_max_economies_euros = 0;
     if (
       action_def.type === TypeAction.bilan ||
       action_def.type === TypeAction.simulateur

@@ -9,12 +9,19 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { WinterUsecase } from '../../usecase/winter.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ConnectPRMByAddressAPI } from './types/winter/connectPRMByAddressAPI';
 import { ConnectPRMByPRMAPI } from './types/winter/ConnectPRMByPRMAPI';
+import { WinterConsommationAPI } from './types/winter/winterConsommationAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -93,7 +100,7 @@ export class WinterController extends GenericControler {
   }
 
   @ApiOperation({
-    summary: `Liste des actions winter, pour test`,
+    summary: `API DE TEST pour Lister des actions winter`,
   })
   @Get('utilisateurs/:utilisateurId/winter/actions')
   @UseGuards(AuthGuard)
@@ -103,5 +110,22 @@ export class WinterController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     return await this.winterUsecase.refreshListeActions(utilisateurId);
+  }
+
+  @ApiOperation({
+    summary: `Donne la décomposition de la consommation annuelle`,
+  })
+  @ApiOkResponse({
+    type: WinterConsommationAPI,
+  })
+  @Get('utilisateurs/:utilisateurId/winter/consommation')
+  @UseGuards(AuthGuard)
+  async getConsommation(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<WinterConsommationAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.winterUsecase.getUsage(utilisateurId);
+    return WinterConsommationAPI.mapToAPI(result);
   }
 }

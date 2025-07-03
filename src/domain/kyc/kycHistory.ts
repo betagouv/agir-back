@@ -12,9 +12,19 @@ import { QuestionSimple } from './new_interfaces/QuestionSimple';
 import { QuestionTexteLibre } from './new_interfaces/QuestionTexteLibre';
 import { AndConditionSet, QuestionKYC } from './questionKYC';
 
+export type AnyQuestion =
+  | QuestionKYC
+  | QuestionChoixMultiple
+  | QuestionChoixUnique
+  | QuestionSimple
+  | QuestionNumerique
+  | QuestionTexteLibre;
+
 export class KYCHistory {
   private answered_questions: QuestionKYC[];
+  private skipped_questions: QuestionKYC[];
   private answered_mosaics: KYCMosaicID[];
+  private skipped_mosaics: KYCMosaicID[];
 
   catalogue: KycDefinition[];
 
@@ -26,8 +36,16 @@ export class KYCHistory {
         this.answered_questions.push(new QuestionKYC(question));
       }
     }
+    if (data && data.skipped_questions) {
+      for (const question of data.skipped_questions) {
+        this.skipped_questions.push(new QuestionKYC(question));
+      }
+    }
     if (data && data.answered_mosaics) {
       this.answered_mosaics = data.answered_mosaics;
+    }
+    if (data && data.skipped_mosaics) {
+      this.skipped_mosaics = data.skipped_mosaics;
     }
   }
 
@@ -37,49 +55,37 @@ export class KYCHistory {
   }
 
   public getQuestionTextLibre(code: string): QuestionTexteLibre {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionTexteLibre(kyc);
     return undefined;
   }
 
   public getQuestionNumerique(code: string): QuestionNumerique {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionNumerique(kyc);
     return undefined;
   }
 
   public getQuestionChoixUnique(code: string): QuestionChoixUnique {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoixUnique(kyc);
     return undefined;
   }
 
   public getQuestionChoixMultiple(code: string): QuestionChoixMultiple {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoixMultiple(kyc);
     return undefined;
   }
 
   public getQuestionChoix(code: string): QuestionChoix {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoix(kyc);
     return undefined;
   }
 
   public getQuestionSimple(code: string): QuestionSimple {
-    const kyc =
-      this.getUpToDateAnsweredQuestionByCode(code) ||
-      this.getKycFromCatalogue_new(code);
+    const kyc = this.getQuestion(code);
     if (kyc) return new QuestionSimple(kyc);
     return undefined;
   }
@@ -87,9 +93,13 @@ export class KYCHistory {
   public getQuestion(code: string): QuestionKYC {
     const kyc =
       this.getUpToDateAnsweredQuestionByCode(code) ||
+      this.getUpToDateSkippedQuestionByCode(code) ||
       this.getKycFromCatalogue_new(code);
-    if (kyc) return kyc;
-    return undefined;
+
+    if (kyc && kyc.isBrokenAnsweredKyc()) {
+      kyc.is_answered = false;
+    }
+    return kyc;
   }
 
   public getQuestionByNGCKey(ngc_key: string): QuestionKYC {
@@ -100,22 +110,28 @@ export class KYCHistory {
     return undefined;
   }
 
-  public updateQuestion(
-    question:
-      | QuestionKYC
-      | QuestionChoixMultiple
-      | QuestionChoixUnique
-      | QuestionSimple
-      | QuestionNumerique
-      | QuestionTexteLibre,
-  ) {
+  public updateQuestion(question: AnyQuestion) {
     const kyc = question.getKyc();
-    const index = this.answered_questions.findIndex((q) => q.code === kyc.code);
-    if (index >= 0) {
-      this.answered_questions[index] = kyc;
-    } else {
-      this.answered_questions.push(kyc);
+    this.setQuestionToList(kyc, this.answered_questions);
+    this.removeQuestionFromList(kyc, this.skipped_questions);
+  }
+
+  public skipQuestion(question: AnyQuestion) {
+    const kyc = question.getKyc();
+    if (kyc.is_answered) {
+      return; // skipped une question déjà répondu n'a pas d'effet
     }
+    this.setQuestionToList(kyc, this.skipped_questions);
+
+    // au cas où les question était cassée
+    this.removeQuestionFromList(kyc, this.answered_questions);
+  }
+
+  public skipMosaic(id: KYCMosaicID) {
+    if (this.isMosaicAnswered(id)) {
+      return; // skipped une question déjà répondu n'a pas d'effet
+    }
+    this.addSkippedMosaic(id);
   }
 
   private getUpToDateAnsweredQuestionByNGCKeyCode(
@@ -126,7 +142,8 @@ export class KYCHistory {
     );
     if (answered) {
       this.refreshQuestion(answered);
-      answered.is_answered = answered.hasAnyResponses();
+      answered.is_answered = true;
+      answered.is_skipped = false;
     }
     return answered;
   }
@@ -137,9 +154,22 @@ export class KYCHistory {
     );
     if (answered) {
       this.refreshQuestion(answered);
-      answered.is_answered = answered.hasAnyResponses();
+      answered.is_answered = true;
+      answered.is_skipped = false;
     }
     return answered;
+  }
+
+  private getUpToDateSkippedQuestionByCode(code: string): QuestionKYC {
+    const skipped = this.skipped_questions.find(
+      (element) => element.code === code,
+    );
+    if (skipped) {
+      this.refreshQuestion(skipped);
+      skipped.is_skipped = true;
+      skipped.is_answered = false;
+    }
+    return skipped;
   }
 
   private getKycFromCatalogue_new(code: string): QuestionKYC {
@@ -170,6 +200,9 @@ export class KYCHistory {
   public getAnsweredKYCs(): QuestionKYC[] {
     return this.answered_questions;
   }
+  public getSkippedKYCs(): QuestionKYC[] {
+    return this.skipped_questions;
+  }
   public getAnsweredKYCsAfter(after: Date): QuestionKYC[] {
     return this.answered_questions.filter(
       (q) =>
@@ -180,6 +213,9 @@ export class KYCHistory {
   }
   public getAnsweredMosaics(): KYCMosaicID[] {
     return this.answered_mosaics;
+  }
+  public getSkippedMosaics(): KYCMosaicID[] {
+    return this.skipped_mosaics;
   }
 
   public flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered() {
@@ -201,7 +237,7 @@ export class KYCHistory {
     for (const kyc_code of mosaic_def.question_kyc_codes) {
       const kyc = this.getQuestion(kyc_code);
 
-      if (kyc && kyc.hasAnyResponses()) {
+      if (kyc && kyc.is_answered) {
         return true;
       }
     }
@@ -261,6 +297,8 @@ export class KYCHistory {
   public reset() {
     this.answered_questions = [];
     this.answered_mosaics = [];
+    this.skipped_mosaics = [];
+    this.skipped_questions = [];
     this.catalogue = [];
   }
 
@@ -268,9 +306,24 @@ export class KYCHistory {
     if (!this.answered_mosaics.includes(type)) {
       this.answered_mosaics.push(type);
     }
+    this.removeSkippedMosaic(type);
+  }
+  public addSkippedMosaic(type: KYCMosaicID) {
+    if (!this.skipped_mosaics.includes(type)) {
+      this.skipped_mosaics.push(type);
+    }
+  }
+  public removeSkippedMosaic(type: KYCMosaicID) {
+    const index = this.skipped_mosaics.findIndex((k) => k === type);
+    if (index > -1) {
+      this.skipped_mosaics.splice(index, 1);
+    }
   }
   public isMosaicAnswered(type: KYCMosaicID): boolean {
     return this.answered_mosaics.includes(type);
+  }
+  public isMosaicSkipped(type: KYCMosaicID): boolean {
+    return this.skipped_mosaics.includes(type);
   }
 
   public getAllKycs(): QuestionKYC[] {
@@ -355,6 +408,7 @@ export class KYCHistory {
 
     const result = QuestionKYC.buildFromMosaicDef(mosaic_def, target_kyc_liste);
     result.is_answered = this.isMosaicAnswered(mosaic_def.id);
+    result.is_skipped = this.isMosaicSkipped(mosaic_def.id);
 
     return result;
   }
@@ -381,11 +435,27 @@ export class KYCHistory {
     return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
   }
 
-  public getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
+  private getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {
     return this.answered_questions.find((element) => element.id_cms === id_cms);
   }
 
   private getKYCDefinitionByCodeOrNull(code: string): KycDefinition {
     return this.catalogue.find((element) => element.code === code);
+  }
+
+  private removeQuestionFromList(kyc: QuestionKYC, liste: QuestionKYC[]) {
+    const index = liste.findIndex((k) => k.code === kyc.code);
+    if (index > -1) {
+      liste.splice(index, 1);
+    }
+  }
+
+  private setQuestionToList(kyc: QuestionKYC, liste: QuestionKYC[]) {
+    const index = liste.findIndex((k) => k.code === kyc.code);
+    if (index >= 0) {
+      liste[index] = kyc;
+    } else {
+      liste.push(kyc);
+    }
   }
 }

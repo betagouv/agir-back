@@ -124,7 +124,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -172,7 +171,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -231,7 +229,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: false,
           first_personnalisation_date: null,
         },
@@ -305,6 +302,9 @@ describe('Thematique (API test)', () => {
     });
     const kyc: KYCHistory_v2 = {
       version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+
       answered_mosaics: [],
       answered_questions: [
         {
@@ -388,12 +388,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [
-            {
-              action: { code: '1', type: TypeAction.classique },
-              date: new Date(123),
-            },
-          ],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -439,7 +433,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -497,6 +490,7 @@ describe('Thematique (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      montant_max_economies_euros: 0,
     });
   });
 
@@ -520,7 +514,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -569,7 +562,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -626,7 +618,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -679,7 +670,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -736,7 +726,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -788,7 +777,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
@@ -846,7 +834,6 @@ describe('Thematique (API test)', () => {
       liste_thematiques: [
         {
           thematique: Thematique.alimentation,
-          codes_actions_exclues: [],
           personnalisation_done_once: true,
           first_personnalisation_date: new Date(123),
         },
