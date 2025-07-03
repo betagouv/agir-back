@@ -549,6 +549,40 @@ export class MigrationUsecase {
     version: number,
     _this: MigrationUsecase,
   ): Promise<{ ok: boolean; info: string }> {
+    const scopes = [Scope.kyc, Scope.core];
+    const kycId = KYCID.KYC_transport_voiture_motorisation;
+    const utilisateur = await _this.utilisateurRepository.getById(
+      user_id,
+      scopes,
+    );
+
+    // DO SOMETHING
+
+    const kyc = utilisateur.kyc_history.getQuestionChoixUnique(kycId);
+    if (kyc && kyc.isSelected('hybride')) {
+      kyc.selectByCode('hybride_non_rechargeable');
+      utilisateur.kyc_history.updateQuestion(kyc);
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      scopes,
+    );
+
+    return {
+      ok: true,
+      info: `Correctly migrate answers for the KYC: ${kycId}`,
+    };
+  }
+
+  private async migrate_24(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
     const utilisateur = await _this.utilisateurRepository.getById(user_id, [
       Scope.core,
     ]);

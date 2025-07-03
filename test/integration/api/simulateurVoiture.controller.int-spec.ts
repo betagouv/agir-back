@@ -102,7 +102,7 @@ describe('/simulateur_voiture (API test)', () => {
       expect(response2.body.motorisation.valeur).toEqual('hybride');
     });
 
-    test("prend correctement en compte les KYCs même après avoir modifié une question conditionnant l'applicabilité d'autres questions", async () => {
+    test('prend correctement en compte les KYCs', async () => {
       // GIVEN
       // NOTE: could only be done once for all tests?
       await createKYCs();
@@ -110,8 +110,10 @@ describe('/simulateur_voiture (API test)', () => {
       await kycRepository.loadCache();
 
       // WHEN
-      await setEstProprietaire(true);
-      await setPrixAchat(100000);
+      await setMotorisation('hybride');
+      await setCarburant('essence_E85');
+      await setGabarit('SUV');
+      await setVoitureOccasion(true);
 
       // THEN
       const response = await TestUtil.GET(
@@ -120,31 +122,70 @@ describe('/simulateur_voiture (API test)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        couts: 8624.802752132495,
-        empreinte: 3022.851504292707,
+        couts: 4288.997957175108,
+        empreinte: 1615.288885445806,
         gabarit: {
-          label: 'Berline',
-          valeur: 'berline',
+          label: 'SUV',
+          valeur: 'SUV',
         },
         motorisation: {
-          label: 'Thermique',
-          valeur: 'thermique',
+          label: 'Hybride',
+          valeur: 'hybride',
         },
         carburant: {
-          label: 'Essence',
-          valeur: 'essence E5 ou E10',
+          // NOTE: do we want to map back to the KYC label?
+          label: 'Essence (E85)',
+          valeur: 'essence E85',
         },
       });
 
       // WHEN
-      await setEstProprietaire(false);
+      await setKmParcourus(0);
 
       const response2 = await TestUtil.GET(
         '/utilisateurs/utilisateur-id/simulateur_voiture/resultat/voiture_actuelle',
       );
-
       expect(response2.status).toBe(200);
-      expect(response2.body.couts).toEqual(6370.257297587041);
+      expect(response2.body.empreinte).toEqual(0);
+      expect(response2.body.motorisation.valeur).toEqual('hybride');
+    });
+
+    test('gère correctement les nouvelles motorisations', async () => {
+      // GIVEN
+      // NOTE: could only be done once for all tests?
+      await createKYCs();
+      await TestUtil.create(DB.utilisateur);
+      await kycRepository.loadCache();
+
+      // WHEN
+      await setMotorisation('hybride_non_rechargeable');
+      await setCarburant('essence_E85');
+      await setGabarit('SUV');
+      await setVoitureOccasion(true);
+
+      // THEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat/voiture_actuelle',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        couts: 4288.997957175108,
+        empreinte: 1615.288885445806,
+        gabarit: {
+          label: 'SUV',
+          valeur: 'SUV',
+        },
+        motorisation: {
+          label: 'Hybride',
+          valeur: 'hybride',
+        },
+        carburant: {
+          // NOTE: do we want to map back to the KYC label?
+          label: 'Essence (E85)',
+          valeur: 'essence E85',
+        },
+      });
     });
   });
 
@@ -336,6 +377,18 @@ async function createKYCs() {
         ngc_code: "'électrique'",
         selected: false,
       },
+      {
+        label: 'Hybride rechargeable',
+        code: 'hybride_rechargeable',
+        ngc_code: "'hybride rechargeable'",
+        selected: false,
+      },
+      {
+        label: 'Hybride non rechargeable',
+        code: 'hybride_non_rechargeable',
+        ngc_code: "'hybride non rechargeable'",
+        selected: false,
+      },
     ],
   });
   await TestUtil.create(DB.kYC, {
@@ -443,7 +496,13 @@ async function setMotorisation(
 ) {
   await setKYC(
     KYCID.KYC_transport_voiture_motorisation,
-    ['thermique', 'hybride', 'electrique'].map((code) => ({
+    [
+      'thermique',
+      'hybride',
+      'electrique',
+      'hybride_non_rechargeable',
+      'hybride_rechargeable',
+    ].map((code) => ({
       code,
       selected: code === value,
     })),

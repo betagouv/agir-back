@@ -88,10 +88,15 @@ function getParams(
       }
 
       case KYCID.KYC_transport_voiture_motorisation: {
+        const selectedAnswer =
+          question.getSelectedAnswer<KYCID.KYC_transport_voiture_motorisation>()
+            ?.ngc_code;
         params.set(
           regle,
-          question.getSelectedAnswer<KYCID.KYC_transport_voiture_motorisation>()
-            ?.ngc_code,
+          selectedAnswer === "'hybride rechargeable'" ||
+            selectedAnswer === "'hybride non rechargeable'"
+            ? "'hybride'"
+            : selectedAnswer,
         );
         break;
       }
