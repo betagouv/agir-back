@@ -336,7 +336,7 @@ describe('Winter (API test)', () => {
           percent: 5,
           type: 'mobility',
           couleur: 'EBD6FB',
-          emoji: '⚡️🚙',
+          emoji: '🚙',
         },
         {
           eur: 42,

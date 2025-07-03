@@ -29,7 +29,7 @@ const USAGE_EMOJI: Record<TypeUsage, string> = {
   heating: '🔥',
   hotWater: '💧',
   lighting: '💡',
-  mobility: '⚡️🚙',
+  mobility: '🚙',
   multimedia: '🎮',
   other: '❓',
   swimmingPool: '🏊',
