@@ -1,5 +1,6 @@
 import validator from 'validator';
 import { Utilisateur } from '../../utilisateur/utilisateur';
+import { KYCID } from '../KYCID';
 import { QuestionChoixUnique } from '../new_interfaces/QuestionChoixUnique';
 import { QuestionSimple } from '../new_interfaces/QuestionSimple';
 import { TypeReponseQuestionKYC } from '../QuestionKYCData';
@@ -39,14 +40,20 @@ export class SituationNgcToKycSync {
             KycToProfileSync.synchronize(kyc_ngc, utilisateur);
           } else if (kyc_ngc.type === TypeReponseQuestionKYC.choix_unique) {
             const choix_unique_kyc = new QuestionChoixUnique(kyc_ngc);
-            const ok = choix_unique_kyc.selectByCodeNgc(string_value);
+            const value =
+              // TODO: to remove when NGC has deployed the new version (3.8.1)
+              kyc_ngc.code === KYCID.KYC_transport_voiture_motorisation &&
+              string_value === 'hybride'
+                ? 'hybride non rechargeable'
+                : string_value;
+            const ok = choix_unique_kyc.selectByCodeNgc(value);
             history.updateQuestion(choix_unique_kyc);
             if (ok) {
               result.push(key);
               KycToProfileSync.synchronize(kyc_ngc, utilisateur);
             } else {
               console.error(
-                `Code NGC [${string_value}] non disponible pour la KYC ${kyc_ngc.id_cms}/${kyc_ngc.code}`,
+                `Code NGC [${value}] non disponible pour la KYC ${kyc_ngc.id_cms}/${kyc_ngc.code}`,
               );
             }
           }
