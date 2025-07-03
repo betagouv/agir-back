@@ -124,6 +124,36 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
   });
+  it(`POST /utilisateurs/send_magic_link - génère un magic_link même si doublon de mail par casse`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+    await TestUtil.create(DB.utilisateur, {
+      id: '1',
+      email: 'aaa@w.com',
+      code_generation_time: new Date(1),
+    });
+    await TestUtil.create(DB.utilisateur, {
+      id: '2',
+      email: 'AAA@w.com',
+      code_generation_time: new Date(1),
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'aaa@w.com',
+      });
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'aaa@w.com' },
+    });
+    expect(userDB.code_generation_time.getTime()).toBeGreaterThan(
+      Date.now() - 200,
+    );
+  });
   it(`POST /utilisateurs/send_magic_link - prend en compte la source`, async () => {
     // GIVEN
     process.env.IS_PROD = 'true';

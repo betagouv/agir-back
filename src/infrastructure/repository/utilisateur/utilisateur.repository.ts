@@ -134,8 +134,11 @@ export class UtilisateurRepository {
           mode: 'insensitive',
         },
       },
+      orderBy: {
+        created_at: 'asc',
+      },
     });
-    if (users.length !== 1) {
+    if (users.length === 0) {
       return null;
     }
     return this.buildUtilisateurFromDB(users[0]);
