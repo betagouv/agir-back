@@ -44,6 +44,7 @@ const KYC_TAG_MAPPER_COLLECTION: {
       oui: [Tag_v2.a_un_velo],
     },
   },
+  // NOTE(@EmileRolley): quid des deux autres questions sur la possession de voiture ?
   KYC_possede_voiture_oui_non: {
     oui_non: {
       oui: [Tag_v2.a_une_voiture],

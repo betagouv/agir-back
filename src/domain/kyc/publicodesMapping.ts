@@ -28,7 +28,6 @@ export type KYCComplexValues = {
     | { code: 'VUL'; ngc_code: "'VUL'" };
   KYC_transport_voiture_motorisation:
     | { code: 'thermique'; ngc_code: "'thermique'" }
-    | { code: 'hybride'; ngc_code: "'hybride'" }
     | { code: 'hybride_rechargeable'; ngc_code: "'hybride rechargeable'" }
     | {
         code: 'hybride_non_rechargeable';
