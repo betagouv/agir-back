@@ -99,7 +99,7 @@ export class QuestionKYC extends QuestionKYCData {
   public static getProgression(liste: QuestionKYC[]): Progression {
     let progression = 0;
     for (const question of liste) {
-      if (question.is_answered) {
+      if (question.is_answered || question.is_skipped) {
         progression++;
       }
     }
