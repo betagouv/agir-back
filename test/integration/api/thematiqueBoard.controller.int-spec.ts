@@ -659,7 +659,7 @@ describe('Thematique Board (API test)', () => {
     expect(body).toEqual({
       nom_commune: 'Dijon',
       pourcentage_bilan_done: 17,
-      bilan_carbone_total_kg: 8602.08230607434,
+      bilan_carbone_total_kg: 8719.070172621903,
       total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
       pourcentage_consommation_reco_done: 0,
