@@ -29,6 +29,11 @@ export type KYCComplexValues = {
   KYC_transport_voiture_motorisation:
     | { code: 'thermique'; ngc_code: "'thermique'" }
     | { code: 'hybride'; ngc_code: "'hybride'" }
+    | { code: 'hybride_rechargeable'; ngc_code: "'hybride rechargeable'" }
+    | {
+        code: 'hybride_non_rechargeable';
+        ngc_code: "'hybride non rechargeable'";
+      }
     | { code: 'electrique'; ngc_code: "'électrique'" };
   KYC_transport_voiture_thermique_carburant:
     | { code: 'gazole_B7_B10'; ngc_code: "'gazole B7 ou B10'" }
