@@ -126,7 +126,7 @@ export class RecettesRepository implements FinderInterface {
       case CategorieRecherche.vege:
         return 217;
       case CategorieRecherche.vegan:
-        return 438;
+        return 324;
       case CategorieRecherche.dinde_volaille:
         return 88;
       case CategorieRecherche.saison:
@@ -165,7 +165,9 @@ export class RecettesRepository implements FinderInterface {
     }
 
     if (filtre.categorie === CategorieRecherche.vegan) {
-      recherche = recherche.filter((a) => a.regime === 1);
+      recherche = recherche.filter(
+        (a) => a.regime === 1 && a.pnns_cheese === 0,
+      );
     }
 
     if (filtre.categorie === CategorieRecherche.vege) {
