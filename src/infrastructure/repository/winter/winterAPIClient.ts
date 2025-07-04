@@ -265,6 +265,9 @@ export class WinterAPIClient {
       if (error?.response?.data?.enedisCode === 'SGT570') {
         ApplicationError.throwErrorAlreadyInscriptionDONE();
       }
+      if (error?.response?.data?.message === 'prm already used') {
+        ApplicationError.throwErrorAlreadyInscriptionDONE();
+      }
       ApplicationError.throwErrorInscriptionPRM();
     }
     console.log(`API_TIME:winter_put_prm/${prm}:${Date.now() - call_time}`);
