@@ -44,6 +44,7 @@ export class ActionDefinitionData {
   tags_a_exclure: string[];
   sources: Source[];
   VISIBLE_PROD: boolean;
+  emoji: string;
 }
 
 export class ActionDefinition extends ActionDefinitionData {

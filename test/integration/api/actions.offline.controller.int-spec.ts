@@ -113,6 +113,7 @@ describe('Single Actions Offline (API test)', () => {
       thematique: 'consommation',
       titre: '**The titre**',
       type: 'classique',
+      emoji: '🔥',
       sources: [
         {
           label: 'hoho',

@@ -130,6 +130,7 @@ export class ActionRepository {
       tags_a_inclure_v2: action.tags_a_inclure,
       tags_a_exclure_v2: action.tags_a_exclure,
       VISIBLE_PROD: action.VISIBLE_PROD,
+      emoji: action.emoji,
 
       created_at: undefined,
       updated_at: undefined,
@@ -293,6 +294,7 @@ export class ActionRepository {
       tags_a_exclure: action.tags_a_exclure_v2,
       tags_a_inclure: action.tags_a_inclure_v2,
       VISIBLE_PROD: action.VISIBLE_PROD,
+      emoji: action.emoji,
     });
   }
 }
