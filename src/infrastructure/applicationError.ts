@@ -895,6 +895,14 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwTagInconnu(tag: string) {
+    this.throwAppError('163', `Le tag [${tag}] est inconnu`);
+  }
+
+  static throwPersonaInconnu(persona: string) {
+    this.throwAppError('164', `Le persona [${persona}] est inconnu`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,
