@@ -62,7 +62,7 @@ describe('/simulateur_voiture (API test)', () => {
       await kycRepository.loadCache();
 
       // WHEN
-      await setMotorisation('hybride');
+      await setMotorisation('hybride_non_rechargeable');
       await setCarburant('essence_E85');
       await setGabarit('SUV');
       await setVoitureOccasion(true);
@@ -110,7 +110,7 @@ describe('/simulateur_voiture (API test)', () => {
       await kycRepository.loadCache();
 
       // WHEN
-      await setMotorisation('hybride');
+      await setMotorisation('hybride_non_rechargeable');
       await setCarburant('essence_E85');
       await setGabarit('SUV');
       await setVoitureOccasion(true);

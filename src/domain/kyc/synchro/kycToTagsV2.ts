@@ -136,6 +136,7 @@ export class KycToTags_v2 {
       },
     });
 
+    // NOTE(@EmileRolley): quid des deux autres questions sur la possession de voiture ?
     this.distribuerOuiNonAutre(KYCID.KYC_possede_voiture_oui_non, {
       oui: {
         set: [Tag_v2.a_une_voiture],
@@ -153,7 +154,7 @@ export class KycToTags_v2 {
     this.distribuerOuiNon(
       this.has_one_of(KYCID.KYC_transport_voiture_motorisation, [
         'thermique',
-        'hybride',
+        'hybride_non_rechargeable',
       ]),
       {
         oui: {
@@ -166,7 +167,10 @@ export class KycToTags_v2 {
     );
 
     this.distribuerOuiNon(
-      this.is_code(KYCID.KYC_transport_voiture_motorisation, 'electrique'),
+      this.has_one_of(KYCID.KYC_transport_voiture_motorisation, [
+        'electrique',
+        'hybride_rechargeable',
+      ]),
       {
         oui: {
           set: [Tag_v2.a_une_voiture_electrique],
