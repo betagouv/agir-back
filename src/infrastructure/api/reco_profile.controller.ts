@@ -65,7 +65,7 @@ export class RecoProfileController extends GenericControler {
   @ApiOkResponse({ type: ProfileRecoAPI })
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 } })
-  async code_postal_synthese(
+  async action_reco_par_tag(
     @Query('tag') tag: string | string[],
     @Query('persona') persona: string,
     @Response() res: Res,
