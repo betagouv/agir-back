@@ -8,11 +8,14 @@ import {
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { ContenuLocal } from '../../domain/contenu/contenuLocal';
+import { Thematique } from '../../domain/thematique/thematique';
 import { Scope } from '../../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../applicationError';
+import { ActionRepository } from '../repository/action.repository';
 import { AideRepository } from '../repository/aide.repository';
 import { ArticleRepository } from '../repository/article.repository';
 import { CommuneRepository } from '../repository/commune/commune.repository';
+import { StatistiqueExternalRepository } from '../repository/statitstique.external.repository';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { GenericControler } from './genericControler';
 
@@ -65,18 +68,26 @@ export class SyntheseAPI {
 
   @ApiProperty() nombre_inscrits_total: number;
   @ApiProperty() nombre_inscrits_local: number;
+  @ApiProperty() nombre_inscrits_local_dernier_mois: number;
+  @ApiProperty() nombre_inscrits_total_dernier_mois: number;
   @ApiProperty() nombre_points_moyen: number;
+  @ApiProperty() pourcent_actions_logement: number;
+  @ApiProperty() pourcent_actions_transport: number;
+  @ApiProperty() pourcent_actions_consommation: number;
+  @ApiProperty() pourcent_actions_alimentation: number;
 }
 
-@ApiTags('Previews')
+@ApiTags('Collectivités')
 @Controller()
 @ApiBearerAuth()
 export class Synthese_v2Controller extends GenericControler {
   constructor(
     private userRepository: UtilisateurRepository,
     private articleRepository: ArticleRepository,
+    private actionRepository: ActionRepository,
     private communeRepository: CommuneRepository,
     private aideRepository: AideRepository,
+    private statistiqueExternalRepository: StatistiqueExternalRepository,
   ) {
     super();
   }
@@ -177,13 +188,50 @@ export class Synthese_v2Controller extends GenericControler {
     );
 
     let nombre_points_moyen = 0;
+    let nombre_inscrit_dernier_mois = 0;
+
+    const last_month = new Date();
+    last_month.setMonth(new Date().getMonth() - 1);
+
+    const epoc_last_month = last_month.getTime();
 
     for (const userid of local_users) {
       const user = await this.userRepository.getById(userid, [
         Scope.gamification,
       ]);
       nombre_points_moyen += user.gamification.getPoints();
+      if (user.created_at.getTime() > epoc_last_month) {
+        nombre_inscrit_dernier_mois++;
+      }
     }
+
+    let nbr_actions_logement = 0;
+    let nbr_actions_alimentation = 0;
+    let nbr_actions_transport = 0;
+    let nbr_actions_consommation = 0;
+
+    for (const action of this.actionRepository.getActionCompleteList()) {
+      switch (action.thematique) {
+        case Thematique.alimentation:
+          nbr_actions_alimentation++;
+          break;
+        case Thematique.logement:
+          nbr_actions_logement++;
+          break;
+        case Thematique.transport:
+          nbr_actions_transport++;
+          break;
+        case Thematique.consommation:
+          nbr_actions_consommation++;
+          break;
+      }
+    }
+
+    const nbr_actions_total =
+      nbr_actions_logement +
+      nbr_actions_alimentation +
+      nbr_actions_consommation +
+      nbr_actions_transport;
 
     // ###########################################################################
     // ######### BUILD RESULT
@@ -203,7 +251,28 @@ export class Synthese_v2Controller extends GenericControler {
     );
     result.nombre_inscrits_total = total_users;
     result.nombre_inscrits_local = local_users.length;
-    result.nombre_points_moyen = nombre_points_moyen;
+    result.nombre_inscrits_local_dernier_mois = nombre_inscrit_dernier_mois;
+    result.nombre_inscrits_total_dernier_mois =
+      await this.statistiqueExternalRepository.getNombreInscritsDernierMois();
+    result.nombre_points_moyen =
+      local_users.length > 0 ? nombre_points_moyen / local_users.length : 0;
+
+    result.pourcent_actions_alimentation = this.pourcent(
+      nbr_actions_alimentation,
+      nbr_actions_total,
+    );
+    result.pourcent_actions_logement = this.pourcent(
+      nbr_actions_logement,
+      nbr_actions_total,
+    );
+    result.pourcent_actions_transport = this.pourcent(
+      nbr_actions_transport,
+      nbr_actions_total,
+    );
+    result.pourcent_actions_consommation = this.pourcent(
+      nbr_actions_consommation,
+      nbr_actions_total,
+    );
 
     result.liste_aides_region = categorisation_aides.regional;
     result.liste_aides_departement = categorisation_aides.departemental;
@@ -289,5 +358,10 @@ export class Synthese_v2Controller extends GenericControler {
     }
     result.local = Array.from(RESULT_liste_locale.values());
     return result;
+  }
+
+  private pourcent(a: number, b: number): number {
+    if (b === 0) return 0;
+    return Math.round((a / b) * 100);
   }
 }
