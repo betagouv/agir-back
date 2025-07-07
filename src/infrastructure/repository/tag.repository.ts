@@ -43,6 +43,9 @@ export class TagRepository {
   public static getTagDefinition(tag: string): TagDefinition {
     return TagRepository.catalogue.get(tag);
   }
+  public static getCatalogue(): Map<string, TagDefinition> {
+    return TagRepository.catalogue;
+  }
 
   async upsert(tag_def: TagDefinition): Promise<void> {
     const pond_db: Tag = {

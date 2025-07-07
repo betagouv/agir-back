@@ -12,6 +12,7 @@ import { Tag_v2 } from '../../domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { ActionRepository } from '../repository/action.repository';
+import { TagRepository } from '../repository/tag.repository';
 import { GenericControler } from './genericControler';
 
 export class ProfileRecoActionAPI {
@@ -60,12 +61,42 @@ export class DynamicTagAPI {
   @ApiProperty() explication: string;
 }
 
+export class TagCMSAPI {
+  @ApiProperty()
+  id_cms: string;
+
+  @ApiProperty()
+  tag_id: string;
+
+  @ApiProperty()
+  label_explication_front: string;
+
+  @ApiProperty()
+  description_interne: string;
+
+  @ApiProperty()
+  ponderation: number;
+
+  @ApiProperty()
+  boost: number;
+}
+
 export class MappingKycTagAPI {
   @ApiProperty({ type: [KycTagsAPI] }) mapped_kyc_liste: KycTagsAPI[];
-  @ApiProperty({ enum: Tag_v2, isArray: true }) reached_tags: Tag_v2[];
-  @ApiProperty({ enum: Tag_v2, isArray: true }) unreachable_tags: Tag_v2[];
+
+  @ApiProperty({ enum: Tag_v2, isArray: true })
+  reachable_tags_via_kycs: Tag_v2[];
+
+  @ApiProperty({ enum: Tag_v2, isArray: true })
+  unreachable_tags_via_kyc: Tag_v2[];
+
   @ApiProperty({ type: [DynamicTagAPI] })
   dynamic_tags: DynamicTagAPI[];
+
+  @ApiProperty({ type: [TagCMSAPI] }) backend_unknown_cms_tags: TagCMSAPI[];
+
+  @ApiProperty({ type: [TagCMSAPI] })
+  full_cms_tag_collection: TagCMSAPI[];
 }
 
 @ApiTags('Z - Admin')
@@ -75,7 +106,7 @@ export class RecoProfileController extends GenericControler {
     super();
   }
 
-  @Get('action_recommandee')
+  @Get('recommandation/simulateur_actions_recommandees')
   @ApiQuery({
     name: 'tag',
     enum: Tag_v2,
@@ -83,18 +114,11 @@ export class RecoProfileController extends GenericControler {
     isArray: true,
     description: `liste des tags de l'utilisateur, si spécifié, prend la place des personas`,
   })
-  @ApiQuery({
-    name: 'persona',
-    enum: PersonaProfile,
-    required: false,
-    description: `persona regroupant plusieurs tags`,
-  })
   @ApiOkResponse({ type: ProfileRecoAPI })
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 } })
   async action_reco_par_tag(
     @Query('tag') tag: string | string[],
-    @Query('persona') persona: string,
     @Response() res: Res,
   ): Promise<any> {
     const result: ProfileRecoAPI = {
@@ -111,16 +135,6 @@ export class RecoProfileController extends GenericControler {
         final_tag_liste.push(Tag_v2[one_tag]);
       } else {
         ApplicationError.throwTagInconnu(one_tag);
-      }
-    }
-
-    if (tag_liste.length === 0) {
-      if (persona) {
-        if (PersonaProfile[persona]) {
-          final_tag_liste = TAGGING_PERSONA[PersonaProfile[persona]];
-        } else {
-          ApplicationError.throwPersonaInconnu(persona);
-        }
       }
     }
 
@@ -165,7 +179,7 @@ export class RecoProfileController extends GenericControler {
     return res.json(result);
   }
 
-  @Get('mapping_kyc_tags')
+  @Get('recommandation/mapping_kyc_tags')
   @ApiOkResponse({ type: MappingKycTagAPI })
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 } })
@@ -187,15 +201,15 @@ export class RecoProfileController extends GenericControler {
       }
     }
 
-    result.reached_tags = Array.from(final_tag_set.values());
+    result.reachable_tags_via_kycs = Array.from(final_tag_set.values());
 
     const unreachable = [];
     for (const tag of Object.values(Tag_v2)) {
-      if (!result.reached_tags.includes(tag)) {
+      if (!result.reachable_tags_via_kycs.includes(tag)) {
         unreachable.push(tag);
       }
     }
-    result.unreachable_tags = unreachable;
+    result.unreachable_tags_via_kyc = unreachable;
 
     result.dynamic_tags = [];
 
@@ -204,6 +218,23 @@ export class RecoProfileController extends GenericControler {
         tag: Tag_v2[tag],
         explication: explication,
       });
+    }
+
+    result.backend_unknown_cms_tags = [];
+    result.full_cms_tag_collection = [];
+    for (const [tag, definition] of TagRepository.getCatalogue()) {
+      const def = {
+        id_cms: definition.cms_id,
+        tag_id: definition.tag,
+        label_explication_front: definition.label_explication,
+        description_interne: definition.description,
+        ponderation: definition.ponderation,
+        boost: definition.boost,
+      };
+      if (!Tag_v2[tag]) {
+        result.backend_unknown_cms_tags.push(def);
+      }
+      result.full_cms_tag_collection.push(def);
     }
 
     return result;
