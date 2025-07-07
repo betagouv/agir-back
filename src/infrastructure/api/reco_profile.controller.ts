@@ -4,6 +4,9 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response as Res } from 'express';
 import { Action } from '../../domain/actions/action';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { KYCID } from '../../domain/kyc/KYCID';
+import { KycToTags_v2 } from '../../domain/kyc/synchro/kycToTagsV2';
+import { DynamicTag_v2Ref } from '../../domain/scoring/system_v2/DynamicTag_v2';
 import { ProfileRecommandationUtilisateur } from '../../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../domain/thematique/thematique';
@@ -41,6 +44,30 @@ export class ProfileRecoAPI {
   @ApiProperty({ type: [ProfileRecoActionAPI] })
   alimentation: ProfileRecoActionAPI[];
 }
+
+export class KycTagsAPI {
+  @ApiProperty({ enum: KYCID })
+  kyc: KYCID;
+
+  @ApiProperty({ enum: Tag_v2, isArray: true })
+  tags: Tag_v2[];
+}
+
+export class DynamicTagAPI {
+  @ApiProperty({ enum: Tag_v2 })
+  tag: Tag_v2;
+
+  @ApiProperty() explication: string;
+}
+
+export class MappingKycTagAPI {
+  @ApiProperty({ type: [KycTagsAPI] }) mapped_kyc_liste: KycTagsAPI[];
+  @ApiProperty({ enum: Tag_v2, isArray: true }) reached_tags: Tag_v2[];
+  @ApiProperty({ enum: Tag_v2, isArray: true }) unreachable_tags: Tag_v2[];
+  @ApiProperty({ type: [DynamicTagAPI] })
+  dynamic_tags: DynamicTagAPI[];
+}
+
 @ApiTags('Z - Admin')
 @Controller()
 export class RecoProfileController extends GenericControler {
@@ -136,5 +163,49 @@ export class RecoProfileController extends GenericControler {
     result.consommation.sort((a, b) => b.pourcentage_reco - a.pourcentage_reco);
 
     return res.json(result);
+  }
+
+  @Get('mapping_kyc_tags')
+  @ApiOkResponse({ type: MappingKycTagAPI })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  async mapping_kyc_tags(): Promise<MappingKycTagAPI> {
+    const report = KycToTags_v2.generate_dependency_report();
+
+    const result = new MappingKycTagAPI();
+    result.mapped_kyc_liste = [];
+
+    const final_tag_set = new Set<Tag_v2>();
+
+    for (const [kyc, tag_set] of report) {
+      result.mapped_kyc_liste.push({
+        kyc: kyc,
+        tags: Array.from(tag_set.values()),
+      });
+      for (const value of tag_set.values()) {
+        final_tag_set.add(value);
+      }
+    }
+
+    result.reached_tags = Array.from(final_tag_set.values());
+
+    const unreachable = [];
+    for (const tag of Object.values(Tag_v2)) {
+      if (!result.reached_tags.includes(tag)) {
+        unreachable.push(tag);
+      }
+    }
+    result.unreachable_tags = unreachable;
+
+    result.dynamic_tags = [];
+
+    for (const [tag, explication] of Object.entries(DynamicTag_v2Ref)) {
+      result.dynamic_tags.push({
+        tag: Tag_v2[tag],
+        explication: explication,
+      });
+    }
+
+    return result;
   }
 }

@@ -18,7 +18,6 @@ type CODE_TAG = Record<string, Tag_v2>;
 export type KycToTagMapper = {
   oui_non?: OUI_NON;
   is_zero?: OUI_NON;
-  is_oui?: OUI_NON;
   both_zero?: { kyc: KYCID } & OUI_NON;
   one_of?: { set: string[] } & OUI_NON;
   is_code?: { code: string } & OUI_NON;
@@ -156,6 +155,57 @@ export class KycToTags_v2 {
     this.new_tag_set = new Set();
     this.logement = logement;
     this.commune_repo = commune_repo;
+  }
+
+  public static generate_dependency_report(): Map<KYCID, Set<Tag_v2>> {
+    const result_map: Map<KYCID, Set<Tag_v2>> = new Map();
+
+    for (const [kyc_id, mappers] of Object.entries(KYC_TAG_MAPPER_COLLECTION)) {
+      const tag_set: Set<Tag_v2> = new Set();
+
+      if (mappers.oui_non) {
+        mappers.oui_non.oui?.forEach((t) => tag_set.add(t));
+        mappers.oui_non.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.is_zero) {
+        mappers.is_zero.oui?.forEach((t) => tag_set.add(t));
+        mappers.is_zero.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.both_zero) {
+        mappers.both_zero.oui?.forEach((t) => tag_set.add(t));
+        mappers.both_zero.non?.forEach((t) => tag_set.add(t));
+        let other_set = result_map.get(mappers.both_zero.kyc);
+        if (!other_set) {
+          other_set = new Set();
+        }
+        mappers.both_zero.oui?.forEach((t) => other_set.add(t));
+        mappers.both_zero.non?.forEach((t) => other_set.add(t));
+        result_map.set(mappers.both_zero.kyc, other_set);
+      }
+      if (mappers.one_of) {
+        mappers.one_of.oui?.forEach((t) => tag_set.add(t));
+        mappers.one_of.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.is_code) {
+        mappers.is_code.oui?.forEach((t) => tag_set.add(t));
+        mappers.is_code.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.are_codes) {
+        for (const code of mappers.are_codes) {
+          code.oui?.forEach((t) => tag_set.add(t));
+          code.non?.forEach((t) => tag_set.add(t));
+        }
+      }
+      if (mappers.distribute) {
+        for (const [code, tag] of Object.entries(mappers.distribute)) {
+          tag_set.add(tag);
+        }
+      }
+
+      result_map.set(KYCID[kyc_id], tag_set);
+    }
+
+    return result_map;
   }
 
   public refreshTagState_v2(profile: ProfileRecommandationUtilisateur) {
