@@ -89,6 +89,9 @@ export class ProfileRecommandationUtilisateur {
       if (Tag_v2[tag]) this.set_tags_actifs.add(Tag_v2[tag]);
     }
   }
+  public replaceAllTags(new_set: Set<Tag_v2>) {
+    this.set_tags_actifs = new_set;
+  }
 
   public setTag(tag: Tag_v2) {
     this.set_tags_actifs.add(tag);

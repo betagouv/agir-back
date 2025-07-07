@@ -349,8 +349,8 @@ describe('Thematique (API test)', () => {
       Scope.ALL,
     ]);
     expect(user_after.recommandation.getListeTagsActifs()).toEqual([
-      Tag_v2.habite_zone_urbaine,
       Tag_v2.est_proprietaire,
+      Tag_v2.habite_zone_urbaine,
     ]);
   });
 

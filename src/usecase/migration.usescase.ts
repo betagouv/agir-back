@@ -390,10 +390,9 @@ export class MigrationUsecase {
     // DO SOMETHING
     new KycToTags_v2(
       utilisateur.kyc_history,
-      utilisateur.recommandation,
       utilisateur.logement,
       _this.communeRepository,
-    ).refreshTagState();
+    ).refreshTagState_v2(utilisateur.recommandation);
 
     // VALIDATE VERSION VALUE
     utilisateur.version = version;
@@ -457,10 +456,9 @@ export class MigrationUsecase {
     // DO SOMETHING
     new KycToTags_v2(
       utilisateur.kyc_history,
-      utilisateur.recommandation,
       utilisateur.logement,
       _this.communeRepository,
-    ).refreshTagState();
+    ).refreshTagState_v2(utilisateur.recommandation);
 
     // VALIDATE VERSION VALUE
     utilisateur.version = version;

@@ -189,10 +189,9 @@ export class ThematiqueUsecase {
 
     new KycToTags_v2(
       utilisateur.kyc_history,
-      utilisateur.recommandation,
       utilisateur.logement,
       this.communeRepository,
-    ).refreshTagState();
+    ).refreshTagState_v2(utilisateur.recommandation);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
