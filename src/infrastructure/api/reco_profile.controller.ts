@@ -27,11 +27,6 @@ export enum PersonaProfile {
   rural = 'rural',
 }
 
-const TAGGING_PERSONA: Record<PersonaProfile, Tag_v2[]> = {
-  rural: [Tag_v2.habite_zone_rurale],
-  urbain: [Tag_v2.habite_zone_urbaine],
-};
-
 export class ProfileRecoAPI {
   @ApiProperty({ type: [ProfileRecoActionAPI] })
   logement: ProfileRecoActionAPI[];
