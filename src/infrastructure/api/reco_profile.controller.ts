@@ -206,14 +206,6 @@ export class RecoProfileController extends GenericControler {
 
     result.reachable_tags_via_kycs = Array.from(final_tag_set.values());
 
-    const unreachable = [];
-    for (const tag of Object.values(Tag_v2)) {
-      if (!result.reachable_tags_via_kycs.includes(tag)) {
-        unreachable.push(tag);
-      }
-    }
-    result.unreachable_tags_via_kyc = unreachable;
-
     result.dynamic_tags = [];
 
     for (const [tag, explication] of Object.entries(DynamicTag_v2Ref)) {
@@ -222,6 +214,17 @@ export class RecoProfileController extends GenericControler {
         explication: explication,
       });
     }
+
+    const unreachable = [];
+    for (const tag of Object.values(Tag_v2)) {
+      if (
+        !result.reachable_tags_via_kycs.includes(tag) &&
+        !(result.dynamic_tags.findIndex((t) => t.tag === tag) > -1)
+      ) {
+        unreachable.push(tag);
+      }
+    }
+    result.unreachable_tags_via_kyc = unreachable;
 
     result.cms_tags_not_in_backend = [];
     result.backend_tags_not_in_cms = [];
