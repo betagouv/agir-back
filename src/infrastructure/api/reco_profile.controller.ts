@@ -93,7 +93,10 @@ export class MappingKycTagAPI {
   @ApiProperty({ type: [DynamicTagAPI] })
   dynamic_tags: DynamicTagAPI[];
 
-  @ApiProperty({ type: [TagCMSAPI] }) backend_unknown_cms_tags: TagCMSAPI[];
+  @ApiProperty({ type: [TagCMSAPI] }) cms_tags_not_in_backend: TagCMSAPI[];
+
+  @ApiProperty({ enum: Tag_v2, isArray: true })
+  backend_tags_not_in_cms: Tag_v2[];
 
   @ApiProperty({ type: [TagCMSAPI] })
   full_cms_tag_collection: TagCMSAPI[];
@@ -220,7 +223,13 @@ export class RecoProfileController extends GenericControler {
       });
     }
 
-    result.backend_unknown_cms_tags = [];
+    result.cms_tags_not_in_backend = [];
+    result.backend_tags_not_in_cms = [];
+    for (const tag of Object.values(Tag_v2)) {
+      if (!TagRepository.getTagDefinition(tag)) {
+        result.backend_tags_not_in_cms.push(tag);
+      }
+    }
     result.full_cms_tag_collection = [];
     for (const [tag, definition] of TagRepository.getCatalogue()) {
       const def = {
@@ -232,7 +241,7 @@ export class RecoProfileController extends GenericControler {
         boost: definition.boost,
       };
       if (!Tag_v2[tag]) {
-        result.backend_unknown_cms_tags.push(def);
+        result.cms_tags_not_in_backend.push(def);
       }
       result.full_cms_tag_collection.push(def);
     }
