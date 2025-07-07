@@ -995,6 +995,7 @@ export class CMSImportUsecase {
             )
           : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
+      emoji: entry.attributes.emoji,
     });
   }
 

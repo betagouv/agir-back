@@ -349,8 +349,8 @@ describe('Thematique (API test)', () => {
       Scope.ALL,
     ]);
     expect(user_after.recommandation.getListeTagsActifs()).toEqual([
-      Tag_v2.habite_zone_urbaine,
       Tag_v2.est_proprietaire,
+      Tag_v2.habite_zone_urbaine,
     ]);
   });
 
@@ -486,6 +486,7 @@ describe('Thematique (API test)', () => {
       thematique: 'alimentation',
       titre: '**The titre**',
       type: 'classique',
+      emoji: '🔥',
       explications_recommandation: {
         est_exclu: false,
         liste_explications: [],

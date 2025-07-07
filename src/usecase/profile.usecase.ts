@@ -310,10 +310,9 @@ export class ProfileUsecase {
     if (data_to_update.code_commune) {
       new KycToTags_v2(
         utilisateur.kyc_history,
-        utilisateur.recommandation,
         utilisateur.logement,
         this.communeRepository,
-      ).refreshTagState();
+      ).refreshTagState_v2(utilisateur.recommandation);
     }
 
     try {

@@ -202,6 +202,8 @@ export class WinterUsecase {
       }
     }
 
+    result.detail_usages.sort((a, b) => b.eur - a.eur);
+
     return result;
   }
 

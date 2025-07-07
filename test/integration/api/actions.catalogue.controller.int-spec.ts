@@ -109,6 +109,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       sous_titre: 'Sous titre',
       thematique: 'consommation',
       titre: '**The titre**',
+      emoji: '🔥',
       type: 'classique',
       points: 100,
       explications_recommandation: {

@@ -48,6 +48,7 @@ import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
 import { QuestionsKYCEnchainementController } from './infrastructure/api/questionKYCEnchainement.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
+import { RecoProfileController } from './infrastructure/api/reco_profile.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RisqesController } from './infrastructure/api/risques.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
@@ -184,6 +185,7 @@ function getControllers(): any[] {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(CmsPreviewController);
+    controllers.push(RecoProfileController);
   }
   return controllers;
 }

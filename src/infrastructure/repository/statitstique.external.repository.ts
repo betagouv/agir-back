@@ -59,6 +59,19 @@ export class StatistiqueExternalRepository {
     await this.prismaStats.questionsUtilisateur.deleteMany();
   }
 
+  public async getNombreInscritsDernierMois(): Promise<number> {
+    const last_month = new Date();
+    last_month.setMonth(new Date().getMonth() - 1);
+
+    return await this.prismaStats.utilisateurCopy.count({
+      where: {
+        date_inscription: {
+          gt: last_month,
+        },
+      },
+    });
+  }
+
   public async createUserQuestionData(
     action_cms_id: string,
     action_titre: string,

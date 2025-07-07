@@ -105,6 +105,7 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       titre: 'titre',
+      emoji: '🔥',
       sous_titre: 'sous-titre',
       consigne: 'Faites rapidement',
       label_compteur: 'tout le monde a déjà fait !',
@@ -973,6 +974,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
+    expect(action.emoji).toEqual('🔥');
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.consigne).toEqual('Faites rapidement');
     expect(action.label_compteur).toEqual('tout le monde a déjà fait !');
@@ -1063,6 +1065,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
+    expect(action.emoji).toEqual('🔥');
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);

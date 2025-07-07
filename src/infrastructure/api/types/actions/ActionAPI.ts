@@ -86,6 +86,7 @@ export class ActionAPI {
   @ApiProperty() code: string;
   @ApiProperty() titre: string;
   @ApiProperty() sous_titre: string;
+  @ApiProperty() emoji: string;
   @ApiProperty() points: number;
   @ApiProperty() consigne: string;
   @ApiProperty({ type: [SourceActionAPI] }) sources: SourceActionAPI[];
@@ -158,6 +159,7 @@ export class ActionAPI {
         action.explicationScore,
       ),
       explications_recommandation_raw: action.explicationScore,
+      emoji: action.emoji,
     };
   }
 }

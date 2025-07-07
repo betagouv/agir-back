@@ -433,6 +433,7 @@ export class TestUtil {
       created_at: undefined,
       updated_at: undefined,
       VISIBLE_PROD: true,
+      emoji: '🔥',
       ...override,
     };
   }

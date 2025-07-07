@@ -561,6 +561,7 @@ export class CMSWebhookUsecase {
         ? entry.tag_v2_incluants.map((elem) => elem.code)
         : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
+      emoji: entry.emoji,
     });
   }
 
