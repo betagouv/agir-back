@@ -70,7 +70,6 @@ import { ActionRepository } from './infrastructure/repository/action.repository'
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { AideExpirationWarningRepository } from './infrastructure/repository/aideExpirationWarning.repository';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
-import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
 import { BlockTextRepository } from './infrastructure/repository/blockText.repository';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
@@ -138,7 +137,6 @@ import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { RisquesUsecase } from './usecase/risques.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
-import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
@@ -246,8 +244,6 @@ function getControllers(): any[] {
     InscriptionUsecase,
     AideRepository,
     LinkyConsentRepository,
-    ArticleStatistiqueUsecase,
-    ArticleStatistiqueRepository,
     QuizStatistiqueRepository,
     KycStatistiqueRepository,
     KycRepository,

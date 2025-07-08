@@ -40,7 +40,6 @@ import './personnalisation.int-spec';
 import './repository/aide.repository.int-spec';
 import './repository/aideVelo.repository.int-spec';
 import './repository/article.repository.int-spec';
-import './repository/articleStatistique.repository.int-spec';
 import './repository/commune.repository.int-spec';
 import './repository/compteurActions.repository.int-spec';
 import './repository/emailTemplate.repository.int-spec';
