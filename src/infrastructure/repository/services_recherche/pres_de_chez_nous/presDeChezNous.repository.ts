@@ -65,7 +65,7 @@ export type PresDeChezVousResponse = {
 
 @Injectable()
 export class PresDeChezNousRepository implements FinderInterface {
-  static API_TIMEOUT = 4000;
+  static API_TIMEOUT = 10000;
 
   constructor(private addressesRepository: AddressesRepository) {}
 
