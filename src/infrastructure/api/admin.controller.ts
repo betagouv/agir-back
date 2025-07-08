@@ -22,6 +22,7 @@ import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
 import { App } from '../../domain/app';
+import { EmailNotification } from '../../domain/notification/notificationHistory';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
@@ -246,6 +247,12 @@ export class AdminController extends GenericControler {
   @Post('/admin/send_one_email_as_test/:utilisateurId/:type')
   @ApiOperation({
     summary: `Tente d'envoyer un template de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
+  })
+  @ApiQuery({
+    name: 'type',
+    enum: EmailNotification,
+    required: true,
+    description: `type de notif email`,
   })
   async send_one_email_as_test(
     @Request() req,
