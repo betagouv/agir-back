@@ -85,20 +85,6 @@ model Utilisateur {
   activity_dates_log         DateTime[] @default([])
 }
 
-model Statistique {
-  utilisateurId           String   @id
-  nombre_defis_realises   Int?
-  nombre_defis_abandonnes Int?
-  nombre_defis_pas_envie  Int?
-  nombre_defis_en_cours   Int?
-  thematiques_en_cours    String?
-  thematiques_terminees   String?
-  univers_en_cours        String?
-  univers_termines        String?
-  created_at              DateTime @default(now()) @db.Timestamptz(3)
-  updated_at              DateTime @updatedAt @db.Timestamptz(3)
-}
-
 model RisquesNaturelsCommunes {
   code_commune           String   @id
   nom_commune            String
@@ -107,19 +93,6 @@ model RisquesNaturelsCommunes {
   pourcentage_secheresse Int?
   created_at             DateTime @default(now()) @db.Timestamptz(3)
   updated_at             DateTime @updatedAt @db.Timestamptz(3)
-}
-
-model DefiStatistique {
-  content_id              String   @id
-  titre                   String?
-  nombre_defis_realises   Int?
-  nombre_defis_abandonnes Int?
-  nombre_defis_en_cours   Int?
-  nombre_defis_pas_envie  Int?
-  raisons_defi_pas_envie  String[] @default([])
-  raisons_defi_abandonne  String[] @default([])
-  created_at              DateTime @default(now()) @db.Timestamptz(3)
-  updated_at              DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model ServicesFavorisStatistique {
