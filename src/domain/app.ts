@@ -161,4 +161,8 @@ export class App {
   } {
     return metadata.version;
   }
+
+  public static isInPDCFilter(id: string): boolean {
+    return process.env.PDCN_FILTER.includes(id);
+  }
 }

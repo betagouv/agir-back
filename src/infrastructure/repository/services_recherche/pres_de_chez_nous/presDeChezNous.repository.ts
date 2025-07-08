@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { App } from '../../../../domain/app';
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
@@ -146,7 +147,9 @@ export class PresDeChezNousRepository implements FinderInterface {
 
     final_result.sort((a, b) => a.distance_metres - b.distance_metres);
 
-    const subset = final_result.slice(
+    const filtered = this.filter(final_result);
+
+    const subset = filtered.slice(
       0,
       filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
     );
@@ -218,5 +221,9 @@ export class PresDeChezNousRepository implements FinderInterface {
     }
     console.log(`API_TIME:presdecheznous:${Date.now() - call_time}`);
     return response.data;
+  }
+
+  private filter(liste: ResultatRecherche[]): ResultatRecherche[] {
+    return liste.filter((r) => !App.isInPDCFilter(r.id));
   }
 }
