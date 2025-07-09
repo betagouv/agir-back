@@ -77,7 +77,6 @@ import { CompteurActionsRepository } from './infrastructure/repository/compteurA
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
-import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
@@ -243,7 +242,6 @@ function getControllers(): any[] {
     InscriptionUsecase,
     AideRepository,
     LinkyConsentRepository,
-    KycStatistiqueRepository,
     KycRepository,
     MissionStatistiqueRepository,
     ThematiqueStatistiqueRepository,

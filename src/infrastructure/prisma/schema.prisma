@@ -116,15 +116,6 @@ model CommunesAndEPCI {
   nom            String
 }
 
-model KycStatistique {
-  kycId         String
-  utilisateurId String
-  titre         String
-  reponse       String
-
-  @@id([utilisateurId, kycId])
-}
-
 model UniversStatistique {
   universId                    String   @id
   titre                        String
