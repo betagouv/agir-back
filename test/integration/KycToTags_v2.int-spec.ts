@@ -184,8 +184,13 @@ describe('KycToTags_v2', () => {
                 selected: false,
               },
               {
-                code: 'hybride',
-                label: 'Hybride',
+                code: 'hybride_rechargeable',
+                label: 'Hybride rechargeable',
+                selected: false,
+              },
+              {
+                code: 'hybride_non_rechargeable',
+                label: 'Hybride non rechargeable',
                 selected: true,
               },
               {
