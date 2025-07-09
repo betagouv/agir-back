@@ -124,6 +124,11 @@ export class ActionUsecase {
     for (const action of catalogue.actions) {
       action.nombre_actions_faites =
         this.compteurActionsRepository.getNombreFaites(action);
+
+      action.label_compteur = action.label_compteur.replace(
+        '{NBR_ACTIONS}',
+        '' + action.nombre_actions_faites,
+      );
     }
 
     return catalogue;

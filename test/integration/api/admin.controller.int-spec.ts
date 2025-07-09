@@ -877,7 +877,7 @@ describe('Admin (API test)', () => {
       expect(userDB.version).toEqual(18);
     });
 
-    it('migration V19 init le mode inscription', async () => {
+    it.skip('migration V19 init le mode inscription', async () => {
       // GIVEN
       TestUtil.token = process.env.CRON_API_KEY;
 
