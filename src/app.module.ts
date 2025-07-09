@@ -99,7 +99,6 @@ import { TagRepository } from './infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
 import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { TokenRepository } from './infrastructure/repository/token.repository';
-import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 import { WinterRepository } from './infrastructure/repository/winter/winter.repository';
@@ -244,7 +243,6 @@ function getControllers(): any[] {
     LinkyConsentRepository,
     KycRepository,
     MissionStatistiqueRepository,
-    ThematiqueStatistiqueRepository,
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,
