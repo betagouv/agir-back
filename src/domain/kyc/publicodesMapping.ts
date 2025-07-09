@@ -11,22 +11,24 @@ import { KYCID } from './KYCID';
  * TODO: we may want to distinguish between the ngc_code and other values.
  */
 export type KYCComplexValues = {
+  [key in KYCID]: { code: string; ngc_code?: string };
+} & {
   _default: { code: string; ngc_code?: string };
-  KYC009: {
+  [KYCID.KYC009]: {
     code: 'ma_voit' | 'loc_voit' | 'co_voit' | 'pas_voiture';
     ngc_code: undefined;
   };
-  KYC_transport_type_utilisateur:
+  [KYCID.KYC_transport_type_utilisateur]:
     | { code: 'proprio'; ngc_code: "'propriétaire'" }
     | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
     | { code: 'change_souvent'; ngc_code: "'non régulier'" };
-  KYC_transport_voiture_gabarit:
+  [KYCID.KYC_transport_voiture_gabarit]:
     | { code: 'petite'; ngc_code: "'petite'" }
     | { code: 'moyenne'; ngc_code: "'moyenne'" }
     | { code: 'berline'; ngc_code: "'berline'" }
     | { code: 'SUV'; ngc_code: "'SUV'" }
     | { code: 'VUL'; ngc_code: "'VUL'" };
-  KYC_transport_voiture_motorisation:
+  [KYCID.KYC_transport_voiture_motorisation]:
     | { code: 'thermique'; ngc_code: "'thermique'" }
     | { code: 'hybride_rechargeable'; ngc_code: "'hybride rechargeable'" }
     | {
@@ -34,14 +36,23 @@ export type KYCComplexValues = {
         ngc_code: "'hybride non rechargeable'";
       }
     | { code: 'electrique'; ngc_code: "'électrique'" };
-  KYC_transport_voiture_thermique_carburant:
+  [KYCID.KYC_transport_voiture_thermique_carburant]:
     | { code: 'gazole_B7_B10'; ngc_code: "'gazole B7 ou B10'" }
     | { code: 'essence_E5_E10'; ngc_code: "'essence E5 ou E10'" }
     | { code: 'essence_E85'; ngc_code: "'essence E85'" }
     | { code: 'GPL'; ngc_code: "'GPL'" };
-  KYC_transport_voiture_occasion:
+  [KYCID.KYC_transport_voiture_occasion]:
     | { code: 'oui'; ngc_code: 'oui' }
     | { code: 'non'; ngc_code: 'non' };
+  [KYCID.KYC_consommation_relation_objets]:
+    | { code: 'faible'; ngc_code: "'faible'" }
+    | { code: 'moyen'; ngc_code: "'moyen'" }
+    | { code: 'maximum'; ngc_code: "'maximum'" };
+  [KYCID.KYC_local_frequence]:
+    | { code: 'jamais'; ngc_code: "'jamais'" }
+    | { code: 'parfois'; ngc_code: "'parfois'" }
+    | { code: 'souvent'; ngc_code: "'souvent'" }
+    | { code: 'toujours'; ngc_code: "'oui toujours'" };
 };
 
 // NOTE: sûrement à déplacer dans un fichier dédié

@@ -7,6 +7,7 @@ import { ProfileRecommandationUtilisateur } from '../../scoring/system_v2/profil
 import { Tag_v2 } from '../../scoring/system_v2/Tag_v2';
 import { KYCHistory } from '../kycHistory';
 import { KYCID } from '../KYCID';
+import { KYCComplexValues } from '../publicodesMapping';
 import { BooleanKYC } from '../QuestionKYCData';
 
 type OUI_NON = {
@@ -15,18 +16,18 @@ type OUI_NON = {
 };
 type CODE_TAG = Record<string, Tag_v2>;
 
-export type KycToTagMapper = {
+export type KycToTagMapper<T extends KYCID> = {
   oui_non?: OUI_NON;
   is_zero?: OUI_NON;
   both_zero?: { kyc: KYCID } & OUI_NON;
-  one_of?: { set: string[] } & OUI_NON;
-  is_code?: { code: string } & OUI_NON;
-  are_codes?: ({ code: string } & OUI_NON)[];
+  one_of?: { set: KYCComplexValues[T]['code'][] } & OUI_NON;
+  is_code?: { code: KYCComplexValues[T]['code'] } & OUI_NON;
+  are_codes?: ({ code: KYCComplexValues[T]['code'] } & OUI_NON)[];
   distribute?: CODE_TAG;
 };
 
 const KYC_TAG_MAPPER_COLLECTION: {
-  [key in KYCID]?: KycToTagMapper;
+  [key in KYCID]?: KycToTagMapper<key>;
 } = {
   KYC_proprietaire: {
     oui_non: {
@@ -70,15 +71,28 @@ const KYC_TAG_MAPPER_COLLECTION: {
     },
   },
   KYC_transport_voiture_motorisation: {
-    one_of: {
-      set: ['thermique', 'hybride'],
-      oui: [Tag_v2.a_une_voiture_thermique],
-    },
-    is_code: { code: 'electrique', oui: [Tag_v2.a_une_voiture_electrique] },
+    are_codes: [
+      {
+        code: 'thermique',
+        oui: [Tag_v2.a_une_voiture_thermique],
+      },
+      {
+        code: 'hybride_non_rechargeable',
+        oui: [Tag_v2.a_une_voiture_thermique],
+      },
+      {
+        code: 'hybride_rechargeable',
+        oui: [Tag_v2.a_une_voiture_electrique],
+      },
+      {
+        code: 'electrique',
+        oui: [Tag_v2.a_une_voiture_electrique],
+      },
+    ],
   },
   KYC_consommation_relation_objets: {
     one_of: {
-      set: ['achete_jamais', 'seconde_main'],
+      set: ['faible', 'moyen'],
       oui: [Tag_v2.achete_peu_et_occasion],
     },
     is_code: {
