@@ -43,7 +43,6 @@ import './repository/article.repository.int-spec';
 import './repository/commune.repository.int-spec';
 import './repository/compteurActions.repository.int-spec';
 import './repository/emailTemplate.repository.int-spec';
-import './repository/quizStatistique.repository.int-spec';
 import './repository/quizz.repository.int-spec';
 import './repository/service.repository.int-spec';
 import './repository/services_recherche/presdechevous.repository.int-spec';

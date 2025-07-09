@@ -80,7 +80,6 @@ import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
-import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
@@ -244,7 +243,6 @@ function getControllers(): any[] {
     InscriptionUsecase,
     AideRepository,
     LinkyConsentRepository,
-    QuizStatistiqueRepository,
     KycStatistiqueRepository,
     KycRepository,
     MissionStatistiqueRepository,
