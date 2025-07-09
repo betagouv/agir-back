@@ -469,25 +469,3 @@ view PrenomVue {
   id     Int    @id
   prenom String
 }
-
-view UtilisateurVue {
-  id                      Int       @id
-  code_postal             String
-  date_inscription        DateTime
-  date_derniere_connexion DateTime?
-  nombre_points           Int
-  classement_global       Int
-  classement_local        Int
-  couverture_aide         Boolean
-  source_inscription      String
-  commune                 String?
-  dpe                     String?
-  plus_de_15_ans          Boolean?
-  nombre_adultes          Int?
-  nombre_enfants          Int?
-  proprietaire            Boolean?
-  superficie              String?
-  type                    String?
-  chauffage               String?
-  annee_de_naissance      Int
-}
