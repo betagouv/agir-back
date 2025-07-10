@@ -1380,7 +1380,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     );
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(201);
 
     const user = await utilisateurRepository.getById('utilisateur-id', [
@@ -1607,7 +1606,6 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     );
 
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(201);
 
     const user = await utilisateurRepository.getById('utilisateur-id', [
