@@ -1,3 +1,4 @@
+import { AlternativeAPI_v2 } from 'src/infrastructure/api/types/simulateur_voiture/SimulateurVoitureResultatAPI_v2';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCComplexValues } from '../../../src/domain/kyc/publicodesMapping';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
@@ -302,6 +303,49 @@ describe('/simulateur_voiture (API test)', () => {
         expect(alternative.empreinte).toBeGreaterThanOrEqual(
           voiture_actuelle.body.empreinte,
         );
+      });
+    });
+  });
+
+  describe('GET /utilisateurs/id/simulateur_voiture/resultat_v2/alternatives', () => {
+    test('renvoie un résultat cohérent avec les valeur par défaut', async () => {
+      // GIVEN
+      await TestUtil.create(DB.utilisateur);
+
+      // WHEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/alternatives',
+      );
+
+      // THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(90);
+      response.body.forEach((alternative: AlternativeAPI_v2) => {
+        expect(alternative.type).toEqual('voiture-individuelle');
+        expect(alternative.couts).toBeGreaterThan(0);
+        expect(alternative.empreinte).toBeGreaterThan(0);
+        expect(alternative.est_occasion).toBeDefined();
+        expect(alternative.gabarit.valeur).toBeDefined();
+        expect(alternative.gabarit.valeur).toBeTruthy();
+        expect(alternative.motorisation.valeur).toBeDefined();
+        expect(alternative.motorisation.est_applicable).toBeTruthy();
+        if (alternative.motorisation.valeur !== 'électrique') {
+          expect(alternative.carburant?.valeur).toBeDefined();
+          expect(alternative.carburant?.est_applicable).toBeTruthy();
+        } else {
+          expect(alternative.carburant).toBeUndefined();
+        }
+        expect(alternative.diff_couts).toBeDefined();
+        expect(alternative.diff_emissions).toBeDefined();
+        expect(alternative.economies_totales.valeur).toEqual(
+          alternative.diff_couts * 10,
+        );
+        expect(alternative.diff_emissions).toBeDefined();
+        expect(alternative.montant_aides.est_applicable).toEqual(
+          alternative.est_occasion === false &&
+            alternative.motorisation.valeur !== 'thermique',
+        );
+        expect(alternative.valeur_revente_actuelle.valeur).toBeDefined();
       });
     });
   });
