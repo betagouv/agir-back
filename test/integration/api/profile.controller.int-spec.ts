@@ -440,7 +440,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       rue: null,
     });
     // THEN
-    console.log(response.body);
     expect(response.status).toBe(200);
     const dbUser = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
