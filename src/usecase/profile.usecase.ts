@@ -329,6 +329,10 @@ export class ProfileUsecase {
       );
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
+    if (input.longitude === null && input.latitude === null) {
+      utilisateur.logement.score_risques_adresse = undefined;
+    }
+
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
     if (input.longitude && input.latitude) {

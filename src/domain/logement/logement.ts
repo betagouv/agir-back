@@ -112,6 +112,8 @@ export class Logement {
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {
+    console.log('hahahah');
+    console.log(input);
     this.nombre_adultes = this.AorB(input.nombre_adultes, this.nombre_adultes);
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
 
