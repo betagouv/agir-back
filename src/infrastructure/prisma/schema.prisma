@@ -464,8 +464,3 @@ model ServiceDefinition {
   updated_at         DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   services           Service[]
 }
-
-view PrenomVue {
-  id     Int    @id
-  prenom String
-}
