@@ -162,36 +162,37 @@ model Aide {
 }
 
 model Action {
-  type_code_id        String   @id
-  code                String
-  cms_id              String
-  type                String   @default("classique")
-  titre               String
-  titre_recherche     String?
-  sous_titre          String?
-  consigne            String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
-  label_compteur      String   @default("**453 actions** réalisées par la communauté")
-  quizz_felicitations String?
-  pourquoi            String?
-  comment             String?
-  thematique          String
-  sous_thematique     String?
-  besoins             String[] @default([])
-  quizz_ids           String[] @default([])
-  articles_ids        String[] @default([])
-  kyc_codes           String[] @default([])
-  faq_ids             String[] @default([])
-  recette_categorie   String?
-  pdcn_categorie      String?
-  lvo_action          String?
-  lvo_objet           String?
-  tags_a_inclure_v2   String[] @default([])
-  tags_a_exclure_v2   String[] @default([])
-  sources             Json?    @default("[]")
-  created_at          DateTime @default(now()) @db.Timestamptz(3)
-  updated_at          DateTime @updatedAt @db.Timestamptz(3)
-  VISIBLE_PROD        Boolean  @default(true)
-  emoji               String?
+  type_code_id           String   @id
+  code                   String
+  cms_id                 String
+  type                   String   @default("classique")
+  titre                  String
+  titre_recherche        String?
+  sous_titre             String?
+  consigne               String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
+  label_compteur         String   @default("**453 actions** réalisées par la communauté")
+  quizz_felicitations    String?
+  pourquoi               String?
+  comment                String?
+  thematique             String
+  sous_thematique        String?
+  besoins                String[] @default([])
+  quizz_ids              String[] @default([])
+  articles_ids           String[] @default([])
+  kyc_codes              String[] @default([])
+  faq_ids                String[] @default([])
+  recette_categorie      String?
+  recette_sous_categorie String?
+  pdcn_categorie         String?
+  lvo_action             String?
+  lvo_objet              String?
+  tags_a_inclure_v2      String[] @default([])
+  tags_a_exclure_v2      String[] @default([])
+  sources                Json?    @default("[]")
+  created_at             DateTime @default(now()) @db.Timestamptz(3)
+  updated_at             DateTime @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD           Boolean  @default(true)
+  emoji                  String?
 
   @@unique([code, type])
   @@unique([cms_id, type])

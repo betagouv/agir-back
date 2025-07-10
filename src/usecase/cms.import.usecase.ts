@@ -13,7 +13,10 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
@@ -943,6 +946,9 @@ export class CMSImportUsecase {
         : null,
       recette_categorie: entry.attributes.categorie_recettes
         ? CategorieRecherche[entry.attributes.categorie_recettes]
+        : null,
+      recette_sous_categorie: entry.attributes.sous_categorie_recettes
+        ? SousCategorieRecherche[entry.attributes.sous_categorie_recettes]
         : null,
       pdcn_categorie: entry.attributes.categorie_pdcn
         ? CategorieRecherche[entry.attributes.categorie_pdcn]

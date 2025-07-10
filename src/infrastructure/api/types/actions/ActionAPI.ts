@@ -4,7 +4,10 @@ import { TypeAction } from '../../../../domain/actions/typeAction';
 import { AideDefinition } from '../../../../domain/aides/aideDefinition';
 import { Besoin } from '../../../../domain/aides/besoin';
 import { Echelle } from '../../../../domain/aides/echelle';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
@@ -23,9 +26,13 @@ export class ServiceActionAPI {
   @ApiProperty({ enum: CategorieRecherche })
   categorie: CategorieRecherche;
 
+  @ApiProperty({ enum: CategorieRecherche })
+  sous_categorie: SousCategorieRecherche;
+
   public static map(service: ActionService): ServiceActionAPI {
     return {
       categorie: service.categorie,
+      sous_categorie: service.sous_categorie,
       recherche_service_id: service.recherche_service_id,
     };
   }

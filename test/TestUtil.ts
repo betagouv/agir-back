@@ -30,7 +30,10 @@ import { AppModule } from '../src/app.module';
 import { TypeAction } from '../src/domain/actions/typeAction';
 import { Besoin } from '../src/domain/aides/besoin';
 import { Echelle } from '../src/domain/aides/echelle';
-import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -413,6 +416,7 @@ export class TestUtil {
       quizz_ids: [],
       articles_ids: [],
       recette_categorie: CategorieRecherche.dinde_volaille,
+      recette_sous_categorie: SousCategorieRecherche.sans_cuisson,
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,

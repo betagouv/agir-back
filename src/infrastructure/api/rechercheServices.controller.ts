@@ -17,7 +17,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RechercheServicesUsecase } from '../../../src/usecase/rechercheServices.usecase';
-import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { ServiceRechercheID } from '../../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { ApplicationError } from '../applicationError';
@@ -64,6 +67,7 @@ export class RechecheServicesController extends GenericControler {
     }
     const filtre = {
       categorie: CategorieRecherche[body.categorie],
+      sous_categorie: SousCategorieRecherche[body.sous_categorie],
       point: body.longitude
         ? { latitude: body.latitude, longitude: body.longitude }
         : undefined,

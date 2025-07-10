@@ -1,5 +1,8 @@
 import { AideDefinition } from '../aides/aideDefinition';
-import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../contenu/article';
 import { Quizz } from '../contenu/quizz';
@@ -17,6 +20,7 @@ import { TypeAction } from './typeAction';
 export class ActionService {
   recherche_service_id: ServiceRechercheID;
   categorie: CategorieRecherche;
+  sous_categorie: SousCategorieRecherche;
 }
 
 export class Action extends ActionDefinition implements TaggedContent {

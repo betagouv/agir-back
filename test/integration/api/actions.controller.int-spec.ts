@@ -201,6 +201,7 @@ describe('Actions (API test)', () => {
         {
           categorie: 'dinde_volaille',
           recherche_service_id: 'recettes',
+          sous_categorie: 'sans_cuisson',
         },
         {
           categorie: 'zero_dechet',

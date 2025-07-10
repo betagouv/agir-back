@@ -1,5 +1,8 @@
 import { Besoin } from '../aides/besoin';
-import { CategorieRecherche } from '../bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../bibliotheque_services/recherche/categorieRecherche';
 import { Source } from '../contenu/source';
 import { SousThematique } from '../thematique/sousThematique';
 import { Thematique } from '../thematique/thematique';
@@ -36,6 +39,7 @@ export class ActionDefinitionData {
   article_ids: string[];
   quizz_ids: string[];
   recette_categorie: CategorieRecherche;
+  recette_sous_categorie: SousCategorieRecherche;
   pdcn_categorie: CategorieRecherche;
   type: TypeAction;
   thematique: Thematique;

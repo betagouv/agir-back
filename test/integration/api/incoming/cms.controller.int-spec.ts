@@ -2,7 +2,10 @@ import { KYC, Prisma } from '.prisma/client';
 import { CMSWebhookEntryAPI } from 'src/infrastructure/api/types/cms/CMSWebhookEntryAPI';
 import { TypeAction } from '../../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../../src/domain/aides/echelle';
-import { CategorieRecherche } from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
@@ -116,6 +119,7 @@ describe('/api/incoming/cms (API test)', () => {
       action_lvo: 'donner',
       type_action: 'quizz',
       categorie_recettes: 'vegan',
+      sous_categorie_recettes: SousCategorieRecherche.sans_saumon,
       categorie_pdcn: CategorieRecherche.circuit_court,
       sources: [{ libelle: 'haha', lien: 'hoho' }],
       VISIBLE_PROD: true,
@@ -1080,6 +1084,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.lvo_action).toEqual('donner');
     expect(action.lvo_objet).toEqual('phone');
     expect(action.recette_categorie).toEqual('vegan');
+    expect(action.recette_sous_categorie).toEqual('sans_saumon');
+    expect(action.recette_sous_categorie).toEqual('sans_saumon');
     expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');

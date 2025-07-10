@@ -241,18 +241,21 @@ export class ActionUsecase {
     if (action_def.recette_categorie) {
       liste_services.push({
         categorie: action_def.recette_categorie,
+        sous_categorie: action_def.recette_sous_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
       });
     }
     if (action_def.pdcn_categorie) {
       liste_services.push({
         categorie: action_def.pdcn_categorie,
+        sous_categorie: undefined,
         recherche_service_id: ServiceRechercheID.proximite,
       });
     }
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
+        sous_categorie: undefined,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
       });
     }
@@ -504,6 +507,7 @@ export class ActionUsecase {
     if (action_def.recette_categorie) {
       liste_services.push({
         categorie: action_def.recette_categorie,
+        sous_categorie: action_def.recette_sous_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
       });
     }
@@ -511,12 +515,14 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.pdcn_categorie,
         recherche_service_id: ServiceRechercheID.proximite,
+        sous_categorie: undefined,
       });
     }
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
+        sous_categorie: undefined,
       });
     }
 
