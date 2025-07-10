@@ -207,7 +207,6 @@ export class TestUtil {
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
-    await this.prisma.defi.deleteMany();
     await this.prisma.action.deleteMany();
     await this.prisma.linkyConsentement.deleteMany();
     await this.prisma.mission.deleteMany();

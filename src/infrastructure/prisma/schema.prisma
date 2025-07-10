@@ -209,23 +209,6 @@ model CompteurActions {
   @@unique([code, type])
 }
 
-model Defi {
-  content_id    String   @id
-  titre         String
-  sous_titre    String?
-  astuces       String?
-  pourquoi      String?
-  points        Int
-  thematique    String
-  tags          String[] @default([])
-  categorie     String   @default("recommandation")
-  mois          Int[]    @default([])
-  conditions    Json     @default("[]")
-  impact_kg_co2 Int?     @default(0)
-  created_at    DateTime @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime @updatedAt @db.Timestamptz(3)
-}
-
 model Article {
   content_id                        String    @id
   titre                             String
