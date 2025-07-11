@@ -8,6 +8,8 @@ import {
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
+import { KYCMosaicID } from '../domain/kyc/mosaicDefinition';
+import { QuestionChoix } from '../domain/kyc/new_interfaces/QuestionChoix';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
@@ -577,6 +579,57 @@ export class MigrationUsecase {
   }
 
   private async migrate_24(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+      Scope.kyc,
+    ]);
+
+    // DO SOMETHING
+
+    const kyc_mosaic_vetements = utilisateur.kyc_history.getUpToDateMosaicById(
+      KYCMosaicID.MOSAIC_VETEMENTS,
+    );
+
+    let nombre_choix = -1;
+    if (kyc_mosaic_vetements.is_answered) {
+      nombre_choix = new QuestionChoix(
+        kyc_mosaic_vetements,
+      ).getNombreSelections();
+
+      const kyc_type_achat_vetements =
+        utilisateur.kyc_history.getQuestionChoixUnique(
+          KYCID.KYC_raison_achat_vetements,
+        );
+
+      if (nombre_choix >= 9) {
+        kyc_type_achat_vetements.selectByCode('accro');
+      } else if (nombre_choix <= 4) {
+        kyc_type_achat_vetements.selectByCode('minimum');
+      } else {
+        kyc_type_achat_vetements.selectByCode('occasionnel');
+      }
+
+      utilisateur.kyc_history.updateQuestion(kyc_type_achat_vetements);
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core, Scope.kyc],
+    );
+
+    return {
+      ok: true,
+      info: `filled KYC_raison_achat_vetements with score ${nombre_choix}`,
+    };
+  }
+  private async migrate_25(
     user_id: string,
     version: number,
     _this: MigrationUsecase,
