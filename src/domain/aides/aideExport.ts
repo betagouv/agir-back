@@ -22,4 +22,5 @@ export class AideExport extends AideDefinition {
   liste_EPCI: EPCI_AIDE_EXPORT[];
   liste_codes_communes_hors_EPCI: CodeNom[];
   liste_partenaires: (PartenaireDefinition & { type_epci: string })[];
+  est_grand_est: boolean;
 }
