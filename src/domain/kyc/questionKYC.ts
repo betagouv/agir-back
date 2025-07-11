@@ -60,6 +60,12 @@ export class QuestionKYC extends QuestionKYCData {
   public isChampEntier(): boolean {
     return this.type === TypeReponseQuestionKYC.entier;
   }
+  public isNumerique(): boolean {
+    return (
+      this.type === TypeReponseQuestionKYC.entier ||
+      this.type === TypeReponseQuestionKYC.decimal
+    );
+  }
   public isChampDecimal(): boolean {
     return this.type === TypeReponseQuestionKYC.decimal;
   }

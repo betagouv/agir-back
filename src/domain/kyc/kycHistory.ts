@@ -10,11 +10,7 @@ import { QuestionChoixUnique } from './new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from './new_interfaces/QuestionNumerique';
 import { QuestionSimple } from './new_interfaces/QuestionSimple';
 import { QuestionTexteLibre } from './new_interfaces/QuestionTexteLibre';
-import {
-  AndConditionSet,
-  QuestionKYC,
-  TypeReponseQuestionKYC,
-} from './questionKYC';
+import { AndConditionSet, QuestionKYC } from './questionKYC';
 
 export type AnyQuestion =
   | QuestionKYC
@@ -427,13 +423,10 @@ export class KYCHistory {
       for (const cond of and_set) {
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
         if (kyc) {
-          if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+          if (kyc.isChoixQuestion()) {
             union = new QuestionChoix(kyc).isSelected(cond.code_reponse);
           }
-          if (
-            kyc.type === TypeReponseQuestionKYC.entier ||
-            kyc.type === TypeReponseQuestionKYC.decimal
-          ) {
+          if (kyc.isNumerique()) {
             const value = new QuestionNumerique(kyc).getValue();
             const evalved_condition = eval(cond.code_reponse);
             union = !!evalved_condition;
