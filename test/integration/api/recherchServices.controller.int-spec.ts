@@ -926,4 +926,23 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body.resultats).toHaveLength(173);
   });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search sous cat saumon crevette cabillaud`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({
+      categorie: CategorieRecherche.poisson,
+      nombre_max_resultats: 3000,
+      sous_categorie: SousCategorieRecherche.sans_saumon_crevette_cabillaud,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(115);
+  });
 });
