@@ -122,13 +122,7 @@ export class ActionUsecase {
     this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
 
     for (const action of catalogue.actions) {
-      action.nombre_actions_faites =
-        this.compteurActionsRepository.getNombreFaites(action);
-
-      action.label_compteur = action.label_compteur.replace(
-        '{NBR_ACTIONS}',
-        '' + action.nombre_actions_faites,
-      );
+      this.setCompteurActionsEtLabel(action);
     }
 
     return catalogue;
@@ -181,8 +175,7 @@ export class ActionUsecase {
     );
 
     for (const action of catalogue.actions) {
-      action.nombre_actions_faites =
-        this.compteurActionsRepository.getNombreFaites(action);
+      this.setCompteurActionsEtLabel(action);
     }
 
     this.setMontantEconomiesEuros(catalogue.actions, utilisateur);
@@ -274,13 +267,7 @@ export class ActionUsecase {
     action.setListeAides(linked_aides);
     action.services = liste_services;
 
-    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
-    action.nombre_actions_faites = nbr_faites;
-
-    action.label_compteur = action.label_compteur.replace(
-      '{NBR_ACTIONS}',
-      '' + nbr_faites,
-    );
+    this.setCompteurActionsEtLabel(action);
 
     return this.personnalisator.personnaliser(action, undefined, [
       CLE_PERSO.espace_insecable,
@@ -559,12 +546,7 @@ export class ActionUsecase {
       );
     }
 
-    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
-    action.nombre_actions_faites = nbr_faites;
-    action.label_compteur = action.label_compteur.replace(
-      '{NBR_ACTIONS}',
-      '' + nbr_faites,
-    );
+    this.setCompteurActionsEtLabel(action);
 
     utilisateur.thematique_history.setActionCommeVue(action);
 
@@ -839,5 +821,14 @@ export class ActionUsecase {
         action.montant_max_economies_euros = reco_winter.montant_economies_euro;
       }
     }
+  }
+
+  private setCompteurActionsEtLabel(action: Action) {
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + nbr_faites,
+    );
   }
 }

@@ -115,8 +115,7 @@ export class ThematiqueUsecase {
     for (const action of liste_actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
-      action.nombre_actions_faites =
-        this.compteurActionsRepository.getNombreFaites(action);
+      this.setCompteurActionsEtLabel(action);
     }
 
     return liste_actions;
@@ -236,5 +235,14 @@ export class ThematiqueUsecase {
       utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
 
     return liste_actions;
+  }
+
+  private setCompteurActionsEtLabel(action: Action) {
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + nbr_faites,
+    );
   }
 }

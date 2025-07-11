@@ -936,7 +936,7 @@ export class CMSImportUsecase {
         'Réalisez cette action dans les prochaines semaines et partagez vos retours',
       label_compteur:
         entry.attributes.label_compteur ||
-        '**453 actions** réalisées par la communauté',
+        '**{NBR_ACTIONS}** fois réalisé par la communauté',
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       quizz_felicitations: entry.attributes.felicitations,
