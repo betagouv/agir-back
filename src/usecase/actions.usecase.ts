@@ -13,6 +13,7 @@ import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
+import { EnchainementDefinition } from '../domain/kyc/enchainementDefinition';
 import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
@@ -36,7 +37,6 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
-import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 const BAD_CHAR_LISTE = `^#&*<>/{|}$%@+`;
 const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
@@ -587,7 +587,7 @@ export class ActionUsecase {
       ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[code_action]];
 
     if (enchainement_id) {
-      return QuestionKYCEnchainementUsecase.ENCHAINEMENTS[enchainement_id];
+      return EnchainementDefinition[enchainement_id];
     } else {
       const action_def = this.actionRepository.getActionDefinitionByTypeCode({
         type: TypeAction.bilan,

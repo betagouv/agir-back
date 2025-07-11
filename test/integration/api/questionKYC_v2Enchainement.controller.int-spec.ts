@@ -1,12 +1,7 @@
 import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
-import {
-  MosaicKYC_CATALOGUE,
-  MosaicKYCDef,
-  TypeMosaic,
-} from '../../../src/domain/kyc/mosaicKYC';
+import { TypeMosaic } from '../../../src/domain/kyc/mosaicKYC';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   KYCHistory_v2,
@@ -14,13 +9,17 @@ import {
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 
 import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { EnchainementDefinition } from '../../../src/domain/kyc/enchainementDefinition';
+import {
+  KYCMosaicID,
+  MosaicDefinition,
+} from '../../../src/domain/kyc/mosaicDefinition';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuestionKYCEnchainementUsecase } from '../../../src/usecase/questionKYCEnchainement.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -82,9 +81,6 @@ const dbKYC: KYC = {
   emoji: '🔥',
 };
 
-const backup = MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE;
-const backup_enchainement = QuestionKYCEnchainementUsecase.ENCHAINEMENTS;
-
 describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
@@ -97,38 +93,31 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
   });
 
   beforeEach(async () => {
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
     await TestUtil.deleteAll();
     process.env = { ...OLD_ENV }; // Make a copy
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = backup_enchainement;
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
     process.env = OLD_ENV;
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = backup_enchainement;
   });
 
   it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de quesitions', async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
-    };
-
-    const MOSAIC_CATALOGUE: MosaicKYCDef[] = [
-      {
-        id: KYCMosaicID.TEST_MOSAIC_ID,
-        categorie: Categorie.test,
-        points: 10,
-        titre: 'Titre test',
-        type: TypeMosaic.mosaic_boolean,
-        question_kyc_codes: [KYCID.KYC002, KYCID.KYC003],
-        thematique: Thematique.alimentation,
-      },
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCMosaicID.TEST_MOSAIC_ID,
     ];
 
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = MOSAIC_CATALOGUE;
+    MosaicDefinition.TEST_MOSAIC_ID = {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Titre test',
+      type: TypeMosaic.mosaic_boolean,
+      question_kyc_codes: [KYCID.KYC002, KYCID.KYC003],
+      thematique: Thematique.alimentation,
+    };
 
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -229,9 +218,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - enchainement qui existe pas', async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1[
+      (KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID)
+    ];
 
     await TestUtil.create(DB.utilisateur);
 
@@ -393,9 +382,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement non répondu`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -487,9 +478,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement quand tout est déjà répondu`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -603,9 +596,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first_to_answer_eligible - premier element d'un enchainement non répondu et eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -698,9 +693,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC002, KYCID.KYC003, KYCID.KYC004],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -800,14 +797,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/following - element suivant d'un enchainement eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -907,14 +902,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following zappe une non eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1013,14 +1006,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - element deja repondu renvoyé quand même`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1119,9 +1110,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - dépasse dernier élément`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [KYCID.KYC001, KYCID.KYC002];
 
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -1158,14 +1147,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding - recule sur une question deja repondu`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1274,9 +1261,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding/XXX - element precedent d'un enchainement, zappe non eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCID.KYC002, KYCID.KYC003],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1369,14 +1358,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following/XXX - zapp 2 non eligible`, async () => {
     // GIVEN
-    QuestionKYCEnchainementUsecase.ENCHAINEMENTS = {
-      ENCHAINEMENT_KYC_1: [
-        KYCID.KYC001,
-        KYCID.KYC002,
-        KYCID.KYC003,
-        KYCID.KYC004,
-      ],
-    };
+    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
+      KYCID.KYC001,
+      KYCID.KYC002,
+      KYCID.KYC003,
+      KYCID.KYC004,
+    ];
 
     const kyc: KYCHistory_v2 = {
       version: 2,

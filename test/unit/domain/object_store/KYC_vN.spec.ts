@@ -1,7 +1,7 @@
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
+import { KYCMosaicID } from '../../../../src/domain/kyc/mosaicDefinition';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { KYCHistory_v1 } from '../../../../src/domain/object_store/kyc/kycHistory_v1';
 import { KYCHistory_v2 } from '../../../../src/domain/object_store/kyc/kycHistory_v2';

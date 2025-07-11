@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
-import { Enchainement } from '../domain/kyc/enchainement';
+import {
+  EnchainementDefinition,
+  EnchainementType,
+} from '../domain/kyc/enchainementDefinition';
 import { Progression } from '../domain/kyc/Progression';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
 import { HomeBoard } from '../domain/thematique/homeBoard';
@@ -14,7 +17,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 import { ActionUsecase } from './actions.usecase';
 import { AidesUsecase } from './aides.usecase';
 import { BilanCarboneUsecase } from './bilanCarbone.usecase';
-import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 @Injectable()
 export class ThematiqueBoardUsecase {
@@ -86,24 +88,24 @@ export class ThematiqueBoardUsecase {
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
 
     let transport_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-        Enchainement.ENCHAINEMENT_KYC_personnalisation_transport
+      EnchainementDefinition[
+        EnchainementType.ENCHAINEMENT_KYC_personnalisation_transport
       ],
     );
     let logement_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-        Enchainement.ENCHAINEMENT_KYC_personnalisation_logement
+      EnchainementDefinition[
+        EnchainementType.ENCHAINEMENT_KYC_personnalisation_logement
       ],
     );
     let conso_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-        Enchainement.ENCHAINEMENT_KYC_personnalisation_consommation
+      EnchainementDefinition[
+        EnchainementType.ENCHAINEMENT_KYC_personnalisation_consommation
       ],
     );
     let alimentation_reco =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_personnalisation_alimentation
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_personnalisation_alimentation
         ],
       );
 

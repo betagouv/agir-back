@@ -1,11 +1,11 @@
 import { KYC } from '.prisma/client';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
 import {
-  MosaicKYC_CATALOGUE,
-  TypeMosaic,
-} from '../../../src/domain/kyc/mosaicKYC';
+  KYCMosaicID,
+  MosaicDefinition,
+} from '../../../src/domain/kyc/mosaicDefinition';
+import { TypeMosaic } from '../../../src/domain/kyc/mosaicKYC';
 import {
   BooleanKYC,
   TypeReponseQuestionKYC,
@@ -28,6 +28,22 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
+
+const NO_MOSAIC = {
+  TEST_MOSAIC_ID: undefined,
+  MOSAIC_CHAUFFAGE: undefined,
+  MOSAIC_RENO: undefined,
+  MOSAIC_EXTERIEUR: undefined,
+  MOSAIC_LOGEMENT_VACANCES: undefined,
+  MOSAIC_ELECTROMENAGER: undefined,
+  MOSAIC_REDUCTION_DECHETS: undefined,
+  MOSAIC_ANIMAUX: undefined,
+  MOSAIC_APPAREIL_NUM: undefined,
+  MOSAIC_MEUBLES: undefined,
+  MOSAIC_VETEMENTS: undefined,
+};
+
+const MOSAIC_DEF_BACKUP = { ...MosaicDefinition };
 
 const KYC_DATA: QuestionKYC_v2 = {
   code: '1',
@@ -87,7 +103,6 @@ const KYC_DB_DATA: KYC = {
   created_at: undefined,
   updated_at: undefined,
 };
-const backup = MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE;
 
 describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   const OLD_ENV = process.env;
@@ -100,20 +115,20 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   });
 
   beforeEach(async () => {
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
     await TestUtil.deleteAll();
+    Object.assign(MosaicDefinition, MOSAIC_DEF_BACKUP);
     process.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(async () => {
     await TestUtil.appclose();
     process.env = OLD_ENV;
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = backup;
+    Object.assign(MosaicDefinition, MOSAIC_DEF_BACKUP);
   });
 
   it('GET /utilisateurs/id/questionsKYC_v2 - 1 question répondue, avec attributs à jour depuis le catalogue', async () => {
     // GIVEN
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
+    Object.assign(MosaicDefinition, NO_MOSAIC);
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -220,8 +235,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
   it('GET /utilisateurs/id/questionsKYC_v2 - liste N questions', async () => {
     // GIVEN
+    Object.assign(MosaicDefinition, NO_MOSAIC);
     await TestUtil.create(DB.utilisateur);
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
 
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });
     await TestUtil.create(DB.kYC, { id_cms: 2, code: KYCID.KYC002 });
@@ -240,17 +255,16 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   it('GET /utilisateurs/id/questionsKYC_V2 - liste N questions + 1 mosaic', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
-      {
-        id: KYCMosaicID.TEST_MOSAIC_ID,
-        categorie: Categorie.test,
-        points: 10,
-        titre: 'Titre test',
-        type: TypeMosaic.mosaic_boolean,
-        question_kyc_codes: [KYCID._1, KYCID._2],
-        thematique: Thematique.alimentation,
-      },
-    ];
+    Object.assign(MosaicDefinition, NO_MOSAIC);
+    MosaicDefinition.TEST_MOSAIC_ID = {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Titre test',
+      type: TypeMosaic.mosaic_boolean,
+      question_kyc_codes: [KYCID._1, KYCID._2],
+      thematique: Thematique.alimentation,
+    };
 
     const dbKYC: KYC = {
       id_cms: 1,
@@ -363,18 +377,17 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   it('GET /utilisateurs/id/questionsKYC_v2 - liste une mosaic de test hors prod', async () => {
     // GIVEN
     process.env.IS_PROD = 'false';
+    Object.assign(MosaicDefinition, NO_MOSAIC);
     await TestUtil.create(DB.utilisateur);
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [
-      {
-        id: KYCMosaicID.TEST_MOSAIC_ID,
-        categorie: Categorie.test,
-        points: 10,
-        titre: 'Titre test',
-        type: TypeMosaic.mosaic_boolean,
-        question_kyc_codes: [KYCID._1, KYCID._2],
-        thematique: Thematique.alimentation,
-      },
-    ];
+    MosaicDefinition.TEST_MOSAIC_ID = {
+      id: KYCMosaicID.TEST_MOSAIC_ID,
+      categorie: Categorie.test,
+      points: 10,
+      titre: 'Titre test',
+      type: TypeMosaic.mosaic_boolean,
+      question_kyc_codes: [KYCID._1, KYCID._2],
+      thematique: Thematique.alimentation,
+    };
     await kycRepository.loadCache();
 
     // WHEN
@@ -388,6 +401,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
   });
   it('GET /utilisateurs/id/questionsKY_v2 - liste N questions dont une remplie', async () => {
     // GIVEN
+    Object.assign(MosaicDefinition, NO_MOSAIC);
+
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -431,7 +446,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
         },
       ],
     };
-    MosaicKYC_CATALOGUE.MOSAIC_CATALOGUE = [];
 
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, { id_cms: 1, code: KYCID.KYC001 });

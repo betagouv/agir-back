@@ -1,10 +1,10 @@
 import { Action } from '../../actions/action';
-import { Enchainement } from '../../kyc/enchainement';
+import { EnchainementType } from '../../kyc/enchainementDefinition';
 import { Thematique } from '../thematique';
 
 export class DetailThematique {
   thematique: Thematique;
-  enchainement_questions_personnalisation: Enchainement;
+  enchainement_questions_personnalisation: EnchainementType;
   personnalisation_necessaire: boolean;
   liste_actions: Action[];
   nom_commune: string;

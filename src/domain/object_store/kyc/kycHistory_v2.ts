@@ -1,6 +1,5 @@
 import { ApplicationError } from '../../../infrastructure/applicationError';
 import { Categorie } from '../../contenu/categorie';
-import { KYCMosaicID } from '../../kyc/KYCMosaicID';
 import {
   KYCReponseComplexe,
   KYCReponseSimple,
@@ -9,6 +8,7 @@ import {
 } from '../../kyc/QuestionKYCData';
 import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory } from '../../kyc/kycHistory';
+import { KYCMosaicID } from '../../kyc/mosaicDefinition';
 import { QuestionKYC } from '../../kyc/questionKYC';
 import { Tag } from '../../scoring/tag';
 import { Thematique } from '../../thematique/thematique';

@@ -2,15 +2,19 @@ import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
 import { KycDefinition } from './kycDefinition';
-import { KYCMosaicID } from './KYCMosaicID';
-import { MosaicKYC_CATALOGUE, MosaicKYCDef } from './mosaicKYC';
+import { KYCMosaicID, MosaicCatalogue } from './mosaicDefinition';
+import { MosaicKYCDef } from './mosaicKYC';
 import { QuestionChoix } from './new_interfaces/QuestionChoix';
 import { QuestionChoixMultiple } from './new_interfaces/QuestionChoixMultiples';
 import { QuestionChoixUnique } from './new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from './new_interfaces/QuestionNumerique';
 import { QuestionSimple } from './new_interfaces/QuestionSimple';
 import { QuestionTexteLibre } from './new_interfaces/QuestionTexteLibre';
-import { AndConditionSet, QuestionKYC } from './questionKYC';
+import {
+  AndConditionSet,
+  QuestionKYC,
+  TypeReponseQuestionKYC,
+} from './questionKYC';
 
 export type AnyQuestion =
   | QuestionKYC
@@ -219,7 +223,7 @@ export class KYCHistory {
   }
 
   public flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered() {
-    const mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
+    const mosaic_ids = MosaicCatalogue.listMosaicIDs();
     for (const mosaicId of mosaic_ids) {
       if (this.areMosaicKYCsAnyTouched(mosaicId)) {
         this.addAnsweredMosaic(mosaicId);
@@ -228,7 +232,7 @@ export class KYCHistory {
   }
 
   public areMosaicKYCsAnyTouched(mosaicId: KYCMosaicID): boolean {
-    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(mosaicId);
+    const mosaic_def = MosaicCatalogue.findMosaicDefByID(mosaicId);
 
     if (!mosaic_def) {
       return false;
@@ -250,7 +254,7 @@ export class KYCHistory {
   ): QuestionKYC[] {
     const result: QuestionKYC[] = [];
     for (const kyc_id of liste_kycs_codes) {
-      if (MosaicKYC_CATALOGUE.isMosaicID(kyc_id)) {
+      if (MosaicCatalogue.isMosaicID(kyc_id)) {
         const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_id]);
         if (mosaic) {
           result.push(mosaic);
@@ -268,7 +272,7 @@ export class KYCHistory {
   public getListeKycsFromCodes(liste_kycs_codes: string[]): QuestionKYC[] {
     const result: QuestionKYC[] = [];
     for (const kyc_code of liste_kycs_codes) {
-      if (MosaicKYC_CATALOGUE.isMosaicID(kyc_code)) {
+      if (MosaicCatalogue.isMosaicID(kyc_code)) {
         const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_code]);
         if (mosaic) {
           result.push(mosaic);
@@ -339,7 +343,7 @@ export class KYCHistory {
   public getAllKycsAndMosaics(): QuestionKYC[] {
     const result = this.getAllKycs();
 
-    const liste_mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
+    const liste_mosaic_ids = MosaicCatalogue.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {
       result.push(this.getUpToDateMosaicById(mosaic_id));
     }
@@ -391,7 +395,7 @@ export class KYCHistory {
 
   public getUpToDateMosaicById(mosaicID: KYCMosaicID): QuestionKYC {
     if (!mosaicID) return null;
-    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(mosaicID);
+    const mosaic_def = MosaicCatalogue.findMosaicDefByID(mosaicID);
     return this.getUpToDateMosaic(mosaic_def);
   }
 
@@ -422,7 +426,16 @@ export class KYCHistory {
       let union = true;
       for (const cond of and_set) {
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
-        if (!(kyc && new QuestionChoix(kyc).isSelected(cond.code_reponse))) {
+        if (kyc) {
+          if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
+            union = new QuestionChoix(kyc).isSelected(cond.code_reponse);
+          }
+          if (kyc.type === TypeReponseQuestionKYC.entier) {
+            const value = new QuestionNumerique(kyc).getValue();
+            const evalved_condition = eval(cond.code_reponse);
+            union = !!evalved_condition;
+          }
+        } else {
           union = false;
         }
       }

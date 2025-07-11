@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
-import { Enchainement } from '../domain/kyc/enchainement';
+import { EnchainementType } from '../domain/kyc/enchainementDefinition';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
@@ -15,13 +15,14 @@ import { WinterRepository } from '../infrastructure/repository/winter/winter.rep
 import { ActionUsecase } from './actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
-const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =
-  {
-    alimentation: Enchainement.ENCHAINEMENT_KYC_personnalisation_alimentation,
-    consommation: Enchainement.ENCHAINEMENT_KYC_personnalisation_consommation,
-    logement: Enchainement.ENCHAINEMENT_KYC_personnalisation_logement,
-    transport: Enchainement.ENCHAINEMENT_KYC_personnalisation_transport,
-  };
+const THEMATIQUE_ENCHAINEMENT_MAPPING: {
+  [key in Thematique]?: EnchainementType;
+} = {
+  alimentation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_alimentation,
+  consommation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_consommation,
+  logement: EnchainementType.ENCHAINEMENT_KYC_personnalisation_logement,
+  transport: EnchainementType.ENCHAINEMENT_KYC_personnalisation_transport,
+};
 
 @Injectable()
 export class ThematiqueUsecase {
