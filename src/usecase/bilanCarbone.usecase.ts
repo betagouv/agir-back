@@ -265,6 +265,7 @@ export class BilanCarboneUsecase {
     );
     const enchainement_conso_progression =
       QuestionKYC.getProgression(enchainement_conso);
+
     const enchainement_alimentation_progression = QuestionKYC.getProgression(
       enchainement_alimentation,
     );

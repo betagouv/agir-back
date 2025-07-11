@@ -518,7 +518,7 @@ describe('Thematique Board (API test)', () => {
       nombre_recettes: 1150,
       nom_commune: 'Dijon',
       pourcentage_alimentation_reco_done: 67,
-      pourcentage_bilan_done: 17,
+      pourcentage_bilan_done: 18,
       pourcentage_consommation_reco_done: 0,
       pourcentage_global_reco_done: 40,
       pourcentage_logement_reco_done: 0,
@@ -658,7 +658,7 @@ describe('Thematique Board (API test)', () => {
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
       nom_commune: 'Dijon',
-      pourcentage_bilan_done: 17,
+      pourcentage_bilan_done: 18,
       bilan_carbone_total_kg: 8719.070172621903,
       total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
