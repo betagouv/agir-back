@@ -68,6 +68,7 @@ describe('Synthese (API test)', () => {
       pourcent_actions_consommation: 0,
       pourcent_actions_logement: 0,
       pourcent_actions_transport: 0,
+      nombre_actifs_local_dernier_mois: 0,
     });
   });
 });

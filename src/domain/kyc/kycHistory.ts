@@ -2,8 +2,8 @@ import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
 import { KycDefinition } from './kycDefinition';
-import { KYCMosaicID } from './KYCMosaicID';
-import { MosaicKYC_CATALOGUE, MosaicKYCDef } from './mosaicKYC';
+import { KYCMosaicID, MosaicCatalogue } from './mosaicDefinition';
+import { MosaicKYCDef } from './mosaicKYC';
 import { QuestionChoix } from './new_interfaces/QuestionChoix';
 import { QuestionChoixMultiple } from './new_interfaces/QuestionChoixMultiples';
 import { QuestionChoixUnique } from './new_interfaces/QuestionChoixUnique';
@@ -219,7 +219,7 @@ export class KYCHistory {
   }
 
   public flagMosaicsAsAnsweredWhenAtLeastOneQuestionAnswered() {
-    const mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
+    const mosaic_ids = MosaicCatalogue.listMosaicIDs();
     for (const mosaicId of mosaic_ids) {
       if (this.areMosaicKYCsAnyTouched(mosaicId)) {
         this.addAnsweredMosaic(mosaicId);
@@ -228,7 +228,7 @@ export class KYCHistory {
   }
 
   public areMosaicKYCsAnyTouched(mosaicId: KYCMosaicID): boolean {
-    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(mosaicId);
+    const mosaic_def = MosaicCatalogue.findMosaicDefByID(mosaicId);
 
     if (!mosaic_def) {
       return false;
@@ -250,7 +250,7 @@ export class KYCHistory {
   ): QuestionKYC[] {
     const result: QuestionKYC[] = [];
     for (const kyc_id of liste_kycs_codes) {
-      if (MosaicKYC_CATALOGUE.isMosaicID(kyc_id)) {
+      if (MosaicCatalogue.isMosaicID(kyc_id)) {
         const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_id]);
         if (mosaic) {
           result.push(mosaic);
@@ -268,7 +268,7 @@ export class KYCHistory {
   public getListeKycsFromCodes(liste_kycs_codes: string[]): QuestionKYC[] {
     const result: QuestionKYC[] = [];
     for (const kyc_code of liste_kycs_codes) {
-      if (MosaicKYC_CATALOGUE.isMosaicID(kyc_code)) {
+      if (MosaicCatalogue.isMosaicID(kyc_code)) {
         const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_code]);
         if (mosaic) {
           result.push(mosaic);
@@ -339,7 +339,7 @@ export class KYCHistory {
   public getAllKycsAndMosaics(): QuestionKYC[] {
     const result = this.getAllKycs();
 
-    const liste_mosaic_ids = MosaicKYC_CATALOGUE.listMosaicIDs();
+    const liste_mosaic_ids = MosaicCatalogue.listMosaicIDs();
     for (const mosaic_id of liste_mosaic_ids) {
       result.push(this.getUpToDateMosaicById(mosaic_id));
     }
@@ -391,7 +391,7 @@ export class KYCHistory {
 
   public getUpToDateMosaicById(mosaicID: KYCMosaicID): QuestionKYC {
     if (!mosaicID) return null;
-    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(mosaicID);
+    const mosaic_def = MosaicCatalogue.findMosaicDefByID(mosaicID);
     return this.getUpToDateMosaic(mosaic_def);
   }
 
@@ -417,18 +417,39 @@ export class KYCHistory {
     if (!conditions || conditions.length === 0) {
       return true;
     }
-    let result = false;
+    let or_result = false;
     for (const and_set of conditions) {
-      let union = true;
+      console.log(and_set);
+      let and_result = true;
       for (const cond of and_set) {
+        let is_ok = false;
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
-        if (!(kyc && new QuestionChoix(kyc).isSelected(cond.code_reponse))) {
-          union = false;
+        if (kyc) {
+          if (kyc.isChoixQuestion()) {
+            is_ok = new QuestionChoix(kyc).isSelected(cond.code_reponse);
+          }
+          if (kyc.isNumerique()) {
+            const value = new QuestionNumerique(kyc).getValue();
+            const evalved_condition = eval(cond.code_reponse);
+            is_ok = !!evalved_condition;
+          }
+        } else {
+          is_ok = false;
+        }
+        and_result = and_result && is_ok;
+        if (!and_result) {
+          break;
         }
       }
-      result = result || union;
+      console.log(and_result);
+      or_result = or_result || and_result;
+      if (or_result) {
+        break;
+      }
     }
-    return result;
+
+    console.log(`res : ${or_result}`);
+    return or_result;
   }
 
   public doesQuestionExistsByCode(code_question: string) {

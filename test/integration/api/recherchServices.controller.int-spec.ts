@@ -1,6 +1,7 @@
 import {
   CategorieRecherche,
   CategorieRechercheManager,
+  SousCategorieRecherche,
 } from '../../../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../src/domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Day } from '../../../src/domain/bibliotheque_services/types/days';
@@ -886,5 +887,43 @@ describe('RechercheServices (API test)', () => {
     expect(response.status).toBe(201);
     expect(response.body.resultats).toHaveLength(88);
     expect(response.body.encore_plus_resultats_dispo).toEqual(false);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search sous cat sans cuisson`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({
+      categorie: CategorieRecherche.poisson,
+      nombre_max_resultats: 3000,
+      sous_categorie: SousCategorieRecherche.sans_cuisson,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(27);
+  });
+  it(`POST /utlilisateur/id/recherche_services/recettes/search sous cat saumon`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement_palaiseau as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/recherche_services/recettes/search2',
+    ).send({
+      categorie: CategorieRecherche.poisson,
+      nombre_max_resultats: 3000,
+      sous_categorie: SousCategorieRecherche.sans_saumon,
+    });
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body.resultats).toHaveLength(173);
   });
 });

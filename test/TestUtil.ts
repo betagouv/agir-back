@@ -23,7 +23,6 @@ import {
   Quizz,
   Service,
   ServiceDefinition,
-  UniversStatistique,
   Utilisateur,
 } from '@prisma/client';
 import request from 'supertest';
@@ -31,7 +30,10 @@ import { AppModule } from '../src/app.module';
 import { TypeAction } from '../src/domain/actions/typeAction';
 import { Besoin } from '../src/domain/aides/besoin';
 import { Echelle } from '../src/domain/aides/echelle';
-import { CategorieRecherche } from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../src/domain/bibliotheque_services/recherche/categorieRecherche';
 import { Categorie } from '../src/domain/contenu/categorie';
 import { ContentType } from '../src/domain/contenu/contentType';
 import { KYCID } from '../src/domain/kyc/KYCID';
@@ -100,7 +102,6 @@ export enum DB {
   compteurActions = 'compteurActions',
   mission = 'mission',
   kYC = 'kYC',
-  universStatistique = 'universStatistique',
   action = 'action',
   OIDC_STATE = 'OIDC_STATE',
   risquesNaturelsCommunes = 'risquesNaturelsCommunes',
@@ -127,7 +128,6 @@ export class TestUtil {
     quizz: TestUtil.quizzData,
     mission: TestUtil.missionData,
     kYC: TestUtil.kycData,
-    universStatistique: TestUtil.universStatistiqueData,
     OIDC_STATE: TestUtil.OIDC_STATEData,
     risquesNaturelsCommunes: TestUtil.risquesNaturelsCommunesData,
   };
@@ -210,16 +210,10 @@ export class TestUtil {
     await this.prisma.article.deleteMany();
     await this.prisma.quizz.deleteMany();
     await this.prisma.aide.deleteMany();
-    await this.prisma.defi.deleteMany();
     await this.prisma.action.deleteMany();
     await this.prisma.linkyConsentement.deleteMany();
-    await this.prisma.articleStatistique.deleteMany();
-    await this.prisma.quizStatistique.deleteMany();
-    await this.prisma.kycStatistique.deleteMany();
     await this.prisma.mission.deleteMany();
     await this.prisma.kYC.deleteMany();
-    await this.prisma.thematiqueStatistique.deleteMany();
-    await this.prisma.universStatistique.deleteMany();
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.bilanCarboneStatistique.deleteMany();
     await this.prisma.partenaire.deleteMany();
@@ -422,6 +416,7 @@ export class TestUtil {
       quizz_ids: [],
       articles_ids: [],
       recette_categorie: CategorieRecherche.dinde_volaille,
+      recette_sous_categorie: SousCategorieRecherche.sans_cuisson,
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
@@ -876,24 +871,6 @@ export class TestUtil {
       ...override,
     };
   }
-  static universStatistiqueData(
-    override?: Partial<UniversStatistique>,
-  ): UniversStatistique {
-    return {
-      universId: 'universId',
-      titre: 'Titre de mon article',
-      completion_pourcentage_1_20: 0,
-      completion_pourcentage_21_40: 0,
-      completion_pourcentage_41_60: 0,
-      completion_pourcentage_61_80: 0,
-      completion_pourcentage_81_99: 0,
-      completion_pourcentage_100: 0,
-      created_at: new Date(),
-      updated_at: new Date(),
-      ...override,
-    };
-  }
-
   /**
    * Create KYC questions for logement (used to test Mes Aides Reno API)
    */

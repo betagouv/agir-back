@@ -3,7 +3,10 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
-import { CategorieRecherche } from '../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { Categorie } from '../domain/contenu/categorie';
@@ -542,6 +545,9 @@ export class CMSWebhookUsecase {
       kyc_codes: entry.kycs ? entry.kycs.map((elem) => elem.code) : [],
       recette_categorie: entry.categorie_recettes
         ? CategorieRecherche[entry.categorie_recettes]
+        : null,
+      recette_sous_categorie: entry.sous_categorie_recettes
+        ? SousCategorieRecherche[entry.sous_categorie_recettes]
         : null,
       pdcn_categorie: entry.categorie_pdcn
         ? CategorieRecherche[entry.categorie_pdcn]

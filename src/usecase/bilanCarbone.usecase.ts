@@ -6,9 +6,12 @@ import {
   NiveauImpact,
   SituationNGC,
 } from '../domain/bilan/bilanCarbone';
-import { Enchainement } from '../domain/kyc/enchainement';
+import {
+  EnchainementDefinition,
+  EnchainementType,
+} from '../domain/kyc/enchainementDefinition';
 import { KYCID } from '../domain/kyc/KYCID';
-import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
+import { KYCMosaicID } from '../domain/kyc/mosaicDefinition';
 import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixUnique';
 import { QuestionNumerique } from '../domain/kyc/new_interfaces/QuestionNumerique';
 import { Progression } from '../domain/kyc/Progression';
@@ -24,7 +27,6 @@ import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { QuestionKYCEnchainementUsecase } from './questionKYCEnchainement.usecase';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
 
@@ -217,33 +219,33 @@ export class BilanCarboneUsecase {
   ): EnchainementRecap {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_mini_bilan_carbone
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_mini_bilan_carbone
         ],
       );
 
     let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_bilan_transport
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_bilan_transport
         ],
       );
     let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_bilan_logement
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_bilan_logement
         ],
       );
     let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_bilan_consommation
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_bilan_consommation
         ],
       );
     let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        QuestionKYCEnchainementUsecase.ENCHAINEMENTS[
-          Enchainement.ENCHAINEMENT_KYC_bilan_alimentation
+        EnchainementDefinition[
+          EnchainementType.ENCHAINEMENT_KYC_bilan_alimentation
         ],
       );
 

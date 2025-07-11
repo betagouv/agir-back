@@ -2,7 +2,7 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { ApplicationError } from '../../../infrastructure/applicationError';
 import { ConditionKYC } from '../../kyc/conditionKYC';
 import { KYCHistory } from '../../kyc/kycHistory';
-import { KYCMosaicID } from '../../kyc/KYCMosaicID';
+import { KYCMosaicID } from '../../kyc/mosaicDefinition';
 import { QuestionKYC } from '../../kyc/questionKYC';
 import {
   KYCReponseComplexe,

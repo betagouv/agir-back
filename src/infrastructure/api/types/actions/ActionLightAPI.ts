@@ -15,6 +15,7 @@ export class ActionLightAPI {
   @ApiProperty() nombre_actions_faites: number;
   @ApiProperty() deja_vue: boolean;
   @ApiProperty() deja_faite: boolean;
+  @ApiProperty() label_compteur: string;
   @ApiProperty() nombre_aides_disponibles: number;
   @ApiProperty() montant_max_economies_euros: number;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
@@ -43,6 +44,7 @@ export class ActionLightAPI {
       explications_recommandation_raw: action.explicationScore,
       montant_max_economies_euros: action.montant_max_economies_euros,
       emoji: action.emoji,
+      label_compteur: action.label_compteur,
     };
   }
 }

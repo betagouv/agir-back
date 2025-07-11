@@ -179,6 +179,44 @@ describe('ProfileRecommandationUtilisateur', () => {
     });
   });
 
+  it('trierEtFiltrerRecommandations : tag contenu_important', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      pourcent_match: 0,
+
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.contenu_important, Tag_v2.a_une_voiture],
+      getExclusionTags: () => [],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(result).toHaveLength(1);
+    expect(Math.round(result[0].score)).toEqual(10);
+    expect(result[0].explicationScore).toEqual({
+      liste_explications: [
+        {
+          inclusion_tag: 'contenu_important',
+          valeur: 10,
+          ponderation: 1,
+        },
+      ],
+    });
+    expect(Math.round(content.pourcent_match)).toEqual(50);
+  });
+
   it('trierEtFiltrerRecommandations : inclusion de thematique, augmentation de score', () => {
     // GIVEN
     const content: TaggedContent = {

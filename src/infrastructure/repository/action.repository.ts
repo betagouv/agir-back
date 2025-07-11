@@ -8,7 +8,10 @@ import {
 import { Ordre } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { App } from '../../domain/app';
-import { CategorieRecherche } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { SousThematique } from '../../domain/thematique/sousThematique';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
@@ -122,6 +125,7 @@ export class ActionRepository {
       articles_ids: action.article_ids,
       faq_ids: action.faq_ids,
       recette_categorie: action.recette_categorie,
+      recette_sous_categorie: action.recette_sous_categorie,
       sous_titre: action.sous_titre,
       type: action.type,
       type_code_id: action.getTypeCodeAsString(),
@@ -295,6 +299,8 @@ export class ActionRepository {
       tags_a_inclure: action.tags_a_inclure_v2,
       VISIBLE_PROD: action.VISIBLE_PROD,
       emoji: action.emoji,
+      recette_sous_categorie:
+        SousCategorieRecherche[action.recette_sous_categorie],
     });
   }
 }

@@ -13,6 +13,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiProperty,
   ApiQuery,
   ApiTags,
@@ -20,8 +21,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
 import { ServiceUsecase } from '../../../src/usecase/service.usecase';
-import { ArticleStatistiqueUsecase } from '../../../src/usecase/stats/articleStatistique.usecase';
 import { App } from '../../domain/app';
+import { EmailNotification } from '../../domain/notification/notificationHistory';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
@@ -64,7 +65,6 @@ export class AdminController extends GenericControler {
     private actionUsecase: ActionUsecase,
     private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
-    private articleStatistiqueUsecase: ArticleStatistiqueUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
     private prisma: PrismaService,
@@ -190,15 +190,6 @@ export class AdminController extends GenericControler {
   }
     */
 
-  @Post('/admin/article-statistique')
-  @ApiOperation({
-    summary: `Calcul des statistiques de l'ensemble des articles`,
-  })
-  async calcul_article_statistique(@Request() req): Promise<string[]> {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.articleStatistiqueUsecase.calculStatistique();
-  }
-
   @Post('/admin/compute_all_aides_communes_from_partenaires')
   @ApiOperation({
     summary: `Calcul les codes communes de chaque aide fonction des partenaires associés`,
@@ -246,6 +237,12 @@ export class AdminController extends GenericControler {
   @Post('/admin/send_one_email_as_test/:utilisateurId/:type')
   @ApiOperation({
     summary: `Tente d'envoyer un template de mail à un utilisateur donné, sans maj de l'historique de notification. Utile pour recetter les templates de mail`,
+  })
+  @ApiParam({
+    name: 'type',
+    enum: EmailNotification,
+    required: true,
+    description: `type de notif email`,
   })
   async send_one_email_as_test(
     @Request() req,

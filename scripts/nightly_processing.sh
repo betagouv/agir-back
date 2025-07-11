@@ -2,8 +2,6 @@
 
 ## npm run execute unsubscribe_oprhan_prms
 
-## npm run execute article_statistique
-
 ## npm run execute service_statistique
 
 npm run execute update_user_couverture

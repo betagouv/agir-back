@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Enchainement } from '../../../../domain/kyc/enchainement';
+import { EnchainementType } from '../../../../domain/kyc/enchainementDefinition';
 import { DetailThematique } from '../../../../domain/thematique/history/detailThematique';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { ActionLightAPI } from '../actions/ActionLightAPI';
@@ -13,10 +13,10 @@ export class DetailThematiquesAPI {
   @ApiProperty() nombre_aides: number;
   @ApiProperty() nombre_simulateurs: number;
   @ApiProperty({
-    enum: Enchainement,
+    enum: EnchainementType,
     description: `L'id d'un enchainement de question pour personnaliser la recommandation d'actions`,
   })
-  enchainement_questions_personnalisation: Enchainement;
+  enchainement_questions_personnalisation: EnchainementType;
   @ApiProperty({
     description: `boolean indiquant s'il est nécessaire de poser les questions de personnalisation pour l'utilisateur courant`,
   })

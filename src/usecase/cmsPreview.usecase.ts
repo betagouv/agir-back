@@ -52,12 +52,14 @@ export class CmsPreviewUsecase {
       liste_services.push({
         categorie: action_def.recette_categorie,
         recherche_service_id: ServiceRechercheID.recettes,
+        sous_categorie: action.recette_sous_categorie,
       });
     }
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
+        sous_categorie: undefined,
       });
     }
 

@@ -116,60 +116,6 @@ model CommunesAndEPCI {
   nom            String
 }
 
-model ArticleStatistique {
-  articleId                 String   @id
-  titre                     String
-  rating                    Decimal? @db.Decimal(2, 1)
-  nombre_de_rating          Int?
-  nombre_de_mise_en_favoris Int?
-  created_at                DateTime @default(now()) @db.Timestamptz(3)
-  updated_at                DateTime @updatedAt @db.Timestamptz(3)
-}
-
-model QuizStatistique {
-  quizId                     String   @id
-  titre                      String
-  nombre_de_bonne_reponse    Int
-  nombre_de_mauvaise_reponse Int
-  created_at                 DateTime @default(now()) @db.Timestamptz(3)
-  updated_at                 DateTime @updatedAt @db.Timestamptz(3)
-}
-
-model KycStatistique {
-  kycId         String
-  utilisateurId String
-  titre         String
-  reponse       String
-
-  @@id([utilisateurId, kycId])
-}
-
-model UniversStatistique {
-  universId                    String   @id
-  titre                        String
-  completion_pourcentage_1_20  Int      @default(0)
-  completion_pourcentage_21_40 Int      @default(0)
-  completion_pourcentage_41_60 Int      @default(0)
-  completion_pourcentage_61_80 Int      @default(0)
-  completion_pourcentage_81_99 Int      @default(0)
-  completion_pourcentage_100   Int      @default(0)
-  created_at                   DateTime @default(now()) @db.Timestamptz(3)
-  updated_at                   DateTime @updatedAt @db.Timestamptz(3)
-}
-
-model ThematiqueStatistique {
-  thematiqueId                 String   @id
-  titre                        String
-  completion_pourcentage_1_20  Int      @default(0)
-  completion_pourcentage_21_40 Int      @default(0)
-  completion_pourcentage_41_60 Int      @default(0)
-  completion_pourcentage_61_80 Int      @default(0)
-  completion_pourcentage_81_99 Int      @default(0)
-  completion_pourcentage_100   Int      @default(0)
-  created_at                   DateTime @default(now()) @db.Timestamptz(3)
-  updated_at                   DateTime @updatedAt @db.Timestamptz(3)
-}
-
 model LinkyConsentement {
   id                    String   @id
   utilisateurId         String
@@ -216,36 +162,37 @@ model Aide {
 }
 
 model Action {
-  type_code_id        String   @id
-  code                String
-  cms_id              String
-  type                String   @default("classique")
-  titre               String
-  titre_recherche     String?
-  sous_titre          String?
-  consigne            String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
-  label_compteur      String   @default("**453 actions** réalisées par la communauté")
-  quizz_felicitations String?
-  pourquoi            String?
-  comment             String?
-  thematique          String
-  sous_thematique     String?
-  besoins             String[] @default([])
-  quizz_ids           String[] @default([])
-  articles_ids        String[] @default([])
-  kyc_codes           String[] @default([])
-  faq_ids             String[] @default([])
-  recette_categorie   String?
-  pdcn_categorie      String?
-  lvo_action          String?
-  lvo_objet           String?
-  tags_a_inclure_v2   String[] @default([])
-  tags_a_exclure_v2   String[] @default([])
-  sources             Json?    @default("[]")
-  created_at          DateTime @default(now()) @db.Timestamptz(3)
-  updated_at          DateTime @updatedAt @db.Timestamptz(3)
-  VISIBLE_PROD        Boolean  @default(true)
-  emoji               String?
+  type_code_id           String   @id
+  code                   String
+  cms_id                 String
+  type                   String   @default("classique")
+  titre                  String
+  titre_recherche        String?
+  sous_titre             String?
+  consigne               String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
+  label_compteur         String   @default("**453 actions** réalisées par la communauté")
+  quizz_felicitations    String?
+  pourquoi               String?
+  comment                String?
+  thematique             String
+  sous_thematique        String?
+  besoins                String[] @default([])
+  quizz_ids              String[] @default([])
+  articles_ids           String[] @default([])
+  kyc_codes              String[] @default([])
+  faq_ids                String[] @default([])
+  recette_categorie      String?
+  recette_sous_categorie String?
+  pdcn_categorie         String?
+  lvo_action             String?
+  lvo_objet              String?
+  tags_a_inclure_v2      String[] @default([])
+  tags_a_exclure_v2      String[] @default([])
+  sources                Json?    @default("[]")
+  created_at             DateTime @default(now()) @db.Timestamptz(3)
+  updated_at             DateTime @updatedAt @db.Timestamptz(3)
+  VISIBLE_PROD           Boolean  @default(true)
+  emoji                  String?
 
   @@unique([code, type])
   @@unique([cms_id, type])
@@ -261,23 +208,6 @@ model CompteurActions {
   updated_at   DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([code, type])
-}
-
-model Defi {
-  content_id    String   @id
-  titre         String
-  sous_titre    String?
-  astuces       String?
-  pourquoi      String?
-  points        Int
-  thematique    String
-  tags          String[] @default([])
-  categorie     String   @default("recommandation")
-  mois          Int[]    @default([])
-  conditions    Json     @default("[]")
-  impact_kg_co2 Int?     @default(0)
-  created_at    DateTime @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Article {
@@ -517,38 +447,4 @@ model ServiceDefinition {
   created_at         DateTime  @default(now()) @db.Timestamptz(3)
   updated_at         DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
   services           Service[]
-}
-
-view PrenomVue {
-  id     Int    @id
-  prenom String
-}
-
-view CartographieVue {
-  id                Int     @id
-  code_postal       String?
-  code_departement  String?
-  couvert_par_aides Boolean
-}
-
-view UtilisateurVue {
-  id                      Int       @id
-  code_postal             String
-  date_inscription        DateTime
-  date_derniere_connexion DateTime?
-  nombre_points           Int
-  classement_global       Int
-  classement_local        Int
-  couverture_aide         Boolean
-  source_inscription      String
-  commune                 String?
-  dpe                     String?
-  plus_de_15_ans          Boolean?
-  nombre_adultes          Int?
-  nombre_enfants          Int?
-  proprietaire            Boolean?
-  superficie              String?
-  type                    String?
-  chauffage               String?
-  annee_de_naissance      Int
 }

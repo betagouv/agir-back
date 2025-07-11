@@ -2,7 +2,10 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KycDefinition } from '../../../../src/domain/kyc/kycDefinition';
 import { KYCHistory } from '../../../../src/domain/kyc/kycHistory';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../../src/domain/kyc/KYCMosaicID';
+import {
+  KYCMosaicID,
+  MosaicCatalogue,
+} from '../../../../src/domain/kyc/mosaicDefinition';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { LogementToKycSync } from '../../../../src/domain/kyc/synchro/logementToKycSync';
 import { SituationNgcToKycSync } from '../../../../src/domain/kyc/synchro/situationNgcToKycSync';
@@ -145,6 +148,91 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
+
+  it('areConditionsMatched : true si match condirtion numérique', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          type: TypeReponseQuestionKYC.entier,
+          reponse_simple: {
+            value: '10',
+          },
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [{ id_kyc: 1, code_reponse: 'value > 0' }],
+    ]);
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+
+  it('areConditionsMatched : true si match condirtion numérique #2', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          type: TypeReponseQuestionKYC.entier,
+          reponse_simple: {
+            value: '10',
+          },
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [{ id_kyc: 1, code_reponse: 'value === 0' }],
+    ]);
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+
+  it('areConditionsMatched : true si match condition décimale', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          type: TypeReponseQuestionKYC.decimal,
+          reponse_simple: {
+            value: '10',
+          },
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [{ id_kyc: 1, code_reponse: 'value <= 20' }],
+    ]);
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+
   it('areConditionsMatched : false si non match simple', () => {
     // GIVEN
     const history = new KYCHistory({
@@ -230,6 +318,55 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
+
+  it('areConditionsMatched : false si match non 2 AND conditions', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              selected: true,
+            },
+          ],
+        },
+        {
+          ...QUESTION_TEST,
+          code: KYCID.KYC002,
+          id_cms: 2,
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'yo',
+              ngc_code: '123',
+              selected: true,
+            },
+          ],
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [
+        { id_kyc: 1, code_reponse: 'climat' },
+        { id_kyc: 2, code_reponse: 'BAD' },
+      ],
+    ]);
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+
   it('areConditionsMatched : false si non match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({
@@ -1685,5 +1822,25 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
     // THEN
     expect(reponse.getTime()).toEqual(200);
+  });
+
+  it(`findMosaicDefByID : undefined si arg null `, () => {
+    // THEN
+    expect(MosaicCatalogue.findMosaicDefByID(undefined)).toBeUndefined();
+    expect(
+      MosaicCatalogue.findMosaicDefByID('toto' as KYCMosaicID),
+    ).toBeUndefined();
+    expect(
+      MosaicCatalogue.findMosaicDefByID(KYCMosaicID.MOSAIC_APPAREIL_NUM),
+    ).not.toBeUndefined();
+  });
+
+  it(`listMosaicIDs : bon nombre `, () => {
+    // THEN
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(11);
+    // GIVEN
+    process.env.IS_PROD = 'true';
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(10);
+    process.env.IS_PROD = 'false';
   });
 });

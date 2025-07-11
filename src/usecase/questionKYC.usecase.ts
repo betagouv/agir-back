@@ -3,8 +3,8 @@ import validator from 'validator';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
-import { KYCMosaicID } from '../domain/kyc/KYCMosaicID';
-import { MosaicKYC_CATALOGUE, TypeMosaic } from '../domain/kyc/mosaicKYC';
+import { KYCMosaicID, MosaicCatalogue } from '../domain/kyc/mosaicDefinition';
+import { TypeMosaic } from '../domain/kyc/mosaicKYC';
 import { QuestionChoixMultiple } from '../domain/kyc/new_interfaces/QuestionChoixMultiples';
 import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixUnique';
 import { QuestionSimple } from '../domain/kyc/new_interfaces/QuestionSimple';
@@ -66,8 +66,8 @@ export class QuestionKYCUsecase {
 
     let result_kyc: QuestionKYC;
 
-    if (MosaicKYC_CATALOGUE.isMosaicID(questionId)) {
-      const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(
+    if (MosaicCatalogue.isMosaicID(questionId)) {
+      const mosaic_def = MosaicCatalogue.findMosaicDefByID(
         KYCMosaicID[questionId],
       );
 
@@ -150,9 +150,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const mosaic_def = MosaicKYC_CATALOGUE.findMosaicDefByID(
-      KYCMosaicID[mosaicId],
-    );
+    const mosaic_def = MosaicCatalogue.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic_def) {
       ApplicationError.throwUnknownMosaicId(mosaicId);
     }
@@ -208,7 +206,7 @@ export class QuestionKYCUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const mosaic = MosaicKYC_CATALOGUE.findMosaicDefByID(KYCMosaicID[mosaicId]);
+    const mosaic = MosaicCatalogue.findMosaicDefByID(KYCMosaicID[mosaicId]);
     if (!mosaic) {
       ApplicationError.throwUnknownMosaicId(mosaicId);
     }
@@ -221,7 +219,7 @@ export class QuestionKYCUsecase {
     }
 
     for (const code_selected of reponses_code_selected) {
-      if (!MosaicKYC_CATALOGUE.hasCode(mosaic.id, code_selected.code)) {
+      if (!MosaicCatalogue.hasCode(mosaic.id, code_selected.code)) {
         ApplicationError.throwQuestionBadCodeValue(
           code_selected.code,
           mosaicId,

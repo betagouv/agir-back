@@ -1,7 +1,7 @@
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
-import { KYCMosaicID } from '../../../src/domain/kyc/KYCMosaicID';
+import { KYCMosaicID } from '../../../src/domain/kyc/mosaicDefinition';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import { Superficie } from '../../../src/domain/logement/logement';
 import { Thematique } from '../../../src/domain/thematique/thematique';

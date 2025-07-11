@@ -46,6 +46,14 @@ export class ProfileRecommandationUtilisateur {
         this.valoriseTag(tag, content);
       }
 
+      if (this.isImportant(content)) {
+        this.valoriseTag(Tag_v2.contenu_important, content);
+      }
+
+      for (const tag of matching_tags) {
+        this.valoriseTag(tag, content);
+      }
+
       if (content.isLocal()) {
         this.valoriseLocal(content);
       }
@@ -149,11 +157,16 @@ export class ProfileRecommandationUtilisateur {
     content.score += BASE_TAG_VALUE;
     content.explicationScore.setLocal(BASE_TAG_VALUE);
   }
+
   private valoriseBoost(tag: string, content: TaggedContent) {
     const tag_def = TagRepository.getTagDefinition(tag);
     if (tag_def && tag_def.boost) {
       content.score += tag_def.boost;
       content.explicationScore.setBoost(tag, tag_def.boost);
     }
+  }
+
+  private isImportant(content: TaggedContent): boolean {
+    return content.getInclusionTags().includes(Tag_v2.contenu_important);
   }
 }

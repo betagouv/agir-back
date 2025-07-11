@@ -491,6 +491,7 @@ describe('Thematique (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      label_compteur: 'label_compteur',
       montant_max_economies_euros: 0,
     });
   });

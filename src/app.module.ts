@@ -70,7 +70,6 @@ import { ActionRepository } from './infrastructure/repository/action.repository'
 import { AideRepository } from './infrastructure/repository/aide.repository';
 import { AideExpirationWarningRepository } from './infrastructure/repository/aideExpirationWarning.repository';
 import { ArticleRepository } from './infrastructure/repository/article.repository';
-import { ArticleStatistiqueRepository } from './infrastructure/repository/articleStatistique.repository';
 import { BilanCarboneStatistiqueRepository } from './infrastructure/repository/bilanCarboneStatistique.repository';
 import { BlockTextRepository } from './infrastructure/repository/blockText.repository';
 import { CommuneRepository } from './infrastructure/repository/commune/commune.repository';
@@ -78,10 +77,8 @@ import { CompteurActionsRepository } from './infrastructure/repository/compteurA
 import { ConformiteRepository } from './infrastructure/repository/conformite.repository';
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
-import { KycStatistiqueRepository } from './infrastructure/repository/kycStatistique.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
-import { QuizStatistiqueRepository } from './infrastructure/repository/quizStatistique.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
@@ -100,9 +97,7 @@ import { SousThematiqueRepository } from './infrastructure/repository/sousThemat
 import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
 import { TagRepository } from './infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
-import { MissionStatistiqueRepository } from './infrastructure/repository/thematiqueStatistique.repository';
 import { TokenRepository } from './infrastructure/repository/token.repository';
-import { ThematiqueStatistiqueRepository } from './infrastructure/repository/universStatistique.repository';
 import { UtilisateurSecurityRepository } from './infrastructure/repository/utilisateur/utilisateurSecurity.repository';
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 import { WinterRepository } from './infrastructure/repository/winter/winter.repository';
@@ -138,7 +133,6 @@ import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { RisquesUsecase } from './usecase/risques.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
-import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
@@ -246,13 +240,7 @@ function getControllers(): any[] {
     InscriptionUsecase,
     AideRepository,
     LinkyConsentRepository,
-    ArticleStatistiqueUsecase,
-    ArticleStatistiqueRepository,
-    QuizStatistiqueRepository,
-    KycStatistiqueRepository,
     KycRepository,
-    MissionStatistiqueRepository,
-    ThematiqueStatistiqueRepository,
     Personnalisator,
     RechercheServicesUsecase,
     RechercheServiceManager,

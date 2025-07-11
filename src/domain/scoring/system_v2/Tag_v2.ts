@@ -37,4 +37,6 @@ export enum Tag_v2 {
   habite_zone_peri_urbaine = 'habite_zone_peri_urbaine',
   habite_zone_urbaine = 'habite_zone_urbaine',
   habite_zone_rurale = 'habite_zone_rurale',
+
+  contenu_important = 'contenu_important',
 }

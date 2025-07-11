@@ -70,6 +70,7 @@ export class SyntheseAPI {
   @ApiProperty() nombre_inscrits_local: number;
   @ApiProperty() nombre_inscrits_local_dernier_mois: number;
   @ApiProperty() nombre_inscrits_total_dernier_mois: number;
+  @ApiProperty() nombre_actifs_local_dernier_mois: number;
   @ApiProperty() nombre_points_moyen: number;
   @ApiProperty() pourcent_actions_logement: number;
   @ApiProperty() pourcent_actions_transport: number;
@@ -189,6 +190,7 @@ export class Synthese_v2Controller extends GenericControler {
 
     let nombre_points_moyen = 0;
     let nombre_inscrit_dernier_mois = 0;
+    let nombre_actifs_locaux = 0;
 
     const last_month = new Date();
     last_month.setMonth(new Date().getMonth() - 1);
@@ -202,6 +204,12 @@ export class Synthese_v2Controller extends GenericControler {
       nombre_points_moyen += user.gamification.getPoints();
       if (user.created_at.getTime() > epoc_last_month) {
         nombre_inscrit_dernier_mois++;
+      }
+      if (
+        user.derniere_activite &&
+        user.derniere_activite.getTime() > epoc_last_month
+      ) {
+        nombre_actifs_locaux++;
       }
     }
 
@@ -251,6 +259,7 @@ export class Synthese_v2Controller extends GenericControler {
     );
     result.nombre_inscrits_total = total_users;
     result.nombre_inscrits_local = local_users.length;
+    result.nombre_actifs_local_dernier_mois = nombre_actifs_locaux;
     result.nombre_inscrits_local_dernier_mois = nombre_inscrit_dernier_mois;
     result.nombre_inscrits_total_dernier_mois =
       await this.statistiqueExternalRepository.getNombreInscritsDernierMois();

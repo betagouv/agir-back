@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
-import { Enchainement } from '../domain/kyc/enchainement';
+import { EnchainementType } from '../domain/kyc/enchainementDefinition';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
@@ -15,13 +15,14 @@ import { WinterRepository } from '../infrastructure/repository/winter/winter.rep
 import { ActionUsecase } from './actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
-const THEMATIQUE_ENCHAINEMENT_MAPPING: { [key in Thematique]?: Enchainement } =
-  {
-    alimentation: Enchainement.ENCHAINEMENT_KYC_personnalisation_alimentation,
-    consommation: Enchainement.ENCHAINEMENT_KYC_personnalisation_consommation,
-    logement: Enchainement.ENCHAINEMENT_KYC_personnalisation_logement,
-    transport: Enchainement.ENCHAINEMENT_KYC_personnalisation_transport,
-  };
+const THEMATIQUE_ENCHAINEMENT_MAPPING: {
+  [key in Thematique]?: EnchainementType;
+} = {
+  alimentation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_alimentation,
+  consommation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_consommation,
+  logement: EnchainementType.ENCHAINEMENT_KYC_personnalisation_logement,
+  transport: EnchainementType.ENCHAINEMENT_KYC_personnalisation_transport,
+};
 
 @Injectable()
 export class ThematiqueUsecase {
@@ -114,8 +115,7 @@ export class ThematiqueUsecase {
     for (const action of liste_actions) {
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
-      action.nombre_actions_faites =
-        this.compteurActionsRepository.getNombreFaites(action);
+      this.setCompteurActionsEtLabel(action);
     }
 
     return liste_actions;
@@ -235,5 +235,14 @@ export class ThematiqueUsecase {
       utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
 
     return liste_actions;
+  }
+
+  private setCompteurActionsEtLabel(action: Action) {
+    const nbr_faites = this.compteurActionsRepository.getNombreFaites(action);
+    action.nombre_actions_faites = nbr_faites;
+    action.label_compteur = action.label_compteur.replace(
+      '{NBR_ACTIONS}',
+      '' + nbr_faites,
+    );
   }
 }

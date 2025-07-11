@@ -7,6 +7,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { NiveauRisqueLogement } from '../../../src/domain/logement/NiveauRisque';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -395,6 +396,59 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     });
     expect(response.status).toBe(200);
     expect(dbUser.nom).toEqual('THE NOM');
+  });
+  it('PATCH /utilisateurs/id/profile - update basic profile datas with null data pour adress', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      score_risques_adresse: {
+        argile: NiveauRisqueLogement.faible,
+        inondation: NiveauRisqueLogement.fort,
+        radon: NiveauRisqueLogement.moyen,
+        secheresse: NiveauRisqueLogement.tres_faible,
+        submersion: NiveauRisqueLogement.faible,
+        seisme: NiveauRisqueLogement.tres_fort,
+        tempete: NiveauRisqueLogement.fort,
+      },
+      prm: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      code_commune: '21231',
+      longitude: null,
+      latitude: null,
+      numero_rue: null,
+      rue: null,
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(dbUser.logement.longitude).toEqual(null);
+    expect(dbUser.logement.latitude).toEqual(null);
+    expect(dbUser.logement.numero_rue).toEqual(null);
+    expect(dbUser.logement.rue).toEqual(null);
+    expect(dbUser.logement.score_risques_adresse).toEqual({});
   });
   it('PATCH /utilisateurs/id/profile - prenom trop long', async () => {
     // GIVEN

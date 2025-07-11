@@ -1,10 +1,14 @@
 import { getDistance } from 'geolib';
 import { ModeDeplacement } from '../types/modeDeplacement';
-import { CategorieRecherche } from './categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from './categorieRecherche';
 
 export class FiltreRecherche {
   text?: string;
   categorie?: CategorieRecherche;
+  sous_categorie?: SousCategorieRecherche;
   point?: { latitude: number; longitude: number };
   rect_A?: { latitude: number; longitude: number };
   rect_B?: { latitude: number; longitude: number };

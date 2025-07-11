@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import {
+  CategorieRecherche,
+  SousCategorieRecherche,
+} from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import {
@@ -179,6 +182,39 @@ export class RecettesRepository implements FinderInterface {
       recherche = recherche.filter((a) => this.contientDuPoisson(a));
     }
 
+    if (filtre.sous_categorie === SousCategorieRecherche.sans_cuisson) {
+      const filtered = [];
+      for (const recette of recherche) {
+        if (recette.baking_time === 0) {
+          const steps = this.getEtapesRecette(recette.id);
+          let sans_cuisson = true;
+          for (const step of steps) {
+            if (
+              step.texte.includes('cuire') ||
+              step.texte.includes('chauff') ||
+              step.texte.includes('revenir') ||
+              step.texte.includes('griller')
+            ) {
+              sans_cuisson = false;
+              break;
+            }
+          }
+          if (sans_cuisson) {
+            filtered.push(recette);
+          }
+        }
+      }
+      recherche = filtered;
+    }
+
+    if (filtre.sous_categorie === SousCategorieRecherche.sans_cuisson) {
+      recherche = this.filtrerSansCuisson(recherche);
+    }
+
+    if (filtre.sous_categorie === SousCategorieRecherche.sans_saumon) {
+      recherche = this.filtrerSansSaumon(recherche);
+    }
+
     const max_result = filtre.nombre_max_resultats || 10;
 
     recherche = recherche.slice(0, max_result);
@@ -245,6 +281,9 @@ export class RecettesRepository implements FinderInterface {
   private contientDuPoisson(recette: Recette_RAW): boolean {
     return recette.ingredient_food_practice.includes('contains_fish');
   }
+  private estSansCuisson(recette: Recette_RAW): boolean {
+    return recette.baking_time === 0;
+  }
   private computeUnit(quantity: number, unit_id: number): string {
     const unit = this.getUnitFromId(unit_id);
     if (!unit) {
@@ -307,5 +346,48 @@ export class RecettesRepository implements FinderInterface {
     if (cat.includes('GAR')) return 'Garniture';
     if (cat.includes('PLC')) return 'Plat complet';
     return '-';
+  }
+
+  private filtrerSansCuisson(liste: Recette_RAW[]): Recette_RAW[] {
+    const filtered = [];
+    for (const recette of liste) {
+      if (recette.baking_time === 0) {
+        const steps = this.getEtapesRecette(recette.id);
+        let sans_cuisson = true;
+        for (const step of steps) {
+          if (
+            step.texte.includes('cuire') ||
+            step.texte.includes('chauff') ||
+            step.texte.includes('revenir') ||
+            step.texte.includes('griller')
+          ) {
+            sans_cuisson = false;
+            break;
+          }
+        }
+        if (sans_cuisson) {
+          filtered.push(recette);
+        }
+      }
+    }
+    return filtered;
+  }
+
+  private filtrerSansSaumon(liste: Recette_RAW[]): Recette_RAW[] {
+    const filtered = [];
+    for (const recette of liste) {
+      const ingredients = this.getIngredientsRecette(recette.id);
+      let sans_saumon = true;
+      for (const ingredient of ingredients) {
+        if (ingredient.nom.includes('saumon')) {
+          sans_saumon = false;
+          break;
+        }
+      }
+      if (sans_saumon) {
+        filtered.push(recette);
+      }
+    }
+    return filtered;
   }
 }

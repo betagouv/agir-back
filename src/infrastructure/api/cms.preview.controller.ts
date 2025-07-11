@@ -399,7 +399,9 @@ export class CmsPreviewController extends GenericControler {
 
     result.push(`<strong>SERVICES</strong>`);
     for (const service of action.services) {
-      result.push(`${service.recherche_service_id} => ${service.categorie}`);
+      result.push(
+        `${service.recherche_service_id} => ${service.categorie} / ${service.sous_categorie}`,
+      );
     }
 
     result.push(`<strong>AIDES</strong>`);

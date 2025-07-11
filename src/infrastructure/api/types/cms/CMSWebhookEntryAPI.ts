@@ -109,6 +109,7 @@ export class CMSWebhookEntryAPI {
   @ApiProperty() code_epci: string;
   @ApiProperty() texte: string;
   @ApiProperty() categorie_recettes: string;
+  @ApiProperty() sous_categorie_recettes: string;
   @ApiProperty() categorie_pdcn: string;
   @ApiProperty() est_visible: boolean;
   @ApiProperty() est_gratuit: boolean;

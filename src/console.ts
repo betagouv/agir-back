@@ -11,7 +11,6 @@ import { ProfileUsecase } from './usecase/profile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
-import { ArticleStatistiqueUsecase } from './usecase/stats/articleStatistique.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 
 async function bootstrap() {
@@ -26,14 +25,6 @@ async function bootstrap() {
       await application.get(ReferentielUsecase).upsertServicesDefinitions();
       console.log(
         `STOP upsert_service_definitions after ${Date.now() - start_time}  ms`,
-      );
-      break;
-    case 'article_statistique':
-      start_time = Date.now();
-      console.log(`START article_statistique ${start_time}`);
-      await application.get(ArticleStatistiqueUsecase).calculStatistique();
-      console.log(
-        `STOP article_statistique after ${Date.now() - start_time} ms`,
       );
       break;
     case 'service_statistique':

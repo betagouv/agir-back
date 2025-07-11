@@ -33,6 +33,11 @@ export enum CategorieRecherche {
   any_transport = 'any_transport',
 }
 
+export enum SousCategorieRecherche {
+  sans_saumon = 'sans_saumon',
+  sans_cuisson = 'sans_cuisson',
+}
+
 export class CategorieRechercheManager {
   private static MOIS_ANNEE = [
     CategorieRecherche.janvier,

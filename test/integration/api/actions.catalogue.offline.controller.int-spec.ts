@@ -274,6 +274,7 @@ describe('Actions Catalogue Offline (API test)', () => {
     await TestUtil.create(DB.action, {
       code: 'code_fonct',
       besoins: ['composter'],
+      label_compteur: '{NBR_ACTIONS} haha',
     });
     await TestUtil.create(DB.compteurActions, {
       code: 'code_fonct',
@@ -308,6 +309,7 @@ describe('Actions Catalogue Offline (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      label_compteur: '45 haha',
       montant_max_economies_euros: 0,
     });
   });
