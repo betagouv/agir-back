@@ -43,20 +43,6 @@ describe('Aide Velo (API test)', () => {
       prix_du_velo: 5000,
     });
 
-    const bonusVelo: AideVeloAPI = {
-      libelle: 'Bonus vélo',
-      montant: 150,
-      plafond: 150,
-      description:
-        "Le bonus vélo est maintenu pour toute facture émise avant le 14 février 2025 (inclus). Vous avez jusqu'au 14 août 2025 pour faire votre demande. Passé ce délai, il ne sera plus possible de bénéficier du bonus.",
-      lien: 'https://www.economie.gouv.fr/particuliers/prime-velo-electrique#',
-      collectivite: {
-        kind: 'pays',
-        value: 'France',
-      },
-      logo: 'http://localhost:3000/logo_etat_francais.webp',
-    };
-
     const idfMobilites: AideVeloAPI = {
       libelle: 'Île-de-France Mobilités',
       montant: 50,
@@ -74,13 +60,8 @@ describe('Aide Velo (API test)', () => {
     // THEN
     expect(response.status).toBe(201);
     expect(response.body).toEqual<AidesVeloParTypeAPI>({
-      'mécanique simple': [bonusVelo],
+      'mécanique simple': [],
       électrique: [
-        {
-          ...bonusVelo,
-          montant: 400,
-          plafond: 400,
-        },
         {
           ...idfMobilites,
           montant: 400,
@@ -89,22 +70,12 @@ describe('Aide Velo (API test)', () => {
       ],
       cargo: [
         {
-          ...bonusVelo,
-          montant: 2000,
-          plafond: 2000,
-        },
-        {
           ...idfMobilites,
           montant: 400,
           plafond: 400,
         },
       ],
       'cargo électrique': [
-        {
-          ...bonusVelo,
-          montant: 2000,
-          plafond: 2000,
-        },
         {
           ...idfMobilites,
           montant: 600,
@@ -113,23 +84,12 @@ describe('Aide Velo (API test)', () => {
       ],
       pliant: [
         {
-          ...bonusVelo,
-          montant: 2000,
-          plafond: 2000,
-        },
-
-        {
           ...idfMobilites,
           montant: 400,
           plafond: 400,
         },
       ],
       'pliant électrique': [
-        {
-          ...bonusVelo,
-          montant: 2000,
-          plafond: 2000,
-        },
         {
           ...idfMobilites,
           montant: 400,
@@ -145,57 +105,12 @@ describe('Aide Velo (API test)', () => {
       ],
       adapté: [
         {
-          ...bonusVelo,
-          montant: 2000,
-          plafond: 2000,
-        },
-        {
           ...idfMobilites,
           montant: 1200,
           plafond: 1200,
         },
       ],
     });
-  });
-
-  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 1', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      revenu_fiscal: 5000,
-      parts: 1 as any,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/simulerAideVelo',
-    ).send({
-      prix_du_velo: 100000,
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
-    expect(response.body['électrique'][0].montant).toEqual(400);
-  });
-
-  it('POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, tranche 2', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {
-      revenu_fiscal: 10000,
-      parts: 1 as any,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST(
-      '/utilisateurs/utilisateur-id/simulerAideVelo',
-    ).send({
-      prix_du_velo: 100000,
-    });
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body['électrique'][0].libelle).toEqual('Bonus vélo');
-    expect(response.body['électrique'][0].montant).toEqual(300);
   });
 
   it(`POST /utilisateurs/:utilisateurId/simulerAideVelo aide nationnale sur plafond OK, au dela tranche 2, pas d'aide sauf si situation de handicap`, async () => {
@@ -229,9 +144,8 @@ describe('Aide Velo (API test)', () => {
 
     // THEN
     expect(response2.status).toBe(201);
-    expect(response2.body['électrique']).toHaveLength(2);
-    expect(response2.body['électrique'][0].libelle).toEqual('Bonus vélo');
-    expect(response2.body['électrique'][1].libelle).toEqual(
+    expect(response2.body['électrique']).toHaveLength(1);
+    expect(response2.body['électrique'][0].libelle).toEqual(
       'Île-de-France Mobilités',
     );
   });
@@ -344,17 +258,13 @@ describe('Aide Velo (API test)', () => {
 
       // EXPECT
       expect(response.status).toBe(201);
-      expect(response.body).toHaveLength(3);
+      expect(response.body).toHaveLength(2);
       expect(response.body[0].collectivite).toEqual({
-        kind: 'pays',
-        value: 'France',
-      });
-      expect(response.body[1].collectivite).toEqual({
         kind: 'epci',
         code: '243300316',
         value: 'Bordeaux Métropole',
       });
-      expect(response.body[2].collectivite).toEqual({
+      expect(response.body[1].collectivite).toEqual({
         kind: 'code insee',
         value: '33281',
       });
@@ -370,12 +280,8 @@ describe('Aide Velo (API test)', () => {
 
       // EXPECT
       expect(response.status).toBe(201);
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toHaveLength(1);
       expect(response.body[0].collectivite).toEqual({
-        kind: 'pays',
-        value: 'France',
-      });
-      expect(response.body[1].collectivite).toEqual({
         kind: 'epci',
         code: '243300316',
         value: 'Bordeaux Métropole',
@@ -392,29 +298,28 @@ describe('Aide Velo (API test)', () => {
 
       // EXPECT
       expect(response.status).toBe(201);
-      expect(response.body).toHaveLength(7);
-      expect(response.body[0].libelle).toBe('Bonus vélo');
-      expect(response.body[1].libelle).toContain('Région Occitanie');
-      expect(response.body[1].description).toContain(
+      expect(response.body).toHaveLength(6);
+      expect(response.body[0].libelle).toContain('Région Occitanie');
+      expect(response.body[0].description).toContain(
         "Achat d'un vélo à assistance électrique",
       );
-      expect(response.body[2].libelle).toContain('Région Occitanie');
-      expect(response.body[2].description).toContain('Bonus vélo adapté PMR');
+      expect(response.body[1].libelle).toContain('Région Occitanie');
+      expect(response.body[1].description).toContain('Bonus vélo adapté PMR');
+      expect(response.body[2].libelle).toContain('Département Hérault');
       expect(response.body[3].libelle).toContain('Département Hérault');
-      expect(response.body[4].libelle).toContain('Département Hérault');
-      expect(response.body[4].description).toContain(
+      expect(response.body[3].description).toContain(
         'Chèque Hérault Handi-Vélo',
+      );
+      expect(response.body[4].libelle).toContain(
+        'Montpellier Méditerranée Métropole',
+      );
+      expect(response.body[4].description).toContain(
+        "vélo électrique ou d'occasion",
       );
       expect(response.body[5].libelle).toContain(
         'Montpellier Méditerranée Métropole',
       );
       expect(response.body[5].description).toContain(
-        "vélo électrique ou d'occasion",
-      );
-      expect(response.body[6].libelle).toContain(
-        'Montpellier Méditerranée Métropole',
-      );
-      expect(response.body[6].description).toContain(
         'personnes en situation de handicap',
       );
     });

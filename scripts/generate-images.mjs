@@ -4,32 +4,33 @@
  *
  * NOTE: wh
  */
+import { aidesAvecLocalisation, miniatures } from '@betagouv/aides-velo/data';
 import fs from 'fs';
-import sharp from 'sharp';
 import { join } from 'path';
-import { miniatures, aidesAvecLocalisation } from '@betagouv/aides-velo/data';
 import { exit } from 'process';
+import sharp from 'sharp';
 
 const currentPath = new URL('./', import.meta.url).pathname;
 const rootPath = join(currentPath, '../');
 
 const imgDir = join(rootPath, 'static/images/');
-if (fs.existsSync(imgDir)) {
-  fs.rmSync(imgDir, { recursive: true });
-}
-fs.mkdirSync(imgDir, { recursive: true });
-
 const thumbnailsManifestEntries = [];
 
 for (const id in aidesAvecLocalisation) {
-  const imgSrc = miniatures[id];
+  let imgSrc = miniatures[id];
   if (!imgSrc) {
     continue;
   }
 
+  if (id === 'aides . bassin-pompey') {
+    imgSrc =
+      'https://upload.wikimedia.org/wikipedia/commons/3/3c/Logo_Bassin_de_Pompey.png';
+  }
   const imgName = imgSrc.split('/').at(-1).split('.')[0] + '.webp';
-  // NOTE: synchronous call to avoid crashing fetch on restricted wifi
-  await generateImage(imgSrc, imgName);
+  if (!fs.existsSync(join(imgDir, imgName))) {
+    // NOTE: synchronous call to avoid crashing fetch on restricted wifi
+    await generateImage(imgSrc, imgName);
+  }
   thumbnailsManifestEntries.push([id, imgName]);
 }
 
@@ -40,6 +41,7 @@ async function generateImage(imgSrc, imgName) {
     const buffer = await blob.arrayBuffer();
     const img = sharp(buffer);
     img.resize({ fit: 'inside', height: 500, width: 200 });
+    console.log(`Generating image for ${imgSrc} as ${imgName}`);
     img.webp().toFile(join(imgDir, imgName));
   } catch (e) {
     console.error(`Error while generating image for ${imgSrc}: ${e.message}`);

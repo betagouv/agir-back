@@ -1,7 +1,4 @@
 {
-  "aides . bonus vélo": "logo_etat_francais.webp",
-  "aides . prime à la conversion": "logo_etat_francais.webp",
-  "aides . prime à la conversion . surprime ZFE": "logo_etat_francais.webp",
   "aides . ile de france": "logo_ile_de_france.webp",
   "aides . occitanie": "logo_occitanie.webp",
   "aides . occitanie vélo adapté": "logo_occitanie.webp",
@@ -323,5 +320,8 @@
   "aides . elbeuf-sur-seine": "logo_ville_elbeuf.webp",
   "aides . cc kreiz breizh": "Cc-kreiz-breizh.webp",
   "aides . metropole-rouen-normandie": "Logo_M%C3%A9tropole_Rouen_Normandie_-_2015.webp",
-  "aides . petit-quevilly": "Petit-quevilly-municipalite.webp"
+  "aides . petit-quevilly": "Petit-quevilly-municipalite.webp",
+  "aides . bassin-pompey": "Logo_Bassin_de_Pompey.webp",
+  "aides . cc terre d'eau": "cc-terre-deau-logo-blanchd.webp",
+  "aides . ville lodève": "Logo_lod%C3%A8ve.webp"
 }
