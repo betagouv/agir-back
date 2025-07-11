@@ -318,6 +318,55 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     // THEN
     expect(result).toEqual(true);
   });
+
+  it('areConditionsMatched : false si match non 2 AND conditions', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          reponse_complexe: [
+            {
+              label: 'Le climat',
+              code: Thematique.climat,
+              ngc_code: '123',
+              selected: true,
+            },
+          ],
+        },
+        {
+          ...QUESTION_TEST,
+          code: KYCID.KYC002,
+          id_cms: 2,
+          reponse_complexe: [
+            {
+              label: 'Yo',
+              code: 'yo',
+              ngc_code: '123',
+              selected: true,
+            },
+          ],
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [
+        { id_kyc: 1, code_reponse: 'climat' },
+        { id_kyc: 2, code_reponse: 'BAD' },
+      ],
+    ]);
+
+    // THEN
+    expect(result).toEqual(false);
+  });
+
   it('areConditionsMatched : false si non match 2 conditions OK', () => {
     // GIVEN
     const history = new KYCHistory({

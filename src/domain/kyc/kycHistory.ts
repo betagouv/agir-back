@@ -417,27 +417,39 @@ export class KYCHistory {
     if (!conditions || conditions.length === 0) {
       return true;
     }
-    let result = false;
+    let or_result = false;
     for (const and_set of conditions) {
-      let union = true;
+      console.log(and_set);
+      let and_result = true;
       for (const cond of and_set) {
+        let is_ok = false;
         const kyc = this.getAnsweredQuestionByIdCMS(cond.id_kyc);
         if (kyc) {
           if (kyc.isChoixQuestion()) {
-            union = new QuestionChoix(kyc).isSelected(cond.code_reponse);
+            is_ok = new QuestionChoix(kyc).isSelected(cond.code_reponse);
           }
           if (kyc.isNumerique()) {
             const value = new QuestionNumerique(kyc).getValue();
             const evalved_condition = eval(cond.code_reponse);
-            union = !!evalved_condition;
+            is_ok = !!evalved_condition;
           }
         } else {
-          union = false;
+          is_ok = false;
+        }
+        and_result = and_result && is_ok;
+        if (!and_result) {
+          break;
         }
       }
-      result = result || union;
+      console.log(and_result);
+      or_result = or_result || and_result;
+      if (or_result) {
+        break;
+      }
     }
-    return result;
+
+    console.log(`res : ${or_result}`);
+    return or_result;
   }
 
   public doesQuestionExistsByCode(code_question: string) {
