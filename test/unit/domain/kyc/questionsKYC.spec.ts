@@ -205,6 +205,34 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
     expect(result).toEqual(false);
   });
 
+  it('areConditionsMatched : true si match condition décimale', () => {
+    // GIVEN
+    const history = new KYCHistory({
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [
+        {
+          ...QUESTION_TEST,
+          type: TypeReponseQuestionKYC.decimal,
+          reponse_simple: {
+            value: '10',
+          },
+        },
+      ],
+    });
+
+    // WHEN
+    const result = history.areConditionsMatched([
+      [{ id_kyc: 1, code_reponse: 'value <= 20' }],
+    ]);
+
+    // THEN
+    expect(result).toEqual(true);
+  });
+
   it('areConditionsMatched : false si non match simple', () => {
     // GIVEN
     const history = new KYCHistory({

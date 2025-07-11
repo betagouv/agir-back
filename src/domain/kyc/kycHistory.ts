@@ -430,7 +430,10 @@ export class KYCHistory {
           if (kyc.type === TypeReponseQuestionKYC.choix_unique) {
             union = new QuestionChoix(kyc).isSelected(cond.code_reponse);
           }
-          if (kyc.type === TypeReponseQuestionKYC.entier) {
+          if (
+            kyc.type === TypeReponseQuestionKYC.entier ||
+            kyc.type === TypeReponseQuestionKYC.decimal
+          ) {
             const value = new QuestionNumerique(kyc).getValue();
             const evalved_condition = eval(cond.code_reponse);
             union = !!evalved_condition;
