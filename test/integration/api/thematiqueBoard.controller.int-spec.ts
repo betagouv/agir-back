@@ -128,7 +128,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.body.nom_commune).toEqual('Dijon');
     expect(response.body.liste_thematiques[0]).toEqual({
       nombre_actions: 0,
-      nombre_aides: 1,
+      nombre_aides: 3,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,
@@ -186,7 +186,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.body.nom_commune).toEqual('Dijon');
     expect(response.body.liste_thematiques[0]).toEqual({
       nombre_actions: 0,
-      nombre_aides: 1,
+      nombre_aides: 3,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,

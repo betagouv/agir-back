@@ -341,20 +341,20 @@ export class AidesUsecase {
   async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
+    code_postal?: string,
   ): Promise<number> {
-    const filtre: AideFilter = {};
+    const dept_region =
+      this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
 
-    if (code_commune) {
-      const codes_postaux =
-        this.communeRepository.getCodePostauxFromCodeCommune(code_commune);
-      const dept_region =
-        this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-
-      filtre.code_postal = codes_postaux[0];
-      filtre.code_commune = code_commune;
-      filtre.code_departement = dept_region?.code_departement;
-      filtre.code_region = dept_region?.code_region;
-    }
+    const filtre: AideFilter = {
+      code_postal: code_postal,
+      code_commune: code_commune ? code_commune : undefined,
+      date_expiration: new Date(),
+      cu_ca_cc_mode: true,
+      commune_pour_partenaire: code_commune,
+      departement_pour_partenaire: dept_region?.code_departement,
+      region_pour_partenaire: dept_region?.code_region,
+    };
 
     filtre.date_expiration = new Date();
     if (thematique) {
