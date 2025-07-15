@@ -356,7 +356,6 @@ export class AidesUsecase {
       region_pour_partenaire: dept_region?.code_region,
     };
 
-    filtre.date_expiration = new Date();
     if (thematique) {
       filtre.thematiques = [thematique];
     }

@@ -68,6 +68,7 @@ export class ThematiqueUsecase {
       await this.thematiqueBoardUsecase.external_thematique_synthese(
         thematique,
         utilisateur.logement.code_commune,
+        utilisateur.logement.code_postal,
       );
 
     result.nombre_actions = thematique_synthese.nombre_actions;

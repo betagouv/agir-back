@@ -43,6 +43,7 @@ export class ThematiqueBoardUsecase {
 
     return await this.buildSyntheseFromCodeCommune(
       utilisateur.logement.code_commune,
+      utilisateur.logement.code_postal,
     );
   }
 
@@ -135,6 +136,7 @@ export class ThematiqueBoardUsecase {
     const nombre_aides = await this.aidesUsecase.external_count_aides(
       undefined,
       utilisateur.logement.code_commune,
+      utilisateur.logement.code_postal,
     );
     result.nombre_aides = nombre_aides;
     result.nombre_recettes = 1150;
@@ -144,12 +146,14 @@ export class ThematiqueBoardUsecase {
 
   public async getListeThematiquesPrincipales(
     code_commune?: string,
+    code_postal?: string,
   ): Promise<{ nom_commune: string; thematiques: ThematiqueSynthese[] }> {
-    return await this.buildSyntheseFromCodeCommune(code_commune);
+    return await this.buildSyntheseFromCodeCommune(code_commune, code_postal);
   }
 
   private async buildSyntheseFromCodeCommune(
     code_commune: string,
+    code_postal: string,
   ): Promise<{ nom_commune: string; thematiques: ThematiqueSynthese[] }> {
     const result: { nom_commune: string; thematiques: ThematiqueSynthese[] } = {
       nom_commune: undefined,
@@ -168,19 +172,23 @@ export class ThematiqueBoardUsecase {
     const alimentation = await this.external_thematique_synthese(
       Thematique.alimentation,
       code_commune,
+      code_postal,
     );
 
     const logement = await this.external_thematique_synthese(
       Thematique.logement,
       code_commune,
+      code_postal,
     );
     const transport = await this.external_thematique_synthese(
       Thematique.transport,
       code_commune,
+      code_postal,
     );
     const consommation = await this.external_thematique_synthese(
       Thematique.consommation,
       code_commune,
+      code_postal,
     );
 
     result.thematiques.push(alimentation, logement, transport, consommation);
@@ -191,6 +199,7 @@ export class ThematiqueBoardUsecase {
   public async external_thematique_synthese(
     thematique: Thematique,
     code_commune: string,
+    code_postal: string,
   ): Promise<ThematiqueSynthese> {
     if (thematique === Thematique.alimentation) {
       return {
@@ -201,6 +210,7 @@ export class ThematiqueBoardUsecase {
         nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.alimentation,
           code_commune,
+          code_postal,
         ),
         nombre_recettes: 1150,
         nombre_simulateurs: 0,
@@ -215,6 +225,7 @@ export class ThematiqueBoardUsecase {
         nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.logement,
           code_commune,
+          code_postal,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,
@@ -229,6 +240,7 @@ export class ThematiqueBoardUsecase {
         nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.transport,
           code_commune,
+          code_postal,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,
@@ -243,6 +255,7 @@ export class ThematiqueBoardUsecase {
         nombre_aides: await this.aidesUsecase.external_count_aides(
           Thematique.consommation,
           code_commune,
+          code_postal,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,
