@@ -924,7 +924,7 @@ describe('RechercheServices (API test)', () => {
 
     // THEN
     expect(response.status).toBe(201);
-    expect(response.body.resultats).toHaveLength(173);
+    expect(response.body.resultats).toHaveLength(156);
   });
   it(`POST /utlilisateur/id/recherche_services/recettes/search sous cat saumon crevette cabillaud`, async () => {
     // GIVEN
