@@ -1,9 +1,11 @@
+import { KYC } from '@prisma/client';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
+import { KYCMosaicID } from '../../../src/domain/kyc/mosaicDefinition';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -1480,6 +1482,147 @@ describe('Admin (API test)', () => {
       const user4 = await utilisateurRepository.getById('user-4', [Scope.ALL]);
       expect(user4.kyc_history.getAnsweredKYCs()).toHaveLength(0);
     });
+  });
+
+  it('migration V24 OK - reprise donnée vetements mosaic', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 24;
+
+    const user_base_kyc = {
+      code: KYCID.KYC_achat_robe,
+      id_cms: 1,
+      categorie: undefined,
+      question: '',
+      reponse_simple: {
+        value: '1',
+      },
+      reponse_complexe: undefined,
+      type: TypeReponseQuestionKYC.entier,
+      conditions: undefined,
+      is_NGC: true,
+      last_update: new Date(1),
+      points: 5,
+      tags: [],
+      thematique: Thematique.consommation,
+    };
+    const kyc_user: KYCHistory_v2 = {
+      version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+      answered_mosaics: [KYCMosaicID.MOSAIC_VETEMENTS],
+      answered_questions: [
+        { ...user_base_kyc, code: KYCID.KYC_achat_robe },
+        { ...user_base_kyc, code: KYCID.KYC_achat_manteau },
+        { ...user_base_kyc, code: KYCID.KYC_achat_chemise },
+        { ...user_base_kyc, code: KYCID.KYC_achat_pantalon },
+        { ...user_base_kyc, code: KYCID.KYC_achat_sweat },
+      ],
+    };
+
+    const db_base_kyc = {
+      code: KYCID.KYC_achat_robe,
+      id_cms: 1,
+      question: '',
+      reponses: [],
+      type: TypeReponseQuestionKYC.entier,
+      conditions: undefined,
+      points: 5,
+      tags: [],
+      thematique: Thematique.consommation,
+    };
+
+    await TestUtil.create(DB.kYC, {
+      ...db_base_kyc,
+      code: KYCID.KYC_achat_robe,
+      id_cms: 1,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...db_base_kyc,
+      code: KYCID.KYC_achat_manteau,
+      id_cms: 2,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...db_base_kyc,
+      code: KYCID.KYC_achat_chemise,
+      id_cms: 3,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...db_base_kyc,
+      code: KYCID.KYC_achat_pantalon,
+      id_cms: 4,
+    });
+    await TestUtil.create(DB.kYC, {
+      ...db_base_kyc,
+      code: KYCID.KYC_achat_sweat,
+      id_cms: 5,
+    });
+
+    const KYC_DB_DATA_VET: KYC = {
+      id_cms: 10,
+      code: KYCID.KYC_raison_achat_vetements,
+      a_supprimer: false,
+      categorie: Categorie.mission,
+      conditions: undefined,
+      emoji: 'a',
+      image_url: 'img',
+      is_ngc: true,
+      ngc_key: 'a . b . c',
+      points: 123,
+      short_question: 'short',
+      tags: ['A'],
+      thematique: Thematique.dechet,
+      unite: { abreviation: 'kg' },
+      type: TypeReponseQuestionKYC.choix_unique,
+      question: `Type achat vetements`,
+      reponses: [
+        { label: 'un peu', code: 'minimum' },
+        { label: 'moyen', code: 'occasionnel' },
+        { label: 'beaucoup', code: 'accro' },
+      ],
+      created_at: undefined,
+      updated_at: undefined,
+    };
+    await TestUtil.create(DB.kYC, KYC_DB_DATA_VET);
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 23,
+      email: 'user-2@mail',
+      migration_enabled: true,
+      kyc: kyc_user as any,
+    });
+
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        migrations: [
+          {
+            info: 'filled KYC_raison_achat_vetements with score 5',
+            ok: true,
+            version: 24,
+          },
+        ],
+        user_id: 'utilisateur-id',
+      },
+    ]);
+
+    const user1 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user1.version).toEqual(24);
+
+    const kyc_vet = user1.kyc_history.getQuestionChoixUnique(
+      KYCID.KYC_raison_achat_vetements,
+    );
+
+    expect(kyc_vet.isAnswered()).toEqual(true);
+    expect(kyc_vet.getSelectedCode()).toEqual('occasionnel');
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {

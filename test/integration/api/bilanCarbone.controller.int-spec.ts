@@ -614,7 +614,7 @@ describe('/bilan (API test)', () => {
 
     //THEN
     expect(response.status).toBe(200);
-    expect(response.body.pourcentage_completion_totale).toEqual(17);
+    expect(response.body.pourcentage_completion_totale).toEqual(18);
     expect(response.body.liens_bilans_thematique).toEqual([
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
@@ -638,7 +638,7 @@ describe('/bilan (API test)', () => {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
         image_url:
           'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
-        nombre_total_question: 6,
+        nombre_total_question: 5,
         pourcentage_progression: 0,
         thematique: 'consommation',
         temps_minutes: 10,

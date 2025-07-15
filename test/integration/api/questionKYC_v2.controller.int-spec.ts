@@ -790,6 +790,56 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(userDB.tag_ponderation_set.transport).toEqual(0);
   });
 
+  it('PUT /utilisateurs/id/questionsKYC_v2/KYC001 - synchro entre KYC kyc_transport_type_utilisateur et kyc_possede_voiture_oui_non', async () => {
+    // GIVEN
+    await TestUtil.create(DB.kYC, {
+      id_cms: 1,
+      code: KYCID.KYC_transport_type_utilisateur,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { label: 'A', code: 'proprio' },
+        { label: 'B', code: 'pas_la_mienne' },
+        { label: 'C', code: 'change_souvent' },
+      ],
+    });
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_possede_voiture_oui_non,
+      type: TypeReponseQuestionKYC.choix_unique,
+      reponses: [
+        { label: 'A', code: 'oui' },
+        { label: 'B', code: 'non' },
+      ],
+    });
+
+    const kyc: KYCHistory_v2 = {
+      version: 2,
+      answered_mosaics: [],
+      skipped_mosaics: [],
+      skipped_questions: [],
+
+      answered_questions: [],
+    };
+    await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.PUT(
+      '/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_transport_type_utilisateur',
+    ).send([{ code: 'proprio', selected: true }]);
+
+    // THEN
+    expect(response.status).toBe(200);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(
+      userDB.kyc_history
+        .getQuestionChoixUnique(KYCID.KYC_possede_voiture_oui_non)
+        .getSelectedCode(),
+    ).toEqual('oui');
+  });
+
   it('PUT /utilisateurs/id/questionsKYC_v2/006 - transpose dans logement KYC006 plus de 15 ans', async () => {
     // GIVEN
     const kyc: KYCHistory_v2 = {

@@ -10,7 +10,8 @@ import { QuestionChoixUnique } from '../domain/kyc/new_interfaces/QuestionChoixU
 import { QuestionSimple } from '../domain/kyc/new_interfaces/QuestionSimple';
 import { QuestionKYC, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { BooleanKYC } from '../domain/kyc/QuestionKYCData';
-import { KycRegimeToKycRepas } from '../domain/kyc/synchro/kycRegimeToKycRepas';
+import { KycRegimeToKycRepas } from '../domain/kyc/synchro/kycRegimeToKycRepasSynch';
+import { KycToKycSynch } from '../domain/kyc/synchro/kycToKycSynch';
 import { KycToProfileSync } from '../domain/kyc/synchro/kycToProfileSync';
 import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -118,6 +119,8 @@ export class QuestionKYCUsecase {
       utilisateur.logement,
       this.communeRepository,
     ).refreshTagState_v2(utilisateur.recommandation);
+
+    KycToKycSynch.synchro(utilisateur.kyc_history);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 

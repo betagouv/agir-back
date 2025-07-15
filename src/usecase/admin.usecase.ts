@@ -44,7 +44,10 @@ export class AdminUsecase {
         const communes =
           this.communeRepository.getCommunesForCodePostal(code_postal);
         for (const com of communes) {
-          liste_codes_communes.add(this.getCommuneGlobale(com.INSEE));
+          const code_to_check = this.getCommuneGlobale(com.INSEE);
+          if (code_to_check) {
+            liste_codes_communes.add(this.getCommuneGlobale(com.INSEE));
+          }
         }
       }
       const liste_codes_EPCI = new Set<string>();
@@ -85,6 +88,27 @@ export class AdminUsecase {
           }
         }
         aide.liste_EPCI.push(EPCI_export);
+      }
+
+      aide.est_grand_est = false;
+      for (const code_commune of aide.liste_codes_communes) {
+        const commune =
+          this.communeRepository.getCommuneByCodeINSEE(code_commune);
+        if (commune.region === '44') {
+          aide.est_grand_est = true;
+          break;
+        }
+      }
+      for (const code_commune of aide.codes_commune_from_partenaire) {
+        const commune =
+          this.communeRepository.getCommuneByCodeINSEE(code_commune);
+        if (commune.region === '44') {
+          aide.est_grand_est = true;
+          break;
+        }
+      }
+      if (aide.codes_region.includes('44')) {
+        aide.est_grand_est = true;
       }
 
       result.push(aide);
@@ -179,6 +203,9 @@ export class AdminUsecase {
 
   private getCommuneGlobale(code_commune: string): string {
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
-    return commune.commune ? commune.commune : code_commune;
+    if (commune) {
+      return commune.commune ? commune.commune : code_commune;
+    }
+    return undefined;
   }
 }

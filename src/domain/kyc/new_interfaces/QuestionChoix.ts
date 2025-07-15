@@ -37,4 +37,15 @@ export class QuestionChoix {
     }
     return result;
   }
+  public getNombreSelections() {
+    if (!this.kyc.reponse_complexe) return 0;
+    const entry_liste = this.kyc.reponse_complexe;
+    let result = 0;
+    for (const entry of entry_liste) {
+      if (entry.selected) {
+        result++;
+      }
+    }
+    return result;
+  }
 }

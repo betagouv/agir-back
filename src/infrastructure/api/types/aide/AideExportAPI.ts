@@ -29,6 +29,7 @@ export class AideExportAPI {
   @ApiProperty() codes_departement: string;
   @ApiProperty() codes_region: string;
   @ApiProperty() liste_codes_communes: string;
+  @ApiProperty() est_grand_est: boolean;
   @ApiProperty({ type: [EPCI_AIDE_EXPORT_API] })
   liste_EPCI: EPCI_AIDE_EXPORT_API[];
   @ApiProperty({ type: [EPCI_AIDE_EXPORT_PARTENAIRE_API] })
@@ -61,6 +62,7 @@ export class AideExportAPI {
         codes_commune_manquants: e.codes_commune_manquants.join('|'),
         codes_commune_qui_matchent: e.codes_commune_qui_matchent.join('|'),
       })),
+      est_grand_est: aide.est_grand_est,
     };
   }
 }

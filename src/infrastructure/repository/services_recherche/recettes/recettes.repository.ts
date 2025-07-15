@@ -214,6 +214,14 @@ export class RecettesRepository implements FinderInterface {
     if (filtre.sous_categorie === SousCategorieRecherche.sans_saumon) {
       recherche = this.filtrerSansSaumon(recherche);
     }
+    if (
+      filtre.sous_categorie ===
+      SousCategorieRecherche.sans_saumon_crevette_cabillaud
+    ) {
+      recherche = this.filtrerSansSaumonCabillaudCrevettes(recherche);
+    }
+
+    const result_count = recherche.length;
 
     const max_result = filtre.nombre_max_resultats || 10;
 
@@ -233,6 +241,7 @@ export class RecettesRepository implements FinderInterface {
           ),
           ingredients: this.getIngredientsRecette(r.id),
           etapes_recette: this.getEtapesRecette(r.id),
+          nbr_resultats_max_dispo: result_count,
         }),
     );
 
@@ -385,6 +394,29 @@ export class RecettesRepository implements FinderInterface {
         }
       }
       if (sans_saumon) {
+        filtered.push(recette);
+      }
+    }
+    return filtered;
+  }
+  private filtrerSansSaumonCabillaudCrevettes(
+    liste: Recette_RAW[],
+  ): Recette_RAW[] {
+    const filtered = [];
+    for (const recette of liste) {
+      const ingredients = this.getIngredientsRecette(recette.id);
+      let sans = true;
+      for (const ingredient of ingredients) {
+        if (
+          ingredient.nom.includes('aumon') ||
+          ingredient.nom.includes('revette') ||
+          ingredient.nom.includes('abillaud')
+        ) {
+          sans = false;
+          break;
+        }
+      }
+      if (sans) {
         filtered.push(recette);
       }
     }

@@ -67,7 +67,7 @@ export const EnchainementDefinition: Record<
     KYCMosaicID.MOSAIC_ANIMAUX,
     KYCMosaicID.MOSAIC_APPAREIL_NUM,
     KYCMosaicID.MOSAIC_MEUBLES,
-    KYCMosaicID.MOSAIC_VETEMENTS,
+    KYCID.KYC_raison_achat_vetements,
   ],
   ENCHAINEMENT_KYC_bilan_alimentation: [
     KYCID.KYC_alimentation_regime, // manque quand import NGC Full
