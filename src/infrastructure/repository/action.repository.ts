@@ -32,9 +32,11 @@ export type ActionFilter = {
 export class ActionRepository {
   constructor(private prisma: PrismaService) {
     ActionRepository.catalogue = new Map();
+    ActionRepository.catalogue_by_partenaire = new Map();
   }
 
   private static catalogue: Map<string, ActionDefinition>;
+  private static catalogue_by_partenaire: Map<string, ActionDefinition>;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
@@ -48,6 +50,7 @@ export class ActionRepository {
   @Cron('* * * * *')
   async loadCache(): Promise<void> {
     const new_map: Map<string, ActionDefinition> = new Map();
+    const new_map_partenaire: Map<string, ActionDefinition> = new Map();
 
     let liste;
     if (App.isProd()) {
@@ -63,8 +66,15 @@ export class ActionRepository {
     for (const action_db of liste) {
       const action_def = this.buildActionDefinitionFromDB(action_db);
       new_map.set(action_db.type_code_id, action_def);
+      if (action_def.partenaire_id && action_def.external_id) {
+        new_map_partenaire.set(
+          '' + action_def.partenaire_id + '_' + action_def.external_id,
+          action_def,
+        );
+      }
     }
     ActionRepository.catalogue = new_map;
+    ActionRepository.catalogue_by_partenaire = new_map_partenaire;
   }
 
   public isSimulateur(action: TypeCodeAction): boolean {
@@ -86,6 +96,15 @@ export class ActionRepository {
   ): ActionDefinition {
     return ActionRepository.catalogue.get(
       ActionDefinition.getIdFromTypeCode(type_code),
+    );
+  }
+
+  public getActionPartenaireByExternalId(
+    partenaire_id: string,
+    external_id: string,
+  ): ActionDefinition {
+    return ActionRepository.catalogue_by_partenaire.get(
+      '' + partenaire_id + '_' + external_id,
     );
   }
 

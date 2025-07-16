@@ -8,6 +8,7 @@ import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
+import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
@@ -21,6 +22,8 @@ J'autorise J'Agis et son partenaire Watt Watchers à recueillir mon historique d
 ainsi qu'à analyser mes consommations tant que j'ai un compte`;
 
 const CURRENT_VERSION = 'v1';
+
+const WINTER_PARTENAIRE_ID = '455';
 
 const USAGE_EMOJI: Record<TypeUsage, string> = {
   airConditioning: '❄️',
@@ -53,6 +56,7 @@ export class WinterUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
+    private actionRepository: ActionRepository,
     private linkyConsentRepository: LinkyConsentRepository,
   ) {}
 
@@ -221,13 +225,20 @@ export class WinterUsecase {
     );
 
     for (const winter_action of liste) {
-      new_reco_set.push({
-        action: {
-          code: winter_action.slug,
-          type: TypeAction.classique,
-        },
-        montant_economies_euro: winter_action.economy,
-      });
+      const winter_action_def =
+        this.actionRepository.getActionPartenaireByExternalId(
+          WINTER_PARTENAIRE_ID,
+          winter_action.slug,
+        );
+      if (winter_action_def) {
+        new_reco_set.push({
+          action: {
+            code: winter_action_def.code,
+            type: TypeAction.classique,
+          },
+          montant_economies_euro: winter_action.economy,
+        });
+      }
     }
 
     utilisateur.thematique_history.setWinterRecommandations(new_reco_set);
