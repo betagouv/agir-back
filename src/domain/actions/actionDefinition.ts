@@ -49,6 +49,7 @@ export class ActionDefinitionData {
   sources: Source[];
   VISIBLE_PROD: boolean;
   emoji: string;
+  external_id: string;
 }
 
 export class ActionDefinition extends ActionDefinitionData {

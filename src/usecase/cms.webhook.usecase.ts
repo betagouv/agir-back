@@ -568,6 +568,7 @@ export class CMSWebhookUsecase {
         : [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
       emoji: entry.emoji,
+      external_id: entry.external_id,
     });
   }
 

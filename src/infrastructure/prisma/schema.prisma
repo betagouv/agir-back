@@ -193,6 +193,7 @@ model Action {
   updated_at             DateTime @updatedAt @db.Timestamptz(3)
   VISIBLE_PROD           Boolean  @default(true)
   emoji                  String?
+  external_id            String?
 
   @@unique([code, type])
   @@unique([cms_id, type])
