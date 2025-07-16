@@ -17,5 +17,5 @@ export const DynamicTag_v2Ref: { [key in Tag_v2]?: string } = {
   risque_adresse_tempete: `Risque tempete à l'adresse, moyen ou plus`,
   risque_commune_catnat: `Commune avec plus de 5 arrêt catastrophe naturelle`,
   risque_commune_argile: `Commune avec plus de 50% de surface en risque geotechnique`,
-  risque_commune_inondation: `Commune avec plus de 20% de surface en risque inondation`,
+  risque_commune_inondation: `Commune avec plus de 10% de surface en risque inondation`,
 };

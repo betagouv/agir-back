@@ -419,7 +419,6 @@ export class KYCHistory {
     }
     let or_result = false;
     for (const and_set of conditions) {
-      console.log(and_set);
       let and_result = true;
       for (const cond of and_set) {
         let is_ok = false;
@@ -441,14 +440,12 @@ export class KYCHistory {
           break;
         }
       }
-      console.log(and_result);
       or_result = or_result || and_result;
       if (or_result) {
         break;
       }
     }
 
-    console.log(`res : ${or_result}`);
     return or_result;
   }
 
