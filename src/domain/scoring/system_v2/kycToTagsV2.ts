@@ -2,13 +2,15 @@ import {
   CommuneRepository,
   TypeCommune,
 } from '../../../infrastructure/repository/commune/commune.repository';
+import { RisquesNaturelsCommunesRepository } from '../../../infrastructure/repository/risquesNaturelsCommunes.repository';
+import { KYCHistory } from '../../kyc/kycHistory';
+import { KYCID } from '../../kyc/KYCID';
+import { KYCComplexValues } from '../../kyc/publicodesMapping';
+import { BooleanKYC } from '../../kyc/QuestionKYCData';
 import { Logement } from '../../logement/logement';
-import { ProfileRecommandationUtilisateur } from '../../scoring/system_v2/profileRecommandationUtilisateur';
-import { Tag_v2 } from '../../scoring/system_v2/Tag_v2';
-import { KYCHistory } from '../kycHistory';
-import { KYCID } from '../KYCID';
-import { KYCComplexValues } from '../publicodesMapping';
-import { BooleanKYC } from '../QuestionKYCData';
+import { NiveauRisqueLogement } from '../../logement/NiveauRisque';
+import { ProfileRecommandationUtilisateur } from './profileRecommandationUtilisateur';
+import { Tag_v2 } from './Tag_v2';
 
 type OUI_NON = {
   oui?: Tag_v2[];
@@ -160,16 +162,19 @@ export class KycToTags_v2 {
   private new_tag_set: Set<Tag_v2>;
   private logement: Logement;
   private commune_repo: CommuneRepository;
+  private risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository;
 
   constructor(
     hist: KYCHistory,
     logement: Logement,
     commune_repo: CommuneRepository,
+    risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {
     this.hist = hist;
     this.new_tag_set = new Set();
     this.logement = logement;
     this.commune_repo = commune_repo;
+    this.risquesNaturelsCommunesRepository = risquesNaturelsCommunesRepository;
   }
 
   public static generate_dependency_report(): Map<KYCID, Set<Tag_v2>> {
@@ -271,20 +276,84 @@ export class KycToTags_v2 {
       }
     }
 
-    if (this.logement && this.logement.code_commune) {
-      const niveau = this.commune_repo.getNiveauUrbainCommune(
-        this.logement.code_commune,
-      );
-      switch (niveau) {
-        case TypeCommune.Rural:
-          this.setTags([Tag_v2.habite_zone_rurale]);
-          break;
-        case TypeCommune.Urbain:
-          this.setTags([Tag_v2.habite_zone_urbaine]);
-          break;
-        case TypeCommune['Péri-urbain']:
-          this.setTags([Tag_v2.habite_zone_peri_urbaine]);
-          break;
+    if (this.logement) {
+      if (this.logement.code_commune) {
+        const niveau = this.commune_repo.getNiveauUrbainCommune(
+          this.logement.code_commune,
+        );
+        switch (niveau) {
+          case TypeCommune.Rural:
+            this.setTags([Tag_v2.habite_zone_rurale]);
+            break;
+          case TypeCommune.Urbain:
+            this.setTags([Tag_v2.habite_zone_urbaine]);
+            break;
+          case TypeCommune['Péri-urbain']:
+            this.setTags([Tag_v2.habite_zone_peri_urbaine]);
+            break;
+        }
+
+        const risque_commune =
+          this.risquesNaturelsCommunesRepository.getRisquesCommune(
+            this.logement.code_commune,
+          );
+        if (risque_commune) {
+          if (risque_commune.nombre_cat_nat > 10) {
+            this.setTags([Tag_v2.risque_commune_catnat]);
+          }
+          if (risque_commune.pourcentage_risque_innondation > 20) {
+            this.setTags([Tag_v2.risque_commune_inondation]);
+          }
+          if (risque_commune.pourcentage_risque_secheresse > 50) {
+            this.setTags([Tag_v2.risque_commune_argile]);
+          }
+        }
+      }
+      if (
+        this.logement.score_risques_adresse &&
+        this.logement.score_risques_adresse.isDefined()
+      ) {
+        if (
+          this.estRisqueMoyenOuPlus(this.logement.score_risques_adresse.argile)
+        ) {
+          this.setTags([Tag_v2.risque_adresse_argile]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(
+            this.logement.score_risques_adresse.inondation,
+          )
+        ) {
+          this.setTags([Tag_v2.risque_adresse_inondation]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(this.logement.score_risques_adresse.radon)
+        ) {
+          this.setTags([Tag_v2.risque_adresse_radon]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(
+            this.logement.score_risques_adresse.secheresse,
+          )
+        ) {
+          this.setTags([Tag_v2.risque_adresse_secheresse]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(this.logement.score_risques_adresse.seisme)
+        ) {
+          this.setTags([Tag_v2.risque_adresse_seisme]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(
+            this.logement.score_risques_adresse.submersion,
+          )
+        ) {
+          this.setTags([Tag_v2.risque_adresse_submersion]);
+        }
+        if (
+          this.estRisqueMoyenOuPlus(this.logement.score_risques_adresse.tempete)
+        ) {
+          this.setTags([Tag_v2.risque_adresse_tempete]);
+        }
       }
     }
 
@@ -346,5 +415,14 @@ export class KycToTags_v2 {
     const kyc = this.hist.getQuestionNumerique(kyc_code);
     if (!kyc) return false;
     return kyc.getValue() === 0;
+  }
+
+  private estRisqueMoyenOuPlus(level: NiveauRisqueLogement): boolean {
+    return (
+      level !== undefined &&
+      (level === NiveauRisqueLogement.moyen ||
+        level === NiveauRisqueLogement.fort ||
+        level === NiveauRisqueLogement.tres_fort)
+    );
   }
 }

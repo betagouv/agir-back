@@ -39,4 +39,15 @@ export enum Tag_v2 {
   habite_zone_rurale = 'habite_zone_rurale',
 
   contenu_important = 'contenu_important',
+
+  risque_adresse_argile = 'risque_adresse_argile',
+  risque_adresse_inondation = 'risque_adresse_inondation',
+  risque_adresse_radon = 'risque_adresse_radon',
+  risque_adresse_secheresse = 'risque_adresse_secheresse',
+  risque_adresse_seisme = 'risque_adresse_seisme',
+  risque_adresse_submersion = 'risque_adresse_submersion',
+  risque_adresse_tempete = 'risque_adresse_tempete',
+  risque_commune_catnat = 'risque_commune_catnat',
+  risque_commune_argile = 'risque_commune_argile',
+  risque_commune_inondation = 'risque_commune_inondation',
 }

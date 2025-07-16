@@ -3,15 +3,15 @@ import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import { EnchainementType } from '../domain/kyc/enchainementDefinition';
-import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
+import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
+import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { ActionUsecase } from './actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
@@ -32,7 +32,7 @@ export class ThematiqueUsecase {
     private communeRepository: CommuneRepository,
     private compteurActionsRepository: CompteurActionsRepository,
     private thematiqueBoardUsecase: ThematiqueBoardUsecase,
-    private winterRepository: WinterRepository,
+    private risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {}
 
   public async getUtilisateurThematique(
@@ -192,6 +192,7 @@ export class ThematiqueUsecase {
       utilisateur.kyc_history,
       utilisateur.logement,
       this.communeRepository,
+      this.risquesNaturelsCommunesRepository,
     ).refreshTagState_v2(utilisateur.recommandation);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(

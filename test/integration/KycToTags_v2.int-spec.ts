@@ -2,16 +2,23 @@ import { Categorie } from '../../src/domain/contenu/categorie';
 import { KYCHistory } from '../../src/domain/kyc/kycHistory';
 import { KYCID } from '../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../src/domain/kyc/QuestionKYCData';
-import { KycToTags_v2 } from '../../src/domain/kyc/synchro/kycToTagsV2';
-import { Logement } from '../../src/domain/logement/logement';
+import {
+  Logement,
+  ScoreRisquesAdresse,
+} from '../../src/domain/logement/logement';
+import { NiveauRisqueLogement } from '../../src/domain/logement/NiveauRisque';
+import { KycToTags_v2 } from '../../src/domain/scoring/system_v2/kycToTagsV2';
 import { ProfileRecommandationUtilisateur } from '../../src/domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../src/domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../src/domain/thematique/thematique';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { RisquesNaturelsCommunesRepository } from '../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { TestUtil } from '../TestUtil';
 
 describe('KycToTags_v2', () => {
   const communeRepository = new CommuneRepository(TestUtil.prisma);
+  const risquesNaturelsCommunesRepository =
+    new RisquesNaturelsCommunesRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -34,6 +41,7 @@ describe('KycToTags_v2', () => {
       new KYCHistory(),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -50,6 +58,7 @@ describe('KycToTags_v2', () => {
       new KYCHistory(),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     logement.code_commune = '21231';
@@ -60,6 +69,97 @@ describe('KycToTags_v2', () => {
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([Tag_v2.habite_zone_urbaine]);
   });
+  it(`refreshTagState : Gère correctement les risques à l'adresse`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory(),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    logement.code_commune = undefined;
+    logement.score_risques_adresse = new ScoreRisquesAdresse({
+      argile: NiveauRisqueLogement.faible,
+      inondation: NiveauRisqueLogement.fort,
+      radon: NiveauRisqueLogement.faible,
+      secheresse: NiveauRisqueLogement.moyen,
+      submersion: NiveauRisqueLogement.tres_fort,
+      tempete: NiveauRisqueLogement.inconnu,
+      seisme: NiveauRisqueLogement.nul,
+    });
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      'risque_adresse_inondation',
+      'risque_adresse_secheresse',
+      'risque_adresse_submersion',
+    ]);
+  });
+  it(`refreshTagState : COmmune à risque commune`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory(),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    logement.code_commune = '21231';
+    await risquesNaturelsCommunesRepository.upsert({
+      code_commune: '21231',
+      nom_commune: 'Dijon',
+      nombre_cat_nat: 12,
+      pourcentage_risque_innondation: 30,
+      pourcentage_risque_secheresse: 60,
+    });
+    await risquesNaturelsCommunesRepository.loadCache();
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      'habite_zone_urbaine',
+      'risque_commune_catnat',
+      'risque_commune_inondation',
+      'risque_commune_argile',
+    ]);
+  });
+  it(`refreshTagState : COmmune sans risque`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory(),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    logement.code_commune = '21231';
+    await risquesNaturelsCommunesRepository.upsert({
+      code_commune: '21231',
+      nom_commune: 'Dijon',
+      nombre_cat_nat: 5,
+      pourcentage_risque_innondation: 15,
+      pourcentage_risque_secheresse: 30,
+    });
+    await risquesNaturelsCommunesRepository.loadCache();
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual(['habite_zone_urbaine']);
+  });
   it(`refreshTagState : Gère correctement le tag rural`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -68,6 +168,7 @@ describe('KycToTags_v2', () => {
       new KYCHistory(),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     logement.code_commune = '97126';
@@ -86,6 +187,7 @@ describe('KycToTags_v2', () => {
       new KYCHistory(),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     logement.code_commune = '97132';
@@ -144,6 +246,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -204,6 +307,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -245,6 +349,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -302,6 +407,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -361,6 +467,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
@@ -420,6 +527,7 @@ describe('KycToTags_v2', () => {
       }),
       logement,
       communeRepository,
+      risquesNaturelsCommunesRepository,
     );
 
     // WHEN
