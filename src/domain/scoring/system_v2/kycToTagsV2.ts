@@ -301,7 +301,7 @@ export class KycToTags_v2 {
           if (risque_commune.nombre_cat_nat > 10) {
             this.setTags([Tag_v2.risque_commune_catnat]);
           }
-          if (risque_commune.pourcentage_risque_innondation > 20) {
+          if (risque_commune.pourcentage_risque_innondation > 10) {
             this.setTags([Tag_v2.risque_commune_inondation]);
           }
           if (risque_commune.pourcentage_risque_secheresse > 50) {

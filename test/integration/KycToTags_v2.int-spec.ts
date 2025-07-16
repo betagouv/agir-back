@@ -158,7 +158,10 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual(['habite_zone_urbaine']);
+    expect(profile.getListeTagsActifs()).toEqual([
+      'habite_zone_urbaine',
+      'risque_commune_inondation',
+    ]);
   });
   it(`refreshTagState : Gère correctement le tag rural`, async () => {
     // GIVEN
