@@ -268,4 +268,77 @@ describe('CommuneRepository', () => {
     expect(epicDB.is_commune).toEqual(false);
     expect(epicDB.type_epci).toEqual('METRO');
   });
+
+  it.skip(`test : listes communes d'une EPCI`, async () => {
+    // WHEN
+
+    const res1 = communeRepository.getListCommunesParCodePostal('51150');
+    const res2 = communeRepository.getListCommunesParCodePostal('51400');
+    const res3 = communeRepository.getListCommunesParCodePostal('51320');
+    const res4 = communeRepository.getListCommunesParCodePostal('51000');
+    const res5 = communeRepository.getListCommunesParCodePostal('51510');
+    const res6 = communeRepository.getListCommunesParCodePostal('51460');
+    const res7 = communeRepository.getListCommunesParCodePostal('51230');
+    const res8 = communeRepository.getListCommunesParCodePostal('51470');
+    const res9 = communeRepository.getListCommunesParCodePostal('51520');
+    const res10 = communeRepository.getListCommunesParCodePostal('51320');
+
+    const result = res1.concat(
+      res2,
+      res3,
+      res4,
+      res5,
+      res6,
+      res7,
+      res8,
+      res9,
+      res10,
+    );
+
+    const EPCI_set_commune =
+      communeRepository.getListeCodesCommuneParCodeEPCI('200067213');
+
+    for (const code_commune of EPCI_set_commune) {
+      const found1 = res1.find((a) => a.code === code_commune);
+      const found2 = res2.find((a) => a.code === code_commune);
+      const found3 = res3.find((a) => a.code === code_commune);
+      const found4 = res4.find((a) => a.code === code_commune);
+      const found5 = res5.find((a) => a.code === code_commune);
+      const found6 = res6.find((a) => a.code === code_commune);
+      const found7 = res7.find((a) => a.code === code_commune);
+      const found8 = res8.find((a) => a.code === code_commune);
+      const found9 = res9.find((a) => a.code === code_commune);
+      const found10 = res10.find((a) => a.code === code_commune);
+      if (found1) {
+        console.log(`${JSON.stringify(found1)} in 51150`);
+      }
+      if (found2) {
+        console.log(`${JSON.stringify(found2)} in 51400`);
+      }
+      if (found3) {
+        console.log(`${JSON.stringify(found3)} in 51320`);
+      }
+      if (found4) {
+        console.log(`${JSON.stringify(found4)} in 51000`);
+      }
+      if (found5) {
+        console.log(`${JSON.stringify(found5)} in 51510`);
+      }
+      if (found6) {
+        console.log(`${JSON.stringify(found6)} in 51460`);
+      }
+      if (found7) {
+        console.log(`${JSON.stringify(found7)} in 51230`);
+      }
+      if (found8) {
+        console.log(`${JSON.stringify(found8)} in 51470`);
+      }
+      if (found9) {
+        console.log(`${JSON.stringify(found9)} in 51520`);
+      }
+      if (found9) {
+        console.log(`${JSON.stringify(found10)} in 51320`);
+      }
+    }
+  });
 });

@@ -32,7 +32,7 @@ export type WinterFoundPRM = {
 
 export type WinterHousingData = {
   nbAmericanRefrigerator?: number;
-  nbClassicRefrigerator?: number; // MAPPED KYC 100
+  nbClassicRefrigerator?: number; // MAPPED KYC 100 => DONE ACTION
   nbOneDoorRefrigerator?: number; // MAPPED KYC 101
   nbFreezer?: number; // MAPPED  KYC 102
   nbPool?: number; // MAPPED KYC 259
@@ -51,7 +51,7 @@ export type WinterHousingData = {
   nbDryer?: number; // MAPPED KYC104
   nbMobileAirConditioner?: number;
   hasElectricWaterHeater?: boolean;
-  hasElectricHeater?: boolean; // MAPPED KYC 59
+  hasElectricHeater?: boolean; // MAPPED KYC 59  => DONE ACTION ?
   hasHeatPump?: boolean; // MAPPED KYC 81
   heatPumpType?: 'air-air' | 'air-water' | 'geotermal';
   hasWaterHeaterStorage?: boolean;
@@ -62,11 +62,11 @@ export type WinterHousingData = {
   housingType?: 'terraced-house' | 'house' | 'apartment' | 'office';
   sharedWalls?: boolean;
   livingArea?: number;
-  housingYear?: number; // MAPPED KYC 191
+  housingYear?: number; // MAPPED KYC 191  => DONE ACTION
   houseLevels?: number;
   houseExteriorWalls?: number;
   apartmentFloor?: 'ground' | 'intermediate' | 'last';
-  heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84
+  heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => DONE ACTION
   generatorTypes?: (
     | 'electric_generator'
     | 'heat_pump'
@@ -75,7 +75,7 @@ export type WinterHousingData = {
     | 'boiler_fuel'
     | 'other'
     | 'dont-know'
-  )[]; // MAPPED KYC 59
+  )[]; // MAPPED KYC 59 => DONE ACTION
   mainGenerator?:
     | 'boiler_gas'
     | 'boiler_wood'
@@ -106,14 +106,14 @@ export type WinterHousingData = {
     | 'other'
     | 'dont-know';
   boilerInstallationYear?: 'before-2010' | 'after-2010' | 'dont-know';
-  recentlyRenovated?: // MAPPED KYC 158
+  recentlyRenovated?: // MAPPED KYC 158 => DONE ACTION
   'floor' | 'walls' | 'generator' | 'attics' | 'roof' | 'vents' | 'windows';
-  hasDoneWorks?: boolean; // MAPPED KYC 158
+  hasDoneWorks?: boolean; // MAPPED KYC 158 => DONE ACTION
   renovatedWalls?: boolean;
   highFloorType?: 'converted_attics' | 'attics';
   windowType?: 'middle_class' | 'high_class';
   ventTypev?: 'simple_vmc' | 'double_vmc';
-  inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61
+  inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61  => DONE ACTION
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement
   nbAdult?: number; // MAPPED Profil->logement

@@ -13,13 +13,14 @@ import { BooleanKYC } from '../domain/kyc/QuestionKYCData';
 import { KycRegimeToKycRepas } from '../domain/kyc/synchro/kycRegimeToKycRepasSynch';
 import { KycToKycSynch } from '../domain/kyc/synchro/kycToKycSynch';
 import { KycToProfileSync } from '../domain/kyc/synchro/kycToProfileSync';
-import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
+import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { WinterUsecase } from './winter.usecase';
 
@@ -33,6 +34,7 @@ export class QuestionKYCUsecase {
     private personnalisator: Personnalisator,
     private winterUsecase: WinterUsecase,
     private winterRepository: WinterRepository,
+    private risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {}
 
   async getALL(utilisateurId: string): Promise<QuestionKYC[]> {
@@ -118,6 +120,7 @@ export class QuestionKYCUsecase {
       utilisateur.kyc_history,
       utilisateur.logement,
       this.communeRepository,
+      this.risquesNaturelsCommunesRepository,
     ).refreshTagState_v2(utilisateur.recommandation);
 
     KycToKycSynch.synchro(utilisateur.kyc_history);
@@ -270,6 +273,7 @@ export class QuestionKYCUsecase {
       utilisateur.kyc_history,
       utilisateur.logement,
       this.communeRepository,
+      this.risquesNaturelsCommunesRepository,
     ).refreshTagState_v2(utilisateur.recommandation);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);

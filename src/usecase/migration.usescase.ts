@@ -10,7 +10,6 @@ import { UtilisateurRepository } from '../../src/infrastructure/repository/utili
 import { App } from '../domain/app';
 import { KYCMosaicID } from '../domain/kyc/mosaicDefinition';
 import { QuestionChoix } from '../domain/kyc/new_interfaces/QuestionChoix';
-import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 
@@ -379,6 +378,7 @@ export class MigrationUsecase {
     };
   }
     */
+  /*
   private async migrate_18(
     user_id: string,
     version: number,
@@ -409,6 +409,7 @@ export class MigrationUsecase {
       info: `updated reco tags`,
     };
   }
+    */
   private async migrate_19(
     user_id: string,
     version: number,
@@ -443,6 +444,7 @@ export class MigrationUsecase {
       info: `mode = [${utilisateur.mode_inscription}]`,
     };
   }
+  /*
   private async migrate_20(
     user_id: string,
     version: number,
@@ -475,6 +477,7 @@ export class MigrationUsecase {
       info: `updated recos tags`,
     };
   }
+    */
   /*
   private async migrate_21(
     user_id: string,

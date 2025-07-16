@@ -243,4 +243,43 @@ describe('NotificationMobileUsecase', () => {
       );
     }
   });
+  it('getRisquesCommuneUtilisateur : commune inconnue', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      proprietaire: true,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      code_postal: '21000',
+      commune: 'Dijon',
+      plus_de_15_ans: undefined,
+      superficie: undefined,
+      type: undefined,
+      chauffage: undefined,
+      latitude: undefined,
+      longitude: undefined,
+      nombre_enfants: undefined,
+      numero_rue: undefined,
+      rue: undefined,
+      version: 0,
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+    };
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+    });
+
+    // WHEN
+    try {
+      await risquesUsecase.getRisquesCommuneUtilisateur(
+        'utilisateur-id',
+        'bad',
+      );
+      fail();
+    } catch (error) {
+      expect(error.message).toEqual(
+        `le code INSEE de commune [bad] n'existe pas`,
+      );
+    }
+  });
 });

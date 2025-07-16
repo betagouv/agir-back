@@ -62,7 +62,7 @@ export class CategorieRechercheManager {
   ];
   private static labels: Record<CategorieRecherche, string> = {
     score_risque: 'Score des risques naturelles',
-    vos_objets: 'Vos objets',
+    vos_objets: 'Mes objets',
     donner: 'Donner',
     jeter: 'Jeter',
     reparer: 'Réparer',

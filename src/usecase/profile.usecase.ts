@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
-import { RechercheServiceManager } from '../domain/bibliotheque_services/recherche/rechercheServiceManager';
-import { KycToTags_v2 } from '../domain/kyc/synchro/kycToTagsV2';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
 import { Logement } from '../domain/logement/logement';
+import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import {
@@ -15,6 +14,7 @@ import { ApplicationError } from '../infrastructure/applicationError';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
+import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { ServiceRepository } from '../infrastructure/repository/service.repository';
 import { MaifRepository } from '../infrastructure/repository/services_recherche/maif/maif.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
@@ -40,8 +40,8 @@ export class ProfileUsecase {
     private aideRepository: AideRepository,
     private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
-    private rechercheServiceManager: RechercheServiceManager,
     private maifRepository: MaifRepository,
+    private risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {}
 
   @Retryable({
@@ -312,6 +312,7 @@ export class ProfileUsecase {
         utilisateur.kyc_history,
         utilisateur.logement,
         this.communeRepository,
+        this.risquesNaturelsCommunesRepository,
       ).refreshTagState_v2(utilisateur.recommandation);
     }
 
@@ -513,9 +514,17 @@ export class ProfileUsecase {
         utilisateur.logement.latitude,
       );
       utilisateur.logement.score_risques_adresse = scoring;
+
+      new KycToTags_v2(
+        utilisateur.kyc_history,
+        utilisateur.logement,
+        this.communeRepository,
+        this.risquesNaturelsCommunesRepository,
+      ).refreshTagState_v2(utilisateur.recommandation);
+
       await this.utilisateurRepository.updateUtilisateurNoConcurency(
         utilisateur,
-        [Scope.logement],
+        [Scope.logement, Scope.recommandation],
       );
     }
   }

@@ -183,31 +183,6 @@ export class RecettesRepository implements FinderInterface {
     }
 
     if (filtre.sous_categorie === SousCategorieRecherche.sans_cuisson) {
-      const filtered = [];
-      for (const recette of recherche) {
-        if (recette.baking_time === 0) {
-          const steps = this.getEtapesRecette(recette.id);
-          let sans_cuisson = true;
-          for (const step of steps) {
-            if (
-              step.texte.includes('cuire') ||
-              step.texte.includes('chauff') ||
-              step.texte.includes('revenir') ||
-              step.texte.includes('griller')
-            ) {
-              sans_cuisson = false;
-              break;
-            }
-          }
-          if (sans_cuisson) {
-            filtered.push(recette);
-          }
-        }
-      }
-      recherche = filtered;
-    }
-
-    if (filtre.sous_categorie === SousCategorieRecherche.sans_cuisson) {
       recherche = this.filtrerSansCuisson(recherche);
     }
 
@@ -388,7 +363,7 @@ export class RecettesRepository implements FinderInterface {
       const ingredients = this.getIngredientsRecette(recette.id);
       let sans_saumon = true;
       for (const ingredient of ingredients) {
-        if (ingredient.nom.includes('saumon')) {
+        if (ingredient.nom.includes('aumon')) {
           sans_saumon = false;
           break;
         }

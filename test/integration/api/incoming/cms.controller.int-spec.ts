@@ -106,6 +106,10 @@ describe('/api/incoming/cms (API test)', () => {
     event: CMSEvent['entry.publish'],
     entry: {
       id: 123,
+      external_id: 'ext_123',
+      partenaire: {
+        id: 1,
+      },
       publishedAt: new Date('2023-09-20T14:42:12.941Z'),
       titre: 'titre',
       emoji: '🔥',
@@ -978,6 +982,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
+    expect(action.external_id).toEqual('ext_123');
+    expect(action.partenaire_id).toEqual('1');
     expect(action.emoji).toEqual('🔥');
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.consigne).toEqual('Faites rapidement');
@@ -1069,6 +1075,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(actions).toHaveLength(1);
     const action = actions[0];
     expect(action.titre).toEqual('titre');
+    expect(action.external_id).toEqual('ext_123');
+    expect(action.partenaire_id).toEqual('1');
     expect(action.emoji).toEqual('🔥');
     expect(action.sous_titre).toEqual('sous-titre');
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);

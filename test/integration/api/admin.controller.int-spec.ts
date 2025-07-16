@@ -786,7 +786,7 @@ describe('Admin (API test)', () => {
   });
   */
 
-    it('migration V18 OK - recalcul des tags de reco', async () => {
+    it.skip('migration V18 OK - recalcul des tags de reco', async () => {
       // GIVEN
       TestUtil.token = process.env.CRON_API_KEY;
       const kyc: KYCHistory_v2 = {
@@ -984,7 +984,7 @@ describe('Admin (API test)', () => {
       expect(userDB.version).toEqual(19);
     });
 
-    it('migration V20 OK - recalcul des tags de reco', async () => {
+    it.skip('migration V20 OK - recalcul des tags de reco', async () => {
       // GIVEN
       TestUtil.token = process.env.CRON_API_KEY;
       const logement: Logement_v0 = {

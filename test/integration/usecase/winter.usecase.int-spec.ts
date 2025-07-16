@@ -1,4 +1,13 @@
+import { TypeAction } from '../../../src/domain/actions/typeAction';
+import {
+  Chauffage,
+  DPE,
+  Superficie,
+  TypeLogement,
+} from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
@@ -9,15 +18,18 @@ const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
 describe('WinterUsecase', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
+  let actionRepository = new ActionRepository(TestUtil.prisma);
 
   let winterRepository = {
     rechercherPRMParAdresse: jest.fn(),
     inscrirePRM: jest.fn(),
+    listerActionsWinter: jest.fn(),
   };
 
   let winterUsecase = new WinterUsecase(
     utilisateurRepository,
     winterRepository as any,
+    actionRepository,
     linkyConsentRepository,
   );
 
@@ -252,5 +264,137 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
 
     const consent = await TestUtil.prisma.linkyConsentement.findMany();
     expect(consent).toHaveLength(0);
+  });
+  it('refreshListeActions : integre correctement une action winter dans la liste de reco', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: '123',
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      code: 'winter_123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_winter_123',
+      external_id: 'slug_123',
+      partenaire_id: '455',
+    });
+    await actionRepository.loadCache();
+
+    winterRepository.listerActionsWinter.mockImplementation(() => {
+      return [
+        {
+          slug: 'slug_123',
+          eligibility: 'eligible',
+          economy: 10,
+          status: 'not_started',
+          type: 'ecogeste',
+          usage: 'appliances',
+        },
+      ];
+    });
+
+    // WHEN
+    const result = await winterUsecase.refreshListeActions('utilisateur-id');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(winterRepository.listerActionsWinter).toHaveBeenCalledTimes(1);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({
+      action: {
+        code: 'winter_123',
+        type: 'classique',
+      },
+      montant_economies_euro: 10,
+    });
+    expect(user.thematique_history.getNombreActionsWinter()).toEqual(1);
+    expect(user.thematique_history.getRecommandationsWinter()).toEqual([
+      {
+        action: {
+          code: 'winter_123',
+          type: 'classique',
+        },
+        montant_economies_euro: 10,
+      },
+    ]);
+  });
+  it('refreshListeActions : pas de PRM => pas de reco', async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      code: 'winter_123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_winter_123',
+      external_id: 'slug_123',
+      partenaire_id: '455',
+    });
+    await actionRepository.loadCache();
+
+    winterRepository.listerActionsWinter.mockImplementation(() => {
+      return [
+        {
+          slug: 'slug_123',
+          eligibility: 'eligible',
+          economy: 10,
+          status: 'not_started',
+          type: 'ecogeste',
+          usage: 'appliances',
+        },
+      ];
+    });
+
+    // WHEN
+    const result = await winterUsecase.refreshListeActions('utilisateur-id');
+
+    const user = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(winterRepository.listerActionsWinter).toHaveBeenCalledTimes(0);
+
+    expect(result).toHaveLength(0);
+    expect(user.thematique_history.getNombreActionsWinter()).toEqual(0);
   });
 });

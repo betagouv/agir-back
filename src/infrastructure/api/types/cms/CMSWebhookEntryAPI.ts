@@ -98,6 +98,7 @@ export class CMSWebhookArticleAPI {
 export class CMSWebhookEntryAPI {
   @ApiProperty() id: number;
   @ApiProperty() titre: string;
+  @ApiProperty() external_id: string;
   @ApiProperty() sous_titre: string;
   @ApiProperty() consigne: string;
   @ApiProperty() label_compteur: string;
