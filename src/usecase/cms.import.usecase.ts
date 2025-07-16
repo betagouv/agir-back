@@ -926,6 +926,9 @@ export class CMSImportUsecase {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
       external_id: entry.attributes.external_id,
+      partenaire_id: entry.attributes.partenaire.data
+        ? '' + entry.attributes.partenaire.data.id
+        : null,
       code: entry.attributes.code,
       titre: entry.attributes.titre,
       titre_recherche: entry.attributes.titre

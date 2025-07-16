@@ -429,6 +429,7 @@ export class TestUtil {
       VISIBLE_PROD: true,
       emoji: '🔥',
       external_id: undefined,
+      partenaire_id: undefined,
       ...override,
     };
   }

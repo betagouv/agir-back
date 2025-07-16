@@ -136,6 +136,7 @@ export class ActionRepository {
       VISIBLE_PROD: action.VISIBLE_PROD,
       emoji: action.emoji,
       external_id: action.external_id,
+      partenaire_id: action.partenaire_id,
 
       created_at: undefined,
       updated_at: undefined,
@@ -303,6 +304,7 @@ export class ActionRepository {
       recette_sous_categorie:
         SousCategorieRecherche[action.recette_sous_categorie],
       external_id: action.external_id,
+      partenaire_id: action.partenaire_id,
     });
   }
 }

@@ -194,6 +194,7 @@ model Action {
   VISIBLE_PROD           Boolean  @default(true)
   emoji                  String?
   external_id            String?
+  partenaire_id          String?
 
   @@unique([code, type])
   @@unique([cms_id, type])

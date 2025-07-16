@@ -521,6 +521,7 @@ export class CMSWebhookUsecase {
   private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
+      partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       titre: entry.titre,
       titre_recherche: entry.titre ? entry.titre.replaceAll('*', '') : '',
       sous_titre: entry.sous_titre,
