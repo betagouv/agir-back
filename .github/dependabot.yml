@@ -12,3 +12,4 @@ updates:
       - dependency-name: '@betagouv/publicodes-voiture'
       - dependency-name: '@incubateur-ademe/nosgestesclimat'
       - dependency-name: 'publicodes'
+      - dependency-name: 'mesaidesreno'

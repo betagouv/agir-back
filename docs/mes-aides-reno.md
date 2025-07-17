@@ -104,3 +104,10 @@ Voici la liste des informations récupérées :
 - **Revenu fiscal de référence**
 - **Utilise la localisation du logement** _si logement principal_
 - **Utilise la localisation du ménage**
+
+### Suivi des modifications de versions
+
+Afin de pouvoir repérer plus facilement les changements cassants sur l'API de
+l'iframe, le paquet `mesaidesreno` (que nous n'utilisons pas directement) est
+ajouté dans les dépendances pour activer les alertes dependabots lors qu'une
+nouvelle version est publiée.
