@@ -81,6 +81,11 @@ describe('Mes Aides Réno', () => {
         'logement . commune . denormandie': 'non',
         'ménage . revenu': '32197',
         'DPE . actuel': '3',
+        // valeur non prises en compte
+        'projet . définition': '"travaux inconnus"',
+        'projet . travaux': 0,
+        'denormandie . années de location': 12,
+        "logement . prix d'achat": 150000,
       });
 
       const utilisateur = await utilisateurRepository.getById(

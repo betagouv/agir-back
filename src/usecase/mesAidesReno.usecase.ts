@@ -94,7 +94,7 @@ export class MesAidesRenoUsecase {
    */
   async updateUtilisateurWith(
     userId: string,
-    situation: Record<string, string>,
+    situation: Record<string, string | number>,
   ): Promise<void> {
     const utilisateur = await this.utilisateurRepository.getById(userId, [
       Scope.kyc,
@@ -491,7 +491,9 @@ function getParamsFromSituation(
  * parsePublicodesValue(null) // null
  * ```
  */
-function parsePublicodesValue(value: string | null): PublicodesJsValue | null {
+function parsePublicodesValue(
+  value: string | number | null,
+): PublicodesJsValue | null {
   if (!value) {
     return null;
   }
@@ -505,8 +507,9 @@ function parsePublicodesValue(value: string | null): PublicodesJsValue | null {
     return null;
   }
   if (
-    (value.startsWith('"') && value.endsWith('"')) ||
-    (value.startsWith("'") && value.endsWith("'"))
+    typeof value === 'string' &&
+    ((value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'")))
   ) {
     return value.slice(1, -1);
   }
