@@ -121,7 +121,10 @@ export class WinterRepository {
   public async getUsage(user_id: string): Promise<WinterUsageBreakdown> {
     if (App.isWinterFaked()) {
       return {
-        yearlyElectricityTotalConsumption: [{ unit: 'eur', value: 1234567 }],
+        yearlyElectricityTotalConsumption: [
+          { unit: '€', value: 1234 },
+          { unit: 'kWh', value: 3690 },
+        ],
         usageBreakdown: {
           airConditioning: { eur: 130, percent: 3.8, kWh: 10 },
           heating: { eur: 1000, percent: 29.8, kWh: 20 },

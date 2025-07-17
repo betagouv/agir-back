@@ -14,6 +14,7 @@ export class WinterUsageAPI {
 
 export class WinterConsommationAPI {
   @ApiProperty() consommation_totale_euros: number;
+  @ApiProperty() consommation_totale_kwh: number;
   @ApiProperty() economies_possibles_euros: number;
   @ApiProperty() economies_realisees_euros: number;
   @ApiProperty() nombre_actions_associees: number;
@@ -22,6 +23,7 @@ export class WinterConsommationAPI {
   public static mapToAPI(conso: ConsommationElectrique): WinterConsommationAPI {
     return {
       consommation_totale_euros: conso.consommation_totale_euros,
+      consommation_totale_kwh: conso.consommation_totale_kwh,
       economies_possibles_euros: conso.getEconomiesPossibles(),
       economies_realisees_euros: conso.economies_realisees_euros,
       nombre_actions_associees: conso.nombre_actions_associees,
