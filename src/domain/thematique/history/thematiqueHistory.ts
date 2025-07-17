@@ -1,4 +1,5 @@
 import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { Action } from '../../actions/action';
 import {
   ActionDefinition,
   TypeCodeAction,
@@ -8,6 +9,7 @@ import {
   RecommandationWinter_v0,
   ThematiqueHistory_v0,
 } from '../../object_store/thematique/thematiqueHistory_v0';
+import { Tag_v2 } from '../../scoring/system_v2/Tag_v2';
 import { Thematique } from '../thematique';
 import {
   ActionExclue,
@@ -85,6 +87,14 @@ export class ThematiqueHistory {
       this.liste_recommandations_winter = data.recommandations_winter
         ? data.recommandations_winter.map((r) => new RecommandationWinter(r))
         : [];
+    }
+  }
+
+  public tagguerActionRecommandeesDynamiquement(liste_actions: Action[]) {
+    for (const action of liste_actions) {
+      if (this.isWinterRecommandation(action)) {
+        action.addInclusionTag(Tag_v2.recommandation_winter);
+      }
     }
   }
 
@@ -327,6 +337,13 @@ export class ThematiqueHistory {
   public getWinterRecommandation(action: TypeCodeAction) {
     return this.liste_recommandations_winter.find(
       (r) => r.action.code === action.code && r.action.type === action.type,
+    );
+  }
+  public isWinterRecommandation(action: TypeCodeAction): boolean {
+    return (
+      this.liste_recommandations_winter.findIndex(
+        (r) => r.action.code === action.code && r.action.type === action.type,
+      ) > -1
     );
   }
   public getNombreActionsWinter() {

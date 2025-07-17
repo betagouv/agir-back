@@ -49,6 +49,9 @@ export class ProfileRecommandationUtilisateur {
       if (this.isImportant(content)) {
         this.valoriseTag(Tag_v2.contenu_important, content);
       }
+      if (this.isRecoWinter(content)) {
+        this.valoriseTag(Tag_v2.recommandation_winter, content);
+      }
 
       for (const tag of matching_tags) {
         this.valoriseTag(tag, content);
@@ -168,5 +171,8 @@ export class ProfileRecommandationUtilisateur {
 
   private isImportant(content: TaggedContent): boolean {
     return content.getInclusionTags().includes(Tag_v2.contenu_important);
+  }
+  private isRecoWinter(content: TaggedContent): boolean {
+    return content.getInclusionTags().includes(Tag_v2.recommandation_winter);
   }
 }

@@ -182,6 +182,9 @@ export class CatalogueActionUsecase {
     }
 
     if (filtre.ordre === Ordre.recommandee) {
+      utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
+        result,
+      );
       result = utilisateur.recommandation.trierEtFiltrerRecommandations(result);
     }
 

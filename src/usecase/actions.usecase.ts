@@ -350,6 +350,10 @@ export class ActionUsecase {
 
     const action = Action.newActionFromUser(action_def, utilisateur);
 
+    utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement([
+      action,
+    ]);
+
     utilisateur.recommandation.trierEtFiltrerRecommandations([action]);
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(

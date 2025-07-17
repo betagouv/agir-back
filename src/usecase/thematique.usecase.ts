@@ -234,6 +234,10 @@ export class ThematiqueUsecase {
         filtre,
       );
 
+    utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
+      liste_actions,
+    );
+
     liste_actions =
       utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
 

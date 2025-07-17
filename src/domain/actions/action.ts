@@ -9,6 +9,7 @@ import { Quizz } from '../contenu/quizz';
 import { FAQDefinition } from '../faq/FAQDefinition';
 import { QuestionKYC } from '../kyc/questionKYC';
 import { ExplicationScore } from '../scoring/system_v2/ExplicationScore';
+import { Tag_v2 } from '../scoring/system_v2/Tag_v2';
 import { Tag } from '../scoring/tag';
 import { TaggedContent } from '../scoring/taggedContent';
 import { ActionUtilisateur } from '../thematique/history/thematiqueHistory';
@@ -127,5 +128,11 @@ export class Action extends ActionDefinition implements TaggedContent {
 
   public getListeAides(): AideDefinition[] {
     return this.aides;
+  }
+
+  public addInclusionTag(tag: Tag_v2) {
+    if (!this.tags_a_inclure.includes(tag)) {
+      this.tags_a_inclure.push(tag);
+    }
   }
 }
