@@ -10,6 +10,46 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 const MES_AIDES_RENO_IFRAME_SIMULATION_URL =
   "https://mesaidesreno.beta.gouv.fr/simulation?iframe=true&sendDataToHost=true&hostTitle=J'agis&hostName=jagis.beta.gouv.fr";
 
+enum MesAidesRenoRuleNames {
+  dpeActuel = 'DPE . actuel',
+  logementAdresse = 'logement . adresse',
+  logementCodeRegion = 'logement . code région',
+  logementCodeDepartement = 'logement . code département',
+  logementEPCI = 'logement . EPCI',
+  logementCommuneCodeInsee = 'logement . commune',
+  logementCommuneNom = 'logement . commune . nom',
+  logementCoordonnees = 'logement . coordonees',
+  logementCommuneDeNormandie = 'logement . commune . denormandie',
+  taxeFonciereCommuneEligible = 'taxe foncière . commune . éligible',
+  logementPeriodeDeConstruction = 'logement . période de construction',
+  logementProprietaireOccupant = 'logement . propriétaire occupant',
+  logementProprietaire = 'vous . propriétaire . statut',
+  logementResidencePrincipaleLocataire = 'logement . résidence principale locataire',
+  logementResidencePrincipaleProprietaire = 'logement . résidence principale propriétaire',
+  logementSurface = 'logement . surface',
+  logementType = 'logement . type',
+  menageCodeDepartement = 'ménage . code département',
+  menageCodeEPCI = 'ménage . EPCI',
+  menageCodeRegion = 'ménage . code région',
+  menageCommune = 'ménage . commune',
+  menagePersonnes = 'ménage . personnes',
+  menageRevenu = 'ménage . revenu',
+}
+
+type PublicodesJsValue = string | number | boolean | null;
+
+interface UpdateQuestionKYCCallback {
+  (
+    utilisateur: Utilisateur,
+    value: PublicodesJsValue,
+    estLogementPrincipal: boolean,
+  ): QuestionKYC | undefined;
+}
+
+interface GetMesAidesRenoSituationCallback {
+  (utilisateur: Utilisateur): PublicodesJsValue | undefined;
+}
+
 @Injectable()
 export class MesAidesRenoUsecase {
   constructor(
@@ -144,23 +184,26 @@ export class MesAidesRenoUsecase {
           MesAidesRenoRuleNames.menageCodeDepartement
         ] = `"${commune.departement}"`;
         situation[MesAidesRenoRuleNames.menageCodeEPCI] = `"${epci.code}"`;
-        // NOTE: we assume that in the context of J'agis, the user is considered
-        // as 'occupant' if he is 'proprietaire' and 'locataire'.
+        // NOTE: we assume that in the context of J'agis, the user is
+        // considered as 'occupant'. So the address is the same for both
+        // the menage and the logement.
         situation[
           MesAidesRenoRuleNames.logementCommuneCodeInsee
         ] = `"${commune.code}"`;
         situation[
-          MesAidesRenoRuleNames.logementCommuneDepartement
+          MesAidesRenoRuleNames.logementCodeDepartement
         ] = `"${commune.departement}"`;
         situation[
-          MesAidesRenoRuleNames.logementCommuneRegion
+          MesAidesRenoRuleNames.logementCodeRegion
         ] = `"${commune.region}"`;
         situation[
           MesAidesRenoRuleNames.logementCommuneNom
         ] = `"${commune.nom}"`;
-        situation[
-          MesAidesRenoRuleNames.logementCodePostal
-        ] = `"${utilisateur.logement.code_postal}"`;
+        situation[MesAidesRenoRuleNames.logementEPCI] = `"${epci.code}"`;
+        situation[MesAidesRenoRuleNames.logementAdresse] = `"${commune.nom}"`;
+        // TODO:
+        // situation[MesAidesRenoRuleNames.logementCoordonnees] = ""
+        // situation[MesAidesRenoRuleNames.logementCommuneDeNormandie]
       }
     }
 
@@ -231,10 +274,14 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.menageCodeEPCI]: (_) => undefined,
     [MesAidesRenoRuleNames.menageCodeRegion]: (_) => undefined,
     [MesAidesRenoRuleNames.logementCommuneCodeInsee]: (_) => undefined,
-    [MesAidesRenoRuleNames.logementCodePostal]: (_) => undefined,
-    [MesAidesRenoRuleNames.logementCommuneDepartement]: (_) => undefined,
     [MesAidesRenoRuleNames.logementCommuneNom]: (_) => undefined,
-    [MesAidesRenoRuleNames.logementCommuneRegion]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementAdresse]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCodeRegion]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCodeDepartement]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementEPCI]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCoordonnees]: (_) => undefined,
+    [MesAidesRenoRuleNames.logementCommuneDeNormandie]: (_) => undefined,
+    [MesAidesRenoRuleNames.taxeFonciereCommuneEligible]: (_) => undefined,
   };
 
   private mappingMesAidesRenoToUpdatedKYC: Record<
@@ -402,47 +449,15 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.menageCodeDepartement]: [],
     [MesAidesRenoRuleNames.menageCodeEPCI]: [],
     [MesAidesRenoRuleNames.menageCodeRegion]: [],
-    [MesAidesRenoRuleNames.logementCodePostal]: [],
-    [MesAidesRenoRuleNames.logementCommuneDepartement]: [],
     [MesAidesRenoRuleNames.logementCommuneNom]: [],
-    [MesAidesRenoRuleNames.logementCommuneRegion]: [],
+    [MesAidesRenoRuleNames.logementAdresse]: [],
+    [MesAidesRenoRuleNames.logementCodeRegion]: [],
+    [MesAidesRenoRuleNames.logementCodeDepartement]: [],
+    [MesAidesRenoRuleNames.logementEPCI]: [],
+    [MesAidesRenoRuleNames.logementCoordonnees]: [],
+    [MesAidesRenoRuleNames.logementCommuneDeNormandie]: [],
+    [MesAidesRenoRuleNames.taxeFonciereCommuneEligible]: [],
   };
-}
-
-enum MesAidesRenoRuleNames {
-  dpeActuel = 'DPE . actuel',
-  logementCodePostal = 'logement . code postal',
-  logementCommuneCodeInsee = 'logement . commune',
-  logementCommuneDepartement = 'logement . commune département',
-  logementCommuneNom = 'logement . commune . nom',
-  logementCommuneRegion = 'logement . commune région',
-  logementPeriodeDeConstruction = 'logement . période de construction',
-  logementProprietaireOccupant = 'logement . propriétaire occupant',
-  logementProprietaire = 'vous . propriétaire . statut',
-  logementResidencePrincipaleLocataire = 'logement . résidence principale locataire',
-  logementResidencePrincipaleProprietaire = 'logement . résidence principale propriétaire',
-  logementSurface = 'logement . surface',
-  logementType = 'logement . type',
-  menageCodeDepartement = 'ménage . code département',
-  menageCodeEPCI = 'ménage . EPCI',
-  menageCodeRegion = 'ménage . code région',
-  menageCommune = 'ménage . commune',
-  menagePersonnes = 'ménage . personnes',
-  menageRevenu = 'ménage . revenu',
-}
-
-type PublicodesJsValue = string | number | boolean | null;
-
-interface UpdateQuestionKYCCallback {
-  (
-    utilisateur: Utilisateur,
-    value: PublicodesJsValue,
-    estLogementPrincipal: boolean,
-  ): QuestionKYC | undefined;
-}
-
-interface GetMesAidesRenoSituationCallback {
-  (utilisateur: Utilisateur): PublicodesJsValue | undefined;
 }
 
 // Copied from https://github.com/betagouv/reno/blob/bea6cc74bd776a477141b77d78d37c330f7191f0/components/publicodes/situationUtils.ts#L3

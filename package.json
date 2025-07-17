@@ -89,6 +89,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
+    "mesaidesreno": "^0.6.0",
     "prettier": "^2.3.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prisma": "^6.2.1",
