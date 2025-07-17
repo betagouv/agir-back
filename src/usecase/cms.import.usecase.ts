@@ -22,6 +22,7 @@ import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
@@ -37,6 +38,7 @@ import { BlockTextRepository } from '../infrastructure/repository/blockText.repo
 import { ConformiteRepository } from '../infrastructure/repository/conformite.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
@@ -50,12 +52,13 @@ const FULL_POPULATE_URL =
   '&populate[26]=logo&populate[27]=sources&populate[28]=articles&populate[29]=questions&populate[30]=questions.reponses&populate[31]=actions' +
   '&populate[32]=quizzes&populate[33]=kycs&populate[34]=besoins&populate[35]=action-bilans&populate[36]=action-quizzes&populate[37]=action-classiques' +
   '&populate[38]=action-simulateurs&populate[39]=faqs&populate[40]=texts&populate[41]=tags_excluants&populate[42]=partenaires&populate[43]=tag_v2_excluants&populate[44]=tag_v2_incluants&populate[45]=tag_v2_incluants' +
-  '&populate[46]=sous_thematique';
+  '&populate[46]=sous_thematique&populate[47]=selections';
 
 const enum CMSPluralAPIEndpoint {
   articles = 'articles',
   'tag-v2s' = 'tag-v2s',
   quizzes = 'quizzes',
+  selections = 'selections',
   aides = 'aides',
   kycs = 'kycs',
   faqs = 'faqs',
@@ -85,6 +88,7 @@ export class CMSImportUsecase {
     private blockTextRepository: BlockTextRepository,
     private aidesUsecase: AidesUsecase,
     private tagRepository: TagRepository,
+    private selectionRepository: SelectionRepository,
   ) {}
 
   async loadTagsV2FromCMS(): Promise<string[]> {
@@ -111,6 +115,34 @@ export class CMSImportUsecase {
     }
     for (const tag_def of liste_tags) {
       await this.tagRepository.upsert(tag_def);
+    }
+    return loading_result;
+  }
+
+  async loadSelectionsFromCMS(): Promise<string[]> {
+    const loading_result: string[] = [];
+    const liste_selections: SelectionDefinition[] = [];
+    const CMS_SELECT_DATA = await this.loadDataFromCMS(
+      CMSPluralAPIEndpoint['selections'],
+    );
+
+    for (let index = 0; index < CMS_SELECT_DATA.length; index++) {
+      const element: CMSWebhookPopulateAPI = CMS_SELECT_DATA[index];
+      let selection_def: SelectionDefinition;
+      try {
+        selection_def = this.buildSelectionFromCMSPopulateData(element);
+        liste_selections.push(selection_def);
+        loading_result.push(`loaded selection def : ${selection_def.cms_id}`);
+      } catch (error) {
+        console.log(error);
+        loading_result.push(
+          `Could not load selection def ${element.id} : ${error.message}`,
+        );
+        loading_result.push(JSON.stringify(element));
+      }
+    }
+    for (const select_def of liste_selections) {
+      await this.selectionRepository.upsert(select_def);
     }
     return loading_result;
   }
@@ -768,6 +800,15 @@ export class CMSImportUsecase {
     };
   }
 
+  private buildSelectionFromCMSPopulateData(
+    entry: CMSWebhookPopulateAPI,
+  ): SelectionDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.attributes.code,
+      description: entry.attributes.description,
+    };
+  }
   private buildQuizzFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): QuizzDefinition {

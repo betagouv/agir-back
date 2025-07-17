@@ -81,6 +81,7 @@ import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
+import { SelectionRepository } from './infrastructure/repository/selection.repository';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
@@ -297,6 +298,7 @@ function getControllers(): any[] {
     WinterRepository,
     SousThematiqueRepository,
     CatalogueActionUsecase,
+    SelectionRepository,
   ],
 })
 export class AppModule {}

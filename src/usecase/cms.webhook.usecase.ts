@@ -13,6 +13,7 @@ import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
 import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
+import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
@@ -37,6 +38,7 @@ import { FAQRepository } from '../infrastructure/repository/faq.repository';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
+import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
@@ -55,6 +57,7 @@ export class CMSWebhookUsecase {
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
     private tagRepository: TagRepository,
+    private selectionRepository: SelectionRepository,
     private aidesUsecase: AidesUsecase,
   ) {}
 
@@ -164,6 +167,18 @@ export class CMSWebhookUsecase {
           return this.createOrUpdateTag(cmsWebhookAPI);
       }
     }
+    if (cmsWebhookAPI.model === CMSModel['selection']) {
+      switch (cmsWebhookAPI.event) {
+        case CMSEvent['entry.unpublish']:
+          return this.deleteSelection(cmsWebhookAPI);
+        case CMSEvent['entry.delete']:
+          return this.deleteSelection(cmsWebhookAPI);
+        case CMSEvent['entry.publish']:
+          return this.createOrUpdateSelection(cmsWebhookAPI);
+        case CMSEvent['entry.update']:
+          return this.createOrUpdateSelection(cmsWebhookAPI);
+      }
+    }
     if (cmsWebhookAPI.model === CMSModel.conformite) {
       switch (cmsWebhookAPI.event) {
         case CMSEvent['entry.unpublish']:
@@ -202,6 +217,11 @@ export class CMSWebhookUsecase {
   async deleteTag(cmsWebhookAPI: CMSWebhookAPI) {
     await this.tagRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+
+  async deleteSelection(cmsWebhookAPI: CMSWebhookAPI) {
+    await this.selectionRepository.delete(cmsWebhookAPI.entry.id.toString());
+  }
+
   async deleteConformite(cmsWebhookAPI: CMSWebhookAPI) {
     await this.conformiteRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -250,6 +270,15 @@ export class CMSWebhookUsecase {
       this.buildTagFromCMSData(cmsWebhookAPI.entry),
     );
   }
+
+  async createOrUpdateSelection(cmsWebhookAPI: CMSWebhookAPI) {
+    if (cmsWebhookAPI.entry.publishedAt === null) return;
+
+    await this.selectionRepository.upsert(
+      this.buildSelectionFromCMSData(cmsWebhookAPI.entry),
+    );
+  }
+
   async createOrUpdateConformite(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
 
@@ -623,6 +652,16 @@ export class CMSWebhookUsecase {
       boost: entry.boost_absolu,
       ponderation: entry.ponderation,
       label_explication: entry.label_explication,
+    };
+  }
+
+  private buildSelectionFromCMSData(
+    entry: CMSWebhookEntryAPI,
+  ): SelectionDefinition {
+    return {
+      cms_id: entry.id.toString(),
+      code: entry.code,
+      description: entry.description,
     };
   }
 

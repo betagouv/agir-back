@@ -471,6 +471,16 @@ describe('/api/incoming/cms (API test)', () => {
     } as CMSWebhookEntryAPI,
   };
 
+  const CMS_DATA_SELECTION: CMSWebhookAPI = {
+    model: CMSModel['selection'],
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      code: '456',
+      description: 'The desc',
+    } as CMSWebhookEntryAPI,
+  };
+
   const CMS_DATA_QUIZZ: CMSWebhookAPI = {
     model: CMSModel.quizz,
     event: CMSEvent['entry.publish'],
@@ -804,6 +814,28 @@ describe('/api/incoming/cms (API test)', () => {
       ponderation: new Prisma.Decimal(3),
       label_explication: 'expli',
       tag: '456',
+    });
+  });
+
+  it('POST /api/incoming/cms - create a new selection', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_SELECTION,
+    );
+
+    // THEN
+    const selection = await TestUtil.prisma.selection.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(selection).toHaveLength(1);
+    delete selection[0].updated_at;
+    delete selection[0].created_at;
+    expect(selection[0]).toEqual({
+      description: 'The desc',
+      id_cms: '123',
+      code: '456',
     });
   });
 
