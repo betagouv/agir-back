@@ -108,6 +108,7 @@ import { AdminUsecase } from './usecase/admin.usecase';
 import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
+import { CatalogueActionUsecase } from './usecase/catalogue_actions.usecase';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
 import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CmsPreviewUsecase } from './usecase/cmsPreview.usecase';
@@ -295,6 +296,7 @@ function getControllers(): any[] {
     WinterAPIClient,
     WinterRepository,
     SousThematiqueRepository,
+    CatalogueActionUsecase,
   ],
 })
 export class AppModule {}

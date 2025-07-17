@@ -29,6 +29,7 @@ import { TypeAction } from '../../domain/actions/typeAction';
 import { SousThematique } from '../../domain/thematique/sousThematique';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
+import { CatalogueActionUsecase } from '../../usecase/catalogue_actions.usecase';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -44,6 +45,7 @@ import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
 export class ActionsController extends GenericControler {
   constructor(
     private readonly actionUsecase: ActionUsecase,
+    private readonly catalogueActionUsecase: CatalogueActionUsecase,
     private readonly thematiqueUsecase: ThematiqueUsecase,
   ) {
     super();
@@ -93,7 +95,7 @@ export class ActionsController extends GenericControler {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
 
-    const catalogue = await this.actionUsecase.getOpenCatalogue(
+    const catalogue = await this.catalogueActionUsecase.getOpenCatalogue(
       liste_thematiques,
       code_commune,
       titre,
@@ -216,7 +218,7 @@ export class ActionsController extends GenericControler {
 
     const type_ordre = this.castTypeOrdreActionOrException(ordre);
 
-    const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
+    const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
       liste_sous_thematiques,

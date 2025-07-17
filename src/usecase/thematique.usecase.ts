@@ -12,7 +12,7 @@ import { CommuneRepository } from '../infrastructure/repository/commune/commune.
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ActionUsecase } from './actions.usecase';
+import { CatalogueActionUsecase } from './catalogue_actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: {
@@ -27,7 +27,7 @@ const THEMATIQUE_ENCHAINEMENT_MAPPING: {
 @Injectable()
 export class ThematiqueUsecase {
   constructor(
-    private actionUsecase: ActionUsecase,
+    private catalogueActionUsecase: CatalogueActionUsecase,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private compteurActionsRepository: CompteurActionsRepository,
@@ -228,10 +228,11 @@ export class ThematiqueUsecase {
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {
-    let liste_actions = await this.actionUsecase.external_get_user_actions(
-      utilisateur,
-      filtre,
-    );
+    let liste_actions =
+      await this.catalogueActionUsecase.external_get_user_actions(
+        utilisateur,
+        filtre,
+      );
 
     liste_actions =
       utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
