@@ -24,6 +24,7 @@ import {
   Consultation,
   Ordre,
   Realisation,
+  Recommandation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { Selection } from '../../domain/contenu/selection';
@@ -168,10 +169,16 @@ export class ActionsController extends GenericControler {
     description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
   })
   @ApiQuery({
+    name: 'recommandation',
+    enum: Recommandation,
+    required: false,
+    description: `indique si on veut lister des action recommandée strictement, celles aussi neutres, excluant dans tous les cas les actions exclues par l'algo de recommandation`,
+  })
+  @ApiQuery({
     name: 'ordre',
     enum: Ordre,
     required: false,
-    description: `indique si on veut les recommandée par ordre de reco (et donc sans les actions exclues), ou toutes les action sans ordre particulier`,
+    description: `DEPRECATED : Ne plus utiliser, remplacé par les autres filtres disponibles`,
   })
   @ApiQuery({
     name: 'exclure_rejets_utilisateur',
