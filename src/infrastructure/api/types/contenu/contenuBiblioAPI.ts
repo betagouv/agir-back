@@ -3,15 +3,12 @@ import { ContentType } from '../../../../../src/domain/contenu/contentType';
 import { ThematiqueRepository } from '../../../../../src/infrastructure/repository/thematique.repository';
 import {
   Bibliotheque,
+  CheckFilter,
   ContenuBibliotheque,
-  ThematiqueFilter,
 } from '../../../../domain/contenu/bibliotheque';
-import {
-  SousThematique,
-  SousThematiqueHelper,
-} from '../../../../domain/thematique/sousThematique';
+import { Selection } from '../../../../domain/contenu/selection';
 import { Thematique } from '../../../../domain/thematique/thematique';
-import { SousThematiqueRepository } from '../../../repository/sousThematique.repository';
+import { SelectionRepository } from '../../../repository/selection.repository';
 
 export class ContenuBibliothequeAPI {
   @ApiProperty({ enum: ContentType }) type: ContentType;
@@ -47,19 +44,19 @@ export class ContenuBibliothequeAPI {
     };
   }
 }
-export class SousThematiqueFiltereAPI {
-  @ApiProperty({ enum: SousThematique }) code: SousThematique;
+export class SelectionFiltereAPI {
+  @ApiProperty({ enum: Selection }) code: Selection;
   @ApiProperty() label: string;
   @ApiProperty() selected: boolean;
 
   public static mapToAPI(
-    filtres: Map<SousThematique, ThematiqueFilter>,
-  ): SousThematiqueFiltereAPI[] {
-    const result: SousThematiqueFiltereAPI[] = [];
+    filtres: Map<Selection, CheckFilter>,
+  ): SelectionFiltereAPI[] {
+    const result: SelectionFiltereAPI[] = [];
     for (const [key, value] of filtres) {
       result.push({
         code: key,
-        label: SousThematiqueRepository.getLabel(key),
+        label: SelectionRepository.getLabel(key),
         selected: value.selected,
       });
     }
@@ -71,12 +68,9 @@ export class ThematiqueFiltereAPI {
   @ApiProperty({ enum: Thematique }) code: Thematique;
   @ApiProperty() label: string;
   @ApiProperty() selected: boolean;
-  @ApiProperty({ type: [SousThematiqueFiltereAPI] })
-  liste_sous_thematiques: SousThematiqueFiltereAPI[];
 
   public static mapToAPI(
-    filtres_thematique: Map<Thematique, ThematiqueFilter>,
-    filtres_sous_thematique: Map<SousThematique, ThematiqueFilter>,
+    filtres_thematique: Map<Thematique, CheckFilter>,
   ): ThematiqueFiltereAPI[] {
     const result: ThematiqueFiltereAPI[] = [];
     for (const entry of filtres_thematique) {
@@ -86,24 +80,7 @@ export class ThematiqueFiltereAPI {
         code: thematique,
         label: ThematiqueRepository.getTitreThematique(thematique),
         selected: them_filter.selected,
-        liste_sous_thematiques: [],
       };
-      if (filtres_sous_thematique) {
-        for (const entry2 of filtres_sous_thematique) {
-          const sous_thematique = entry2[0];
-          const sous_them_filter = entry2[1];
-          const them_parent =
-            SousThematiqueHelper.getThematique(sous_thematique);
-          if (them_parent === thematique) {
-            const sous_them: SousThematiqueFiltereAPI = {
-              code: sous_thematique,
-              label: SousThematiqueRepository.getLabel(sous_thematique),
-              selected: sous_them_filter.selected,
-            };
-            item.liste_sous_thematiques.push(sous_them);
-          }
-        }
-      }
       result.push(item);
     }
     return result;
@@ -114,6 +91,8 @@ export class BibliothequeAPI {
   contenu: ContenuBibliothequeAPI[];
   @ApiProperty({ type: [ThematiqueFiltereAPI] })
   filtres: ThematiqueFiltereAPI[];
+  @ApiProperty({ type: [SelectionFiltereAPI] })
+  selections: SelectionFiltereAPI[];
 
   @ApiProperty() nombre_resultats: number;
   @ApiProperty() nombre_resultats_disponibles: number;
@@ -123,10 +102,8 @@ export class BibliothequeAPI {
       contenu: biblio
         .getAllContenu()
         .map((content) => ContenuBibliothequeAPI.mapToAPI(content)),
-      filtres: ThematiqueFiltereAPI.mapToAPI(
-        biblio.filtre_thematiques,
-        undefined,
-      ),
+      filtres: ThematiqueFiltereAPI.mapToAPI(biblio.filtre_thematiques),
+      selections: SelectionFiltereAPI.mapToAPI(biblio.filtre_selections),
       nombre_resultats: biblio.getNombreResultats(),
       nombre_resultats_disponibles: biblio.getNombreResultatsDispo(),
     };

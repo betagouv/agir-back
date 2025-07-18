@@ -4,7 +4,6 @@ import {
   SousCategorieRecherche,
 } from '../bibliotheque_services/recherche/categorieRecherche';
 import { Source } from '../contenu/source';
-import { SousThematique } from '../thematique/sousThematique';
 import { Thematique } from '../thematique/thematique';
 import { TypeAction } from './typeAction';
 
@@ -43,7 +42,6 @@ export class ActionDefinitionData {
   pdcn_categorie: CategorieRecherche;
   type: TypeAction;
   thematique: Thematique;
-  sous_thematique: SousThematique;
   tags_a_inclure: string[];
   tags_a_exclure: string[];
   sources: Source[];
@@ -51,6 +49,7 @@ export class ActionDefinitionData {
   emoji: string;
   external_id: string;
   partenaire_id: string;
+  selections: string[];
 }
 
 export class ActionDefinition extends ActionDefinitionData {

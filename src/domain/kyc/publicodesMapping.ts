@@ -1,6 +1,7 @@
 import { RegleNGC } from '../bilan/bilanCarbone';
 import { RegleSimulateurVoiture } from '../simulateur_voiture/parametres';
 import { KYCID } from './KYCID';
+import { BooleanKYC } from './QuestionKYCData';
 
 /**
  * Associates KYC IDs with their corresponding values.
@@ -14,14 +15,69 @@ export type KYCComplexValues = {
   [key in KYCID]: { code: string; ngc_code?: string };
 } & {
   _default: { code: string; ngc_code?: string };
+  [KYCID.KYC001]: {
+    code:
+      | 'alimentation'
+      | 'climat'
+      | 'consommation'
+      | 'dechet'
+      | 'logement'
+      | 'loisir'
+      | 'transport'
+      | 'rien';
+  };
+  [KYCID.KYC002]: {
+    code: 'marcher' | 'faire_velo' | 'TEC' | 'co_voit' | 'voiture' | 'aucun';
+  };
+  [KYCID.KYC003]: {
+    code: BooleanKYC.oui | BooleanKYC.non;
+  };
+  [KYCID.KYC004]: {
+    code:
+      | 'pistes_cyclables_faciles'
+      | 'pistes_cyclables_dangereuses'
+      | 'absence_pistes_cyclables'
+      | 'ne_sais_pas';
+  };
+  [KYCID.KYC005]: {
+    code: 'emploi' | 'sans_emploi' | 'etudiant' | 'retraite' | 'ne_sais_pas';
+  };
+  [KYCID.KYC006]: { code: 'plus_15' | 'moins_15' };
+  [KYCID.KYC007]: {
+    code: 'cafe' | 'the' | 'chicore' | 'autre' | 'aucune';
+  };
+  [KYCID.KYC008]: {
+    code: 'max_tele' | 'un_peu_tele' | 'no_tele' | 'ne_sais_pas';
+  };
   [KYCID.KYC009]: {
     code: 'ma_voit' | 'loc_voit' | 'co_voit' | 'pas_voiture';
-    ngc_code: undefined;
+  };
+  [KYCID.KYC010]: {
+    code: BooleanKYC.oui | BooleanKYC.non;
+  };
+  [KYCID.KYC011]: {
+    code: 'voit_therm' | 'voit_elec_hybride' | 'pas_voiture' | 'ne_sais_pas';
+  };
+  [KYCID.KYC012]: {
+    code: BooleanKYC.oui | BooleanKYC.non | 'ne_sais_pas';
+  };
+  [KYCID.KYC013]: {
+    code:
+      | 'limiter_impact'
+      | 'achat_voit'
+      | 'economie'
+      | 'bouger'
+      | 'autre'
+      | 'ne_sais_pas';
+  };
+  [KYCID.KYC_alimentation_regime]: {
+    code: 'chaque_jour_viande' | 'peu_viande' | 'vegetarien' | 'vegetalien';
   };
   [KYCID.KYC_transport_type_utilisateur]:
     | { code: 'proprio'; ngc_code: "'propriétaire'" }
     | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
-    | { code: 'change_souvent'; ngc_code: "'non régulier'" };
+    | { code: 'change_souvent'; ngc_code: "'non régulier'" }
+    | { code: 'jamais'; ngc_code: "'jamais'" };
   [KYCID.KYC_transport_voiture_gabarit]:
     | { code: 'petite'; ngc_code: "'petite'" }
     | { code: 'moyenne'; ngc_code: "'moyenne'" }
@@ -53,6 +109,55 @@ export type KYCComplexValues = {
     | { code: 'parfois'; ngc_code: "'parfois'" }
     | { code: 'souvent'; ngc_code: "'souvent'" }
     | { code: 'toujours'; ngc_code: "'oui toujours'" };
+  [KYCID.KYC_possede_voiture_oui_non]: {
+    code: BooleanKYC.oui | BooleanKYC.non;
+  };
+  [KYCID.KYC_chauffage_gaz]:
+    | {
+        code: BooleanKYC.oui;
+        ngc_code: 'oui';
+      }
+    | {
+        code: BooleanKYC.non;
+        ngc_code: 'non';
+      }
+    | { code: 'ne_sais_pas' };
+  [KYCID.KYC_chauffage_fioul]:
+    | {
+        code: BooleanKYC.oui;
+        ngc_code: 'oui';
+      }
+    | {
+        code: BooleanKYC.non;
+        ngc_code: 'non';
+      }
+    | { code: 'ne_sais_pas' };
+  [KYCID.KYC_chauffage_bois]:
+    | {
+        code: BooleanKYC.oui;
+        ngc_code: 'oui';
+      }
+    | {
+        code: BooleanKYC.non;
+        ngc_code: 'non';
+      }
+    | { code: 'ne_sais_pas' };
+  [KYCID.KYC_chauffage_elec]:
+    | {
+        code: BooleanKYC.oui;
+        ngc_code: 'oui';
+      }
+    | {
+        code: BooleanKYC.non;
+        ngc_code: 'non';
+      }
+    | { code: 'ne_sais_pas' };
+  [KYCID.KYC_type_logement]:
+    | { code: 'type_maison'; ngc_code: "'maison'" }
+    | { code: 'type_appartement'; ngc_code: "'appartement'" };
+  [KYCID.KYC_DPE]: {
+    code: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'ne_sais_pas';
+  };
 };
 
 // NOTE: sûrement à déplacer dans un fichier dédié

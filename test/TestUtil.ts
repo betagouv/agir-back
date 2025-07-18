@@ -10,6 +10,7 @@ import {
   OIDC_STATE,
   Partenaire,
   RisquesNaturelsCommunes,
+  Selection as SelectionDB,
   SituationNGC,
   Tag as TagDB,
   Thematique as ThematiqueDB,
@@ -56,7 +57,6 @@ import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/them
 import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
-import { SousThematique } from '../src/domain/thematique/sousThematique';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
@@ -79,6 +79,7 @@ import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from '../src/infrastructure/repository/risquesNaturelsCommunes.repository';
+import { SelectionRepository } from '../src/infrastructure/repository/selection.repository';
 import { ServiceFavorisStatistiqueRepository } from '../src/infrastructure/repository/serviceFavorisStatistique.repository';
 import { TagRepository } from '../src/infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../src/infrastructure/repository/thematique.repository';
@@ -91,6 +92,7 @@ export enum DB {
   fAQ = 'fAQ',
   blockText = 'blockText',
   tag = 'tag',
+  selection = 'selection',
   conformite = 'conformite',
   service = 'service',
   serviceDefinition = 'serviceDefinition',
@@ -124,6 +126,7 @@ export class TestUtil {
     compteurActions: TestUtil.compteurActionsData,
     blockText: TestUtil.blockTextData,
     tag: TestUtil.tagData,
+    selection: TestUtil.selectionData,
     aideExpirationWarning: TestUtil.aideExpirationWarningData,
     quizz: TestUtil.quizzData,
     mission: TestUtil.missionData,
@@ -227,6 +230,7 @@ export class TestUtil {
     await this.prisma.servicesFavorisStatistique.deleteMany();
     await this.prisma.risquesNaturelsCommunes.deleteMany();
     await this.prisma.tag.deleteMany();
+    await this.prisma.selection.deleteMany();
 
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
@@ -253,6 +257,7 @@ export class TestUtil {
     QuizzRepository.resetCache();
     RisquesNaturelsCommunesRepository.resetCache();
     TagRepository.resetCache();
+    SelectionRepository.resetCache();
   }
 
   static getDate(date: string) {
@@ -420,7 +425,6 @@ export class TestUtil {
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
-      sous_thematique: SousThematique.logement_risque_naturel,
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
       sources: [],
@@ -430,6 +434,7 @@ export class TestUtil {
       emoji: '🔥',
       external_id: undefined,
       partenaire_id: undefined,
+      selections: [],
       ...override,
     };
   }
@@ -767,6 +772,16 @@ export class TestUtil {
       ...override,
     };
   }
+  static selectionData(override?: Partial<SelectionDB>): SelectionDB {
+    return {
+      id_cms: '123',
+      code: '456',
+      description: 'desc',
+      created_at: undefined,
+      updated_at: undefined,
+      ...override,
+    };
+  }
   static risquesNaturelsCommunesData(
     override?: Partial<RisquesNaturelsCommunes>,
   ): RisquesNaturelsCommunes {
@@ -925,8 +940,8 @@ export class TestUtil {
         code: KYCID.KYC_type_logement,
         type: TypeReponseQuestionKYC.choix_unique,
         reponses: [
-          { code: TypeLogement.appartement, label: 'Appartement' },
-          { code: TypeLogement.maison, label: 'Maison' },
+          { code: 'type_appartement', label: 'Appartement' },
+          { code: 'type_maison', label: 'Maison' },
         ],
       }),
       TestUtil.create(DB.kYC, {

@@ -273,7 +273,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8719.070172621903,
+      bilan_carbone_total_kg: 8719.051817969366,
       est_utilisateur_ngc: false,
       nombre_aides: 2,
       nombre_recettes: 1150,
@@ -512,7 +512,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8684.36294409093,
+      bilan_carbone_total_kg: 8684.344589438393,
       est_utilisateur_ngc: false,
       nombre_aides: 0,
       nombre_recettes: 1150,
@@ -659,7 +659,7 @@ describe('Thematique Board (API test)', () => {
     expect(body).toEqual({
       nom_commune: 'Dijon',
       pourcentage_bilan_done: 18,
-      bilan_carbone_total_kg: 8719.070172621903,
+      bilan_carbone_total_kg: 8719.051817969366,
       total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
       pourcentage_consommation_reco_done: 0,

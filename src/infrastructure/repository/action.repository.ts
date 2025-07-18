@@ -5,27 +5,34 @@ import {
   ActionDefinition,
   TypeCodeAction,
 } from '../../domain/actions/actionDefinition';
-import { Ordre } from '../../domain/actions/catalogueAction';
+import {
+  Consultation,
+  Realisation,
+  Recommandation,
+} from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { App } from '../../domain/app';
 import {
   CategorieRecherche,
   SousCategorieRecherche,
 } from '../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { SousThematique } from '../../domain/thematique/sousThematique';
+import { Selection } from '../../domain/contenu/selection';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 export type ActionFilter = {
   thematique?: Thematique;
   liste_thematiques?: Thematique[];
-  liste_sous_thematiques?: SousThematique[];
+  liste_selections?: Selection[];
   type_codes_exclus?: TypeCodeAction[];
   type_codes_inclus?: TypeCodeAction[];
   codes_exclus?: string[];
   codes_inclus?: string[];
   titre_fragment?: string;
-  ordre?: Ordre;
+  recommandation?: Recommandation;
+  exclure_rejets_utilisateur?: boolean;
+  consultation?: Consultation;
+  realisation?: Realisation;
 };
 
 @Injectable()
@@ -133,7 +140,6 @@ export class ActionRepository {
       label_compteur: action.label_compteur,
       quizz_felicitations: action.quizz_felicitations,
       thematique: action.thematique,
-      sous_thematique: action.sous_thematique,
       besoins: action.besoins,
       comment: action.comment,
       kyc_codes: action.kyc_codes,
@@ -156,6 +162,7 @@ export class ActionRepository {
       emoji: action.emoji,
       external_id: action.external_id,
       partenaire_id: action.partenaire_id,
+      selections: action.selections,
 
       created_at: undefined,
       updated_at: undefined,
@@ -219,10 +226,10 @@ export class ActionRepository {
         },
       });
     }
-    if (filtre.liste_sous_thematiques) {
+    if (filtre.liste_selections) {
       main_filter.push({
-        sous_thematique: {
-          in: filtre.liste_sous_thematiques,
+        selections: {
+          hasSome: filtre.liste_selections,
         },
       });
     }
@@ -298,7 +305,6 @@ export class ActionRepository {
       titre_recherche: action.titre_recherche,
       code: action.code,
       thematique: Thematique[action.thematique],
-      sous_thematique: SousThematique[action.sous_thematique],
       comment: action.comment,
       pourquoi: action.pourquoi,
       besoins: action.besoins,
@@ -324,6 +330,7 @@ export class ActionRepository {
         SousCategorieRecherche[action.recette_sous_categorie],
       external_id: action.external_id,
       partenaire_id: action.partenaire_id,
+      selections: action.selections,
     });
   }
 }

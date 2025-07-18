@@ -87,6 +87,35 @@ kycs
             },
           ]);
         }
+
+        const missing_values = possibilities.filter((pos) => {
+          return !responses.some(
+            (r) => r.ngc_code === pos.publicodesValue,
+          );
+        })
+
+        if (missing_values.length > 0) {
+          errors.push([
+            'KYC is missing responses',
+            {
+              KYC: {
+                code: attributes.code,
+                type: attributes.type,
+                question: attributes.question,
+                ngc_key: attributes.ngc_key,
+              },
+              NGC: {
+                name: ruleName,
+                type: getRuleType(ruleName),
+              },
+              missing_values: missing_values.map((v) => ({
+                code: v.dottedName,
+                label: v.title,
+                value: v.publicodesValue,
+              })),
+            },
+          ]);
+        }
       }
     }
   });

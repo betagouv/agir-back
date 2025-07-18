@@ -22,6 +22,7 @@ export type SingleUsage = {
 
 export class ConsommationElectrique {
   consommation_totale_euros: number;
+  consommation_totale_kwh: number;
   detail_usages: SingleUsage[];
   monthsOfDataAvailable: number;
   computingFinished: boolean;

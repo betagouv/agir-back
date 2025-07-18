@@ -284,7 +284,8 @@ describe('Winter (API test)', () => {
     // THEN
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      consommation_totale_euros: 1234567,
+      consommation_totale_euros: 1234,
+      consommation_totale_kwh: 3690,
       economies_possibles_euros: 3345,
       economies_realisees_euros: 0,
       nombre_actions_associees: 0,

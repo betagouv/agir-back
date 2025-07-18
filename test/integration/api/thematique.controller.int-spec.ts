@@ -496,7 +496,7 @@ describe('Thematique (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue / faite OK`, async () => {
+  it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue OK`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {
       version: 0,
@@ -506,7 +506,7 @@ describe('Thematique (API test)', () => {
         {
           action: { code: '123', type: TypeAction.classique },
           vue_le: new Date(),
-          faite_le: new Date(),
+          faite_le: undefined,
           feedback: null,
           like_level: null,
           liste_questions: [],
@@ -536,7 +536,6 @@ describe('Thematique (API test)', () => {
       besoins: ['composter'],
       thematique: Thematique.alimentation,
     });
-
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
@@ -550,7 +549,7 @@ describe('Thematique (API test)', () => {
     expect(response.body.liste_actions_recommandees[0].code).toEqual('123');
     expect(response.body.liste_actions_recommandees[0].deja_vue).toEqual(true);
     expect(response.body.liste_actions_recommandees[0].deja_faite).toEqual(
-      true,
+      false,
     );
   });
 

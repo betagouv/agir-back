@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
+import { Realisation, Recommandation } from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
 import { EnchainementType } from '../domain/kyc/enchainementDefinition';
 import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-import { ActionUsecase } from './actions.usecase';
+import { CatalogueActionUsecase } from './catalogue_actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: {
@@ -27,7 +27,7 @@ const THEMATIQUE_ENCHAINEMENT_MAPPING: {
 @Injectable()
 export class ThematiqueUsecase {
   constructor(
-    private actionUsecase: ActionUsecase,
+    private catalogueActionUsecase: CatalogueActionUsecase,
     private utilisateurRepository: UtilisateurRepository,
     private communeRepository: CommuneRepository,
     private compteurActionsRepository: CompteurActionsRepository,
@@ -97,25 +97,17 @@ export class ThematiqueUsecase {
     utilisateur: Utilisateur,
     thematique?: Thematique,
   ): Promise<Action[]> {
-    const history = utilisateur.thematique_history;
-
-    const action_faites_par_utilisateur = history.getListeActionsFaites();
-    const action_exclues = history.getAllTypeCodeActionsExclues();
-    const total_a_exclure = action_exclues.concat(
-      action_faites_par_utilisateur,
-    );
-
-    const stock_actions_eligibles =
-      await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
-        type_codes_exclus: total_a_exclure,
+    let stock_actions_eligibles =
+      await this.catalogueActionUsecase.external_get_user_actions(utilisateur, {
         thematique: thematique,
+        recommandation: Recommandation.recommandee_et_neutre,
+        realisation: Realisation.pas_faite,
+        exclure_rejets_utilisateur: true,
       });
 
     const liste_actions = stock_actions_eligibles.slice(0, 6);
 
     for (const action of liste_actions) {
-      action.deja_vue = utilisateur.thematique_history.isActionVue(action);
-      action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       this.setCompteurActionsEtLabel(action);
     }
 
@@ -222,21 +214,6 @@ export class ThematiqueUsecase {
       utilisateur,
       [Scope.thematique_history],
     );
-  }
-
-  private async getActionEligiblesEtRecommandeesUtilisateur(
-    utilisateur: Utilisateur,
-    filtre: ActionFilter,
-  ): Promise<Action[]> {
-    let liste_actions = await this.actionUsecase.external_get_user_actions(
-      utilisateur,
-      filtre,
-    );
-
-    liste_actions =
-      utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
-
-    return liste_actions;
   }
 
   private setCompteurActionsEtLabel(action: Action) {

@@ -22,10 +22,6 @@ for (const id in aidesAvecLocalisation) {
     continue;
   }
 
-  if (id === 'aides . bassin-pompey') {
-    imgSrc =
-      'https://upload.wikimedia.org/wikipedia/commons/3/3c/Logo_Bassin_de_Pompey.png';
-  }
   const imgName = imgSrc.split('/').at(-1).split('.')[0] + '.webp';
   if (!fs.existsSync(join(imgDir, imgName))) {
     // NOTE: synchronous call to avoid crashing fetch on restricted wifi

@@ -21,6 +21,11 @@ export class CMSWebhookTagAPI {
   @ApiProperty() code: string;
   @ApiProperty() description: string;
 }
+export class CMSWebhookSelectionAPI {
+  @ApiProperty() id: number;
+  @ApiProperty() code: string;
+  @ApiProperty() description: string;
+}
 export class CMSWebhookSourceAPI {
   @ApiProperty() id: number;
   @ApiProperty() libelle: string;
@@ -161,6 +166,9 @@ export class CMSWebhookEntryAPI {
 
   @ApiProperty({ type: [CMSWebhookTagAPI] })
   tag_v2_excluants: CMSWebhookTagAPI[];
+
+  @ApiProperty({ type: [CMSWebhookSelectionAPI] })
+  selections: CMSWebhookSelectionAPI[];
 
   @ApiProperty({ type: [CMSWebhookTagAPI] })
   tag_v2_incluants: CMSWebhookTagAPI[];

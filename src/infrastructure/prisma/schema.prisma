@@ -175,7 +175,6 @@ model Action {
   pourquoi               String?
   comment                String?
   thematique             String
-  sous_thematique        String?
   besoins                String[] @default([])
   quizz_ids              String[] @default([])
   articles_ids           String[] @default([])
@@ -195,6 +194,7 @@ model Action {
   emoji                  String?
   external_id            String?
   partenaire_id          String?
+  selections             String[] @default([])
 
   @@unique([code, type])
   @@unique([cms_id, type])
@@ -359,6 +359,14 @@ model Tag {
   boost             Decimal?
   created_at        DateTime @default(now()) @db.Timestamptz(3)
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+}
+
+model Selection {
+  id_cms      String   @id
+  code        String?  @unique
+  description String?
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }
 
 model Mission {

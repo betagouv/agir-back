@@ -10,7 +10,6 @@ import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { KYCID } from '../../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../../src/domain/kyc/questionKYC';
 import { Tag } from '../../../../src/domain/scoring/tag';
-import { SousThematique } from '../../../../src/domain/thematique/sousThematique';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { CMSEvent } from '../../../../src/infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../../../../src/infrastructure/api/types/cms/CMSModels';
@@ -184,6 +183,16 @@ describe('/api/incoming/cms (API test)', () => {
           code: 'BB',
         },
       ],
+      selections: [
+        {
+          id: 1,
+          code: 'S1',
+        },
+        {
+          id: 2,
+          code: 'S2',
+        },
+      ],
       tag_v2_incluants: [
         {
           id: 1,
@@ -199,10 +208,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         titre: 'Alimentation',
         code: Thematique.alimentation,
-      },
-      sous_thematique: {
-        id: 1,
-        code: SousThematique.logement_economie_energie,
       },
     } as CMSWebhookEntryAPI,
   };
@@ -230,10 +235,6 @@ describe('/api/incoming/cms (API test)', () => {
         id: 1,
         titre: 'Alimentation',
         code: Thematique.alimentation,
-      },
-      sous_thematique: {
-        id: 1,
-        code: SousThematique.logement_economie_energie,
       },
     } as CMSWebhookEntryAPI,
   };
@@ -468,6 +469,16 @@ describe('/api/incoming/cms (API test)', () => {
       label_explication: 'expli',
       boost_absolu: 20,
       ponderation: 3,
+    } as CMSWebhookEntryAPI,
+  };
+
+  const CMS_DATA_SELECTION: CMSWebhookAPI = {
+    model: CMSModel['selection'],
+    event: CMSEvent['entry.publish'],
+    entry: {
+      id: 123,
+      code: '456',
+      description: 'The desc',
     } as CMSWebhookEntryAPI,
   };
 
@@ -807,6 +818,28 @@ describe('/api/incoming/cms (API test)', () => {
     });
   });
 
+  it('POST /api/incoming/cms - create a new selection', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send(
+      CMS_DATA_SELECTION,
+    );
+
+    // THEN
+    const selection = await TestUtil.prisma.selection.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(selection).toHaveLength(1);
+    delete selection[0].updated_at;
+    delete selection[0].created_at;
+    expect(selection[0]).toEqual({
+      description: 'The desc',
+      id_cms: '123',
+      code: '456',
+    });
+  });
+
   it('POST /api/incoming/cms - create a new aide in aide table', async () => {
     // GIVEN
     await TestUtil.create(DB.partenaire, {
@@ -992,6 +1025,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(action.selections).toEqual(['S1', 'S2']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
@@ -1007,9 +1041,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.cms_id).toEqual('123');
     expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
     expect(action.thematique).toEqual('alimentation');
-    expect(action.sous_thematique).toEqual(
-      SousThematique.logement_economie_energie,
-    );
     expect(action.VISIBLE_PROD).toEqual(true);
     expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
   });
@@ -1082,6 +1113,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
     expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
+    expect(action.selections).toEqual(['S1', 'S2']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
@@ -1098,9 +1130,6 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.code).toEqual('code');
     expect(action.cms_id).toEqual('123');
     expect(action.thematique).toEqual('alimentation');
-    expect(action.sous_thematique).toEqual(
-      SousThematique.logement_economie_energie,
-    );
   });
 
   it('POST /api/incoming/cms - updates exisying aide in aide table', async () => {

@@ -562,7 +562,11 @@ export class MigrationUsecase {
     // DO SOMETHING
 
     const kyc = utilisateur.kyc_history.getQuestionChoixUnique(kycId);
-    if (kyc && kyc.isSelected('hybride')) {
+    if (
+      kyc &&
+      // @ts-ignore
+      kyc.isSelected('hybride')
+    ) {
       kyc.selectByCode('hybride_non_rechargeable');
       utilisateur.kyc_history.updateQuestion(kyc);
     }

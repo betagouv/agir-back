@@ -863,8 +863,8 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError('157', `Erreur à la récupération des actions Winter`);
   }
 
-  static throwSousThematiqueNotFound(them: string) {
-    this.throwAppError('158', `Sous thematique [${them}] inconnue`);
+  static throwSelectionNotFound(sel: string) {
+    this.throwAppError('158', `Selection [${sel}] inconnue`);
   }
 
   static throwOnboardingNotDone() {
@@ -901,6 +901,17 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
 
   static throwPersonaInconnu(persona: string) {
     this.throwAppError('164', `Le persona [${persona}] est inconnu`);
+  }
+
+  static throwTypeRecommandationNotFound(type: string) {
+    this.throwAppError('165', `Type de recommandation [${type}] inconnu`);
+  }
+
+  static throwbadOuiNon(value: string) {
+    this.throwAppError(
+      '166',
+      `Valeur 'oui' ou 'non' attendue, reçu : [${value}]`,
+    );
   }
 
   private static throwAppError(

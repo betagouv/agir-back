@@ -4,6 +4,7 @@ import {
 } from '../../../src/domain/actions/catalogueAction';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
+import { Selection } from '../../../src/domain/contenu/selection';
 import {
   Chauffage,
   DPE,
@@ -14,7 +15,6 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { ProfileRecommandationUtilisateur_v0 } from '../../../src/domain/object_store/recommandation/ProfileRecommandationUtilisateur_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
-import { SousThematique } from '../../../src/domain/thematique/sousThematique';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
@@ -349,59 +349,48 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         code: 'alimentation',
         label: 'alimentation',
         selected: true,
-        liste_sous_thematiques: [],
       },
       {
         code: 'transport',
         label: 'transport',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'logement',
         label: 'logement',
         selected: true,
-        liste_sous_thematiques: [
-          {
-            code: 'logement_economie_energie',
-            label: "Faire des économies d'énergie",
-            selected: false,
-          },
-          {
-            code: 'logement_risque_naturel',
-            label: 'Les risques naturels',
-            selected: false,
-          },
-        ],
       },
       {
         code: 'consommation',
         label: 'consommation',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'climat',
         label: 'climat',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'dechet',
         label: 'dechet',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'loisir',
         label: 'loisir',
         selected: false,
-        liste_sous_thematiques: [],
+      },
+    ]);
+    expect(response.body.selections).toEqual([
+      {
+        code: 'actions_winter',
+        label: 'actions_winter',
+        selected: false,
       },
     ]);
   });
 
-  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre sous thematique`, async () => {
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre selections`, async () => {
     // GIVEN
     logement.code_commune = '21231';
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -411,7 +400,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.logement,
-      sous_thematique: SousThematique.logement_economie_energie,
+      selections: [Selection.actions_winter],
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -419,7 +408,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
-      sous_thematique: SousThematique.logement_economie_energie,
+      selections: ['BB'],
     });
     await TestUtil.create(DB.action, {
       code: '3',
@@ -427,73 +416,62 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_3',
       thematique: Thematique.logement,
-      sous_thematique: SousThematique.logement_risque_naturel,
+      selections: [Selection.actions_winter],
     });
 
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions?sous_thematique=logement_risque_naturel',
+      '/utilisateurs/utilisateur-id/actions?selection=actions_winter',
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions.length).toBe(2);
 
     expect(response.body.filtres).toEqual([
       {
         code: 'alimentation',
         label: 'alimentation',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'transport',
         label: 'transport',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'logement',
         label: 'logement',
         selected: false,
-        liste_sous_thematiques: [
-          {
-            code: 'logement_economie_energie',
-            label: "Faire des économies d'énergie",
-            selected: false,
-          },
-          {
-            code: 'logement_risque_naturel',
-            label: 'Les risques naturels',
-            selected: true,
-          },
-        ],
       },
       {
         code: 'consommation',
         label: 'consommation',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'climat',
         label: 'climat',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'dechet',
         label: 'dechet',
         selected: false,
-        liste_sous_thematiques: [],
       },
       {
         code: 'loisir',
         label: 'loisir',
         selected: false,
-        liste_sous_thematiques: [],
+      },
+    ]);
+    expect(response.body.selections).toEqual([
+      {
+        code: 'actions_winter',
+        label: 'actions_winter',
+        selected: true,
       },
     ]);
   });
@@ -875,16 +853,16 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.actions.length).toBe(2);
+
+    expect(response.body.actions.length).toBe(1);
     expect(response.body.actions[0].code).toEqual('1');
-    expect(response.body.actions[1].code).toEqual('3');
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre ordre recommandée perso, qui exclue celle exclues`, async () => {
     // GIVEN
     logement.code_commune = '21231';
     const reco: ProfileRecommandationUtilisateur_v0 = {
-      liste_tags_actifs: [],
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
       version: 0,
     };
 
@@ -928,6 +906,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type_code_id: 'classique_2',
       thematique: Thematique.logement,
       titre_recherche: 'Une action toute nulle',
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
     });
     await TestUtil.create(DB.action, {
       code: '3',
@@ -946,9 +925,149 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
+
     expect(response.body.actions.length).toBe(2);
     expect(response.body.actions[0].code).toEqual('2');
     expect(response.body.actions[1].code).toEqual('3');
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre recommandée et non exclue (équivelent ancien ordre = recommandee_filtre_perso)`, async () => {
+    // GIVEN
+    logement.code_commune = '21231';
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin, Tag_v2.a_un_velo],
+      version: 0,
+    };
+
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: [],
+      liste_actions_utilisateur: [],
+      recommandations_winter: [],
+      liste_thematiques: [
+        {
+          first_personnalisation_date: null,
+          personnalisation_done_once: false,
+          thematique: Thematique.alimentation,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      recommandation: reco as any,
+      thematique_history: thematique_history as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre_recherche: 'Une belle action',
+      tags_a_exclure_v2: [Tag_v2.a_un_velo],
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre_recherche: 'Une action toute nulle',
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.transport,
+      titre_recherche: 'Une action toute nulle',
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?recommandation=recommandee_et_neutre',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+    expect(response.body.actions[0].code).toEqual('2');
+    expect(response.body.actions[1].code).toEqual('3');
+  });
+
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre stricte reco`, async () => {
+    // GIVEN
+    logement.code_commune = '21231';
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    };
+
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      codes_actions_exclues: [
+        {
+          action: { code: '1', type: TypeAction.classique },
+          date: new Date(1),
+        },
+      ],
+      liste_actions_utilisateur: [],
+      recommandations_winter: [],
+      liste_thematiques: [
+        {
+          first_personnalisation_date: null,
+          personnalisation_done_once: false,
+          thematique: Thematique.alimentation,
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      recommandation: reco as any,
+      thematique_history: thematique_history as any,
+    });
+
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre_recherche: 'Une belle action',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre_recherche: 'Une action toute nulle',
+      tags_a_inclure_v2: [Tag_v2.a_un_jardin],
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.transport,
+      titre_recherche: 'Une action toute nulle',
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions?recommandation=recommandee',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+    expect(response.body.actions[0].code).toEqual('2');
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre titre textuel`, async () => {

@@ -24,12 +24,15 @@ import {
   Consultation,
   Ordre,
   Realisation,
+  Recommandation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
-import { SousThematique } from '../../domain/thematique/sousThematique';
+import { Selection } from '../../domain/contenu/selection';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
+import { CatalogueActionUsecase } from '../../usecase/catalogue_actions.usecase';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
@@ -38,12 +41,18 @@ import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
 import { FeedbackActionInputAPI } from './types/actions/FeedbackActionInputAPI';
 import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
 
+enum oui_non {
+  oui = 'oui',
+  non = 'non',
+}
+
 @Controller()
 @ApiBearerAuth()
 @ApiTags('Actions')
 export class ActionsController extends GenericControler {
   constructor(
     private readonly actionUsecase: ActionUsecase,
+    private readonly catalogueActionUsecase: CatalogueActionUsecase,
     private readonly thematiqueUsecase: ThematiqueUsecase,
   ) {
     super();
@@ -93,7 +102,7 @@ export class ActionsController extends GenericControler {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
 
-    const catalogue = await this.actionUsecase.getOpenCatalogue(
+    const catalogue = await this.catalogueActionUsecase.getOpenCatalogue(
       liste_thematiques,
       code_commune,
       titre,
@@ -134,12 +143,12 @@ export class ActionsController extends GenericControler {
     description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
-    name: 'sous_thematique',
-    enum: SousThematique,
-    enumName: 'sous thematique',
+    name: 'selection',
+    enum: Selection,
+    enumName: 'Selection',
     isArray: true,
     required: false,
-    description: `filtrage par sous thematiques, plusieurs sous thematiques possible avec la notation ?sous_thematique=XXX&sous_thematique=YYY`,
+    description: `filtrage par selections d'actions, plusieurs selections possibles avec la notation ?selection=XXX&selection=YYY`,
   })
   @ApiQuery({
     name: 'titre',
@@ -160,10 +169,22 @@ export class ActionsController extends GenericControler {
     description: `indique si on veut lister toutes les actions, celles faites, ou celles pas faites`,
   })
   @ApiQuery({
+    name: 'recommandation',
+    enum: Recommandation,
+    required: false,
+    description: `indique si on veut lister des action recommandée strictement, celles aussi neutres, excluant dans tous les cas les actions exclues par l'algo de recommandation`,
+  })
+  @ApiQuery({
     name: 'ordre',
     enum: Ordre,
     required: false,
-    description: `indique si on veut les recommandée par ordre de reco (et donc sans les actions exclues), ou toutes les action sans ordre particulier`,
+    description: `DEPRECATED : Ne plus utiliser, remplacé par les autres filtres disponibles`,
+  })
+  @ApiQuery({
+    name: 'exclure_rejets_utilisateur',
+    enum: oui_non,
+    required: false,
+    description: `Permet de rejeter ou pas les actions rejetée par l'utilisateur dans les thématiques`,
   })
   @ApiQuery({
     name: 'skip',
@@ -179,12 +200,14 @@ export class ActionsController extends GenericControler {
   })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
-    @Query('sous_thematique') sous_thematique: string[] | string,
+    @Query('selection') selection: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
+    @Query('recommandation') recommandation: string,
     @Query('realisation') realisation: string,
     @Query('ordre') ordre: string,
+    @Query('exclure_rejets_utilisateur') exclure_rejets_utilisateur: string,
     @Query('skip') skip: string,
     @Query('take') take: string,
     @Request() req,
@@ -192,38 +215,47 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const liste_thematiques_input =
       this.getStringListFromStringArrayAPIInput(thematique);
-    const liste_sous_thematiques_input =
-      this.getStringListFromStringArrayAPIInput(sous_thematique);
+    const liste_selections_input =
+      this.getStringListFromStringArrayAPIInput(selection);
 
     const liste_thematiques: Thematique[] = [];
-    const liste_sous_thematiques: SousThematique[] = [];
+    const liste_selections: Selection[] = [];
 
     for (const them_string of liste_thematiques_input) {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
 
-    for (const them_string of liste_sous_thematiques_input) {
-      liste_sous_thematiques.push(
-        this.castSousThematiqueOrException(them_string),
-      );
+    for (const sel_string of liste_selections_input) {
+      liste_selections.push(this.castSelectionOrException(sel_string));
     }
 
     const type_consulation =
       this.castTypeConsultationActionOrException(consultation);
+
+    const type_recommandation =
+      this.castTypeRecommandationActionOrException(recommandation);
 
     const type_realisation =
       this.castTypeRealisationActionOrException(realisation);
 
     const type_ordre = this.castTypeOrdreActionOrException(ordre);
 
-    const catalogue = await this.actionUsecase.getUtilisateurCatalogue(
+    if (exclure_rejets_utilisateur) {
+      if (oui_non[exclure_rejets_utilisateur]) {
+        ApplicationError.throwbadOuiNon(exclure_rejets_utilisateur);
+      }
+    }
+
+    const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
-      liste_sous_thematiques,
+      liste_selections,
       titre,
       type_consulation,
       type_realisation,
+      type_recommandation,
       type_ordre,
+      'oui' === exclure_rejets_utilisateur,
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
     );

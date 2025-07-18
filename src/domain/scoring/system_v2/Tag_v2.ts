@@ -50,4 +50,6 @@ export enum Tag_v2 {
   risque_commune_catnat = 'risque_commune_catnat',
   risque_commune_argile = 'risque_commune_argile',
   risque_commune_inondation = 'risque_commune_inondation',
+
+  recommandation_winter = 'recommandation_winter',
 }

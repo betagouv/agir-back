@@ -12,6 +12,7 @@ import { ActionRepository } from '../infrastructure/repository/action.repository
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
+import { WinterUsageBreakdown } from '../infrastructure/repository/winter/winterAPIClient';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -23,7 +24,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`;
 
 const CURRENT_VERSION = 'v1';
 
-const WINTER_PARTENAIRE_ID = '455';
+const WINTER_PARTENAIRE_CMS_ID = '455';
 
 const USAGE_EMOJI: Record<TypeUsage, string> = {
   airConditioning: '❄️',
@@ -139,27 +140,6 @@ export class WinterUsecase {
     );
   }
 
-  public async refreshListeActions(
-    utilisateurId: string,
-  ): Promise<RecommandationWinter[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.thematique_history, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const result = await this.external_update_winter_recommandation(
-      utilisateur,
-    );
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.thematique_history],
-    );
-
-    return result;
-  }
-
   public async getUsage(
     utilisateurId: string,
   ): Promise<ConsommationElectrique> {
@@ -177,8 +157,8 @@ export class WinterUsecase {
 
     const result = new ConsommationElectrique({
       computingFinished: usage.computingFinished,
-      consommation_totale_euros:
-        usage.yearlyElectricityTotalConsumption[0].value,
+      consommation_totale_euros: this.getConsoEuroAnnuelle(usage),
+      consommation_totale_kwh: this.getConsoKwhAnnuelle(usage),
       monthsOfDataAvailable: usage.monthsOfDataAvailable,
       detail_usages: [],
       nombre_actions_associees:
@@ -227,7 +207,7 @@ export class WinterUsecase {
     for (const winter_action of liste) {
       const winter_action_def =
         this.actionRepository.getActionPartenaireByExternalId(
-          WINTER_PARTENAIRE_ID,
+          WINTER_PARTENAIRE_CMS_ID,
           winter_action.slug,
         );
       if (winter_action_def) {
@@ -313,5 +293,18 @@ export class WinterUsecase {
   }
   private getTypeUsageCouleur(type: TypeUsage): string {
     return USAGE_COLORS[type];
+  }
+
+  public getConsoEuroAnnuelle(usage: WinterUsageBreakdown): number {
+    const entry = usage.yearlyElectricityTotalConsumption.find(
+      (a) => a.unit === '€',
+    );
+    return entry?.value;
+  }
+  public getConsoKwhAnnuelle(usage: WinterUsageBreakdown): number {
+    const entry = usage.yearlyElectricityTotalConsumption.find(
+      (a) => a.unit === 'kWh',
+    );
+    return entry?.value;
   }
 }

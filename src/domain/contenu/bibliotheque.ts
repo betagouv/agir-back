@@ -1,9 +1,9 @@
-import { SousThematique } from '../thematique/sousThematique';
 import { Thematique } from '../thematique/thematique';
 import { Article } from './article';
 import { ContentType } from './contentType';
+import { Selection } from './selection';
 
-export type ThematiqueFilter = {
+export type CheckFilter = {
   selected: boolean;
 };
 export class ContenuBibliotheque {
@@ -25,14 +25,14 @@ export class Bibliotheque {
   constructor() {
     this.contenu = [];
     this.filtre_thematiques = new Map();
-    this.filtre_sous_thematiques = new Map();
+    this.filtre_selections = new Map();
     this.nombre_resultats_dispo = 0;
   }
 
   private contenu: ContenuBibliotheque[];
 
-  filtre_thematiques: Map<Thematique, ThematiqueFilter>;
-  filtre_sous_thematiques: Map<SousThematique, ThematiqueFilter>;
+  filtre_thematiques: Map<Thematique, CheckFilter>;
+  filtre_selections: Map<Selection, CheckFilter>;
 
   private nombre_resultats_dispo: number;
 

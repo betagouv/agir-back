@@ -1,3 +1,8 @@
+/**
+ * NOTE: le mapping avec les valeur associées pour les réponses des KYCs à
+ * choix, sont définies dans 'src/domain/kyc/publicodesMapping.ts' et permet
+ * d'avoir un typechecking plus fort pour la manipulation des réponses KYC.
+ */
 export enum KYCID {
   _1 = '_1',
   _2 = '_2',

@@ -81,6 +81,7 @@ import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
+import { SelectionRepository } from './infrastructure/repository/selection.repository';
 import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
@@ -93,7 +94,6 @@ import { MaifAPIClient } from './infrastructure/repository/services_recherche/ma
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
-import { SousThematiqueRepository } from './infrastructure/repository/sousThematique.repository';
 import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
 import { TagRepository } from './infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
@@ -108,6 +108,7 @@ import { AdminUsecase } from './usecase/admin.usecase';
 import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
+import { CatalogueActionUsecase } from './usecase/catalogue_actions.usecase';
 import { CMSImportUsecase } from './usecase/cms.import.usecase';
 import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CmsPreviewUsecase } from './usecase/cmsPreview.usecase';
@@ -294,7 +295,8 @@ function getControllers(): any[] {
     WinterUsecase,
     WinterAPIClient,
     WinterRepository,
-    SousThematiqueRepository,
+    CatalogueActionUsecase,
+    SelectionRepository,
   ],
 })
 export class AppModule {}

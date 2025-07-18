@@ -100,19 +100,6 @@ export class WinterController extends GenericControler {
   }
 
   @ApiOperation({
-    summary: `API DE TEST pour Lister des actions winter`,
-  })
-  @Get('utilisateurs/:utilisateurId/winter/actions')
-  @UseGuards(AuthGuard)
-  async listerActions(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ) {
-    this.checkCallerId(req, utilisateurId);
-    return await this.winterUsecase.refreshListeActions(utilisateurId);
-  }
-
-  @ApiOperation({
     summary: `Donne la décomposition de la consommation annuelle`,
   })
   @ApiOkResponse({
