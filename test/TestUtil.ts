@@ -436,6 +436,7 @@ export class TestUtil {
       emoji: '🔥',
       external_id: undefined,
       partenaire_id: undefined,
+      selections: [],
       ...override,
     };
   }

@@ -195,6 +195,7 @@ model Action {
   emoji                  String?
   external_id            String?
   partenaire_id          String?
+  selections             String[] @default([])
 
   @@unique([code, type])
   @@unique([cms_id, type])

@@ -1046,6 +1046,13 @@ export class CMSImportUsecase {
               (elem) => elem.attributes.code,
             )
           : [],
+
+      selections:
+        entry.attributes.selections &&
+        entry.attributes.selections.data.length > 0
+          ? entry.attributes.selections.data.map((elem) => elem.attributes.code)
+          : [],
+
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.attributes.VISIBLE_PROD),
       emoji: entry.attributes.emoji,
     });

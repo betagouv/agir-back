@@ -51,6 +51,7 @@ export class ActionDefinitionData {
   emoji: string;
   external_id: string;
   partenaire_id: string;
+  selections: string[];
 }
 
 export class ActionDefinition extends ActionDefinitionData {
