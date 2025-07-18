@@ -8,7 +8,6 @@ import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ActionFilter } from '../infrastructure/repository/action.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
@@ -98,8 +97,8 @@ export class ThematiqueUsecase {
     utilisateur: Utilisateur,
     thematique?: Thematique,
   ): Promise<Action[]> {
-    const stock_actions_eligibles =
-      await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
+    let stock_actions_eligibles =
+      await this.catalogueActionUsecase.external_get_user_actions(utilisateur, {
         thematique: thematique,
         recommandation: Recommandation.recommandee_et_neutre,
         realisation: Realisation.pas_faite,
@@ -109,8 +108,6 @@ export class ThematiqueUsecase {
     const liste_actions = stock_actions_eligibles.slice(0, 6);
 
     for (const action of liste_actions) {
-      action.deja_vue = utilisateur.thematique_history.isActionVue(action);
-      action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       this.setCompteurActionsEtLabel(action);
     }
 
@@ -217,26 +214,6 @@ export class ThematiqueUsecase {
       utilisateur,
       [Scope.thematique_history],
     );
-  }
-
-  private async getActionEligiblesEtRecommandeesUtilisateur(
-    utilisateur: Utilisateur,
-    filtre: ActionFilter,
-  ): Promise<Action[]> {
-    let liste_actions =
-      await this.catalogueActionUsecase.external_get_user_actions(
-        utilisateur,
-        filtre,
-      );
-
-    utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
-      liste_actions,
-    );
-
-    liste_actions =
-      utilisateur.recommandation.trierEtFiltrerRecommandations(liste_actions);
-
-    return liste_actions;
   }
 
   private setCompteurActionsEtLabel(action: Action) {
