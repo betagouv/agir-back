@@ -184,6 +184,16 @@ describe('/api/incoming/cms (API test)', () => {
           code: 'BB',
         },
       ],
+      selections: [
+        {
+          id: 1,
+          code: 'S1',
+        },
+        {
+          id: 2,
+          code: 'S2',
+        },
+      ],
       tag_v2_incluants: [
         {
           id: 1,
@@ -1024,6 +1034,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
     expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(action.selections).toEqual(['S1', 'S2']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');
@@ -1114,6 +1125,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.besoins).toEqual(['composter', 'mieux_manger']);
     expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
     expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
+    expect(action.selections).toEqual(['S1', 'S2']);
     expect(action.comment).toEqual('comment');
     expect(action.quizz_felicitations).toEqual('Bravo !!');
     expect(action.pourquoi).toEqual('pourquoi');

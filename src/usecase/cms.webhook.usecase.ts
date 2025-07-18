@@ -594,8 +594,8 @@ export class CMSWebhookUsecase {
         ? entry.tag_v2_excluants.map((elem) => elem.code)
         : [],
 
-      selections: entry.tag_v2_excluants
-        ? entry.tag_v2_excluants.map((elem) => elem.code)
+      selections: entry.selections
+        ? entry.selections.map((elem) => elem.code)
         : [],
 
       tags_a_inclure: entry.tag_v2_incluants
