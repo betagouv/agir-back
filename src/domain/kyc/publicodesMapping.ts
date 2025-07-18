@@ -1,6 +1,7 @@
 import { RegleNGC } from '../bilan/bilanCarbone';
 import { RegleSimulateurVoiture } from '../simulateur_voiture/parametres';
 import { KYCID } from './KYCID';
+import { BooleanKYC } from './QuestionKYCData';
 
 /**
  * Associates KYC IDs with their corresponding values.
@@ -21,7 +22,8 @@ export type KYCComplexValues = {
   [KYCID.KYC_transport_type_utilisateur]:
     | { code: 'proprio'; ngc_code: "'propriétaire'" }
     | { code: 'pas_la_mienne'; ngc_code: "'régulier non propriétaire'" }
-    | { code: 'change_souvent'; ngc_code: "'non régulier'" };
+    | { code: 'change_souvent'; ngc_code: "'non régulier'" }
+    | { code: 'jamais'; ngc_code: "'jamais'" };
   [KYCID.KYC_transport_voiture_gabarit]:
     | { code: 'petite'; ngc_code: "'petite'" }
     | { code: 'moyenne'; ngc_code: "'moyenne'" }
@@ -53,6 +55,9 @@ export type KYCComplexValues = {
     | { code: 'parfois'; ngc_code: "'parfois'" }
     | { code: 'souvent'; ngc_code: "'souvent'" }
     | { code: 'toujours'; ngc_code: "'oui toujours'" };
+  [KYCID.KYC_possede_voiture_oui_non]:
+    | { code: BooleanKYC.oui; ngc_code: 'oui' }
+    | { code: BooleanKYC.non; ngc_code: 'non' };
 };
 
 // NOTE: sûrement à déplacer dans un fichier dédié

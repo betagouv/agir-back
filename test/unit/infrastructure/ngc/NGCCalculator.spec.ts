@@ -22,7 +22,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(9172.002002283767);
+    expect(response).toEqual(9171.983647631228);
   });
 
   it('computeSingleEntry : compute ok single entry, empty situation', () => {
@@ -34,26 +34,28 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(1685.5359196330212);
+    expect(response).toEqual(1685.517564980484);
   });
 
   it('computeSingleEntry : compute ok single entry, minimal situation', () => {
     //GIVEN
     const situation = {
-      'transport . voiture . km': { valeur: 11000, unité: 'km/an' },
+      'transport . voiture . utilisateur': "'propriétaire'",
+      'transport . voiture . km': { valeur: 110000, unité: 'km/an' },
     };
-    const entry = 'transport . voiture . empreinte moyenne';
+    const entry = 'transport . voiture . empreinte';
 
     //WHEN
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(2121.020354014107);
+    expect(response).toEqual(16664.35457774211);
   });
 
   it('computeSingleEntry : compute ok single entry, complexe situation', () => {
     //GIVEN
     const situation = {
+      'transport . voiture . utilisateur': "'propriétaire'",
       'transport . voiture . km': { valeur: 12000, unité: 'km/an' },
       'transport . voiture . gabarit': "'VUL'",
       'transport . voiture . motorisation': "'électrique'",
@@ -70,7 +72,7 @@ describe('NGCCalculator', () => {
     const response = calculator.computeSingleEntryValue(situation, entry);
 
     //THEN
-    expect(response).toEqual(8515.095807644026);
+    expect(response).toEqual(7357.88361852824);
   });
 
   it('computeSingleEntry : Cas du photovlotaique', () => {
@@ -94,6 +96,7 @@ describe('NGCCalculator', () => {
   it('computeEntryList : compute ok multiple entries', () => {
     //GIVEN
     const situation = {
+      'transport . voiture . utilisateur': "'propriétaire'",
       'transport . voiture . km': 12000,
       'transport . voiture . gabarit': "'VUL'",
       'transport . voiture . motorisation': "'électrique'",
@@ -115,11 +118,11 @@ describe('NGCCalculator', () => {
 
     //THEN
     expect(response.size).toEqual(6);
-    expect(response.get('bilan')).toEqual(8515.095807644026);
+    expect(response.get('bilan')).toEqual(7357.88361852824);
     expect(response.get('divers')).toEqual(989.0602932841089);
     expect(response.get('logement')).toEqual(2159.945192079794);
     expect(response.get('transport . voiture . empreinte moyenne')).toEqual(
-      1816.9975065194033,
+      1685.517564980484,
     );
     expect(response.get('alimentation')).toEqual(2043.6891821);
     expect(response.get('services sociétaux')).toEqual(1450.9052263863641);
