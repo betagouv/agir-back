@@ -940,8 +940,8 @@ export class TestUtil {
         code: KYCID.KYC_type_logement,
         type: TypeReponseQuestionKYC.choix_unique,
         reponses: [
-          { code: TypeLogement.appartement, label: 'Appartement' },
-          { code: TypeLogement.maison, label: 'Maison' },
+          { code: 'type_appartement', label: 'Appartement' },
+          { code: 'type_maison', label: 'Maison' },
         ],
       }),
       TestUtil.create(DB.kYC, {

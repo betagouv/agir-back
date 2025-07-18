@@ -123,7 +123,7 @@ describe('Mes Aides Réno', () => {
         utilisateur.kyc_history
           .getQuestion(KYCID.KYC_type_logement)
           .getSelectedCode(),
-      ).toEqual(TypeLogement.maison);
+      ).toEqual('type_maison');
 
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_35);
       expect(

@@ -217,7 +217,7 @@ export class KycToTags_v2 {
         }
       }
       if (mappers.distribute) {
-        for (const [code, tag] of Object.entries(mappers.distribute)) {
+        for (const [_, tag] of Object.entries(mappers.distribute)) {
           tag_set.add(tag);
         }
       }
@@ -360,7 +360,7 @@ export class KycToTags_v2 {
     profile.replaceAllTags(this.new_tag_set);
   }
 
-  private is_code(kyc_code: string, code: string): boolean {
+  private is_code(kyc_code: KYCID, code: string): boolean {
     const kyc = this.hist.getQuestionChoix(kyc_code);
     if (!kyc) return false;
     return kyc.isSelected(code);
@@ -402,7 +402,7 @@ export class KycToTags_v2 {
     }
   }
 
-  private has_one_of(kyc_code: string, code_liste: string[]): boolean {
+  private has_one_of(kyc_code: KYCID, code_liste: string[]): boolean {
     const kyc = this.hist.getQuestionChoix(kyc_code);
     if (!kyc) return false;
     for (const code of code_liste) {

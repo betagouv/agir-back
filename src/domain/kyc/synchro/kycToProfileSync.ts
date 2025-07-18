@@ -16,9 +16,9 @@ export class KycToProfileSync {
 
     switch (kyc.code) {
       case KYCID.KYC006:
-        utilisateur.logement.plus_de_15_ans = new QuestionChoix(kyc).isSelected(
-          'plus_15',
-        );
+        utilisateur.logement.plus_de_15_ans = new QuestionChoix<KYCID.KYC006>(
+          kyc,
+        ).isSelected('plus_15');
         break;
       case KYCID.KYC_logement_age:
         const value = new QuestionNumerique(kyc).getValue();

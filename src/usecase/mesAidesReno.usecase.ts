@@ -389,7 +389,7 @@ export class MesAidesRenoUsecase {
               const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
                 KYCID.KYC_type_logement,
               );
-              kyc.selectByCode(TypeLogement.maison);
+              kyc.selectByCode('type_maison');
               utilisateur.kyc_history.updateQuestion(kyc);
               return kyc.getKyc();
             }
@@ -397,7 +397,7 @@ export class MesAidesRenoUsecase {
               const kyc = utilisateur.kyc_history.getQuestionChoixUnique(
                 KYCID.KYC_type_logement,
               );
-              kyc.selectByCode(TypeLogement.appartement);
+              kyc.selectByCode('type_appartement');
               utilisateur.kyc_history.updateQuestion(kyc);
               return kyc.getKyc();
             }

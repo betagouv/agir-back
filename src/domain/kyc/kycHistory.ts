@@ -2,6 +2,7 @@ import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
 import { KycDefinition } from './kycDefinition';
+import { KYCID } from './KYCID';
 import { KYCMosaicID, MosaicCatalogue } from './mosaicDefinition';
 import { MosaicKYCDef } from './mosaicKYC';
 import { QuestionChoix } from './new_interfaces/QuestionChoix';
@@ -14,8 +15,8 @@ import { AndConditionSet, QuestionKYC } from './questionKYC';
 
 export type AnyQuestion =
   | QuestionKYC
-  | QuestionChoixMultiple
-  | QuestionChoixUnique
+  | QuestionChoixMultiple<KYCID>
+  | QuestionChoixUnique<KYCID>
   | QuestionSimple
   | QuestionNumerique
   | QuestionTexteLibre;
@@ -66,19 +67,25 @@ export class KYCHistory {
     return undefined;
   }
 
-  public getQuestionChoixUnique(code: string): QuestionChoixUnique {
+  public getQuestionChoixUnique<ID extends KYCID>(
+    code: ID,
+  ): QuestionChoixUnique<ID> | undefined {
     const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoixUnique(kyc);
     return undefined;
   }
 
-  public getQuestionChoixMultiple(code: string): QuestionChoixMultiple {
+  public getQuestionChoixMultiple<ID extends KYCID>(
+    code: ID,
+  ): QuestionChoixMultiple<ID> | undefined {
     const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoixMultiple(kyc);
     return undefined;
   }
 
-  public getQuestionChoix(code: string): QuestionChoix {
+  public getQuestionChoix<ID extends KYCID>(
+    code: ID,
+  ): QuestionChoix<ID> | undefined {
     const kyc = this.getQuestion(code);
     if (kyc) return new QuestionChoix(kyc);
     return undefined;
@@ -449,8 +456,11 @@ export class KYCHistory {
     return or_result;
   }
 
-  public doesQuestionExistsByCode(code_question: string) {
-    return !!code_question && this.getKYCDefinitionByCodeOrNull(code_question);
+  public doesQuestionExistsByCode(code_question: KYCID): boolean {
+    return (
+      !!code_question &&
+      this.getKYCDefinitionByCodeOrNull(code_question) != null
+    );
   }
 
   private getAnsweredQuestionByIdCMS(id_cms: number): QuestionKYC {

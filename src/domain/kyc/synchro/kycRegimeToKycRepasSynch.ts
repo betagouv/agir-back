@@ -4,7 +4,7 @@ import { QuestionChoixUnique } from '../new_interfaces/QuestionChoixUnique';
 
 export class KycRegimeToKycRepas {
   public static synchroAlimentationRegime(
-    kyc_regime: QuestionChoixUnique,
+    kyc_regime: QuestionChoixUnique<KYCID.KYC_alimentation_regime>,
     utilisateur: Utilisateur,
   ) {
     const code = kyc_regime.getSelectedCode();
