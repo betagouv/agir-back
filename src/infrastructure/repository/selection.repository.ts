@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { Selection } from '@prisma/client';
+import { Selection as SelectionDB } from '@prisma/client';
+import { Selection } from '../../domain/contenu/selection';
 import { SelectionDefinition } from '../../domain/contenu/SelectionDefinition';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -47,8 +48,12 @@ export class SelectionRepository {
     return SelectionRepository.catalogue;
   }
 
+  public static getLabel(selection: Selection): string {
+    return selection;
+  }
+
   async upsert(selection_def: SelectionDefinition): Promise<void> {
-    const select_db: Selection = {
+    const select_db: SelectionDB = {
       id_cms: selection_def.cms_id,
       code: selection_def.code,
       description: selection_def.description,
@@ -75,7 +80,7 @@ export class SelectionRepository {
     });
   }
 
-  private buildDefinitionFromDB(selection: Selection): SelectionDefinition {
+  private buildDefinitionFromDB(selection: SelectionDB): SelectionDefinition {
     if (selection === null) return undefined;
     return new SelectionDefinition({
       cms_id: selection.id_cms,

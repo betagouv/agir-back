@@ -1,5 +1,5 @@
-import { ThematiqueFilter } from '../contenu/bibliotheque';
-import { SousThematique } from '../thematique/sousThematique';
+import { CheckFilter } from '../contenu/bibliotheque';
+import { Selection } from '../contenu/selection';
 import { Thematique } from '../thematique/thematique';
 import { Action } from './action';
 
@@ -22,8 +22,8 @@ export enum Ordre {
 
 export class CatalogueAction {
   actions: Action[];
-  filtre_thematiques: Map<Thematique, ThematiqueFilter>;
-  filtre_sous_thematiques: Map<SousThematique, ThematiqueFilter>;
+  filtre_thematiques: Map<Thematique, CheckFilter>;
+  filtre_selections: Map<Selection, CheckFilter>;
   consultation: Consultation;
   realisation: Realisation;
   ordre: Ordre;
@@ -32,7 +32,7 @@ export class CatalogueAction {
   constructor() {
     this.actions = [];
     this.filtre_thematiques = new Map();
-    this.filtre_sous_thematiques = new Map();
+    this.filtre_selections = new Map();
     this.consultation = Consultation.tout;
     this.realisation = Realisation.tout;
     this.nombre_resultats_disponibles = 0;
@@ -52,11 +52,8 @@ export class CatalogueAction {
       selected: selected,
     });
   }
-  public addSelectedSousThematique(
-    sous_thematique: SousThematique,
-    selected: boolean,
-  ) {
-    this.filtre_sous_thematiques.set(sous_thematique, {
+  public addSelectedSelection(selection: Selection, selected: boolean) {
+    this.filtre_selections.set(selection, {
       selected: selected,
     });
   }

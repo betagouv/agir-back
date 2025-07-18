@@ -15,7 +15,7 @@ import {
 import { TypeAction } from '../../domain/actions/typeAction';
 import { ContentType } from '../../domain/contenu/contentType';
 import { IncludeArticle } from '../../domain/contenu/includeArticle';
-import { SousThematique } from '../../domain/thematique/sousThematique';
+import { Selection } from '../../domain/contenu/selection';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
@@ -96,14 +96,12 @@ export class GenericControler {
     }
     return thematique;
   }
-  public castSousThematiqueOrException(
-    code_thematique: string,
-  ): SousThematique {
-    const thematique = SousThematique[code_thematique];
-    if (!thematique) {
-      ApplicationError.throwSousThematiqueNotFound(code_thematique);
+  public castSelectionOrException(code_selection: string): Selection {
+    const selection = Selection[code_selection];
+    if (!selection) {
+      ApplicationError.throwSelectionNotFound(code_selection);
     }
-    return thematique;
+    return selection;
   }
 
   public castContentTypeOrException(code_type: string): ContentType {

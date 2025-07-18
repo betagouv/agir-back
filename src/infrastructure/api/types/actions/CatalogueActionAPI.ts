@@ -5,7 +5,10 @@ import {
   Ordre,
   Realisation,
 } from '../../../../domain/actions/catalogueAction';
-import { ThematiqueFiltereAPI } from '../contenu/contenuBiblioAPI';
+import {
+  SelectionFiltereAPI,
+  ThematiqueFiltereAPI,
+} from '../contenu/contenuBiblioAPI';
 import { ActionLightAPI } from './ActionLightAPI';
 
 export class CatalogueActionAPI {
@@ -14,6 +17,9 @@ export class CatalogueActionAPI {
 
   @ApiProperty({ type: [ThematiqueFiltereAPI] })
   filtres: ThematiqueFiltereAPI[];
+
+  @ApiProperty({ type: [SelectionFiltereAPI] })
+  selections: SelectionFiltereAPI[];
 
   @ApiProperty({ enum: Consultation }) consultation: Consultation;
   @ApiProperty({ enum: Realisation }) realisation: Realisation;
@@ -25,10 +31,8 @@ export class CatalogueActionAPI {
   public static mapToAPI(catalogue: CatalogueAction): CatalogueActionAPI {
     return {
       actions: catalogue.actions.map((a) => ActionLightAPI.mapToAPI(a)),
-      filtres: ThematiqueFiltereAPI.mapToAPI(
-        catalogue.filtre_thematiques,
-        catalogue.filtre_sous_thematiques,
-      ),
+      filtres: ThematiqueFiltereAPI.mapToAPI(catalogue.filtre_thematiques),
+      selections: SelectionFiltereAPI.mapToAPI(catalogue.filtre_selections),
       consultation: catalogue.consultation,
       realisation: catalogue.realisation,
       nombre_resultats: catalogue.getNombreResultats(),

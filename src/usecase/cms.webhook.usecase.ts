@@ -19,7 +19,6 @@ import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
-import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
 import { CMSModel } from '../infrastructure/api/types/cms/CMSModels';
@@ -583,9 +582,6 @@ export class CMSWebhookUsecase {
         ? CategorieRecherche[entry.categorie_pdcn]
         : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
-      sous_thematique: entry.sous_thematique
-        ? SousThematique[entry.sous_thematique.code]
-        : null,
       code: entry.code,
       sources: entry.sources
         ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))

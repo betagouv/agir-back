@@ -863,8 +863,8 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError('157', `Erreur à la récupération des actions Winter`);
   }
 
-  static throwSousThematiqueNotFound(them: string) {
-    this.throwAppError('158', `Sous thematique [${them}] inconnue`);
+  static throwSelectionNotFound(sel: string) {
+    this.throwAppError('158', `Selection [${sel}] inconnue`);
   }
 
   static throwOnboardingNotDone() {

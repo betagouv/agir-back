@@ -26,7 +26,7 @@ import {
   Realisation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
-import { SousThematique } from '../../domain/thematique/sousThematique';
+import { Selection } from '../../domain/contenu/selection';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { CatalogueActionUsecase } from '../../usecase/catalogue_actions.usecase';
@@ -136,12 +136,12 @@ export class ActionsController extends GenericControler {
     description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
-    name: 'sous_thematique',
-    enum: SousThematique,
-    enumName: 'sous thematique',
+    name: 'selection',
+    enum: Selection,
+    enumName: 'Selection',
     isArray: true,
     required: false,
-    description: `filtrage par sous thematiques, plusieurs sous thematiques possible avec la notation ?sous_thematique=XXX&sous_thematique=YYY`,
+    description: `filtrage par selections d'actions, plusieurs selections possibles avec la notation ?selection=XXX&selection=YYY`,
   })
   @ApiQuery({
     name: 'titre',
@@ -181,7 +181,7 @@ export class ActionsController extends GenericControler {
   })
   async getCatalogueUtilisateur(
     @Query('thematique') thematique: string[] | string,
-    @Query('sous_thematique') sous_thematique: string[] | string,
+    @Query('selection') selection: string[] | string,
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
@@ -194,20 +194,18 @@ export class ActionsController extends GenericControler {
     this.checkCallerId(req, utilisateurId);
     const liste_thematiques_input =
       this.getStringListFromStringArrayAPIInput(thematique);
-    const liste_sous_thematiques_input =
-      this.getStringListFromStringArrayAPIInput(sous_thematique);
+    const liste_selections_input =
+      this.getStringListFromStringArrayAPIInput(selection);
 
     const liste_thematiques: Thematique[] = [];
-    const liste_sous_thematiques: SousThematique[] = [];
+    const liste_selections: Selection[] = [];
 
     for (const them_string of liste_thematiques_input) {
       liste_thematiques.push(this.castThematiqueOrException(them_string));
     }
 
-    for (const them_string of liste_sous_thematiques_input) {
-      liste_sous_thematiques.push(
-        this.castSousThematiqueOrException(them_string),
-      );
+    for (const sel_string of liste_selections_input) {
+      liste_selections.push(this.castSelectionOrException(sel_string));
     }
 
     const type_consulation =
@@ -221,7 +219,7 @@ export class ActionsController extends GenericControler {
     const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
       utilisateurId,
       liste_thematiques,
-      liste_sous_thematiques,
+      liste_selections,
       titre,
       type_consulation,
       type_realisation,

@@ -57,7 +57,6 @@ import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/them
 import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
 import { ServiceStatus } from '../src/domain/service/service';
-import { SousThematique } from '../src/domain/thematique/sousThematique';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
@@ -426,7 +425,6 @@ export class TestUtil {
       pdcn_categorie: CategorieRecherche.zero_dechet,
       type: TypeAction.classique,
       thematique: Thematique.consommation,
-      sous_thematique: SousThematique.logement_risque_naturel,
       tags_a_exclure_v2: [],
       tags_a_inclure_v2: [],
       sources: [],

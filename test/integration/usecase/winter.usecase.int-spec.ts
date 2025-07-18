@@ -311,12 +311,14 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       ];
     });
 
-    // WHEN
-    const result = await winterUsecase.refreshListeActions('utilisateur-id');
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+
+    // WHEN
+    const result = await winterUsecase.external_update_winter_recommandation(
+      userDB,
+    );
 
     expect(winterRepository.listerActionsWinter).toHaveBeenCalledTimes(1);
 
@@ -328,8 +330,8 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       },
       montant_economies_euro: 10,
     });
-    expect(user.thematique_history.getNombreActionsWinter()).toEqual(1);
-    expect(user.thematique_history.getRecommandationsWinter()).toEqual([
+    expect(userDB.thematique_history.getNombreActionsWinter()).toEqual(1);
+    expect(userDB.thematique_history.getRecommandationsWinter()).toEqual([
       {
         action: {
           code: 'winter_123',
@@ -385,16 +387,17 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       ];
     });
 
-    // WHEN
-    const result = await winterUsecase.refreshListeActions('utilisateur-id');
-
-    const user = await utilisateurRepository.getById('utilisateur-id', [
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
       Scope.ALL,
     ]);
+    // WHEN
+    const result = await winterUsecase.external_update_winter_recommandation(
+      userDB,
+    );
 
     expect(winterRepository.listerActionsWinter).toHaveBeenCalledTimes(0);
 
     expect(result).toHaveLength(0);
-    expect(user.thematique_history.getNombreActionsWinter()).toEqual(0);
+    expect(userDB.thematique_history.getNombreActionsWinter()).toEqual(0);
   });
 });

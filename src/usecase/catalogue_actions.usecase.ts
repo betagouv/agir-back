@@ -9,8 +9,8 @@ import {
 } from '../domain/actions/catalogueAction';
 import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { Echelle } from '../domain/aides/echelle';
+import { Selection } from '../domain/contenu/selection';
 import { EnchainementDefinition } from '../domain/kyc/enchainementDefinition';
-import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -97,8 +97,8 @@ export class CatalogueActionUsecase {
 
   async getUtilisateurCatalogue(
     utilisateurId: string,
-    filtre_thematiques: Thematique[],
-    filtre_sous_thematiques: SousThematique[],
+    liste_thematiques: Thematique[],
+    liste_selections: Selection[],
     titre: string = undefined,
     consultation: Consultation,
     realisation: Realisation,
@@ -120,10 +120,13 @@ export class CatalogueActionUsecase {
         utilisateur.thematique_history.getAllTypeCodeActionsExclues();
     }
     filtre.ordre = ordre;
+
     filtre.liste_thematiques =
-      filtre_thematiques.length > 0 ? filtre_thematiques : undefined;
-    filtre.liste_sous_thematiques =
-      filtre_sous_thematiques.length > 0 ? filtre_sous_thematiques : undefined;
+      liste_thematiques.length > 0 ? liste_thematiques : undefined;
+
+    filtre.liste_selections =
+      liste_selections.length > 0 ? liste_selections : undefined;
+
     filtre.titre_fragment = titre;
 
     catalogue.actions = await this.external_get_user_actions(
@@ -131,8 +134,8 @@ export class CatalogueActionUsecase {
       filtre,
     );
 
-    this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
-    this.setFiltreSousThematiqueToCatalogue(catalogue, filtre_sous_thematiques);
+    this.setFiltreThematiqueToCatalogue(catalogue, liste_thematiques);
+    this.setFiltreSelectionToCatalogue(catalogue, liste_selections);
 
     this.filtreParConsultationRealisation(
       catalogue,
@@ -225,14 +228,14 @@ export class CatalogueActionUsecase {
     }
   }
 
-  private setFiltreSousThematiqueToCatalogue(
+  private setFiltreSelectionToCatalogue(
     catalogue: CatalogueAction,
-    liste_sous_thematiques: SousThematique[],
+    liste_selections: Selection[],
   ) {
-    for (const sous_thematique of Object.values(SousThematique)) {
-      catalogue.addSelectedSousThematique(
-        sous_thematique,
-        liste_sous_thematiques.includes(sous_thematique),
+    for (const selection of Object.values(Selection)) {
+      catalogue.addSelectedSelection(
+        selection,
+        liste_selections.includes(selection),
       );
     }
   }

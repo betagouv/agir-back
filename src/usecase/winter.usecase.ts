@@ -24,7 +24,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`;
 
 const CURRENT_VERSION = 'v1';
 
-const WINTER_PARTENAIRE_ID = '455';
+const WINTER_PARTENAIRE_CMS_ID = '455';
 
 const USAGE_EMOJI: Record<TypeUsage, string> = {
   airConditioning: '❄️',
@@ -140,27 +140,6 @@ export class WinterUsecase {
     );
   }
 
-  public async refreshListeActions(
-    utilisateurId: string,
-  ): Promise<RecommandationWinter[]> {
-    const utilisateur = await this.utilisateurRepository.getById(
-      utilisateurId,
-      [Scope.thematique_history, Scope.logement],
-    );
-    Utilisateur.checkState(utilisateur);
-
-    const result = await this.external_update_winter_recommandation(
-      utilisateur,
-    );
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.thematique_history],
-    );
-
-    return result;
-  }
-
   public async getUsage(
     utilisateurId: string,
   ): Promise<ConsommationElectrique> {
@@ -228,7 +207,7 @@ export class WinterUsecase {
     for (const winter_action of liste) {
       const winter_action_def =
         this.actionRepository.getActionPartenaireByExternalId(
-          WINTER_PARTENAIRE_ID,
+          WINTER_PARTENAIRE_CMS_ID,
           winter_action.slug,
         );
       if (winter_action_def) {

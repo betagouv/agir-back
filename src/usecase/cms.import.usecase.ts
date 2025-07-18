@@ -26,7 +26,6 @@ import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
-import { SousThematique } from '../domain/thematique/sousThematique';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -1022,9 +1021,6 @@ export class CMSImportUsecase {
           : [],
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
-        : null,
-      sous_thematique: entry.attributes.sous_thematique.data
-        ? SousThematique[entry.attributes.sous_thematique.data.attributes.code]
         : null,
       sources: entry.attributes.sources
         ? entry.attributes.sources.map((s) => ({
