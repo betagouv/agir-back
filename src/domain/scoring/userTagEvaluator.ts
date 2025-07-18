@@ -16,7 +16,10 @@ export class UserTagEvaluator {
     }
   }
 
-  private static kyc_001(user: Utilisateur, kyc: QuestionChoixMultiple) {
+  private static kyc_001(
+    user: Utilisateur,
+    kyc: QuestionChoixMultiple<KYCID.KYC001>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.transport,
       kyc.isSelected(Thematique.transport),
@@ -61,7 +64,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_002(user: Utilisateur, kyc: QuestionChoixMultiple) {
+  private static kyc_002(
+    user: Utilisateur,
+    kyc: QuestionChoixMultiple<KYCID.KYC002>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.appetence_covoit,
       kyc.isSelected('co_voit'),
@@ -88,7 +94,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_003(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_003(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC003>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.possede_velo,
       kyc.isSelected(BooleanKYC.oui),
@@ -97,7 +106,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_004(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_004(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC004>,
+  ) {
     user.increaseTagForAnswers(Tag.pistes_cyclables, kyc, {
       pistes_cyclables_faciles: 100,
       pistes_cyclables_dangereuses: 50,
@@ -106,15 +118,23 @@ export class UserTagEvaluator {
     });
   }
 
-  private static kyc_005(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_005(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC005>,
+  ) {
     user.increaseTagForAnswers(Tag.possede_emploi, kyc, {
       emploi: 100,
       sans_emploi: -100,
+      etudiant: 0,
+      retraite: 0,
       ne_sais_pas: 0,
     });
   }
 
-  private static kyc_006(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_006(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC006>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.logement_plus_15_ans,
       kyc.isSelected('plus_15'),
@@ -122,6 +142,7 @@ export class UserTagEvaluator {
       -100,
     );
   }
+
   private static kyc_logement_age(user: Utilisateur, kyc: QuestionNumerique) {
     const value = kyc.getValue();
     if (value) {
@@ -134,7 +155,10 @@ export class UserTagEvaluator {
     }
   }
 
-  private static kyc_007(user: Utilisateur, kyc: QuestionChoixMultiple) {
+  private static kyc_007(
+    user: Utilisateur,
+    kyc: QuestionChoixMultiple<KYCID.KYC007>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.appetence_cafe,
       kyc.isSelected('cafe'),
@@ -143,7 +167,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_008(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_008(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC008>,
+  ) {
     user.increaseTagForAnswers(Tag.capacite_teletravail, kyc, {
       max_tele: 100,
       un_peu_tele: 50,
@@ -152,7 +179,10 @@ export class UserTagEvaluator {
     });
   }
 
-  private static kyc_009(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_009(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC009>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.possede_voiture,
       kyc.isSelected('ma_voit'),
@@ -167,7 +197,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_010(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_010(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC010>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.possede_jardin,
       kyc.isSelected(BooleanKYC.oui),
@@ -176,7 +209,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_011(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_011(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC011>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.possede_voiture_thermique,
       kyc.isSelected('voit_therm'),
@@ -191,7 +227,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_012(user: Utilisateur, kyc: QuestionChoixUnique) {
+  private static kyc_012(
+    user: Utilisateur,
+    kyc: QuestionChoixUnique<KYCID.KYC012>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.trajet_court_voiture,
       kyc.isSelected(BooleanKYC.oui),
@@ -206,7 +245,10 @@ export class UserTagEvaluator {
     );
   }
 
-  private static kyc_013(user: Utilisateur, kyc: QuestionChoixMultiple) {
+  private static kyc_013(
+    user: Utilisateur,
+    kyc: QuestionChoixMultiple<KYCID.KYC013>,
+  ) {
     user.increaseTagValueIfElse(
       Tag.appetence_limiter_impact_trajets,
       kyc.isSelected('limiter_impact'),

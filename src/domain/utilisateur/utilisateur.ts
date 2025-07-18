@@ -7,7 +7,9 @@ import { CacheBilanCarbone } from '../bilan/cacheBilanCarbone';
 import { Gamification } from '../gamification/gamification';
 import { History } from '../history/history';
 import { KYCHistory } from '../kyc/kycHistory';
+import { KYCID } from '../kyc/KYCID';
 import { QuestionChoixUnique } from '../kyc/new_interfaces/QuestionChoixUnique';
+import { KYCComplexValues } from '../kyc/publicodesMapping';
 import { Logement } from '../logement/logement';
 import { NotificationHistory } from '../notification/notificationHistory';
 import { ProfileRecommandationUtilisateur } from '../scoring/system_v2/profileRecommandationUtilisateur';
@@ -362,10 +364,11 @@ export class Utilisateur extends UtilisateurData {
   public increaseTagValue(tag: Tag, value: number) {
     this.setTagValue(tag, this.getTagValue(tag) + value);
   }
-  public increaseTagForAnswers(
+
+  public increaseTagForAnswers<ID extends KYCID>(
     tag: Tag,
-    kyc: QuestionChoixUnique,
-    map: Record<string, number>,
+    kyc: QuestionChoixUnique<ID>,
+    map: Record<KYCComplexValues[ID]['code'], number>,
   ) {
     if (kyc && kyc.isAnswered()) {
       for (const key in map) {

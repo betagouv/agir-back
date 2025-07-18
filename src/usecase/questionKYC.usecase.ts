@@ -365,8 +365,9 @@ export class QuestionKYCUsecase {
 
     kyc.setStringValue(input);
   }
-  private updateQuestionChoixUnique(
-    kyc: QuestionChoixUnique,
+
+  private updateQuestionChoixUnique<ID extends KYCID>(
+    kyc: QuestionChoixUnique<ID>,
     input_reponse_payload: {
       code?: string;
       value?: string;
@@ -399,8 +400,8 @@ export class QuestionKYCUsecase {
     }
   }
 
-  private updateQuestionChoixMultiple(
-    kyc: QuestionChoixMultiple,
+  private updateQuestionChoixMultiple<ID extends KYCID>(
+    kyc: QuestionChoixMultiple<ID>,
     input_reponse_payload: {
       code?: string;
       value?: string;

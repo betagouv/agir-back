@@ -1765,7 +1765,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
     expect(
-      user.kyc_history.getQuestionChoix('_2').getSelectedCodes(),
+      user.kyc_history.getQuestionChoix(KYCID._2).getSelectedCodes(),
     ).toStrictEqual([Thematique.climat, Thematique.logement]);
 
     const userDB = await utilisateurRepository.getById('utilisateur-id', [
@@ -1785,7 +1785,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       answered_questions: [
         {
           ...KYC_DATA,
-          code: '1',
+          code: KYCID._1,
           id_cms: 1,
           type: TypeReponseQuestionKYC.choix_unique,
           reponse_complexe: [
@@ -1812,7 +1812,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     await TestUtil.create(DB.utilisateur, { kyc: kyc as any });
     await TestUtil.create(DB.kYC, {
       id_cms: 1,
-      code: '1',
+      code: KYCID._1,
       question: `Quel est votre sujet principal d'intéret ?`,
       reponses: [
         { label: 'Le climat', code: Thematique.climat },
@@ -1825,7 +1825,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
 
     // WHEN
     const response = await TestUtil.PUT(
-      '/utilisateurs/utilisateur-id/questionsKYC_v2/1',
+      `/utilisateurs/utilisateur-id/questionsKYC_v2/${KYCID._1}`,
     ).send([
       { code: Thematique.climat, selected: false },
       { code: Thematique.logement, selected: false },
@@ -1839,7 +1839,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     ]);
     user.kyc_history.setCatalogue(KycRepository.getCatalogue());
     expect(
-      user.kyc_history.getQuestionChoix('1').getSelectedCodes(),
+      user.kyc_history.getQuestionChoix(KYCID._1).getSelectedCodes(),
     ).toStrictEqual([Thematique.alimentation]);
   });
 

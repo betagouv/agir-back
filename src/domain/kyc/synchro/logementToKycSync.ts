@@ -55,7 +55,7 @@ export class LogementToKycSync {
       history.updateQuestion(choix_unique);
     }
     if (input.chauffage) {
-      const target_KYC: Record<Chauffage, string> = {
+      const target_KYC: Record<Chauffage, KYCID> = {
         gaz: KYCID.KYC_chauffage_gaz,
         fioul: KYCID.KYC_chauffage_fioul,
         electricite: KYCID.KYC_chauffage_elec,

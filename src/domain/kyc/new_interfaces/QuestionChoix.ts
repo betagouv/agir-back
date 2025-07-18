@@ -1,6 +1,8 @@
+import { KYCID } from '../KYCID';
+import { KYCComplexValues } from '../publicodesMapping';
 import { QuestionKYC } from '../questionKYC';
 
-export class QuestionChoix {
+export class QuestionChoix<ID extends KYCID> {
   protected kyc: QuestionKYC;
 
   constructor(kyc: QuestionKYC) {
@@ -18,16 +20,17 @@ export class QuestionChoix {
     return this.kyc.is_answered;
   }
 
-  public isSelected(code_reponse: string): boolean {
+  public isSelected(code_reponse: KYCComplexValues[ID]['code']): boolean {
     const entry_liste = this.kyc.reponse_complexe;
     const found = entry_liste.find((r) => r.code === code_reponse);
     return found ? found.selected : false;
   }
 
-  public getAllCodes(): string[] {
+  public getAllCodes(): KYCComplexValues[ID]['code'][] {
     return this.kyc.reponse_complexe.map((r) => r.code);
   }
-  public getSelectedCodes(): string[] {
+
+  public getSelectedCodes(): KYCComplexValues[ID]['code'][] {
     if (!this.kyc.reponse_complexe) return [];
     const result = [];
     for (const rep of this.kyc.reponse_complexe) {
@@ -37,6 +40,7 @@ export class QuestionChoix {
     }
     return result;
   }
+
   public getNombreSelections() {
     if (!this.kyc.reponse_complexe) return 0;
     const entry_liste = this.kyc.reponse_complexe;
