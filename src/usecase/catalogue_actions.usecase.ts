@@ -6,6 +6,7 @@ import {
   Consultation,
   Ordre,
   Realisation,
+  Recommandation,
 } from '../domain/actions/catalogueAction';
 import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { Echelle } from '../domain/aides/echelle';
@@ -102,7 +103,9 @@ export class CatalogueActionUsecase {
     titre: string = undefined,
     consultation: Consultation,
     realisation: Realisation,
+    recommandation: Recommandation,
     ordre: Ordre,
+    exclure_rejets_utilisateur: boolean,
     skip: number = 0,
     take: number = 1000000,
   ): Promise<CatalogueAction> {
@@ -115,11 +118,11 @@ export class CatalogueActionUsecase {
     let catalogue = new CatalogueAction();
 
     const filtre: ActionFilter = {};
-    if (ordre === Ordre.recommandee_filtre_perso) {
-      filtre.type_codes_exclus =
-        utilisateur.thematique_history.getAllTypeCodeActionsExclues();
-    }
-    filtre.ordre = ordre;
+
+    filtre.recommandation = recommandation;
+    filtre.realisation = realisation;
+    filtre.consultation = consultation;
+    filtre.exclure_rejets_utilisateur = exclure_rejets_utilisateur;
 
     filtre.liste_thematiques =
       liste_thematiques.length > 0 ? liste_thematiques : undefined;
@@ -129,20 +132,26 @@ export class CatalogueActionUsecase {
 
     filtre.titre_fragment = titre;
 
+    // FIXME : à supprimer quand suppression de ordre dans l'API
+    if (ordre === Ordre.recommandee_filtre_perso) {
+      filtre.recommandation = Recommandation.recommandee_et_neutre;
+      filtre.exclure_rejets_utilisateur = true;
+    }
+    if (ordre === Ordre.recommandee) {
+      filtre.recommandation = Recommandation.recommandee;
+    }
+
     catalogue.actions = await this.external_get_user_actions(
       utilisateur,
       filtre,
     );
 
+    catalogue.consultation = consultation;
+    catalogue.realisation = realisation;
+    catalogue.recommandation = recommandation;
+
     this.setFiltreThematiqueToCatalogue(catalogue, liste_thematiques);
     this.setFiltreSelectionToCatalogue(catalogue, liste_selections);
-
-    this.filtreParConsultationRealisation(
-      catalogue,
-      consultation,
-      realisation,
-      utilisateur,
-    );
 
     for (const action of catalogue.actions) {
       this.setCompteurActionsEtLabel(action);
@@ -161,9 +170,14 @@ export class CatalogueActionUsecase {
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {
+    if (filtre.exclure_rejets_utilisateur) {
+      filtre.type_codes_exclus =
+        utilisateur.thematique_history.getAllTypeCodeActionsExclues();
+    }
+
     const liste_actions = await this.actionRepository.list(filtre);
 
-    let result: Action[] = [];
+    let actions_resultat: Action[] = [];
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
@@ -181,17 +195,39 @@ export class CatalogueActionUsecase {
       action.nombre_aides = count_aides;
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
-      result.push(action);
+      actions_resultat.push(action);
     }
 
-    if (filtre.ordre === Ordre.recommandee) {
-      utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
-        result,
+    utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
+      actions_resultat,
+    );
+
+    const filtered_reco_actions =
+      utilisateur.recommandation.trierEtFiltrerRecommandations(
+        actions_resultat,
       );
-      result = utilisateur.recommandation.trierEtFiltrerRecommandations(result);
+
+    if (filtre.recommandation === Recommandation.recommandee) {
+      const new_action_set = [];
+      for (const action of filtered_reco_actions) {
+        if (action.score > 0) {
+          new_action_set.push(action);
+        }
+      }
+      actions_resultat = new_action_set;
+    }
+    if (filtre.recommandation === Recommandation.recommandee_et_neutre) {
+      actions_resultat = filtered_reco_actions;
     }
 
-    return result;
+    actions_resultat = this.filtreParConsultationRealisation(
+      actions_resultat,
+      filtre.consultation,
+      filtre.realisation,
+      utilisateur,
+    );
+
+    return actions_resultat;
   }
 
   public external_get_kyc_codes_from_action_bilan(
@@ -241,20 +277,17 @@ export class CatalogueActionUsecase {
   }
 
   private filtreParConsultationRealisation(
-    catalogue: CatalogueAction,
+    liste_actions: Action[],
     type_consulation: Consultation,
     type_realisation: Realisation,
     utilisateur: Utilisateur,
-  ) {
-    catalogue.consultation = type_consulation;
-    catalogue.realisation = type_realisation;
-
+  ): Action[] {
     const new_action_list: Action[] = [];
 
     const prendre_vues = type_consulation === Consultation.vu;
     const prendre_faites = type_realisation === Realisation.faite;
 
-    for (const action of catalogue.actions) {
+    for (const action of liste_actions) {
       const est_vue = utilisateur.thematique_history.isActionVue(action);
       const est_faite = utilisateur.thematique_history.isActionFaite(action);
 
@@ -274,7 +307,7 @@ export class CatalogueActionUsecase {
         new_action_list.push(action);
       }
     }
-    catalogue.actions = new_action_list;
+    return new_action_list;
   }
 
   private setMontantEconomiesEuros(

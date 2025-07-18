@@ -11,6 +11,7 @@ import {
   Consultation,
   Ordre,
   Realisation,
+  Recommandation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { ContentType } from '../../domain/contenu/contentType';
@@ -146,6 +147,17 @@ export class GenericControler {
     const type = Consultation[consultation];
     if (!type) {
       ApplicationError.throwTypeConsultationNotFound(consultation);
+    }
+    return type;
+  }
+
+  public castTypeRecommandationActionOrException(
+    recommandation: string,
+  ): Recommandation {
+    if (!recommandation) return Recommandation.tout;
+    const type = Recommandation[recommandation];
+    if (!type) {
+      ApplicationError.throwTypeRecommandationNotFound(recommandation);
     }
     return type;
   }

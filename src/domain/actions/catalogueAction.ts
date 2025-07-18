@@ -14,6 +14,12 @@ export enum Realisation {
   tout = 'tout',
 }
 
+export enum Recommandation {
+  recommandee = 'recommandee',
+  recommandee_et_neutre = 'recommandee_et_neutre',
+  tout = 'tout',
+}
+
 export enum Ordre {
   random = 'random',
   recommandee = 'recommandee',
@@ -26,6 +32,7 @@ export class CatalogueAction {
   filtre_selections: Map<Selection, CheckFilter>;
   consultation: Consultation;
   realisation: Realisation;
+  recommandation: Recommandation;
   ordre: Ordre;
   nombre_resultats_disponibles: number;
 
@@ -35,6 +42,7 @@ export class CatalogueAction {
     this.filtre_selections = new Map();
     this.consultation = Consultation.tout;
     this.realisation = Realisation.tout;
+    this.recommandation = Recommandation.tout;
     this.nombre_resultats_disponibles = 0;
   }
   public getNombreResultats(): number {

@@ -903,6 +903,17 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError('164', `Le persona [${persona}] est inconnu`);
   }
 
+  static throwTypeRecommandationNotFound(type: string) {
+    this.throwAppError('165', `Type de recommandation [${type}] inconnu`);
+  }
+
+  static throwbadOuiNon(value: string) {
+    this.throwAppError(
+      '166',
+      `Valeur 'oui' ou 'non' attendue, reçu : [${value}]`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
+import { Realisation, Recommandation } from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
 import { EnchainementType } from '../domain/kyc/enchainementDefinition';
 import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
@@ -97,18 +98,12 @@ export class ThematiqueUsecase {
     utilisateur: Utilisateur,
     thematique?: Thematique,
   ): Promise<Action[]> {
-    const history = utilisateur.thematique_history;
-
-    const action_faites_par_utilisateur = history.getListeActionsFaites();
-    const action_exclues = history.getAllTypeCodeActionsExclues();
-    const total_a_exclure = action_exclues.concat(
-      action_faites_par_utilisateur,
-    );
-
     const stock_actions_eligibles =
       await this.getActionEligiblesEtRecommandeesUtilisateur(utilisateur, {
-        type_codes_exclus: total_a_exclure,
         thematique: thematique,
+        recommandation: Recommandation.recommandee_et_neutre,
+        realisation: Realisation.pas_faite,
+        exclure_rejets_utilisateur: true,
       });
 
     const liste_actions = stock_actions_eligibles.slice(0, 6);

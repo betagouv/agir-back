@@ -31,6 +31,7 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { CatalogueActionUsecase } from '../../usecase/catalogue_actions.usecase';
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
@@ -38,6 +39,11 @@ import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
 import { FeedbackActionInputAPI } from './types/actions/FeedbackActionInputAPI';
 import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
+
+enum oui_non {
+  oui = 'oui',
+  non = 'non',
+}
 
 @Controller()
 @ApiBearerAuth()
@@ -168,6 +174,12 @@ export class ActionsController extends GenericControler {
     description: `indique si on veut les recommandée par ordre de reco (et donc sans les actions exclues), ou toutes les action sans ordre particulier`,
   })
   @ApiQuery({
+    name: 'exclure_rejets_utilisateur',
+    enum: oui_non,
+    required: false,
+    description: `Permet de rejeter ou pas les actions rejetée par l'utilisateur dans les thématiques`,
+  })
+  @ApiQuery({
     name: 'skip',
     type: Number,
     required: false,
@@ -185,8 +197,10 @@ export class ActionsController extends GenericControler {
     @Param('utilisateurId') utilisateurId: string,
     @Query('titre') titre: string,
     @Query('consultation') consultation: string,
+    @Query('recommandation') recommandation: string,
     @Query('realisation') realisation: string,
     @Query('ordre') ordre: string,
+    @Query('exclure_rejets_utilisateur') exclure_rejets_utilisateur: string,
     @Query('skip') skip: string,
     @Query('take') take: string,
     @Request() req,
@@ -211,10 +225,19 @@ export class ActionsController extends GenericControler {
     const type_consulation =
       this.castTypeConsultationActionOrException(consultation);
 
+    const type_recommandation =
+      this.castTypeRecommandationActionOrException(recommandation);
+
     const type_realisation =
       this.castTypeRealisationActionOrException(realisation);
 
     const type_ordre = this.castTypeOrdreActionOrException(ordre);
+
+    if (exclure_rejets_utilisateur) {
+      if (oui_non[exclure_rejets_utilisateur]) {
+        ApplicationError.throwbadOuiNon(exclure_rejets_utilisateur);
+      }
+    }
 
     const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
       utilisateurId,
@@ -223,7 +246,9 @@ export class ActionsController extends GenericControler {
       titre,
       type_consulation,
       type_realisation,
+      type_recommandation,
       type_ordre,
+      'oui' === exclure_rejets_utilisateur,
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
     );

@@ -5,7 +5,11 @@ import {
   ActionDefinition,
   TypeCodeAction,
 } from '../../domain/actions/actionDefinition';
-import { Ordre } from '../../domain/actions/catalogueAction';
+import {
+  Consultation,
+  Realisation,
+  Recommandation,
+} from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { App } from '../../domain/app';
 import {
@@ -25,7 +29,10 @@ export type ActionFilter = {
   codes_exclus?: string[];
   codes_inclus?: string[];
   titre_fragment?: string;
-  ordre?: Ordre;
+  recommandation?: Recommandation;
+  exclure_rejets_utilisateur?: boolean;
+  consultation?: Consultation;
+  realisation?: Realisation;
 };
 
 @Injectable()
