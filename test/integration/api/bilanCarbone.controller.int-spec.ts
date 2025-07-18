@@ -1,5 +1,6 @@
 import ngcRules from '@incubateur-ademe/nosgestesclimat/nosgestesclimat.model.json';
 import { KYC } from '@prisma/client';
+import Engine from 'publicodes';
 import { KYCS_TO_RULE_NAME } from 'src/domain/kyc/publicodesMapping';
 import { App } from '../../../src/domain/app';
 import { Categorie } from '../../../src/domain/contenu/categorie';
@@ -144,7 +145,7 @@ describe('/bilan (API test)', () => {
       top_3: [
         {
           emoji: '🚘️',
-          impact_kg_annee: 1685.5359196330212,
+          impact_kg_annee: 1685.517564980484,
           label: 'Voiture',
           pourcentage: 19,
           pourcentage_categorie: 81,
@@ -224,13 +225,13 @@ describe('/bilan (API test)', () => {
         },
         {
           emoji: '🚦',
-          impact_kg_annee: 2075.470278771637,
+          impact_kg_annee: 2075.4519241190997,
           pourcentage: 24,
           thematique: 'transport',
           details: [
             {
               emoji: '🚘️',
-              impact_kg_annee: 1685.5359196330212,
+              impact_kg_annee: 1685.517564980484,
               label: 'Voiture',
               pourcentage: 19,
               pourcentage_categorie: 81,
@@ -660,11 +661,11 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8684.36294409093,
+      impact_kg_annee: 8684.344589438393,
       top_3: [
         {
           emoji: '🚘️',
-          impact_kg_annee: 1685.5359196330212,
+          impact_kg_annee: 1685.517564980484,
           label: 'Voiture',
           pourcentage: 19,
           pourcentage_categorie: 81,
@@ -746,7 +747,7 @@ describe('/bilan (API test)', () => {
           details: [
             {
               emoji: '🚘️',
-              impact_kg_annee: 1685.5359196330212,
+              impact_kg_annee: 1685.517564980484,
               label: 'Voiture',
               pourcentage: 19,
               pourcentage_categorie: 81,
@@ -802,7 +803,7 @@ describe('/bilan (API test)', () => {
             },
           ],
           emoji: '🚦',
-          impact_kg_annee: 2075.470278771637,
+          impact_kg_annee: 2075.4519241190997,
           pourcentage: 24,
           thematique: 'transport',
         },
@@ -983,7 +984,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11036.445425100268,
+      11036.427070447731,
     );
   });
 
@@ -1098,7 +1099,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
-      }&bilan_tonnes=9.3`,
+      }&bilan_tonnes=8.7`,
     );
   });
   it('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
@@ -1250,7 +1251,7 @@ describe('/bilan (API test)', () => {
       details: [
         {
           emoji: '🚘️',
-          impact_kg_annee: 1685.5359196330212,
+          impact_kg_annee: 1685.517564980484,
           label: 'Voiture',
         },
         { label: 'Avion', impact_kg_annee: 312.2395338291978, emoji: '✈️' },
@@ -1270,7 +1271,7 @@ describe('/bilan (API test)', () => {
         { label: 'Vacances', impact_kg_annee: 0, emoji: '🏖️' },
       ],
       emoji: '🚦',
-      impact_kg_annee: 2075.470278771637,
+      impact_kg_annee: 2075.4519241190997,
       thematique: 'transport',
     });
   });
@@ -1296,7 +1297,8 @@ describe('/bilan (API test)', () => {
       await TestUtil.create(DB.situationNGC, {
         utilisateurId: 'utilisateur-id',
         situation: {
-          'transport . voiture . km': 200000,
+          'transport . voiture . utilisateur': "'propriétaire'",
+          'transport . voiture . km': 20000,
         },
       });
 
@@ -1309,11 +1311,16 @@ describe('/bilan (API test)', () => {
         NGCCalculator.DEFAULT_TOTAL_KG,
       );
 
+      const engine = new Engine(ngcRules, {
+        logger: { log: (_) => {}, error: (_) => {}, warn: (_) => {} },
+      });
+
       const question_res = await TestUtil.PUT(
         `/utilisateurs/utilisateur-id/questionsKYC_v2/KYC_transport_voiture_km`,
       ).send([
         {
-          value: ngcRules['transport . voiture . km']['par défaut'],
+          value: engine.evaluate('transport . voiture . km annuels moyen')
+            .nodeValue,
         },
       ]);
 
@@ -1323,9 +1330,13 @@ describe('/bilan (API test)', () => {
         `/utilisateurs/utilisateur-id/bilans/last_v3?force=true`,
       );
 
+      engine.setSituation({
+        'transport . voiture . utilisateur': "'propriétaire'",
+      });
+
       expect(last_res.status).toBe(200);
       expect(last_res.body.bilan_complet.impact_kg_annee).toEqual(
-        NGCCalculator.DEFAULT_TOTAL_KG,
+        engine.evaluate('bilan').nodeValue,
       );
     });
   });
