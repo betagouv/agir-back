@@ -89,12 +89,6 @@ export class ProfileRecommandationUtilisateur {
 
     const filtered_result = [];
     for (const content of result) {
-      console.log(content.explicationScore.doesNotContainAnyInclusion());
-      console.log(
-        content.explicationScore.doesContainExclusionTag(
-          Tag_v2.match_aucun_autre_tag,
-        ),
-      );
       if (
         content.explicationScore.doesNotContainAnyInclusion() &&
         content.getExclusionTags().includes(Tag_v2.match_aucun_autre_tag)
