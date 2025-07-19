@@ -690,4 +690,72 @@ describe('ProfileRecommandationUtilisateur', () => {
     expect(result[0].inclusion_tag).toEqual('AA');
     expect(result[1].inclusion_tag).toEqual('BB');
   });
+
+  it('trierEtFiltrerRecommandations : tag match_aucun_autre_tag, contenu exclu', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      pourcent_match: 0,
+
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [],
+      getExclusionTags: () => [Tag_v2.match_aucun_autre_tag],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(result).toHaveLength(0);
+    expect(content.explicationScore.listeUniqueExplications()).toEqual([
+      {
+        exclusion_tag: 'match_aucun_autre_tag',
+      },
+    ]);
+  });
+
+  it('trierEtFiltrerRecommandations : tag match_aucun_autre_tag, contenu non exclu', () => {
+    // GIVEN
+    const content: TaggedContent = {
+      score: 0,
+      pourcent_match: 0,
+
+      getTags: () => [],
+      getDistinctText: () => 'abc',
+      isLocal: () => false,
+      getInclusionTags: () => [Tag_v2.a_un_jardin],
+      getExclusionTags: () => [Tag_v2.match_aucun_autre_tag],
+      getThematiques: () => [Thematique.alimentation],
+      explicationScore: new ExplicationScore(),
+    };
+
+    const profile = new ProfileRecommandationUtilisateur({
+      liste_tags_actifs: [Tag_v2.a_un_jardin],
+      version: 0,
+    });
+
+    // WHEN
+    const result = profile.trierEtFiltrerRecommandations([content]);
+    // THEN
+
+    expect(result).toHaveLength(1);
+    expect(result[0].explicationScore).toEqual({
+      liste_explications: [
+        {
+          inclusion_tag: 'a_un_jardin',
+          valeur: 10,
+          ponderation: 1,
+        },
+      ],
+    });
+  });
 });

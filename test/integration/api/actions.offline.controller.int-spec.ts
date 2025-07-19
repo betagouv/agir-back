@@ -125,6 +125,7 @@ describe('Single Actions Offline (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      score_recommandation: 0,
     });
   });
 

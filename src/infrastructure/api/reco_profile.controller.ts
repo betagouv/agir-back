@@ -153,7 +153,7 @@ export class RecoProfileController extends GenericControler {
         thematique: action.thematique,
         titre: action.titre,
         type: action.type,
-        est_exclue: action.explicationScore.doesContainExclusion(),
+        est_exclue: action.explicationScore.doesContainAnyExclusion(),
       };
       if (action.thematique === Thematique.alimentation) {
         result.alimentation.push(element);

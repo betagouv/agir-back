@@ -228,6 +228,7 @@ describe('Actions (API test)', () => {
         est_exclu: false,
         liste_explications: [],
       },
+      score_recommandation: 0.00481617146,
     });
   });
 

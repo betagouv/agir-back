@@ -493,6 +493,7 @@ describe('Thematique (API test)', () => {
       },
       label_compteur: 'label_compteur',
       montant_max_economies_euros: 0,
+      score_recommandation: 0.00481617146,
     });
   });
 
