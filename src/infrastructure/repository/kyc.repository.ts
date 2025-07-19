@@ -12,9 +12,11 @@ import { PrismaService } from '../prisma/prisma.service';
 export class KycRepository {
   constructor(private prisma: PrismaService) {
     KycRepository.catalogue_kyc = [];
+    KycRepository.map_kyc = new Map();
   }
 
   private static catalogue_kyc: KycDefinition[];
+  private static map_kyc: Map<string, KycDefinition>;
 
   async onApplicationBootstrap(): Promise<void> {
     try {
@@ -29,9 +31,17 @@ export class KycRepository {
   @Cron('* * * * *')
   async loadCache(): Promise<void> {
     const result = await this.prisma.kYC.findMany();
-    KycRepository.catalogue_kyc = result.map((elem) =>
-      this.buildKYCDefFromDB(elem),
-    );
+    const new_catalogue = [];
+    const new_map = new Map();
+
+    for (const element of result) {
+      const def = this.buildKYCDefFromDB(element);
+      new_catalogue.push(def);
+      new_map.set(def.code, def);
+    }
+
+    KycRepository.catalogue_kyc = new_catalogue;
+    KycRepository.map_kyc = new_map;
   }
 
   public static resetCache() {
@@ -84,6 +94,10 @@ export class KycRepository {
     return this.buildKYCDefFromDB(result);
   }
 
+  getByCode(kyc_code: string): KycDefinition {
+    return KycRepository.map_kyc.get(kyc_code);
+  }
+
   public static getCatalogue(): KycDefinition[] {
     return KycRepository.catalogue_kyc;
   }
@@ -115,4 +129,6 @@ export class KycRepository {
       a_supprimer: kycDB.a_supprimer,
     });
   }
+
+  private get;
 }

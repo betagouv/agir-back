@@ -5,29 +5,72 @@ import { Response as Res } from 'express';
 import { Action } from '../../domain/actions/action';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { KYCID } from '../../domain/kyc/KYCID';
-import { DynamicTag_v2Ref } from '../../domain/scoring/system_v2/DynamicTag_v2';
+import { ComputedTagList } from '../../domain/scoring/system_v2/ComputedTagList';
 import { KycToTags_v2 } from '../../domain/scoring/system_v2/kycToTagsV2';
 import { ProfileRecommandationUtilisateur } from '../../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../domain/scoring/system_v2/Tag_v2';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ApplicationError } from '../applicationError';
 import { ActionRepository } from '../repository/action.repository';
+import { KycRepository } from '../repository/kyc.repository';
+import { StatistiqueExternalRepository } from '../repository/statitstique.external.repository';
 import { TagRepository } from '../repository/tag.repository';
 import { GenericControler } from './genericControler';
 
-export class ProfileRecoActionAPI {
+class ActionTagAPI {
+  @ApiProperty() code: string;
+  @ApiProperty() type: string;
+  @ApiProperty() titre: string;
+  @ApiProperty({ enum: Thematique }) thematique: Thematique;
+}
+class KycTagAPI {
+  @ApiProperty() code: string;
+  @ApiProperty() question: string;
+}
+
+enum TypeTag {
+  kyc_based = 'kyc_based',
+  computed = 'computed',
+  editorial = 'editorial',
+}
+
+class TagAPI {
+  @ApiProperty() code: string;
+  @ApiProperty() label_recommandation: string;
+  @ApiProperty() description_interne: string;
+  @ApiProperty({ enum: TypeTag }) type: TypeTag;
+  @ApiProperty() est_cms_declaration_manquante: boolean;
+  @ApiProperty() est_backend_declaration_manquante: boolean;
+  @ApiProperty() pourcentage_user_avec_tag: number;
+  @ApiProperty() nombre_user_avec_tag: number;
+  @ApiProperty({ type: [KycTagAPI] }) kyc_creation_tag: KycTagAPI[];
+  @ApiProperty({ type: [ActionTagAPI] }) actions_incluantes: ActionTagAPI[];
+  @ApiProperty({ type: [ActionTagAPI] }) actions_excluantes: ActionTagAPI[];
+
+  constructor(tag: string) {
+    this.actions_excluantes = [];
+    this.actions_incluantes = [];
+    this.code = tag;
+    const tag_def = TagRepository.getTagDefinition(tag);
+    if (tag_def) {
+      this.label_recommandation = tag_def.label_explication;
+      this.description_interne = tag_def.description;
+      this.est_cms_declaration_manquante = false;
+    } else {
+      this.est_cms_declaration_manquante = true;
+    }
+  }
+}
+
+class ProfileRecoActionAPI {
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: TypeAction }) type: TypeAction;
   @ApiProperty() pourcentage_reco: number;
   @ApiProperty() est_exclue: boolean;
 }
-export enum PersonaProfile {
-  urbain = 'urbain',
-  rural = 'rural',
-}
 
-export class ProfileRecoAPI {
+class ProfileRecoAPI {
   @ApiProperty({ type: [ProfileRecoActionAPI] })
   logement: ProfileRecoActionAPI[];
 
@@ -100,7 +143,11 @@ export class MappingKycTagAPI {
 @ApiTags('Z - Admin')
 @Controller()
 export class RecoProfileController extends GenericControler {
-  constructor(private actionRepository: ActionRepository) {
+  constructor(
+    private actionRepository: ActionRepository,
+    private statsRepo: StatistiqueExternalRepository,
+    private kycRepo: KycRepository,
+  ) {
     super();
   }
 
@@ -203,7 +250,7 @@ export class RecoProfileController extends GenericControler {
 
     result.dynamic_tags = [];
 
-    for (const [tag, explication] of Object.entries(DynamicTag_v2Ref)) {
+    for (const [tag, explication] of Object.entries(ComputedTagList)) {
       result.dynamic_tags.push({
         tag: Tag_v2[tag],
         explication: explication,
@@ -245,5 +292,111 @@ export class RecoProfileController extends GenericControler {
     }
 
     return result;
+  }
+
+  @Get('tags/dictionnaire')
+  @ApiOkResponse({ type: [TagAPI] })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  async getDicoTags(): Promise<TagAPI[]> {
+    const dico = this.build_dictionnaire();
+    return dico;
+  }
+
+  private async build_dictionnaire(): Promise<TagAPI[]> {
+    const result: TagAPI[] = [];
+
+    const nombre_total_users = await this.utilisateurRepository.countAll();
+
+    const dependency_report = KycToTags_v2.generate_dependency_report();
+    const reverse_dependency: Map<Tag_v2, Set<KYCID>> = new Map();
+
+    for (const [kyc_id, tag_set] of Object.entries(dependency_report)) {
+      for (const tag of tag_set) {
+        const elem = reverse_dependency.get(tag);
+        if (elem) {
+          elem.add(KYCID[kyc_id]);
+        } else {
+          const set: Set<KYCID> = new Set();
+          set.add(KYCID[kyc_id]);
+          reverse_dependency.set(tag, set);
+        }
+      }
+    }
+
+    for (const tag of Object.values(Tag_v2)) {
+      const tag_api: TagAPI = new TagAPI(tag);
+      tag_api.est_backend_declaration_manquante = false;
+
+      await this.enrichTagInfo(tag_api, reverse_dependency, nombre_total_users);
+
+      result.push(tag_api);
+    }
+
+    for (const tag_def of TagRepository.getCatalogue().values()) {
+      if (!KYCID[tag_def.tag]) {
+        const tag_api = new TagAPI(tag_def.tag);
+
+        if (ComputedTagList[tag_def.tag]) {
+          tag_api.type = TypeTag.computed;
+          tag_api.description_interne = ComputedTagList[tag_def.tag];
+        } else {
+          tag_api.est_backend_declaration_manquante = true;
+        }
+
+        await this.enrichTagInfo(
+          tag_api,
+          reverse_dependency,
+          nombre_total_users,
+        );
+        result.push(tag_api);
+      }
+    }
+    return result;
+  }
+
+  private async enrichTagInfo(
+    tag_api: TagAPI,
+    reverse_dependency: Map<Tag_v2, Set<KYCID>>,
+    nombre_total_users: number,
+  ) {
+    const tagged_users = await this.statsRepo.getNombreUserAvecTag(
+      tag_api.code,
+    );
+    tag_api.nombre_user_avec_tag = tagged_users;
+    tag_api.pourcentage_user_avec_tag =
+      Math.round((tagged_users / nombre_total_users) * 1000) / 10;
+
+    if (Tag_v2[tag_api.code]) {
+      const set_kyc = reverse_dependency.get(Tag_v2[tag_api.code]);
+      if (set_kyc) {
+        tag_api.type = TypeTag.kyc_based;
+        for (const kyc of set_kyc) {
+          tag_api.kyc_creation_tag.push({
+            code: kyc,
+            question: this.kycRepo.getByCode(kyc)?.question,
+          });
+        }
+      }
+    }
+
+    for (const action_def of this.actionRepository.getActionCompleteList()) {
+      if (action_def.tags_a_inclure.includes(tag_api.code)) {
+        tag_api.actions_incluantes.push({
+          code: action_def.code,
+          thematique: action_def.thematique,
+          titre: action_def.titre,
+          type: action_def.type,
+        });
+      }
+      if (action_def.tags_a_exclure.includes(tag_api.code)) {
+        tag_api.actions_excluantes.push({
+          code: action_def.code,
+          thematique: action_def.thematique,
+          titre: action_def.titre,
+          type: action_def.type,
+        });
+      }
+    }
   }
 }

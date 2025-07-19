@@ -1,6 +1,6 @@
 import { Tag_v2 } from './Tag_v2';
 
-export const DynamicTag_v2Ref: { [key in Tag_v2]?: string } = {
+export const ComputedTagList: { [key in Tag_v2]?: string } = {
   est_un_contenu_local:
     'Tag dynamique affecté aux contenus détectés comme locaux',
   recommandation_winter:

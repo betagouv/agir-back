@@ -28,7 +28,7 @@ export type KycToTagMapper<T extends KYCID> = {
   distribute?: CODE_TAG;
 };
 
-const KYC_TAG_MAPPER_COLLECTION: {
+export const KYC_TAG_MAPPER_COLLECTION: {
   [key in KYCID]?: KycToTagMapper<key>;
 } = {
   KYC_proprietaire: {

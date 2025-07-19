@@ -72,6 +72,16 @@ export class StatistiqueExternalRepository {
     });
   }
 
+  public async getNombreUserAvecTag(tag: string): Promise<number> {
+    return await this.prismaStats.personnalisation.count({
+      where: {
+        tags: {
+          has: tag,
+        },
+      },
+    });
+  }
+
   public async createUserQuestionData(
     action_cms_id: string,
     action_titre: string,
