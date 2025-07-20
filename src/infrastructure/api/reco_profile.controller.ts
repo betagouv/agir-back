@@ -6,6 +6,7 @@ import { Action } from '../../domain/actions/action';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { KYCID } from '../../domain/kyc/KYCID';
 import { ComputedTagList } from '../../domain/scoring/system_v2/ComputedTagList';
+import { EditorialTagList } from '../../domain/scoring/system_v2/EditorialTagList';
 import { KycToTags_v2 } from '../../domain/scoring/system_v2/kycToTagsV2';
 import { ProfileRecommandationUtilisateur } from '../../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Tag_v2 } from '../../domain/scoring/system_v2/Tag_v2';
@@ -18,19 +19,26 @@ import { TagRepository } from '../repository/tag.repository';
 import { GenericControler } from './genericControler';
 
 class ActionTagAPI {
+  @ApiProperty() id_cms: string;
   @ApiProperty() code: string;
   @ApiProperty() type: string;
   @ApiProperty() titre: string;
   @ApiProperty({ enum: Thematique }) thematique: Thematique;
 }
 class KycTagAPI {
+  @ApiProperty() id_cms: string;
   @ApiProperty() code: string;
   @ApiProperty() question: string;
 }
+class WarningTagAPI {
+  @ApiProperty() est_cms_declaration_manquante: boolean;
+  @ApiProperty() est_backend_declaration_manquante: boolean;
+  @ApiProperty() est_activation_fonctionnelle_absente: boolean;
+}
 
 enum TypeTag {
-  kyc_based = 'kyc_based',
-  computed = 'computed',
+  user_kyc = 'user_kyc',
+  user_computed = 'user_computed',
   editorial = 'editorial',
 }
 
@@ -38,9 +46,8 @@ class TagAPI {
   @ApiProperty() code: string;
   @ApiProperty() label_recommandation: string;
   @ApiProperty() description_interne: string;
+  @ApiProperty({ type: WarningTagAPI }) warnings: WarningTagAPI;
   @ApiProperty({ enum: TypeTag }) type: TypeTag;
-  @ApiProperty() est_cms_declaration_manquante: boolean;
-  @ApiProperty() est_backend_declaration_manquante: boolean;
   @ApiProperty() pourcentage_user_avec_tag: number;
   @ApiProperty() nombre_user_avec_tag: number;
   @ApiProperty({ type: [KycTagAPI] }) kyc_creation_tag: KycTagAPI[];
@@ -50,14 +57,20 @@ class TagAPI {
   constructor(tag: string) {
     this.actions_excluantes = [];
     this.actions_incluantes = [];
+    this.kyc_creation_tag = [];
     this.code = tag;
+    this.warnings = {
+      est_activation_fonctionnelle_absente: false,
+      est_backend_declaration_manquante: false,
+      est_cms_declaration_manquante: false,
+    };
     const tag_def = TagRepository.getTagDefinition(tag);
     if (tag_def) {
       this.label_recommandation = tag_def.label_explication;
       this.description_interne = tag_def.description;
-      this.est_cms_declaration_manquante = false;
+      this.warnings.est_cms_declaration_manquante = false;
     } else {
-      this.est_cms_declaration_manquante = true;
+      this.warnings.est_cms_declaration_manquante = true;
     }
   }
 }
@@ -311,7 +324,7 @@ export class RecoProfileController extends GenericControler {
     const dependency_report = KycToTags_v2.generate_dependency_report();
     const reverse_dependency: Map<Tag_v2, Set<KYCID>> = new Map();
 
-    for (const [kyc_id, tag_set] of Object.entries(dependency_report)) {
+    for (const [kyc_id, tag_set] of dependency_report.entries()) {
       for (const tag of tag_set) {
         const elem = reverse_dependency.get(tag);
         if (elem) {
@@ -326,7 +339,6 @@ export class RecoProfileController extends GenericControler {
 
     for (const tag of Object.values(Tag_v2)) {
       const tag_api: TagAPI = new TagAPI(tag);
-      tag_api.est_backend_declaration_manquante = false;
 
       await this.enrichTagInfo(tag_api, reverse_dependency, nombre_total_users);
 
@@ -334,15 +346,10 @@ export class RecoProfileController extends GenericControler {
     }
 
     for (const tag_def of TagRepository.getCatalogue().values()) {
-      if (!KYCID[tag_def.tag]) {
+      if (!Tag_v2[tag_def.tag]) {
         const tag_api = new TagAPI(tag_def.tag);
 
-        if (ComputedTagList[tag_def.tag]) {
-          tag_api.type = TypeTag.computed;
-          tag_api.description_interne = ComputedTagList[tag_def.tag];
-        } else {
-          tag_api.est_backend_declaration_manquante = true;
-        }
+        tag_api.warnings.est_backend_declaration_manquante = true;
 
         await this.enrichTagInfo(
           tag_api,
@@ -367,15 +374,29 @@ export class RecoProfileController extends GenericControler {
     tag_api.pourcentage_user_avec_tag =
       Math.round((tagged_users / nombre_total_users) * 1000) / 10;
 
+    if (this.isComputed(tag_api.code)) {
+      tag_api.type = TypeTag.user_computed;
+      tag_api.description_interne = ComputedTagList[tag_api.code];
+    } else if (this.isEditorial(tag_api.code)) {
+      tag_api.type = TypeTag.editorial;
+      tag_api.description_interne = EditorialTagList[tag_api.code];
+    } else {
+      tag_api.type = TypeTag.user_kyc;
+    }
+
     if (Tag_v2[tag_api.code]) {
       const set_kyc = reverse_dependency.get(Tag_v2[tag_api.code]);
       if (set_kyc) {
-        tag_api.type = TypeTag.kyc_based;
         for (const kyc of set_kyc) {
           tag_api.kyc_creation_tag.push({
+            id_cms: '' + this.kycRepo.getByCode(kyc)?.id_cms,
             code: kyc,
             question: this.kycRepo.getByCode(kyc)?.question,
           });
+        }
+      } else {
+        if (this.isKycBased(tag_api.code)) {
+          tag_api.warnings.est_activation_fonctionnelle_absente = true;
         }
       }
     }
@@ -387,6 +408,7 @@ export class RecoProfileController extends GenericControler {
           thematique: action_def.thematique,
           titre: action_def.titre,
           type: action_def.type,
+          id_cms: action_def.cms_id,
         });
       }
       if (action_def.tags_a_exclure.includes(tag_api.code)) {
@@ -395,8 +417,19 @@ export class RecoProfileController extends GenericControler {
           thematique: action_def.thematique,
           titre: action_def.titre,
           type: action_def.type,
+          id_cms: action_def.cms_id,
         });
       }
     }
+  }
+
+  private isEditorial(tag: string): boolean {
+    return !!EditorialTagList[tag];
+  }
+  private isComputed(tag: string): boolean {
+    return !!ComputedTagList[tag];
+  }
+  private isKycBased(tag: string): boolean {
+    return !ComputedTagList[tag] && !EditorialTagList[tag] && !!Tag_v2[tag];
   }
 }
