@@ -286,6 +286,8 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -362,6 +364,8 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

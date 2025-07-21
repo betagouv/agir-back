@@ -440,6 +440,8 @@ describe('UtilisateurRepository', () => {
       code_commune: '123',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     const count = await utilisateurRepository.countByCodesCommune([
@@ -469,6 +471,8 @@ describe('UtilisateurRepository', () => {
       code_commune: '123',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     const logement2: Logement_v0 = {
       version: 0,
@@ -489,6 +493,8 @@ describe('UtilisateurRepository', () => {
       code_commune: '456',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     const logement3: Logement_v0 = {
       version: 0,
@@ -509,6 +515,8 @@ describe('UtilisateurRepository', () => {
       code_commune: '789',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, {
       id: '1',

@@ -1033,6 +1033,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1090,6 +1092,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1154,6 +1158,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1237,6 +1243,8 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {

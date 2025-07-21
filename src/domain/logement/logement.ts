@@ -81,6 +81,8 @@ export class Logement {
   plus_de_15_ans: boolean;
   dpe: DPE;
   prm: string;
+  est_prm_obsolete: boolean;
+  est_prm_par_adresse: boolean;
   score_risques_adresse: ScoreRisquesAdresse;
 
   commune_label?: string;
@@ -106,6 +108,8 @@ export class Logement {
     this.latitude = log.latitude;
     this.longitude = log.longitude;
     this.code_commune = log.code_commune;
+    this.est_prm_obsolete = !!log.est_prm_obsolete;
+    this.est_prm_par_adresse = !!log.est_prm_par_adresse;
     this.score_risques_adresse = new ScoreRisquesAdresse(
       log.score_risques_adresse,
     );

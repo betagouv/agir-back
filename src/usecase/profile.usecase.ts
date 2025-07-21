@@ -307,6 +307,16 @@ export class ProfileUsecase {
 
     utilisateur.logement.patch(data_to_update, utilisateur);
 
+    if (
+      (input.numero_rue ||
+        input.rue ||
+        input.code_commune ||
+        input.code_postal) &&
+      utilisateur.logement.prm &&
+      utilisateur.logement.est_prm_par_adresse
+    ) {
+      utilisateur.logement.est_prm_obsolete = true;
+    }
     if (data_to_update.code_commune) {
       new KycToTags_v2(
         utilisateur.kyc_history,

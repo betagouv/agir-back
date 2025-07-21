@@ -104,6 +104,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345678901234',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -164,6 +166,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345678901234',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -199,6 +203,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -233,6 +239,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -271,6 +279,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -386,6 +396,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],

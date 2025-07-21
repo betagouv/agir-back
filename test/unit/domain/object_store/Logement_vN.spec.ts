@@ -50,6 +50,8 @@ describe('Logement vN ', () => {
         tempete: NiveauRisqueLogement.moyen,
       },
       prm: '123',
+      est_prm_obsolete: true,
+      est_prm_par_adresse: false,
     });
 
     // WHEN
@@ -88,6 +90,8 @@ describe('Logement vN ', () => {
         tempete: NiveauRisqueLogement.moyen,
       },
       prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: true,
     });
 
     // WHEN

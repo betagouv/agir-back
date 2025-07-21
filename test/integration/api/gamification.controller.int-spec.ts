@@ -31,6 +31,8 @@ const logement_palaiseau: Logement_v0 = {
   code_commune: '91477',
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 
 const logement_dijon: Logement_v0 = {
@@ -52,6 +54,8 @@ const logement_dijon: Logement_v0 = {
   code_commune: '21231',
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 describe('Gamification  (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

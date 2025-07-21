@@ -207,6 +207,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: '12345',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -235,6 +237,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: '12345',
+      est_prm_obsolete: false,
+      est_prm_present: false,
     });
   });
 
@@ -260,6 +264,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
 
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -288,6 +294,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       numero_rue: '12',
       rue: 'avenue de la Paix',
       code_commune: '12345',
+      est_prm_obsolete: false,
+      est_prm_present: false,
     });
   });
 
@@ -312,6 +320,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: '23456',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -347,6 +357,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -426,6 +438,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
         tempete: NiveauRisqueLogement.fort,
       },
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     // WHEN
@@ -1190,6 +1204,92 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Tag_v2.habite_zone_urbaine,
     ]);
   });
+  it('PATCH /utilisateurs/id/logement - update code_commune , si PRM par adresse => obsolète', async () => {
+    // GIVEN
+    const logement_91120: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: true,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement_91120 as any });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_commune: '91477',
+      code_postal: '91120',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(dbUser.logement.est_prm_obsolete).toEqual(true);
+  });
+  it('PATCH /utilisateurs/id/logement - update code_commune , si PRM PAS par adresse => PAS obsolète', async () => {
+    // GIVEN
+    const logement_91120: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement_91120 as any });
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_commune: '91477',
+      code_postal: '91120',
+    });
+
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    // KYCs
+    expect(dbUser.logement.est_prm_obsolete).toEqual(false);
+  });
   it('PATCH /utilisateurs/id/logement - update logement datas et synchro KYC logement age supp', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1636,6 +1736,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1656,6 +1758,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {

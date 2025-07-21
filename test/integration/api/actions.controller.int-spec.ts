@@ -47,6 +47,8 @@ const logement: Logement_v0 = {
   code_commune: '21231',
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 
 describe('Actions (API test)', () => {
