@@ -7,7 +7,6 @@ import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
-import { ProfileUsecase } from './usecase/profile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
@@ -51,7 +50,7 @@ async function bootstrap() {
       start_time = Date.now();
       console.log(`START update_user_couverture ${start_time}`);
       const result_couv = await application
-        .get(ProfileUsecase)
+        .get(AidesUsecase)
         .updateAllUserCouvertureAides();
       console.log(
         `STOP update_user_couverture after ${Date.now() - start_time} ms`,
