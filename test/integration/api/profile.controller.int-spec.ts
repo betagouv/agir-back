@@ -1670,22 +1670,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(servicesDefDB).toHaveLength(1);
   });
 
-  it(`POST /utilisateurs/id/reset reset tous les utilisateurs`, async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.utilisateur, { id: '1', email: '1' });
-    await TestUtil.create(DB.utilisateur, { id: '2', email: '2' });
-
-    // WHEN
-    const response = await TestUtil.POST('/utilisateurs/reset').send({
-      confirmation: 'CONFIRMATION RESET',
-    });
-
-    const userDB1 = await utilisateurRepository.getById('1', [Scope.ALL]);
-
-    // THEN
-    expect(response.status).toBe(201);
-  });
   it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

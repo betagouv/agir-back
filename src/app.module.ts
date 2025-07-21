@@ -120,6 +120,7 @@ import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { LogementUsecase } from './usecase/logement.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
@@ -297,6 +298,7 @@ function getControllers(): any[] {
     WinterRepository,
     CatalogueActionUsecase,
     SelectionRepository,
+    LogementUsecase,
   ],
 })
 export class AppModule {}

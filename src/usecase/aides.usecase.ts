@@ -338,6 +338,39 @@ export class AidesUsecase {
     }
   }
 
+  async updateAllUserCouvertureAides(block_size = 200): Promise<{
+    couvert: number;
+    pas_couvert: number;
+  }> {
+    let couvert = 0;
+    let pas_couvert = 0;
+
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.logement],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        user.couverture_aides_ok =
+          await this.aideRepository.isCodePostalCouvert(
+            user.logement.code_postal,
+          );
+        couvert += user.couverture_aides_ok ? 1 : 0;
+        pas_couvert += !user.couverture_aides_ok ? 1 : 0;
+        await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+          Scope.core,
+        ]);
+      }
+    }
+    return { couvert, pas_couvert };
+  }
+
   async external_count_aides(
     thematique?: Thematique,
     code_commune?: string,
