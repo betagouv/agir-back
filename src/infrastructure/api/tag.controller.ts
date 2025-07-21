@@ -1,5 +1,19 @@
-import { Controller, Get, Query, Response, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiProperty,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response as Res } from 'express';
 import { Action } from '../../domain/actions/action';
@@ -29,6 +43,9 @@ class KycTagAPI {
   @ApiProperty() id_cms: string;
   @ApiProperty() code: string;
   @ApiProperty() question: string;
+}
+class RecoSimuBodyAPI {
+  @ApiProperty({ enum: Tag_v2, isArray: true }) liste_tags: Tag_v2[];
 }
 class WarningTagAPI {
   @ApiProperty() est_cms_declaration_manquante: boolean;
@@ -164,6 +181,28 @@ export class TagController extends GenericControler {
     super();
   }
 
+  @Post('tags/simuler')
+  @ApiBody({
+    type: RecoSimuBodyAPI,
+    description: `liste des tags de l'utilisateur, si spécifié, prend la place des personas`,
+  })
+  @ApiOkResponse({ type: ProfileRecoAPI })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  async simuler_recommandations(
+    @Body() body: RecoSimuBodyAPI,
+  ): Promise<ProfileRecoAPI> {
+    for (const one_tag of body.liste_tags) {
+      if (!Tag_v2[one_tag]) {
+        ApplicationError.throwTagInconnu(one_tag);
+      }
+    }
+
+    const result = this.simulateTagProfile(body.liste_tags);
+
+    return result;
+  }
+
   @Get('recommandation/simulateur_actions_recommandees')
   @ApiQuery({
     name: 'tag',
@@ -178,15 +217,9 @@ export class TagController extends GenericControler {
   async action_reco_par_tag(
     @Query('tag') tag: string | string[],
     @Response() res: Res,
-  ): Promise<any> {
-    const result: ProfileRecoAPI = {
-      alimentation: [],
-      consommation: [],
-      logement: [],
-      transport: [],
-    };
-
+  ): Promise<ProfileRecoAPI> {
     const tag_liste = this.getStringListFromStringArrayAPIInput(tag);
+
     let final_tag_liste: Tag_v2[] = [];
     for (const one_tag of tag_liste) {
       if (Tag_v2[one_tag]) {
@@ -195,10 +228,22 @@ export class TagController extends GenericControler {
         ApplicationError.throwTagInconnu(one_tag);
       }
     }
+    const result = this.simulateTagProfile(final_tag_liste);
+
+    return res.json(result) as any;
+  }
+
+  private simulateTagProfile(tag_liste: Tag_v2[]): ProfileRecoAPI {
+    const result: ProfileRecoAPI = {
+      alimentation: [],
+      consommation: [],
+      logement: [],
+      transport: [],
+    };
 
     const profile = new ProfileRecommandationUtilisateur({
       version: 0,
-      liste_tags_actifs: final_tag_liste,
+      liste_tags_actifs: tag_liste,
     });
 
     let stock_actions = this.actionRepository
@@ -234,7 +279,7 @@ export class TagController extends GenericControler {
     result.transport.sort((a, b) => b.pourcentage_reco - a.pourcentage_reco);
     result.consommation.sort((a, b) => b.pourcentage_reco - a.pourcentage_reco);
 
-    return res.json(result);
+    return result;
   }
 
   @Get('recommandation/mapping_kyc_tags')
@@ -305,6 +350,14 @@ export class TagController extends GenericControler {
     }
 
     return result;
+  }
+
+  @Get('tags')
+  @ApiOkResponse({ type: [String] })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  async getTagList(): Promise<String[]> {
+    return Object.values(Tag_v2);
   }
 
   @Get('tags/dictionnaire')
