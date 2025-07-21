@@ -19,6 +19,7 @@ export class LogementAPI {
   @ApiProperty() rue: string;
   @ApiProperty() est_prm_present: boolean;
   @ApiProperty() est_prm_obsolete: boolean;
+  @ApiProperty() est_adresse_complete: boolean;
 
   @ApiProperty({ required: false }) commune_label: string;
   @ApiProperty({ enum: TypeLogement }) type: TypeLogement;
@@ -49,6 +50,7 @@ export class LogementAPI {
       code_commune: log.code_commune,
       est_prm_present: !!log.prm,
       est_prm_obsolete: log.est_prm_obsolete,
+      est_adresse_complete: log.possedeAdressePrecise(),
     };
   }
 }

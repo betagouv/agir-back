@@ -239,6 +239,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: '12345',
       est_prm_obsolete: false,
       est_prm_present: false,
+      est_adresse_complete: true,
     });
   });
 
@@ -296,6 +297,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       code_commune: '12345',
       est_prm_obsolete: false,
       est_prm_present: false,
+      est_adresse_complete: true,
     });
   });
 
