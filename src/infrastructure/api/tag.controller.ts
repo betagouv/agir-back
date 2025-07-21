@@ -155,7 +155,7 @@ export class MappingKycTagAPI {
 
 @ApiTags('Z - Admin')
 @Controller()
-export class RecoProfileController extends GenericControler {
+export class TagController extends GenericControler {
   constructor(
     private actionRepository: ActionRepository,
     private statsRepo: StatistiqueExternalRepository,

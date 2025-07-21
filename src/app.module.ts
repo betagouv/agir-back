@@ -48,13 +48,13 @@ import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
 import { QuestionsKYCEnchainementController } from './infrastructure/api/questionKYCEnchainement.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
-import { RecoProfileController } from './infrastructure/api/reco_profile.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RisqesController } from './infrastructure/api/risques.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
 import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
+import { TagController } from './infrastructure/api/tag.controller';
 import { ThematiqueController } from './infrastructure/api/thematique.controller';
 import { WinterController } from './infrastructure/api/winter.controller';
 import { OidcService } from './infrastructure/auth/oidc.service';
@@ -180,7 +180,7 @@ function getControllers(): any[] {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(CmsPreviewController);
-    controllers.push(RecoProfileController);
+    controllers.push(TagController);
   }
   return controllers;
 }
