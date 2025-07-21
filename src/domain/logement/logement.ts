@@ -145,6 +145,10 @@ export class Logement {
     return !!this.numero_rue && !!this.rue;
   }
 
+  public getAdresse(): string {
+    return '' + this.numero_rue + ' ' + this.rue;
+  }
+
   private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;

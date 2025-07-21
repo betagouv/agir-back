@@ -34,7 +34,7 @@ const USAGE_EMOJI: Record<TypeUsage, string> = {
   hotWater: '🛁',
   lighting: '💡',
   mobility: '🚙',
-  multimedia: '',
+  multimedia: '📺',
   other: '✳️',
   swimmingPool: '🏊',
 };
@@ -44,7 +44,7 @@ const USAGE_COLORS: Record<TypeUsage, string> = {
   appliances: 'AEF372',
   cooking: 'A8C6E5',
   heating: 'FF9239',
-  hotWater: '98CCF',
+  hotWater: '98CCFF',
   lighting: 'FFC739',
   mobility: 'CB9F75',
   multimedia: 'C1BEFF',
@@ -64,9 +64,6 @@ export class WinterUsecase {
   public async inscrireAdresse(
     utilisateurId: string,
     nom: string,
-    adresse: string,
-    code_postal: string,
-    code_commune: string,
     ip: string,
     user_agent: string,
   ): Promise<void> {
@@ -79,17 +76,20 @@ export class WinterUsecase {
     if (!nom) {
       ApplicationError.throwNomObligatoireError();
     }
-    if (!code_postal || !code_commune) {
+    if (
+      !utilisateur.logement.code_postal ||
+      !utilisateur.logement.code_commune
+    ) {
       ApplicationError.throwCodePostalCommuneMandatory();
     }
-    if (!adresse) {
+    if (!utilisateur.logement.possedeAdressePrecise()) {
       ApplicationError.throwUserMissingAdresseForPrmSearch();
     }
     const target_prm = await this.winterRepository.rechercherPRMParAdresse(
       nom,
-      adresse,
-      code_commune,
-      code_postal,
+      utilisateur.logement.getAdresse(),
+      utilisateur.logement.code_commune,
+      utilisateur.logement.code_postal,
     );
 
     await this.connect_prm(utilisateur, nom, target_prm, ip, user_agent);

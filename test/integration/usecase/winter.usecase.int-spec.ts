@@ -50,7 +50,30 @@ describe('WinterUsecase', () => {
 
   it('connect_by_address : Connexion par adresse en argument OK', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     winterRepository.rechercherPRMParAdresse.mockImplementation(() => {
       return '12345';
@@ -60,9 +83,6 @@ describe('WinterUsecase', () => {
     await winterUsecase.inscrireAdresse(
       'utilisateur-id',
       'SMITH',
-      '20 rue de la paix',
-      '91120',
-      '91477',
       '127.0.0.1',
       'chrome',
     );
@@ -124,16 +144,36 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
 
   it('connect_by_address : missing name', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
         undefined,
-        '20 rue de la paix',
-        '91120',
-        '91477',
         '127.0.0.1',
         'chrome',
       );
@@ -151,16 +191,36 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : missing adresse', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: undefined,
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
         'toto',
-        undefined,
-        '91120',
-        '91477',
         '127.0.0.1',
         'chrome',
       );
@@ -180,16 +240,36 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : missing code postal', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: undefined,
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
         'toto',
-        '20 rue de la paix',
-        undefined,
-        '91477',
         '127.0.0.1',
         'chrome',
       );
@@ -208,17 +288,36 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     expect(consent).toHaveLength(0);
   });
   it('connect_by_address : missing code commune', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
         'toto',
-        '20 rue de la paix',
-        '91120',
-        undefined,
         '127.0.0.1',
         'chrome',
       );
@@ -238,7 +337,30 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : pas de PRM trouvé', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     winterRepository.rechercherPRMParAdresse.mockImplementation(() => {
       throw { message: 'not found' };
     });
@@ -247,9 +369,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
         'toto',
-        '20 rue de la paix',
-        '91120',
-        '91477',
         '127.0.0.1',
         'chrome',
       );
