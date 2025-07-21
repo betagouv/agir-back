@@ -28,28 +28,28 @@ const WINTER_PARTENAIRE_CMS_ID = '455';
 
 const USAGE_EMOJI: Record<TypeUsage, string> = {
   airConditioning: '❄️',
-  appliances: '📠',
-  cooking: '🍕',
+  appliances: '🧺',
+  cooking: '🍳',
   heating: '🔥',
-  hotWater: '💧',
+  hotWater: '🛁',
   lighting: '💡',
   mobility: '🚙',
-  multimedia: '🎮',
-  other: '❓',
+  multimedia: '',
+  other: '✳️',
   swimmingPool: '🏊',
 };
 
 const USAGE_COLORS: Record<TypeUsage, string> = {
-  airConditioning: '00809D',
-  appliances: 'FCECDD',
-  cooking: 'FF7601',
-  heating: 'F3A26D',
-  hotWater: 'FCD8CD',
-  lighting: 'FEEBF6',
-  mobility: 'EBD6FB',
-  multimedia: '748873',
-  other: 'D1A980',
-  swimmingPool: 'E5E0D8',
+  airConditioning: '007592',
+  appliances: 'AEF372',
+  cooking: 'A8C6E5',
+  heating: 'FF9239',
+  hotWater: '98CCF',
+  lighting: 'FFC739',
+  mobility: 'CB9F75',
+  multimedia: 'C1BEFF',
+  other: '77F2B2',
+  swimmingPool: '5574F2',
 };
 
 @Injectable()
