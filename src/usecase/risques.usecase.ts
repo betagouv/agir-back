@@ -44,7 +44,7 @@ export class RisquesUsecase {
     }
 
     if (latitude && longitude) {
-      return await this.maifRepository.findScoreRisque_2(longitude, latitude);
+      return await this.maifRepository.findScoreRisque(longitude, latitude);
     }
 
     if (utilisateur.logement.score_risques_adresse) {
@@ -52,7 +52,7 @@ export class RisquesUsecase {
     }
 
     if (utilisateur.logement.longitude) {
-      return await this.maifRepository.findScoreRisque_2(
+      return await this.maifRepository.findScoreRisque(
         utilisateur.logement.longitude,
         utilisateur.logement.latitude,
       );

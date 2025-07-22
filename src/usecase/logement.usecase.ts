@@ -180,7 +180,7 @@ export class LogementUsecase {
 
   private async setRisqueFromCoordonnees(utilisateur: Utilisateur) {
     if (utilisateur.logement.longitude && utilisateur.logement.latitude) {
-      const scoring = await this.maifRepository.findScoreRisque_2(
+      const scoring = await this.maifRepository.findScoreRisque(
         utilisateur.logement.longitude,
         utilisateur.logement.latitude,
       );
