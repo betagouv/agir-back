@@ -139,6 +139,7 @@ describe('WinterUsecase', () => {
     ]);
 
     expect(user.logement.prm).toEqual('12345');
+    expect(user.logement.est_prm_par_adresse).toEqual(true);
 
     const consent = (await TestUtil.prisma.linkyConsentement.findMany())[0];
 
