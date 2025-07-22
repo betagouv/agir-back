@@ -479,6 +479,13 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       code: '456',
       description: 'The desc',
+      titre: 'the titre',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+        url: 'http://monurl',
+      },
     } as CMSWebhookEntryAPI,
   };
 
@@ -837,6 +844,8 @@ describe('/api/incoming/cms (API test)', () => {
       description: 'The desc',
       id_cms: '123',
       code: '456',
+      titre: 'the titre',
+      image_url: 'https://',
     });
   });
 

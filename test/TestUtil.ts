@@ -779,6 +779,8 @@ export class TestUtil {
       id_cms: '123',
       code: '456',
       description: 'desc',
+      titre: 'titre',
+      image_url: 'url',
       created_at: undefined,
       updated_at: undefined,
       ...override,

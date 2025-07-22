@@ -806,6 +806,8 @@ export class CMSImportUsecase {
       cms_id: entry.id.toString(),
       code: entry.attributes.code,
       description: entry.attributes.description,
+      titre: entry.attributes.titre,
+      image_url: this.getImageUrlFromPopulate(entry.attributes.imageUrl),
     };
   }
   private buildQuizzFromCMSPopulateData(

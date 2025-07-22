@@ -57,6 +57,8 @@ export class SelectionRepository {
       id_cms: selection_def.cms_id,
       code: selection_def.code,
       description: selection_def.description,
+      image_url: selection_def.image_url,
+      titre: selection_def.titre,
       created_at: undefined,
       updated_at: undefined,
     };
@@ -86,6 +88,8 @@ export class SelectionRepository {
       cms_id: selection.id_cms,
       code: selection.code,
       description: selection.description,
+      image_url: selection.image_url,
+      titre: selection.titre,
     });
   }
 }

@@ -663,6 +663,8 @@ export class CMSWebhookUsecase {
       cms_id: entry.id.toString(),
       code: entry.code,
       description: entry.description,
+      titre: entry.titre,
+      image_url: this.getImageUrlFromImageField(entry.imageUrl),
     };
   }
 
