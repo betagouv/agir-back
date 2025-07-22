@@ -93,6 +93,8 @@ export class WinterUsecase {
     );
 
     await this.connect_prm(utilisateur, nom, target_prm, ip, user_agent);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public async inscrirePRM(
@@ -117,6 +119,8 @@ export class WinterUsecase {
     }
 
     await this.connect_prm(utilisateur, nom, prm, ip, user_agent);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public async supprimerPRM(utilisateurId: string): Promise<void> {
@@ -260,11 +264,6 @@ export class WinterUsecase {
     );
 
     await this.linkyConsentRepository.insert(consent);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.logement],
-    );
   }
 
   private buildConsentement(
