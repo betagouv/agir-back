@@ -101,7 +101,14 @@ export class WinterUsecase {
       utilisateur.logement.code_postal,
     );
 
-    await this.connect_prm(utilisateur, input.nom, target_prm, ip, user_agent);
+    await this.connect_prm(
+      utilisateur,
+      input.nom,
+      target_prm,
+      ip,
+      user_agent,
+      true,
+    );
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -127,7 +134,7 @@ export class WinterUsecase {
       ApplicationError.throwBadPRM(prm);
     }
 
-    await this.connect_prm(utilisateur, nom, prm, ip, user_agent);
+    await this.connect_prm(utilisateur, nom, prm, ip, user_agent, false);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
@@ -251,6 +258,7 @@ export class WinterUsecase {
     prm: string,
     ip: string,
     user_agent: string,
+    par_adresse: boolean,
   ): Promise<void> {
     await this.winterRepository.inscrirePRM(
       prm,
@@ -262,6 +270,7 @@ export class WinterUsecase {
     );
 
     utilisateur.logement.prm = prm;
+    utilisateur.logement.est_prm_par_adresse = par_adresse;
 
     const consent = this.buildConsentement(
       utilisateur.email,

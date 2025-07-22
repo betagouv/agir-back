@@ -162,4 +162,8 @@ export class Logement {
     const enfants = this.nombre_enfants ? this.nombre_enfants : 0;
     return enfants + adultes;
   }
+
+  public estPRMPresentEtParAdresse(): boolean {
+    return this.prm && this.est_prm_par_adresse;
+  }
 }

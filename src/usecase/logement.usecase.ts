@@ -140,8 +140,13 @@ export class LogementUsecase {
         input.rue ||
         input.code_commune ||
         input.code_postal) &&
-      utilisateur.logement.prm &&
-      utilisateur.logement.est_prm_par_adresse
+      utilisateur.logement.estPRMPresentEtParAdresse()
+    ) {
+      utilisateur.logement.est_prm_obsolete = true;
+    }
+    if (
+      (input.numero_rue === null || input.rue === null) &&
+      utilisateur.logement.estPRMPresentEtParAdresse()
     ) {
       utilisateur.logement.est_prm_obsolete = true;
     }
