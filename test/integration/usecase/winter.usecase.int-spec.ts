@@ -8,8 +8,14 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
+import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
+import { MaifRepository } from '../../../src/infrastructure/repository/services_recherche/maif/maif.repository';
+import { MaifAPIClient } from '../../../src/infrastructure/repository/services_recherche/maif/maifAPIClient';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { LogementUsecase } from '../../../src/usecase/logement.usecase';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -19,6 +25,21 @@ describe('WinterUsecase', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let actionRepository = new ActionRepository(TestUtil.prisma);
+  let aideRepository = new AideRepository(TestUtil.prisma);
+  let communeRepository = new CommuneRepository(TestUtil.prisma);
+  let maifAPIClient = new MaifAPIClient();
+  let risquesNaturelsCommunesRepository = new RisquesNaturelsCommunesRepository(
+    TestUtil.prisma,
+  );
+  let maifRepository = new MaifRepository(communeRepository, maifAPIClient);
+
+  let logementUsecase = new LogementUsecase(
+    utilisateurRepository,
+    aideRepository,
+    communeRepository,
+    maifRepository,
+    risquesNaturelsCommunesRepository,
+  );
 
   let winterRepository = {
     rechercherPRMParAdresse: jest.fn(),
@@ -30,6 +51,7 @@ describe('WinterUsecase', () => {
     utilisateurRepository,
     winterRepository as any,
     actionRepository,
+    logementUsecase,
     linkyConsentRepository,
   );
 
@@ -62,10 +84,10 @@ describe('WinterUsecase', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      latitude: 48,
-      longitude: 2,
-      numero_rue: '20',
-      rue: 'rue de la paix',
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      rue: undefined,
       code_commune: '91477',
       score_risques_adresse: undefined,
       prm: '123',
@@ -82,7 +104,15 @@ describe('WinterUsecase', () => {
     // WHEN
     await winterUsecase.inscrireAdresse(
       'utilisateur-id',
-      'SMITH',
+      {
+        code_commune: '91477',
+        code_postal: '91120',
+        latitude: 42,
+        longitude: 2,
+        nom: 'SMITH',
+        numero_rue: '20',
+        rue: 'rue de la paix',
+      },
       '127.0.0.1',
       'chrome',
     );
@@ -173,7 +203,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        undefined,
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: undefined,
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -220,7 +258,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: undefined,
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -269,7 +315,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
+        {
+          code_commune: '91477',
+          code_postal: undefined,
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -317,7 +371,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
+        {
+          code_commune: undefined,
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -368,7 +430,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );

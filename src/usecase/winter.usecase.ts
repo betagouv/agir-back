@@ -7,12 +7,14 @@ import {
 import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ConnectPRMByAddressAPI } from '../infrastructure/api/types/winter/connectPRMByAddressAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { WinterUsageBreakdown } from '../infrastructure/repository/winter/winterAPIClient';
+import { LogementUsecase } from './logement.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -58,41 +60,48 @@ export class WinterUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
     private actionRepository: ActionRepository,
+    private logementUsecase: LogementUsecase,
     private linkyConsentRepository: LinkyConsentRepository,
   ) {}
 
   public async inscrireAdresse(
     utilisateurId: string,
-    nom: string,
+    input: ConnectPRMByAddressAPI,
     ip: string,
     user_agent: string,
   ): Promise<void> {
+    if (!input.nom) {
+      ApplicationError.throwNomObligatoireError();
+    }
+    if (!input.code_postal || !input.code_commune) {
+      ApplicationError.throwCodePostalCommuneMandatory();
+    }
+    if (!input.numero_rue || !input.rue) {
+      ApplicationError.throwUserMissingAdresseForPrmSearch();
+    }
+
+    await this.logementUsecase.updateUtilisateurLogement(utilisateurId, {
+      rue: input.rue,
+      code_commune: input.code_commune,
+      code_postal: input.code_postal,
+      latitude: input.latitude,
+      longitude: input.longitude,
+      numero_rue: input.numero_rue,
+    });
+
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.logement],
     );
-    Utilisateur.checkState(utilisateur);
 
-    if (!nom) {
-      ApplicationError.throwNomObligatoireError();
-    }
-    if (
-      !utilisateur.logement.code_postal ||
-      !utilisateur.logement.code_commune
-    ) {
-      ApplicationError.throwCodePostalCommuneMandatory();
-    }
-    if (!utilisateur.logement.possedeAdressePrecise()) {
-      ApplicationError.throwUserMissingAdresseForPrmSearch();
-    }
     const target_prm = await this.winterRepository.rechercherPRMParAdresse(
-      nom,
+      input.nom,
       utilisateur.logement.getAdresse(),
       utilisateur.logement.code_commune,
       utilisateur.logement.code_postal,
     );
 
-    await this.connect_prm(utilisateur, nom, target_prm, ip, user_agent);
+    await this.connect_prm(utilisateur, input.nom, target_prm, ip, user_agent);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }

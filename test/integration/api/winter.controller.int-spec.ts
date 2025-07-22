@@ -67,6 +67,8 @@ describe('Winter (API test)', () => {
       adresse: '20 rue de la paix',
       code_postal: '91120',
       code_commune: '91477',
+      rue: 'Rue de la paix',
+      numero_rue: '20',
     });
 
     // THEN
@@ -112,6 +114,8 @@ describe('Winter (API test)', () => {
         adresse: '20 rue de la paix',
         code_postal: '91120',
         code_commune: '91477',
+        rue: 'Rue de la paix',
+        numero_rue: '20',
       });
 
     // THEN

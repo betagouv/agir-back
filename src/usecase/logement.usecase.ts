@@ -145,14 +145,6 @@ export class LogementUsecase {
     ) {
       utilisateur.logement.est_prm_obsolete = true;
     }
-    if (data_to_update.code_commune) {
-      new KycToTags_v2(
-        utilisateur.kyc_history,
-        utilisateur.logement,
-        this.communeRepository,
-        this.risquesNaturelsCommunesRepository,
-      ).refreshTagState_v2(utilisateur.recommandation);
-    }
 
     try {
       LogementToKycSync.synchronize(input, utilisateur.kyc_history);
@@ -172,11 +164,18 @@ export class LogementUsecase {
       utilisateur.logement.score_risques_adresse = undefined;
     }
 
-    await this.utilisateurRepository.updateUtilisateur(utilisateur);
-
     if (input.longitude && input.latitude) {
-      this.setRisqueFromCoordonnees(utilisateur);
+      await this.setRisqueFromCoordonnees(utilisateur);
     }
+
+    new KycToTags_v2(
+      utilisateur.kyc_history,
+      utilisateur.logement,
+      this.communeRepository,
+      this.risquesNaturelsCommunesRepository,
+    ).refreshTagState_v2(utilisateur.recommandation);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   private async setRisqueFromCoordonnees(utilisateur: Utilisateur) {
@@ -193,11 +192,6 @@ export class LogementUsecase {
         this.communeRepository,
         this.risquesNaturelsCommunesRepository,
       ).refreshTagState_v2(utilisateur.recommandation);
-
-      await this.utilisateurRepository.updateUtilisateurNoConcurency(
-        utilisateur,
-        [Scope.logement, Scope.recommandation],
-      );
     }
   }
 }
