@@ -185,13 +185,6 @@ export class LogementUsecase {
         utilisateur.logement.latitude,
       );
       utilisateur.logement.score_risques_adresse = scoring;
-
-      new KycToTags_v2(
-        utilisateur.kyc_history,
-        utilisateur.logement,
-        this.communeRepository,
-        this.risquesNaturelsCommunesRepository,
-      ).refreshTagState_v2(utilisateur.recommandation);
     }
   }
 }
