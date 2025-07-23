@@ -177,6 +177,7 @@ export class Synthese_v2Controller extends GenericControler {
       IS_CODE_EPCI,
       code_input,
       liste_codes_communes_of_input,
+      true,
     );
 
     const categorisation_articles = this.rangeContenuParLocalisation(
@@ -186,6 +187,7 @@ export class Synthese_v2Controller extends GenericControler {
       IS_CODE_EPCI,
       code_input,
       liste_codes_communes_of_input,
+      false,
     );
 
     let nombre_points_moyen = 0;
@@ -302,6 +304,7 @@ export class Synthese_v2Controller extends GenericControler {
     IS_CODE_EPCI: boolean,
     code_insee_input: string,
     liste_codes_communes_of_input: string[],
+    is_aides: boolean,
   ): {
     national: ContentAPI[];
     regional: ContentAPI[];
@@ -321,7 +324,10 @@ export class Synthese_v2Controller extends GenericControler {
         content_def.codes_postaux.length === 0 &&
         content_def.codes_departement.length === 0 &&
         content_def.codes_region.length === 0 &&
-        content_def.include_codes_commune.length === 0
+        content_def.include_codes_commune.length === 0 &&
+        content_def.codes_commune_from_partenaire.length === 0 &&
+        content_def.codes_departement_from_partenaire.length === 0 &&
+        content_def.codes_region_from_partenaire.length === 0
       ) {
         result.national.push(ContentAPI.mapContent(content_def));
         continue;
@@ -344,29 +350,35 @@ export class Synthese_v2Controller extends GenericControler {
       ) {
         result.departemental.push(ContentAPI.mapContent(content_def));
       }
-      for (const code_postal of content_def.codes_postaux) {
-        const liste_codes_communes_of_code_postal =
-          this.communeRepository.getListCodesCommunesParCodePostal(code_postal);
+      if (is_aides) {
+        for (const code_postal of content_def.codes_postaux) {
+          const liste_codes_communes_of_code_postal =
+            this.communeRepository.getListCodesCommunesParCodePostal(
+              code_postal,
+            );
 
-        if (IS_CODE_EPCI) {
-          for (const un_code_commune_du_code_postal of liste_codes_communes_of_code_postal) {
+          if (IS_CODE_EPCI) {
+            for (const un_code_commune_du_code_postal of liste_codes_communes_of_code_postal) {
+              if (
+                liste_codes_communes_of_input.includes(
+                  un_code_commune_du_code_postal,
+                )
+              ) {
+                RESULT_liste_locale.set(
+                  content_def.content_id,
+                  ContentAPI.mapContent(content_def),
+                );
+              }
+            }
+          } else {
             if (
-              liste_codes_communes_of_input.includes(
-                un_code_commune_du_code_postal,
-              )
+              liste_codes_communes_of_code_postal.includes(code_insee_input)
             ) {
               RESULT_liste_locale.set(
                 content_def.content_id,
                 ContentAPI.mapContent(content_def),
               );
             }
-          }
-        } else {
-          if (liste_codes_communes_of_code_postal.includes(code_insee_input)) {
-            RESULT_liste_locale.set(
-              content_def.content_id,
-              ContentAPI.mapContent(content_def),
-            );
           }
         }
       }
