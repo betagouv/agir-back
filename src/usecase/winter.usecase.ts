@@ -260,6 +260,12 @@ export class WinterUsecase {
     user_agent: string,
     par_adresse: boolean,
   ): Promise<void> {
+    if (utilisateur.logement.prm) {
+      await this.winterRepository.supprimerPRM(utilisateur.id);
+      utilisateur.logement.prm = undefined;
+      utilisateur.logement.est_prm_obsolete = false;
+      utilisateur.logement.est_prm_par_adresse = false;
+    }
     await this.winterRepository.inscrirePRM(
       prm,
       nom,

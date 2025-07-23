@@ -45,6 +45,7 @@ describe('WinterUsecase', () => {
     rechercherPRMParAdresse: jest.fn(),
     inscrirePRM: jest.fn(),
     listerActionsWinter: jest.fn(),
+    supprimerPRM: jest.fn(),
   };
 
   let winterUsecase = new WinterUsecase(
@@ -70,7 +71,7 @@ describe('WinterUsecase', () => {
     await TestUtil.appclose();
   });
 
-  it('connect_by_address : Connexion par adresse en argument OK', async () => {
+  it('connect_by_address : Connexion par adresse en argument OK, suppression PRM dejà existant', async () => {
     // GIVEN
     const logement: Logement_v0 = {
       version: 0,
@@ -118,6 +119,7 @@ describe('WinterUsecase', () => {
     );
 
     // THEN
+    expect(winterRepository.supprimerPRM).toHaveBeenCalledTimes(1);
     expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(1);
     expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledWith(
       'SMITH',
