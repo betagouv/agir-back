@@ -177,9 +177,7 @@ export class SyntheseController extends GenericControler {
     );
 
     const dept_region =
-      await this.communeRepository.findDepartementRegionByCodePostal(
-        code_postal,
-      );
+      this.communeRepository.findDepartementRegionByCodePostal(code_postal);
 
     const aides_dispo = await this.aideRepository.search({
       code_postal: code_postal,
@@ -316,10 +314,9 @@ export class SyntheseController extends GenericControler {
 
     let nombre_articles_locaux = 0;
     const articles = await this.articleRepository.searchArticles({
-      code_postal: code_postal,
-      code_commune: code_commune ? code_commune : undefined,
-      code_departement: dept_region ? dept_region.code_departement : undefined,
-      code_region: dept_region ? dept_region.code_region : undefined,
+      commune_pour_partenaire: code_commune,
+      departement_pour_partenaire: dept_region?.code_departement,
+      region_pour_partenaire: dept_region?.code_region,
     });
 
     const articles_locaux: ArticleDefinition[] = [];

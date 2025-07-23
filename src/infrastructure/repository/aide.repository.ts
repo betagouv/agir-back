@@ -61,7 +61,9 @@ export class AideRepository {
     AideRepository.catalogue_aides = new_map;
   }
 
-  public async findAidesByPartenaireId(part_id: string) {
+  public async findAidesByPartenaireId(
+    part_id: string,
+  ): Promise<AideDefinition[]> {
     const result = await this.prisma.aide.findMany({
       where: {
         partenaires_supp_ids: {
@@ -87,7 +89,6 @@ export class AideRepository {
       },
     });
   }
-
   public static resetCache() {
     // FOR TEST ONLY
     AideRepository.catalogue_aides = new Map();

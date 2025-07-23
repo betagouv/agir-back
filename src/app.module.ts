@@ -125,6 +125,7 @@ import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
+import { PartenaireUsecase } from './usecase/partenaire.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { QuestionKYCEnchainementUsecase } from './usecase/questionKYCEnchainement.usecase';
@@ -299,6 +300,7 @@ function getControllers(): any[] {
     CatalogueActionUsecase,
     SelectionRepository,
     LogementUsecase,
+    PartenaireUsecase,
   ],
 })
 export class AppModule {}

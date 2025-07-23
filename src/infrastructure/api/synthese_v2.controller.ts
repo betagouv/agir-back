@@ -329,7 +329,19 @@ export class Synthese_v2Controller extends GenericControler {
       if (content_def.codes_region.includes(code_region_cible)) {
         result.regional.push(ContentAPI.mapContent(content_def));
       }
+      if (
+        content_def.codes_region_from_partenaire.includes(code_region_cible)
+      ) {
+        result.regional.push(ContentAPI.mapContent(content_def));
+      }
       if (content_def.codes_departement.includes(code_departement_cible)) {
+        result.departemental.push(ContentAPI.mapContent(content_def));
+      }
+      if (
+        content_def.codes_departement_from_partenaire.includes(
+          code_departement_cible,
+        )
+      ) {
         result.departemental.push(ContentAPI.mapContent(content_def));
       }
       for (const code_postal of content_def.codes_postaux) {
@@ -363,6 +375,14 @@ export class Synthese_v2Controller extends GenericControler {
           content_def.content_id,
           ContentAPI.mapContent(content_def),
         );
+      }
+      for (const code_commune of liste_codes_communes_of_input) {
+        if (content_def.codes_commune_from_partenaire.includes(code_commune)) {
+          RESULT_liste_locale.set(
+            content_def.content_id,
+            ContentAPI.mapContent(content_def),
+          );
+        }
       }
     }
     result.local = Array.from(RESULT_liste_locale.values());

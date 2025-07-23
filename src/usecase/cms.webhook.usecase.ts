@@ -41,6 +41,7 @@ import { SelectionRepository } from '../infrastructure/repository/selection.repo
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
+import { PartenaireUsecase } from './partenaire.usecase';
 
 @Injectable()
 export class CMSWebhookUsecase {
@@ -58,6 +59,7 @@ export class CMSWebhookUsecase {
     private tagRepository: TagRepository,
     private selectionRepository: SelectionRepository,
     private aidesUsecase: AidesUsecase,
+    private partenaireUsecase: PartenaireUsecase,
   ) {}
 
   async manageIncomingCMSData(cmsWebhookAPI: CMSWebhookAPI) {
@@ -233,20 +235,6 @@ export class CMSWebhookUsecase {
 
     const aide_to_upsert = this.buildAideFromCMSData(cmsWebhookAPI.entry);
     await this.aideRepository.upsert(aide_to_upsert);
-
-    /*
-    const computed =
-      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-        aide_to_upsert.partenaires_supp_ids,
-      );
-
-    await this.aideRepository.updateAideCodesFromPartenaire(
-      aide_to_upsert.content_id,
-      computed.codes_commune,
-      computed.codes_departement,
-      computed.codes_region,
-    );
-    */
   }
   async createOrUpdateFAQ(cmsWebhookAPI: CMSWebhookAPI) {
     if (cmsWebhookAPI.entry.publishedAt === null) return;
@@ -298,15 +286,32 @@ export class CMSWebhookUsecase {
     const liste_aides = await this.aideRepository.findAidesByPartenaireId(
       '' + cmsWebhookAPI.entry.id,
     );
-
     for (const aide of liste_aides) {
       const computed =
-        this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+        this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
           aide.partenaires_supp_ids,
         );
 
       await this.aideRepository.updateAideCodesFromPartenaire(
         aide.content_id,
+        computed.codes_commune,
+        computed.codes_departement,
+        computed.codes_region,
+      );
+    }
+
+    const liste_articles =
+      await this.articleRepository.findArticlesByPartenaireId(
+        '' + cmsWebhookAPI.entry.id,
+      );
+    for (const article of liste_articles) {
+      const computed =
+        this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+          [article.partenaire_id],
+        );
+
+      await this.articleRepository.updateArticlesCodesFromPartenaire(
+        article.content_id,
         computed.codes_commune,
         computed.codes_departement,
         computed.codes_region,
@@ -389,7 +394,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
-    return {
+    const result: ArticleDefinition = {
       contenu: hook.entry.contenu,
       sources: hook.entry.sources
         ? hook.entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
@@ -439,6 +444,17 @@ export class CMSWebhookUsecase {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
     };
+
+    const computed =
+      this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+        [result.partenaire_id],
+      );
+
+    result.codes_commune_from_partenaire = computed.codes_commune;
+    result.codes_departement_from_partenaire = computed.codes_departement;
+    result.codes_region_from_partenaire = computed.codes_region;
+
+    return result;
   }
 
   private buildQuizzFromCMSData(hook: CMSWebhookAPI): QuizzDefinition {
@@ -524,7 +540,7 @@ export class CMSWebhookUsecase {
     };
 
     const computed =
-      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+      this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
         result.partenaires_supp_ids,
       );
 
@@ -617,7 +633,9 @@ export class CMSWebhookUsecase {
       code_region: entry.code_region,
       code_epci: entry.code_epci,
       liste_codes_commune_from_EPCI:
-        this.aidesUsecase.external_compute_communes_from_epci(entry.code_epci),
+        this.partenaireUsecase.external_compute_communes_from_epci(
+          entry.code_epci,
+        ),
     };
 
     return result;

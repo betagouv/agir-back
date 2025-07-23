@@ -13,7 +13,6 @@ import { PrismaService } from '../prisma/prisma.service';
 
 export type ArticleFilter = {
   thematiques?: Thematique[];
-  code_postal?: string;
   difficulty?: DifficultyLevel;
   exclude_ids?: string[];
   include_ids?: string[];
@@ -26,6 +25,9 @@ export type ArticleFilter = {
   code_commune?: string;
   skip?: number;
   take?: number;
+  commune_pour_partenaire?: string;
+  region_pour_partenaire?: string;
+  departement_pour_partenaire?: string;
 };
 
 @Injectable()
@@ -145,15 +147,6 @@ export class ArticleRepository {
       });
     }
 
-    if (filter.code_postal) {
-      main_filter.push({
-        OR: [
-          { codes_postaux: { has: filter.code_postal } },
-          { codes_postaux: { isEmpty: true } },
-        ],
-      });
-    }
-
     if (filter.code_region) {
       main_filter.push({
         OR: [
@@ -231,6 +224,45 @@ export class ArticleRepository {
       });
     }
 
+    if (filter.commune_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          {
+            codes_commune_from_partenaire: {
+              has: filter.commune_pour_partenaire,
+            },
+          },
+          { codes_commune_from_partenaire: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.departement_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          {
+            codes_departement_from_partenaire: {
+              has: filter.departement_pour_partenaire,
+            },
+          },
+          { codes_departement_from_partenaire: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.region_pour_partenaire) {
+      main_filter.push({
+        OR: [
+          {
+            codes_region_from_partenaire: {
+              has: filter.region_pour_partenaire,
+            },
+          },
+          { codes_region_from_partenaire: { isEmpty: true } },
+        ],
+      });
+    }
+
     const finalQuery = {
       skip: filter.skip,
       take: filter.take,
@@ -244,6 +276,33 @@ export class ArticleRepository {
     }
     const result = await this.prisma.article.findMany(finalQuery);
     return result.map((elem) => this.buildArticleFromDB(elem));
+  }
+
+  public async findArticlesByPartenaireId(
+    part_id: string,
+  ): Promise<ArticleDefinition[]> {
+    const result = await this.prisma.article.findMany({
+      where: {
+        partenaire_id: part_id,
+      },
+    });
+    return result.map((r) => this.buildArticleFromDB(r));
+  }
+
+  public async updateArticlesCodesFromPartenaire(
+    cms_id: string,
+    codes_commune: string[],
+    codes_departement_from_partenaire: string[],
+    codes_region_from_partenaire: string[],
+  ) {
+    await this.prisma.article.update({
+      where: { content_id: cms_id },
+      data: {
+        codes_commune_from_partenaire: codes_commune,
+        codes_departement_from_partenaire: codes_departement_from_partenaire,
+        codes_region_from_partenaire: codes_region_from_partenaire,
+      },
+    });
   }
 
   private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {

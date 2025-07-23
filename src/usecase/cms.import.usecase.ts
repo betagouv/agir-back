@@ -41,6 +41,7 @@ import { SelectionRepository } from '../infrastructure/repository/selection.repo
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { AidesUsecase } from './aides.usecase';
+import { PartenaireUsecase } from './partenaire.usecase';
 
 const FULL_POPULATE_URL =
   '?populate[0]=thematiques&populate[1]=imageUrl&populate[2]=partenaire&populate[3]=thematique_gamification&populate[4]=rubriques' +
@@ -86,6 +87,7 @@ export class CMSImportUsecase {
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
     private aidesUsecase: AidesUsecase,
+    private partenaireUsecase: PartenaireUsecase,
     private tagRepository: TagRepository,
     private selectionRepository: SelectionRepository,
   ) {}
@@ -349,7 +351,7 @@ export class CMSImportUsecase {
 
       for (const aide of liste_aides) {
         const computed =
-          this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
             aide.partenaires_supp_ids,
           );
 
@@ -363,7 +365,30 @@ export class CMSImportUsecase {
           `loaded_partenaire updating_aide: ${aide.content_id}`,
         );
       }
+
+      const liste_articles =
+        await this.articleRepository.findArticlesByPartenaireId(
+          part_def.id_cms,
+        );
+
+      for (const article of liste_articles) {
+        const computed =
+          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+            [article.partenaire_id],
+          );
+
+        await this.articleRepository.updateArticlesCodesFromPartenaire(
+          article.content_id,
+          computed.codes_commune,
+          computed.codes_departement,
+          computed.codes_region,
+        );
+        loading_result.push(
+          `loaded_partenaire updating_article: ${article.content_id}`,
+        );
+      }
     }
+
     return loading_result;
   }
 
@@ -524,25 +549,6 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
-    /*
-    for (const aide of liste_aides) {
-      await this.aideRepository.upsert(aide);
-      const computed =
-        this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-          aide.partenaires_supp_ids,
-        );
-
-      await this.aideRepository.updateAideCodesFromPartenaire(
-        aide.content_id,
-        computed.codes_commune,
-        computed.codes_departement,
-        computed.codes_region,
-      );
-      loading_result.push(
-        `loaded_partenaire updating_aide: ${aide.content_id}`,
-      );
-    }
-      */
     return loading_result;
   }
 
@@ -673,7 +679,7 @@ export class CMSImportUsecase {
       code_departement: entry.attributes.code_departement,
       code_region: entry.attributes.code_region,
       liste_codes_commune_from_EPCI:
-        this.aidesUsecase.external_compute_communes_from_epci(
+        this.partenaireUsecase.external_compute_communes_from_epci(
           entry.attributes.code_epci,
         ),
     };
@@ -706,7 +712,7 @@ export class CMSImportUsecase {
   private buildArticleFromCMSPopulateData(
     entry: CMSWebhookPopulateAPI,
   ): ArticleDefinition {
-    return {
+    const result = {
       contenu: entry.attributes.contenu,
       sources: entry.attributes.sources
         ? entry.attributes.sources.map((s) => ({
@@ -784,6 +790,17 @@ export class CMSImportUsecase {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
     };
+
+    const computed =
+      this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+        [result.partenaire_id],
+      );
+
+    result.codes_commune_from_partenaire = computed.codes_commune;
+    result.codes_departement_from_partenaire = computed.codes_departement;
+    result.codes_region_from_partenaire = computed.codes_region;
+
+    return result;
   }
 
   private buildTagFromCMSPopulateData(
@@ -927,7 +944,7 @@ export class CMSImportUsecase {
     };
 
     const computed =
-      this.aidesUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
+      this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
         result.partenaires_supp_ids,
       );
 

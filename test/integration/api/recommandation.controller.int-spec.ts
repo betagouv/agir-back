@@ -113,21 +113,42 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     expect(response.body[0].points).toEqual(10);
   });
 
-  it('GET /utilisateurs/id/recommandations - list all recos, filtée par code postal', async () => {
+  it('GET /utilisateurs/id/recommandations - list all recos, filtée par commune', async () => {
     // GIVEN
-    //CatalogueQuestionsKYC.setCatalogue([]);
 
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      commune: 'DIJON',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
     await TestUtil.create(DB.utilisateur, {
       history: {},
-      logement: { version: 0, code_postal: '123' },
+      logement: logement as any,
     });
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_postaux: ['123'],
+      codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
-      codes_postaux: ['456'],
+      codes_commune_from_partenaire: ['456'],
     });
     await articleRepository.loadCache();
 
@@ -173,11 +194,11 @@ describe('/utilisateurs/id/recommandations (API test)', () => {
     });
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_departement: ['21'],
+      codes_departement_from_partenaire: ['21'],
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
-      codes_departement: ['22'],
+      codes_departement_from_partenaire: ['22'],
     });
     await articleRepository.loadCache();
 
