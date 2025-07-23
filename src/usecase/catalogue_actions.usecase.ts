@@ -96,7 +96,7 @@ export class CatalogueActionUsecase {
     return catalogue;
   }
 
-  async getUtilisateurCatalogue(
+  async getCatalogueUtilisateur(
     utilisateurId: string,
     liste_thematiques: Thematique[],
     liste_selections: Selection[],
@@ -113,8 +113,37 @@ export class CatalogueActionUsecase {
       utilisateurId,
       [Scope.thematique_history, Scope.logement, Scope.recommandation],
     );
+
     Utilisateur.checkState(utilisateur);
 
+    return await this.external_get_utilisateur_catalogue(
+      utilisateur,
+      liste_thematiques,
+      liste_selections,
+      titre,
+      consultation,
+      realisation,
+      recommandation,
+      ordre,
+      exclure_rejets_utilisateur,
+      skip,
+      take,
+    );
+  }
+
+  async external_get_utilisateur_catalogue(
+    utilisateur: Utilisateur,
+    liste_thematiques: Thematique[],
+    liste_selections: Selection[],
+    titre: string = undefined,
+    consultation: Consultation,
+    realisation: Realisation,
+    recommandation: Recommandation,
+    ordre: Ordre,
+    exclure_rejets_utilisateur: boolean,
+    skip: number = 0,
+    take: number = 1000000,
+  ): Promise<CatalogueAction> {
     let catalogue = new CatalogueAction();
 
     const filtre: ActionFilter = {};

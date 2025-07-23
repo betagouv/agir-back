@@ -246,7 +246,7 @@ export class ActionsController extends GenericControler {
       }
     }
 
-    const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
+    const catalogue = await this.catalogueActionUsecase.getCatalogueUtilisateur(
       utilisateurId,
       liste_thematiques,
       liste_selections,

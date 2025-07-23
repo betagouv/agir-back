@@ -10,11 +10,13 @@ import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
 import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { MaifRepository } from '../../../src/infrastructure/repository/services_recherche/maif/maif.repository';
 import { MaifAPIClient } from '../../../src/infrastructure/repository/services_recherche/maif/maifAPIClient';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { CatalogueActionUsecase } from '../../../src/usecase/catalogue_actions.usecase';
 import { LogementUsecase } from '../../../src/usecase/logement.usecase';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
 import { DB, TestUtil } from '../../TestUtil';
@@ -27,6 +29,16 @@ describe('WinterUsecase', () => {
   let actionRepository = new ActionRepository(TestUtil.prisma);
   let aideRepository = new AideRepository(TestUtil.prisma);
   let communeRepository = new CommuneRepository(TestUtil.prisma);
+  let compteurActionsRepository = new CompteurActionsRepository(
+    TestUtil.prisma,
+  );
+  let catalogueActionUsecase = new CatalogueActionUsecase(
+    actionRepository,
+    compteurActionsRepository,
+    aideRepository,
+    communeRepository,
+    utilisateurRepository,
+  );
   let maifAPIClient = new MaifAPIClient();
   let risquesNaturelsCommunesRepository = new RisquesNaturelsCommunesRepository(
     TestUtil.prisma,
@@ -54,6 +66,7 @@ describe('WinterUsecase', () => {
     actionRepository,
     logementUsecase,
     linkyConsentRepository,
+    catalogueActionUsecase,
   );
 
   beforeAll(async () => {

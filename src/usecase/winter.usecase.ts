@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import {
+  Consultation,
+  Realisation,
+  Recommandation,
+} from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
+import { Selection } from '../domain/contenu/selection';
 import {
   ConsommationElectrique,
   TypeUsage,
@@ -14,6 +20,7 @@ import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsen
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { WinterUsageBreakdown } from '../infrastructure/repository/winter/winterAPIClient';
+import { CatalogueActionUsecase } from './catalogue_actions.usecase';
 import { LogementUsecase } from './logement.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
@@ -62,6 +69,7 @@ export class WinterUsecase {
     private actionRepository: ActionRepository,
     private logementUsecase: LogementUsecase,
     private linkyConsentRepository: LinkyConsentRepository,
+    private catalogueActionUsecase: CatalogueActionUsecase,
   ) {}
 
   public async inscrireAdresse(
@@ -165,7 +173,7 @@ export class WinterUsecase {
   ): Promise<ConsommationElectrique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.core, Scope.logement, Scope.thematique_history],
+      [Scope.logement, Scope.thematique_history, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -175,6 +183,19 @@ export class WinterUsecase {
 
     const usage = await this.winterRepository.getUsage(utilisateurId);
 
+    const catalogue_actions_winter_reco =
+      await this.catalogueActionUsecase.external_get_utilisateur_catalogue(
+        utilisateur,
+        [],
+        [Selection.actions_winter],
+        undefined,
+        Consultation.tout,
+        Realisation.pas_faite,
+        Recommandation.recommandee,
+        undefined,
+        false,
+      );
+
     const result = new ConsommationElectrique({
       computingFinished: usage.computingFinished,
       consommation_totale_euros: this.getConsoEuroAnnuelle(usage),
@@ -182,7 +203,7 @@ export class WinterUsecase {
       monthsOfDataAvailable: usage.monthsOfDataAvailable,
       detail_usages: [],
       nombre_actions_associees:
-        utilisateur.thematique_history.getNombreActionsWinter(),
+        catalogue_actions_winter_reco.nombre_resultats_disponibles,
       economies_realisees_euros:
         utilisateur.thematique_history.calculeEconomiesWinterRealisées(),
     });
