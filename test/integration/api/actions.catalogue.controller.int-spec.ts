@@ -386,8 +386,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     ]);
     expect(response.body.selections).toEqual([
       {
-        code: 'actions_winter',
-        label: 'actions_winter',
+        code: 'actions_watt_watchers',
+        label: 'actions_watt_watchers',
         selected: false,
       },
     ]);
@@ -403,7 +403,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.logement,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -419,14 +419,14 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_3',
       thematique: Thematique.logement,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
 
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions?selection=actions_winter',
+      '/utilisateurs/utilisateur-id/actions?selection=actions_watt_watchers',
     );
 
     // THEN
@@ -472,8 +472,8 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     ]);
     expect(response.body.selections).toEqual([
       {
-        code: 'actions_winter',
-        label: 'actions_winter',
+        code: 'actions_watt_watchers',
+        label: 'actions_watt_watchers',
         selected: true,
       },
     ]);

@@ -187,7 +187,7 @@ export class WinterUsecase {
       await this.catalogueActionUsecase.external_get_utilisateur_catalogue(
         utilisateur,
         [],
-        [Selection.actions_winter],
+        [Selection.actions_watt_watchers],
         undefined,
         Consultation.tout,
         Realisation.pas_faite,

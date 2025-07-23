@@ -478,14 +478,14 @@ describe('Winter (API test)', () => {
       type_code_id: 'classique_123',
       code: '123',
       type: TypeAction.classique,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
     await TestUtil.create(DB.action, {
       cms_id: '2',
       type_code_id: 'classique_456',
       code: '456',
       type: TypeAction.classique,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
 
     await actionRepository.loadCache();
@@ -578,14 +578,14 @@ describe('Winter (API test)', () => {
       type_code_id: 'classique_123',
       code: '123',
       type: TypeAction.classique,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
     await TestUtil.create(DB.action, {
       cms_id: '2',
       type_code_id: 'classique_456',
       code: '456',
       type: TypeAction.classique,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
 
     await actionRepository.loadCache();
