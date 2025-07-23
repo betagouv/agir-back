@@ -384,13 +384,12 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         selected: false,
       },
     ]);
-    expect(response.body.selections).toEqual([
-      {
-        code: 'actions_watt_watchers',
-        label: 'actions_watt_watchers',
-        selected: false,
-      },
-    ]);
+    expect(response.body.selections.length).toBeGreaterThan(1);
+    expect(response.body.selections[0]).toEqual({
+      code: 'actions_watt_watchers',
+      label: 'actions_watt_watchers',
+      selected: false,
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre selections`, async () => {
@@ -470,13 +469,12 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         selected: false,
       },
     ]);
-    expect(response.body.selections).toEqual([
-      {
-        code: 'actions_watt_watchers',
-        label: 'actions_watt_watchers',
-        selected: true,
-      },
-    ]);
+    expect(response.body.selections.length).toBeGreaterThan(1);
+    expect(response.body.selections[0]).toEqual({
+      code: 'actions_watt_watchers',
+      label: 'actions_watt_watchers',
+      selected: true,
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre titre textuel`, async () => {

@@ -47,6 +47,9 @@ export class SelectionRepository {
   public static getCatalogue(): Map<string, SelectionDefinition> {
     return SelectionRepository.catalogue;
   }
+  public static getListeComplete(): SelectionDefinition[] {
+    return Array.from(SelectionRepository.catalogue.values());
+  }
 
   public static getLabel(selection: Selection): string {
     return selection;
