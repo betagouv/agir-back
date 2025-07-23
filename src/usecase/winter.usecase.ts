@@ -208,22 +208,24 @@ export class WinterUsecase {
         utilisateur.thematique_history.calculeEconomiesWinterRealisées(),
     });
 
-    for (const [key, value] of Object.entries(usage.usageBreakdown)) {
-      const type = TypeUsage[key];
-      if (type) {
-        const typed_value = value as {
-          kWh: number;
-          eur: number;
-          percent: number;
-        };
-        result.detail_usages.push({
-          type: type,
-          eur: typed_value.eur,
-          kWh: typed_value.kWh,
-          percent: typed_value.percent,
-          couleur: this.getTypeUsageCouleur(type),
-          emoji: this.getTypeUsageEmoji(type),
-        });
+    if (usage.usageBreakdown) {
+      for (const [key, value] of Object.entries(usage.usageBreakdown)) {
+        const type = TypeUsage[key];
+        if (type) {
+          const typed_value = value as {
+            kWh: number;
+            eur: number;
+            percent: number;
+          };
+          result.detail_usages.push({
+            type: type,
+            eur: typed_value.eur,
+            kWh: typed_value.kWh,
+            percent: typed_value.percent,
+            couleur: this.getTypeUsageCouleur(type),
+            emoji: this.getTypeUsageEmoji(type),
+          });
+        }
       }
     }
 
