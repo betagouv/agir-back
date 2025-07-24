@@ -232,6 +232,22 @@ export class WinterRepository {
     const chauffage = user.kyc_history.getQuestionChoixMultiple(
       KYCID.KYC_chauffage,
     );
+    const chauffage_reseau = getChoixU(KYCID.KYC_chauffage_reseau);
+    const chauffage_eau = getChoixU(KYCID.KYC_type_chauffage_eau);
+
+    let hot_water_type = 'dont-know';
+    if (chauffage_eau.isSelected('chauffe_eau_elec'))
+      hot_water_type = 'electric_water_heater';
+    if (chauffage_eau.isSelected('chauffe_eau_elec_thermo'))
+      hot_water_type = 'electric_water_heater_thermodynamic';
+    if (chauffage_eau.isSelected('pompe_chaleur')) hot_water_type = 'heat_pump';
+    if (chauffage_eau.isSelected('chaudiere_gaz'))
+      hot_water_type = 'boiler_gaz';
+    if (chauffage_eau.isSelected('chaudiere_fioul'))
+      hot_water_type = 'boiler_fuel';
+    if (chauffage_eau.isSelected('urbaine_ou_biomasse'))
+      hot_water_type = 'urban_heating_or_biomass';
+    if (chauffage_eau.isSelected('ne_sais_pas')) hot_water_type = 'dont-know';
 
     const gen_types = [];
     if (chauffage) {
@@ -241,6 +257,9 @@ export class WinterRepository {
       if (chauffage.isSelected('fioul')) gen_types.push('boiler_fuel');
       if (chauffage.isSelected('gaz')) gen_types.push('boiler_gas');
       if (chauffage.isSelected('ne_sais_pas')) gen_types.push('dont-know');
+    }
+    if (gen_types.length === 0) {
+      gen_types.push('dont-know');
     }
 
     const chauffage_pompe_chaleur = getChoixU(
@@ -255,6 +274,8 @@ export class WinterRepository {
       KYCID.KYC_2roue_motorisation_type,
     );
     const logement_age = getNumQ(KYCID.KYC_logement_age);
+    const logement_type = getChoixU(KYCID.KYC_type_logement);
+    const logement_superficie = getNumQ(KYCID.KYC_superficie);
     const logement_reno_second_oeuvre = getChoixU(
       KYCID.KYC_logement_reno_second_oeuvre,
     );
@@ -291,7 +312,16 @@ export class WinterRepository {
           ? 1
           : undefined,
       housingYear: logement_age?.getValue(),
+      housingType: logement_type.isSelected('type_maison')
+        ? 'house'
+        : 'apartment',
+      livingArea: logement_superficie.getValue(),
+      hotWaterType: hot_water_type as any,
+      heatingType: chauffage_reseau.isSelected('oui')
+        ? 'district_heating'
+        : 'personal',
       generatorTypes: gen_types,
+      mainGenerator: gen_types[0], // FIXME : manque une question plus spécifique
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
       nbInhabitant: user.logement.getTailleFoyer(),
       nbAdult: user.logement.nombre_adultes,
