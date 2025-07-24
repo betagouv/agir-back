@@ -292,9 +292,10 @@ export class WinterRepository {
       nbOneDoorRefrigerator: electro_petit_refrigerateur?.getValue(),
       nbFreezer: electro_congelateur?.getValue(),
       nbPool:
-        loisir_piscine_type?.getSelectedCode() !== 'pas_piscine'
-          ? 1
-          : undefined,
+        loisir_piscine_type.getSelectedCode() === undefined ||
+        loisir_piscine_type.getSelectedCode() === 'pas_piscine'
+          ? 0
+          : 1,
       nbTV: appareil_television?.getValue(),
       nbConsole: appareil_console_salon?.getValue(),
       hasElectricHotPlate: electro_plaques
