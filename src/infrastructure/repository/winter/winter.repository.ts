@@ -251,8 +251,7 @@ export class WinterRepository {
 
     const gen_types = [];
     if (chauffage) {
-      if (chauffage.isSelected('electricite'))
-        gen_types.push('electric_generator');
+      if (chauffage.isSelected('electricite')) gen_types.push('electric');
       if (chauffage.isSelected('bois')) gen_types.push('boiler_wood');
       if (chauffage.isSelected('fioul')) gen_types.push('boiler_fuel');
       if (chauffage.isSelected('gaz')) gen_types.push('boiler_gas');
@@ -274,9 +273,17 @@ export class WinterRepository {
       KYCID.KYC_2roue_motorisation_type,
     );
     const logement_age = getNumQ(KYCID.KYC_logement_age);
+
+    const annee_logement =
+      new Date().getFullYear() -
+      (logement_age.getValue() ? logement_age.getValue() : 20);
+
     const logement_proprio = getChoixU(KYCID.KYC_proprietaire);
     const logement_type = getChoixU(KYCID.KYC_type_logement);
     const logement_superficie = getNumQ(KYCID.KYC_superficie);
+
+    const logement_habitants = getNumQ(KYCID.KYC_menage);
+
     const logement_reno_second_oeuvre = getChoixU(
       KYCID.KYC_logement_reno_second_oeuvre,
     );
@@ -312,7 +319,7 @@ export class WinterRepository {
         deuxroue_motorisation_type?.getSelectedCode() === 'scoot_elec'
           ? 1
           : undefined,
-      housingYear: logement_age?.getValue(),
+      housingYear: annee_logement,
       housingType: logement_type.isSelected('type_maison')
         ? 'house'
         : 'apartment',
@@ -324,8 +331,10 @@ export class WinterRepository {
       generatorTypes: gen_types,
       mainGenerator: gen_types[0], // FIXME : manque une question plus spécifique
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
-      nbInhabitant: user.logement.getTailleFoyer(),
-      nbAdult: user.logement.nombre_adultes,
+      nbInhabitant: logement_habitants.getValue()
+        ? logement_habitants.getValue()
+        : 2,
+      //nbAdult: nbr_adultes,
       inhabitantType: logement_proprio.isSelected('oui') ? 'owner' : 'tenant',
     };
   }

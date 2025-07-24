@@ -68,7 +68,7 @@ export type WinterHousingData = {
   apartmentFloor?: 'ground' | 'intermediate' | 'last';
   heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => INCLUS ACTION
   generatorTypes?: (
-    | 'electric_generator'
+    | 'electric'
     | 'heat_pump'
     | 'boiler_gaz'
     | 'boiler_wood'
@@ -80,7 +80,7 @@ export type WinterHousingData = {
     | 'boiler_gas'
     | 'boiler_wood'
     | 'boiler_fuel'
-    | 'electric_generator'
+    | 'electric'
     | 'other'
     | 'dont-know'
     | 'heat_pump'; // MAPPED KYC 59 => INCLUS ACTION
@@ -116,7 +116,7 @@ export type WinterHousingData = {
   inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61  => INCLUS ACTION
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement
-  nbAdult?: number; // MAPPED Profil->logement
+  nbAdult?: number; // MAPPED KYC_menage 58 => INCLUS ACTION
   inhabitantAges?: '0-18' | '18-60' | '60+';
 };
 
