@@ -274,6 +274,7 @@ export class WinterRepository {
       KYCID.KYC_2roue_motorisation_type,
     );
     const logement_age = getNumQ(KYCID.KYC_logement_age);
+    const logement_proprio = getChoixU(KYCID.KYC_proprietaire);
     const logement_type = getChoixU(KYCID.KYC_type_logement);
     const logement_superficie = getNumQ(KYCID.KYC_superficie);
     const logement_reno_second_oeuvre = getChoixU(
@@ -325,6 +326,7 @@ export class WinterRepository {
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
       nbInhabitant: user.logement.getTailleFoyer(),
       nbAdult: user.logement.nombre_adultes,
+      inhabitantType: logement_proprio.isSelected('oui') ? 'owner' : 'tenant',
     };
   }
 }
