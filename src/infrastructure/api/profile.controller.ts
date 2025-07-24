@@ -21,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AidesUsecase } from '../../usecase/aides.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
 import { LogementUsecase } from '../../usecase/logement.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { AuthGuard } from '../auth/guard';
@@ -51,6 +52,7 @@ export class ProfileController extends GenericControler {
     private readonly profileUsecase: ProfileUsecase,
     private readonly logementUsecase: LogementUsecase,
     private readonly aidesUsecase: AidesUsecase,
+    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
     super();
   }
@@ -231,5 +233,26 @@ export class ProfileController extends GenericControler {
   async updateAllUserCouvertureAides(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.aidesUsecase.updateAllUserCouvertureAides();
+  }
+
+  @Post('utilisateurs/:utilisateurId/logout')
+  @ApiOperation({
+    summary: `Déconnecte un utilisateur donné, si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
+  })
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: logoutAPI })
+  async disconnect(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<logoutAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.connexion_v2_Usecase.logout_single_user(
+      utilisateurId,
+    );
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
   }
 }

@@ -35,11 +35,9 @@ import { BilanCarboneController } from './infrastructure/api/bilanCarbone.contro
 import { CmsPreviewController } from './infrastructure/api/cms.preview.controller';
 import { CommunesController } from './infrastructure/api/communes.controller';
 import { ConformiteController } from './infrastructure/api/conformite.controller';
-import { ConnexionController } from './infrastructure/api/connexion.controller';
 import { EventController } from './infrastructure/api/event.controller';
 import { GamificationController } from './infrastructure/api/gamification.controller';
 import { GoneController } from './infrastructure/api/gone.controller';
-import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { MesAidesRenoController } from './infrastructure/api/mesAidesReno.controller';
@@ -147,7 +145,6 @@ function getControllers(): any[] {
   const controllers = [];
   controllers.push(
     ProfileController,
-    ConnexionController,
     AidesController,
     CMSController,
     CommunesController,
@@ -158,7 +155,6 @@ function getControllers(): any[] {
     QuestionsKYCController,
     RecommandationsController,
     BibliothequeController,
-    InscriptionController,
     ThematiqueController,
     RechecheServicesController,
     BilanCarboneController,
