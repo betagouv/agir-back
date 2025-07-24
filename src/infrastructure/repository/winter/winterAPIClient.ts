@@ -32,7 +32,7 @@ export type WinterFoundPRM = {
 
 export type WinterHousingData = {
   nbAmericanRefrigerator?: number;
-  nbClassicRefrigerator?: number; // MAPPED KYC 100 => DONE ACTION
+  nbClassicRefrigerator?: number; // MAPPED KYC 100 => INCLUS ACTION
   nbOneDoorRefrigerator?: number; // MAPPED KYC 101
   nbFreezer?: number; // MAPPED  KYC 102
   nbPool?: number; // MAPPED KYC 259
@@ -51,7 +51,7 @@ export type WinterHousingData = {
   nbDryer?: number; // MAPPED KYC104
   nbMobileAirConditioner?: number;
   hasElectricWaterHeater?: boolean;
-  hasElectricHeater?: boolean; // MAPPED KYC 59  => DONE ACTION ?
+  hasElectricHeater?: boolean; // MAPPED KYC 59  => INCLUS ACTION ?
   hasHeatPump?: boolean; // MAPPED KYC 81
   heatPumpType?: 'air-air' | 'air-water' | 'geotermal';
   hasWaterHeaterStorage?: boolean;
@@ -59,14 +59,14 @@ export type WinterHousingData = {
   nbElectricCar?: number; // MAPPED KYC 141
   nbElectricBike?: number; // MAPPED KYC 237
   nbElectricScooter?: number; // MAPPED KYC 147
-  housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 309
+  housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 309 => INCLUS ACTION
   sharedWalls?: boolean;
   livingArea?: number; //MAPPED KYC 62
-  housingYear?: number; // MAPPED KYC 191  => DONE ACTION
+  housingYear?: number; // MAPPED KYC 191  => INCLUS ACTION
   houseLevels?: number;
   houseExteriorWalls?: number;
   apartmentFloor?: 'ground' | 'intermediate' | 'last';
-  heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => DONE ACTION
+  heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => INCLUS ACTION
   generatorTypes?: (
     | 'electric_generator'
     | 'heat_pump'
@@ -75,7 +75,7 @@ export type WinterHousingData = {
     | 'boiler_fuel'
     | 'other'
     | 'dont-know'
-  )[]; // MAPPED KYC 59 => DONE ACTION
+  )[]; // MAPPED KYC 59 => INCLUS ACTION
   mainGenerator?:
     | 'boiler_gas'
     | 'boiler_wood'
@@ -83,7 +83,7 @@ export type WinterHousingData = {
     | 'electric_generator'
     | 'other'
     | 'dont-know'
-    | 'heat_pump';
+    | 'heat_pump'; // MAPPED KYC 59 => INCLUS ACTION
   secondaryGenerators?: Record<
     | 'boiler_gas'
     | 'boiler_wood'
@@ -106,14 +106,14 @@ export type WinterHousingData = {
     | 'other'
     | 'dont-know';
   boilerInstallationYear?: 'before-2010' | 'after-2010' | 'dont-know';
-  recentlyRenovated?: // MAPPED KYC 158 => DONE ACTION
+  recentlyRenovated?: // MAPPED KYC 158 => INCLUS ACTION
   'floor' | 'walls' | 'generator' | 'attics' | 'roof' | 'vents' | 'windows';
-  hasDoneWorks?: boolean; // MAPPED KYC 158 => DONE ACTION
+  hasDoneWorks?: boolean; // MAPPED KYC 158 => INCLUS ACTION
   renovatedWalls?: boolean;
   highFloorType?: 'converted_attics' | 'attics';
   windowType?: 'middle_class' | 'high_class';
   ventTypev?: 'simple_vmc' | 'double_vmc';
-  inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61  => DONE ACTION
+  inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61  => INCLUS ACTION
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement
   nbAdult?: number; // MAPPED Profil->logement
@@ -277,6 +277,7 @@ export class WinterAPIClient {
     ext_id: string,
     data: WinterHousingData,
   ): Promise<void> {
+    console.log(JSON.stringify(data));
     const call_time = Date.now();
     try {
       await axios.put(PUT_HOUSING_URL.replace('USER_ID', ext_id), data, {
