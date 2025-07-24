@@ -22,6 +22,8 @@ export class OIDCStateRepository {
     nonce: string,
     source_inscription: string,
     situation_ngc_id?: string,
+    referer?: string,
+    referer_keyword?: string,
   ) {
     return this.prisma.oIDC_STATE.create({
       data: {
@@ -29,6 +31,8 @@ export class OIDCStateRepository {
         nonce: nonce,
         situation_ngc_id: situation_ngc_id,
         source_inscription: source_inscription,
+        referer: referer,
+        referer_keyword: referer_keyword,
       },
     });
   }

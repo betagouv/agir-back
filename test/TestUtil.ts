@@ -447,6 +447,8 @@ export class TestUtil {
       nonce: '789',
       situation_ngc_id: '94cfcd83-487c-4e7a-b944-d38165eb36e5',
       source_inscription: SourceInscription.mobile,
+      referer: undefined,
+      referer_keyword: undefined,
       created_at: undefined,
       updated_at: undefined,
       ...override,
@@ -667,7 +669,6 @@ export class TestUtil {
       derniere_activite: null,
       bilbiotheque_services: {},
       db_version: 0,
-      is_magic_link_user: false,
       points_classement: 0,
       rank: null,
       rank_commune: null,
@@ -692,6 +693,8 @@ export class TestUtil {
       activity_dates_log: [],
       recommandation: recommandation as any,
       mode_inscription: ModeInscription.france_connect,
+      referer: undefined,
+      referer_keyword: undefined,
       ...override,
     };
   }

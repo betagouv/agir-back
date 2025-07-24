@@ -111,6 +111,8 @@ describe('/utilisateurs - Magic link - (API test)', () => {
       .send({
         email: 'ww@w.com',
         source_inscription: SourceInscription.mobile,
+        referer: 'NGC',
+        referer_keyword: 'test',
       });
     // THEN
     expect(response.status).toBe(201);
@@ -121,6 +123,8 @@ describe('/utilisateurs - Magic link - (API test)', () => {
 
     expect(userDB.source_inscription).toEqual(SourceInscription.mobile);
     expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
+    expect(userDB.referer).toEqual('NGC');
+    expect(userDB.referer_keyword).toEqual('test');
     expect(userDB.active_account).toEqual(false);
     expect(userDB.code.length).toEqual(6);
   });

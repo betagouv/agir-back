@@ -5,4 +5,6 @@ export type OIDCState = {
   nonce?: string;
   situation_ngc_id?: string;
   source_inscription?: string;
+  referer?: string;
+  referer_keyword?: string;
 };

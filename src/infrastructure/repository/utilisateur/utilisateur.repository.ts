@@ -677,7 +677,8 @@ export class UtilisateurRepository {
       global_user_version: GlobalUserVersion[user.global_user_version],
       recommandation: recommandation,
       code_commune_classement: user.code_commune_classement,
-      is_magic_link: user.is_magic_link_user,
+      referer: user.referer,
+      referer_keyword: user.referer_keyword,
     });
 
     if (result.kyc_history) {
@@ -753,7 +754,8 @@ export class UtilisateurRepository {
       global_user_version: user.global_user_version,
       activity_dates_log: undefined,
       code_commune_classement: user.code_commune_classement,
-      is_magic_link_user: undefined,
+      referer: user.referer,
+      referer_keyword: user.referer_keyword,
     };
   }
 

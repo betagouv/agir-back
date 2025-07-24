@@ -48,19 +48,35 @@ export class FranceConnectController extends GenericControler {
     name: 'source_inscription',
     enum: SourceInscription,
     required: false,
-    description: `indique la source de souscription au service`,
+    description: `indique la source de souscription au service (web / mobile / web_ngc (web_ngc qui va basculer vers source tout court))`,
+  })
+  @ApiQuery({
+    name: 'referer',
+    required: false,
+    description: `un acteur proposant l'inscription, par exemple un partenaire`,
+    maxLength: 20,
+  })
+  @ApiQuery({
+    required: false,
+    name: 'referer_keyword',
+    description: `un texte arbitraire qui peut être fourni à l'inscription en complément de 'referer', pour tagguer par exemple un sous groupe d'utilisateurs`,
+    maxLength: 50,
   })
   async login(
     @Query('situation_ngc_id') situation_ngc_id: string,
     @Query('source_inscription') source_inscription: string,
+    @Query('referer') referer: string,
+    @Query('referer_keyword') referer_keyword: string,
   ) {
-    const source =
+    const source_i =
       SourceInscription[source_inscription] || SourceInscription.inconnue;
 
     const redirect_url =
       await this.franceConnectUsecase.genererConnexionFranceConnect(
-        source,
+        source_i,
         situation_ngc_id,
+        referer,
+        referer_keyword,
       );
     return { url: redirect_url };
   }

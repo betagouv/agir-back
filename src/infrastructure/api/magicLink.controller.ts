@@ -46,6 +46,8 @@ export class MagicLinkController extends GenericControler {
       origin,
       body.origin,
       body.situation_ngc_id,
+      body.referer,
+      body.referer_keyword,
     );
     return EmailAPI.mapToAPI(body.email);
   }

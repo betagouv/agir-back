@@ -117,7 +117,8 @@ export class UtilisateurData {
   cache_bilan_carbone: CacheBilanCarbone;
   recommandation: ProfileRecommandationUtilisateur;
   global_user_version: GlobalUserVersion;
-  is_magic_link: boolean;
+  referer: string;
+  referer_keyword: string;
 
   constructor(data?: UtilisateurData) {
     if (data) {
@@ -145,6 +146,8 @@ export class Utilisateur extends UtilisateurData {
     email: string,
     source_inscription: SourceInscription,
     mode_inscription: ModeInscription,
+    referer?: string,
+    referer_keyword?: string,
   ): Utilisateur {
     return new Utilisateur({
       id: uuidv4(),
@@ -203,7 +206,8 @@ export class Utilisateur extends UtilisateurData {
       recommandation: new ProfileRecommandationUtilisateur(),
       global_user_version: GlobalUserVersion.V2,
       code_commune_classement: null,
-      is_magic_link: ModeInscription.magic_link === mode_inscription,
+      referer: referer,
+      referer_keyword: referer_keyword,
     });
   }
 
