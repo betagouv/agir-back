@@ -134,7 +134,6 @@ export class ThematiqueBoardUsecase {
       transport_progression.getPourcent();
 
     const nombre_aides = await this.aidesUsecase.external_count_aides(
-      undefined,
       utilisateur.logement.code_commune,
       utilisateur.logement.code_postal,
     );
@@ -208,9 +207,9 @@ export class ThematiqueBoardUsecase {
           Thematique.alimentation,
         ),
         nombre_aides: await this.aidesUsecase.external_count_aides(
-          Thematique.alimentation,
           code_commune,
           code_postal,
+          Thematique.alimentation,
         ),
         nombre_recettes: 1150,
         nombre_simulateurs: 0,
@@ -223,9 +222,9 @@ export class ThematiqueBoardUsecase {
           Thematique.logement,
         ),
         nombre_aides: await this.aidesUsecase.external_count_aides(
-          Thematique.logement,
           code_commune,
           code_postal,
+          Thematique.logement,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,
@@ -238,9 +237,9 @@ export class ThematiqueBoardUsecase {
           Thematique.transport,
         ),
         nombre_aides: await this.aidesUsecase.external_count_aides(
-          Thematique.transport,
           code_commune,
           code_postal,
+          Thematique.transport,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,
@@ -253,9 +252,9 @@ export class ThematiqueBoardUsecase {
           Thematique.consommation,
         ),
         nombre_aides: await this.aidesUsecase.external_count_aides(
-          Thematique.consommation,
           code_commune,
           code_postal,
+          Thematique.consommation,
         ),
         nombre_recettes: undefined,
         nombre_simulateurs: 0,

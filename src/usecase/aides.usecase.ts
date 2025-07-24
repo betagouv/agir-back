@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  AideFilter,
-  AideRepository,
-} from '../../src/infrastructure/repository/aide.repository';
-import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
+import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Aide } from '../domain/aides/aide';
 import { AideFeedback } from '../domain/aides/aideFeedback';
+import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
 import { Thematique } from '../domain/thematique/thematique';
@@ -32,7 +29,6 @@ export class AidesUsecase {
     private aideRepository: AideRepository,
     private partenaireRepository: PartenaireRepository,
     private utilisateurRepository: UtilisateurRepository,
-    private communeRepository: CommuneRepository,
     private personnalisator: Personnalisator,
     private partenaireUsecase: PartenaireUsecase,
   ) {}
@@ -49,20 +45,11 @@ export class AidesUsecase {
 
     const code_commune = utilisateur.logement.code_commune;
 
-    const dept_region =
-      this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-
-    const filtre: AideFilter = {
-      code_postal: utilisateur.logement.code_postal,
-      code_commune: code_commune ? code_commune : undefined,
-      date_expiration: new Date(),
-      thematiques:
-        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
-      cu_ca_cc_mode: true,
-      commune_pour_partenaire: utilisateur.logement.code_commune,
-      departement_pour_partenaire: dept_region?.code_departement,
-      region_pour_partenaire: dept_region?.code_region,
-    };
+    const filtre = AideFilter.buildBasicAideFilter(
+      utilisateur.logement.code_postal,
+      code_commune,
+      filtre_thematiques,
+    );
 
     const aide_def_liste = await this.aideRepository.search(filtre);
 
@@ -374,26 +361,17 @@ export class AidesUsecase {
   }
 
   async external_count_aides(
+    code_commune: string,
+    code_postal: string,
     thematique?: Thematique,
-    code_commune?: string,
-    code_postal?: string,
+    besoins?: string[],
   ): Promise<number> {
-    const dept_region =
-      this.communeRepository.findDepartementRegionByCodeCommune(code_commune);
-
-    const filtre: AideFilter = {
-      code_postal: code_postal,
-      code_commune: code_commune ? code_commune : undefined,
-      date_expiration: new Date(),
-      cu_ca_cc_mode: true,
-      commune_pour_partenaire: code_commune,
-      departement_pour_partenaire: dept_region?.code_departement,
-      region_pour_partenaire: dept_region?.code_region,
-    };
-
-    if (thematique) {
-      filtre.thematiques = [thematique];
-    }
+    const filtre = AideFilter.buildBasicAideFilter(
+      code_postal,
+      code_commune,
+      thematique ? [thematique] : undefined,
+      besoins,
+    );
 
     return await this.aideRepository.count(filtre);
   }

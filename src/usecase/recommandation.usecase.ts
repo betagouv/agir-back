@@ -28,7 +28,6 @@ import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/
 export class RecommandationUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private communeRepository: CommuneRepository,
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
@@ -136,10 +135,9 @@ export class RecommandationUsecase {
       est_lu: true,
     });
 
-    const dept_region =
-      this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.logement.code_commune,
-      );
+    const dept_region = CommuneRepository.findDepartementRegionByCodeCommune(
+      utilisateur.logement.code_commune,
+    );
 
     const filtre: ArticleFilter = {
       exclude_ids: articles_lus,

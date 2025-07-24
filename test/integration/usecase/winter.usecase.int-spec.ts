@@ -7,17 +7,23 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { EmailSender } from '../../../src/infrastructure/email/emailSender';
+import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
+import { AideExpirationWarningRepository } from '../../../src/infrastructure/repository/aideExpirationWarning.repository';
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { MaifRepository } from '../../../src/infrastructure/repository/services_recherche/maif/maif.repository';
 import { MaifAPIClient } from '../../../src/infrastructure/repository/services_recherche/maif/maifAPIClient';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AidesUsecase } from '../../../src/usecase/aides.usecase';
 import { CatalogueActionUsecase } from '../../../src/usecase/catalogue_actions.usecase';
 import { LogementUsecase } from '../../../src/usecase/logement.usecase';
+import { PartenaireUsecase } from '../../../src/usecase/partenaire.usecase';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -28,14 +34,31 @@ describe('WinterUsecase', () => {
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let actionRepository = new ActionRepository(TestUtil.prisma);
   let aideRepository = new AideRepository(TestUtil.prisma);
+  let partenaireRepository = new PartenaireRepository(TestUtil.prisma);
   let communeRepository = new CommuneRepository(TestUtil.prisma);
+  let emailSender = new EmailSender();
+  let personalisator = new Personnalisator(communeRepository);
+  let aideExpirationWarningRepository = new AideExpirationWarningRepository(
+    TestUtil.prisma,
+  );
+  let partenaireUsecase = new PartenaireUsecase(communeRepository);
   let compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
+  );
+  let aidesUsecase = new AidesUsecase(
+    aideExpirationWarningRepository,
+    emailSender,
+    aideRepository,
+    partenaireRepository,
+    utilisateurRepository,
+    personalisator,
+    partenaireUsecase,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,
     compteurActionsRepository,
     aideRepository,
+    aidesUsecase,
     communeRepository,
     utilisateurRepository,
   );

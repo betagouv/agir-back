@@ -106,6 +106,7 @@ export class ActionsController extends GenericControler {
 
     const catalogue = await this.catalogueActionUsecase.getOpenCatalogue(
       liste_thematiques,
+      [],
       code_commune,
       titre,
     );

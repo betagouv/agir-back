@@ -50,7 +50,6 @@ import { RecommandationsController } from './infrastructure/api/recommandations.
 import { RisqesController } from './infrastructure/api/risques.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
-import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
 import { TagController } from './infrastructure/api/tag.controller';
 import { ThematiqueController } from './infrastructure/api/thematique.controller';
@@ -160,7 +159,6 @@ function getControllers(): any[] {
     BilanCarboneController,
     NotificationsController,
     LoadCMSController,
-    SyntheseController,
     GoneController,
     ConformiteController,
     Synthese_v2Controller,

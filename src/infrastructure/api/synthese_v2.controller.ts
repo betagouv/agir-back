@@ -164,7 +164,7 @@ export class Synthese_v2Controller extends GenericControler {
     );
 
     const region_departement =
-      this.communeRepository.findDepartementRegionByCodeCommune(
+      CommuneRepository.findDepartementRegionByCodeCommune(
         code_commune_cible_ou_exemple,
       );
     code_departement_cible = region_departement?.code_departement;

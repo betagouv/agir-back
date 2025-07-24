@@ -27,6 +27,7 @@ import {
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+import { AidesUsecase } from './aides.usecase';
 
 @Injectable()
 export class CatalogueActionUsecase {
@@ -34,6 +35,7 @@ export class CatalogueActionUsecase {
     private actionRepository: ActionRepository,
     private compteurActionsRepository: CompteurActionsRepository,
     private aideRepository: AideRepository,
+    private aidesUsecase: AidesUsecase,
     private communeRepository: CommuneRepository,
     private utilisateurRepository: UtilisateurRepository,
   ) {}
@@ -43,13 +45,14 @@ export class CatalogueActionUsecase {
   }
 
   async getOpenCatalogue(
-    filtre_thematiques: Thematique[],
+    liste_thematiques: Thematique[],
+    liste_selections: Selection[],
     code_commune: string = null,
     titre: string = undefined,
   ): Promise<CatalogueAction> {
     const liste_actions = await this.actionRepository.list({
       liste_thematiques:
-        filtre_thematiques.length > 0 ? filtre_thematiques : undefined,
+        liste_thematiques.length > 0 ? liste_thematiques : undefined,
       titre_fragment: titre,
     });
 
@@ -62,14 +65,13 @@ export class CatalogueActionUsecase {
       }
 
       for (const action_def of liste_actions) {
-        const count_aides = await this.aideRepository.count({
-          besoins: action_def.besoins,
-          code_postal: commune.codesPostaux[0],
-          code_commune: commune.code,
-          code_departement: commune.departement,
-          code_region: commune.region,
-          date_expiration: new Date(),
-        });
+        const count_aides = await this.aidesUsecase.external_count_aides(
+          commune.code,
+          commune.codesPostaux[0],
+          undefined,
+          action_def.besoins,
+        );
+
         const action = new Action(action_def);
         action.nombre_aides = count_aides;
         catalogue.actions.push(action);
@@ -87,7 +89,7 @@ export class CatalogueActionUsecase {
       }
     }
 
-    this.setFiltreThematiqueToCatalogue(catalogue, filtre_thematiques);
+    this.setFiltreThematiqueToCatalogue(catalogue, liste_thematiques);
 
     for (const action of catalogue.actions) {
       this.setCompteurActionsEtLabel(action);
@@ -212,14 +214,12 @@ export class CatalogueActionUsecase {
     );
 
     for (const action_def of liste_actions) {
-      const count_aides = await this.aideRepository.count({
-        besoins: action_def.besoins,
-        code_postal: commune.codesPostaux[0],
-        code_commune: commune.code,
-        code_departement: commune.departement,
-        code_region: commune.region,
-        date_expiration: new Date(),
-      });
+      const count_aides = await this.aidesUsecase.external_count_aides(
+        commune.code,
+        commune.codesPostaux[0],
+        undefined,
+        action_def.besoins,
+      );
       const action = new Action(action_def);
       action.nombre_aides = count_aides;
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);

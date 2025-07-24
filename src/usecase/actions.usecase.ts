@@ -4,6 +4,7 @@ import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBila
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
+import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
@@ -16,10 +17,7 @@ import {
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
-import {
-  AideFilter,
-  AideRepository,
-} from '../infrastructure/repository/aide.repository';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import {
   Commune,
@@ -104,14 +102,13 @@ export class ActionUsecase {
     );
     action.nom_commune = commune.nom;
 
-    const linked_aides = await this.aideRepository.search({
-      besoins: action_def.besoins,
-      code_postal: commune.codesPostaux[0],
-      code_commune: commune.code,
-      code_departement: commune.departement,
-      code_region: commune.region,
-      date_expiration: new Date(),
-    });
+    const filtre_aides = AideFilter.buildBasicAideFilter(
+      commune.codesPostaux[0],
+      commune.code,
+      undefined,
+      action_def.besoins,
+    );
+    const linked_aides = await this.aideRepository.search(filtre_aides);
 
     const liste_services: ActionService[] = [];
     if (action_def.recette_categorie) {
@@ -212,16 +209,12 @@ export class ActionUsecase {
 
     let linked_aides: AideDefinition[];
     if (commune) {
-      const filtre: AideFilter = {
-        code_postal: commune.codesPostaux[0],
-        code_commune: commune.code,
-        date_expiration: new Date(),
-        cu_ca_cc_mode: true,
-        commune_pour_partenaire: commune.code,
-        departement_pour_partenaire: commune.departement,
-        region_pour_partenaire: commune.region,
-        besoins: action_def.besoins,
-      };
+      const filtre = AideFilter.buildBasicAideFilter(
+        commune.codesPostaux[0],
+        commune.code,
+        undefined,
+        action_def.besoins,
+      );
 
       linked_aides = await this.aideRepository.search(filtre);
     } else {

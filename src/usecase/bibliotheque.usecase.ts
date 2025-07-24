@@ -23,7 +23,6 @@ export class BibliothequeUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
-    private communeRepository: CommuneRepository,
   ) {}
 
   async rechercheBiblio(
@@ -97,10 +96,9 @@ export class BibliothequeUsecase {
         est_favoris: includes.includes(IncludeArticle.favoris),
       });
     }
-    const dept_region =
-      this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.logement.code_commune,
-      );
+    const dept_region = CommuneRepository.findDepartementRegionByCodeCommune(
+      utilisateur.logement.code_commune,
+    );
 
     const articles = await this.articleRepository.searchArticles({
       include_ids: articles_candidats_ids,

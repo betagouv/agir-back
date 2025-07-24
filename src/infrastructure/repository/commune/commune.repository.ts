@@ -391,11 +391,13 @@ export class CommuneRepository {
     }
   }
 
-  findDepartementRegionByCodeCommune(code_commune: string): {
+  public static findDepartementRegionByCodeCommune(code_commune: string): {
     code_departement: string;
     code_region: string;
   } {
-    let commune = this.getCommuneByCodeINSEE(code_commune);
+    if (!code_commune) return undefined;
+
+    let commune = communes.find((c) => c.code === code_commune);
 
     if (commune) {
       return {

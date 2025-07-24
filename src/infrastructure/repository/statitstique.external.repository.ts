@@ -104,10 +104,9 @@ export class StatistiqueExternalRepository {
   }
 
   public async createUserData(utilisateur: Utilisateur) {
-    const code_depart =
-      this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.logement.code_commune,
-      );
+    const code_depart = CommuneRepository.findDepartementRegionByCodeCommune(
+      utilisateur.logement.code_commune,
+    );
     await this.prismaStats.utilisateurCopy.create({
       data: {
         user_id: utilisateur.external_stat_id,
