@@ -28,28 +28,6 @@ export class RecommandationsController extends GenericControler {
     super();
   }
 
-  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/recommandations')
-  @ApiOkResponse({ type: [RecommandationAPI] })
-  @UseGuards(AuthGuard)
-  @ApiOperation({
-    summary:
-      "Liste les recommendations personnalisées de l'utilisateur par thématique",
-  })
-  async getUserRecommandationThematique(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-    @Param('thematique') thematique: string,
-  ): Promise<RecommandationAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-    const them = this.castThematiqueOrException(thematique);
-
-    const list = await this.recommandationUsecase.listRecommandationsV2(
-      utilisateurId,
-      them,
-    );
-    return list.map((reco) => RecommandationAPI.mapToAPI(reco));
-  }
-
   @Get('utilisateurs/:utilisateurId/recommandations_v3')
   @ApiQuery({
     name: 'nombre_max',

@@ -310,4 +310,12 @@ export class GoneController extends GenericControler {
   async renvoyerCode(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/recommandations')
+  @ApiOperation({
+    summary: 'utiliser /recommandations_v3',
+  })
+  async getUserRecommandationThematique(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 }
