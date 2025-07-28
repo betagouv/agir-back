@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Action, ActionService } from '../domain/actions/action';
-import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBilanMappingEnchainements';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
-import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
+import {
+  ACTION_BILAN_MAPPING_ENCHAINEMENTS,
+  ACTION_SIMULATEUR_MAPPING_ENCHAINEMENTS,
+} from '../domain/actions/actionMappingEnchainements';
+import {
+  ActionBilanID,
+  ActionSimulateurID,
+  TypeAction,
+} from '../domain/actions/typeAction';
 import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
@@ -153,17 +160,16 @@ export class ActionUsecase {
       );
     }
 
-    if (action_def.type === TypeAction.bilan) {
-      const kyc_codes = this.external_get_kyc_codes_from_action_bilan(
+    if (
+      action_def.type === TypeAction.bilan ||
+      action_def.type === TypeAction.simulateur
+    ) {
+      const kyc_codes = this.external_get_kyc_codes_from_action(
+        action_def.type,
         action_def.code,
       );
       action.kycs =
         utilisateur.kyc_history.getEnchainementKYCsEligibles(kyc_codes);
-    }
-    if (action_def.type === TypeAction.simulateur) {
-      action.kycs = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        action_def.kyc_codes,
-      );
     }
 
     this.setCompteurActionsEtLabel(action);
@@ -442,19 +448,27 @@ export class ActionUsecase {
     }
   }
 
-  public external_get_kyc_codes_from_action_bilan(
-    code_action: string,
+  public external_get_kyc_codes_from_action(
+    action_type: TypeAction,
+    action_code: string,
   ): string[] {
     const enchainement_id =
-      ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[code_action]];
+      action_type === TypeAction.bilan
+        ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action_code]]
+        : action_type === TypeAction.simulateur
+        ? ACTION_SIMULATEUR_MAPPING_ENCHAINEMENTS[
+            ActionSimulateurID[action_code]
+          ]
+        : undefined;
 
     if (enchainement_id) {
       return EnchainementDefinition[enchainement_id];
     } else {
       const action_def = this.actionRepository.getActionDefinitionByTypeCode({
-        type: TypeAction.bilan,
-        code: code_action,
+        type: action_type,
+        code: action_code,
       });
+
       return action_def ? action_def.kyc_codes : [];
     }
   }

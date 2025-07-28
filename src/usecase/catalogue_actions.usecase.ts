@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Action } from '../domain/actions/action';
-import { ACTION_BILAN_MAPPING_ENCHAINEMENTS } from '../domain/actions/actionBilanMappingEnchainements';
 import {
   CatalogueAction,
   Consultation,
@@ -8,10 +7,8 @@ import {
   Realisation,
   Recommandation,
 } from '../domain/actions/catalogueAction';
-import { ActionBilanID, TypeAction } from '../domain/actions/typeAction';
 import { Echelle } from '../domain/aides/echelle';
 import { Selection } from '../domain/contenu/selection';
-import { EnchainementDefinition } from '../domain/kyc/enchainementDefinition';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -257,23 +254,6 @@ export class CatalogueActionUsecase {
     );
 
     return actions_resultat;
-  }
-
-  public external_get_kyc_codes_from_action_bilan(
-    code_action: string,
-  ): string[] {
-    const enchainement_id =
-      ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[code_action]];
-
-    if (enchainement_id) {
-      return EnchainementDefinition[enchainement_id];
-    } else {
-      const action_def = this.actionRepository.getActionDefinitionByTypeCode({
-        type: TypeAction.bilan,
-        code: code_action,
-      });
-      return action_def ? action_def.kyc_codes : [];
-    }
   }
 
   async external_count_actions(thematique?: Thematique): Promise<number> {

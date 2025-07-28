@@ -8,7 +8,10 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 
-import { TypeAction } from '../../../src/domain/actions/typeAction';
+import {
+  ActionBilanID,
+  TypeAction,
+} from '../../../src/domain/actions/typeAction';
 import { EnchainementDefinition } from '../../../src/domain/kyc/enchainementDefinition';
 import {
   KYCMosaicID,
@@ -236,6 +239,75 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     );
   });
 
+  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID connu de bilan`, async () => {
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 1,
+      code: KYCID.KYC_type_logement,
+      question: 'Quel est le type de votre logement ?',
+    });
+    await TestUtil.create(DB.kYC, {
+      ...dbKYC,
+      id_cms: 2,
+      code: KYCID.KYC_menage,
+      question: 'Combien de personnes vivent dans votre logement ?',
+    });
+
+    const type_code_id = `${TypeAction.bilan}_${ActionBilanID.action_bilan_logement}`;
+    await TestUtil.create(DB.action, {
+      code: ActionBilanID.action_bilan_logement,
+      type: TypeAction.bilan,
+      type_code_id,
+    });
+
+    await TestUtil.create(DB.utilisateur);
+    await kycRepository.loadCache();
+    await actionRepository.loadCache();
+
+    const response = await TestUtil.GET(
+      `/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/${type_code_id}/first`,
+    );
+
+    // THEN$
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      nombre_total_questions: 5,
+      nombre_total_questions_effectives: 5,
+      position_courante: 1,
+      is_first: true,
+      is_last: false,
+      is_out_of_range: false,
+      question_courante: {
+        categorie: 'recommandation',
+        code: KYCID.KYC_type_logement,
+        is_NGC: true,
+        is_answered: false,
+        is_skipped: false,
+        points: 20,
+        question: 'Quel est le type de votre logement ?',
+        reponse_multiple: [
+          {
+            code: 'oui',
+            label: 'Oui',
+            selected: false,
+          },
+          {
+            code: 'non',
+            label: 'Non',
+            selected: false,
+          },
+          {
+            code: 'sais_pas',
+            label: 'Je sais pas',
+            selected: false,
+          },
+        ],
+        thematique: 'alimentation',
+        type: 'choix_unique',
+      },
+    });
+  });
+
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de simultateur`, async () => {
     // GIVEN
 
@@ -310,7 +382,6 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de bilan`, async () => {
     // GIVEN
-
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 1,

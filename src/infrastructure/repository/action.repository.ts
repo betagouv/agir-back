@@ -88,6 +88,7 @@ export class ActionRepository {
     const action_def = this.getActionDefinitionByTypeCode(action);
     return action_def && action_def.type === TypeAction.simulateur;
   }
+
   public isBilan(action: TypeCodeAction): boolean {
     const action_def = this.getActionDefinitionByTypeCode(action);
     return action_def && action_def.type === TypeAction.bilan;
