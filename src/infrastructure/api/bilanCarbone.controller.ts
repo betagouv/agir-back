@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -9,20 +11,28 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { App } from '../../domain/app';
 import { Thematique } from '../../domain/thematique/thematique';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
+import { ImportNGCUsecase } from '../../usecase/importNGC.usecase';
 import { DuplicateBDDForStatsUsecase } from '../../usecase/stats/new/duplicateBDD.usecase';
+import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
 import { BilanCarboneDashboardAPI_v3 } from './types/ngc/bilanAPI_v3';
 import { BilanThematiqueAPI } from './types/ngc/bilanThematiqueAPI';
 import { BilanTotalAPI } from './types/ngc/bilanTotalAPI';
+import { ReponseImportSituationNGCAPI } from './types/ngc/reponseImportSituationNGCAPI';
+import { SituationNGCAPI } from './types/ngc/situationNGCAPI';
 
 @Controller()
 @ApiBearerAuth()
@@ -31,6 +41,7 @@ export class BilanCarboneController extends GenericControler {
   constructor(
     private readonly bilanCarboneUsecase: BilanCarboneUsecase,
     private duplicateUsecase: DuplicateBDDForStatsUsecase,
+    private readonly importNGCUsecase: ImportNGCUsecase,
   ) {
     super();
   }
@@ -118,5 +129,36 @@ export class BilanCarboneController extends GenericControler {
   async computeBilanTousUtilisateurs(@Request() req): Promise<any> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.duplicateUsecase.computeBilanTousUtilisateurs();
+  }
+
+  @ApiBody({ type: SituationNGCAPI })
+  @Post('bilan/importFromNGC')
+  @ApiOkResponse({
+    type: ReponseImportSituationNGCAPI,
+  })
+  @ApiHeader({
+    name: 'apikey',
+    description: 'La clé de sécurité pour soliciter cette URL',
+  })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
+  async importFromNGC(
+    @Body() body: SituationNGCAPI,
+    @Headers('apikey') apikey: string,
+  ): Promise<ReponseImportSituationNGCAPI> {
+    if (!apikey) {
+      ApplicationError.throwMissingNGC_API_KEY();
+    }
+    if (apikey !== App.getNGC_API_KEY()) {
+      ApplicationError.throwBadNGC_API_KEY(apikey);
+    }
+    const result = await this.importNGCUsecase.importSituationNGC(
+      body.situation,
+    );
+    return {
+      redirect_url: `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
+        result.id_situtation
+      }&bilan_tonnes=${result.bilan_tonnes}`,
+    };
   }
 }

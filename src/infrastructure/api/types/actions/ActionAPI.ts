@@ -95,6 +95,7 @@ export class ActionAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() emoji: string;
   @ApiProperty() points: number;
+  @ApiProperty() score_recommandation: number;
   @ApiProperty() consigne: string;
   @ApiProperty({ type: [SourceActionAPI] }) sources: SourceActionAPI[];
   @ApiProperty() label_compteur: string;
@@ -167,6 +168,7 @@ export class ActionAPI {
       ),
       explications_recommandation_raw: action.explicationScore,
       emoji: action.emoji,
+      score_recommandation: action.pourcent_match,
     };
   }
 }

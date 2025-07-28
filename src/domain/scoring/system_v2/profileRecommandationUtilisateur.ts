@@ -87,9 +87,21 @@ export class ProfileRecommandationUtilisateur {
       content.pourcent_match += this.hash(content.getDistinctText());
     }
 
-    result.sort((a, b) => b.pourcent_match - a.pourcent_match);
+    const filtered_result = [];
+    for (const content of result) {
+      if (
+        content.explicationScore.doesNotContainAnyInclusion() &&
+        content.getExclusionTags().includes(Tag_v2.match_aucun_autre_tag)
+      ) {
+        content.explicationScore.addExclusionTag(Tag_v2.match_aucun_autre_tag);
+      } else {
+        filtered_result.push(content);
+      }
+    }
 
-    return result;
+    filtered_result.sort((a, b) => b.pourcent_match - a.pourcent_match);
+
+    return filtered_result;
   }
 
   public getListeTagsActifs(): Tag_v2[] {

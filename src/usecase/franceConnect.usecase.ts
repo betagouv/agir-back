@@ -30,6 +30,8 @@ export class FranceConnectUsecase {
   async genererConnexionFranceConnect(
     source_inscription: SourceInscription,
     situation_ngc_id?: string,
+    referer?: string,
+    referer_keyword?: string,
   ): Promise<URL> {
     if (App.isFranceConnectDown()) {
       ApplicationError.throwConnexionDown(App.getEmailContact());
@@ -41,11 +43,21 @@ export class FranceConnectUsecase {
       ApplicationError.throwBadSituationID(situation_ngc_id);
     }
 
+    if (referer && referer.length > 20) {
+      ApplicationError.throwRefererTooLong(referer);
+    }
+
+    if (referer_keyword && referer_keyword.length > 50) {
+      ApplicationError.throwRefererKeywordTooLong(referer_keyword);
+    }
+
     await this.oIDCStateRepository.createNewState(
       redirect_infos.state,
       redirect_infos.nonce,
       source_inscription,
       situation_ngc_id,
+      referer,
+      referer_keyword,
     );
 
     return redirect_infos.url;
@@ -141,6 +153,8 @@ export class FranceConnectUsecase {
       user_info.email,
       SourceInscription[state.source_inscription] || SourceInscription.inconnue,
       ModeInscription.france_connect,
+      state.referer,
+      state.referer_keyword,
     );
 
     this.setFCUserInfoToUser(new_utilisateur, user_info);

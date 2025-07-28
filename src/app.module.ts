@@ -35,11 +35,9 @@ import { BilanCarboneController } from './infrastructure/api/bilanCarbone.contro
 import { CmsPreviewController } from './infrastructure/api/cms.preview.controller';
 import { CommunesController } from './infrastructure/api/communes.controller';
 import { ConformiteController } from './infrastructure/api/conformite.controller';
-import { ConnexionController } from './infrastructure/api/connexion.controller';
 import { EventController } from './infrastructure/api/event.controller';
 import { GamificationController } from './infrastructure/api/gamification.controller';
 import { GoneController } from './infrastructure/api/gone.controller';
-import { InscriptionController } from './infrastructure/api/inscription.controller';
 import { LoadCMSController } from './infrastructure/api/loadCMS.controller';
 import { MagicLinkController } from './infrastructure/api/magicLink.controller';
 import { MesAidesRenoController } from './infrastructure/api/mesAidesReno.controller';
@@ -48,13 +46,12 @@ import { ProfileController } from './infrastructure/api/profile.controller';
 import { QuestionsKYCController } from './infrastructure/api/questionKYC.controller';
 import { QuestionsKYCEnchainementController } from './infrastructure/api/questionKYCEnchainement.controller';
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
-import { RecoProfileController } from './infrastructure/api/reco_profile.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RisqesController } from './infrastructure/api/risques.controller';
 import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
-import { SyntheseController } from './infrastructure/api/synthese.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
+import { TagController } from './infrastructure/api/tag.controller';
 import { ThematiqueController } from './infrastructure/api/thematique.controller';
 import { WinterController } from './infrastructure/api/winter.controller';
 import { OidcService } from './infrastructure/auth/oidc.service';
@@ -120,10 +117,12 @@ import { EventUsecase } from './usecase/event.usecase';
 import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
+import { LogementUsecase } from './usecase/logement.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
+import { PartenaireUsecase } from './usecase/partenaire.usecase';
 import { ProfileUsecase } from './usecase/profile.usecase';
 import { QuestionKYCUsecase } from './usecase/questionKYC.usecase';
 import { QuestionKYCEnchainementUsecase } from './usecase/questionKYCEnchainement.usecase';
@@ -145,7 +144,6 @@ function getControllers(): any[] {
   const controllers = [];
   controllers.push(
     ProfileController,
-    ConnexionController,
     AidesController,
     CMSController,
     CommunesController,
@@ -156,13 +154,11 @@ function getControllers(): any[] {
     QuestionsKYCController,
     RecommandationsController,
     BibliothequeController,
-    InscriptionController,
     ThematiqueController,
     RechecheServicesController,
     BilanCarboneController,
     NotificationsController,
     LoadCMSController,
-    SyntheseController,
     GoneController,
     ConformiteController,
     Synthese_v2Controller,
@@ -180,7 +176,7 @@ function getControllers(): any[] {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(CmsPreviewController);
-    controllers.push(RecoProfileController);
+    controllers.push(TagController);
   }
   return controllers;
 }
@@ -297,6 +293,8 @@ function getControllers(): any[] {
     WinterRepository,
     CatalogueActionUsecase,
     SelectionRepository,
+    LogementUsecase,
+    PartenaireUsecase,
   ],
 })
 export class AppModule {}

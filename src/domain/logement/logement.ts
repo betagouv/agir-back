@@ -81,6 +81,8 @@ export class Logement {
   plus_de_15_ans: boolean;
   dpe: DPE;
   prm: string;
+  est_prm_obsolete: boolean;
+  est_prm_par_adresse: boolean;
   score_risques_adresse: ScoreRisquesAdresse;
 
   commune_label?: string;
@@ -106,6 +108,8 @@ export class Logement {
     this.latitude = log.latitude;
     this.longitude = log.longitude;
     this.code_commune = log.code_commune;
+    this.est_prm_obsolete = !!log.est_prm_obsolete;
+    this.est_prm_par_adresse = !!log.est_prm_par_adresse;
     this.score_risques_adresse = new ScoreRisquesAdresse(
       log.score_risques_adresse,
     );
@@ -141,6 +145,10 @@ export class Logement {
     return !!this.numero_rue && !!this.rue;
   }
 
+  public getAdresse(): string {
+    return '' + this.numero_rue + ' ' + this.rue;
+  }
+
   private AorB?<T>(a: T, b: T): T {
     if (a === undefined) return b;
     return a;
@@ -153,5 +161,9 @@ export class Logement {
     const adultes = this.nombre_adultes ? this.nombre_adultes : 0;
     const enfants = this.nombre_enfants ? this.nombre_enfants : 0;
     return enfants + adultes;
+  }
+
+  public estPRMPresentEtParAdresse(): boolean {
+    return this.prm && this.est_prm_par_adresse;
   }
 }

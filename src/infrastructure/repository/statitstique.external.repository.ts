@@ -72,6 +72,16 @@ export class StatistiqueExternalRepository {
     });
   }
 
+  public async getNombreUserAvecTag(tag: string): Promise<number> {
+    return await this.prismaStats.personnalisation.count({
+      where: {
+        tags: {
+          has: tag,
+        },
+      },
+    });
+  }
+
   public async createUserQuestionData(
     action_cms_id: string,
     action_titre: string,
@@ -94,10 +104,9 @@ export class StatistiqueExternalRepository {
   }
 
   public async createUserData(utilisateur: Utilisateur) {
-    const code_depart =
-      this.communeRepository.findDepartementRegionByCodeCommune(
-        utilisateur.logement.code_commune,
-      );
+    const code_depart = CommuneRepository.findDepartementRegionByCodeCommune(
+      utilisateur.logement.code_commune,
+    );
     await this.prismaStats.utilisateurCopy.create({
       data: {
         user_id: utilisateur.external_stat_id,

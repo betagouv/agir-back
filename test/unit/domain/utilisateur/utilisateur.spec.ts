@@ -391,4 +391,23 @@ describe('Objet Utilisateur', () => {
     // THEN
     expect(utilisateur.getDateNaissanceString()).toEqual('1978-06-19');
   });
+  it('possedeAdressePrecise : OK', () => {
+    // GIVEN
+    let utilisateur = Utilisateur.createNewUtilisateur(
+      'A',
+      SourceInscription.web,
+      ModeInscription.magic_link,
+    );
+    utilisateur.logement = new Logement();
+
+    // THEN
+    expect(utilisateur.logement.possedeAdressePrecise()).toEqual(false);
+
+    // WHEN
+    utilisateur.logement.rue = 'rue de  la paix';
+    utilisateur.logement.numero_rue = '20';
+
+    // THEN
+    expect(utilisateur.logement.possedeAdressePrecise()).toEqual(true);
+  });
 });

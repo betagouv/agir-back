@@ -24,10 +24,7 @@ import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponde
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import {
-  ModeInscription,
-  Scope,
-} from '../../../src/domain/utilisateur/utilisateur';
+import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
@@ -878,6 +875,7 @@ describe('Admin (API test)', () => {
       ]);
       expect(userDB.version).toEqual(18);
     });
+    /*
 
     it.skip('migration V19 init le mode inscription', async () => {
       // GIVEN
@@ -983,6 +981,7 @@ describe('Admin (API test)', () => {
       expect(userDB.mode_inscription).toEqual(ModeInscription.mot_de_passe);
       expect(userDB.version).toEqual(19);
     });
+    */
 
     it.skip('migration V20 OK - recalcul des tags de reco', async () => {
       // GIVEN
@@ -1006,6 +1005,8 @@ describe('Admin (API test)', () => {
         code_commune: '91477',
         score_risques_adresse: undefined,
         prm: undefined,
+        est_prm_obsolete: false,
+        est_prm_par_adresse: false,
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -2456,6 +2457,8 @@ describe('Admin (API test)', () => {
       code_commune: '91477',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2495,6 +2498,8 @@ describe('Admin (API test)', () => {
       code_commune: '12345',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2535,6 +2540,8 @@ describe('Admin (API test)', () => {
       code_commune: '91477',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {

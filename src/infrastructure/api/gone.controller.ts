@@ -254,4 +254,68 @@ export class GoneController extends GenericControler {
   async getAllUserDefi_2(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
+
+  @Post('utilisateurs/login_v2')
+  @ApiOperation({
+    summary: 'plus de connexion par login / mdp',
+  })
+  async loginUtilisateur_v2(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/login_v2_code')
+  @ApiOperation({
+    summary: `plus de connexion par login / mdp`,
+  })
+  async validateCodePourLogin(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/oubli_mot_de_passe')
+  @ApiOperation({
+    summary: 'plus de connexion par login / mdp',
+  })
+  async oubli_mdp(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/modifier_mot_de_passe')
+  @ApiOperation({
+    summary: 'plus de connexion par login / mdp',
+  })
+  async modifier_mdp(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs_v2')
+  @ApiOperation({
+    summary: 'plus de creation compte par login / mdp',
+  })
+  async createUtilisateur_v2(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/valider')
+  @ApiOperation({
+    summary: 'plus de creation compte par login / mdp',
+  })
+  async validerCode(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Post('utilisateurs/renvoyer_code')
+  @ApiOperation({
+    summary: 'plus de creation compte par login / mdp',
+  })
+  async renvoyerCode(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/thematiques/:thematique/recommandations')
+  @ApiOperation({
+    summary: 'utiliser /recommandations_v3',
+  })
+  async getUserRecommandationThematique(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
 }

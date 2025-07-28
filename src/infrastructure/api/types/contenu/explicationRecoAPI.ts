@@ -21,7 +21,7 @@ export class ExplicationRecoAPI {
       est_exclu: false,
     };
 
-    if (exp.doesContainExclusion()) {
+    if (exp.doesContainAnyExclusion()) {
       for (const element of exp.listeUniqueExplications()) {
         if (element.exclusion_tag) {
           result.liste_explications.push({

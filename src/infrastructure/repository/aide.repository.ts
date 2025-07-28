@@ -2,26 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Aide as AideDB } from '@prisma/client';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
+import { AideFilter } from '../../domain/aides/aideFilter';
 import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
-
-export type AideFilter = {
-  maxNumber?: number;
-  thematiques?: Thematique[];
-  besoins?: string[];
-  code_postal?: string;
-  code_region?: string;
-  code_departement?: string;
-  code_commune?: string;
-  echelle?: Echelle;
-  date_expiration?: Date;
-  commune_pour_partenaire?: string;
-  region_pour_partenaire?: string;
-  departement_pour_partenaire?: string;
-  cu_ca_cc_mode?: boolean;
-};
 
 @Injectable()
 export class AideRepository {
@@ -61,7 +46,9 @@ export class AideRepository {
     AideRepository.catalogue_aides = new_map;
   }
 
-  public async findAidesByPartenaireId(part_id: string) {
+  public async findAidesByPartenaireId(
+    part_id: string,
+  ): Promise<AideDefinition[]> {
     const result = await this.prisma.aide.findMany({
       where: {
         partenaires_supp_ids: {
@@ -87,7 +74,6 @@ export class AideRepository {
       },
     });
   }
-
   public static resetCache() {
     // FOR TEST ONLY
     AideRepository.catalogue_aides = new Map();

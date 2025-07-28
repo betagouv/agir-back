@@ -9,4 +9,7 @@ export interface ContenuLocal {
   exclude_codes_commune: string[];
   codes_departement: string[];
   codes_region: string[];
+  codes_commune_from_partenaire: string[];
+  codes_departement_from_partenaire: string[];
+  codes_region_from_partenaire: string[];
 }

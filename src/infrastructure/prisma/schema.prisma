@@ -16,6 +16,8 @@ model OIDC_STATE {
   utilisateurId      String?  @unique
   situation_ngc_id   String?
   source_inscription String?
+  referer            String?
+  referer_keyword    String?
   nonce              String?  @unique
   idtoken            String?
   created_at         DateTime @default(now()) @db.Timestamptz(3)
@@ -63,7 +65,6 @@ model Utilisateur {
   force_connexion            Boolean    @default(false)
   derniere_activite          DateTime?
   db_version                 Int        @default(0)
-  is_magic_link_user         Boolean    @default(false)
   points_classement          Int        @default(0)
   rank                       Int?
   rank_commune               Int?
@@ -83,6 +84,8 @@ model Utilisateur {
   external_stat_id           String?    @unique
   global_user_version        String     @default("V1")
   activity_dates_log         DateTime[] @default([])
+  referer                    String?
+  referer_keyword            String?
 }
 
 model RisquesNaturelsCommunes {
@@ -364,7 +367,9 @@ model Tag {
 model Selection {
   id_cms      String   @id
   code        String?  @unique
+  titre       String?
   description String?
+  image_url   String?
   created_at  DateTime @default(now()) @db.Timestamptz(3)
   updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 }

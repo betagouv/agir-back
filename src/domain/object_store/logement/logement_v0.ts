@@ -51,6 +51,8 @@ export class Logement_v0 extends Versioned_v0 {
   plus_de_15_ans: boolean;
   dpe: DPE;
   prm: string;
+  est_prm_obsolete: boolean;
+  est_prm_par_adresse: boolean;
   score_risques_adresse: ScoreRisquesAdresse_v0;
 
   static serialise(domain: Logement): Logement_v0 {
@@ -75,6 +77,8 @@ export class Logement_v0 extends Versioned_v0 {
         domain.score_risques_adresse,
       ),
       prm: domain.prm,
+      est_prm_obsolete: domain.est_prm_obsolete,
+      est_prm_par_adresse: domain.est_prm_par_adresse,
     };
   }
 }

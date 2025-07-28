@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import {
+  Consultation,
+  Realisation,
+  Recommandation,
+} from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
+import { Selection } from '../domain/contenu/selection';
 import {
   ConsommationElectrique,
   TypeUsage,
@@ -7,12 +13,15 @@ import {
 import { LinkyConsent } from '../domain/linky/linkyConsent';
 import { RecommandationWinter } from '../domain/thematique/history/thematiqueHistory';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ConnectPRMByAddressAPI } from '../infrastructure/api/types/winter/connectPRMByAddressAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
 import { LinkyConsentRepository } from '../infrastructure/repository/linkyConsent.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { WinterRepository } from '../infrastructure/repository/winter/winter.repository';
 import { WinterUsageBreakdown } from '../infrastructure/repository/winter/winterAPIClient';
+import { CatalogueActionUsecase } from './catalogue_actions.usecase';
+import { LogementUsecase } from './logement.usecase';
 
 const PRM_REGEXP = new RegExp('^[0123456789]{14}$');
 const TROIS_ANS = 1000 * 60 * 60 * 24 * 365 * 3;
@@ -28,28 +37,28 @@ const WINTER_PARTENAIRE_CMS_ID = '455';
 
 const USAGE_EMOJI: Record<TypeUsage, string> = {
   airConditioning: '❄️',
-  appliances: '📠',
-  cooking: '🍕',
+  appliances: '🧺',
+  cooking: '🍳',
   heating: '🔥',
-  hotWater: '💧',
+  hotWater: '🛁',
   lighting: '💡',
   mobility: '🚙',
-  multimedia: '🎮',
-  other: '❓',
+  multimedia: '📺',
+  other: '✳️',
   swimmingPool: '🏊',
 };
 
 const USAGE_COLORS: Record<TypeUsage, string> = {
-  airConditioning: '00809D',
-  appliances: 'FCECDD',
-  cooking: 'FF7601',
-  heating: 'F3A26D',
-  hotWater: 'FCD8CD',
-  lighting: 'FEEBF6',
-  mobility: 'EBD6FB',
-  multimedia: '748873',
-  other: 'D1A980',
-  swimmingPool: 'E5E0D8',
+  airConditioning: '007592',
+  appliances: 'AEF372',
+  cooking: 'A8C6E5',
+  heating: 'FF9239',
+  hotWater: '98CCFF',
+  lighting: 'FFC739',
+  mobility: 'CB9F75',
+  multimedia: 'C1BEFF',
+  other: '77F2B2',
+  swimmingPool: '5574F2',
 };
 
 @Injectable()
@@ -58,41 +67,58 @@ export class WinterUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private winterRepository: WinterRepository,
     private actionRepository: ActionRepository,
+    private logementUsecase: LogementUsecase,
     private linkyConsentRepository: LinkyConsentRepository,
+    private catalogueActionUsecase: CatalogueActionUsecase,
   ) {}
 
   public async inscrireAdresse(
     utilisateurId: string,
-    nom: string,
-    adresse: string,
-    code_postal: string,
-    code_commune: string,
+    input: ConnectPRMByAddressAPI,
     ip: string,
     user_agent: string,
   ): Promise<void> {
+    if (!input.nom) {
+      ApplicationError.throwNomObligatoireError();
+    }
+    if (!input.code_postal || !input.code_commune) {
+      ApplicationError.throwCodePostalCommuneMandatory();
+    }
+    if (!input.numero_rue || !input.rue) {
+      ApplicationError.throwUserMissingAdresseForPrmSearch();
+    }
+
+    await this.logementUsecase.updateUtilisateurLogement(utilisateurId, {
+      rue: input.rue,
+      code_commune: input.code_commune,
+      code_postal: input.code_postal,
+      latitude: input.latitude,
+      longitude: input.longitude,
+      numero_rue: input.numero_rue,
+    });
+
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.logement],
     );
-    Utilisateur.checkState(utilisateur);
 
-    if (!nom) {
-      ApplicationError.throwNomObligatoireError();
-    }
-    if (!code_postal || !code_commune) {
-      ApplicationError.throwCodePostalCommuneMandatory();
-    }
-    if (!adresse) {
-      ApplicationError.throwUserMissingAdresseForPrmSearch();
-    }
     const target_prm = await this.winterRepository.rechercherPRMParAdresse(
-      nom,
-      adresse,
-      code_commune,
-      code_postal,
+      input.nom,
+      utilisateur.logement.getAdresse(),
+      utilisateur.logement.code_commune,
+      utilisateur.logement.code_postal,
     );
 
-    await this.connect_prm(utilisateur, nom, target_prm, ip, user_agent);
+    await this.connect_prm(
+      utilisateur,
+      input.nom,
+      target_prm,
+      ip,
+      user_agent,
+      true,
+    );
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public async inscrirePRM(
@@ -116,7 +142,9 @@ export class WinterUsecase {
       ApplicationError.throwBadPRM(prm);
     }
 
-    await this.connect_prm(utilisateur, nom, prm, ip, user_agent);
+    await this.connect_prm(utilisateur, nom, prm, ip, user_agent, false);
+
+    await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
   public async supprimerPRM(utilisateurId: string): Promise<void> {
@@ -145,7 +173,7 @@ export class WinterUsecase {
   ): Promise<ConsommationElectrique> {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
-      [Scope.core, Scope.logement, Scope.thematique_history],
+      [Scope.logement, Scope.thematique_history, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
 
@@ -155,6 +183,19 @@ export class WinterUsecase {
 
     const usage = await this.winterRepository.getUsage(utilisateurId);
 
+    const catalogue_actions_winter_reco =
+      await this.catalogueActionUsecase.external_get_utilisateur_catalogue(
+        utilisateur,
+        [],
+        [Selection.actions_watt_watchers],
+        undefined,
+        Consultation.tout,
+        Realisation.pas_faite,
+        Recommandation.recommandee,
+        undefined,
+        false,
+      );
+
     const result = new ConsommationElectrique({
       computingFinished: usage.computingFinished,
       consommation_totale_euros: this.getConsoEuroAnnuelle(usage),
@@ -162,27 +203,29 @@ export class WinterUsecase {
       monthsOfDataAvailable: usage.monthsOfDataAvailable,
       detail_usages: [],
       nombre_actions_associees:
-        utilisateur.thematique_history.getNombreActionsWinter(),
+        catalogue_actions_winter_reco.nombre_resultats_disponibles,
       economies_realisees_euros:
         utilisateur.thematique_history.calculeEconomiesWinterRealisées(),
     });
 
-    for (const [key, value] of Object.entries(usage.usageBreakdown)) {
-      const type = TypeUsage[key];
-      if (type) {
-        const typed_value = value as {
-          kWh: number;
-          eur: number;
-          percent: number;
-        };
-        result.detail_usages.push({
-          type: type,
-          eur: typed_value.eur,
-          kWh: typed_value.kWh,
-          percent: typed_value.percent,
-          couleur: this.getTypeUsageCouleur(type),
-          emoji: this.getTypeUsageEmoji(type),
-        });
+    if (usage.usageBreakdown) {
+      for (const [key, value] of Object.entries(usage.usageBreakdown)) {
+        const type = TypeUsage[key];
+        if (type) {
+          const typed_value = value as {
+            kWh: number;
+            eur: number;
+            percent: number;
+          };
+          result.detail_usages.push({
+            type: type,
+            eur: typed_value.eur,
+            kWh: typed_value.kWh,
+            percent: typed_value.percent,
+            couleur: this.getTypeUsageCouleur(type),
+            emoji: this.getTypeUsageEmoji(type),
+          });
+        }
       }
     }
 
@@ -238,7 +281,14 @@ export class WinterUsecase {
     prm: string,
     ip: string,
     user_agent: string,
+    par_adresse: boolean,
   ): Promise<void> {
+    if (utilisateur.logement.prm) {
+      await this.winterRepository.supprimerPRM(utilisateur.id);
+      utilisateur.logement.prm = undefined;
+      utilisateur.logement.est_prm_obsolete = false;
+      utilisateur.logement.est_prm_par_adresse = false;
+    }
     await this.winterRepository.inscrirePRM(
       prm,
       nom,
@@ -249,6 +299,7 @@ export class WinterUsecase {
     );
 
     utilisateur.logement.prm = prm;
+    utilisateur.logement.est_prm_par_adresse = par_adresse;
 
     const consent = this.buildConsentement(
       utilisateur.email,
@@ -260,11 +311,6 @@ export class WinterUsecase {
     );
 
     await this.linkyConsentRepository.insert(consent);
-
-    await this.utilisateurRepository.updateUtilisateurNoConcurency(
-      utilisateur,
-      [Scope.logement],
-    );
   }
 
   private buildConsentement(

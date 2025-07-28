@@ -156,6 +156,8 @@ describe('Thematique Board (API test)', () => {
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -246,6 +248,8 @@ describe('Thematique Board (API test)', () => {
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -496,6 +500,8 @@ describe('Thematique Board (API test)', () => {
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -641,6 +647,8 @@ describe('Thematique Board (API test)', () => {
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {

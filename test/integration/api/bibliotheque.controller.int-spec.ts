@@ -1110,7 +1110,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[3].content_id).toEqual('4');
   });
 
-  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code postal', async () => {
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code commune partenaire', async () => {
     // GIVEN
     const history: History_v0 = {
       aide_interactions: [],
@@ -1138,6 +1138,8 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1147,19 +1149,19 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
 
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_postaux: ['21000'],
+      codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
-      codes_postaux: ['21000'],
+      codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.article, {
       content_id: '3',
-      codes_postaux: ['91120'],
+      codes_commune_from_partenaire: ['91120'],
     });
     await TestUtil.create(DB.article, {
       content_id: '4',
-      codes_postaux: ['91120'],
+      codes_commune_from_partenaire: ['91120'],
     });
     await articleRepository.loadCache();
 
@@ -1174,6 +1176,134 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[0].content_id).not.toEqual('4');
     expect(response.body.contenu[1].content_id).not.toEqual('3');
     expect(response.body.contenu[1].content_id).not.toEqual('4');
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code departement', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [],
+    };
+
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      commune: 'DIJON',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      logement: logement as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_departement_from_partenaire: ['21'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      codes_departement_from_partenaire: ['21'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      codes_departement_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+      codes_departement_from_partenaire: ['30'],
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
+  });
+
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code region', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [],
+    };
+
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      commune: 'DIJON',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      logement: logement as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      codes_region_from_partenaire: ['27'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      codes_region_from_partenaire: ['27'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      codes_region_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+      codes_region_from_partenaire: ['30'],
+    });
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu).toHaveLength(2);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - que les favoris', async () => {

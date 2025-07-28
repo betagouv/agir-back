@@ -549,7 +549,6 @@ describe('KycToTags_v2', () => {
     const result = KycToTags_v2.generate_dependency_report();
 
     // THEN
-    console.log(result.get(KYCID.KYC_proprietaire));
     expect(Array.from(result.get(KYCID.KYC_proprietaire))).toEqual([
       'est_proprietaire',
       'n_est_pas_proprietaire',

@@ -1,3 +1,4 @@
 export enum Selection {
-  actions_winter = 'actions_winter',
+  actions_watt_watchers = 'actions_watt_watchers',
+  risques_naturels = 'risques_naturels',
 }

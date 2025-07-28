@@ -1,4 +1,5 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
+import { Selection } from '../../../src/domain/contenu/selection';
 import {
   Chauffage,
   DPE,
@@ -8,6 +9,7 @@ import {
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -15,6 +17,7 @@ import { DB, TestUtil } from '../../TestUtil';
 describe('Winter (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
+  const actionRepository = new ActionRepository(TestUtil.prisma);
   const risquesNaturelsCommunesRepository =
     new RisquesNaturelsCommunesRepository(TestUtil.prisma);
 
@@ -35,7 +38,29 @@ describe('Winter (API test)', () => {
 
   it('POST /utilisateurs/utilisateur-id/winter/inscription_par_adresse - service non actif', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     const response = await TestUtil.POST(
@@ -45,6 +70,8 @@ describe('Winter (API test)', () => {
       adresse: '20 rue de la paix',
       code_postal: '91120',
       code_commune: '91477',
+      rue: 'Rue de la paix',
+      numero_rue: '20',
     });
 
     // THEN
@@ -53,7 +80,30 @@ describe('Winter (API test)', () => {
   });
   it('POST /utilisateurs/utilisateur-id/winter/inscription_par_adresse - service mode fake', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur);
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+
     process.env.WINTER_API_ENABLED = 'fake';
 
     // WHEN
@@ -67,6 +117,8 @@ describe('Winter (API test)', () => {
         adresse: '20 rue de la paix',
         code_postal: '91120',
         code_commune: '91477',
+        rue: 'Rue de la paix',
+        numero_rue: '20',
       });
 
     // THEN
@@ -104,6 +156,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345678901234',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -164,6 +218,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345678901234',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -199,6 +255,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -233,6 +291,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -271,6 +331,8 @@ describe('Winter (API test)', () => {
       code_commune: undefined,
       score_risques_adresse: undefined,
       prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -294,85 +356,85 @@ describe('Winter (API test)', () => {
           eur: 1000,
           percent: 29.8,
           type: 'heating',
-          couleur: 'F3A26D',
+          couleur: 'FF9239',
           emoji: '🔥',
         },
         {
           eur: 987,
           percent: 29.5,
           type: 'other',
-          couleur: 'D1A980',
-          emoji: '❓',
+          couleur: '77F2B2',
+          emoji: '✳️',
         },
         {
           eur: 453,
           percent: 13.5,
           type: 'appliances',
-          couleur: 'FCECDD',
-          emoji: '📠',
+          couleur: 'AEF372',
+          emoji: '🧺',
         },
         {
           eur: 220,
           percent: 6.5,
           type: 'hotWater',
-          couleur: 'FCD8CD',
-          emoji: '💧',
+          couleur: '98CCFF',
+          emoji: '🛁',
         },
         {
           eur: 200,
           percent: 5.9,
           type: 'cooking',
-          couleur: 'FF7601',
-          emoji: '🍕',
+          couleur: 'A8C6E5',
+          emoji: '🍳',
         },
         {
           eur: 130,
           percent: 3.8,
           type: 'airConditioning',
-          couleur: '00809D',
+          couleur: '007592',
           emoji: '❄️',
         },
         {
           eur: 123,
           percent: 3.6,
           type: 'swimmingPool',
-          couleur: 'E5E0D8',
+          couleur: '5574F2',
           emoji: '🏊',
         },
         {
           eur: 120,
           percent: 3.5,
           type: 'lighting',
-          couleur: 'FEEBF6',
+          couleur: 'FFC739',
           emoji: '💡',
         },
         {
           eur: 70,
           percent: 2,
           type: 'mobility',
-          couleur: 'EBD6FB',
+          couleur: 'CB9F75',
           emoji: '🚙',
         },
         {
           eur: 42,
           percent: 1.2,
           type: 'multimedia',
-          couleur: '748873',
-          emoji: '🎮',
+          couleur: 'C1BEFF',
+          emoji: '📺',
         },
       ],
     });
   });
 
-  it(`GET /utilisateurs/utilisateur-id/winter/consommation : nombre d'actions winter OK`, async () => {
+  it(`GET /utilisateurs/utilisateur-id/winter/consommation : nombre d'actions winter pas faites OK`, async () => {
     // GIVEN
     const logement: Logement_v0 = {
       version: 0,
       superficie: Superficie.superficie_150,
       type: TypeLogement.maison,
-      code_postal: '91120',
+      code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
+      commune: 'Dijon',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -382,9 +444,92 @@ describe('Winter (API test)', () => {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: undefined,
+      code_commune: '21231',
       score_risques_adresse: undefined,
       prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+    const them: ThematiqueHistory_v0 = {
+      codes_actions_exclues: [],
+      liste_actions_utilisateur: [],
+      liste_thematiques: [],
+      recommandations_winter: [
+        {
+          action: {
+            code: '123',
+            type: TypeAction.classique,
+          },
+          montant_economies_euros: 23,
+        },
+        {
+          action: {
+            code: '456',
+            type: TypeAction.classique,
+          },
+          montant_economies_euros: 10,
+        },
+      ],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.action, {
+      cms_id: '1',
+      type_code_id: 'classique_123',
+      code: '123',
+      type: TypeAction.classique,
+      selections: [Selection.actions_watt_watchers],
+    });
+    await TestUtil.create(DB.action, {
+      cms_id: '2',
+      type_code_id: 'classique_456',
+      code: '456',
+      type: TypeAction.classique,
+      selections: [Selection.actions_watt_watchers],
+    });
+
+    await actionRepository.loadCache();
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+      thematique_history: them as any,
+    });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/winter/consommation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nombre_actions_associees).toEqual(2);
+    expect(response.body.economies_realisees_euros).toEqual(0);
+  });
+  it(`GET /utilisateurs/utilisateur-id/winter/consommation : nombre d'actions winter faites OK`, async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      commune: 'Dijon',
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: '12345',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],
@@ -428,6 +573,23 @@ describe('Winter (API test)', () => {
       version: 0,
     };
 
+    await TestUtil.create(DB.action, {
+      cms_id: '1',
+      type_code_id: 'classique_123',
+      code: '123',
+      type: TypeAction.classique,
+      selections: [Selection.actions_watt_watchers],
+    });
+    await TestUtil.create(DB.action, {
+      cms_id: '2',
+      type_code_id: 'classique_456',
+      code: '456',
+      type: TypeAction.classique,
+      selections: [Selection.actions_watt_watchers],
+    });
+
+    await actionRepository.loadCache();
+
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
       thematique_history: them as any,
@@ -442,7 +604,7 @@ describe('Winter (API test)', () => {
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.nombre_actions_associees).toEqual(2);
+    expect(response.body.nombre_actions_associees).toEqual(0);
     expect(response.body.economies_realisees_euros).toEqual(33);
   });
 });

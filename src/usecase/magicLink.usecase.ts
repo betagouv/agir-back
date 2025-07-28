@@ -35,10 +35,12 @@ export class MagicLinkUsecase {
 
   async sendLink(
     email: string,
-    source: SourceInscription,
+    source_inscription: SourceInscription,
     originHost: string,
     originator: string,
     situation_ngc_id?: string,
+    referer?: string,
+    referer_keyword?: string,
   ): Promise<void> {
     if (App.isConnexionDown()) {
       ApplicationError.throwConnexionDown(App.getEmailContact());
@@ -47,6 +49,14 @@ export class MagicLinkUsecase {
     if (!email) {
       ApplicationError.throwEmailObligatoireMagicLinkError();
     }
+    if (referer && referer.length > 20) {
+      ApplicationError.throwRefererTooLong(referer);
+    }
+
+    if (referer_keyword && referer_keyword.length > 50) {
+      ApplicationError.throwRefererKeywordTooLong(referer_keyword);
+    }
+
     if (originator) {
       if (!char_regexp.test(originator)) {
         ApplicationError.throwBadOriginParam(originator);
@@ -63,8 +73,10 @@ export class MagicLinkUsecase {
     if (!utilisateur) {
       utilisateur = Utilisateur.createNewUtilisateur(
         email,
-        SourceInscription[source] || SourceInscription.inconnue,
+        SourceInscription[source_inscription] || SourceInscription.inconnue,
         ModeInscription.magic_link,
+        referer,
+        referer_keyword,
       );
 
       if (situation_ngc_id) {

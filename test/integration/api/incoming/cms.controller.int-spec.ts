@@ -479,6 +479,13 @@ describe('/api/incoming/cms (API test)', () => {
       id: 123,
       code: '456',
       description: 'The desc',
+      titre: 'the titre',
+      imageUrl: {
+        formats: {
+          thumbnail: { url: 'https://' },
+        },
+        url: 'http://monurl',
+      },
     } as CMSWebhookEntryAPI,
   };
 
@@ -667,6 +674,14 @@ describe('/api/incoming/cms (API test)', () => {
 
   it('POST /api/incoming/cms - create a new article in article table', async () => {
     // GIVEN
+    await TestUtil.create(DB.partenaire, {
+      content_id: '1',
+      code_epci: '242100410',
+      code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
+    });
+    await partenaireRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -678,36 +693,59 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(response.status).toBe(201);
     expect(articles).toHaveLength(1);
-    expect(articles[0].titre).toEqual('titre');
-    expect(articles[0].derniere_maj).toEqual(new Date(123));
-    expect(articles[0].soustitre).toEqual('soustitre 222');
-    expect(articles[0].thematique_principale).toEqual('alimentation');
-    expect(articles[0].tags_a_exclure_v2).toEqual(['AA', 'BB']);
-    expect(articles[0].tags_a_inclure_v2).toEqual(['CC', 'DD']);
-    expect(articles[0].thematiques).toStrictEqual(['alimentation', 'climat']);
-    expect(articles[0].duree).toEqual('pas trop long');
-    expect(articles[0].frequence).toEqual('souvent');
-    expect(articles[0].image_url).toEqual('https://haha');
-    expect(articles[0].contenu).toEqual('Un long article très intéressant');
-    expect(articles[0].difficulty).toEqual(3);
-    expect(articles[0].points).toEqual(20);
-    expect(articles[0].source).toEqual('La source');
-    expect(articles[0].codes_postaux).toStrictEqual(['91120', '75002']);
-    expect(articles[0].mois).toStrictEqual([0, 1]);
-    expect(articles[0].content_id).toEqual('123');
-    expect(articles[0].partenaire_id).toEqual('1');
-    expect(articles[0].rubrique_ids).toEqual(['1', '2']);
-    expect(articles[0].rubrique_labels).toEqual(['A', 'B']);
-    expect(articles[0].include_codes_commune).toEqual(['01', '02']);
-    expect(articles[0].exclude_codes_commune).toEqual(['03', '04']);
-    expect(articles[0].codes_departement).toEqual(['78']);
-    expect(articles[0].codes_region).toEqual(['25']);
-    expect(articles[0].sources).toEqual([{ label: 'haha', url: 'hoho' }]);
-    expect(articles[0].VISIBLE_PROD).toEqual(true);
+    delete articles[0].created_at;
+    delete articles[0].updated_at;
+
+    expect(articles[0]).toEqual({
+      VISIBLE_PROD: true,
+      categorie: 'recommandation',
+      codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
+      codes_departement: ['78'],
+      codes_departement_from_partenaire: ['123'],
+      codes_postaux: ['91120', '75002'],
+      codes_region: ['25'],
+      codes_region_from_partenaire: ['456'],
+      content_id: '123',
+      contenu: 'Un long article très intéressant',
+      derniere_maj: new Date(123),
+      difficulty: 3,
+      duree: 'pas trop long',
+      echelle: null,
+      exclude_codes_commune: ['03', '04'],
+      frequence: 'souvent',
+      image_url: 'https://haha',
+      include_codes_commune: ['01', '02'],
+      mois: [0, 1],
+      partenaire_id: '1',
+      points: 20,
+      rubrique_ids: ['1', '2'],
+      rubrique_labels: ['A', 'B'],
+      source: 'La source',
+      sources: [
+        {
+          label: 'haha',
+          url: 'hoho',
+        },
+      ],
+      soustitre: 'soustitre 222',
+      tags_a_exclure_v2: ['AA', 'BB'],
+      tags_a_inclure_v2: ['CC', 'DD'],
+      tags_utilisateur: [],
+      thematique_principale: 'alimentation',
+      thematiques: ['alimentation', 'climat'],
+      titre: 'titre',
+    });
   });
 
   it('POST /api/incoming/cms - create a new partenaire in partenaire table', async () => {
     // GIVEN
+
+    await TestUtil.create(DB.article, {
+      partenaire_id: '123',
+    });
+    await TestUtil.create(DB.aide, {
+      partenaires_supp_ids: ['123'],
+    });
 
     // WHEN
     const response = await TestUtil.POST('/api/incoming/cms').send(
@@ -719,16 +757,50 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(response.status).toBe(201);
     expect(partenaire).toHaveLength(1);
-    expect(partenaire[0].content_id).toEqual('123');
-    expect(partenaire[0].nom).toEqual('part');
-    expect(partenaire[0].code_commune).toEqual('456');
-    expect(partenaire[0].code_departement).toEqual('789');
-    expect(partenaire[0].code_region).toEqual('111');
-    expect(partenaire[0].code_epci).toEqual('242100410');
-    expect(partenaire[0].url).toEqual('the lien');
-    expect(partenaire[0].echelle).toEqual(Echelle.Département);
-    expect(partenaire[0].image_url).toEqual('https://haha');
-    expect(partenaire[0].liste_communes_calculees).toEqual([
+    delete partenaire[0].created_at;
+    delete partenaire[0].updated_at;
+    expect(partenaire[0]).toEqual({
+      code_commune: '456',
+      code_departement: '789',
+      code_epci: '242100410',
+      code_region: '111',
+      content_id: '123',
+      echelle: 'Département',
+      image_url: 'https://haha',
+      liste_communes_calculees: [
+        '21231',
+        '21166',
+        '21617',
+        '21171',
+        '21515',
+        '21278',
+        '21355',
+        '21540',
+        '21390',
+        '21452',
+        '21485',
+        '21481',
+        '21605',
+        '21263',
+        '21003',
+        '21223',
+        '21473',
+        '21315',
+        '21105',
+        '21106',
+        '21370',
+        '21192',
+        '21270',
+      ],
+      nom: 'part',
+      url: 'the lien',
+    });
+
+    const articleDB = (await TestUtil.prisma.article.findMany())[0];
+    const aideDB = (await TestUtil.prisma.article.findMany())[0];
+
+    expect(articleDB.codes_commune_from_partenaire).toEqual([
+      '456',
       '21231',
       '21166',
       '21617',
@@ -753,6 +825,37 @@ describe('/api/incoming/cms (API test)', () => {
       '21192',
       '21270',
     ]);
+    expect(articleDB.codes_departement_from_partenaire).toEqual(['789']);
+    expect(articleDB.codes_region_from_partenaire).toEqual(['111']);
+
+    expect(aideDB.codes_commune_from_partenaire).toEqual([
+      '456',
+      '21231',
+      '21166',
+      '21617',
+      '21171',
+      '21515',
+      '21278',
+      '21355',
+      '21540',
+      '21390',
+      '21452',
+      '21485',
+      '21481',
+      '21605',
+      '21263',
+      '21003',
+      '21223',
+      '21473',
+      '21315',
+      '21105',
+      '21106',
+      '21370',
+      '21192',
+      '21270',
+    ]);
+    expect(aideDB.codes_departement_from_partenaire).toEqual(['789']);
+    expect(aideDB.codes_region_from_partenaire).toEqual(['111']);
   });
 
   it('POST /api/incoming/cms - create a new FAQ', async () => {
@@ -837,6 +940,8 @@ describe('/api/incoming/cms (API test)', () => {
       description: 'The desc',
       id_cms: '123',
       code: '456',
+      titre: 'the titre',
+      image_url: 'https://',
     });
   });
 

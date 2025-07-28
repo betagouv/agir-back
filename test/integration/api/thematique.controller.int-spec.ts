@@ -48,6 +48,8 @@ const logement: Logement_v0 = {
   code_commune: '21231',
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -493,6 +495,7 @@ describe('Thematique (API test)', () => {
       },
       label_compteur: 'label_compteur',
       montant_max_economies_euros: 0,
+      score_recommandation: 0.00481617146,
     });
   });
 

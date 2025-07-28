@@ -64,6 +64,8 @@ describe('FranceConnectUsecase', () => {
       utilisateurId: null,
       situation_ngc_id: null,
       source_inscription: SourceInscription.mobile,
+      referer: 'NGC',
+      referer_keyword: 'campagne_001',
     });
 
     oidcService.getAccessAndIdTokens.mockImplementation(() => {
@@ -119,6 +121,8 @@ describe('FranceConnectUsecase', () => {
     expect(result.utilisateur.source_inscription).toEqual(
       SourceInscription.mobile,
     );
+    expect(result.utilisateur.referer).toEqual('NGC');
+    expect(result.utilisateur.referer_keyword).toEqual('campagne_001');
     expect(result.utilisateur.mode_inscription).toEqual(
       ModeInscription.france_connect,
     );

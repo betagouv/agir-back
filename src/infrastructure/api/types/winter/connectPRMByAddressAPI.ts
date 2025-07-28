@@ -5,11 +5,19 @@ export class ConnectPRMByAddressAPI {
   nom: string;
 
   @ApiProperty()
-  adresse: string;
+  rue: string;
+
+  @ApiProperty()
+  code_commune: string;
 
   @ApiProperty()
   code_postal: string;
 
   @ApiProperty()
-  code_commune: string;
+  latitude: number;
+
+  @ApiProperty()
+  longitude: number;
+
+  @ApiProperty() numero_rue: string;
 }

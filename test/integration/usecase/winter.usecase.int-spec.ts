@@ -7,9 +7,23 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { EmailSender } from '../../../src/infrastructure/email/emailSender';
+import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
+import { AideExpirationWarningRepository } from '../../../src/infrastructure/repository/aideExpirationWarning.repository';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
+import { MaifRepository } from '../../../src/infrastructure/repository/services_recherche/maif/maif.repository';
+import { MaifAPIClient } from '../../../src/infrastructure/repository/services_recherche/maif/maifAPIClient';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
+import { AidesUsecase } from '../../../src/usecase/aides.usecase';
+import { CatalogueActionUsecase } from '../../../src/usecase/catalogue_actions.usecase';
+import { LogementUsecase } from '../../../src/usecase/logement.usecase';
+import { PartenaireUsecase } from '../../../src/usecase/partenaire.usecase';
 import { WinterUsecase } from '../../../src/usecase/winter.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -19,18 +33,63 @@ describe('WinterUsecase', () => {
   let utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   let linkyConsentRepository = new LinkyConsentRepository(TestUtil.prisma);
   let actionRepository = new ActionRepository(TestUtil.prisma);
+  let aideRepository = new AideRepository(TestUtil.prisma);
+  let partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  let communeRepository = new CommuneRepository(TestUtil.prisma);
+  let emailSender = new EmailSender();
+  let personalisator = new Personnalisator(communeRepository);
+  let aideExpirationWarningRepository = new AideExpirationWarningRepository(
+    TestUtil.prisma,
+  );
+  let partenaireUsecase = new PartenaireUsecase(communeRepository);
+  let compteurActionsRepository = new CompteurActionsRepository(
+    TestUtil.prisma,
+  );
+  let aidesUsecase = new AidesUsecase(
+    aideExpirationWarningRepository,
+    emailSender,
+    aideRepository,
+    partenaireRepository,
+    utilisateurRepository,
+    personalisator,
+    partenaireUsecase,
+  );
+  let catalogueActionUsecase = new CatalogueActionUsecase(
+    actionRepository,
+    compteurActionsRepository,
+    aideRepository,
+    aidesUsecase,
+    communeRepository,
+    utilisateurRepository,
+  );
+  let maifAPIClient = new MaifAPIClient();
+  let risquesNaturelsCommunesRepository = new RisquesNaturelsCommunesRepository(
+    TestUtil.prisma,
+  );
+  let maifRepository = new MaifRepository(communeRepository, maifAPIClient);
+
+  let logementUsecase = new LogementUsecase(
+    utilisateurRepository,
+    aideRepository,
+    communeRepository,
+    maifRepository,
+    risquesNaturelsCommunesRepository,
+  );
 
   let winterRepository = {
     rechercherPRMParAdresse: jest.fn(),
     inscrirePRM: jest.fn(),
     listerActionsWinter: jest.fn(),
+    supprimerPRM: jest.fn(),
   };
 
   let winterUsecase = new WinterUsecase(
     utilisateurRepository,
     winterRepository as any,
     actionRepository,
+    logementUsecase,
     linkyConsentRepository,
+    catalogueActionUsecase,
   );
 
   beforeAll(async () => {
@@ -48,9 +107,32 @@ describe('WinterUsecase', () => {
     await TestUtil.appclose();
   });
 
-  it('connect_by_address : Connexion par adresse en argument OK', async () => {
+  it('connect_by_address : Connexion par adresse en argument OK, suppression PRM dejà existant', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      rue: undefined,
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     winterRepository.rechercherPRMParAdresse.mockImplementation(() => {
       return '12345';
@@ -59,15 +141,21 @@ describe('WinterUsecase', () => {
     // WHEN
     await winterUsecase.inscrireAdresse(
       'utilisateur-id',
-      'SMITH',
-      '20 rue de la paix',
-      '91120',
-      '91477',
+      {
+        code_commune: '91477',
+        code_postal: '91120',
+        latitude: 42,
+        longitude: 2,
+        nom: 'SMITH',
+        numero_rue: '20',
+        rue: 'rue de la paix',
+      },
       '127.0.0.1',
       'chrome',
     );
 
     // THEN
+    expect(winterRepository.supprimerPRM).toHaveBeenCalledTimes(1);
     expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledTimes(1);
     expect(winterRepository.rechercherPRMParAdresse).toHaveBeenCalledWith(
       'SMITH',
@@ -89,6 +177,7 @@ describe('WinterUsecase', () => {
     ]);
 
     expect(user.logement.prm).toEqual('12345');
+    expect(user.logement.est_prm_par_adresse).toEqual(true);
 
     const consent = (await TestUtil.prisma.linkyConsentement.findMany())[0];
 
@@ -124,16 +213,44 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
 
   it('connect_by_address : missing name', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        undefined,
-        '20 rue de la paix',
-        '91120',
-        '91477',
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: undefined,
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -151,16 +268,44 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : missing adresse', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: undefined,
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
-        undefined,
-        '91120',
-        '91477',
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: undefined,
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -180,16 +325,44 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : missing code postal', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: undefined,
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
-        '20 rue de la paix',
-        undefined,
-        '91477',
+        {
+          code_commune: '91477',
+          code_postal: undefined,
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -208,17 +381,44 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     expect(consent).toHaveLength(0);
   });
   it('connect_by_address : missing code commune', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: undefined,
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
     // WHEN
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
-        '20 rue de la paix',
-        '91120',
-        undefined,
+        {
+          code_commune: undefined,
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -238,7 +438,30 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
   });
   it('connect_by_address : pas de PRM trouvé', async () => {
     // GIVEN
-    await TestUtil.create(DB.utilisateur, {});
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '91120',
+      chauffage: Chauffage.bois,
+      commune: 'PALAISEAU',
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '20',
+      rue: 'rue de la paix',
+      code_commune: '91477',
+      score_risques_adresse: undefined,
+      prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
     winterRepository.rechercherPRMParAdresse.mockImplementation(() => {
       throw { message: 'not found' };
     });
@@ -246,10 +469,15 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     try {
       await winterUsecase.inscrireAdresse(
         'utilisateur-id',
-        'toto',
-        '20 rue de la paix',
-        '91120',
-        '91477',
+        {
+          code_commune: '91477',
+          code_postal: '91120',
+          latitude: 42,
+          longitude: 2,
+          nom: 'SMITH',
+          numero_rue: '20',
+          rue: 'rue de la paix',
+        },
         '127.0.0.1',
         'chrome',
       );
@@ -286,6 +514,8 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: '123',
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -362,6 +592,8 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       code_commune: '21231',
       score_risques_adresse: undefined,
       prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

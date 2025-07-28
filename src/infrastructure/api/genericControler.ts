@@ -28,7 +28,7 @@ import { EnchainementKYCExclude } from './types/kyc/enchainementKYCAPI';
 @Injectable()
 export class GenericControler {
   @Inject()
-  private utilisateurRepository: UtilisateurRepository;
+  protected utilisateurRepository: UtilisateurRepository;
 
   checkCallerId(req: Request, utilisateurId: string) {
     if (AuthGuard.getUtilisateurIdFromTokenInRequest(req) !== utilisateurId) {

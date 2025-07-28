@@ -37,6 +37,8 @@ const logement_palaiseau: Logement_v0 = {
   code_commune: undefined,
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 
 describe('RechercheServices (API test)', () => {

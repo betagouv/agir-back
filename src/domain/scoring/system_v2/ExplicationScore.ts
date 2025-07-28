@@ -59,7 +59,18 @@ export class ExplicationScore {
       valeur: valeur,
     });
   }
-  public doesContainExclusion(): boolean {
+  public doesContainAnyExclusion(): boolean {
     return this.liste_explications.findIndex((e) => !!e.exclusion_tag) > -1;
+  }
+  public doesContainExclusionTag(tag: Tag_v2): boolean {
+    return (
+      this.liste_explications.findIndex((e) => e.exclusion_tag === tag) > -1
+    );
+  }
+  public doesContainAnyInclusion(): boolean {
+    return this.liste_explications.findIndex((e) => !!e.inclusion_tag) > -1;
+  }
+  public doesNotContainAnyInclusion(): boolean {
+    return this.liste_explications.findIndex((e) => !!e.inclusion_tag) === -1;
   }
 }

@@ -34,12 +34,14 @@ import { CatalogueActionUsecase } from '../../usecase/catalogue_actions.usecase'
 import { ThematiqueUsecase } from '../../usecase/thematique.usecase';
 import { ApplicationError } from '../applicationError';
 import { AuthGuard } from '../auth/guard';
+import { SelectionRepository } from '../repository/selection.repository';
 import { GenericControler } from './genericControler';
 import { ActionAPI, ScoreActionAPI } from './types/actions/ActionAPI';
 import { CatalogueActionAPI } from './types/actions/CatalogueActionAPI';
 import { CompteutActionAPI } from './types/actions/CompteurActionAPI';
 import { FeedbackActionInputAPI } from './types/actions/FeedbackActionInputAPI';
 import { QuestionActionInputAPI } from './types/actions/QuestionActionInputAPI';
+import { SelectionAPI } from './types/actions/SelectionAPI';
 
 enum oui_non {
   oui = 'oui',
@@ -104,6 +106,7 @@ export class ActionsController extends GenericControler {
 
     const catalogue = await this.catalogueActionUsecase.getOpenCatalogue(
       liste_thematiques,
+      [],
       code_commune,
       titre,
     );
@@ -246,7 +249,7 @@ export class ActionsController extends GenericControler {
       }
     }
 
-    const catalogue = await this.catalogueActionUsecase.getUtilisateurCatalogue(
+    const catalogue = await this.catalogueActionUsecase.getCatalogueUtilisateur(
       utilisateurId,
       liste_thematiques,
       liste_selections,
@@ -466,6 +469,26 @@ export class ActionsController extends GenericControler {
       code_commune,
     );
     return ActionAPI.mapToAPI(result);
+  }
+
+  @Get('selections')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 1000 } })
+  @ApiOkResponse({
+    type: [SelectionAPI],
+  })
+  @ApiOperation({
+    summary: `Retourne la liste des selections connues par le systeme`,
+  })
+  async getSelectionsRef(): Promise<SelectionAPI[]> {
+    const result: SelectionAPI[] = [];
+    for (const select of Object.values(Selection)) {
+      const select_def = SelectionRepository.getSelectionDefinition(select);
+      if (select_def) {
+        result.push(SelectionAPI.mapToAPI(select_def));
+      }
+    }
+    return result;
   }
 
   @Get('utilisateurs/:utilisateurId/actions/:type_action/:code_action')

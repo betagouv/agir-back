@@ -11,6 +11,7 @@ export class ActionLightAPI {
   @ApiProperty() sous_titre: string;
   @ApiProperty() emoji: string;
   @ApiProperty() points: number;
+  @ApiProperty() score_recommandation: number;
   @ApiProperty() nombre_actions_en_cours: number;
   @ApiProperty() nombre_actions_faites: number;
   @ApiProperty() deja_vue: boolean;
@@ -45,6 +46,7 @@ export class ActionLightAPI {
       montant_max_economies_euros: action.montant_max_economies_euros,
       emoji: action.emoji,
       label_compteur: action.label_compteur,
+      score_recommandation: action.pourcent_match,
     };
   }
 }

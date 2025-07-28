@@ -50,10 +50,7 @@ export class WinterController extends GenericControler {
 
     await this.winterUsecase.inscrireAdresse(
       utilisateurId,
-      body.nom,
-      body.adresse,
-      body.code_postal,
-      body.code_commune,
+      body,
       x_forwarded_for,
       user_agent,
     );

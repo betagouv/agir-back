@@ -1,6 +1,6 @@
 import { Tag_v2 } from './Tag_v2';
 
-export const DynamicTag_v2Ref: { [key in Tag_v2]?: string } = {
+export const ComputedTagList: { [key in Tag_v2]?: string } = {
   est_un_contenu_local:
     'Tag dynamique affecté aux contenus détectés comme locaux',
   recommandation_winter:
@@ -20,4 +20,5 @@ export const DynamicTag_v2Ref: { [key in Tag_v2]?: string } = {
   risque_commune_catnat: `Commune avec plus de 5 arrêt catastrophe naturelle`,
   risque_commune_argile: `Commune avec plus de 50% de surface en risque geotechnique`,
   risque_commune_inondation: `Commune avec plus de 10% de surface en risque inondation`,
+  match_aucun_autre_tag: `Tag valorisé à vrai si un contenu n'a aucun autre tag qui match, utilisé a priori pour exlure du contenu qui ne match pas au moins un tag`,
 };

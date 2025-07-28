@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from '../../src/domain/kyc/KYCID';
-import {
-  ModeInscription,
-  Scope,
-  Utilisateur,
-} from '../../src/domain/utilisateur/utilisateur';
+import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
@@ -410,6 +406,7 @@ export class MigrationUsecase {
     };
   }
     */
+  /*
   private async migrate_19(
     user_id: string,
     version: number,
@@ -444,6 +441,7 @@ export class MigrationUsecase {
       info: `mode = [${utilisateur.mode_inscription}]`,
     };
   }
+    */
   /*
   private async migrate_20(
     user_id: string,

@@ -8,23 +8,26 @@ import {
 } from '../../../../domain/logement/logement';
 
 export class LogementAPI {
-  @ApiProperty({ required: false }) nombre_adultes: number;
-  @ApiProperty({ required: false }) nombre_enfants: number;
-  @ApiProperty({ required: false }) code_postal: string;
-  @ApiProperty({ required: false }) commune: string;
-  @ApiProperty({ required: false }) code_commune: string;
-  @ApiProperty() latitude: number;
-  @ApiProperty() longitude: number;
-  @ApiProperty() numero_rue: string;
-  @ApiProperty() rue: string;
+  @ApiProperty({ required: false }) nombre_adultes?: number;
+  @ApiProperty({ required: false }) nombre_enfants?: number;
+  @ApiProperty({ required: false }) code_postal?: string;
+  @ApiProperty({ required: false }) commune?: string;
+  @ApiProperty({ required: false }) code_commune?: string;
+  @ApiProperty({ required: false }) latitude?: number;
+  @ApiProperty({ required: false }) longitude?: number;
+  @ApiProperty({ required: false }) numero_rue?: string;
+  @ApiProperty({ required: false }) rue?: string;
+  @ApiProperty() est_prm_present?: boolean;
+  @ApiProperty() est_prm_obsolete?: boolean;
+  @ApiProperty() est_adresse_complete?: boolean;
 
-  @ApiProperty({ required: false }) commune_label: string;
-  @ApiProperty({ enum: TypeLogement }) type: TypeLogement;
-  @ApiProperty({ enum: Superficie }) superficie: Superficie;
-  @ApiProperty({ required: false }) proprietaire: boolean;
-  @ApiProperty({ enum: Chauffage }) chauffage: Chauffage;
-  @ApiProperty({ required: false }) plus_de_15_ans: boolean;
-  @ApiProperty({ enum: DPE }) dpe: DPE;
+  @ApiProperty({ required: false }) commune_label?: string;
+  @ApiProperty({ enum: TypeLogement, required: false }) type?: TypeLogement;
+  @ApiProperty({ enum: Superficie, required: false }) superficie?: Superficie;
+  @ApiProperty({ required: false }) proprietaire?: boolean;
+  @ApiProperty({ enum: Chauffage, required: false }) chauffage?: Chauffage;
+  @ApiProperty({ required: false }) plus_de_15_ans?: boolean;
+  @ApiProperty({ enum: DPE, required: false }) dpe?: DPE;
 
   public static mapToAPI(user: Utilisateur): LogementAPI {
     const log = user.logement;
@@ -45,6 +48,9 @@ export class LogementAPI {
       dpe: log.dpe,
       commune_label: log.commune_label,
       code_commune: log.code_commune,
+      est_prm_present: !!log.prm,
+      est_prm_obsolete: log.est_prm_obsolete,
+      est_adresse_complete: log.possedeAdressePrecise(),
     };
   }
 }

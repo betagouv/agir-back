@@ -41,6 +41,8 @@ const logement: Logement_v0 = {
   code_commune: '21231',
   score_risques_adresse: undefined,
   prm: undefined,
+  est_prm_obsolete: false,
+  est_prm_par_adresse: false,
 };
 
 describe('Actions Catalogue Utilisateur (API test)', () => {
@@ -118,6 +120,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       },
       label_compteur: 'label_compteur',
       montant_max_economies_euros: 0,
+      score_recommandation: 0.00481617146,
     });
 
     expect(response.body.nombre_resultats).toEqual(1);
@@ -381,13 +384,12 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         selected: false,
       },
     ]);
-    expect(response.body.selections).toEqual([
-      {
-        code: 'actions_winter',
-        label: 'actions_winter',
-        selected: false,
-      },
-    ]);
+    expect(response.body.selections.length).toBeGreaterThan(1);
+    expect(response.body.selections[0]).toEqual({
+      code: 'actions_watt_watchers',
+      label: 'actions_watt_watchers',
+      selected: false,
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre selections`, async () => {
@@ -400,7 +402,7 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_1',
       thematique: Thematique.logement,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
     await TestUtil.create(DB.action, {
       code: '2',
@@ -416,14 +418,14 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
       type: TypeAction.classique,
       type_code_id: 'classique_3',
       thematique: Thematique.logement,
-      selections: [Selection.actions_winter],
+      selections: [Selection.actions_watt_watchers],
     });
 
     await actionRepository.onApplicationBootstrap();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions?selection=actions_winter',
+      '/utilisateurs/utilisateur-id/actions?selection=actions_watt_watchers',
     );
 
     // THEN
@@ -467,13 +469,12 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
         selected: false,
       },
     ]);
-    expect(response.body.selections).toEqual([
-      {
-        code: 'actions_winter',
-        label: 'actions_winter',
-        selected: true,
-      },
-    ]);
+    expect(response.body.selections.length).toBeGreaterThan(1);
+    expect(response.body.selections[0]).toEqual({
+      code: 'actions_watt_watchers',
+      label: 'actions_watt_watchers',
+      selected: true,
+    });
   });
 
   it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur - filtre titre textuel`, async () => {

@@ -161,4 +161,7 @@ export enum KYCID {
   KYC_electro_congelateur = 'KYC_electro_congelateur',
   KYC_loisir_piscine_type = 'KYC_loisir_piscine_type',
   KYC_raison_achat_vetements = 'KYC_raison_achat_vetements',
+  KYC_type_chauffage_eau = 'KYC_type_chauffage_eau',
+  KYC_logement_nombre_adultes = 'KYC_logement_nombre_adultes',
+  KYC_logement_nombre_enfants = 'KYC_logement_nombre_enfants',
 }

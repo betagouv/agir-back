@@ -75,24 +75,6 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
-  it('searchArticles : liste article par code postal parmi plusieurs', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      codes_postaux: ['A', 'B'],
-    });
-    await articleRepository.loadCache();
-
-    // WHEN
-    const liste = await articleRepository.searchArticles({
-      code_postal: 'B',
-    });
-
-    // THEN
-    expect(liste).toHaveLength(1);
-    expect(liste[0].content_id).toEqual('1');
-  });
   it('searchArticles : liste article sans code postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -103,27 +85,7 @@ describe('ArticleRepository', () => {
     await articleRepository.loadCache();
 
     // WHEN
-    const liste = await articleRepository.searchArticles({
-      code_postal: 'B',
-    });
-
-    // THEN
-    expect(liste).toHaveLength(1);
-    expect(liste[0].content_id).toEqual('1');
-  });
-  it('searchArticles : liste article filtre code postal à null', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      codes_postaux: ['A', 'B'],
-    });
-    await articleRepository.loadCache();
-
-    // WHEN
-    const liste = await articleRepository.searchArticles({
-      code_postal: null,
-    });
+    const liste = await articleRepository.searchArticles({});
 
     // THEN
     expect(liste).toHaveLength(1);
@@ -359,7 +321,6 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_postal: '21000',
       code_region: '47',
     });
 
@@ -371,51 +332,30 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_region: ['45', '46'],
-      codes_postaux: [],
+      codes_region_from_partenaire: ['45', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_postal: '21000',
-      code_region: '46',
+      region_pour_partenaire: '46',
     });
 
     // THEN
     expect(liste).toHaveLength(1);
-  });
-  it('search : le filtre region et code qui exluent', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.article, {
-      content_id: '1',
-      codes_region: ['45', '46'],
-      codes_postaux: ['91120'],
-    });
-    await articleRepository.loadCache();
-
-    // WHEN
-    const liste = await articleRepository.searchArticles({
-      code_postal: '21000',
-      code_region: '46',
-    });
-
-    // THEN
-    expect(liste).toHaveLength(0);
   });
   it('search : le filtre departement no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_departement: ['45', '46'],
+      codes_departement_from_partenaire: ['45', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_departement: '47',
+      departement_pour_partenaire: '47',
     });
 
     // THEN
@@ -426,13 +366,13 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_departement: ['45', '46'],
+      codes_departement_from_partenaire: ['45', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_departement: '46',
+      departement_pour_partenaire: '46',
     });
 
     // THEN

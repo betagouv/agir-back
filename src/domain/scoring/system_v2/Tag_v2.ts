@@ -39,6 +39,7 @@ export enum Tag_v2 {
   habite_zone_rurale = 'habite_zone_rurale',
 
   contenu_important = 'contenu_important',
+  match_aucun_autre_tag = 'match_aucun_autre_tag',
 
   risque_adresse_argile = 'risque_adresse_argile',
   risque_adresse_inondation = 'risque_adresse_inondation',

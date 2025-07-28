@@ -20,6 +20,9 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
+import { AidesUsecase } from '../../usecase/aides.usecase';
+import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
+import { LogementUsecase } from '../../usecase/logement.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
@@ -45,7 +48,12 @@ export class MobileTokenAPI {
 @ApiBearerAuth()
 @ApiTags('1 - Utilisateur - Profile')
 export class ProfileController extends GenericControler {
-  constructor(private readonly profileUsecase: ProfileUsecase) {
+  constructor(
+    private readonly profileUsecase: ProfileUsecase,
+    private readonly logementUsecase: LogementUsecase,
+    private readonly aidesUsecase: AidesUsecase,
+    private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
+  ) {
     super();
   }
 
@@ -168,7 +176,7 @@ export class ProfileController extends GenericControler {
     @Body() body: LogementAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.profileUsecase.updateUtilisateurLogement(utilisateurId, body);
+    await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
   }
 
   @Post('utilisateurs/:utilisateurId/reset')
@@ -186,18 +194,6 @@ export class ProfileController extends GenericControler {
   ) {
     this.checkCallerId(req, utilisateurId);
     await this.profileUsecase.reset(body.confirmation, utilisateurId);
-  }
-
-  @Post('utilisateurs/reset')
-  @ApiBody({
-    type: ConfirmationAPI,
-  })
-  @ApiOperation({
-    summary: `Reset TOUS LES UTILISATEURS`,
-  })
-  async resetAll(@Request() req, @Body() body: ConfirmationAPI) {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.profileUsecase.resetAllUsers(body.confirmation);
   }
 
   @Put('utilisateurs/:utilisateurId/mobile_token')
@@ -236,6 +232,27 @@ export class ProfileController extends GenericControler {
   })
   async updateAllUserCouvertureAides(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    return await this.profileUsecase.updateAllUserCouvertureAides();
+    return await this.aidesUsecase.updateAllUserCouvertureAides();
+  }
+
+  @Post('utilisateurs/:utilisateurId/logout')
+  @ApiOperation({
+    summary: `Déconnecte un utilisateur donné, si l'utilisateur était FranceConnecté, alors une URL est fournie pour réaliser la redirection France Connect de logout`,
+  })
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: logoutAPI })
+  async disconnect(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<logoutAPI> {
+    this.checkCallerId(req, utilisateurId);
+    const result = await this.connexion_v2_Usecase.logout_single_user(
+      utilisateurId,
+    );
+    return {
+      france_connect_logout_url: result.fc_logout_url
+        ? result.fc_logout_url.toString()
+        : undefined,
+    };
   }
 }

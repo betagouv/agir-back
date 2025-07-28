@@ -913,6 +913,18 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `Valeur 'oui' ou 'non' attendue, reçu : [${value}]`,
     );
   }
+  static throwRefererTooLong(referer: string) {
+    this.throwAppError(
+      '167',
+      `L'attribut 'referer' est trop long, reçu [${referer}]. Max 20 char`,
+    );
+  }
+  static throwRefererKeywordTooLong(referer_keyword: string) {
+    this.throwAppError(
+      '168',
+      `L'attribut 'referer_keyword' est trop long, reçu [${referer_keyword}]. Max 50 char`,
+    );
+  }
 
   private static throwAppError(
     code: string,
