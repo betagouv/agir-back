@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { RuleName } from 'publicodes-voiture-v2';
 import { RegleSimulateurVoiture_v2 } from 'src/domain/simulateur_voiture/parametres_v2';
 import {
   VoitureActuelle_v2,
@@ -23,6 +24,19 @@ import {
   SimulateurVoitureRepository_v2,
 } from '../infrastructure/repository/simulateurVoiture_v2.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
+
+const PARAMS_TO_IGNORE: RuleName[] = [
+  'usage . km annuels',
+  'voiture . âge',
+  'voiture . année de fabrication',
+  'voiture . cible',
+  'voiture . durée de détention totale',
+  'voiture . gabarit',
+  'voiture . motorisation',
+  'voiture . occasion',
+  "voiture . prix d'achat",
+  'voiture . thermique . carburant',
+];
 
 @Injectable()
 export class SimulateurVoitureUsecase {
@@ -49,7 +63,21 @@ export class SimulateurVoitureUsecase {
     ]);
     const params = getParams_v2(utilisateur);
 
-    return this.simulateurVoitureRepository_v2.evaluateVoitureActuelle(params);
+    const voitureActuelle =
+      this.simulateurVoitureRepository_v2.evaluateVoitureActuelle(params);
+
+    voitureActuelle.parameters = voitureActuelle.parameters
+      .filter(
+        ({ ruleName }) => !PARAMS_TO_IGNORE.some((p) => ruleName.startsWith(p)),
+      )
+      .map((p) => {
+        if (p.isEnumValue) {
+          p.value = p.title as any;
+        }
+
+        return p;
+      });
+    return voitureActuelle;
   }
 
   async calculerVoitureAlternatives(
