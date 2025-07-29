@@ -5,7 +5,6 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { LVAOUsecase } from './usecase/lvao.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
@@ -276,10 +275,6 @@ async function bootstrap() {
       await application
         .get(CMSDataHelperUsecase)
         .migrateEchelleAides(process.argv[3]);
-      break;
-
-    case 'load_lvao_big_csv':
-      await application.get(LVAOUsecase).smart_load_csv_lvao(process.argv[3]);
       break;
 
     case 'cms_migrate_aides_partenaires':
