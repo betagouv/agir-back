@@ -461,16 +461,7 @@ export class ActionUsecase {
           ]
         : undefined;
 
-    if (enchainement_id) {
-      return EnchainementDefinition[enchainement_id];
-    } else {
-      const action_def = this.actionRepository.getActionDefinitionByTypeCode({
-        type: action_type,
-        code: action_code,
-      });
-
-      return action_def ? action_def.kyc_codes : [];
-    }
+    return EnchainementDefinition[enchainement_id] ?? [];
   }
 
   public async calculeScoreQuizzAction(

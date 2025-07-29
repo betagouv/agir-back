@@ -10,6 +10,7 @@ import {
 
 import {
   ActionBilanID,
+  ActionSimulateurID,
   TypeAction,
 } from '../../../src/domain/actions/typeAction';
 import { EnchainementDefinition } from '../../../src/domain/kyc/enchainementDefinition';
@@ -310,34 +311,32 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de simultateur`, async () => {
     // GIVEN
-
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 1,
-      question: 'quest 1',
-      code: KYCID.KYC001,
+      code: KYCID.KYC_transport_type_utilisateur,
+      question: 'Quel est votre moyen de transport principal ?',
     });
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 2,
-      question: 'quest 2',
-      code: KYCID.KYC002,
+      code: KYCID.KYC_transport_voiture_occasion,
+      question: "Votre voiture est-elle d'occasion ?",
     });
+
+    const type_code_id = `${TypeAction.simulateur}_${ActionSimulateurID.action_simulateur_voiture}`;
     await TestUtil.create(DB.action, {
-      code: '123',
+      code: ActionSimulateurID.action_simulateur_voiture,
       type: TypeAction.simulateur,
-      type_code_id: 'simulateur_123',
-      label_compteur: 'ttt',
-      kyc_codes: ['KYC001', 'KYC002'],
+      type_code_id,
     });
 
     await TestUtil.create(DB.utilisateur);
     await kycRepository.loadCache();
     await actionRepository.loadCache();
 
-    // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/simulateur_123/first',
+      `/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/${type_code_id}/first`,
     );
 
     // THEN
@@ -351,83 +350,12 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
-        code: 'KYC001',
+        code: KYCID.KYC_transport_type_utilisateur,
         is_NGC: true,
         is_answered: false,
         is_skipped: false,
         points: 20,
-        question: 'quest 1',
-        reponse_multiple: [
-          {
-            code: 'oui',
-            label: 'Oui',
-            selected: false,
-          },
-          {
-            code: 'non',
-            label: 'Non',
-            selected: false,
-          },
-          {
-            code: 'sais_pas',
-            label: 'Je sais pas',
-            selected: false,
-          },
-        ],
-        thematique: 'alimentation',
-        type: 'choix_unique',
-      },
-    });
-  });
-
-  it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - ID de bilan`, async () => {
-    // GIVEN
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 1,
-      question: 'quest 1',
-      code: KYCID.KYC001,
-    });
-    await TestUtil.create(DB.kYC, {
-      ...dbKYC,
-      id_cms: 2,
-      question: 'quest 2',
-      code: KYCID.KYC002,
-    });
-    await TestUtil.create(DB.action, {
-      code: '123',
-      type: TypeAction.bilan,
-      type_code_id: 'bilan_123',
-      label_compteur: 'ttt',
-      kyc_codes: ['KYC001', 'KYC002'],
-    });
-
-    await TestUtil.create(DB.utilisateur);
-    await kycRepository.loadCache();
-    await actionRepository.loadCache();
-
-    // WHEN
-    const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/enchainementQuestionsKYC_v2/bilan_123/first',
-    );
-
-    // THEN
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      nombre_total_questions: 2,
-      nombre_total_questions_effectives: 2,
-      position_courante: 1,
-      is_first: true,
-      is_last: false,
-      is_out_of_range: false,
-      question_courante: {
-        categorie: 'recommandation',
-        code: 'KYC001',
-        is_NGC: true,
-        is_answered: false,
-        is_skipped: false,
-        points: 20,
-        question: 'quest 1',
+        question: 'Quel est votre moyen de transport principal ?',
         reponse_multiple: [
           {
             code: 'oui',
