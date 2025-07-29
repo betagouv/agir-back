@@ -173,12 +173,12 @@ function getControllers(): any[] {
     RisqesController,
     MagicLinkController,
     WinterController,
+    TagController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(CmsPreviewController);
-    controllers.push(TagController);
   }
   return controllers;
 }
