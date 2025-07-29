@@ -75,6 +75,7 @@ import { ConformiteRepository } from './infrastructure/repository/conformite.rep
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
+import { LVAORepository } from './infrastructure/repository/lvao.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
@@ -118,6 +119,7 @@ import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { LogementUsecase } from './usecase/logement.usecase';
+import { LVAOUsecase } from './usecase/lvao.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
@@ -171,12 +173,12 @@ function getControllers(): any[] {
     RisqesController,
     MagicLinkController,
     WinterController,
+    TagController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
     controllers.push(TestDataController);
     controllers.push(CmsPreviewController);
-    controllers.push(TagController);
   }
   return controllers;
 }
@@ -295,6 +297,8 @@ function getControllers(): any[] {
     SelectionRepository,
     LogementUsecase,
     PartenaireUsecase,
+    LVAORepository,
+    LVAOUsecase,
   ],
 })
 export class AppModule {}

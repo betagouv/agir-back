@@ -60,6 +60,7 @@
     "@publicodes/tools": "^1.7.2",
     "@sentry/node": "^8.48.0",
     "axios": ">=1.7.9",
+    "csv-reader": "^1.0.12",
     "firebase-admin": "^13.0.2",
     "geolib": "^3.3.4",
     "handlebars": "^4.7.8",
