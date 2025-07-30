@@ -290,8 +290,8 @@ export class CommuneRepository {
     return liste.map((a) => a.INSEE);
   }
 
-  getLibelleCommuneLowerCase(code_insee: string) {
-    const commune = this.getCommuneByCodeINSEE(code_insee);
+  static getLibelleCommuneLowerCase(code_insee: string) {
+    const commune = communes.find((c) => c.code === code_insee);
     if (commune) {
       return commune.nom;
     }
@@ -319,7 +319,7 @@ export class CommuneRepository {
     if (code_postal === null) return null;
 
     const code_insee = this.getCommuneCodeInsee(code_postal, commune);
-    const libelle = this.getLibelleCommuneLowerCase(code_insee);
+    const libelle = CommuneRepository.getLibelleCommuneLowerCase(code_insee);
     return libelle || commune;
   }
 
@@ -454,6 +454,13 @@ export class CommuneRepository {
    * can be shared by multiple communes.
    */
   getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
+    return CommuneRepository.getCommuneByCodeINSEE_static(code_insee);
+  }
+
+  // FIXME : passer tout en static, re - intégrer ce faux repository dans le domaine
+  public static getCommuneByCodeINSEE_static(
+    code_insee: string,
+  ): Commune | undefined {
     return communes.find((c) => c.code === code_insee);
   }
 

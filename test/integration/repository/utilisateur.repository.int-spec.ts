@@ -442,6 +442,7 @@ describe('UtilisateurRepository', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     const count = await utilisateurRepository.countByCodesCommune([
@@ -473,6 +474,7 @@ describe('UtilisateurRepository', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const logement2: Logement_v0 = {
       version: 0,
@@ -495,6 +497,7 @@ describe('UtilisateurRepository', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const logement3: Logement_v0 = {
       version: 0,
@@ -517,6 +520,7 @@ describe('UtilisateurRepository', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       id: '1',

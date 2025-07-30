@@ -59,6 +59,7 @@ describe('Winter (API test)', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -101,6 +102,7 @@ describe('Winter (API test)', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -158,6 +160,7 @@ describe('Winter (API test)', () => {
       prm: '12345678901234',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -220,6 +223,7 @@ describe('Winter (API test)', () => {
       prm: '12345678901234',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -257,6 +261,7 @@ describe('Winter (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -293,6 +298,7 @@ describe('Winter (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -333,6 +339,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -449,6 +456,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],
@@ -530,6 +538,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],

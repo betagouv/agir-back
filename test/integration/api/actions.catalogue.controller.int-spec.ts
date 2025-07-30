@@ -43,6 +43,7 @@ const logement: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 describe('Actions Catalogue Utilisateur (API test)', () => {

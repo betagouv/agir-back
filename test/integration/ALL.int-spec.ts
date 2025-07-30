@@ -7,6 +7,7 @@ import './api/actions.catalogue.offline.controller.int-spec';
 import './api/actions.controller.int-spec';
 import './api/actions.offline.controller.int-spec';
 import './api/admin.controller.int-spec';
+import './api/adresse.controller.int-spec';
 import './api/aide.controller.int-spec';
 import './api/aideVelo.controller.int-spec';
 import './api/bibliotheque.controller.int-spec';

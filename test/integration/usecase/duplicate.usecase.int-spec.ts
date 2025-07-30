@@ -282,6 +282,7 @@ describe('Duplicate Usecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -415,6 +416,7 @@ describe('Duplicate Usecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     for (let index = 0; index < 10; index++) {

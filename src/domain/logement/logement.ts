@@ -3,6 +3,7 @@ import {
   ScoreRisquesAdresse_v0,
 } from '../object_store/logement/logement_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { Adresse } from './adresse';
 import { NiveauRisqueLogement } from './NiveauRisque';
 import { TypeRisqueLogement } from './TypeRisque';
 
@@ -65,6 +66,7 @@ export class ScoreRisquesAdresse
 }
 
 export class Logement {
+  liste_adresses_recentes: Adresse[];
   nombre_adultes: number;
   nombre_enfants: number;
   code_commune: string;
@@ -90,6 +92,7 @@ export class Logement {
   constructor(log?: Logement_v0) {
     if (!log) {
       this.score_risques_adresse = undefined;
+      this.liste_adresses_recentes = [];
       return;
     }
     this.nombre_adultes = log.nombre_adultes;
@@ -113,6 +116,9 @@ export class Logement {
     this.score_risques_adresse = new ScoreRisquesAdresse(
       log.score_risques_adresse,
     );
+    this.liste_adresses_recentes = log.liste_adresses_recentes
+      ? log.liste_adresses_recentes.map((a) => new Adresse(a))
+      : [];
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {

@@ -209,6 +209,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -267,6 +268,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -324,6 +326,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -361,6 +364,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -442,6 +446,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     // WHEN
@@ -1229,6 +1234,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: true,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement_91120 as any });
 
@@ -1272,6 +1278,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement_91120 as any });
 
@@ -1724,6 +1731,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const logement_21000: Logement_v0 = {
       version: 0,
@@ -1746,6 +1754,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {

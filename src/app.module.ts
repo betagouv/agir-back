@@ -28,6 +28,7 @@ import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmailManager';
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
+import { AdressesController } from './infrastructure/api/adresses.controller';
 import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
 import { AsciiPreviewController } from './infrastructure/api/ascii.preview.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
@@ -102,6 +103,7 @@ import { WinterAPIClient } from './infrastructure/repository/winter/winterAPICli
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
+import { AdresseUsecase } from './usecase/adresse.usecase';
 import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
@@ -172,6 +174,7 @@ function getControllers(): any[] {
     MagicLinkController,
     WinterController,
     TagController,
+    AdressesController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
@@ -295,6 +298,7 @@ function getControllers(): any[] {
     SelectionRepository,
     LogementUsecase,
     PartenaireUsecase,
+    AdresseUsecase,
   ],
 })
 export class AppModule {}

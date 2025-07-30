@@ -54,6 +54,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -88,6 +89,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -133,6 +135,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -181,6 +184,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await risquesNaturelsCommunesRepository.loadCache();
@@ -221,6 +225,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -254,6 +259,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
 
       score_risques_adresse: {
         argile: NiveauRisqueLogement.faible,
@@ -335,6 +341,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 

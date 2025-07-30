@@ -139,6 +139,7 @@ describe('WinterUsecase', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -243,6 +244,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -298,6 +300,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -355,6 +358,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -411,6 +415,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -468,6 +473,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -525,6 +531,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -603,6 +610,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

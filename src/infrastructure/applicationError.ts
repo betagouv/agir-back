@@ -926,6 +926,28 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwTropAdressesRecentes(max: number) {
+    this.throwAppError(
+      '169',
+      `Il n'est pas possible d'avoir plus de [${max}] adresses récentes`,
+    );
+  }
+
+  static throwMissingField(field: string) {
+    this.throwAppError('175', `Attribut [${field}] obligatoire`);
+  }
+
+  static throwBadLatitude() {
+    this.throwAppError('170', `la latitude doit être comprise entre -90 et 90`);
+  }
+
+  static throwBadLongitude() {
+    this.throwAppError(
+      '171',
+      `la longitude doit être comprise entre -180 et 180`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,

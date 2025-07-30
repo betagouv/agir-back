@@ -39,6 +39,7 @@ const logement_palaiseau: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 describe('RechercheServices (API test)', () => {
@@ -213,6 +214,7 @@ describe('RechercheServices (API test)', () => {
         code_postal: null,
         risques: undefined,
         score_risques_adresse: undefined,
+        liste_adresses_recentes: [],
       },
     });
 

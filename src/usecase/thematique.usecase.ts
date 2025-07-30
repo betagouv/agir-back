@@ -60,7 +60,7 @@ export class ThematiqueUsecase {
       THEMATIQUE_ENCHAINEMENT_MAPPING[thematique];
     result.personnalisation_necessaire = !personnalisation_done_once;
 
-    result.nom_commune = this.communeRepository.getLibelleCommuneLowerCase(
+    result.nom_commune = CommuneRepository.getLibelleCommuneLowerCase(
       utilisateur.logement.code_commune,
     );
 
