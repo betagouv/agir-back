@@ -14,6 +14,7 @@ import { EmailSender } from '../infrastructure/email/emailSender';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { AidesVeloUsecase } from './aidesVelo.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
 const MAX_FEEDBACK_LENGTH = 500;
@@ -31,6 +32,7 @@ export class AidesUsecase {
     private utilisateurRepository: UtilisateurRepository,
     private personnalisator: Personnalisator,
     private partenaireUsecase: PartenaireUsecase,
+    private aideVeloUsecase: AidesVeloUsecase,
   ) {}
 
   async getCatalogueAidesUtilisateur(
@@ -56,6 +58,12 @@ export class AidesUsecase {
     const aides_nationales: Aide[] = [];
     const aides_locales: Aide[] = [];
     for (const aide_def of aide_def_liste) {
+      // Aide simuler l'achat d'un vélo
+      if (aide_def.content_id === '3') {
+        aide_def.montant_max = await this.aideVeloUsecase.calculerMontantMax(
+          utilisateurId,
+        );
+      }
       if (aide_def.echelle === Echelle.National) {
         const aide = Aide.newAide(aide_def, utilisateur);
         this.setPartenaire(aide, code_commune);

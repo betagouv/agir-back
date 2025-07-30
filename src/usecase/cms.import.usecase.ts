@@ -549,6 +549,9 @@ export class CMSImportUsecase {
         loading_result.push(JSON.stringify(element));
       }
     }
+    for (let index = 0; index < liste_aides.length; index++) {
+      await this.aideRepository.upsert(liste_aides[index]);
+    }
     return loading_result;
   }
 

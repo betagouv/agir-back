@@ -25,9 +25,21 @@ export class AidesVeloUsecase {
     private communeRepository: CommuneRepository,
   ) {}
 
+  /**
+   * Simule les aides disponibles pour un utilisateur en fonction de son
+   * identifiant, du prix du vélo, de l'état du vélo et de sa situation
+   * handicap.
+   *
+   * @param utilisateurId - L'identifiant de l'utilisateur pour lequel les aides sont simulées.
+   * @param prix_velo - Le prix du vélo pour lequel les aides sont simulées. Si non défini, une valeur par défaut est utilisée pour maximiser le montant de l'aide.
+   * @param etat_velo - L'état du vélo (neuf ou occasion).
+   * @param situation_handicap - Indique si l'utilisateur est en situation de handicap.
+   *
+   * @return La liste des aides disponibles pour chaque type de vélo.
+   */
   async simulerAideVelo(
     utilisateurId: string,
-    prix_velo: number,
+    prix_velo: number | undefined,
     etat_velo: 'neuf' | 'occasion' = 'neuf',
     situation_handicap: boolean = false,
   ): Promise<AidesVeloParType> {
@@ -70,6 +82,33 @@ export class AidesVeloUsecase {
     };
 
     return this.aidesVeloRepository.getSummaryVelos(inputs);
+  }
+
+  /**
+   * Calcule le montant maximum d'aide auquel un utilisateur pourrait prétendre
+   * en fonction de son revenu fiscal de référence et de sa situation.
+   *
+   * @param utilisateurId - L'identifiant de l'utilisateur pour lequel le montant maximum est calculé.
+   * @return Le montant maximum d'aide auquel l'utilisateur pourrait prétendre.
+   */
+  async calculerMontantMax(utilisateurId: string): Promise<number> {
+    const summary = await this.simulerAideVelo(
+      utilisateurId,
+      undefined,
+      'neuf',
+      true,
+    );
+
+    const montantMax = Object.values(summary).reduce(
+      (max, aides) =>
+        Math.max(
+          max,
+          aides.reduce((sum, aide) => sum + (aide.montant ?? 0), 0),
+        ),
+      0,
+    );
+
+    return montantMax;
   }
 
   /**

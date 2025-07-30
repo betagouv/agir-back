@@ -1,3 +1,5 @@
+import { AidesVeloRepository } from 'src/infrastructure/repository/aidesVelo.repository';
+import { AidesVeloUsecase } from 'src/usecase/aidesVelo.usecase';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import {
   Chauffage,
@@ -45,6 +47,12 @@ describe('WinterUsecase', () => {
   let compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
+  let aideVeloRepository = new AidesVeloRepository();
+  let aideVeloUsecase = new AidesVeloUsecase(
+    aideVeloRepository,
+    utilisateurRepository,
+    communeRepository,
+  );
   let aidesUsecase = new AidesUsecase(
     aideExpirationWarningRepository,
     emailSender,
@@ -53,6 +61,7 @@ describe('WinterUsecase', () => {
     utilisateurRepository,
     personalisator,
     partenaireUsecase,
+    aideVeloUsecase,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,
