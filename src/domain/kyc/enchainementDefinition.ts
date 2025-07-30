@@ -23,9 +23,9 @@ export const EnchainementDefinition: Record<
   ENCHAINEMENT_KYC_1: [KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID],
   ENCHAINEMENT_KYC_action_simulateur_voiture: [
     KYCID.KYC_possede_voiture_oui_non,
+    KYCID.KYC_transport_voiture_occasion,
     KYCID.KYC_transport_voiture_duree_detention,
     KYCID.KYC_transport_voiture_annee_fabrication,
-    KYCID.KYC_transport_voiture_prix_achat,
     KYCID.KYC_transport_voiture_gabarit,
     KYCID.KYC_transport_voiture_motorisation,
     KYCID.KYC_transport_voiture_thermique_carburant,
