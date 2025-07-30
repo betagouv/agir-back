@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
+import { TypeAction } from '../domain/actions/typeAction';
 import {
   EnchainementDefinition,
   EnchainementType,
 } from '../domain/kyc/enchainementDefinition';
 import { EnchainementKYC } from '../domain/kyc/enchainementKYC';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../infrastructure/repository/action.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ActionUsecase } from './actions.usecase';
 
 @Injectable()
@@ -143,47 +144,40 @@ export class QuestionKYCEnchainementUsecase {
     enchainementId: string,
     utilisateur: Utilisateur,
   ): QuestionKYC[] {
-    const is_enchainement_simultateur = this.isSimulateurId(enchainementId);
-    const is_enchainement_bilan = this.isBilanId(enchainementId);
+    const actionCodeType =
+      ActionDefinition.getTypeCodeFromString(enchainementId);
+    const is_enchainement_simulateur =
+      this.actionRepository.isSimulateur(actionCodeType);
+    const is_enchainement_bilan = this.actionRepository.isBilan(actionCodeType);
 
     if (
       !EnchainementType[enchainementId] &&
-      !is_enchainement_simultateur &&
+      !is_enchainement_simulateur &&
       !is_enchainement_bilan
     ) {
       ApplicationError.throwUnkownEnchainement(enchainementId);
     }
 
-    if (is_enchainement_simultateur) {
-      const action_def = this.actionRepository.getActionDefinitionByTypeCode(
-        ActionDefinition.getTypeCodeFromString(enchainementId),
+    if (is_enchainement_simulateur) {
+      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+        TypeAction.simulateur,
+        actionCodeType.code,
       );
-      return utilisateur.kyc_history.getListeKycsFromCodes(
-        action_def.kyc_codes,
-      );
+
+      return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
     }
 
     if (is_enchainement_bilan) {
-      const action_code =
-        ActionDefinition.getTypeCodeFromString(enchainementId).code;
-      const kyc_codes =
-        this.actionUsecase.external_get_kyc_codes_from_action_bilan(
-          action_code,
-        );
+      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+        TypeAction.bilan,
+        actionCodeType.code,
+      );
+
       return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
     }
 
     return utilisateur.kyc_history.getListeKycsFromCodes(
       EnchainementDefinition[enchainementId],
     );
-  }
-
-  private isSimulateurId(id: string): boolean {
-    const action = ActionDefinition.getTypeCodeFromString(id);
-    return this.actionRepository.isSimulateur(action);
-  }
-  private isBilanId(id: string): boolean {
-    const action = ActionDefinition.getTypeCodeFromString(id);
-    return this.actionRepository.isBilan(action);
   }
 }
