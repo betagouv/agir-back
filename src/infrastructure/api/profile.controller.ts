@@ -186,6 +186,7 @@ export class ProfileController extends GenericControler {
     try {
       await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
     } catch (error) {
+      console.log(body);
       console.log(error);
       throw error;
     }
