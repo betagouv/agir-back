@@ -67,7 +67,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { a: '{COMMUNE}', b: 'The {COMMUNE}' };
 
@@ -88,7 +88,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { a: '{CODE_POSTAL}' };
 
@@ -108,7 +108,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { a: '{CODE_POSTAL}' };
 
@@ -130,7 +130,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { a: '{COMMUNE}', b: 'The {COMMUNE}' };
 
@@ -188,7 +188,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { a: { the_commune: '{COMMUNE}' } };
 
@@ -208,7 +208,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = [
       { the_commune: '{COMMUNE}' },
@@ -232,7 +232,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = [`toto {COMMUNE}`, '91120'];
 
@@ -250,7 +250,7 @@ describe('Personalisation', () => {
       ModeInscription.magic_link,
     );
     user.logement.code_postal = '21800';
-    user.logement.commune = 'SENNECEY LES DIJON';
+    user.logement.code_commune = '21605';
 
     const test_data = { done_at: new Date(1) };
 

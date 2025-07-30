@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { ApplicationError } from '../../infrastructure/applicationError';
 import { CommuneRepository } from '../../infrastructure/repository/commune/commune.repository';
 import { Adresse_v0 } from '../object_store/logement/logement_v0';
@@ -60,31 +61,61 @@ export class Adresse extends AdresseData {
       );
     }
   }
-  public checkCoordinates() {
+  public checkCoordinatesOK() {
     if (this.latitude) {
+      if (!validator.isDecimal('' + this.latitude)) {
+        ApplicationError.throwNotDecimalField('longitude', this.latitude);
+      }
+
       if (this.latitude < -90 || this.latitude > 90) {
         ApplicationError.throwBadLatitude();
       }
     }
     if (this.longitude) {
+      if (!validator.isDecimal('' + this.longitude)) {
+        ApplicationError.throwNotDecimalField('longitude', this.longitude);
+      }
       if (this.longitude < -180 || this.longitude > 180) {
         ApplicationError.throwBadLongitude();
       }
     }
   }
-  public checkCodeCommuneAndCodePostalOK() {
+  public checkCodeCommuneOK() {
+    if (!this.code_commune) {
+      return;
+    }
     const commune = CommuneRepository.getCommuneByCodeINSEE_static(
       this.code_commune,
     );
     if (!commune) {
       ApplicationError.throwCodeCommuneNotFound(this.code_commune);
     }
+  }
 
-    if (!commune.codesPostaux.includes(this.code_postal)) {
-      ApplicationError.throwBadCodePostalAndCommuneAssociation(
-        this.code_postal,
+  public checkCodePostalOK() {
+    if (!this.code_postal) {
+      return;
+    }
+    CommuneRepository.getCommuneByCodeINSEE_static;
+    if (!CommuneRepository.checkCodePostal(this.code_postal)) {
+      ApplicationError.throwCodePostalIncorrect(this.code_postal);
+    }
+  }
+
+  public checkCodeCommuneAndCodePostalCoherent() {
+    if (this.code_commune && this.code_postal) {
+      const commune = CommuneRepository.getCommuneByCodeINSEE_static(
         this.code_commune,
       );
+      if (!commune) {
+        ApplicationError.throwCodeCommuneNotFound(this.code_commune);
+      }
+      if (!commune.codesPostaux.includes(this.code_postal)) {
+        ApplicationError.throwBadCodePostalAndCommuneAssociation(
+          this.code_postal,
+          this.code_commune,
+        );
+      }
     }
   }
 
@@ -107,5 +138,37 @@ export class Adresse extends AdresseData {
     if (!this.rue) {
       ApplicationError.throwMissingField('rue');
     }
+  }
+
+  public checkBothCodePostalEtCodeCommuneOrNone() {
+    const both_or_none =
+      (!!this.code_postal && !!this.code_commune) ||
+      (!this.code_postal && !this.code_commune);
+    if (!both_or_none) {
+      ApplicationError.throwCodePostalCommuneBothMandatory();
+    }
+  }
+
+  public hasAnyAdressData(): boolean {
+    return (
+      !!this.numero_rue ||
+      !!this.rue ||
+      !!this.code_commune ||
+      !!this.code_postal
+    );
+  }
+  public hasNullifiedStreetData(): boolean {
+    return this.numero_rue === null || this.rue === null;
+  }
+  public hasNullifiedCoordinates(): boolean {
+    return this.longitude === null && this.latitude === null;
+  }
+  public hasAnyCoordinates(): boolean {
+    return (
+      this.longitude !== null &&
+      this.longitude !== undefined &&
+      this.latitude !== null &&
+      this.latitude !== undefined
+    );
   }
 }

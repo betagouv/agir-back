@@ -196,10 +196,6 @@ export class ProfileUsecase {
       Scope.gamification,
     ]);
     Utilisateur.checkState(utilisateur);
-    utilisateur.logement.commune_label = this.communeRepository.formatCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
-    );
     return utilisateur;
   }
 

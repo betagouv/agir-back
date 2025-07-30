@@ -44,8 +44,8 @@ export class AdresseUsecase {
 
     adresse.checkAllFieldsMandatory();
     adresse.checkAllFieldsSize();
-    adresse.checkCoordinates();
-    adresse.checkCodeCommuneAndCodePostalOK();
+    adresse.checkCoordinatesOK();
+    adresse.checkCodeCommuneAndCodePostalCoherent();
 
     adresse.id = uuidv4();
     adresse.date_creation = new Date();

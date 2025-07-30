@@ -35,7 +35,6 @@ const logement: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '91120',
   chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,

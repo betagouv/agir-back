@@ -177,7 +177,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(response.body.jour_naissance).toEqual(24);
     expect(response.body.email).toEqual('yo@truc.com');
     expect(response.body.code_postal).toEqual('91120');
-    expect(response.body.commune).toEqual('PALAISEAU');
+    expect(response.body.commune).toEqual('Palaiseau');
     expect(response.body.revenu_fiscal).toEqual(10000);
     expect(response.body.nombre_de_parts_fiscales).toEqual(2);
     expect(response.body.abonnement_ter_loire).toEqual(false);
@@ -194,7 +194,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -204,7 +203,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
       score_risques_adresse: undefined,
       prm: undefined,
       est_prm_obsolete: false,
@@ -237,7 +236,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
       est_prm_obsolete: false,
       est_prm_present: false,
       est_adresse_complete: true,
@@ -252,7 +251,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -262,7 +260,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
 
       score_risques_adresse: undefined,
       prm: undefined,
@@ -296,7 +294,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       longitude: 2,
       numero_rue: '12',
       rue: 'avenue de la Paix',
-      code_commune: '12345',
+      code_commune: '91477',
       est_prm_obsolete: false,
       est_prm_present: false,
       est_adresse_complete: true,
@@ -311,7 +309,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -349,7 +346,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -423,7 +419,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1098,7 +1093,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_adultes: 4,
       nombre_enfants: 1,
       code_postal: '21000',
-      commune: 'DIJON',
       type: TypeLogement.appartement,
       superficie: Superficie.superficie_35,
       proprietaire: false,
@@ -1113,7 +1107,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       Scope.ALL,
     ]);
     expect(dbUser.logement.code_postal).toEqual('21000');
-    expect(dbUser.logement.commune).toEqual('Dijon');
     expect(dbUser.logement.nombre_adultes).toEqual(4);
     expect(dbUser.logement.nombre_enfants).toEqual(1);
     expect(dbUser.logement.type).toEqual(TypeLogement.appartement);
@@ -1219,7 +1212,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1263,7 +1255,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1349,7 +1340,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
-      commune: 'DIJON',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(200);
@@ -1385,25 +1376,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     expect(dbUser.logement.latitude).toEqual(43.7);
   });
 
-  it('PATCH /utilisateurs/id/logement - maj code postal positionne le code insee de la commune', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/logement',
-    ).send({
-      code_postal: '21000',
-      commune: 'DIJON',
-    });
-    // THEN
-    expect(response.status).toBe(200);
-    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-
-    expect(dbUser.logement.code_commune).toEqual('21231');
-  });
   it('PATCH /utilisateurs/id/logement - maj code commune surcharge le reste', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -1413,7 +1385,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
-      commune: 'DIJON',
       code_commune: '21231',
     });
     // THEN
@@ -1423,8 +1394,27 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     ]);
 
     expect(dbUser.logement.code_commune).toEqual('21231');
-    expect(dbUser.logement.commune).toEqual('Dijon');
     expect(dbUser.logement.code_postal).toEqual('21000'); // code postal lui pas touché car on peut pas retoruver un unique code postal à partir d'un code commune
+  });
+  it('PATCH /utilisateurs/id/logement - maj avec nom commune déduit le code commune', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+
+    // WHEN
+    const response = await TestUtil.PATCH(
+      '/utilisateurs/utilisateur-id/logement',
+    ).send({
+      code_postal: '21000',
+      commune: 'DIJON',
+    });
+    // THEN
+    expect(response.status).toBe(200);
+    const dbUser = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(dbUser.logement.code_commune).toEqual('21231');
+    expect(dbUser.logement.code_postal).toEqual('21000');
   });
   it('PATCH /utilisateurs/id/logement - code postal de moins de 5 char => erreur', async () => {
     // GIVEN
@@ -1453,20 +1443,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('077');
-  });
-  it('PATCH /utilisateurs/id/logement - code postal sans commune', async () => {
-    // GIVEN
-    await TestUtil.create(DB.utilisateur);
-
-    // WHEN
-    const response = await TestUtil.PATCH(
-      '/utilisateurs/utilisateur-id/logement',
-    ).send({
-      code_postal: '21000',
-    });
-    // THEN
-    expect(response.status).toBe(400);
-    expect(response.body.code).toEqual('078');
   });
   it('PATCH /utilisateurs/id/logement - code postal avec code_commune sans label commune => OK', async () => {
     // GIVEN
@@ -1499,7 +1475,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       `Le code postal [21000] ne correspond pas à la commune [91477]`,
     );
   });
-  it('PATCH /utilisateurs/id/logement - commune sans code postal', async () => {
+  it('PATCH /utilisateurs/id/logement - code_commune sans code postal', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
@@ -1507,13 +1483,13 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     const response = await TestUtil.PATCH(
       '/utilisateurs/utilisateur-id/logement',
     ).send({
-      commune: 'DIJON',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(400);
     expect(response.body.code).toEqual('078');
   });
-  it('PATCH /utilisateurs/id/logement - commune qui match pas le code postal', async () => {
+  it('PATCH /utilisateurs/id/logement - code_commune qui match pas le code postal', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
 
@@ -1522,7 +1498,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '91120',
-      commune: 'DIJON',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(400);
@@ -1537,11 +1513,11 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '99999',
-      commune: 'DIJON',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(400);
-    expect(response.body.code).toEqual('079');
+    expect(response.body.code).toEqual('077');
   });
 
   it('PATCH /utilisateurs/id/logement - exception silencieuse si KYC de synchro échoue', async () => {
@@ -1554,7 +1530,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       nombre_adultes: 4,
       nombre_enfants: 1,
       code_postal: '21000',
-      commune: 'DIJON',
+      code_commune: '21231',
       type: TypeLogement.appartement,
       superficie: Superficie.superficie_35,
       proprietaire: false,
@@ -1579,7 +1555,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       '/utilisateurs/utilisateur-id/logement',
     ).send({
       code_postal: '21000',
-      commune: 'DIJON',
+      code_commune: '21231',
     });
     // THEN
     expect(response.status).toBe(200);
@@ -1716,7 +1692,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1739,7 +1714,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'DIJON',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,

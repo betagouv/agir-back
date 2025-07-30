@@ -82,7 +82,7 @@ export class WinterUsecase {
       ApplicationError.throwNomObligatoireError();
     }
     if (!input.code_postal || !input.code_commune) {
-      ApplicationError.throwCodePostalCommuneMandatory();
+      ApplicationError.throwCodePostalCommuneBothMandatory();
     }
     if (!input.numero_rue || !input.rue) {
       ApplicationError.throwUserMissingAdresseForPrmSearch();

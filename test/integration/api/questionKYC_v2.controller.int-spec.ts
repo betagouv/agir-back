@@ -1020,7 +1020,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1080,7 +1079,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1147,7 +1145,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -1233,7 +1230,6 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -2040,6 +2036,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(userDB.recommandation.getListeTagsActifs()).toEqual([
       'appetence_thematique_transport',
       'appetence_thematique_consommation',
+      'habite_zone_urbaine',
     ]);
   });
 

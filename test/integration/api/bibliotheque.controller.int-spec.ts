@@ -1122,7 +1122,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,
@@ -1191,7 +1190,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,
@@ -1256,7 +1254,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,

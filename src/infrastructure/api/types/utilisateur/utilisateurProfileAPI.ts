@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Utilisateur } from '../../../../../src/domain/utilisateur/utilisateur';
+import { CommuneRepository } from '../../../repository/commune/commune.repository';
 import { LogementAPI } from './logementAPI';
 
 export class UtilisateurUpdateProfileAPI {
@@ -80,7 +81,9 @@ export class UtilisateurProfileAPI {
       nom: user.nom,
       prenom: user.prenom,
       code_postal: user.logement.code_postal,
-      commune: user.logement.commune,
+      commune: CommuneRepository.getLibelleCommuneLowerCase(
+        user.logement.code_commune,
+      ),
       revenu_fiscal: user.revenu_fiscal,
       nombre_de_parts_fiscales: user.getNombrePartsFiscalesOuEstimee(),
       abonnement_ter_loire: user.abonnement_ter_loire,

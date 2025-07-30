@@ -52,12 +52,7 @@ export class AidesVeloUsecase {
     const revenu_reference =
       utilisateur.revenu_fiscal === null ? 0 : utilisateur.revenu_fiscal;
     const nb_parts_fiscales = utilisateur.getNombrePartsFiscalesOuEstimee();
-    const code_insee =
-      utilisateur.logement.code_commune ??
-      this.communeRepository.getCommuneCodeInsee(
-        utilisateur.logement.code_postal,
-        utilisateur.logement.commune,
-      );
+    const code_insee = utilisateur.logement.code_commune;
 
     const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
     const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);

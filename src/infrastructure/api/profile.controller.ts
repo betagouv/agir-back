@@ -26,7 +26,7 @@ import { LogementUsecase } from '../../usecase/logement.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
-import { AdressesRecentesAPI } from './types/utilisateur/adressesRecentesAPI';
+import { InputLogementAPI } from './types/utilisateur/logementAPI';
 import { logoutAPI } from './types/utilisateur/logoutAPI';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
@@ -122,29 +122,6 @@ export class ProfileController extends GenericControler {
     return UtilisateurProfileAPI.mapToAPI(utilisateur);
   }
 
-  @ApiOkResponse({ type: [AdressesRecentesAPI] })
-  @Get('utilisateurs/:utilisateurId/adresses_recentes')
-  @ApiOperation({
-    summary: "Liste les adresses récemment saisies par l'utilisateur",
-  })
-  @UseGuards(AuthGuard)
-  async getUtilisateurAdressesRecentes(
-    @Request() req,
-    @Param('utilisateurId') utilisateurId: string,
-  ): Promise<AdressesRecentesAPI[]> {
-    this.checkCallerId(req, utilisateurId);
-
-    let utilisateur = await this.profileUsecase.findUtilisateurById(
-      utilisateurId,
-    );
-    if (utilisateur == null) {
-      throw new NotFoundException(`Pas d'utilisateur d'id ${utilisateurId}`);
-    }
-    return utilisateur.logement.liste_adresses_recentes.map((a) =>
-      AdressesRecentesAPI.mapToAPI(a),
-    );
-  }
-
   @ApiOkResponse({ type: LogementAPI })
   @Get('utilisateurs/:utilisateurId/logement')
   @ApiOperation({
@@ -187,7 +164,7 @@ export class ProfileController extends GenericControler {
 
   @Patch('utilisateurs/:utilisateurId/logement')
   @ApiBody({
-    type: LogementAPI,
+    type: InputLogementAPI,
   })
   @ApiOperation({
     summary:
@@ -197,9 +174,16 @@ export class ProfileController extends GenericControler {
   async updateLogement(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Body() body: LogementAPI,
+    @Body() body: InputLogementAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
+    /* FIXME : stop usage de la commune, attente mobile
+    if (body['commune']) {
+      ApplicationError.throwThatPartOfAPIGone(
+        "l'attribut 'commune' n'est plus supporté",
+      );
+    }*/
+
     await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
   }
 
