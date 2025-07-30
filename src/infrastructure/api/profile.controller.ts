@@ -183,8 +183,12 @@ export class ProfileController extends GenericControler {
         "l'attribut 'commune' n'est plus supporté",
       );
     }*/
-
-    await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
+    try {
+      await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Post('utilisateurs/:utilisateurId/reset')

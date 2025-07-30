@@ -45,6 +45,7 @@ export class LogementUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    console.log(input);
     const data_to_update: Partial<Logement> = { ...input };
 
     const adresse_checker = new Adresse({
