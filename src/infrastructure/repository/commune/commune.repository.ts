@@ -356,6 +356,17 @@ export class CommuneRepository {
     return Array.from(result.values());
   }
 
+  public estCommuneMembreDeEPCI(
+    code_commune: string,
+    code_epci: string,
+  ): boolean {
+    const epci = this.getEPCIBySIRENCode(code_epci);
+    if (epci) {
+      return epci.membres.findIndex((c) => c.code === code_commune) >= 0;
+    }
+    return false;
+  }
+
   findDepartementRegionByCodePostal(code_postal: string): {
     code_departement: string;
     code_region: string;
