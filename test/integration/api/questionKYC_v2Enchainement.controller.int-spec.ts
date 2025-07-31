@@ -314,7 +314,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
       id_cms: 1,
-      code: KYCID.KYC_transport_type_utilisateur,
+      code: KYCID.KYC_possede_voiture_oui_non,
       question: 'Quel est votre moyen de transport principal ?',
     });
     await TestUtil.create(DB.kYC, {
@@ -350,7 +350,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
-        code: KYCID.KYC_transport_type_utilisateur,
+        code: KYCID.KYC_possede_voiture_oui_non,
         is_NGC: true,
         is_answered: false,
         is_skipped: false,
