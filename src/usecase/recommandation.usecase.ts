@@ -8,6 +8,7 @@ import { Article } from '../domain/contenu/article';
 import { Quizz } from '../domain/contenu/quizz';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { KycToKycSynch } from '../domain/kyc/synchro/kycToKycSynch';
 import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { ProfileRecommandationUtilisateur } from '../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
@@ -218,6 +219,7 @@ export class RecommandationUsecase {
 
       for (const user of current_user_list) {
         try {
+          KycToKycSynch.synchro(user.kyc_history);
           new KycToTags_v2(
             user.kyc_history,
             user.logement,
