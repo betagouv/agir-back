@@ -1202,6 +1202,7 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // KYCs
     expect(dbUser.recommandation.getListeTagsActifs()).toEqual([
       Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
   it('PATCH /utilisateurs/id/logement - update code_commune , si PRM par adresse => obsolète', async () => {

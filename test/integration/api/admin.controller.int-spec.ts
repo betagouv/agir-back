@@ -2758,7 +2758,8 @@ describe('Admin (API test)', () => {
     ]);
 
     expect(user_DB.recommandation.getListeTagsActifs()).toEqual([
-      'habite_zone_urbaine',
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
 });

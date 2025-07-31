@@ -21,6 +21,7 @@ import {
   QuestionKYC_v2,
 } from '../../../src/domain/object_store/kyc/kycHistory_v2';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
+import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../../../src/domain/scoring/tag';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
@@ -2034,9 +2035,10 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       Scope.ALL,
     ]);
     expect(userDB.recommandation.getListeTagsActifs()).toEqual([
-      'appetence_thematique_transport',
-      'appetence_thematique_consommation',
-      'habite_zone_urbaine',
+      Tag_v2.appetence_thematique_transport,
+      Tag_v2.appetence_thematique_consommation,
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
 

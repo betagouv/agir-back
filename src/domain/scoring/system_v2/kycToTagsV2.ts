@@ -351,6 +351,8 @@ export class KycToTags_v2 {
         );
         if (est_drom_com) {
           this.setTags([Tag_v2.habite_en_outre_mer]);
+        } else {
+          this.setTags([Tag_v2.habite_en_metropole]);
         }
 
         const risque_commune =

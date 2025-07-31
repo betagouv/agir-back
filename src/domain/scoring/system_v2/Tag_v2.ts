@@ -56,4 +56,5 @@ export enum Tag_v2 {
   vie_en_famille = 'vie_en_famille',
   ne_vit_pas_en_famille = 'ne_vit_pas_en_famille',
   habite_en_outre_mer = 'habite_en_outre_mer',
+  habite_en_metropole = 'habite_en_metropole',
 }
