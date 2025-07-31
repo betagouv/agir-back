@@ -53,4 +53,6 @@ export enum Tag_v2 {
   risque_commune_inondation = 'risque_commune_inondation',
 
   recommandation_winter = 'recommandation_winter',
+  vie_en_famille = 'vie_en_famille',
+  ne_vit_pas_en_famille = 'ne_vit_pas_en_famille',
 }

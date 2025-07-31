@@ -363,6 +363,94 @@ describe('KycToTags_v2', () => {
       'ne_mange_pas_de_viande_rouge',
     ]);
   });
+
+  it(`refreshTagState-V2 : Gère correctement le comparaison numerique`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory({
+        answered_mosaics: [],
+        skipped_mosaics: [],
+        skipped_questions: [],
+        version: 2,
+        answered_questions: [
+          {
+            id_cms: 1,
+            code: KYCID.KYC_menage,
+            type: TypeReponseQuestionKYC.entier,
+            categorie: Categorie.recommandation,
+            points: 0,
+            is_NGC: false,
+            tags: [],
+            thematique: Thematique.logement,
+            last_update: new Date(),
+            conditions: undefined,
+            question: 'Combien dans le ménage',
+            reponse_complexe: undefined,
+            reponse_simple: {
+              value: '1',
+            },
+          },
+        ],
+      }),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.ne_vit_pas_en_famille,
+    ]);
+  });
+  it(`refreshTagState-V2 : Gère correctement le comparaison numerique, cas supérieu`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory({
+        answered_mosaics: [],
+        skipped_mosaics: [],
+        skipped_questions: [],
+        version: 2,
+        answered_questions: [
+          {
+            id_cms: 1,
+            code: KYCID.KYC_menage,
+            type: TypeReponseQuestionKYC.entier,
+            categorie: Categorie.recommandation,
+            points: 0,
+            is_NGC: false,
+            tags: [],
+            thematique: Thematique.logement,
+            last_update: new Date(),
+            conditions: undefined,
+            question: 'Combien dans le ménage',
+            reponse_complexe: undefined,
+            reponse_simple: {
+              value: '3',
+            },
+          },
+        ],
+      }),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.vie_en_famille]);
+  });
+
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - KYC multiple multi options`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
