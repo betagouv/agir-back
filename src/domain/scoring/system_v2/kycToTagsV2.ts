@@ -40,6 +40,7 @@ export const KYC_TAG_MAPPER_COLLECTION: {
   KYC_transport_avion_3_annees: {
     oui_non: {
       non: [Tag_v2.ne_prend_pas_avion],
+      oui: [Tag_v2.prend_l_avion],
     },
   },
   KYC003: {
