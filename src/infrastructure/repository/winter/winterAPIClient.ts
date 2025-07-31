@@ -62,12 +62,18 @@ export type WinterHousingData = {
   housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 309 => INCLUS ACTION
   sharedWalls?: boolean;
   livingArea?: number; //MAPPED KYC 62
-  housingYear?: number; // MAPPED KYC 191  => INCLUS ACTION
+  housingYear?:
+    | 'unknown'
+    | 'before_48'
+    | '49-88'
+    | '89-11'
+    | '12-21'
+    | 'after_21'; // MAPPED KYC 191  => INCLUS ACTION
   houseLevels?: number;
   houseExteriorWalls?: number;
   apartmentFloor?: 'ground' | 'intermediate' | 'last';
-  heatingType?: 'district_heating' | '_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => INCLUS ACTION
-  generatorTypes?: (
+  heatingType?: 'district_heating_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => INCLUS ACTION
+  generatorTypeOther?: (
     | 'electric'
     | 'heat_pump'
     | 'boiler_gaz'

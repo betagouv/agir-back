@@ -274,9 +274,25 @@ export class WinterRepository {
     );
     const logement_age = getNumQ(KYCID.KYC_logement_age);
 
-    const annee_logement =
-      new Date().getFullYear() -
-      (logement_age.getValue() ? logement_age.getValue() : 20);
+    let fourchette_annee_logement = 'unknown';
+    if (logement_age.getValue()) {
+      const annee_logement = new Date().getFullYear() - logement_age.getValue();
+      if (annee_logement > 2021) {
+        fourchette_annee_logement = 'after_21';
+      }
+      if (annee_logement >= 2012) {
+        fourchette_annee_logement = '12-21';
+      }
+      if (annee_logement >= 1989) {
+        fourchette_annee_logement = '89-11';
+      }
+      if (annee_logement >= 1949) {
+        fourchette_annee_logement = '49-88';
+      }
+      if (annee_logement < 1949) {
+        fourchette_annee_logement = 'before_48';
+      }
+    }
 
     const logement_proprio = getChoixU(KYCID.KYC_proprietaire);
     const logement_type = getChoixU(KYCID.KYC_type_logement);
@@ -320,16 +336,16 @@ export class WinterRepository {
         deuxroue_motorisation_type?.getSelectedCode() === 'scoot_elec'
           ? 1
           : undefined,
-      housingYear: annee_logement,
+      housingYear: fourchette_annee_logement as any,
       housingType: logement_type.isSelected('type_maison')
         ? 'house'
         : 'apartment',
       livingArea: logement_superficie.getValue(),
       hotWaterType: hot_water_type as any,
       heatingType: chauffage_reseau.isSelected('oui')
-        ? 'district_heating'
+        ? 'district_heating_network'
         : 'personal',
-      generatorTypes: gen_types,
+      generatorTypeOther: gen_types,
       mainGenerator: gen_types[0], // FIXME : manque une question plus spécifique
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
       nbInhabitant: logement_habitants.getValue()
