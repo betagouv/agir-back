@@ -116,14 +116,14 @@ export class QuestionKYCUsecase {
 
     this.updateQuestionOfCode_v2(code_question, reponse, utilisateur);
 
+    KycToKycSynch.synchro(utilisateur.kyc_history);
+
     new KycToTags_v2(
       utilisateur.kyc_history,
       utilisateur.logement,
       this.communeRepository,
       this.risquesNaturelsCommunesRepository,
     ).refreshTagState_v2(utilisateur.recommandation);
-
-    KycToKycSynch.synchro(utilisateur.kyc_history);
 
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
 
