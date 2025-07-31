@@ -8,6 +8,7 @@ import { Article } from '../domain/contenu/article';
 import { Quizz } from '../domain/contenu/quizz';
 import { Recommandation } from '../domain/contenu/recommandation';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
+import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { ProfileRecommandationUtilisateur } from '../domain/scoring/system_v2/profileRecommandationUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import {
@@ -22,6 +23,7 @@ import {
   QuizzFilter,
   QuizzRepository,
 } from '../infrastructure/repository/quizz.repository';
+import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 @Injectable()
@@ -31,6 +33,8 @@ export class RecommandationUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
+    private communeRepository: CommuneRepository,
+    private risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {}
 
   async listRecommandationsV2(
@@ -198,5 +202,37 @@ export class RecommandationUsecase {
       type: ContentType.quizz,
       isLocal: e.isLocal(),
     }));
+  }
+
+  async refreshAllUserTags(block_size: number = 100) {
+    const total_user_count = await this.utilisateurRepository.countAll();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const current_user_list =
+        await this.utilisateurRepository.listePaginatedUsers(
+          index,
+          block_size,
+          [Scope.logement, Scope.kyc, Scope.recommandation],
+          {},
+        );
+
+      for (const user of current_user_list) {
+        try {
+          new KycToTags_v2(
+            user.kyc_history,
+            user.logement,
+            this.communeRepository,
+            this.risquesNaturelsCommunesRepository,
+          ).refreshTagState_v2(user.recommandation);
+
+          await this.utilisateurRepository.updateUtilisateurNoConcurency(user, [
+            Scope.recommandation,
+          ]);
+        } catch (error) {
+          console.error(error);
+          console.error(`Error refreshing user tags : ${JSON.stringify(user)}`);
+        }
+      }
+    }
   }
 }

@@ -8,6 +8,7 @@ import { ContactUsecase } from './usecase/contact.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
+import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
@@ -287,6 +288,15 @@ async function bootstrap() {
       await application
         .get(CMSDataHelperUsecase)
         .cleanActionExport(process.argv[3]);
+      break;
+
+    case 'refresh_all_user_tags':
+      start_time = Date.now();
+      console.log(`START refresh_all_user_tags ${start_time}`);
+      await application.get(RecommandationUsecase).refreshAllUserTags();
+      console.log(
+        `STOP refresh_all_user_tags after ${Date.now() - start_time} ms`,
+      );
       break;
 
     case 'compute_all_aides_communes_from_partenaires':

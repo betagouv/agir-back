@@ -34,6 +34,7 @@ import { ContactUsecase } from '../../usecase/contact.usecase';
 import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
+import { RecommandationUsecase } from '../../usecase/recommandation.usecase';
 import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
@@ -67,6 +68,7 @@ export class AdminController extends GenericControler {
     private contactUsecase: ContactUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
+    private recommandationUsecase: RecommandationUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
@@ -407,5 +409,14 @@ export class AdminController extends GenericControler {
   async listeQuesitons(@Request() req): Promise<any> {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.actionUsecase.getAllQuestions();
+  }
+
+  @Post('/admin/refresh_all_user_tags')
+  @ApiOperation({
+    summary: `recalcul les tags de recommandation de tous les utilisateurs de la base`,
+  })
+  async refresh_all_user_tags(@Request() req): Promise<void> {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.recommandationUsecase.refreshAllUserTags();
   }
 }
