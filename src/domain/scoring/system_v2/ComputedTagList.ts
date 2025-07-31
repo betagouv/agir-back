@@ -9,6 +9,8 @@ export const ComputedTagList: { [key in Tag_v2]?: string } = {
     'Tag dynamique affecté aux utilisateurs péri urbains',
   habite_zone_urbaine: 'Tag dynamique affecté aux utilisateurs urbains',
   habite_zone_rurale: 'Tag dynamique affecté aux utilisateurs ruraux',
+  habite_en_metropole: 'Tag dynamique fonction du code commune',
+  habite_en_outre_mer: 'Tag dynamique fonction du code commune',
 
   risque_adresse_argile: `Risque géotechnique à l'adresse, moyen ou plus`,
   risque_adresse_inondation: `Risque d'inondation à l'adresse, moyen ou plus`,
