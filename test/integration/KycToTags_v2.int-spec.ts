@@ -50,6 +50,28 @@ describe('KycToTags_v2', () => {
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([]);
   });
+  it(`refreshTagState : Gère correctement le tag outre mer`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory(),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    logement.code_commune = '97418';
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_peri_urbaine,
+      Tag_v2.habite_en_outre_mer,
+    ]);
+  });
   it(`refreshTagState : Gère correctement le tag urbain`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -174,7 +196,7 @@ describe('KycToTags_v2', () => {
       risquesNaturelsCommunesRepository,
     );
 
-    logement.code_commune = '97126';
+    logement.code_commune = '21134';
 
     // WHEN
     translator.refreshTagState_v2(profile);
@@ -193,7 +215,7 @@ describe('KycToTags_v2', () => {
       risquesNaturelsCommunesRepository,
     );
 
-    logement.code_commune = '97132';
+    logement.code_commune = '21133';
 
     // WHEN
     translator.refreshTagState_v2(profile);

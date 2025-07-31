@@ -346,6 +346,12 @@ export class KycToTags_v2 {
             this.setTags([Tag_v2.habite_zone_peri_urbaine]);
             break;
         }
+        const est_drom_com = this.commune_repo.estDromCom(
+          this.logement.code_commune,
+        );
+        if (est_drom_com) {
+          this.setTags([Tag_v2.habite_en_outre_mer]);
+        }
 
         const risque_commune =
           this.risquesNaturelsCommunesRepository.getRisquesCommune(

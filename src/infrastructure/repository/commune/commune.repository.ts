@@ -74,7 +74,7 @@ export type Commune = {
   commune: string;
   nom: string;
   typeLiaison?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8;
-  zone: 'metro' | 'dom' | 'com';
+  zone: 'metro' | 'drom' | 'com';
   arrondissement?: string;
   departement: string;
   region: string;
@@ -453,6 +453,13 @@ export class CommuneRepository {
       }
     }
     return [];
+  }
+
+  public estDromCom(code_commune: string): boolean {
+    if (!code_commune) return false;
+    const commune = this.getCommuneByCodeINSEE(code_commune);
+    if (!commune) return false;
+    return commune.zone === 'com' || commune.zone === 'drom';
   }
 
   /**
