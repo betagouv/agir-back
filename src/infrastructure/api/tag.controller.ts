@@ -372,7 +372,8 @@ export class TagController extends GenericControler {
   private async build_dictionnaire(): Promise<TagAPI[]> {
     const result: TagAPI[] = [];
 
-    const nombre_total_users = await this.utilisateurRepository.countAll();
+    const nombre_total_users =
+      await this.utilisateurRepository.countActiveUsers();
 
     const dependency_report = KycToTags_v2.generate_dependency_report();
     const reverse_dependency: Map<Tag_v2, Set<KYCID>> = new Map();
