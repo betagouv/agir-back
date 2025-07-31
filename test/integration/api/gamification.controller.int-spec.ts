@@ -18,7 +18,6 @@ const logement_palaiseau: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '91120',
   chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,
@@ -33,6 +32,7 @@ const logement_palaiseau: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 const logement_dijon: Logement_v0 = {
@@ -41,7 +41,6 @@ const logement_dijon: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '21000',
   chauffage: Chauffage.bois,
-  commune: 'DIJON',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,
@@ -56,6 +55,7 @@ const logement_dijon: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 describe('Gamification  (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);

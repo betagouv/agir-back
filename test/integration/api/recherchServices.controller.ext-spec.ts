@@ -22,7 +22,6 @@ const logement_palaiseau: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '91120',
   chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,
@@ -37,6 +36,7 @@ const logement_palaiseau: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 describe('RechercheServices (API test)', () => {
@@ -144,7 +144,6 @@ describe('RechercheServices (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91400',
       chauffage: Chauffage.bois,
-      commune: 'ORSAY',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -159,6 +158,7 @@ describe('RechercheServices (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });
@@ -185,7 +185,6 @@ describe('RechercheServices (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91400',
       chauffage: Chauffage.bois,
-      commune: 'ORSAY',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -200,6 +199,7 @@ describe('RechercheServices (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement_dijon as any });

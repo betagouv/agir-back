@@ -16,6 +16,15 @@ const typologie_communes_by_code_insee = _typologie_communes as Record<
 const communes = _communes as Commune[];
 const epci = _epci as EPCI[];
 
+const map_code_commune_nom_uppercase: Map<string, string> = new Map();
+
+for (const liste_communes of Object.values(_codes_postaux)) {
+  const liste = liste_communes as CommuneParCodePostal[];
+  for (const elem of liste) {
+    map_code_commune_nom_uppercase.set(elem.INSEE, elem.commune);
+  }
+}
+
 /** Associate each commune INSEE code to its EPCI SIREN code. */
 const communesEPCI = Object.fromEntries(
   _epci.flatMap((epci) => epci.membres.map(({ code }) => [code, epci.code])),
@@ -65,7 +74,7 @@ export type Commune = {
   commune: string;
   nom: string;
   typeLiaison?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8;
-  zone: 'metro' | 'dom' | 'com';
+  zone: 'metro' | 'drom' | 'com';
   arrondissement?: string;
   departement: string;
   region: string;
@@ -254,7 +263,7 @@ export class CommuneRepository {
     return result ? result.nom : 'INCONNU';
   }
 
-  checkCodePostal(code_postal: string): boolean {
+  public static checkCodePostal(code_postal: string): boolean {
     return _codes_postaux[code_postal] !== undefined;
   }
 
@@ -290,17 +299,26 @@ export class CommuneRepository {
     return liste.map((a) => a.INSEE);
   }
 
-  getLibelleCommuneLowerCase(code_insee: string) {
-    const commune = this.getCommuneByCodeINSEE(code_insee);
+  static getLibelleCommuneLowerCase(code_insee: string) {
+    const commune = communes.find((c) => c.code === code_insee);
     if (commune) {
       return commune.nom;
     }
     return null;
   }
 
+  // FIXME : fonction à supprimer
+  static getLibelleCommuneUpperCase(code_insee: string) {
+    return map_code_commune_nom_uppercase.get(code_insee);
+  }
+
   // FIXME: the [utilisateur.logement.commune] doesn't correspond anymore to the
   // "commune" field in `_codes_postaux`.
-  getCommuneCodeInsee(code_postal: string, nom_commune: string): string | null {
+  // FIXME : fonction à supprimer
+  public static getCodeCommuneFromCodePostalEtNomCommune(
+    code_postal: string,
+    nom_commune: string,
+  ): string | null {
     const liste: CommuneParCodePostal[] = _codes_postaux[code_postal];
     if (!liste) {
       return null;
@@ -315,13 +333,7 @@ export class CommuneRepository {
     return null;
   }
 
-  formatCommune(code_postal: string, commune: string): string {
-    if (code_postal === null) return null;
-
-    const code_insee = this.getCommuneCodeInsee(code_postal, commune);
-    const libelle = this.getLibelleCommuneLowerCase(code_insee);
-    return libelle || commune;
-  }
+  public static getCommune;
 
   listeCodesCommunesByEPCICode(code_epci: string): string[] {
     const the_epci = this.getEPCIBySIRENCode(code_epci);
@@ -354,6 +366,17 @@ export class CommuneRepository {
     }
 
     return Array.from(result.values());
+  }
+
+  public estCommuneMembreDeEPCI(
+    code_commune: string,
+    code_epci: string,
+  ): boolean {
+    const epci = this.getEPCIBySIRENCode(code_epci);
+    if (epci) {
+      return epci.membres.findIndex((c) => c.code === code_commune) >= 0;
+    }
+    return false;
   }
 
   findDepartementRegionByCodePostal(code_postal: string): {
@@ -432,6 +455,13 @@ export class CommuneRepository {
     return [];
   }
 
+  public estDromCom(code_commune: string): boolean {
+    if (!code_commune) return false;
+    const commune = this.getCommuneByCodeINSEE(code_commune);
+    if (!commune) return false;
+    return commune.zone === 'com' || commune.zone === 'drom';
+  }
+
   /**
    * Get the commune OR A DISTRICT by its INSEE code.
    *
@@ -443,6 +473,13 @@ export class CommuneRepository {
    * can be shared by multiple communes.
    */
   getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
+    return CommuneRepository.getCommuneByCodeINSEE_static(code_insee);
+  }
+
+  // FIXME : passer tout en static, re - intégrer ce faux repository dans le domaine
+  public static getCommuneByCodeINSEE_static(
+    code_insee: string,
+  ): Commune | undefined {
     return communes.find((c) => c.code === code_insee);
   }
 

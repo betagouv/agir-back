@@ -143,7 +143,6 @@ describe('Thematique Board (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'DIJON',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -158,6 +157,7 @@ describe('Thematique Board (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -235,7 +235,6 @@ describe('Thematique Board (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -250,6 +249,7 @@ describe('Thematique Board (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -487,7 +487,6 @@ describe('Thematique Board (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -502,6 +501,7 @@ describe('Thematique Board (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -634,7 +634,6 @@ describe('Thematique Board (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -649,6 +648,7 @@ describe('Thematique Board (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {

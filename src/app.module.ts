@@ -28,6 +28,7 @@ import { PasswordManager } from './domain/utilisateur/manager/passwordManager';
 import { SecurityEmailManager } from './domain/utilisateur/manager/securityEmailManager';
 import { ActionsController } from './infrastructure/api/actions.controller';
 import { AdminController } from './infrastructure/api/admin.controller';
+import { AdressesController } from './infrastructure/api/adresses.controller';
 import { AidesVeloController } from './infrastructure/api/aidesVelo.controller';
 import { AsciiPreviewController } from './infrastructure/api/ascii.preview.controller';
 import { BibliothequeController } from './infrastructure/api/bibliotheque.controller';
@@ -75,7 +76,6 @@ import { ConformiteRepository } from './infrastructure/repository/conformite.rep
 import { FAQRepository } from './infrastructure/repository/faq.repository';
 import { KycRepository } from './infrastructure/repository/kyc.repository';
 import { LinkyConsentRepository } from './infrastructure/repository/linkyConsent.repository';
-import { LVAORepository } from './infrastructure/repository/lvao.repository';
 import { PartenaireRepository } from './infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
@@ -103,6 +103,7 @@ import { WinterAPIClient } from './infrastructure/repository/winter/winterAPICli
 import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
+import { AdresseUsecase } from './usecase/adresse.usecase';
 import { AidesVeloUsecase } from './usecase/aidesVelo.usecase';
 import { BibliothequeUsecase } from './usecase/bibliotheque.usecase';
 import { BilanCarboneUsecase } from './usecase/bilanCarbone.usecase';
@@ -119,7 +120,6 @@ import { FranceConnectUsecase } from './usecase/franceConnect.usecase';
 import { GamificationUsecase } from './usecase/gamification.usecase';
 import { InscriptionUsecase } from './usecase/inscription.usecase';
 import { LogementUsecase } from './usecase/logement.usecase';
-import { LVAOUsecase } from './usecase/lvao.usecase';
 import { MagicLinkUsecase } from './usecase/magicLink.usecase';
 import { MigrationUsecase } from './usecase/migration.usescase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
@@ -174,6 +174,7 @@ function getControllers(): any[] {
     MagicLinkController,
     WinterController,
     TagController,
+    AdressesController,
   );
   if (!App.isProd()) {
     controllers.push(AsciiPreviewController);
@@ -297,8 +298,7 @@ function getControllers(): any[] {
     SelectionRepository,
     LogementUsecase,
     PartenaireUsecase,
-    LVAORepository,
-    LVAOUsecase,
+    AdresseUsecase,
   ],
 })
 export class AppModule {}

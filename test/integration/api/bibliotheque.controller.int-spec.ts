@@ -1122,7 +1122,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,
@@ -1140,6 +1139,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1190,7 +1190,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,
@@ -1208,6 +1207,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -1254,7 +1254,6 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     const logement: Logement_v0 = {
       chauffage: Chauffage.autre,
       code_postal: '21000',
-      commune: 'DIJON',
       dpe: DPE.A,
       nombre_adultes: 1,
       nombre_enfants: 1,
@@ -1272,6 +1271,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {

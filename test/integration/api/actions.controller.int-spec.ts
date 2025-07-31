@@ -1,6 +1,11 @@
-import { TypeAction } from '../../../src/domain/actions/typeAction';
+import {
+  ActionBilanID,
+  ActionSimulateurID,
+  TypeAction,
+} from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { Categorie } from '../../../src/domain/contenu/categorie';
+import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
 import {
   Chauffage,
@@ -34,7 +39,6 @@ const logement: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '91120',
   chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,
@@ -49,6 +53,7 @@ const logement: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 describe('Actions (API test)', () => {
@@ -404,19 +409,24 @@ describe('Actions (API test)', () => {
   it(`GET /utilisateurs/id/actions/id - action de type simulateur doit contenir une liste de KYCs (quelles soient répondues ou non)`, async () => {
     // GIVEN
     const KYC2 = {
-      id_cms: 502,
-      code: 'KYC2',
+      id_cms: 1,
+      code: KYCID.KYC_transport_type_utilisateur,
+      question: 'Quel est votre moyen de transport principal ?',
       type: TypeReponseQuestionKYC.entier,
-      question: '',
       categorie: Categorie.test,
       points: 0,
       is_ngc: false,
       tags: [],
-      thematique: Thematique.alimentation,
+      thematique: Thematique.transport,
       conditions: [],
     };
-    await TestUtil.create(DB.kYC, { id_cms: 501, code: 'KYC1' });
-    await TestUtil.create(DB.kYC, KYC2 as any);
+    await TestUtil.create(DB.kYC, KYC2);
+    await TestUtil.create(DB.kYC, {
+      id_cms: 2,
+      code: KYCID.KYC_transport_voiture_occasion,
+      question: "Votre voiture est-elle d'occasion ?",
+    });
+
     const kyc: KYCHistory_v2 = {
       version: 2,
       answered_mosaics: [],
@@ -435,41 +445,40 @@ describe('Actions (API test)', () => {
       logement: logement as any,
       kyc: kyc as any,
     });
+    const type_code_id = `${TypeAction.simulateur}_${ActionSimulateurID.action_simulateur_voiture}`;
     await TestUtil.create(DB.action, {
-      code: '123',
+      code: ActionSimulateurID.action_simulateur_voiture,
       type: TypeAction.simulateur,
-      kyc_codes: ['KYC1', 'KYC2'],
-      type_code_id: 'simulateur_123',
+      type_code_id,
     });
     await kycRepository.loadCache();
     await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions/simulateur/123',
+      `/utilisateurs/utilisateur-id/actions/simulateur/${ActionSimulateurID.action_simulateur_voiture}`,
     );
 
     // THEN
     expect(response.status).toBe(200);
     expect(response.body.kycs).toHaveLength(2);
-    expect(response.body.enchainement_id).toEqual('simulateur_123');
+    expect(response.body.enchainement_id).toEqual(type_code_id);
   });
 
   it(`GET /utilisateurs/id/actions/id - action de type bilan doit contenir une liste de KYCs (quelles soient répondues ou non)`, async () => {
     // GIVEN
     const KYC2 = {
       id_cms: 502,
-      code: 'KYC2',
+      code: KYCID.KYC_type_logement,
       type: TypeReponseQuestionKYC.entier,
-      question: '',
+      question: 'Quel est le type de votre logement ?',
       categorie: Categorie.test,
       points: 0,
       is_ngc: false,
       tags: [],
-      thematique: Thematique.alimentation,
+      thematique: Thematique.logement,
       conditions: [],
     };
-    await TestUtil.create(DB.kYC, { id_cms: 501, code: 'KYC1' });
     await TestUtil.create(DB.kYC, KYC2 as any);
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -489,24 +498,24 @@ describe('Actions (API test)', () => {
       logement: logement as any,
       kyc: kyc as any,
     });
+    const type_code_id = `${TypeAction.bilan}_${ActionBilanID.action_bilan_logement}`;
     await TestUtil.create(DB.action, {
-      code: '123',
+      code: ActionBilanID.action_bilan_logement,
       type: TypeAction.bilan,
-      kyc_codes: ['KYC1', 'KYC2'],
-      type_code_id: 'bilan_123',
+      type_code_id,
     });
     await kycRepository.loadCache();
     await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
-      '/utilisateurs/utilisateur-id/actions/bilan/123',
+      `/utilisateurs/utilisateur-id/actions/bilan/${ActionBilanID.action_bilan_logement}`,
     );
 
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.kycs).toHaveLength(2);
-    expect(response.body.enchainement_id).toEqual('bilan_123');
+    expect(response.body.kycs).toHaveLength(4);
+    expect(response.body.enchainement_id).toEqual(type_code_id);
   });
 
   it(`GET /utilisateurs/id/actions/id - accroche les quizz liés à l'action`, async () => {

@@ -39,7 +39,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -54,6 +53,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -73,7 +73,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -88,6 +87,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -118,7 +118,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -133,6 +132,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await TestUtil.create(DB.risquesNaturelsCommunes, {
@@ -166,7 +166,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -181,6 +180,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
     await risquesNaturelsCommunesRepository.loadCache();
@@ -206,7 +206,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -221,6 +220,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -240,7 +240,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 10,
       longitude: 12,
       numero_rue: '12',
@@ -254,6 +253,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
 
       score_risques_adresse: {
         argile: NiveauRisqueLogement.faible,
@@ -320,7 +320,6 @@ describe('Risques (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 10,
       longitude: 12,
       numero_rue: '12',
@@ -335,6 +334,7 @@ describe('Risques (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 

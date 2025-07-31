@@ -387,14 +387,17 @@ export class ApplicationError {
       `Le nombre d'adultes et d'enfants doit être un nombre entier`,
     );
   }
-  static throwCodePostalIncorrect() {
+  static throwCodePostalIncorrect(code: string) {
     this.throwAppError(
       '077',
-      'Le code postal doit être une suite de 5 chiffres',
+      `Le code postal doit être une suite de 5 chiffres correspondant à une code postal existant, reçu : [${code}]`,
     );
   }
-  static throwCodePostalCommuneMandatory() {
-    this.throwAppError('078', 'Le code postal ET la commune sont obligatoires');
+  static throwCodePostalCommuneBothMandatory() {
+    this.throwAppError(
+      '078',
+      'Le code postal ET le code commune sont obligatoires',
+    );
   }
   static throwBadCodePostalAndCommuneAssociation(
     code_postal: string,
@@ -923,6 +926,36 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     this.throwAppError(
       '168',
       `L'attribut 'referer_keyword' est trop long, reçu [${referer_keyword}]. Max 50 char`,
+    );
+  }
+
+  static throwTropAdressesRecentes(max: number) {
+    this.throwAppError(
+      '169',
+      `Il n'est pas possible d'avoir plus de [${max}] adresses récentes`,
+    );
+  }
+
+  static throwMissingField(field: string) {
+    this.throwAppError('175', `Attribut [${field}] obligatoire`);
+  }
+
+  static throwBadLatitude() {
+    this.throwAppError('170', `la latitude doit être comprise entre -90 et 90`);
+  }
+
+  static throwBadLongitude() {
+    this.throwAppError(
+      '171',
+      `la longitude doit être comprise entre -180 et 180`,
+    );
+  }
+
+  static throwThatPartOfAPIGone(message: string) {
+    this.throwAppError(
+      '172',
+      `Les arguments utilisés dans cette API ne sont plus à jour : ${message}`,
+      410,
     );
   }
 

@@ -16,16 +16,24 @@ describe('CommuneRepository', () => {
     await TestUtil.appclose();
   });
 
+  it('NOm upper case commune par code insee ', async () => {
+    // WHEN
+    const result = CommuneRepository.getLibelleCommuneUpperCase('21231');
+
+    // THEN
+    expect(result).toStrictEqual('DIJON');
+  });
+
   it('checkCodePostal : revoie true si le code postal existe', async () => {
     // WHEN
-    const result = communeRepository.checkCodePostal('91120');
+    const result = CommuneRepository.checkCodePostal('91120');
 
     // THEN
     expect(result).toStrictEqual(true);
   });
   it('checkCodePostal : revoie false si le code postal non existant', async () => {
     // WHEN
-    const result = communeRepository.checkCodePostal('99999');
+    const result = CommuneRepository.checkCodePostal('99999');
 
     // THEN
     expect(result).toStrictEqual(false);

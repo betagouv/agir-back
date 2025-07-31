@@ -265,9 +265,8 @@ describe('Duplicate Usecase', () => {
       version: 0,
       superficie: Superficie.superficie_150,
       type: TypeLogement.maison,
-      code_postal: '91120',
+      code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -282,6 +281,7 @@ describe('Duplicate Usecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -308,11 +308,11 @@ describe('Duplicate Usecase', () => {
 
     expect(user).toEqual({
       code_insee_commune: '21231',
-      code_postal: '91120',
+      code_postal: '21000',
       compte_actif: true,
       date_derniere_activite: new Date(1),
       user_id: '123',
-      nom_commune: 'PALAISEAU',
+      nom_commune: 'DIJON',
       nombre_points: 10,
       revenu_fiscal: 10000,
       source_inscription: 'web',
@@ -400,7 +400,6 @@ describe('Duplicate Usecase', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -415,6 +414,7 @@ describe('Duplicate Usecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     for (let index = 0; index < 10; index++) {

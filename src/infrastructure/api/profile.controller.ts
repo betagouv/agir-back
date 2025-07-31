@@ -26,6 +26,7 @@ import { LogementUsecase } from '../../usecase/logement.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { AuthGuard } from '../auth/guard';
 import { GenericControler } from './genericControler';
+import { InputLogementAPI } from './types/utilisateur/logementAPI';
 import { logoutAPI } from './types/utilisateur/logoutAPI';
 import { UtilisateurAPI } from './types/utilisateur/utilisateurAPI';
 import {
@@ -163,7 +164,7 @@ export class ProfileController extends GenericControler {
 
   @Patch('utilisateurs/:utilisateurId/logement')
   @ApiBody({
-    type: LogementAPI,
+    type: InputLogementAPI,
   })
   @ApiOperation({
     summary:
@@ -173,10 +174,22 @@ export class ProfileController extends GenericControler {
   async updateLogement(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,
-    @Body() body: LogementAPI,
+    @Body() body: InputLogementAPI,
   ) {
     this.checkCallerId(req, utilisateurId);
-    await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
+    /* FIXME : stop usage de la commune, attente mobile
+    if (body['commune']) {
+      ApplicationError.throwThatPartOfAPIGone(
+        "l'attribut 'commune' n'est plus supporté",
+      );
+    }*/
+    try {
+      await this.logementUsecase.updateUtilisateurLogement(utilisateurId, body);
+    } catch (error) {
+      console.log(body);
+      console.log(error);
+      throw error;
+    }
   }
 
   @Post('utilisateurs/:utilisateurId/reset')

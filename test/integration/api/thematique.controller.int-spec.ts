@@ -35,7 +35,6 @@ const logement: Logement_v0 = {
   type: TypeLogement.maison,
   code_postal: '91120',
   chauffage: Chauffage.bois,
-  commune: 'PALAISEAU',
   dpe: DPE.B,
   nombre_adultes: 2,
   nombre_enfants: 2,
@@ -50,6 +49,7 @@ const logement: Logement_v0 = {
   prm: undefined,
   est_prm_obsolete: false,
   est_prm_par_adresse: false,
+  liste_adresses_recentes: [],
 };
 
 const KYC_DATA: QuestionKYC_v2 = {
@@ -353,6 +353,7 @@ describe('Thematique (API test)', () => {
     expect(user_after.recommandation.getListeTagsActifs()).toEqual([
       Tag_v2.est_proprietaire,
       Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
 

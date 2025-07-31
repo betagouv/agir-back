@@ -12,6 +12,8 @@ npm run execute create_brevo_contacts
 
 npm run execute update_brevo_contacts
 
+npm run execute refresh_all_user_tags
+
 npm run execute aide_expired_soon
 
 npm run execute aide_expired_soon_emails

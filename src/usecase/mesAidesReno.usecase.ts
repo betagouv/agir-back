@@ -157,16 +157,8 @@ export class MesAidesRenoUsecase {
 
     // Handle the commune and EPCI information separately, to avoid redundant
     // calls to the commune repository.
-    if (
-      utilisateur.logement.code_commune ||
-      (utilisateur.logement?.code_postal && utilisateur.logement?.commune)
-    ) {
-      const code_insee =
-        utilisateur.logement.code_commune ??
-        this.communeRepository.getCommuneCodeInsee(
-          utilisateur.logement.code_postal,
-          utilisateur.logement.commune,
-        );
+    if (utilisateur.logement.code_commune) {
+      const code_insee = utilisateur.logement.code_commune;
       const commune =
         this.communeRepository.getCommunByCodeINSEESansArrondissement(
           code_insee,
@@ -306,8 +298,8 @@ export class MesAidesRenoUsecase {
           const commune = this.communeRepository.getCommuneByCodeINSEE(value);
           if (commune) {
             utilisateur.logement.code_commune = commune.code;
+            // FIXME : ce n'est pas déterministe
             utilisateur.logement.code_postal = commune.codesPostaux[0];
-            utilisateur.logement.commune = commune.nom.toUpperCase();
           }
         }
         return undefined;
@@ -414,7 +406,6 @@ export class MesAidesRenoUsecase {
           const commune = this.communeRepository.getCommuneByCodeINSEE(value);
           if (commune) {
             utilisateur.logement.code_commune = commune.code;
-            utilisateur.logement.commune = commune.nom.toUpperCase();
             utilisateur.logement.code_postal = commune.codesPostaux[0];
           }
         }

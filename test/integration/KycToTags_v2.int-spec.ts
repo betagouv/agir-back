@@ -50,6 +50,28 @@ describe('KycToTags_v2', () => {
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([]);
   });
+  it(`refreshTagState : Gère correctement le tag outre mer`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory(),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    logement.code_commune = '97418';
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_peri_urbaine,
+      Tag_v2.habite_en_outre_mer,
+    ]);
+  });
   it(`refreshTagState : Gère correctement le tag urbain`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -67,7 +89,10 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.habite_zone_urbaine]);
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
+    ]);
   });
   it(`refreshTagState : Gère correctement les risques à l'adresse`, async () => {
     // GIVEN
@@ -96,9 +121,9 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'risque_adresse_inondation',
-      'risque_adresse_secheresse',
-      'risque_adresse_submersion',
+      Tag_v2.risque_adresse_inondation,
+      Tag_v2.risque_adresse_secheresse,
+      Tag_v2.risque_adresse_submersion,
     ]);
   });
   it(`refreshTagState : COmmune à risque commune`, async () => {
@@ -127,10 +152,11 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'habite_zone_urbaine',
-      'risque_commune_catnat',
-      'risque_commune_inondation',
-      'risque_commune_argile',
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
+      Tag_v2.risque_commune_catnat,
+      Tag_v2.risque_commune_inondation,
+      Tag_v2.risque_commune_argile,
     ]);
   });
   it(`refreshTagState : COmmune sans risque`, async () => {
@@ -159,8 +185,9 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'habite_zone_urbaine',
-      'risque_commune_inondation',
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
+      Tag_v2.risque_commune_inondation,
     ]);
   });
   it(`refreshTagState : Gère correctement le tag rural`, async () => {
@@ -174,13 +201,16 @@ describe('KycToTags_v2', () => {
       risquesNaturelsCommunesRepository,
     );
 
-    logement.code_commune = '97126';
+    logement.code_commune = '21134';
 
     // WHEN
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.habite_zone_rurale]);
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_rurale,
+      Tag_v2.habite_en_metropole,
+    ]);
   });
   it(`refreshTagState : Gère correctement le tag peri urbain`, async () => {
     // GIVEN
@@ -193,7 +223,7 @@ describe('KycToTags_v2', () => {
       risquesNaturelsCommunesRepository,
     );
 
-    logement.code_commune = '97132';
+    logement.code_commune = '21133';
 
     // WHEN
     translator.refreshTagState_v2(profile);
@@ -201,6 +231,7 @@ describe('KycToTags_v2', () => {
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
       Tag_v2.habite_zone_peri_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - cas KYC unique oui / non`, async () => {
@@ -256,7 +287,7 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual(['est_proprietaire']);
+    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.est_proprietaire]);
   });
 
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - cas KYC choix multiple`, async () => {
@@ -317,7 +348,9 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual(['a_une_voiture_thermique']);
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.a_une_voiture_thermique,
+    ]);
   });
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - cas KYC à zéro`, async () => {
     // GIVEN
@@ -360,9 +393,97 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'ne_mange_pas_de_viande_rouge',
+      Tag_v2.ne_mange_pas_de_viande_rouge,
     ]);
   });
+
+  it(`refreshTagState-V2 : Gère correctement le comparaison numerique`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory({
+        answered_mosaics: [],
+        skipped_mosaics: [],
+        skipped_questions: [],
+        version: 2,
+        answered_questions: [
+          {
+            id_cms: 1,
+            code: KYCID.KYC_menage,
+            type: TypeReponseQuestionKYC.entier,
+            categorie: Categorie.recommandation,
+            points: 0,
+            is_NGC: false,
+            tags: [],
+            thematique: Thematique.logement,
+            last_update: new Date(),
+            conditions: undefined,
+            question: 'Combien dans le ménage',
+            reponse_complexe: undefined,
+            reponse_simple: {
+              value: '1',
+            },
+          },
+        ],
+      }),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([
+      Tag_v2.ne_vit_pas_en_famille,
+    ]);
+  });
+  it(`refreshTagState-V2 : Gère correctement le comparaison numerique, cas supérieu`, async () => {
+    // GIVEN
+    const profile = new ProfileRecommandationUtilisateur();
+
+    const logement = new Logement();
+    const translator = new KycToTags_v2(
+      new KYCHistory({
+        answered_mosaics: [],
+        skipped_mosaics: [],
+        skipped_questions: [],
+        version: 2,
+        answered_questions: [
+          {
+            id_cms: 1,
+            code: KYCID.KYC_menage,
+            type: TypeReponseQuestionKYC.entier,
+            categorie: Categorie.recommandation,
+            points: 0,
+            is_NGC: false,
+            tags: [],
+            thematique: Thematique.logement,
+            last_update: new Date(),
+            conditions: undefined,
+            question: 'Combien dans le ménage',
+            reponse_complexe: undefined,
+            reponse_simple: {
+              value: '3',
+            },
+          },
+        ],
+      }),
+      logement,
+      communeRepository,
+      risquesNaturelsCommunesRepository,
+    );
+
+    // WHEN
+    translator.refreshTagState_v2(profile);
+
+    // THEN
+    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.vie_en_famille]);
+  });
+
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - KYC multiple multi options`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -417,7 +538,7 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual(['mange_de_saison']);
+    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.mange_de_saison]);
   });
 
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - cas KYC double zéro`, async () => {
@@ -478,8 +599,8 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'ne_mange_pas_de_viande_rouge',
-      'ne_mange_pas_de_viande',
+      Tag_v2.ne_mange_pas_de_viande_rouge,
+      Tag_v2.ne_mange_pas_de_viande,
     ]);
   });
 
@@ -538,7 +659,7 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([
-      'appetence_thematique_transport',
+      Tag_v2.appetence_thematique_transport,
     ]);
   });
 
@@ -550,8 +671,8 @@ describe('KycToTags_v2', () => {
 
     // THEN
     expect(Array.from(result.get(KYCID.KYC_proprietaire))).toEqual([
-      'est_proprietaire',
-      'n_est_pas_proprietaire',
+      Tag_v2.est_proprietaire,
+      Tag_v2.n_est_pas_proprietaire,
     ]);
   });
 });

@@ -42,7 +42,6 @@ describe('Mes Aides Réno', () => {
         type: TypeLogement.appartement,
         code_postal: '91120',
         chauffage: Chauffage.bois,
-        commune: 'PALAISEAU',
         dpe: DPE.B,
         nombre_adultes: 2,
         nombre_enfants: 2,
@@ -57,6 +56,7 @@ describe('Mes Aides Réno', () => {
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -135,7 +135,6 @@ describe('Mes Aides Réno', () => {
       ).toEqual(30);
 
       expect(utilisateur.logement.code_commune).toEqual('31555');
-      expect(utilisateur.logement.commune).toEqual('TOULOUSE');
       expect(utilisateur.logement.code_postal).toEqual('31000');
     });
 
@@ -146,7 +145,6 @@ describe('Mes Aides Réno', () => {
         type: TypeLogement.appartement,
         code_postal: '91120',
         chauffage: Chauffage.bois,
-        commune: 'PALAISEAU',
         dpe: DPE.B,
         nombre_adultes: 2,
         nombre_enfants: 2,
@@ -161,6 +159,7 @@ describe('Mes Aides Réno', () => {
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -212,7 +211,6 @@ describe('Mes Aides Réno', () => {
       expect(utilisateur.logement.type).toBe(TypeLogement.appartement);
       expect(utilisateur.logement.superficie).toBe(Superficie.superficie_150);
       expect(utilisateur.logement.code_commune).toEqual('91477');
-      expect(utilisateur.logement.commune).toEqual('PALAISEAU');
       expect(utilisateur.logement.code_postal).toEqual('91120');
     });
   });
@@ -235,7 +233,6 @@ describe('Mes Aides Réno', () => {
         dpe: DPE.B,
         type: TypeLogement.appartement,
         nombre_adultes: 2,
-        commune: 'TOULOUSE',
         code_postal: '31500',
         superficie: Superficie.superficie_150,
         chauffage: undefined,
@@ -245,11 +242,12 @@ describe('Mes Aides Réno', () => {
         numero_rue: undefined,
         rue: undefined,
         version: 0,
-        code_commune: undefined,
+        code_commune: '31555',
         score_risques_adresse: undefined,
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
       await TestUtil.create(DB.utilisateur, {
         logement: logement as any,
@@ -272,7 +270,6 @@ describe('Mes Aides Réno', () => {
         dpe: DPE.B,
         type: TypeLogement.appartement,
         nombre_adultes: 2,
-        commune: 'TOULOUSE',
         code_postal: '31500',
         superficie: Superficie.superficie_70,
         chauffage: undefined,
@@ -282,11 +279,12 @@ describe('Mes Aides Réno', () => {
         numero_rue: undefined,
         rue: undefined,
         version: 0,
-        code_commune: undefined,
+        code_commune: '31555',
         score_risques_adresse: undefined,
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -322,7 +320,6 @@ describe('Mes Aides Réno', () => {
         dpe: DPE.B,
         nombre_adultes: 2,
         code_postal: undefined,
-        commune: undefined,
         plus_de_15_ans: undefined,
         superficie: undefined,
         type: undefined,
@@ -338,6 +335,7 @@ describe('Mes Aides Réno', () => {
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
       await TestUtil.create(DB.utilisateur, {
         logement: logement as any,
@@ -356,7 +354,7 @@ describe('Mes Aides Réno', () => {
     test('doit prendre en compte les communes avec arrondissements', async () => {
       const logement = {
         code_postal: '69006',
-        commune: 'LYON 06',
+        code_commune: '69386',
       };
       await TestUtil.create(DB.utilisateur, {
         logement: logement as any,

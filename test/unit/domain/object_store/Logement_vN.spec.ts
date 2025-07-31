@@ -33,7 +33,6 @@ describe('Logement vN ', () => {
       chauffage: Chauffage.bois,
       code_postal: '91120',
       proprietaire: true,
-      commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
       latitude: 48,
       longitude: 2,
@@ -52,6 +51,18 @@ describe('Logement vN ', () => {
       prm: '123',
       est_prm_obsolete: true,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [
+        {
+          code_commune: 'AA',
+          code_postal: 'BB',
+          id: '123',
+          latitude: 12,
+          longitude: 45,
+          numero_rue: '12',
+          rue: 'rue de la paix',
+          date_creation: new Date(),
+        },
+      ],
     });
 
     // WHEN
@@ -73,7 +84,6 @@ describe('Logement vN ', () => {
       chauffage: Chauffage.bois,
       code_postal: '91120',
       proprietaire: true,
-      commune: 'PALAISEAU',
       superficie: Superficie.superficie_150_et_plus,
       latitude: 48,
       longitude: 2,
@@ -92,6 +102,18 @@ describe('Logement vN ', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: true,
+      liste_adresses_recentes: [
+        {
+          code_commune: 'AA',
+          code_postal: 'BB',
+          id: '123',
+          latitude: 12,
+          longitude: 45,
+          numero_rue: '12',
+          rue: 'rue de la paix',
+          date_creation: new Date(),
+        },
+      ],
     });
 
     // WHEN

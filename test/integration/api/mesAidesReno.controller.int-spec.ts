@@ -3,6 +3,7 @@ import {
   Superficie,
   TypeLogement,
 } from '../../../src/domain/logement/logement';
+import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -26,16 +27,30 @@ describe('Mes Aides Reno (API test)', () => {
   });
 
   test('GET /utilisateurs/:utilisateurId/mes_aides_reno/iframe_url', async () => {
+    const logement: Logement_v0 = {
+      proprietaire: true,
+      plus_de_15_ans: true,
+      dpe: DPE.B,
+      type: TypeLogement.appartement,
+      nombre_adultes: 2,
+      code_commune: '31555',
+      code_postal: '31500',
+      chauffage: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      latitude: 40,
+      longitude: 2,
+      liste_adresses_recentes: [],
+      nombre_enfants: undefined,
+      numero_rue: undefined,
+      prm: undefined,
+      rue: undefined,
+      score_risques_adresse: undefined,
+      superficie: undefined,
+      version: 0,
+    };
     await TestUtil.create(DB.utilisateur, {
-      logement: {
-        proprietaire: true,
-        plus_de_15_ans: true,
-        dpe: 'B',
-        type: TypeLogement.appartement,
-        nombre_adultes: 2,
-        commune: 'TOULOUSE',
-        code_postal: '31500',
-      },
+      logement: logement as any,
       revenu_fiscal: 20000,
     });
 

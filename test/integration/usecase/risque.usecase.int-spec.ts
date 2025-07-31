@@ -45,7 +45,6 @@ describe('NotificationMobileUsecase', () => {
       dpe: DPE.B,
       nombre_adultes: 2,
       code_postal: '21000',
-      commune: 'Dijon',
       plus_de_15_ans: undefined,
       superficie: undefined,
       type: undefined,
@@ -61,6 +60,7 @@ describe('NotificationMobileUsecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -109,7 +109,6 @@ describe('NotificationMobileUsecase', () => {
       dpe: DPE.B,
       nombre_adultes: 2,
       code_postal: '21000',
-      commune: 'Dijon',
       plus_de_15_ans: undefined,
       superficie: undefined,
       type: undefined,
@@ -125,6 +124,7 @@ describe('NotificationMobileUsecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -163,7 +163,6 @@ describe('NotificationMobileUsecase', () => {
       dpe: DPE.B,
       nombre_adultes: 2,
       code_postal: '21000',
-      commune: 'Dijon',
       plus_de_15_ans: undefined,
       superficie: undefined,
       type: undefined,
@@ -179,6 +178,7 @@ describe('NotificationMobileUsecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -217,7 +217,6 @@ describe('NotificationMobileUsecase', () => {
       dpe: DPE.B,
       nombre_adultes: 2,
       code_postal: '21000',
-      commune: 'Dijon',
       plus_de_15_ans: undefined,
       superficie: undefined,
       type: undefined,
@@ -233,6 +232,7 @@ describe('NotificationMobileUsecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,
@@ -258,7 +258,6 @@ describe('NotificationMobileUsecase', () => {
       dpe: DPE.B,
       nombre_adultes: 2,
       code_postal: '21000',
-      commune: 'Dijon',
       plus_de_15_ans: undefined,
       superficie: undefined,
       type: undefined,
@@ -274,6 +273,7 @@ describe('NotificationMobileUsecase', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, {
       logement: logement as any,

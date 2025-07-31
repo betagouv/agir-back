@@ -12,6 +12,7 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { ServiceFavorisStatistiqueRepository } from '../infrastructure/repository/serviceFavorisStatistique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { NewServiceCatalogue } from './referentiels/newServiceCatalogue';
@@ -65,7 +66,10 @@ export class RechercheServicesUsecase {
           ApplicationError.throwUnkonwnUserLocation();
         } else {
           filtre.code_postal = utilisateur.logement.code_postal;
-          filtre.commune = utilisateur.logement.commune;
+          filtre.code_commune = utilisateur.logement.code_commune;
+          filtre.commune = CommuneRepository.getLibelleCommuneUpperCase(
+            utilisateur.logement.code_commune,
+          );
         }
       }
     }

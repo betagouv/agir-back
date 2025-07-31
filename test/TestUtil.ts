@@ -617,7 +617,6 @@ export class TestUtil {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: 48,
       longitude: 2,
       numero_rue: '12',
@@ -627,11 +626,12 @@ export class TestUtil {
       nombre_enfants: 2,
       plus_de_15_ans: true,
       proprietaire: true,
-      code_commune: undefined,
+      code_commune: '91477',
       score_risques_adresse: undefined,
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     return {

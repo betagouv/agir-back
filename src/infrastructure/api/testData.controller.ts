@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -12,14 +11,12 @@ import { utilisateurs_liste } from '../../../test_data/utilisateurs_liste';
 import { App } from '../../domain/app';
 import { Thematique } from '../../domain/thematique/thematique';
 import { Scope } from '../../domain/utilisateur/utilisateur';
-import { LVAOUsecase } from '../../usecase/lvao.usecase';
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { ApplicationError } from '../applicationError';
 import { BrevoRepository } from '../contact/brevoRepository';
 import { PrismaService } from '../prisma/prisma.service';
 import { UtilisateurRepository } from '../repository/utilisateur/utilisateur.repository';
 import { GenericControler } from './genericControler';
-import { ActeurLVAO_API } from './types/ActeurLVAOAPI';
 const utilisateurs_content = require('../../../test_data/utilisateurs_content');
 
 @Controller()
@@ -32,7 +29,6 @@ export class TestDataController extends GenericControler {
     public contactSynchro: BrevoRepository,
     private utilisateurRepository2: UtilisateurRepository,
     private profileUsecase: ProfileUsecase,
-    private lvao_usecase: LVAOUsecase,
   ) {
     super();
   }
@@ -172,15 +168,5 @@ export class TestDataController extends GenericControler {
     );
     utilisatateur.recomputeRecoTags();
     await this.utilisateurRepository2.updateUtilisateur(utilisatateur);
-  }
-
-  @Put('lvao/acteurs')
-  @ApiBody({
-    type: ActeurLVAO_API,
-  })
-  async upsert_acteur(@Body() body: ActeurLVAO_API): Promise<void> {
-    console.log(body);
-
-    await this.lvao_usecase.upsert_acteur(body);
   }
 }

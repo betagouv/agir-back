@@ -125,10 +125,10 @@ export class Personnalisator {
   }
 
   private formatCommune(utilisateur: Utilisateur): string {
-    return this.communeRepository.formatCommune(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.commune,
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.logement.code_commune,
     );
+    return commune.nom;
   }
 
   private isActive(cle: CLE_PERSO, disable_actions: CLE_PERSO[]): boolean {

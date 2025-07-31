@@ -151,7 +151,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'Palaiseau',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -166,6 +165,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -195,7 +195,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -210,6 +209,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -240,7 +240,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -255,6 +254,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -285,7 +285,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -300,6 +299,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -330,7 +330,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -345,6 +344,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -376,7 +376,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -391,6 +390,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -421,7 +421,6 @@ describe('Aide (API test)', () => {
       type: TypeLogement.appartement,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -436,6 +435,7 @@ describe('Aide (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

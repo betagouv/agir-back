@@ -5,10 +5,10 @@ import { AidesUsecase } from './usecase/aides.usecase';
 import { CMSDataHelperUsecase } from './usecase/CMSDataHelper.usecase';
 import { CommunesUsecase } from './usecase/communes.usecase';
 import { ContactUsecase } from './usecase/contact.usecase';
-import { LVAOUsecase } from './usecase/lvao.usecase';
 import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
+import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { ServiceUsecase } from './usecase/service.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
@@ -278,10 +278,6 @@ async function bootstrap() {
         .migrateEchelleAides(process.argv[3]);
       break;
 
-    case 'load_lvao_big_csv':
-      await application.get(LVAOUsecase).smart_load_csv_lvao(process.argv[3]);
-      break;
-
     case 'cms_migrate_aides_partenaires':
       await application
         .get(CMSDataHelperUsecase)
@@ -292,6 +288,15 @@ async function bootstrap() {
       await application
         .get(CMSDataHelperUsecase)
         .cleanActionExport(process.argv[3]);
+      break;
+
+    case 'refresh_all_user_tags':
+      start_time = Date.now();
+      console.log(`START refresh_all_user_tags ${start_time}`);
+      await application.get(RecommandationUsecase).refreshAllUserTags();
+      console.log(
+        `STOP refresh_all_user_tags after ${Date.now() - start_time} ms`,
+      );
       break;
 
     case 'compute_all_aides_communes_from_partenaires':

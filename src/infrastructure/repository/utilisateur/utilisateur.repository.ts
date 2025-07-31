@@ -539,6 +539,14 @@ export class UtilisateurRepository {
     });
     return Number(count);
   }
+  async countActiveUsers(): Promise<number> {
+    const count = await this.prisma.utilisateur.count({
+      where: {
+        active_account: true,
+      },
+    });
+    return Number(count);
+  }
 
   async countAll(): Promise<number> {
     const count = await this.prisma.utilisateur.count();

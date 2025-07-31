@@ -992,7 +992,6 @@ describe('Admin (API test)', () => {
         type: TypeLogement.maison,
         code_postal: '21000',
         chauffage: Chauffage.bois,
-        commune: 'DIJON',
         dpe: DPE.B,
         nombre_adultes: 2,
         nombre_enfants: 2,
@@ -1007,6 +1006,7 @@ describe('Admin (API test)', () => {
         prm: undefined,
         est_prm_obsolete: false,
         est_prm_par_adresse: false,
+        liste_adresses_recentes: [],
       };
 
       await TestUtil.create(DB.utilisateur, {
@@ -2444,7 +2444,6 @@ describe('Admin (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'DIJON',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -2459,6 +2458,7 @@ describe('Admin (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2485,7 +2485,6 @@ describe('Admin (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'DIJON',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -2500,6 +2499,7 @@ describe('Admin (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2526,7 +2526,6 @@ describe('Admin (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'DIJON',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -2542,6 +2541,7 @@ describe('Admin (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, {
@@ -2715,6 +2715,51 @@ describe('Admin (API test)', () => {
         pseudo: 'pseudo',
         question: 'mais quoi donc ?',
       },
+    ]);
+  });
+
+  it(`POST /admin/refresh_all_user_tags`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '21000',
+      chauffage: Chauffage.bois,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
+      prm: undefined,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: logement as any,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/refresh_all_user_tags');
+
+    // THEN
+    expect(response.status).toBe(201);
+    const user_DB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+
+    expect(user_DB.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
     ]);
   });
 });

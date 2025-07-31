@@ -1,3 +1,5 @@
+import { AidesVeloRepository } from 'src/infrastructure/repository/aidesVelo.repository';
+import { AidesVeloUsecase } from 'src/usecase/aidesVelo.usecase';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import {
   Chauffage,
@@ -45,6 +47,12 @@ describe('WinterUsecase', () => {
   let compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
+  let aideVeloRepository = new AidesVeloRepository();
+  let aideVeloUsecase = new AidesVeloUsecase(
+    aideVeloRepository,
+    utilisateurRepository,
+    communeRepository,
+  );
   let aidesUsecase = new AidesUsecase(
     aideExpirationWarningRepository,
     emailSender,
@@ -53,6 +61,7 @@ describe('WinterUsecase', () => {
     utilisateurRepository,
     personalisator,
     partenaireUsecase,
+    aideVeloUsecase,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,
@@ -115,7 +124,6 @@ describe('WinterUsecase', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -130,6 +138,7 @@ describe('WinterUsecase', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -219,7 +228,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -234,6 +242,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -274,7 +283,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -289,6 +297,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -331,7 +340,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: undefined,
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -346,6 +354,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -370,7 +379,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     } catch (error) {
       // THEN
       expect(error.message).toEqual(
-        'Le code postal ET la commune sont obligatoires',
+        'Le code postal ET le code commune sont obligatoires',
       );
     }
 
@@ -387,7 +396,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -402,6 +410,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -426,7 +435,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
     } catch (error) {
       // THEN
       expect(error.message).toEqual(
-        'Le code postal ET la commune sont obligatoires',
+        'Le code postal ET le code commune sont obligatoires',
       );
     }
 
@@ -444,7 +453,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -459,6 +467,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -501,7 +510,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -516,6 +524,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
@@ -579,7 +588,6 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -594,6 +602,7 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
 
     await TestUtil.create(DB.utilisateur, { logement: logement as any });

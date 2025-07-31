@@ -113,8 +113,9 @@ export class StatistiqueExternalRepository {
 
         code_insee_commune: utilisateur.logement.code_commune,
         code_postal: utilisateur.logement.code_postal,
-        nom_commune: utilisateur.logement.commune,
-
+        nom_commune: CommuneRepository.getLibelleCommuneUpperCase(
+          utilisateur.logement.code_commune,
+        ),
         nombre_points: utilisateur.gamification.getPoints(),
 
         nombre_parts_fiscales: utilisateur.parts,

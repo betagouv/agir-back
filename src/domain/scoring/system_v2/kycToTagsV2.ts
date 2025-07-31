@@ -21,6 +21,9 @@ type CODE_TAG = Record<string, Tag_v2>;
 export type KycToTagMapper<T extends KYCID> = {
   oui_non?: OUI_NON;
   is_zero?: OUI_NON;
+  is_equal?: { value: number } & OUI_NON;
+  is_lesser_than?: { value: number } & OUI_NON;
+  is_greater_than?: { value: number } & OUI_NON;
   both_zero?: { kyc: KYCID } & OUI_NON;
   one_of?: { set: KYCComplexValues[T]['code'][] } & OUI_NON;
   is_code?: { code: KYCComplexValues[T]['code'] } & OUI_NON;
@@ -40,6 +43,7 @@ export const KYC_TAG_MAPPER_COLLECTION: {
   KYC_transport_avion_3_annees: {
     oui_non: {
       non: [Tag_v2.ne_prend_pas_avion],
+      oui: [Tag_v2.prend_l_avion],
     },
   },
   KYC003: {
@@ -72,6 +76,17 @@ export const KYC_TAG_MAPPER_COLLECTION: {
       non: [Tag_v2.n_a_pas_chauffage_elec],
     },
   },
+  KYC_menage: {
+    is_greater_than: {
+      value: 2,
+      oui: [Tag_v2.vie_en_famille],
+    },
+    is_lesser_than: {
+      value: 3,
+      oui: [Tag_v2.ne_vit_pas_en_famille],
+    },
+  },
+
   KYC_transport_voiture_motorisation: {
     are_codes: [
       {
@@ -191,6 +206,18 @@ export class KycToTags_v2 {
         mappers.is_zero.oui?.forEach((t) => tag_set.add(t));
         mappers.is_zero.non?.forEach((t) => tag_set.add(t));
       }
+      if (mappers.is_equal) {
+        mappers.is_equal.oui?.forEach((t) => tag_set.add(t));
+        mappers.is_equal.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.is_greater_than) {
+        mappers.is_greater_than.oui?.forEach((t) => tag_set.add(t));
+        mappers.is_greater_than.non?.forEach((t) => tag_set.add(t));
+      }
+      if (mappers.is_lesser_than) {
+        mappers.is_lesser_than.oui?.forEach((t) => tag_set.add(t));
+        mappers.is_lesser_than.non?.forEach((t) => tag_set.add(t));
+      }
       if (mappers.both_zero) {
         mappers.both_zero.oui?.forEach((t) => tag_set.add(t));
         mappers.both_zero.non?.forEach((t) => tag_set.add(t));
@@ -261,6 +288,33 @@ export class KycToTags_v2 {
           non: mapper.is_zero.non,
         });
       }
+      if (mapper.is_equal) {
+        this.distribuerOuiNonBoolean(
+          this.est_egale(KYCID[kyc_code], mapper.is_equal.value),
+          {
+            oui: mapper.is_equal.oui,
+            non: mapper.is_equal.non,
+          },
+        );
+      }
+      if (mapper.is_greater_than) {
+        this.distribuerOuiNonBoolean(
+          this.est_plus_grande(KYCID[kyc_code], mapper.is_greater_than.value),
+          {
+            oui: mapper.is_greater_than.oui,
+            non: mapper.is_greater_than.non,
+          },
+        );
+      }
+      if (mapper.is_lesser_than) {
+        this.distribuerOuiNonBoolean(
+          this.est_plus_petite(KYCID[kyc_code], mapper.is_lesser_than.value),
+          {
+            oui: mapper.is_lesser_than.oui,
+            non: mapper.is_lesser_than.non,
+          },
+        );
+      }
       if (mapper.both_zero) {
         this.distribuerOuiNonBoolean(
           this.est_zero(KYCID[kyc_code]) &&
@@ -291,6 +345,14 @@ export class KycToTags_v2 {
           case TypeCommune['Péri-urbain']:
             this.setTags([Tag_v2.habite_zone_peri_urbaine]);
             break;
+        }
+        const est_drom_com = this.commune_repo.estDromCom(
+          this.logement.code_commune,
+        );
+        if (est_drom_com) {
+          this.setTags([Tag_v2.habite_en_outre_mer]);
+        } else {
+          this.setTags([Tag_v2.habite_en_metropole]);
         }
 
         const risque_commune =
@@ -415,6 +477,21 @@ export class KycToTags_v2 {
     const kyc = this.hist.getQuestionNumerique(kyc_code);
     if (!kyc) return false;
     return kyc.getValue() === 0;
+  }
+  private est_egale(kyc_code: string, value: number): boolean {
+    const kyc = this.hist.getQuestionNumerique(kyc_code);
+    if (!kyc) return false;
+    return kyc.getValue() === value;
+  }
+  private est_plus_grande(kyc_code: string, value: number): boolean {
+    const kyc = this.hist.getQuestionNumerique(kyc_code);
+    if (!kyc) return false;
+    return kyc.getValue() > value;
+  }
+  private est_plus_petite(kyc_code: string, value: number): boolean {
+    const kyc = this.hist.getQuestionNumerique(kyc_code);
+    if (!kyc) return false;
+    return kyc.getValue() < value;
   }
 
   private estRisqueMoyenOuPlus(level: NiveauRisqueLogement): boolean {

@@ -44,7 +44,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -59,6 +58,7 @@ describe('Winter (API test)', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -86,7 +86,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       dpe: DPE.B,
       nombre_adultes: 2,
       nombre_enfants: 2,
@@ -101,6 +100,7 @@ describe('Winter (API test)', () => {
       prm: '123',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -143,7 +143,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -158,6 +157,7 @@ describe('Winter (API test)', () => {
       prm: '12345678901234',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -205,7 +205,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -220,6 +219,7 @@ describe('Winter (API test)', () => {
       prm: '12345678901234',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -242,7 +242,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -257,6 +256,7 @@ describe('Winter (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -278,7 +278,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -293,6 +292,7 @@ describe('Winter (API test)', () => {
       prm: undefined,
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -318,7 +318,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '91120',
       chauffage: Chauffage.bois,
-      commune: 'PALAISEAU',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -333,6 +332,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement as any });
 
@@ -434,7 +434,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -449,6 +448,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],
@@ -515,7 +515,6 @@ describe('Winter (API test)', () => {
       type: TypeLogement.maison,
       code_postal: '21000',
       chauffage: Chauffage.bois,
-      commune: 'Dijon',
       latitude: undefined,
       longitude: undefined,
       numero_rue: '12',
@@ -530,6 +529,7 @@ describe('Winter (API test)', () => {
       prm: '12345',
       est_prm_obsolete: false,
       est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
     };
     const them: ThematiqueHistory_v0 = {
       codes_actions_exclues: [],

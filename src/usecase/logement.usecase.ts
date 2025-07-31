@@ -2,19 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Retryable } from 'typescript-retry-decorator';
 import validator from 'validator';
 import { LogementToKycSync } from '../domain/kyc/synchro/logementToKycSync';
+import { Adresse } from '../domain/logement/adresse';
 import { Logement } from '../domain/logement/logement';
 import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { LogementAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
+import { InputLogementAPI } from '../infrastructure/api/types/utilisateur/logementAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 import { MaifRepository } from '../infrastructure/repository/services_recherche/maif/maif.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
-
-const NUM_RUE_MAX_LENGTH = 10;
-const NOM_RUE_MAX_LENGTH = 100;
 
 export type Phrase = {
   phrase: string;
@@ -37,13 +35,49 @@ export class LogementUsecase {
       return e.code === '050';
     },
   })
-  async updateUtilisateurLogement(utilisateurId: string, input: LogementAPI) {
+  async updateUtilisateurLogement(
+    utilisateurId: string,
+    input: InputLogementAPI,
+  ) {
     const utilisateur = await this.utilisateurRepository.getById(
       utilisateurId,
       [Scope.logement, Scope.kyc, Scope.recommandation],
     );
     Utilisateur.checkState(utilisateur);
+
     const data_to_update: Partial<Logement> = { ...input };
+
+    const adresse_checker = new Adresse({
+      code_commune: input.code_commune,
+      code_postal: input.code_postal,
+      id: undefined,
+      date_creation: undefined,
+      latitude: input.latitude,
+      longitude: input.longitude,
+      numero_rue: input.numero_rue,
+      rue: input.rue,
+    });
+
+    // FIXME : hack à supprimer une fois que mobile n'utilise plus la commune en input
+    if (input.commune && input.code_postal && !input.code_commune) {
+      const code_commune =
+        CommuneRepository.getCodeCommuneFromCodePostalEtNomCommune(
+          input.code_postal,
+          input.commune,
+        );
+      data_to_update.code_commune = code_commune;
+      adresse_checker.code_commune = code_commune;
+    }
+
+    adresse_checker.checkAllFieldsSize();
+    adresse_checker.checkCodePostalOK();
+    adresse_checker.checkCodeCommuneOK();
+    adresse_checker.checkCoordinatesOK();
+    adresse_checker.checkBothCodePostalEtCodeCommuneOrNone();
+
+    if (input.code_commune && input.code_postal) {
+      adresse_checker.checkCodeCommuneAndCodePostalCoherent();
+    }
 
     if (input.nombre_adultes) {
       if (!validator.isInt('' + input.nombre_adultes))
@@ -53,99 +87,17 @@ export class LogementUsecase {
       if (!validator.isInt('' + input.nombre_enfants))
         ApplicationError.throwNbrAdultesEnfants();
     }
-    if (input.code_postal) {
-      if (!validator.isInt(input.code_postal))
-        ApplicationError.throwCodePostalIncorrect();
-      if (input.code_postal.length !== 5)
-        ApplicationError.throwCodePostalIncorrect();
-    }
-
-    if (
-      (input.commune && !input.code_postal) ||
-      (!input.commune && !input.code_commune && input.code_postal)
-    ) {
-      ApplicationError.throwCodePostalCommuneMandatory();
-    }
-
-    if (input.commune) {
-      const code_commune = this.communeRepository.getCommuneCodeInsee(
-        input.code_postal,
-        input.commune,
-      );
-      if (!code_commune) {
-        ApplicationError.throwBadCodePostalAndCommuneAssociation(
-          input.code_postal,
-          input.commune,
-        );
-      }
-      data_to_update.code_commune = code_commune;
-    }
-
-    if (input.code_commune) {
-      const commune = this.communeRepository.getCommuneByCodeINSEE(
-        input.code_commune,
-      );
-      if (!commune.codesPostaux.includes(input.code_postal)) {
-        ApplicationError.throwBadCodePostalAndCommuneAssociation(
-          input.code_postal,
-          input.code_commune,
-        );
-      }
-      if (commune) {
-        data_to_update.code_commune = commune.code;
-        data_to_update.commune = commune.nom;
-      } else {
-        ApplicationError.throwCodeCommuneNotFound(input.code_commune);
-      }
-    }
-
-    if (input.rue) {
-      if (input.rue.length > NOM_RUE_MAX_LENGTH) {
-        ApplicationError.throwTooBigData('rue', input.rue, NOM_RUE_MAX_LENGTH);
-      }
-    }
-    if (input.numero_rue) {
-      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
-        ApplicationError.throwTooBigData(
-          'numero_rue',
-          input.numero_rue,
-          NUM_RUE_MAX_LENGTH,
-        );
-      }
-    }
-    if (input.numero_rue) {
-      if (input.numero_rue.length > NUM_RUE_MAX_LENGTH) {
-        ApplicationError.throwTooBigData(
-          'numero_rue',
-          input.numero_rue,
-          NUM_RUE_MAX_LENGTH,
-        );
-      }
-    }
-    if (input.longitude) {
-      if (!validator.isDecimal('' + input.longitude)) {
-        ApplicationError.throwNotDecimalField('longitude', input.longitude);
-      }
-    }
-    if (input.latitude) {
-      if (!validator.isDecimal('' + input.latitude)) {
-        ApplicationError.throwNotDecimalField('latitude', input.latitude);
-      }
-    }
 
     utilisateur.logement.patch(data_to_update, utilisateur);
 
     if (
-      (input.numero_rue ||
-        input.rue ||
-        input.code_commune ||
-        input.code_postal) &&
+      adresse_checker.hasAnyAdressData() &&
       utilisateur.logement.estPRMPresentEtParAdresse()
     ) {
       utilisateur.logement.est_prm_obsolete = true;
     }
     if (
-      (input.numero_rue === null || input.rue === null) &&
+      adresse_checker.hasNullifiedStreetData() &&
       utilisateur.logement.estPRMPresentEtParAdresse()
     ) {
       utilisateur.logement.est_prm_obsolete = true;
@@ -165,11 +117,11 @@ export class LogementUsecase {
       );
     utilisateur.couverture_aides_ok = couverture_code_postal;
 
-    if (input.longitude === null && input.latitude === null) {
+    if (adresse_checker.hasNullifiedCoordinates()) {
       utilisateur.logement.score_risques_adresse = undefined;
     }
 
-    if (input.longitude && input.latitude) {
+    if (adresse_checker.hasAnyCoordinates()) {
       await this.setRisqueFromCoordonnees(utilisateur);
     }
 

@@ -3,6 +3,7 @@ import {
   ScoreRisquesAdresse_v0,
 } from '../object_store/logement/logement_v0';
 import { Utilisateur } from '../utilisateur/utilisateur';
+import { Adresse } from './adresse';
 import { NiveauRisqueLogement } from './NiveauRisque';
 import { TypeRisqueLogement } from './TypeRisque';
 
@@ -65,11 +66,11 @@ export class ScoreRisquesAdresse
 }
 
 export class Logement {
+  liste_adresses_recentes: Adresse[];
   nombre_adultes: number;
   nombre_enfants: number;
   code_commune: string;
   code_postal: string;
-  commune: string;
   numero_rue: string; // 3, 12bis
   rue: string; // avenue de la paix
   longitude: number;
@@ -85,17 +86,15 @@ export class Logement {
   est_prm_par_adresse: boolean;
   score_risques_adresse: ScoreRisquesAdresse;
 
-  commune_label?: string;
-
   constructor(log?: Logement_v0) {
     if (!log) {
       this.score_risques_adresse = undefined;
+      this.liste_adresses_recentes = [];
       return;
     }
     this.nombre_adultes = log.nombre_adultes;
     this.nombre_enfants = log.nombre_enfants;
     this.code_postal = log.code_postal;
-    this.commune = log.commune;
     this.type = log.type;
     this.prm = log.prm;
     this.superficie = log.superficie;
@@ -113,6 +112,9 @@ export class Logement {
     this.score_risques_adresse = new ScoreRisquesAdresse(
       log.score_risques_adresse,
     );
+    this.liste_adresses_recentes = log.liste_adresses_recentes
+      ? log.liste_adresses_recentes.map((a) => new Adresse(a))
+      : [];
   }
 
   patch?(input: Partial<Logement>, utilisateur: Utilisateur) {
@@ -120,8 +122,6 @@ export class Logement {
     this.nombre_enfants = this.AorB(input.nombre_enfants, this.nombre_enfants);
 
     this.code_postal = this.AorB(input.code_postal, this.code_postal);
-
-    this.commune = this.AorB(input.commune, this.commune);
 
     this.type = this.AorB(input.type, this.type);
     this.superficie = this.AorB(input.superficie, this.superficie);
