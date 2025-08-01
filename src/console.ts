@@ -300,6 +300,7 @@ async function bootstrap() {
       break;
 
     case 'compute_all_aides_communes_from_partenaires':
+      start_time = Date.now();
       console.log(
         `START compute_all_aides_communes_from_partenaires ${start_time}`,
       );
