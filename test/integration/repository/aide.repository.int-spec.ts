@@ -1,3 +1,5 @@
+import { Besoin } from '../../../src/domain/aides/besoin';
+import { Echelle } from '../../../src/domain/aides/echelle';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -18,6 +20,42 @@ describe('AideRepository', () => {
   afterAll(async () => {
     process.env = OLD_ENV;
     await TestUtil.appclose();
+  });
+
+  it('countAll()', async () => {
+    expect(await aideRepository.listAll()).toHaveLength(0);
+    expect(await aideRepository.countAll()).toEqual(0);
+
+    await TestUtil.create(DB.aide, {
+      besoin: Besoin.acheter_velo,
+      besoin_desc: 'hihi',
+      codes_commune_from_partenaire: [],
+      codes_departement: [],
+      codes_departement_from_partenaire: [],
+      codes_postaux: [],
+      codes_region: [],
+      codes_region_from_partenaire: [],
+      content_id: '1',
+      contenu: 'haha',
+      date_expiration: new Date(),
+      derniere_maj: new Date(),
+      echelle: Echelle.Commune,
+      est_gratuit: false,
+      exclude_codes_commune: [],
+      include_codes_commune: [],
+      is_simulateur: false,
+      montant_max: 1000,
+      partenaires_supp_ids: ['1'],
+      thematiques: [],
+      titre: 'titre',
+      url_demande: 'c',
+      url_simulateur: 'a',
+      url_source: 'b',
+    });
+    await aideRepository.loadCache();
+
+    expect(await aideRepository.listAll()).toHaveLength(1);
+    expect(await aideRepository.countAll()).toEqual(1);
   });
 
   it('isCodePostalCouvert : indique si un code postal est couvert par au moins une aide', async () => {

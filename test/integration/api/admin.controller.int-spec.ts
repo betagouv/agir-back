@@ -26,7 +26,6 @@ import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
@@ -57,7 +56,6 @@ describe('Admin (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
-  const articleRepository = new ArticleRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -2443,30 +2441,30 @@ describe('Admin (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
 
     await TestUtil.create(DB.aide, {
-      content_id: '1',
-      titre: 'titre',
-      contenu: 'haha',
-      partenaires_supp_ids: ['1'],
-      url_simulateur: 'a',
-      url_source: 'b',
-      url_demande: 'c',
-      is_simulateur: false,
-      codes_postaux: [],
-      thematiques: [],
-      montant_max: 1000,
-      echelle: Echelle.Commune,
       besoin: Besoin.acheter_velo,
       besoin_desc: 'hihi',
-      include_codes_commune: [],
-      exclude_codes_commune: [],
       codes_departement: [],
+      codes_postaux: [],
       codes_region: [],
-      date_expiration: new Date(),
-      derniere_maj: new Date(),
-      est_gratuit: false,
       codes_commune_from_partenaire: [],
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
+      content_id: '1',
+      contenu: 'haha',
+      date_expiration: new Date(),
+      derniere_maj: new Date(),
+      echelle: Echelle.Commune,
+      est_gratuit: false,
+      exclude_codes_commune: [],
+      include_codes_commune: [],
+      is_simulateur: false,
+      montant_max: 1000,
+      partenaires_supp_ids: ['1'],
+      thematiques: [],
+      titre: 'titre',
+      url_demande: 'c',
+      url_simulateur: 'a',
+      url_source: 'b',
     });
 
     await TestUtil.create(DB.partenaire, {
@@ -2493,12 +2491,12 @@ describe('Admin (API test)', () => {
     expect(aideDB).toEqual({
       besoin: 'acheter_velo',
       besoin_desc: 'hihi',
-      codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
-      codes_region_from_partenaire: ['456'],
-      codes_departement_from_partenaire: ['123'],
       codes_departement: [],
       codes_postaux: [],
       codes_region: [],
+      codes_commune_from_partenaire: TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
+      codes_departement_from_partenaire: ['123'],
+      codes_region_from_partenaire: ['456'],
       content_id: '1',
       contenu: 'haha',
       echelle: 'Commune',

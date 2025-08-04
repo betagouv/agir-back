@@ -9,7 +9,9 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class AideRepository {
+export class AideRepository
+  implements Paginated<AideDefinition>, WithPartenaireCodes<AideDefinition>
+{
   private static catalogue_aides: Map<string, AideDefinition>;
 
   constructor(private prisma: PrismaService) {
@@ -46,20 +48,20 @@ export class AideRepository {
     AideRepository.catalogue_aides = new_map;
   }
 
-  public async findAidesByPartenaireId(
-    part_id: string,
+  public async findByPartenaireId(
+    partenaire_id: string,
   ): Promise<AideDefinition[]> {
     const result = await this.prisma.aide.findMany({
       where: {
         partenaires_supp_ids: {
-          has: part_id,
+          has: partenaire_id,
         },
       },
     });
     return result.map((r) => this.buildAideFromDB(r));
   }
 
-  public async updateAideCodesFromPartenaire(
+  public async updateCodesFromPartenaireFor(
     cms_id: string,
     codes_commune: string[],
     codes_departement_from_partenaire: string[],
@@ -74,6 +76,7 @@ export class AideRepository {
       },
     });
   }
+
   public static resetCache() {
     // FOR TEST ONLY
     AideRepository.catalogue_aides = new Map();
@@ -117,6 +120,11 @@ export class AideRepository {
     return liste_aides.map((a) => this.buildAideFromDB(a));
   }
 
+  async listeAll(): Promise<AideDefinition[]> {
+    const liste_aides = await this.prisma.aide.findMany();
+    return liste_aides.map((a) => this.buildAideFromDB(a));
+  }
+
   async countAll(): Promise<number> {
     const count = await this.prisma.aide.count();
     return Number(count);
@@ -132,6 +140,7 @@ export class AideRepository {
     });
     return results.map((r) => this.buildAideFromDB(r));
   }
+
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
     if (!code_postal) return false;
     let count;
@@ -318,7 +327,7 @@ export class AideRepository {
 
   private buildAideFromDB(aideDB: AideDB): AideDefinition {
     if (aideDB === null) return null;
-    return {
+    return new AideDefinition({
       content_id: aideDB.content_id,
       titre: aideDB.titre,
       codes_postaux: aideDB.codes_postaux,
@@ -345,6 +354,6 @@ export class AideRepository {
         aideDB.codes_departement_from_partenaire,
       codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
       VISIBLE_PROD: aideDB.VISIBLE_PROD,
-    };
+    });
   }
 }

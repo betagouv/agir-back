@@ -5,7 +5,10 @@ import { PartenaireRepository } from '../infrastructure/repository/partenaire.re
 
 @Injectable()
 export class PartenaireUsecase {
-  constructor(private communeRepository: CommuneRepository) {}
+  constructor(
+    private communeRepository: CommuneRepository,
+    private partenaireRepository: PartenaireRepository,
+  ) {}
 
   public external_compute_codes_communes_from_liste_partenaires(
     part_ids: string[],
@@ -86,5 +89,59 @@ export class PartenaireUsecase {
       return [];
     }
     return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
+  }
+
+  public async updateCodesForPartenaire<
+    T extends {
+      content_id: string;
+    } & AssociatedWithPartenaires,
+  >(partenaire_id: string, repository: Paginated<T> & WithPartenaireCodes<T>) {
+    const liste = await repository.findByPartenaireId(partenaire_id);
+
+    for (const elem of liste) {
+      await this.updateCodesFromPartenaireForSingle(repository, elem);
+    }
+  }
+
+  public async updateCodesFromPartenaireFor<
+    T extends {
+      content_id: string;
+    } & AssociatedWithPartenaires,
+  >(
+    repository: Paginated<T> & WithPartenaireCodes<T>,
+    block_size = 100,
+  ): Promise<void> {
+    await this.partenaireRepository.loadCache();
+
+    const total_count = await repository.countAll();
+    for (let index = 0; index < total_count; index = index + block_size) {
+      const current_list = await repository.listePaginated(index, block_size);
+
+      for (const elem of current_list) {
+        await this.updateCodesFromPartenaireForSingle(repository, elem);
+      }
+    }
+
+    await repository.loadCache();
+  }
+
+  private async updateCodesFromPartenaireForSingle<
+    T extends {
+      content_id: string;
+    } & AssociatedWithPartenaires,
+  >(repository: Paginated<T> & WithPartenaireCodes<T>, elem: T) {
+    await this.partenaireRepository.loadCache();
+
+    const computed =
+      this.external_compute_communes_departement_regions_from_liste_partenaires(
+        elem.getPartenaireIds(),
+      );
+
+    await repository.updateCodesFromPartenaireFor(
+      elem.content_id,
+      computed.codes_commune,
+      computed.codes_departement,
+      computed.codes_region,
+    );
   }
 }

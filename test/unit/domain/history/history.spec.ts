@@ -1,22 +1,25 @@
 import { Echelle } from '../../../../src/domain/aides/echelle';
 import { Article } from '../../../../src/domain/contenu/article';
+import { ArticleDefinition } from '../../../../src/domain/contenu/articleDefinition';
 import { Categorie } from '../../../../src/domain/contenu/categorie';
 import { History } from '../../../../src/domain/history/history';
 import { Thematique } from '../../../../src/domain/thematique/thematique';
 import { TestUtil } from '../../../../test/TestUtil';
 
-const BASIC_ARTICLE: Article = new Article({
-  ...TestUtil.articleData(),
-  thematique_principale: Thematique.alimentation,
-  thematiques: [Thematique.alimentation, Thematique.climat],
-  tags_utilisateur: [],
-  categorie: Categorie.recommandation,
-  source: 'source',
-  sources: [{ label: 'source 1', url: 'https//sources1' }],
-  echelle: Echelle.National,
-  tags_a_exclure: [],
-  tags_a_inclure: [],
-});
+const BASIC_ARTICLE: Article = new Article(
+  new ArticleDefinition({
+    ...TestUtil.articleData(),
+    thematique_principale: Thematique.alimentation,
+    thematiques: [Thematique.alimentation, Thematique.climat],
+    tags_utilisateur: [],
+    categorie: Categorie.recommandation,
+    source: 'source',
+    sources: [{ label: 'source 1', url: 'https//sources1' }],
+    echelle: Echelle.National,
+    tags_a_exclure: [],
+    tags_a_inclure: [],
+  }),
+);
 
 describe('History', () => {
   it('WHEN un vie historique ok', () => {
@@ -318,9 +321,15 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '3' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '5' }));
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '1' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '3' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '5' })),
+    );
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);
@@ -366,10 +375,18 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '2' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '3' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '4' }));
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '1' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '2' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '3' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '4' })),
+    );
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);
@@ -406,8 +423,12 @@ describe('History', () => {
     });
 
     const liste_articles: Article[] = [];
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '1' }));
-    liste_articles.push(new Article({ ...BASIC_ARTICLE, content_id: '2' }));
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '1' })),
+    );
+    liste_articles.push(
+      new Article(new ArticleDefinition({ ...BASIC_ARTICLE, content_id: '2' })),
+    );
 
     // WHEN
     const result = history.orderArticlesByReadDateAndFavoris(liste_articles);

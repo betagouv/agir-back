@@ -4,7 +4,7 @@ import { Besoin } from '../../../src/domain/aides/besoin';
 import { Echelle } from '../../../src/domain/aides/echelle';
 import { PartenaireDefinition } from '../../../src/domain/contenu/partenaireDefinition';
 
-const aide_def: AideDefinition = {
+const aide_def = new AideDefinition({
   content_id: '1',
   titre: 'titre',
   contenu: 'haha',
@@ -30,7 +30,7 @@ const aide_def: AideDefinition = {
   codes_departement_from_partenaire: [],
   codes_region_from_partenaire: [],
   VISIBLE_PROD: true,
-};
+});
 
 const part_def = {
   id_cms: '1',

@@ -31,7 +31,11 @@ export type ArticleFilter = {
 };
 
 @Injectable()
-export class ArticleRepository {
+export class ArticleRepository
+  implements
+    Paginated<ArticleDefinition>,
+    WithPartenaireCodes<ArticleDefinition>
+{
   private static catalogue_articles: Map<string, ArticleDefinition>;
 
   constructor(private prisma: PrismaService) {
@@ -289,7 +293,69 @@ export class ArticleRepository {
     return result.map((r) => this.buildArticleFromDB(r));
   }
 
-  public async updateArticlesCodesFromPartenaire(
+  async countAll(): Promise<number> {
+    const count = await this.prisma.aide.count();
+    return Number(count);
+  }
+
+  async listePaginated(
+    skip: number,
+    take: number,
+  ): Promise<ArticleDefinition[]> {
+    const results = await this.prisma.article.findMany({
+      skip: skip,
+      take: take,
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildArticleFromDB(r));
+  }
+
+  private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
+    if (articleDB === null) return null;
+    return new Article(
+      new ArticleDefinition({
+        partenaire_id: articleDB.partenaire_id,
+        content_id: articleDB.content_id,
+        categorie: Categorie[articleDB.categorie],
+        titre: articleDB.titre,
+        soustitre: articleDB.soustitre,
+        source: articleDB.source,
+        image_url: articleDB.image_url,
+        rubrique_ids: articleDB.rubrique_ids,
+        rubrique_labels: articleDB.rubrique_labels,
+        codes_postaux: articleDB.codes_postaux,
+        duree: articleDB.duree,
+        frequence: articleDB.frequence,
+        difficulty: articleDB.difficulty,
+        points: articleDB.points,
+        thematique_principale: Thematique[articleDB.thematique_principale],
+        thematiques: articleDB.thematiques.map((th) => Thematique[th]),
+        tags_utilisateur: articleDB.tags_utilisateur.map(
+          (t) => TagUtilisateur[t],
+        ),
+        mois: articleDB.mois,
+        codes_departement: articleDB.codes_departement,
+        codes_region: articleDB.codes_region,
+        exclude_codes_commune: articleDB.exclude_codes_commune,
+        include_codes_commune: articleDB.include_codes_commune,
+        contenu: articleDB.contenu,
+        sources: articleDB.sources as any,
+        derniere_maj: articleDB.derniere_maj,
+        echelle: Echelle[articleDB.echelle],
+        tags_a_exclure: articleDB.tags_a_exclure_v2,
+        tags_a_inclure: articleDB.tags_a_inclure_v2,
+        VISIBLE_PROD: articleDB.VISIBLE_PROD,
+        codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
+        codes_departement_from_partenaire:
+          articleDB.codes_departement_from_partenaire,
+        codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
+      }),
+    );
+  }
+
+  public async updateCodesFromPartenaireFor(
     cms_id: string,
     codes_commune: string[],
     codes_departement_from_partenaire: string[],
@@ -305,44 +371,23 @@ export class ArticleRepository {
     });
   }
 
-  private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
-    if (articleDB === null) return null;
-    return new Article({
-      partenaire_id: articleDB.partenaire_id,
-      content_id: articleDB.content_id,
-      categorie: Categorie[articleDB.categorie],
-      titre: articleDB.titre,
-      soustitre: articleDB.soustitre,
-      source: articleDB.source,
-      image_url: articleDB.image_url,
-      rubrique_ids: articleDB.rubrique_ids,
-      rubrique_labels: articleDB.rubrique_labels,
-      codes_postaux: articleDB.codes_postaux,
-      duree: articleDB.duree,
-      frequence: articleDB.frequence,
-      difficulty: articleDB.difficulty,
-      points: articleDB.points,
-      thematique_principale: Thematique[articleDB.thematique_principale],
-      thematiques: articleDB.thematiques.map((th) => Thematique[th]),
-      tags_utilisateur: articleDB.tags_utilisateur.map(
-        (t) => TagUtilisateur[t],
-      ),
-      mois: articleDB.mois,
-      codes_departement: articleDB.codes_departement,
-      codes_region: articleDB.codes_region,
-      exclude_codes_commune: articleDB.exclude_codes_commune,
-      include_codes_commune: articleDB.include_codes_commune,
-      contenu: articleDB.contenu,
-      sources: articleDB.sources as any,
-      derniere_maj: articleDB.derniere_maj,
-      echelle: Echelle[articleDB.echelle],
-      tags_a_exclure: articleDB.tags_a_exclure_v2,
-      tags_a_inclure: articleDB.tags_a_inclure_v2,
-      VISIBLE_PROD: articleDB.VISIBLE_PROD,
-      codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
-      codes_departement_from_partenaire:
-        articleDB.codes_departement_from_partenaire,
-      codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
+  public async findByPartenaireId(
+    partenaire_id: string,
+  ): Promise<ArticleDefinition[]> {
+    const result = await this.prisma.article.findMany({
+      where: {
+        partenaire_id: partenaire_id,
+      },
     });
+    return result.map((r) => this.buildArticleFromDB(r));
+  }
+
+  public async listeAll(): Promise<ArticleDefinition[]> {
+    const results = await this.prisma.article.findMany({
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildArticleFromDB(r));
   }
 }
