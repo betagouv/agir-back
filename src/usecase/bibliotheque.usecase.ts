@@ -108,6 +108,8 @@ export class BibliothequeUsecase {
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
       code_commune: utilisateur.logement.code_commune,
+      code_departement: dept_region?.code_departement,
+      code_region: dept_region?.code_region,
       commune_pour_partenaire: utilisateur.logement.code_commune,
       departement_pour_partenaire: dept_region?.code_departement,
       region_pour_partenaire: dept_region?.code_region,

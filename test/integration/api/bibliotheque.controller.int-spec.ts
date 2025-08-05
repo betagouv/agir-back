@@ -1324,6 +1324,20 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       codes_departement_from_partenaire: ['30'],
     });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      codes_departement: ['21'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      codes_departement: ['21'],
+      codes_departement_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      codes_departement: ['30'],
+      codes_departement_from_partenaire: ['21'],
+    });
     await articleRepository.loadCache();
 
     // WHEN
@@ -1332,7 +1346,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu.map(({ content_id }) => content_id)).toEqual([
+      '1',
+      '2',
+      '5',
+      '7',
+    ]);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code region', async () => {
@@ -1388,6 +1407,20 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       codes_region_from_partenaire: ['30'],
     });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      codes_region: ['27'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      codes_region: ['27'],
+      codes_region_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      codes_region: ['30'],
+      codes_region_from_partenaire: ['27'],
+    });
     await articleRepository.loadCache();
 
     // WHEN
@@ -1396,7 +1429,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu.map(({ content_id }) => content_id)).toEqual([
+      '1',
+      '2',
+      '5',
+      '7',
+    ]);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - que les favoris', async () => {

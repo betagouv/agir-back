@@ -154,6 +154,7 @@ export class ArticleRepository
     if (filter.code_region) {
       main_filter.push({
         OR: [
+          { codes_region_from_partenaire: { isEmpty: false } },
           { codes_region: { has: filter.code_region } },
           { codes_region: { isEmpty: true } },
         ],
@@ -163,6 +164,7 @@ export class ArticleRepository
     if (filter.code_departement) {
       main_filter.push({
         OR: [
+          { codes_departement_from_partenaire: { isEmpty: false } },
           { codes_departement: { has: filter.code_departement } },
           { codes_departement: { isEmpty: true } },
         ],
