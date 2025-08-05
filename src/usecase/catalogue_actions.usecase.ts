@@ -50,6 +50,8 @@ export class CatalogueActionUsecase {
     const liste_actions = await this.actionRepository.list({
       liste_thematiques:
         liste_thematiques.length > 0 ? liste_thematiques : undefined,
+      liste_selections:
+        liste_selections.length > 0 ? liste_selections : undefined,
       titre_fragment: titre,
     });
 
@@ -87,6 +89,7 @@ export class CatalogueActionUsecase {
     }
 
     this.setFiltreThematiqueToCatalogue(catalogue, liste_thematiques);
+    this.setFiltreSelectionToCatalogue(catalogue, liste_selections);
 
     for (const action of catalogue.actions) {
       this.setCompteurActionsEtLabel(action);

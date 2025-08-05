@@ -79,6 +79,14 @@ export class ActionsController extends GenericControler {
     description: `filtrage par thematiques, plusieurs thematiques possible avec la notation ?thematique=XXX&thematique=YYY`,
   })
   @ApiQuery({
+    name: 'selection',
+    enum: Selection,
+    enumName: 'Selection',
+    isArray: true,
+    required: false,
+    description: `filtrage par selections d'actions, plusieurs selections possibles avec la notation ?selection=XXX&selection=YYY`,
+  })
+  @ApiQuery({
     name: 'code_commune',
     type: String,
     required: false,
@@ -92,21 +100,19 @@ export class ActionsController extends GenericControler {
   })
   async getCatalogue(
     @Query('thematique') thematique: string[] | string,
+    @Query('selection') selection: string[] | string,
     @Query('code_commune') code_commune: string,
     @Query('titre') titre?: string,
   ): Promise<CatalogueActionAPI> {
-    const liste_thematiques_input =
-      this.getStringListFromStringArrayAPIInput(thematique);
+    const liste_thematiques =
+      this.getAllCastedThematiqueOrExceptionFromAPIInput(thematique);
 
-    const liste_thematiques: Thematique[] = [];
-
-    for (const them_string of liste_thematiques_input) {
-      liste_thematiques.push(this.castThematiqueOrException(them_string));
-    }
+    const liste_selections =
+      this.getAllCastedSelectionOrExceptionFromAPIInput(selection);
 
     const catalogue = await this.catalogueActionUsecase.getOpenCatalogue(
       liste_thematiques,
-      [],
+      liste_selections,
       code_commune,
       titre,
     );
@@ -216,21 +222,12 @@ export class ActionsController extends GenericControler {
     @Request() req,
   ): Promise<CatalogueActionAPI> {
     this.checkCallerId(req, utilisateurId);
-    const liste_thematiques_input =
-      this.getStringListFromStringArrayAPIInput(thematique);
-    const liste_selections_input =
-      this.getStringListFromStringArrayAPIInput(selection);
 
-    const liste_thematiques: Thematique[] = [];
-    const liste_selections: Selection[] = [];
+    const liste_thematiques =
+      this.getAllCastedThematiqueOrExceptionFromAPIInput(thematique);
 
-    for (const them_string of liste_thematiques_input) {
-      liste_thematiques.push(this.castThematiqueOrException(them_string));
-    }
-
-    for (const sel_string of liste_selections_input) {
-      liste_selections.push(this.castSelectionOrException(sel_string));
-    }
+    const liste_selections =
+      this.getAllCastedSelectionOrExceptionFromAPIInput(selection);
 
     const type_consulation =
       this.castTypeConsultationActionOrException(consultation);
