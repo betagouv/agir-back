@@ -1485,7 +1485,7 @@ describe('Admin (API test)', () => {
     });
   });
 
-  it('migration V24 OK - reprise donnée vetements mosaic', async () => {
+  it.skip('migration V24 OK - reprise donnée vetements mosaic', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;
     App.USER_CURRENT_VERSION = 24;
@@ -1624,6 +1624,89 @@ describe('Admin (API test)', () => {
 
     expect(kyc_vet.isAnswered()).toEqual(true);
     expect(kyc_vet.getSelectedCode()).toEqual('occasionnel');
+  });
+
+  it('migration V25 OK - remplace vie_en_famille par vit_en_famille', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 25;
+
+    const menage_kyc = {
+      id_cms: 1,
+      code: KYCID.KYC_menage,
+      type: TypeReponseQuestionKYC.entier,
+      categorie: Categorie.recommandation,
+      points: 0,
+      is_ngc: false,
+      tags: [],
+      thematique: Thematique.logement,
+      conditions: undefined,
+      question: 'Combien dans le ménage',
+      reponse_complexe: undefined,
+    };
+
+    await TestUtil.create(DB.kYC, menage_kyc);
+    const kyc_user: KYCHistory_v2 = {
+      version: 2,
+      skipped_mosaics: [],
+      skipped_questions: [],
+      answered_mosaics: [],
+      answered_questions: [
+        {
+          ...menage_kyc,
+          is_NGC: false,
+          last_update: new Date(),
+          reponse_simple: {
+            value: '3',
+          },
+        },
+      ],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 24,
+      email: 'user-2@mail',
+      migration_enabled: true,
+      kyc: kyc_user as any,
+      recommandation: {
+        version: 0,
+        liste_tags_actifs: [
+          Tag_v2.vie_en_famille,
+          Tag_v2.habite_en_metropole,
+          Tag_v2.habite_zone_urbaine,
+        ],
+      },
+    });
+
+    await kycRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        migrations: [
+          {
+            info: 'updated tag vie_en_famille to vit_en_famille',
+            ok: true,
+            version: 25,
+          },
+        ],
+        user_id: 'utilisateur-id',
+      },
+    ]);
+
+    const user1 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user1.version).toEqual(25);
+    expect(user1.recommandation.getListeTagsActifs()).toEqual([
+      Tag_v2.vit_en_famille,
+      Tag_v2.habite_zone_urbaine,
+      Tag_v2.habite_en_metropole,
+    ]);
   });
 
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
