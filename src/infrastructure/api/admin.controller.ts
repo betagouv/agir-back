@@ -27,6 +27,7 @@ import { PushNotificationMessage } from '../../domain/notification/pushNotificat
 import { ActionUsecase } from '../../usecase/actions.usecase';
 import { AdminUsecase } from '../../usecase/admin.usecase';
 import { AidesUsecase } from '../../usecase/aides.usecase';
+import { ArticlesUsecase } from '../../usecase/articles.usecase';
 import { BilanCarboneUsecase } from '../../usecase/bilanCarbone.usecase';
 import { CommunesUsecase } from '../../usecase/communes.usecase';
 import { Connexion_v2_Usecase } from '../../usecase/connexion.usecase';
@@ -62,6 +63,7 @@ export class AdminController extends GenericControler {
     private serviceUsecase: ServiceUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
+    private articleUsecase: ArticlesUsecase,
     private communesUsecase: CommunesUsecase,
     private actionUsecase: ActionUsecase,
     private referentielUsecase: ReferentielUsecase,
@@ -194,11 +196,20 @@ export class AdminController extends GenericControler {
 
   @Post('/admin/compute_all_aides_communes_from_partenaires')
   @ApiOperation({
-    summary: `Calcul les codes communes de chaque aide fonction des partenaires associés`,
+    summary: `Calcul les codes communes de chaque aide en fonction des partenaires associés`,
   })
   async compute_all_aides_communes_from_partenaires(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
-    await this.aidesUsecase.updatesAllAidesCommunes();
+    await this.aidesUsecase.updateAllPartenairesCodes();
+  }
+
+  @Post('/admin/compute_all_articles_communes_from_partenaires')
+  @ApiOperation({
+    summary: `Calcul les codes communes de chaque article en fonction des partenaires associés`,
+  })
+  async compute_all_aides_communes_from_partenaires(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    await this.articleUsecase.updateAllPartenairesCodes();
   }
 
   @Get('/admin/prenoms_a_valider')
