@@ -79,7 +79,7 @@ export const KYC_TAG_MAPPER_COLLECTION: {
   KYC_menage: {
     is_greater_than: {
       value: 2,
-      oui: [Tag_v2.vie_en_famille],
+      oui: [Tag_v2.vit_en_famille],
     },
     is_lesser_than: {
       value: 3,
@@ -346,6 +346,7 @@ export class KycToTags_v2 {
             this.setTags([Tag_v2.habite_zone_peri_urbaine]);
             break;
         }
+
         const est_drom_com = this.commune_repo.estDromCom(
           this.logement.code_commune,
         );

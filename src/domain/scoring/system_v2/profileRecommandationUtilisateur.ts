@@ -107,6 +107,7 @@ export class ProfileRecommandationUtilisateur {
   public getListeTagsActifs(): Tag_v2[] {
     return Array.from(this.set_tags_actifs.values());
   }
+
   public addListeTagActifs(liste: string[]) {
     for (const tag of liste) {
       if (Tag_v2[tag]) this.set_tags_actifs.add(Tag_v2[tag]);
@@ -116,9 +117,14 @@ export class ProfileRecommandationUtilisateur {
     this.set_tags_actifs = new_set;
   }
 
+  public hasTag(tag: Tag_v2): boolean {
+    return this.set_tags_actifs.has(tag);
+  }
+
   public setTag(tag: Tag_v2) {
     this.set_tags_actifs.add(tag);
   }
+
   public removeTag(tag: Tag_v2) {
     this.set_tags_actifs.delete(tag);
   }

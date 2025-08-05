@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { KYCID } from '../../src/domain/kyc/KYCID';
+import { KycToKycSynch } from '../../src/domain/kyc/synchro/kycToKycSynch';
+import { KycToTags_v2 } from '../../src/domain/scoring/system_v2/kycToTagsV2';
+import { Tag_v2 } from '../../src/domain/scoring/system_v2/Tag_v2';
 import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -8,6 +11,7 @@ import { KYCMosaicID } from '../domain/kyc/mosaicDefinition';
 import { QuestionChoix } from '../domain/kyc/new_interfaces/QuestionChoix';
 import { ThematiqueHistory } from '../domain/thematique/history/thematiqueHistory';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { RisquesNaturelsCommunesRepository } from '../infrastructure/repository/risquesNaturelsCommunes.repository';
 
 export type UserMigrationReport = {
   user_id: string;
@@ -20,6 +24,7 @@ export class MigrationUsecase {
     public utilisateurRepository: UtilisateurRepository,
     public kycRepository: KycRepository,
     public communeRepository: CommuneRepository,
+    public risquesNaturelsCommunesRepository: RisquesNaturelsCommunesRepository,
   ) {}
 
   async lockUserMigration(): Promise<any> {
@@ -634,7 +639,45 @@ export class MigrationUsecase {
       info: `filled KYC_raison_achat_vetements with score ${nombre_choix}`,
     };
   }
+
   private async migrate_25(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const scopes = [Scope.ALL];
+    const utilisateur = await _this.utilisateurRepository.getById(
+      user_id,
+      scopes,
+    );
+
+    // DO SOMETHING
+    if (utilisateur.recommandation.hasTag(Tag_v2.vie_en_famille)) {
+      utilisateur.recommandation.removeTag(Tag_v2.vie_en_famille);
+      KycToKycSynch.synchro(utilisateur.kyc_history);
+      new KycToTags_v2(
+        utilisateur.kyc_history,
+        utilisateur.logement,
+        _this.communeRepository,
+        _this.risquesNaturelsCommunesRepository,
+      ).refreshTagState_v2(utilisateur.recommandation);
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      scopes,
+    );
+
+    return {
+      ok: true,
+      info: `updated tag ${Tag_v2.vie_en_famille} to ${Tag_v2.vit_en_famille}`,
+    };
+  }
+
+  private async migrate_26(
     user_id: string,
     version: number,
     _this: MigrationUsecase,

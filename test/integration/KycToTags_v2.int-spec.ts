@@ -50,6 +50,7 @@ describe('KycToTags_v2', () => {
     // THEN
     expect(profile.getListeTagsActifs()).toEqual([]);
   });
+
   it(`refreshTagState : Gère correctement le tag outre mer`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -72,28 +73,34 @@ describe('KycToTags_v2', () => {
       Tag_v2.habite_en_outre_mer,
     ]);
   });
-  it(`refreshTagState : Gère correctement le tag urbain`, async () => {
-    // GIVEN
-    const profile = new ProfileRecommandationUtilisateur();
-    const logement = new Logement();
-    const translator = new KycToTags_v2(
-      new KYCHistory(),
-      logement,
-      communeRepository,
-      risquesNaturelsCommunesRepository,
-    );
 
-    logement.code_commune = '21231';
+  describe(`refreshTagState : Gère correctement le tag urbain`, () => {
+    test('pour les communes urbaines', async () => {
+      // GIVEN
+      const profile = new ProfileRecommandationUtilisateur();
+      const logement = new Logement();
+      const translator = new KycToTags_v2(
+        new KYCHistory(),
+        logement,
+        communeRepository,
+        risquesNaturelsCommunesRepository,
+      );
 
-    // WHEN
-    translator.refreshTagState_v2(profile);
+      logement.code_commune = '21231';
 
-    // THEN
-    expect(profile.getListeTagsActifs()).toEqual([
-      Tag_v2.habite_zone_urbaine,
-      Tag_v2.habite_en_metropole,
-    ]);
+      // WHEN
+      translator.refreshTagState_v2(profile);
+
+      // THEN
+      expect(profile.getListeTagsActifs()).toEqual([
+        Tag_v2.habite_zone_urbaine,
+        Tag_v2.habite_en_metropole,
+      ]);
+    });
+
+    test.todo('pour les communes avec arrondissements');
   });
+
   it(`refreshTagState : Gère correctement les risques à l'adresse`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -441,6 +448,7 @@ describe('KycToTags_v2', () => {
       Tag_v2.ne_vit_pas_en_famille,
     ]);
   });
+
   it(`refreshTagState-V2 : Gère correctement le comparaison numerique, cas supérieu`, async () => {
     // GIVEN
     const profile = new ProfileRecommandationUtilisateur();
@@ -481,7 +489,7 @@ describe('KycToTags_v2', () => {
     translator.refreshTagState_v2(profile);
 
     // THEN
-    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.vie_en_famille]);
+    expect(profile.getListeTagsActifs()).toEqual([Tag_v2.vit_en_famille]);
   });
 
   it(`refreshTagState-V2 : Gère correctement le proprio via mapping AUTO - KYC multiple multi options`, async () => {
