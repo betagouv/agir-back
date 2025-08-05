@@ -172,14 +172,16 @@ export class ArticleRepository
     if (filter.code_commune) {
       main_filter.push({
         OR: [
-          { include_codes_commune: { has: filter.code_commune } },
+          { codes_commune_from_partenaire: { isEmpty: false } },
           { include_codes_commune: { isEmpty: true } },
+          { include_codes_commune: { has: filter.code_commune } },
         ],
       });
       main_filter.push({
         OR: [
-          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
+          { codes_commune_from_partenaire: { isEmpty: false } },
           { exclude_codes_commune: { isEmpty: true } },
+          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
         ],
       });
     }

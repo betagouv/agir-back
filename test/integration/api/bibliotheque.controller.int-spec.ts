@@ -1153,6 +1153,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     });
     await TestUtil.create(DB.article, {
       content_id: '2',
+      include_codes_commune: ['91120'],
       codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.article, {
@@ -1163,6 +1164,30 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       codes_commune_from_partenaire: ['91120'],
     });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      exclude_codes_commune: ['21231'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      include_codes_commune: ['21232'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      exclude_codes_commune: ['91120'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '8',
+      exclude_codes_commune: ['21231'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '9',
+      exclude_codes_commune: ['91120'],
+    });
+
     await articleRepository.loadCache();
 
     // WHEN
@@ -1171,11 +1196,11 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(2);
-    expect(response.body.contenu[0].content_id).not.toEqual('3');
-    expect(response.body.contenu[0].content_id).not.toEqual('4');
-    expect(response.body.contenu[1].content_id).not.toEqual('3');
-    expect(response.body.contenu[1].content_id).not.toEqual('4');
+    expect(response.body.contenu.map((c) => c.content_id)).toEqual([
+      '1',
+      '2',
+      '9',
+    ]);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code commune partenaire', async () => {
