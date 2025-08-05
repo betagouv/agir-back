@@ -50,9 +50,10 @@ export class AdressesController extends GenericControler {
 
   @Post('utilisateurs/:utilisateurId/adresses_recentes')
   @ApiOperation({
-    summary: 'Crée une nouvelle adresse récente, 5 adresses max possible',
+    summary: `Crée une nouvelle adresse récente, 5 adresses max possible, renvoie la nouvelle liste des adresses récentes en stock`,
   })
   @UseGuards(AuthGuard)
+  @ApiOkResponse({ type: [AdressesRecentesAPI] })
   async createAdresseRecente(
     @Request() req,
     @Param('utilisateurId') utilisateurId: string,

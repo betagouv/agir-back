@@ -53,8 +53,11 @@ export enum Tag_v2 {
   risque_commune_inondation = 'risque_commune_inondation',
 
   recommandation_winter = 'recommandation_winter',
-  vie_en_famille = 'vie_en_famille',
-  ne_vit_pas_en_famille = 'ne_vit_pas_en_famille',
   habite_en_outre_mer = 'habite_en_outre_mer',
   habite_en_metropole = 'habite_en_metropole',
+
+  ne_vit_pas_en_famille = 'ne_vit_pas_en_famille',
+  vit_en_famille = 'vit_en_famille',
+  // DEPRECATED: replaced by `vit_en_famille` in v25
+  vie_en_famille = 'vie_en_famille',
 }

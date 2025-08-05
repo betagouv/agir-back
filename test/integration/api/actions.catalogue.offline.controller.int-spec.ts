@@ -1,16 +1,10 @@
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Echelle } from '../../../src/domain/aides/echelle';
+import { Selection } from '../../../src/domain/contenu/selection';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ActionLightAPI } from '../../../src/infrastructure/api/types/actions/ActionLightAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
-import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
-import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
-import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
-import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
-import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('Actions Catalogue Offline (API test)', () => {
@@ -18,13 +12,6 @@ describe('Actions Catalogue Offline (API test)', () => {
   const compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
-  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
-  const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
-  const fAQRepository = new FAQRepository(TestUtil.prisma);
-  const articleRepository = new ArticleRepository(TestUtil.prisma);
-  const quizzRepository = new QuizzRepository(TestUtil.prisma);
-  const kycRepository = new KycRepository(TestUtil.prisma);
-  let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -254,8 +241,16 @@ describe('Actions Catalogue Offline (API test)', () => {
         selected: false,
       },
     ]);
-    expect(response.body.selections).toEqual([]);
+    expect(response.body.selections).toEqual([
+      {
+        code: 'actions_watt_watchers',
+        label: 'actions_watt_watchers',
+        selected: false,
+      },
+      { code: 'risques_naturels', label: 'risques_naturels', selected: false },
+    ]);
   });
+
   it(`GET /actions - liste le catalogue d'action : données de base`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
@@ -323,5 +318,97 @@ describe('Actions Catalogue Offline (API test)', () => {
     const action: ActionLightAPI = response.body.actions[0];
 
     expect(action.nombre_aides_disponibles).toEqual(1);
+  });
+
+  it(`GET /actions - liste le catalogue d'action - filtre selections`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.logement,
+      selections: [Selection.actions_watt_watchers],
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      selections: ['BB'],
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.logement,
+      selections: [Selection.actions_watt_watchers],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/actions?selection=actions_watt_watchers',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(2);
+
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: false,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: false,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
+    expect(response.body.selections.length).toBeGreaterThan(1);
+    expect(response.body.selections[0]).toEqual({
+      code: 'actions_watt_watchers',
+      label: 'actions_watt_watchers',
+      selected: true,
+    });
+  });
+
+  it(`GET /actions - liste le catalogue d'action - filtre avec une selection inconnue`, async () => {
+    // WHEN
+    const response = await TestUtil.GET('/actions?selection=unknown');
+
+    // THEN
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual('Selection [unknown] inconnue');
   });
 });

@@ -78,6 +78,22 @@ export class GenericControler {
     return `${req.protocol}://${req.get('Host')}${req.originalUrl}`;
   }
 
+  public getAllCastedThematiqueOrExceptionFromAPIInput(
+    input: string | string[],
+  ): Thematique[] {
+    return this.getStringListFromStringArrayAPIInput(input).map((s) =>
+      this.castThematiqueOrException(s),
+    );
+  }
+
+  public getAllCastedSelectionOrExceptionFromAPIInput(
+    input: string | string[],
+  ): Selection[] {
+    return this.getStringListFromStringArrayAPIInput(input).map((s) =>
+      this.castSelectionOrException(s),
+    );
+  }
+
   public getStringListFromStringArrayAPIInput(input): string[] {
     if (input) {
       const isString = typeof input === 'string' || input instanceof String;
@@ -97,6 +113,7 @@ export class GenericControler {
     }
     return thematique;
   }
+
   public castSelectionOrException(code_selection: string): Selection {
     const selection = Selection[code_selection];
     if (!selection) {
