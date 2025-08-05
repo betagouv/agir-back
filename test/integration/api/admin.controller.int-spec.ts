@@ -1,4 +1,5 @@
 import { KYC } from '@prisma/client';
+import { ArticleRepository } from 'src/infrastructure/repository/article.repository';
 import { TypeAction } from '../../../src/domain/actions/typeAction';
 import { Besoin } from '../../../src/domain/aides/besoin';
 import { Echelle } from '../../../src/domain/aides/echelle';
@@ -57,6 +58,7 @@ describe('Admin (API test)', () => {
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const kycRepository = new KycRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const articleRepository = new ArticleRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -2513,6 +2515,41 @@ describe('Admin (API test)', () => {
       url_source: 'b',
       VISIBLE_PROD: true,
     });
+  });
+
+  it('POST /admin/compute_all_articles_communes_from_partenaires', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      titre: 'titre',
+      contenu: 'haha',
+      partenaire_id: 'p1',
+    });
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'p1',
+      code_epci: '242100410',
+      code_commune: '91477',
+      code_departement: '123',
+      code_region: '456',
+    });
+
+    // WHEN
+    const response = await TestUtil.POST(
+      '/admin/compute_all_articles_communes_from_partenaires',
+    );
+
+    // THEN
+    expect(response.status).toBe(201);
+    const articleDB = (await TestUtil.prisma.article.findMany())[0];
+
+    expect(articleDB.content_id).toEqual('1');
+    expect(articleDB.codes_commune_from_partenaire).toEqual(
+      TestUtil.CODE_COMMUNE_FROM_PARTENAIRE,
+    );
+    expect(articleDB.codes_departement_from_partenaire).toEqual(['123']);
+    expect(articleDB.codes_region_from_partenaire).toEqual(['456']);
   });
 
   it.skip('POST /admin/update_all_communes_risques', async () => {

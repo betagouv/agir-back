@@ -295,7 +295,7 @@ export class ArticleRepository
   }
 
   async countAll(): Promise<number> {
-    const count = await this.prisma.aide.count();
+    const count = await this.prisma.article.count();
     return Number(count);
   }
 

@@ -207,7 +207,7 @@ export class AdminController extends GenericControler {
   @ApiOperation({
     summary: `Calcul les codes communes de chaque article en fonction des partenaires associés`,
   })
-  async compute_all_aides_communes_from_partenaires(@Request() req) {
+  async compute_all_articles_communes_from_partenaires(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     await this.articleUsecase.updateAllPartenairesCodes();
   }

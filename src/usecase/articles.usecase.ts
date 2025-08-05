@@ -10,7 +10,6 @@ export class ArticlesUsecase {
     private partenaireUsecase: PartenaireUsecase,
   ) {}
 
-  // TODO: add an admin endpoint to update all articles
   public async updateAllPartenairesCodes(block_size = 100) {
     await this.partenaireUsecase.updateCodesFromPartenaireFor(
       this.articleRepository,
