@@ -100,11 +100,14 @@ export class BibliothequeUsecase {
       utilisateur.logement.code_commune,
     );
 
+    // TODO: to factorize with aide.usecase.ts to have a common filter
+    // builder for articles and aides
     const articles = await this.articleRepository.searchArticles({
       include_ids: articles_candidats_ids,
       thematiques:
         filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
       titre_fragment: titre,
+      code_commune: utilisateur.logement.code_commune,
       commune_pour_partenaire: utilisateur.logement.code_commune,
       departement_pour_partenaire: dept_region?.code_departement,
       region_pour_partenaire: dept_region?.code_region,
