@@ -308,7 +308,7 @@ export class AidesUsecase {
     return result;
   }
 
-  public async updatesAllAidesCommunes(block_size = 100) {
+  public async updateAllPartenairesCodes(block_size = 100) {
     await this.partenaireUsecase.updateCodesFromPartenaireFor(
       this.aideRepository,
       block_size,

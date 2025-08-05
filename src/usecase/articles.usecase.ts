@@ -11,7 +11,7 @@ export class ArticlesUsecase {
   ) {}
 
   // TODO: add an admin endpoint to update all articles
-  public async updatesAllAidesCommunes(block_size = 100) {
+  public async updateAllPartenairesCodes(block_size = 100) {
     await this.partenaireUsecase.updateCodesFromPartenaireFor(
       this.articleRepository,
       block_size,
