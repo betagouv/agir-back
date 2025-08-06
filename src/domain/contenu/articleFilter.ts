@@ -1,9 +1,9 @@
-import { FilterLocalisation } from '../filtre/filterLocalisation';
+import { GeographicFilter } from '../filtre/geographicFilter';
 import { Thematique } from '../thematique/thematique';
 import { Categorie } from './categorie';
 import { DifficultyLevel } from './difficultyLevel';
 
-export class ArticleFilter extends FilterLocalisation {
+export class ArticleFilter extends GeographicFilter {
   thematiques?: Thematique[];
   difficulty?: DifficultyLevel;
   exclude_ids?: string[];
@@ -25,7 +25,7 @@ export class ArticleFilter extends FilterLocalisation {
     code_commune: string,
     article: ArticleFilter,
   ): ArticleFilter {
-    const filterLocalisation = FilterLocalisation.build(
+    const filterLocalisation = GeographicFilter.build(
       code_postal,
       code_commune,
     );
@@ -38,7 +38,7 @@ export class ArticleFilter extends FilterLocalisation {
   }
 
   public static buildSearchQueryClauses(filter: ArticleFilter): any[] {
-    const filter_clauses = FilterLocalisation.buildSearchQueryClauses(filter);
+    const filter_clauses = GeographicFilter.buildSearchQueryClauses(filter);
 
     if (filter.date) {
       filter_clauses.push({

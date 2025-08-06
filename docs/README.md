@@ -12,4 +12,4 @@ techniques et processus de développement.
 
 ## Architecture
 
-- [Architecture et utilisation du CMS](./cms.md)
+- [Règles de filtration des contenux locaux](./filtre-geographique.md)

@@ -430,4 +430,57 @@ export class AdminController extends GenericControler {
     this.checkCronAPIProtectedEndpoint(req);
     await this.recommandationUsecase.refreshAllUserTags();
   }
+
+  @ApiOkResponse({ type: [AideExportAPI] })
+  @ApiOperation({
+    summary:
+      "Export l'ensemble du catalogue d'aides avec les tagging METRO-CA-CC-CU",
+  })
+  @Get('/admin/check_aides')
+  async checkAides(@Request() req): Promise<any> {
+    const aides = await this.prisma.aide.findMany({
+      where: {
+        AND: [
+          { partenaires_supp_ids: { isEmpty: false } },
+          { echelle: 'Communauté de communes' },
+          { codes_postaux: { isEmpty: true } },
+          { VISIBLE_PROD: true },
+        ],
+      },
+    });
+
+    // const articles = await this.prisma.article.findMany({
+    //   where: {
+    //     AND: [
+    //       {
+    //         OR: [{ partenaire_id: { not: { equals: '' } } }],
+    //       },
+    //       { NOT: { echelle: { equals: 'Communauté de communes' } } },
+    //       { codes_postaux: { isEmpty: false } },
+    //       { VISIBLE_PROD: true },
+    //     ],
+    //   },
+    // });
+
+    return {
+      nb_aides: aides.length,
+      // nb_articles: articles.length,
+      aides: aides.map(
+        ({ content_id, titre, codes_postaux, partenaires_supp_ids }) => ({
+          content_id,
+          titre,
+          codes_postaux,
+          partenaires: partenaires_supp_ids,
+        }),
+      ),
+      // articles: articles.map(
+      //   ({ content_id, titre, codes_postaux, partenaire_id }) => ({
+      //     content_id,
+      //     titre,
+      //     codes_postaux,
+      //     partenaire: partenaire_id,
+      //   }),
+      // ),
+    };
+  }
 }

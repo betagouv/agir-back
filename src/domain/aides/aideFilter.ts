@@ -1,7 +1,7 @@
-import { FilterLocalisation } from '../filtre/filterLocalisation';
+import { GeographicFilter } from '../filtre/geographicFilter';
 import { Thematique } from '../thematique/thematique';
 
-export class AideFilter extends FilterLocalisation {
+export class AideFilter extends GeographicFilter {
   maxNumber?: number;
   thematiques?: Thematique[];
   besoins?: string[];
@@ -17,7 +17,7 @@ export class AideFilter extends FilterLocalisation {
     code_commune: string,
     aide: AideFilter,
   ) {
-    const filtreLocalisation = FilterLocalisation.build(
+    const filtreLocalisation = GeographicFilter.build(
       code_postal,
       code_commune,
     );
@@ -33,7 +33,7 @@ export class AideFilter extends FilterLocalisation {
   }
 
   public static buildSearchQueryClauses(filter: AideFilter): any {
-    const clauses = FilterLocalisation.buildSearchQueryClauses(filter);
+    const clauses = GeographicFilter.buildSearchQueryClauses(filter);
 
     if (filter.besoins) {
       clauses.push({

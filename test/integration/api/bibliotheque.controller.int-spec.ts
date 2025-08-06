@@ -1198,6 +1198,7 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.contenu.map((c) => c.content_id)).toEqual([
       '1',
+      '3',
       '2',
       '9',
     ]);

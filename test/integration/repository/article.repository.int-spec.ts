@@ -324,19 +324,20 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_region: ['45', '46'],
       codes_postaux: [],
+      codes_region_from_partenaire: ['45', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_region: '47',
+      region_pour_partenaire: '47',
     });
 
     // THEN
     expect(liste).toHaveLength(0);
   });
+
   it('search : le filtre region match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -388,7 +389,9 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
-  it('search : le filtre code commune no match ', async () => {
+
+  // NOTE: déprécié en faveur des partenaires
+  it.skip('search : le filtre code commune no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
@@ -406,7 +409,9 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
-  it('search : le filtre code commune match', async () => {
+
+  // NOTE: déprécié en faveur des partenaires
+  it.skip('search : le filtre code commune match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
@@ -424,6 +429,7 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exlusion no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -442,6 +448,7 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exclusion match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
