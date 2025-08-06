@@ -64,7 +64,7 @@ export class ThematiqueUsecase {
       utilisateur.logement.code_commune,
     );
 
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
 

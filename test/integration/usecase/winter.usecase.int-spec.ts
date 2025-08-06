@@ -58,12 +58,13 @@ describe('WinterUsecase', () => {
   );
   let aidesUsecase = new AidesUsecase(
     aideExpirationWarningRepository,
-    emailSender,
     aideRepository,
-    utilisateurRepository,
-    personalisator,
-    partenaireUsecase,
     aideVeloUsecase,
+    communeRepository,
+    emailSender,
+    partenaireUsecase,
+    personalisator,
+    utilisateurRepository,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,

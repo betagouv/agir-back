@@ -27,12 +27,13 @@ const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
 export class AidesUsecase {
   constructor(
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
-    private emailSender: EmailSender,
     private aideRepository: AideRepository,
-    private utilisateurRepository: UtilisateurRepository,
-    private personnalisator: Personnalisator,
-    private partenaireUsecase: PartenaireUsecase,
     private aideVeloUsecase: AidesVeloUsecase,
+    private communeRepository: CommuneRepository,
+    private emailSender: EmailSender,
+    private partenaireUsecase: PartenaireUsecase,
+    private personnalisator: Personnalisator,
+    private utilisateurRepository: UtilisateurRepository,
   ) {}
 
   async getCatalogueAidesUtilisateur(
@@ -45,7 +46,7 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
     const code_commune = commune?.code;

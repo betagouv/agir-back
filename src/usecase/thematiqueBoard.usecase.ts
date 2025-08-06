@@ -41,7 +41,7 @@ export class ThematiqueBoardUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
 
@@ -68,7 +68,7 @@ export class ThematiqueBoardUsecase {
     }
 
     const result = new HomeBoard();
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
     result.nom_commune = commune?.nom;
@@ -138,7 +138,7 @@ export class ThematiqueBoardUsecase {
       transport_progression.getPourcent();
 
     const nombre_aides = await this.aidesUsecase.external_count_aides(
-      utilisateur.logement.code_commune,
+      commune?.code,
       utilisateur.logement.code_postal,
     );
     result.nombre_aides = nombre_aides;
@@ -151,8 +151,7 @@ export class ThematiqueBoardUsecase {
     code_commune?: string,
     code_postal?: string,
   ): Promise<{ nom_commune: string; thematiques: ThematiqueSynthese[] }> {
-    const commune =
-      CommuneRepository.getCommuneByCodeINSEESansArrondissement(code_commune);
+    const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
     return await this.buildSyntheseFromCodeCommune(commune?.code, code_postal);
   }
 

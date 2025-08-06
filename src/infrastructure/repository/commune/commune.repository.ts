@@ -466,14 +466,23 @@ export class CommuneRepository {
    * Get the commune OR A DISTRICT by its INSEE code.
    *
    * @param inseeCode The INSEE code of the commune (e.g. "75056").
+   * @param avec_arrondissement If `false`, it will return the commune without
+   * arrondissement (e.g. "75056" instead of "75101" for "Paris 1er
+   * arrondissement"). If `true`, it will return the commune or the
+   * arrondissement municipal if the INSEE code refers to an arrondissement.
    * @returns The commune if found, `undefined` otherwise.
    *
    * @note The INSEE code is not the same as the postal code. It's a unique
    * identifier for each commune in France in contrast to the postal code which
    * can be shared by multiple communes.
    */
-  getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
-    return CommuneRepository.getCommuneByCodeINSEE_static(code_insee);
+  getCommuneByCodeINSEE(
+    code_insee: string,
+    avec_arrondissement: boolean = false,
+  ): Commune | undefined {
+    return avec_arrondissement
+      ? CommuneRepository.getCommuneByCodeINSEE_static(code_insee)
+      : this.getCommuneByCodeINSEESansArrondissement(code_insee);
   }
 
   // FIXME : passer tout en static, re - intégrer ce faux repository dans le domaine
@@ -495,7 +504,7 @@ export class CommuneRepository {
    * const commune = getCommuneByCodeINSEE('69386'); // 'Lyon 6e arrondissement'
    * commune.code; // '69123' (lyon)
    */
-  static getCommuneByCodeINSEESansArrondissement(
+  private getCommuneByCodeINSEESansArrondissement(
     code_insee: string,
   ): Commune | undefined {
     const commune = CommuneRepository.getCommuneByCodeINSEE_static(code_insee);

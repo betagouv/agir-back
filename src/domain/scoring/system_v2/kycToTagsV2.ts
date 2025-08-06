@@ -333,9 +333,7 @@ export class KycToTags_v2 {
     if (this.logement) {
       if (this.logement.code_commune) {
         const code_commune_sans_arrondissement =
-          CommuneRepository.getCommuneByCodeINSEESansArrondissement(
-            this.logement.code_commune,
-          );
+          this.commune_repo.getCommuneByCodeINSEE(this.logement.code_commune);
         const niveau = this.commune_repo.getNiveauUrbainCommune(
           code_commune_sans_arrondissement.code,
         );

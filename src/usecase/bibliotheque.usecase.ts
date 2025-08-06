@@ -23,6 +23,7 @@ export class BibliothequeUsecase {
     private articleRepository: ArticleRepository,
     private quizzRepository: QuizzRepository,
     private personnalisator: Personnalisator,
+    private communeRepository: CommuneRepository,
   ) {}
 
   async rechercheBiblio(
@@ -96,7 +97,7 @@ export class BibliothequeUsecase {
         est_favoris: includes.includes(IncludeArticle.favoris),
       });
     }
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
     const code_commune = commune?.code;

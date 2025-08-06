@@ -58,8 +58,7 @@ export class CatalogueActionUsecase {
     let catalogue = new CatalogueAction();
     let commune: Commune;
     if (code_commune) {
-      commune =
-        CommuneRepository.getCommuneByCodeINSEESansArrondissement(code_commune);
+      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }
@@ -210,7 +209,7 @@ export class CatalogueActionUsecase {
     const liste_actions = await this.actionRepository.list(filtre);
 
     let actions_resultat: Action[] = [];
-    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
 
