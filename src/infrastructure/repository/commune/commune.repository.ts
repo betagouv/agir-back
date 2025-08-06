@@ -495,16 +495,16 @@ export class CommuneRepository {
    * const commune = getCommuneByCodeINSEE('69386'); // 'Lyon 6e arrondissement'
    * commune.code; // '69123' (lyon)
    */
-  getCommuneByCodeINSEESansArrondissement(
+  static getCommuneByCodeINSEESansArrondissement(
     code_insee: string,
   ): Commune | undefined {
-    const commune = this.getCommuneByCodeINSEE(code_insee);
+    const commune = CommuneRepository.getCommuneByCodeINSEE_static(code_insee);
     if (commune === undefined) {
       return undefined;
     }
 
     return commune.type === 'arrondissement-municipal'
-      ? this.getCommuneByCodeINSEE(commune.commune)
+      ? CommuneRepository.getCommuneByCodeINSEE_static(commune.commune)
       : commune;
   }
 

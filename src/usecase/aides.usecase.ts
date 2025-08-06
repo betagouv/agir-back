@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Aide } from '../domain/aides/aide';
 import { AideFeedback } from '../domain/aides/aideFeedback';
 import { AideFilter } from '../domain/aides/aideFilter';
@@ -12,8 +10,11 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { AidesVeloUsecase } from './aidesVelo.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
@@ -44,11 +45,14 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = utilisateur.logement.code_commune;
+    const commune = CommuneRepository.getCommuneByCodeINSEESansArrondissement(
+      utilisateur.logement.code_commune,
+    );
+    const code_commune = commune?.code;
 
     const filtre = AideFilter.buildBasicAideFilter(
       utilisateur.logement.code_postal,
-      code_commune,
+      commune?.code,
       filtre_thematiques,
     );
 
