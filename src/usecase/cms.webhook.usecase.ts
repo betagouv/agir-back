@@ -11,13 +11,13 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { PartenaireDefinition } from '../domain/partenaires/partenaireDefinition';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -282,13 +282,13 @@ export class CMSWebhookUsecase {
     await this.partenaireRepository.loadCache();
 
     const partenaire_id = '' + cmsWebhookAPI.entry.id;
-    await this.partenaireUsecase.updateCodesForPartenaire(
-      partenaire_id,
+    await this.partenaireUsecase.updateFromPartenaireCodes(
       this.aideRepository,
-    );
-    await this.partenaireUsecase.updateCodesForPartenaire(
       partenaire_id,
+    );
+    await this.partenaireUsecase.updateFromPartenaireCodes(
       this.articleRepository,
+      partenaire_id,
     );
   }
 

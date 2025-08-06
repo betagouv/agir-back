@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { CommuneRepository } from '../../src/infrastructure/repository/commune/commune.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 
+interface ContentAssociatedWithPartenaires extends AssociatedWithPartenaires {
+  content_id: string;
+}
+
 @Injectable()
 export class PartenaireUsecase {
   constructor(
@@ -91,24 +95,20 @@ export class PartenaireUsecase {
     return this.communeRepository.getListeCodesCommuneParCodeEPCI(code_EPCI);
   }
 
-  public async updateCodesForPartenaire<
-    T extends {
-      content_id: string;
-    } & AssociatedWithPartenaires,
-  >(partenaire_id: string, repository: Paginated<T> & WithPartenaireCodes<T>) {
+  public async updateFromPartenaireCodes<
+    T extends ContentAssociatedWithPartenaires,
+  >(repository: Paginated<T> & WithPartenaireCodes<T>, partenaire_id: string) {
     const liste = await repository.findByPartenaireId(partenaire_id);
 
     for (const elem of liste) {
-      await this.updateCodesFromPartenaireForSingle(repository, elem);
+      await this.updateCodesForEachPartenairesIn(repository, elem);
     }
   }
 
-  public async updateCodesFromPartenaireFor<
-    T extends {
-      content_id: string;
-    } & AssociatedWithPartenaires,
+  public async updateAllFromPartenaireCodes<
+    T extends ContentAssociatedWithPartenaires,
   >(
-    repository: Paginated<T> & WithPartenaireCodes<T>,
+    repository: Paginated<T> & WithPartenaireCodes<T> & WithCache,
     block_size = 100,
   ): Promise<void> {
     await this.partenaireRepository.loadCache();
@@ -118,17 +118,15 @@ export class PartenaireUsecase {
       const current_list = await repository.listePaginated(index, block_size);
 
       for (const elem of current_list) {
-        await this.updateCodesFromPartenaireForSingle(repository, elem);
+        await this.updateCodesForEachPartenairesIn(repository, elem);
       }
     }
 
     await repository.loadCache();
   }
 
-  private async updateCodesFromPartenaireForSingle<
-    T extends {
-      content_id: string;
-    } & AssociatedWithPartenaires,
+  private async updateCodesForEachPartenairesIn<
+    T extends ContentAssociatedWithPartenaires,
   >(repository: Paginated<T> & WithPartenaireCodes<T>, elem: T) {
     await this.partenaireRepository.loadCache();
 

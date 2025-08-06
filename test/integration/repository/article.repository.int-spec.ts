@@ -478,9 +478,9 @@ describe('ArticleRepository', () => {
 
     await partenaireRepository.loadCache();
     await articleRepository.loadCache();
-    await partenaireUsecase.updateCodesForPartenaire(
-      'partenaire1',
+    await partenaireUsecase.updateFromPartenaireCodes(
       articleRepository,
+      'partenaire1',
     );
 
     // WHEN
@@ -524,9 +524,9 @@ describe('ArticleRepository', () => {
 
     await partenaireRepository.loadCache();
     await articleRepository.loadCache();
-    await partenaireUsecase.updateCodesForPartenaire(
-      'partenaire1',
+    await partenaireUsecase.updateFromPartenaireCodes(
       articleRepository,
+      'partenaire1',
     );
 
     // WHEN

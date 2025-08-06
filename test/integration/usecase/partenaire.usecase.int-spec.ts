@@ -62,9 +62,9 @@ describe('PartenaireUsecase', () => {
       expect(aide.codes_departement_from_partenaire).toEqual([]);
       expect(aide.codes_commune_from_partenaire).toEqual([]);
 
-      await partenaireUsecase.updateCodesForPartenaire(
-        partenaire_id,
+      await partenaireUsecase.updateFromPartenaireCodes(
         aideRepository,
+        partenaire_id,
       );
       await aideRepository.loadCache();
 
@@ -135,9 +135,9 @@ describe('PartenaireUsecase', () => {
       expect(aide.codes_departement_from_partenaire).toEqual([]);
       expect(aide.codes_commune_from_partenaire).toEqual([]);
 
-      await partenaireUsecase.updateCodesForPartenaire(
-        partenaire_id,
+      await partenaireUsecase.updateFromPartenaireCodes(
         aideRepository,
+        partenaire_id,
       );
       await aideRepository.loadCache();
 
@@ -179,9 +179,9 @@ describe('PartenaireUsecase', () => {
       expect(aide.codes_departement_from_partenaire).toEqual([]);
       expect(aide.codes_commune_from_partenaire).toEqual([]);
 
-      await partenaireUsecase.updateCodesForPartenaire(
-        partenaire_id,
+      await partenaireUsecase.updateFromPartenaireCodes(
         aideRepository,
+        partenaire_id,
       );
       await aideRepository.loadCache();
 
@@ -223,9 +223,9 @@ describe('PartenaireUsecase', () => {
       expect(aide.codes_departement_from_partenaire).toEqual([]);
       expect(aide.codes_commune_from_partenaire).toEqual([]);
 
-      await partenaireUsecase.updateCodesForPartenaire(
-        partenaire_id,
+      await partenaireUsecase.updateFromPartenaireCodes(
         aideRepository,
+        partenaire_id,
       );
       await aideRepository.loadCache();
 
@@ -267,9 +267,9 @@ describe('PartenaireUsecase', () => {
     expect(article.codes_departement_from_partenaire).toEqual([]);
     expect(article.codes_commune_from_partenaire).toEqual([]);
 
-    await partenaireUsecase.updateCodesForPartenaire(
-      partenaire_id,
+    await partenaireUsecase.updateFromPartenaireCodes(
       articleRepository,
+      partenaire_id,
     );
 
     await articleRepository.loadCache();

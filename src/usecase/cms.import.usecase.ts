@@ -20,12 +20,12 @@ import {
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { PartenaireDefinition } from '../domain/partenaires/partenaireDefinition';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -346,13 +346,13 @@ export class CMSImportUsecase {
       loading_result.push(
         `loaded partenaire updating codes: ${part_def.id_cms}`,
       );
-      await this.partenaireUsecase.updateCodesForPartenaire(
-        part_def.id_cms,
+      await this.partenaireUsecase.updateFromPartenaireCodes(
         this.aideRepository,
-      );
-      await this.partenaireUsecase.updateCodesForPartenaire(
         part_def.id_cms,
+      );
+      await this.partenaireUsecase.updateFromPartenaireCodes(
         this.articleRepository,
+        part_def.id_cms,
       );
     }
 

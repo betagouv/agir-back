@@ -309,7 +309,7 @@ export class AidesUsecase {
   }
 
   public async updateAllPartenairesCodes(block_size = 100) {
-    await this.partenaireUsecase.updateCodesFromPartenaireFor(
+    await this.partenaireUsecase.updateAllFromPartenaireCodes(
       this.aideRepository,
       block_size,
     );

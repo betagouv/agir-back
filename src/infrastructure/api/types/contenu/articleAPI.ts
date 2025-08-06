@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Article } from '../../../../domain/contenu/article';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
+import { PartenaireDefinition } from '../../../../domain/partenaires/partenaireDefinition';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';
 import { ThematiqueRepository } from '../../../repository/thematique.repository';

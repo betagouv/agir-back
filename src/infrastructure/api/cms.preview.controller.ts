@@ -12,7 +12,7 @@ import { Action } from '../../domain/actions/action';
 import { TypeAction } from '../../domain/actions/typeAction';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
 import { Article } from '../../domain/contenu/article';
-import { PartenaireDefinition } from '../../domain/contenu/partenaireDefinition';
+import { PartenaireDefinition } from '../../domain/partenaires/partenaireDefinition';
 import { CmsPreviewUsecase } from '../../usecase/cmsPreview.usecase';
 import { PartenaireRepository } from '../repository/partenaire.repository';
 import { GenericControler } from './genericControler';

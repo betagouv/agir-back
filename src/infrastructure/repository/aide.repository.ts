@@ -10,7 +10,10 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AideRepository
-  implements Paginated<AideDefinition>, WithPartenaireCodes<AideDefinition>
+  implements
+    WithCache,
+    Paginated<AideDefinition>,
+    WithPartenaireCodes<AideDefinition>
 {
   private static catalogue_aides: Map<string, AideDefinition>;
 

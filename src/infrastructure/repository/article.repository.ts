@@ -33,6 +33,7 @@ export type ArticleFilter = {
 @Injectable()
 export class ArticleRepository
   implements
+    WithCache,
     Paginated<ArticleDefinition>,
     WithPartenaireCodes<ArticleDefinition>
 {
