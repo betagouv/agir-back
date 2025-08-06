@@ -1,6 +1,6 @@
 import { ContenuLocal } from '../contenu/contenuLocal';
-import { PartenaireDefinition } from '../contenu/partenaireDefinition';
 import { AideHistory } from '../history/aideHistory';
+import { PartenaireDefinition } from '../partenaires/partenaireDefinition';
 import { Utilisateur } from '../utilisateur/utilisateur';
 import { AideDefinition } from './aideDefinition';
 

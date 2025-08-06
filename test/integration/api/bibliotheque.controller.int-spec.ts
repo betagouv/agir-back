@@ -1110,6 +1110,99 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     expect(response.body.contenu[3].content_id).toEqual('4');
   });
 
+  it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code commune', async () => {
+    // GIVEN
+    const history: History_v0 = {
+      aide_interactions: [],
+      quizz_interactions: [],
+      version: 0,
+      article_interactions: [],
+    };
+
+    const logement: Logement_v0 = {
+      chauffage: Chauffage.autre,
+      code_postal: '21000',
+      dpe: DPE.A,
+      nombre_adultes: 1,
+      nombre_enfants: 1,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      superficie: Superficie.superficie_150_et_plus,
+      type: TypeLogement.appartement,
+      version: 0,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '21231',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      history: history as any,
+      logement: logement as any,
+    });
+
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      include_codes_commune: ['21231'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      include_codes_commune: ['91120'],
+      codes_commune_from_partenaire: ['21231'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '3',
+      include_codes_commune: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '4',
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      exclude_codes_commune: ['21231'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      include_codes_commune: ['21232'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      exclude_codes_commune: ['91120'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '8',
+      exclude_codes_commune: ['21231'],
+      codes_commune_from_partenaire: ['91120'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '9',
+      exclude_codes_commune: ['91120'],
+    });
+
+    await articleRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/bibliotheque_v2',
+    );
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.contenu.map((c) => c.content_id)).toEqual([
+      '1',
+      '2',
+      '9',
+    ]);
+  });
+
   it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code commune partenaire', async () => {
     // GIVEN
     const history: History_v0 = {
@@ -1231,6 +1324,20 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       codes_departement_from_partenaire: ['30'],
     });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      codes_departement: ['21'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      codes_departement: ['21'],
+      codes_departement_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      codes_departement: ['30'],
+      codes_departement_from_partenaire: ['21'],
+    });
     await articleRepository.loadCache();
 
     // WHEN
@@ -1239,7 +1346,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu.map(({ content_id }) => content_id)).toEqual([
+      '1',
+      '2',
+      '5',
+      '7',
+    ]);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - renvoie tous les articles, sauf ceux hors code region', async () => {
@@ -1295,6 +1407,20 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
       content_id: '4',
       codes_region_from_partenaire: ['30'],
     });
+    await TestUtil.create(DB.article, {
+      content_id: '5',
+      codes_region: ['27'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '6',
+      codes_region: ['27'],
+      codes_region_from_partenaire: ['30'],
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '7',
+      codes_region: ['30'],
+      codes_region_from_partenaire: ['27'],
+    });
     await articleRepository.loadCache();
 
     // WHEN
@@ -1303,7 +1429,12 @@ describe('/utilisateurs/id/bibliotheque (API test)', () => {
     );
     // THEN
     expect(response.status).toBe(200);
-    expect(response.body.contenu).toHaveLength(2);
+    expect(response.body.contenu.map(({ content_id }) => content_id)).toEqual([
+      '1',
+      '2',
+      '5',
+      '7',
+    ]);
   });
 
   it('GET /utilisateurs/id/bibliotheque_v2 - que les favoris', async () => {

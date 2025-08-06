@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Partenaire } from '@prisma/client';
 import { Echelle } from '../../domain/aides/echelle';
-import { PartenaireDefinition } from '../../domain/contenu/partenaireDefinition';
+import { PartenaireDefinition } from '../../domain/partenaires/partenaireDefinition';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()

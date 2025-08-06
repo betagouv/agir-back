@@ -1,4 +1,4 @@
-import { PartenaireDefinition } from '../contenu/partenaireDefinition';
+import { PartenaireDefinition } from '../partenaires/partenaireDefinition';
 import { AideDefinition } from './aideDefinition';
 
 export type EPCI_AIDE_EXPORT = {

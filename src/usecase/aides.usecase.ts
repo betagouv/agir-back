@@ -28,7 +28,6 @@ export class AidesUsecase {
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
     private emailSender: EmailSender,
     private aideRepository: AideRepository,
-    private partenaireRepository: PartenaireRepository,
     private utilisateurRepository: UtilisateurRepository,
     private personnalisator: Personnalisator,
     private partenaireUsecase: PartenaireUsecase,
@@ -309,30 +308,11 @@ export class AidesUsecase {
     return result;
   }
 
-  public async updatesAllAidesCommunes(block_size = 100) {
-    await this.partenaireRepository.loadCache();
-
-    const total_aide_count = await this.aideRepository.countAll();
-    for (let index = 0; index < total_aide_count; index = index + block_size) {
-      const current_aide_list = await this.aideRepository.listePaginated(
-        index,
-        block_size,
-      );
-
-      for (const aide of current_aide_list) {
-        const computed =
-          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-            aide.partenaires_supp_ids,
-          );
-
-        await this.aideRepository.updateAideCodesFromPartenaire(
-          aide.content_id,
-          computed.codes_commune,
-          computed.codes_departement,
-          computed.codes_region,
-        );
-      }
-    }
+  public async updateAllPartenairesCodes(block_size = 100) {
+    await this.partenaireUsecase.updateAllFromPartenaireCodes(
+      this.aideRepository,
+      block_size,
+    );
   }
 
   async updateAllUserCouvertureAides(block_size = 200): Promise<{

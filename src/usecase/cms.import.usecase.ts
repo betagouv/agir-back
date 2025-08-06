@@ -20,12 +20,12 @@ import {
 import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { PartenaireDefinition } from '../domain/partenaires/partenaireDefinition';
 import { Thematique } from '../domain/thematique/thematique';
 import {
   CMSWebhookPopulateAPI,
@@ -40,7 +40,6 @@ import { PartenaireRepository } from '../infrastructure/repository/partenaire.re
 import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { AidesUsecase } from './aides.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
 const FULL_POPULATE_URL =
@@ -86,7 +85,6 @@ export class CMSImportUsecase {
     private kycRepository: KycRepository,
     private fAQRepository: FAQRepository,
     private blockTextRepository: BlockTextRepository,
-    private aidesUsecase: AidesUsecase,
     private partenaireUsecase: PartenaireUsecase,
     private tagRepository: TagRepository,
     private selectionRepository: SelectionRepository,
@@ -345,48 +343,17 @@ export class CMSImportUsecase {
     await this.partenaireRepository.loadCache();
 
     for (const part_def of liste_partenaires) {
-      const liste_aides = await this.aideRepository.findAidesByPartenaireId(
+      loading_result.push(
+        `loaded partenaire updating codes: ${part_def.id_cms}`,
+      );
+      await this.partenaireUsecase.updateFromPartenaireCodes(
+        this.aideRepository,
         part_def.id_cms,
       );
-
-      for (const aide of liste_aides) {
-        const computed =
-          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-            aide.partenaires_supp_ids,
-          );
-
-        await this.aideRepository.updateAideCodesFromPartenaire(
-          aide.content_id,
-          computed.codes_commune,
-          computed.codes_departement,
-          computed.codes_region,
-        );
-        loading_result.push(
-          `loaded_partenaire updating_aide: ${aide.content_id}`,
-        );
-      }
-
-      const liste_articles =
-        await this.articleRepository.findArticlesByPartenaireId(
-          part_def.id_cms,
-        );
-
-      for (const article of liste_articles) {
-        const computed =
-          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-            [article.partenaire_id],
-          );
-
-        await this.articleRepository.updateArticlesCodesFromPartenaire(
-          article.content_id,
-          computed.codes_commune,
-          computed.codes_departement,
-          computed.codes_region,
-        );
-        loading_result.push(
-          `loaded_partenaire updating_article: ${article.content_id}`,
-        );
-      }
+      await this.partenaireUsecase.updateFromPartenaireCodes(
+        this.articleRepository,
+        part_def.id_cms,
+      );
     }
 
     return loading_result;
@@ -803,7 +770,7 @@ export class CMSImportUsecase {
     result.codes_departement_from_partenaire = computed.codes_departement;
     result.codes_region_from_partenaire = computed.codes_region;
 
-    return result;
+    return new ArticleDefinition(result);
   }
 
   private buildTagFromCMSPopulateData(
@@ -955,7 +922,7 @@ export class CMSImportUsecase {
     result.codes_departement_from_partenaire = computed.codes_departement;
     result.codes_region_from_partenaire = computed.codes_region;
 
-    return result;
+    return new AideDefinition(result);
   }
 
   private buildThematiqueFromCMSPopulateData(
