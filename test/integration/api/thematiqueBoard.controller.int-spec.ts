@@ -104,18 +104,19 @@ describe('Thematique Board (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_postaux: ['91120'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['91500'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
-      codes_postaux: ['21000'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'], // Dijon
     });
     await TestUtil.create(DB.aide, {
       content_id: '3',
       codes_postaux: ['21800'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'], // Dijon
     });
 
     // WHEN
@@ -128,7 +129,44 @@ describe('Thematique Board (API test)', () => {
     expect(response.body.nom_commune).toEqual('Dijon');
     expect(response.body.liste_thematiques[0]).toEqual({
       nombre_actions: 0,
-      nombre_aides: 3,
+      nombre_aides: 2,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
+      thematique: Thematique.alimentation,
+    });
+  });
+
+  it(`GET /thematiques?code_commmune - filtrage des aides par commune avec arrondissements`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['75056'], // Paris 1er arrondissement
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['21000'],
+      thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['75056'], // Paris 1er arrondissement
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      codes_postaux: ['21800'],
+      thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'],
+    });
+
+    // WHEN
+    const response = await TestUtil.getServer().get(
+      '/thematiques?code_commune=75101',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nom_commune).toEqual('Paris');
+    expect(response.body.liste_thematiques[0]).toEqual({
+      nombre_actions: 0,
+      nombre_aides: 2,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,
@@ -164,18 +202,20 @@ describe('Thematique Board (API test)', () => {
 
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_postaux: ['91120'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['91500'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       codes_postaux: ['21000'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'], // Dijon
     });
     await TestUtil.create(DB.aide, {
       content_id: '3',
       codes_postaux: ['21800'],
       thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'], // Dijon
     });
 
     // WHEN
@@ -188,7 +228,67 @@ describe('Thematique Board (API test)', () => {
     expect(response.body.nom_commune).toEqual('Dijon');
     expect(response.body.liste_thematiques[0]).toEqual({
       nombre_actions: 0,
-      nombre_aides: 3,
+      nombre_aides: 2,
+      nombre_recettes: 1150,
+      nombre_simulateurs: 0,
+      thematique: Thematique.alimentation,
+    });
+  });
+
+  it(`GET /utilisateurs/id/thematiques - filtrage des aides par commune avec arrondissements`, async () => {
+    // GIVEN
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.maison,
+      code_postal: '75001',
+      chauffage: Chauffage.bois,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: true,
+      proprietaire: true,
+      latitude: 48,
+      longitude: 2,
+      numero_rue: '12',
+      rue: 'avenue de la Paix',
+      code_commune: '75101',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['75056'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      thematiques: [Thematique.alimentation],
+      codes_commune_from_partenaire: ['21231'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '3',
+      codes_commune_from_partenaire: ['21231'],
+      thematiques: [Thematique.alimentation],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.nom_commune).toEqual('Paris');
+    expect(response.body.liste_thematiques[0]).toEqual({
+      nombre_actions: 0,
+      nombre_aides: 1,
       nombre_recettes: 1150,
       nombre_simulateurs: 0,
       thematique: Thematique.alimentation,

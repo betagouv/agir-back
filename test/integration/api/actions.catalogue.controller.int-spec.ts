@@ -127,6 +127,67 @@ describe('Actions Catalogue Utilisateur (API test)', () => {
     expect(response.body.nombre_resultats_disponibles).toEqual(1);
   });
 
+  it(`GET /utilisateurs/id/actions - liste le catalogue d'action pour un utilisateur avec adresse dans une commune à arrondissements`, async () => {
+    // GIVEN
+    logement.code_commune = '75108'; // Paris 8e arrondissement
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Commune,
+      codes_commune_from_partenaire: ['75056'],
+    });
+    await TestUtil.create(DB.compteurActions, {
+      code: '123',
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+      faites: 45,
+      vues: 154,
+    });
+    await compteurActionsRepository.loadCache();
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/utilisateurs/utilisateur-id/actions');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    delete action.explications_recommandation_raw;
+
+    expect(action).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 45,
+      nombre_actions_faites: 45,
+      nombre_aides_disponibles: 1,
+      sous_titre: 'Sous titre',
+      thematique: 'consommation',
+      titre: '**The titre**',
+      emoji: '🔥',
+      type: 'classique',
+      points: 100,
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
+      label_compteur: 'label_compteur',
+      montant_max_economies_euros: 0,
+      score_recommandation: 0.00481617146,
+    });
+
+    expect(response.body.nombre_resultats).toEqual(1);
+    expect(response.body.nombre_resultats_disponibles).toEqual(1);
+  });
+
   it(`GET /utilisateurs/id/actions - montant euros pour actions winter`, async () => {
     // GIVEN
     logement.code_commune = '21231';
