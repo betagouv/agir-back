@@ -332,8 +332,12 @@ export class KycToTags_v2 {
 
     if (this.logement) {
       if (this.logement.code_commune) {
+        const code_commune_sans_arrondissement =
+          this.commune_repo.getCommuneByCodeINSEESansArrondissement(
+            this.logement.code_commune,
+          );
         const niveau = this.commune_repo.getNiveauUrbainCommune(
-          this.logement.code_commune,
+          code_commune_sans_arrondissement.code,
         );
         switch (niveau) {
           case TypeCommune.Rural:
@@ -348,7 +352,7 @@ export class KycToTags_v2 {
         }
 
         const est_drom_com = this.commune_repo.estDromCom(
-          this.logement.code_commune,
+          code_commune_sans_arrondissement.code,
         );
         if (est_drom_com) {
           this.setTags([Tag_v2.habite_en_outre_mer]);
@@ -357,6 +361,7 @@ export class KycToTags_v2 {
         }
 
         const risque_commune =
+          // TODO: should we use the code with arrondissement or without?
           this.risquesNaturelsCommunesRepository.getRisquesCommune(
             this.logement.code_commune,
           );

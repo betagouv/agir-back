@@ -495,7 +495,7 @@ export class CommuneRepository {
    * const commune = getCommuneByCodeINSEE('69386'); // 'Lyon 6e arrondissement'
    * commune.code; // '69123' (lyon)
    */
-  getCommunByCodeINSEESansArrondissement(
+  getCommuneByCodeINSEESansArrondissement(
     code_insee: string,
   ): Commune | undefined {
     const commune = this.getCommuneByCodeINSEE(code_insee);
@@ -515,7 +515,7 @@ export class CommuneRepository {
    * @returns The EPCI if found, `undefined` otherwise.
    *
    * @note This method expects that the INSEE code corresponds to a commune and
-   * not an arrondissement. Use {@link getCommunByCodeINSEESansArrondissement}
+   * not an arrondissement. Use {@link getCommuneByCodeINSEESansArrondissement}
    * if you want to get the commune without arrondissement.
    */
   getEPCIByCommuneCodeINSEE(code_insee: string): EPCI | undefined {

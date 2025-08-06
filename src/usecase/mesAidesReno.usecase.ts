@@ -160,7 +160,7 @@ export class MesAidesRenoUsecase {
     if (utilisateur.logement.code_commune) {
       const code_insee = utilisateur.logement.code_commune;
       const commune =
-        this.communeRepository.getCommunByCodeINSEESansArrondissement(
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
           code_insee,
         );
       const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(
