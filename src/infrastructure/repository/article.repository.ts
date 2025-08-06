@@ -1,34 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Article as ArticleDB } from '@prisma/client';
+import { ArticleFilter } from 'src/domain/contenu/articleFilter';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
 import { Article } from '../../domain/contenu/article';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
-import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
-
-export type ArticleFilter = {
-  thematiques?: Thematique[];
-  difficulty?: DifficultyLevel;
-  exclude_ids?: string[];
-  include_ids?: string[];
-  asc_difficulty?: boolean;
-  titre_fragment?: string;
-  categorie?: Categorie;
-  date?: Date;
-  code_region?: string;
-  code_departement?: string;
-  code_commune?: string;
-  skip?: number;
-  take?: number;
-  commune_pour_partenaire?: string;
-  region_pour_partenaire?: string;
-  departement_pour_partenaire?: string;
-};
 
 @Injectable()
 export class ArticleRepository
@@ -135,140 +116,11 @@ export class ArticleRepository
   }
 
   async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {
-    const main_filter = [];
+    const filter_clauses = ArticleFilter.buildSearchQueryClauses(filter);
 
     if (App.isProd()) {
-      main_filter.push({
+      filter_clauses.push({
         VISIBLE_PROD: true,
-      });
-    }
-
-    if (filter.date) {
-      main_filter.push({
-        OR: [
-          { mois: { has: filter.date.getMonth() + 1 } },
-          { mois: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_region) {
-      main_filter.push({
-        OR: [
-          { codes_region_from_partenaire: { isEmpty: false } },
-          { codes_region: { has: filter.code_region } },
-          { codes_region: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_departement) {
-      main_filter.push({
-        OR: [
-          { codes_departement_from_partenaire: { isEmpty: false } },
-          { codes_departement: { has: filter.code_departement } },
-          { codes_departement: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_commune) {
-      main_filter.push({
-        OR: [
-          { codes_commune_from_partenaire: { isEmpty: false } },
-          { include_codes_commune: { isEmpty: true } },
-          { include_codes_commune: { has: filter.code_commune } },
-        ],
-      });
-      main_filter.push({
-        OR: [
-          { codes_commune_from_partenaire: { isEmpty: false } },
-          { exclude_codes_commune: { isEmpty: true } },
-          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
-        ],
-      });
-    }
-
-    if (filter.difficulty !== undefined && filter.difficulty !== null) {
-      main_filter.push({
-        difficulty:
-          filter.difficulty === DifficultyLevel.ANY
-            ? undefined
-            : filter.difficulty,
-      });
-    }
-
-    if (filter.exclude_ids) {
-      main_filter.push({
-        content_id: { not: { in: filter.exclude_ids } },
-      });
-    }
-
-    if (filter.include_ids) {
-      main_filter.push({
-        content_id: { in: filter.include_ids },
-      });
-    }
-
-    if (filter.titre_fragment) {
-      main_filter.push({
-        titre: {
-          contains: filter.titre_fragment,
-          mode: 'insensitive',
-        },
-      });
-    }
-
-    if (filter.categorie) {
-      main_filter.push({
-        categorie: filter.categorie,
-      });
-    }
-
-    if (filter.thematiques) {
-      main_filter.push({
-        thematiques: {
-          hasSome: filter.thematiques,
-        },
-      });
-    }
-
-    if (filter.commune_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_commune_from_partenaire: {
-              has: filter.commune_pour_partenaire,
-            },
-          },
-          { codes_commune_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.departement_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_departement_from_partenaire: {
-              has: filter.departement_pour_partenaire,
-            },
-          },
-          { codes_departement_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.region_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_region_from_partenaire: {
-              has: filter.region_pour_partenaire,
-            },
-          },
-          { codes_region_from_partenaire: { isEmpty: true } },
-        ],
       });
     }
 
@@ -276,7 +128,7 @@ export class ArticleRepository
       skip: filter.skip,
       take: filter.take,
       where: {
-        AND: main_filter,
+        AND: filter_clauses,
       },
     };
 

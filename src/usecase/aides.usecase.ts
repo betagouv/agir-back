@@ -51,10 +51,13 @@ export class AidesUsecase {
     );
     const code_commune = commune?.code;
 
-    const filtre = AideFilter.buildBasicAideFilter(
+    const filtre = AideFilter.create(
       utilisateur.logement.code_postal,
-      commune?.code,
-      filtre_thematiques,
+      code_commune,
+      {
+        date_expiration: new Date(),
+        thematiques: filtre_thematiques,
+      },
     );
 
     const aide_def_liste = await this.aideRepository.search(filtre);
@@ -359,12 +362,10 @@ export class AidesUsecase {
     thematique?: Thematique,
     besoins?: string[],
   ): Promise<number> {
-    const filtre = AideFilter.buildBasicAideFilter(
-      code_postal,
-      code_commune,
-      thematique ? [thematique] : undefined,
+    const filtre = AideFilter.create(code_postal, code_commune, {
+      thematiques: thematique ? [thematique] : undefined,
       besoins,
-    );
+    });
 
     return await this.aideRepository.count(filtre);
   }

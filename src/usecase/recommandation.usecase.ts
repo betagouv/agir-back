@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ArticleFilter } from 'src/domain/contenu/articleFilter';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
@@ -16,10 +17,7 @@ import {
   CLE_PERSO,
   Personnalisator,
 } from '../infrastructure/personnalisation/personnalisator';
-import {
-  ArticleFilter,
-  ArticleRepository,
-} from '../infrastructure/repository/article.repository';
+import { ArticleRepository } from '../infrastructure/repository/article.repository';
 import {
   QuizzFilter,
   QuizzRepository,
@@ -140,21 +138,16 @@ export class RecommandationUsecase {
       est_lu: true,
     });
 
-    const dept_region = CommuneRepository.findDepartementRegionByCodeCommune(
+    const filtre = ArticleFilter.create(
+      utilisateur.logement.code_postal,
       utilisateur.logement.code_commune,
+      {
+        exclude_ids: articles_lus,
+        categorie: Categorie.recommandation,
+        date: new Date(),
+        thematiques: thematique ? [Thematique[thematique]] : undefined,
+      },
     );
-
-    const filtre: ArticleFilter = {
-      exclude_ids: articles_lus,
-      categorie: Categorie.recommandation,
-      date: new Date(),
-      commune_pour_partenaire: utilisateur.logement.code_commune,
-      departement_pour_partenaire: dept_region?.code_departement,
-      region_pour_partenaire: dept_region?.code_region,
-    };
-    if (thematique) {
-      filtre.thematiques = [Thematique[thematique]];
-    }
 
     const articles_defs = await this.articleRepository.searchArticles(filtre);
 
