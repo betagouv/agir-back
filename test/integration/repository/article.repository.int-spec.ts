@@ -331,7 +331,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      region_pour_partenaire: '47',
+      code_region: '47',
     });
 
     // THEN
@@ -349,7 +349,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      region_pour_partenaire: '46',
+      code_region: '46',
     });
 
     // THEN
@@ -366,7 +366,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      departement_pour_partenaire: '47',
+      code_departement: '47',
     });
 
     // THEN
@@ -383,7 +383,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      departement_pour_partenaire: '46',
+      code_departement: '46',
     });
 
     // THEN
@@ -492,10 +492,10 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const bdx = await articleRepository.searchArticles({
-      commune_pour_partenaire: '33063',
+      code_commune: '33063',
     });
     const not_bdx = await articleRepository.searchArticles({
-      commune_pour_partenaire: '620001',
+      code_commune: '620001',
     });
 
     // THEN
@@ -538,7 +538,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const bdx = await articleRepository.searchArticles({
-      commune_pour_partenaire: '33063',
+      code_commune: '33063',
     });
 
     // THEN

@@ -310,8 +310,8 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      commune_pour_partenaire: '21000',
-      region_pour_partenaire: '47',
+      code_commune: '21000',
+      code_region: '47',
     });
 
     // THEN
@@ -329,8 +329,8 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      commune_pour_partenaire: '21000',
-      region_pour_partenaire: '46',
+      code_commune: '21000',
+      code_region: '46',
     });
 
     // THEN
@@ -348,8 +348,8 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      commune_pour_partenaire: '21000',
-      region_pour_partenaire: '46',
+      code_commune: '21000',
+      code_region: '46',
     });
 
     // THEN
@@ -366,7 +366,7 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      departement_pour_partenaire: '47',
+      code_departement: '47',
     });
 
     // THEN
@@ -383,7 +383,7 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      departement_pour_partenaire: '46',
+      code_departement: '46',
     });
 
     // THEN
@@ -419,7 +419,7 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      commune_pour_partenaire: '46',
+      code_commune: '46',
     });
 
     // THEN

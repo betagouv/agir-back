@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ApplicationError } from '../../src/infrastructure/applicationError';
 import { Article } from '../domain/contenu/article';
+import { ArticleFilter } from '../domain/contenu/articleFilter';
 import { Bibliotheque } from '../domain/contenu/bibliotheque';
 import { IncludeArticle } from '../domain/contenu/includeArticle';
 import { Quizz } from '../domain/contenu/quizz';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
+import { ApplicationError } from '../infrastructure/applicationError';
 import {
   CLE_PERSO,
   Personnalisator,
@@ -97,6 +98,7 @@ export class BibliothequeUsecase {
         est_favoris: includes.includes(IncludeArticle.favoris),
       });
     }
+
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
@@ -104,20 +106,18 @@ export class BibliothequeUsecase {
     const dept_region =
       CommuneRepository.findDepartementRegionByCodeCommune(code_commune);
 
-    // TODO: to factorize with aide.usecase.ts to have a common filter
-    // builder for articles and aides
-    const articles = await this.articleRepository.searchArticles({
-      include_ids: articles_candidats_ids,
-      thematiques:
-        filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
-      titre_fragment: titre,
-      code_commune,
-      code_departement: dept_region?.code_departement,
-      code_region: dept_region?.code_region,
-      commune_pour_partenaire: code_commune,
-      departement_pour_partenaire: dept_region?.code_departement,
-      region_pour_partenaire: dept_region?.code_region,
-    });
+    const filter = ArticleFilter.create(
+      utilisateur.logement?.code_postal,
+      commune.code,
+      {
+        include_ids: articles_candidats_ids,
+        thematiques:
+          filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
+        titre_fragment: titre,
+      },
+    );
+
+    const articles = await this.articleRepository.searchArticles(filter);
 
     const ordered_articles =
       utilisateur.history.orderArticlesByReadDateAndFavoris(articles);
@@ -139,10 +139,8 @@ export class BibliothequeUsecase {
     ]);
   }
 
-  public async getArticleAnonymous(content_id: string): Promise<Article> {
-    const article_definition = await this.articleRepository.getArticle(
-      content_id,
-    );
+  public getArticleAnonymous(content_id: string): Article {
+    const article_definition = this.articleRepository.getArticle(content_id);
 
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
@@ -150,8 +148,8 @@ export class BibliothequeUsecase {
     return this.personnalisator.personnaliser(new Article(article_definition));
   }
 
-  public async getQuizzAnonymous(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizz(content_id);
+  public getQuizzAnonymous(content_id: string): Quizz {
+    const quizz_def = this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -160,9 +158,7 @@ export class BibliothequeUsecase {
     const quizz = new Quizz(quizz_def);
 
     if (quizz_def.article_id) {
-      quizz.article = await this.articleRepository.getArticle(
-        quizz_def.article_id,
-      );
+      quizz.article = this.articleRepository.getArticle(quizz_def.article_id);
     }
 
     return quizz;
@@ -172,9 +168,7 @@ export class BibliothequeUsecase {
     utilisateurId: string,
     content_id: string,
   ): Promise<Article> {
-    const article_definition = await this.articleRepository.getArticle(
-      content_id,
-    );
+    const article_definition = this.articleRepository.getArticle(content_id);
 
     if (!article_definition) {
       ApplicationError.throwArticleNotFound(content_id);
@@ -238,7 +232,7 @@ export class BibliothequeUsecase {
       ApplicationError.throwBadQuizzPourcent(pourcent);
     }
 
-    const quizz_definition = await this.quizzRepository.getQuizz(content_id);
+    const quizz_definition = this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_definition) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -268,11 +262,11 @@ export class BibliothequeUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.external_get_quizz(content_id);
+    return this.external_get_quizz(content_id);
   }
 
-  public async external_get_quizz(content_id: string): Promise<Quizz> {
-    const quizz_def = await this.quizzRepository.getQuizz(content_id);
+  public external_get_quizz(content_id: string): Quizz {
+    const quizz_def = this.quizzRepository.getQuizz(content_id);
 
     if (!quizz_def) {
       ApplicationError.throwQuizzNotFound(content_id);
@@ -280,9 +274,7 @@ export class BibliothequeUsecase {
 
     const quizz = new Quizz(quizz_def);
     if (quizz_def.article_id) {
-      quizz.article = await this.articleRepository.getArticle(
-        quizz_def.article_id,
-      );
+      quizz.article = this.articleRepository.getArticle(quizz_def.article_id);
     }
 
     return this.personnalisator.personnaliser(quizz, undefined, [

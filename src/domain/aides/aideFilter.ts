@@ -7,8 +7,8 @@ export class AideFilter extends GeographicFilter {
   besoins?: string[];
   date_expiration?: Date;
 
-  constructor(filter?: AideFilter) {
-    super();
+  private constructor(filter: AideFilter) {
+    super(filter.code_postal, filter.code_commune, filter.echelle);
     Object.assign(this, filter);
   }
 
@@ -17,10 +17,7 @@ export class AideFilter extends GeographicFilter {
     code_commune: string,
     aide: AideFilter,
   ) {
-    const filtreLocalisation = GeographicFilter.build(
-      code_postal,
-      code_commune,
-    );
+    const filtreLocalisation = new GeographicFilter(code_postal, code_commune);
 
     return new AideFilter({
       ...filtreLocalisation,
@@ -33,7 +30,7 @@ export class AideFilter extends GeographicFilter {
   }
 
   public static buildSearchQueryClauses(filter: AideFilter): any {
-    const clauses = GeographicFilter.buildSearchQueryClauses(filter);
+    const clauses = GeographicFilter.getSearchClauses(filter);
 
     if (filter.besoins) {
       clauses.push({

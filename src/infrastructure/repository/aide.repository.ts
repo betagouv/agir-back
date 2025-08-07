@@ -118,6 +118,7 @@ export class AideRepository
     return this.buildAideFromDB(result);
   }
 
+  // FIXME: doublon
   async listAll(): Promise<AideDefinition[]> {
     const liste_aides = await this.prisma.aide.findMany();
     return liste_aides.map((a) => this.buildAideFromDB(a));

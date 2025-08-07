@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Article as ArticleDB } from '@prisma/client';
-import { ArticleFilter } from 'src/domain/contenu/articleFilter';
+import { ArticleFilter } from '../../../src/domain/contenu/articleFilter';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Echelle } from '../../domain/aides/echelle';

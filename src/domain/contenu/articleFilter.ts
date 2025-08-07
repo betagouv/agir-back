@@ -15,8 +15,8 @@ export class ArticleFilter extends GeographicFilter {
   skip?: number;
   take?: number;
 
-  constructor(filter?: ArticleFilter) {
-    super();
+  private constructor(filter: ArticleFilter) {
+    super(filter.code_postal, filter.code_commune, filter.echelle);
     Object.assign(this, filter);
   }
 
@@ -25,10 +25,7 @@ export class ArticleFilter extends GeographicFilter {
     code_commune: string,
     article: ArticleFilter,
   ): ArticleFilter {
-    const filterLocalisation = GeographicFilter.build(
-      code_postal,
-      code_commune,
-    );
+    const filterLocalisation = new GeographicFilter(code_postal, code_commune);
 
     return new ArticleFilter({
       date: new Date(),
@@ -38,7 +35,7 @@ export class ArticleFilter extends GeographicFilter {
   }
 
   public static buildSearchQueryClauses(filter: ArticleFilter): any[] {
-    const filter_clauses = GeographicFilter.buildSearchQueryClauses(filter);
+    const filter_clauses = GeographicFilter.getSearchClauses(filter);
 
     if (filter.date) {
       filter_clauses.push({

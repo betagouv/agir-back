@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ArticleFilter } from 'src/domain/contenu/articleFilter';
+import { ArticleFilter } from '../../src/domain/contenu/articleFilter';
 import { Categorie } from '../../src/domain/contenu/categorie';
 import { ContentType } from '../../src/domain/contenu/contentType';
 import { PonderationApplicativeManager } from '../../src/domain/scoring/ponderationApplicative';
