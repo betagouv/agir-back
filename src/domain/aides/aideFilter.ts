@@ -22,6 +22,7 @@ export class AideFilter extends GeographicFilter {
     return new AideFilter({
       ...filtreLocalisation,
       ...aide,
+      date_expiration: new Date(),
       thematiques:
         aide.thematiques && aide.thematiques.length > 0
           ? aide.thematiques
