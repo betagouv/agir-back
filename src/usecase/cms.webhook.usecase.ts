@@ -207,6 +207,7 @@ export class CMSWebhookUsecase {
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+
   async deleteFAQ(cmsWebhookAPI: CMSWebhookAPI) {
     await this.fAQRepository.delete(cmsWebhookAPI.entry.id.toString());
   }

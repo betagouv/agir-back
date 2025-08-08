@@ -298,66 +298,70 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(2);
   });
+
   it('search : le filtre region no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_region: ['45', '46'],
-      codes_postaux: [],
+      codes_region_from_partenaire: ['45', '46'],
+      codes_commune_from_partenaire: [],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_postal: '21000',
+      code_commune: '21000',
       code_region: '47',
     });
 
     // THEN
     expect(liste).toHaveLength(0);
   });
+
   it('search : le filtre region match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_region: ['45', '46'],
-      codes_postaux: [],
+      codes_region_from_partenaire: ['45', '46'],
+      codes_commune_from_partenaire: [],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_postal: '21000',
+      code_commune: '21000',
       code_region: '46',
     });
 
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre region et code qui exluent', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_region: ['45', '46'],
-      codes_postaux: ['91120'],
+      codes_commune_from_partenaire: ['92120'],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_postal: '21000',
+      code_commune: '21000',
       code_region: '46',
     });
 
     // THEN
     expect(liste).toHaveLength(0);
   });
+
   it('search : le filtre departement no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_departement: ['45', '46'],
+      codes_departement_from_partenaire: ['45', '46'],
     });
 
     // WHEN
@@ -368,12 +372,13 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
+
   it('search : le filtre departement match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_departement: ['45', '46'],
+      codes_departement_from_partenaire: ['45', '46'],
     });
 
     // WHEN
@@ -384,7 +389,8 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
-  it('search : le filtre code commune no match ', async () => {
+
+  it.skip('search : le filtre code commune no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
@@ -401,13 +407,14 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
-  it('search : le filtre code commune match', async () => {
+
+  it('search : le filtre commune pour partenaire match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      include_codes_commune: ['45', '46'],
       exclude_codes_commune: [],
+      codes_commune_from_partenaire: ['45', '46'],
     });
 
     // WHEN
@@ -418,6 +425,7 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exlusion no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -435,6 +443,7 @@ describe('AideRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exclusion match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);

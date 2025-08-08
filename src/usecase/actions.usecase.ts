@@ -109,11 +109,12 @@ export class ActionUsecase {
     );
     action.nom_commune = commune.nom;
 
-    const filtre_aides = AideFilter.buildBasicAideFilter(
+    const filtre_aides = AideFilter.create(
       commune.codesPostaux[0],
       commune.code,
-      undefined,
-      action_def.besoins,
+      {
+        besoins: action_def.besoins,
+      },
     );
     const linked_aides = await this.aideRepository.search(filtre_aides);
 
@@ -215,12 +216,9 @@ export class ActionUsecase {
 
     let linked_aides: AideDefinition[];
     if (commune) {
-      const filtre = AideFilter.buildBasicAideFilter(
-        commune.codesPostaux[0],
-        commune.code,
-        undefined,
-        action_def.besoins,
-      );
+      const filtre = AideFilter.create(commune.codesPostaux[0], commune.code, {
+        besoins: action_def.besoins,
+      });
 
       linked_aides = await this.aideRepository.search(filtre);
     } else {
