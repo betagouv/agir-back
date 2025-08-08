@@ -51,6 +51,7 @@ export class QuestionKYCEnchainementUsecase {
       CLE_PERSO.no_blank_links,
     ]);
   }
+
   async getFirst(
     utilisateurId: string,
     enchainementId: string,
