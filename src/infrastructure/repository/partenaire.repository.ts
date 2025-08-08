@@ -6,7 +6,7 @@ import { PartenaireDefinition } from '../../domain/partenaires/partenaireDefinit
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class PartenaireRepository {
+export class PartenaireRepository implements WithCache {
   private static catalogue_partenaires: Map<string, PartenaireDefinition>;
 
   constructor(private prisma: PrismaService) {
@@ -26,6 +26,7 @@ export class PartenaireRepository {
   public static getPartenaire(cms_id: string): PartenaireDefinition {
     return PartenaireRepository.catalogue_partenaires.get(cms_id);
   }
+
   public static getPartenaires(list_cms_id: string[]): PartenaireDefinition[] {
     const result = [];
     for (const cms_id of list_cms_id) {
@@ -35,6 +36,10 @@ export class PartenaireRepository {
       }
     }
     return result;
+  }
+
+  public static getAllPartenaires(): PartenaireDefinition[] {
+    return Array.from(PartenaireRepository.catalogue_partenaires.values());
   }
 
   public static resetCache() {

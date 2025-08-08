@@ -9,7 +9,7 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class KycRepository {
+export class KycRepository implements WithCache {
   constructor(private prisma: PrismaService) {
     KycRepository.catalogue_kyc = [];
     KycRepository.map_kyc = new Map();
