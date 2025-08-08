@@ -500,6 +500,84 @@ describe('Thematique (API test)', () => {
     });
   });
 
+  it(`GET /utilisateurs/id/thematiques/alimentation - detail d'une thematique avec liste d'action si perso done et adresse avec arrondissements`, async () => {
+    // GIVEN
+    const thematique_history: ThematiqueHistory_v0 = {
+      version: 0,
+      liste_actions_utilisateur: [],
+      recommandations_winter: [],
+      codes_actions_exclues: [],
+      liste_thematiques: [
+        {
+          thematique: Thematique.alimentation,
+          personnalisation_done_once: true,
+          first_personnalisation_date: new Date(123),
+        },
+      ],
+    };
+    const reco: ProfileRecommandationUtilisateur_v0 = {
+      liste_tags_actifs: [],
+      version: 0,
+    };
+
+    await TestUtil.create(DB.utilisateur, {
+      logement: {
+        ...logement,
+        code_commune: '75101', // Paris 1er arrondissement
+        code_postal: '75001',
+      } as any,
+      thematique_history: thematique_history as any,
+      recommandation: reco as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      thematique: Thematique.alimentation,
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Commune,
+      codes_postaux: ['75056'],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/thematiques/alimentation',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_actions_recommandees).toHaveLength(1);
+    delete response.body.liste_actions_recommandees[0]
+      .explications_recommandation_raw;
+
+    expect(response.body.liste_actions_recommandees[0]).toEqual({
+      code: '123',
+      deja_faite: false,
+      deja_vue: false,
+      nombre_actions_en_cours: 0,
+      nombre_actions_faites: 0,
+      nombre_aides_disponibles: 1,
+      points: 100,
+      sous_titre: 'Sous titre',
+      thematique: 'alimentation',
+      titre: '**The titre**',
+      type: 'classique',
+      emoji: '🔥',
+      explications_recommandation: {
+        est_exclu: false,
+        liste_explications: [],
+      },
+      label_compteur: 'label_compteur',
+      montant_max_economies_euros: 0,
+      score_recommandation: 0.00481617146,
+    });
+  });
+
   it(`GET /utilisateurs/id/thematiques/alimentation - action flaguée déjà vue OK`, async () => {
     // GIVEN
     const thematique_history: ThematiqueHistory_v0 = {

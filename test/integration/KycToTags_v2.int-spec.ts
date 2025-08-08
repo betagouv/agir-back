@@ -98,7 +98,28 @@ describe('KycToTags_v2', () => {
       ]);
     });
 
-    test.todo('pour les communes avec arrondissements');
+    test('pour les communes avec arrondissements', async () => {
+      // GIVEN
+      const profile = new ProfileRecommandationUtilisateur();
+      const logement = new Logement();
+      const translator = new KycToTags_v2(
+        new KYCHistory(),
+        logement,
+        communeRepository,
+        risquesNaturelsCommunesRepository,
+      );
+
+      logement.code_commune = '75108'; // Paris (75) - 8ème arrondissement
+
+      // WHEN
+      translator.refreshTagState_v2(profile);
+
+      // THEN
+      expect(profile.getListeTagsActifs()).toEqual([
+        Tag_v2.habite_zone_urbaine,
+        Tag_v2.habite_en_metropole,
+      ]);
+    });
   });
 
   it(`refreshTagState : Gère correctement les risques à l'adresse`, async () => {

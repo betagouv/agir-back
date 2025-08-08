@@ -230,6 +230,51 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(0);
   });
 
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune avec arrondissement via partenaires`, async () => {
+    // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.appartement,
+      code_postal: '75008',
+      chauffage: Chauffage.bois,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: false,
+      proprietaire: false,
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      rue: undefined,
+      code_commune: '75108',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_commune_from_partenaire: ['75056'],
+      codes_postaux: [],
+      echelle: Echelle.Métropole,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires - sauf si CA_CU_CC, match`, async () => {
     // GIVEN
     process.env.ADMIN_IDS = 'utilisateur-id';
