@@ -230,6 +230,51 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(0);
   });
 
+  it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune avec arrondissement via partenaires`, async () => {
+    // GIVEN
+    process.env.ADMIN_IDS = 'utilisateur-id';
+
+    const logement: Logement_v0 = {
+      version: 0,
+      superficie: Superficie.superficie_150,
+      type: TypeLogement.appartement,
+      code_postal: '75008',
+      chauffage: Chauffage.bois,
+      dpe: DPE.B,
+      nombre_adultes: 2,
+      nombre_enfants: 2,
+      plus_de_15_ans: false,
+      proprietaire: false,
+      latitude: undefined,
+      longitude: undefined,
+      numero_rue: undefined,
+      rue: undefined,
+      code_commune: '75108',
+      score_risques_adresse: undefined,
+      prm: undefined,
+      est_prm_obsolete: false,
+      est_prm_par_adresse: false,
+      liste_adresses_recentes: [],
+    };
+
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_commune_from_partenaire: ['75056'],
+      codes_postaux: [],
+      echelle: Echelle.Métropole,
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+  });
+
   it(`GET /utilisateurs/:utilisateurId/aides filtrage par code commune via partenaires - sauf si CA_CU_CC, match`, async () => {
     // GIVEN
     process.env.ADMIN_IDS = 'utilisateur-id';
@@ -262,7 +307,7 @@ describe('Aide (API test)', () => {
       content_id: '1',
       codes_commune_from_partenaire: ['91477'],
       codes_postaux: ['21000'],
-      echelle: Echelle["Communauté d'agglomération"],
+      echelle: Echelle['Communauté de communes'],
     });
 
     // WHEN
@@ -600,20 +645,44 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
-  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CU', async () => {
+
+  it('GET /utilisateurs/:utilisateurId/aides filtre par partenaire les CC', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      logement: { code_postal: '22222' },
+      logement: { code_commune: '31555' },
     });
+
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_postaux: ['11111'],
-      echelle: Echelle['Communauté urbaine'],
+      echelle: Echelle['Communauté de communes'],
+      partenaires_supp_ids: ['partenaire_1'],
+      codes_postaux: [],
+      codes_commune_from_partenaire: ['56121'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
-      codes_postaux: ['22222'],
-      echelle: Echelle['Communauté urbaine'],
+      echelle: Echelle['Communauté de communes'],
+      partenaires_supp_ids: ['partenaire_2'],
+      codes_postaux: [],
+      codes_commune_from_partenaire: ['31555'],
+    });
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'partenaire_1',
+      nom: 'Lorient Agglomération',
+      echelle: Echelle['Communauté de communes'],
+      code_epci: '200042174',
+      code_commune: undefined,
+      code_departement: undefined,
+      code_region: undefined,
+    });
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'partenaire_2',
+      nom: 'Toulouse Métropole',
+      echelle: Echelle['Communauté de communes'],
+      code_epci: '243100518',
+      code_commune: undefined,
+      code_departement: undefined,
+      code_region: undefined,
     });
 
     // WHEN
@@ -628,20 +697,23 @@ describe('Aide (API test)', () => {
     const aideBody = response.body.liste_aides[0] as AideAPI;
     expect(aideBody.content_id).toEqual('2');
   });
-  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CA', async () => {
+
+  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CU ne devrait pas se baser sur les codes_postaux', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur, {
-      logement: { code_postal: '22222' },
+      logement: { code_postal: '22222', code_commune: '21231' },
     });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       codes_postaux: ['11111'],
-      echelle: Echelle["Communauté d'agglomération"],
+      echelle: Echelle['Communauté urbaine'],
+      codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       codes_postaux: ['22222'],
-      echelle: Echelle["Communauté d'agglomération"],
+      echelle: Echelle['Communauté urbaine'],
+      codes_commune_from_partenaire: ['11111'],
     });
 
     // WHEN
@@ -654,8 +726,40 @@ describe('Aide (API test)', () => {
     expect(response.body.liste_aides).toHaveLength(1);
 
     const aideBody = response.body.liste_aides[0] as AideAPI;
-    expect(aideBody.content_id).toEqual('2');
+    expect(aideBody.content_id).toEqual('1');
   });
+
+  it('GET /utilisateurs/:utilisateurId/aides filtre par code postal les CA ne devrait pas se baser sur les codes postaux', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_postal: '22222', code_commune: '21231' },
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      codes_postaux: ['11111'],
+      echelle: Echelle["Communauté d'agglomération"],
+      codes_commune_from_partenaire: ['21231'],
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      codes_postaux: ['22222'],
+      echelle: Echelle["Communauté d'agglomération"],
+      codes_commune_from_partenaire: ['11111'],
+    });
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/aides_v2',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.liste_aides).toHaveLength(1);
+
+    const aideBody = response.body.liste_aides[0] as AideAPI;
+    expect(aideBody.content_id).toEqual('1');
+  });
+
   it('GET /utilisateurs/:utilisateurId/aides filtre par thematique simple', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -928,6 +1032,7 @@ describe('Aide (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.couverture_aides_ok).toEqual(true);
   });
+
   it('GET /utilisateurs/:utilisateurId/aides_v2 info de couvertur false', async () => {
     // GIVEN
     process.env.CRON_API_KEY = TestUtil.token;

@@ -9,7 +9,12 @@ import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class AideRepository {
+export class AideRepository
+  implements
+    WithCache,
+    Paginated<AideDefinition>,
+    WithPartenaireCodes<AideDefinition>
+{
   private static catalogue_aides: Map<string, AideDefinition>;
 
   constructor(private prisma: PrismaService) {
@@ -46,20 +51,20 @@ export class AideRepository {
     AideRepository.catalogue_aides = new_map;
   }
 
-  public async findAidesByPartenaireId(
-    part_id: string,
+  public async findByPartenaireId(
+    partenaire_id: string,
   ): Promise<AideDefinition[]> {
     const result = await this.prisma.aide.findMany({
       where: {
         partenaires_supp_ids: {
-          has: part_id,
+          has: partenaire_id,
         },
       },
     });
     return result.map((r) => this.buildAideFromDB(r));
   }
 
-  public async updateAideCodesFromPartenaire(
+  public async updateCodesFromPartenaireFor(
     cms_id: string,
     codes_commune: string[],
     codes_departement_from_partenaire: string[],
@@ -74,6 +79,7 @@ export class AideRepository {
       },
     });
   }
+
   public static resetCache() {
     // FOR TEST ONLY
     AideRepository.catalogue_aides = new Map();
@@ -112,7 +118,13 @@ export class AideRepository {
     return this.buildAideFromDB(result);
   }
 
+  // FIXME: doublon
   async listAll(): Promise<AideDefinition[]> {
+    const liste_aides = await this.prisma.aide.findMany();
+    return liste_aides.map((a) => this.buildAideFromDB(a));
+  }
+
+  async listeAll(): Promise<AideDefinition[]> {
     const liste_aides = await this.prisma.aide.findMany();
     return liste_aides.map((a) => this.buildAideFromDB(a));
   }
@@ -132,6 +144,7 @@ export class AideRepository {
     });
     return results.map((r) => this.buildAideFromDB(r));
   }
+
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
     if (!code_postal) return false;
     let count;
@@ -159,166 +172,25 @@ export class AideRepository {
   }
 
   public buildSearchQuery(filter: AideFilter): any {
-    const main_filter = [];
+    const clauses = AideFilter.buildSearchQueryClauses(filter);
 
     if (App.isProd()) {
-      main_filter.push({
+      clauses.push({
         VISIBLE_PROD: true,
-      });
-    }
-
-    if (filter.code_region) {
-      main_filter.push({
-        OR: [
-          { codes_region: { has: filter.code_region } },
-          { codes_region: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_departement) {
-      main_filter.push({
-        OR: [
-          { codes_departement: { has: filter.code_departement } },
-          { codes_departement: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.cu_ca_cc_mode) {
-      if (filter.code_postal) {
-        main_filter.push({
-          OR: [
-            { codes_postaux: { has: filter.code_postal } },
-            { codes_postaux: { isEmpty: true } },
-            {
-              echelle: {
-                not: {
-                  in: [
-                    'Communauté de communes',
-                    'Communauté urbaine',
-                    "Communauté d'agglomération",
-                  ],
-                },
-              },
-            },
-          ],
-        });
-      }
-    } else {
-      if (filter.code_postal) {
-        main_filter.push({
-          OR: [
-            { codes_postaux: { has: filter.code_postal } },
-            { codes_postaux: { isEmpty: true } },
-          ],
-        });
-      }
-    }
-
-    if (filter.besoins) {
-      main_filter.push({
-        besoin: { in: filter.besoins },
-      });
-    }
-
-    if (filter.echelle) {
-      main_filter.push({
-        echelle: filter.echelle,
-      });
-    }
-
-    if (filter.code_commune) {
-      main_filter.push({
-        OR: [
-          { include_codes_commune: { has: filter.code_commune } },
-          { include_codes_commune: { isEmpty: true } },
-        ],
-      });
-      main_filter.push({
-        OR: [
-          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
-          { exclude_codes_commune: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.commune_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          { codes_commune_from_partenaire: { has: filter.code_commune } },
-          { codes_commune_from_partenaire: { isEmpty: true } },
-          {
-            echelle: {
-              in: [
-                'Communauté de communes',
-                'Communauté urbaine',
-                "Communauté d'agglomération",
-              ],
-            },
-          },
-        ],
-      });
-    }
-
-    if (filter.departement_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_departement_from_partenaire: {
-              has: filter.departement_pour_partenaire,
-            },
-          },
-          { codes_departement_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.region_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_region_from_partenaire: {
-              has: filter.region_pour_partenaire,
-            },
-          },
-          { codes_region_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.thematiques) {
-      main_filter.push({
-        thematiques: {
-          hasSome: filter.thematiques,
-        },
-      });
-    }
-
-    if (filter.date_expiration) {
-      main_filter.push({
-        OR: [
-          { date_expiration: null },
-          {
-            date_expiration: {
-              gt: filter.date_expiration,
-            },
-          },
-        ],
       });
     }
 
     return {
       take: filter.maxNumber,
       where: {
-        AND: main_filter,
+        AND: clauses,
       },
     };
   }
 
   private buildAideFromDB(aideDB: AideDB): AideDefinition {
     if (aideDB === null) return null;
-    return {
+    return new AideDefinition({
       content_id: aideDB.content_id,
       titre: aideDB.titre,
       codes_postaux: aideDB.codes_postaux,
@@ -345,6 +217,6 @@ export class AideRepository {
         aideDB.codes_departement_from_partenaire,
       codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
       VISIBLE_PROD: aideDB.VISIBLE_PROD,
-    };
+    });
   }
 }

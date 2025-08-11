@@ -294,15 +294,15 @@ describe('Actions (API test)', () => {
       besoin: 'composter',
       partenaires_supp_ids: ['123'],
       echelle: Echelle.Commune,
-      codes_postaux: ['21000'],
+      codes_commune_from_partenaire: ['21231'],
     });
     await TestUtil.create(DB.aide, {
       content_id: '2',
       besoin: 'composter',
       partenaires_supp_ids: ['123'],
       echelle: Echelle.Département,
-      codes_departement: ['21'],
-      codes_postaux: [],
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: ['21'],
     });
 
     await actionRepository.loadCache();
@@ -318,6 +318,84 @@ describe('Actions (API test)', () => {
     const action: ActionAPI = response.body;
 
     expect(action.aides).toHaveLength(2);
+    expect(action.nom_commune).toEqual('Dijon');
+  });
+
+  it(`GET /utilisateurs/id/actions/id - accorche une aide qui match le code insee de commune avec arrondissement de l'utilisateur`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, {
+      logement: { code_commune: '75101' } as any,
+    });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Commune,
+      codes_commune_from_partenaire: ['75056'],
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.aides).toHaveLength(1);
+    expect(action.nom_commune).toEqual('Paris');
+  });
+
+  it(`GET /utilisateurs/id/actions/id - accorche uniquement les aides non-expirées`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur, { logement: logement as any });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type: TypeAction.classique,
+      type_code_id: 'classique_123',
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Commune,
+      codes_commune_from_partenaire: ['21231'],
+      date_expiration: new Date('2023-10-01'),
+    });
+    await TestUtil.create(DB.aide, {
+      content_id: '2',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Département,
+      codes_commune_from_partenaire: [],
+      codes_departement_from_partenaire: ['21'],
+    });
+
+    await actionRepository.loadCache();
+
+    // WHEN
+    const response = await TestUtil.GET(
+      '/utilisateurs/utilisateur-id/actions/classique/123',
+    );
+
+    // THEN
+    expect(response.status).toBe(200);
+
+    const action: ActionAPI = response.body;
+
+    expect(action.aides).toHaveLength(1);
+    expect(action.aides[0].content_id).toEqual('2');
     expect(action.nom_commune).toEqual('Dijon');
   });
 

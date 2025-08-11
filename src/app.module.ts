@@ -140,6 +140,8 @@ import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
 import { WinterUsecase } from './usecase/winter.usecase';
 
+import { ArticlesUsecase } from './usecase/articles.usecase';
+
 const SESSION_LIFETIME = '30 days';
 
 function getControllers(): any[] {
@@ -299,6 +301,7 @@ function getControllers(): any[] {
     LogementUsecase,
     PartenaireUsecase,
     AdresseUsecase,
+    ArticlesUsecase,
   ],
 })
 export class AppModule {}

@@ -64,10 +64,14 @@ export class ThematiqueUsecase {
       utilisateur.logement.code_commune,
     );
 
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.logement.code_commune,
+    );
+
     const thematique_synthese =
       await this.thematiqueBoardUsecase.external_thematique_synthese(
         thematique,
-        utilisateur.logement.code_commune,
+        commune.code,
         utilisateur.logement.code_postal,
       );
 

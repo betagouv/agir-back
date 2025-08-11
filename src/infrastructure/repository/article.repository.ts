@@ -1,37 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Article as ArticleDB } from '@prisma/client';
+import { ArticleFilter } from '../../../src/domain/contenu/articleFilter';
 import { Categorie } from '../../../src/domain/contenu/categorie';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
 import { Article } from '../../domain/contenu/article';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
-import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
 
-export type ArticleFilter = {
-  thematiques?: Thematique[];
-  difficulty?: DifficultyLevel;
-  exclude_ids?: string[];
-  include_ids?: string[];
-  asc_difficulty?: boolean;
-  titre_fragment?: string;
-  categorie?: Categorie;
-  date?: Date;
-  code_region?: string;
-  code_departement?: string;
-  code_commune?: string;
-  skip?: number;
-  take?: number;
-  commune_pour_partenaire?: string;
-  region_pour_partenaire?: string;
-  departement_pour_partenaire?: string;
-};
-
 @Injectable()
-export class ArticleRepository {
+export class ArticleRepository
+  implements
+    WithCache,
+    Paginated<ArticleDefinition>,
+    WithPartenaireCodes<ArticleDefinition>
+{
   private static catalogue_articles: Map<string, ArticleDefinition>;
 
   constructor(private prisma: PrismaService) {
@@ -130,136 +116,11 @@ export class ArticleRepository {
   }
 
   async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {
-    const main_filter = [];
+    const filter_clauses = ArticleFilter.buildSearchQueryClauses(filter);
 
     if (App.isProd()) {
-      main_filter.push({
+      filter_clauses.push({
         VISIBLE_PROD: true,
-      });
-    }
-
-    if (filter.date) {
-      main_filter.push({
-        OR: [
-          { mois: { has: filter.date.getMonth() + 1 } },
-          { mois: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_region) {
-      main_filter.push({
-        OR: [
-          { codes_region: { has: filter.code_region } },
-          { codes_region: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_departement) {
-      main_filter.push({
-        OR: [
-          { codes_departement: { has: filter.code_departement } },
-          { codes_departement: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.code_commune) {
-      main_filter.push({
-        OR: [
-          { include_codes_commune: { has: filter.code_commune } },
-          { include_codes_commune: { isEmpty: true } },
-        ],
-      });
-      main_filter.push({
-        OR: [
-          { NOT: { exclude_codes_commune: { has: filter.code_commune } } },
-          { exclude_codes_commune: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.difficulty !== undefined && filter.difficulty !== null) {
-      main_filter.push({
-        difficulty:
-          filter.difficulty === DifficultyLevel.ANY
-            ? undefined
-            : filter.difficulty,
-      });
-    }
-
-    if (filter.exclude_ids) {
-      main_filter.push({
-        content_id: { not: { in: filter.exclude_ids } },
-      });
-    }
-
-    if (filter.include_ids) {
-      main_filter.push({
-        content_id: { in: filter.include_ids },
-      });
-    }
-
-    if (filter.titre_fragment) {
-      main_filter.push({
-        titre: {
-          contains: filter.titre_fragment,
-          mode: 'insensitive',
-        },
-      });
-    }
-
-    if (filter.categorie) {
-      main_filter.push({
-        categorie: filter.categorie,
-      });
-    }
-
-    if (filter.thematiques) {
-      main_filter.push({
-        thematiques: {
-          hasSome: filter.thematiques,
-        },
-      });
-    }
-
-    if (filter.commune_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_commune_from_partenaire: {
-              has: filter.commune_pour_partenaire,
-            },
-          },
-          { codes_commune_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.departement_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_departement_from_partenaire: {
-              has: filter.departement_pour_partenaire,
-            },
-          },
-          { codes_departement_from_partenaire: { isEmpty: true } },
-        ],
-      });
-    }
-
-    if (filter.region_pour_partenaire) {
-      main_filter.push({
-        OR: [
-          {
-            codes_region_from_partenaire: {
-              has: filter.region_pour_partenaire,
-            },
-          },
-          { codes_region_from_partenaire: { isEmpty: true } },
-        ],
       });
     }
 
@@ -267,13 +128,14 @@ export class ArticleRepository {
       skip: filter.skip,
       take: filter.take,
       where: {
-        AND: main_filter,
+        AND: filter_clauses,
       },
     };
 
     if (filter.asc_difficulty) {
       finalQuery['orderBy'] = [{ difficulty: 'asc' }];
     }
+
     const result = await this.prisma.article.findMany(finalQuery);
     return result.map((elem) => this.buildArticleFromDB(elem));
   }
@@ -289,7 +151,69 @@ export class ArticleRepository {
     return result.map((r) => this.buildArticleFromDB(r));
   }
 
-  public async updateArticlesCodesFromPartenaire(
+  async countAll(): Promise<number> {
+    const count = await this.prisma.article.count();
+    return Number(count);
+  }
+
+  async listePaginated(
+    skip: number,
+    take: number,
+  ): Promise<ArticleDefinition[]> {
+    const results = await this.prisma.article.findMany({
+      skip: skip,
+      take: take,
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildArticleFromDB(r));
+  }
+
+  private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
+    if (articleDB === null) return null;
+    return new Article(
+      new ArticleDefinition({
+        partenaire_id: articleDB.partenaire_id,
+        content_id: articleDB.content_id,
+        categorie: Categorie[articleDB.categorie],
+        titre: articleDB.titre,
+        soustitre: articleDB.soustitre,
+        source: articleDB.source,
+        image_url: articleDB.image_url,
+        rubrique_ids: articleDB.rubrique_ids,
+        rubrique_labels: articleDB.rubrique_labels,
+        codes_postaux: articleDB.codes_postaux,
+        duree: articleDB.duree,
+        frequence: articleDB.frequence,
+        difficulty: articleDB.difficulty,
+        points: articleDB.points,
+        thematique_principale: Thematique[articleDB.thematique_principale],
+        thematiques: articleDB.thematiques.map((th) => Thematique[th]),
+        tags_utilisateur: articleDB.tags_utilisateur.map(
+          (t) => TagUtilisateur[t],
+        ),
+        mois: articleDB.mois,
+        codes_departement: articleDB.codes_departement,
+        codes_region: articleDB.codes_region,
+        exclude_codes_commune: articleDB.exclude_codes_commune,
+        include_codes_commune: articleDB.include_codes_commune,
+        contenu: articleDB.contenu,
+        sources: articleDB.sources as any,
+        derniere_maj: articleDB.derniere_maj,
+        echelle: Echelle[articleDB.echelle],
+        tags_a_exclure: articleDB.tags_a_exclure_v2,
+        tags_a_inclure: articleDB.tags_a_inclure_v2,
+        VISIBLE_PROD: articleDB.VISIBLE_PROD,
+        codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
+        codes_departement_from_partenaire:
+          articleDB.codes_departement_from_partenaire,
+        codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
+      }),
+    );
+  }
+
+  public async updateCodesFromPartenaireFor(
     cms_id: string,
     codes_commune: string[],
     codes_departement_from_partenaire: string[],
@@ -305,44 +229,23 @@ export class ArticleRepository {
     });
   }
 
-  private buildArticleFromDB(articleDB: ArticleDB): ArticleDefinition {
-    if (articleDB === null) return null;
-    return new Article({
-      partenaire_id: articleDB.partenaire_id,
-      content_id: articleDB.content_id,
-      categorie: Categorie[articleDB.categorie],
-      titre: articleDB.titre,
-      soustitre: articleDB.soustitre,
-      source: articleDB.source,
-      image_url: articleDB.image_url,
-      rubrique_ids: articleDB.rubrique_ids,
-      rubrique_labels: articleDB.rubrique_labels,
-      codes_postaux: articleDB.codes_postaux,
-      duree: articleDB.duree,
-      frequence: articleDB.frequence,
-      difficulty: articleDB.difficulty,
-      points: articleDB.points,
-      thematique_principale: Thematique[articleDB.thematique_principale],
-      thematiques: articleDB.thematiques.map((th) => Thematique[th]),
-      tags_utilisateur: articleDB.tags_utilisateur.map(
-        (t) => TagUtilisateur[t],
-      ),
-      mois: articleDB.mois,
-      codes_departement: articleDB.codes_departement,
-      codes_region: articleDB.codes_region,
-      exclude_codes_commune: articleDB.exclude_codes_commune,
-      include_codes_commune: articleDB.include_codes_commune,
-      contenu: articleDB.contenu,
-      sources: articleDB.sources as any,
-      derniere_maj: articleDB.derniere_maj,
-      echelle: Echelle[articleDB.echelle],
-      tags_a_exclure: articleDB.tags_a_exclure_v2,
-      tags_a_inclure: articleDB.tags_a_inclure_v2,
-      VISIBLE_PROD: articleDB.VISIBLE_PROD,
-      codes_commune_from_partenaire: articleDB.codes_commune_from_partenaire,
-      codes_departement_from_partenaire:
-        articleDB.codes_departement_from_partenaire,
-      codes_region_from_partenaire: articleDB.codes_region_from_partenaire,
+  public async findByPartenaireId(
+    partenaire_id: string,
+  ): Promise<ArticleDefinition[]> {
+    const result = await this.prisma.article.findMany({
+      where: {
+        partenaire_id: partenaire_id,
+      },
     });
+    return result.map((r) => this.buildArticleFromDB(r));
+  }
+
+  public async listeAll(): Promise<ArticleDefinition[]> {
+    const results = await this.prisma.article.findMany({
+      orderBy: {
+        content_id: 'desc',
+      },
+    });
+    return results.map((r) => this.buildArticleFromDB(r));
   }
 }

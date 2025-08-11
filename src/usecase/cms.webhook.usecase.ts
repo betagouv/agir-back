@@ -11,13 +11,13 @@ import { ArticleDefinition } from '../domain/contenu/articleDefinition';
 import { BlockTextDefinition } from '../domain/contenu/BlockTextDefinition';
 import { Categorie } from '../domain/contenu/categorie';
 import { ConformiteDefinition } from '../domain/contenu/conformiteDefinition';
-import { PartenaireDefinition } from '../domain/contenu/partenaireDefinition';
 import { QuizzDefinition } from '../domain/contenu/quizzDefinition';
 import { SelectionDefinition } from '../domain/contenu/SelectionDefinition';
 import { TagDefinition } from '../domain/contenu/TagDefinition';
 import { FAQDefinition } from '../domain/faq/FAQDefinition';
 import { KycDefinition } from '../domain/kyc/kycDefinition';
 import { parseUnite, TypeReponseQuestionKYC } from '../domain/kyc/questionKYC';
+import { PartenaireDefinition } from '../domain/partenaires/partenaireDefinition';
 import { TagUtilisateur } from '../domain/scoring/tagUtilisateur';
 import { Thematique } from '../domain/thematique/thematique';
 import { CMSEvent } from '../infrastructure/api/types/cms/CMSEvent';
@@ -40,7 +40,7 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
-import { AidesUsecase } from './aides.usecase';
+import { ActionCMSDataHelper } from './CMSDataHelper.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
 @Injectable()
@@ -58,7 +58,6 @@ export class CMSWebhookUsecase {
     private blockTextRepository: BlockTextRepository,
     private tagRepository: TagRepository,
     private selectionRepository: SelectionRepository,
-    private aidesUsecase: AidesUsecase,
     private partenaireUsecase: PartenaireUsecase,
   ) {}
 
@@ -209,6 +208,7 @@ export class CMSWebhookUsecase {
   async deleteAide(cmsWebhookAPI: CMSWebhookAPI) {
     await this.aideRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
+
   async deleteFAQ(cmsWebhookAPI: CMSWebhookAPI) {
     await this.fAQRepository.delete(cmsWebhookAPI.entry.id.toString());
   }
@@ -283,40 +283,15 @@ export class CMSWebhookUsecase {
 
     await this.partenaireRepository.loadCache();
 
-    const liste_aides = await this.aideRepository.findAidesByPartenaireId(
-      '' + cmsWebhookAPI.entry.id,
+    const partenaire_id = '' + cmsWebhookAPI.entry.id;
+    await this.partenaireUsecase.updateFromPartenaireCodes(
+      this.aideRepository,
+      partenaire_id,
     );
-    for (const aide of liste_aides) {
-      const computed =
-        this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-          aide.partenaires_supp_ids,
-        );
-
-      await this.aideRepository.updateAideCodesFromPartenaire(
-        aide.content_id,
-        computed.codes_commune,
-        computed.codes_departement,
-        computed.codes_region,
-      );
-    }
-
-    const liste_articles =
-      await this.articleRepository.findArticlesByPartenaireId(
-        '' + cmsWebhookAPI.entry.id,
-      );
-    for (const article of liste_articles) {
-      const computed =
-        this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-          [article.partenaire_id],
-        );
-
-      await this.articleRepository.updateArticlesCodesFromPartenaire(
-        article.content_id,
-        computed.codes_commune,
-        computed.codes_departement,
-        computed.codes_region,
-      );
-    }
+    await this.partenaireUsecase.updateFromPartenaireCodes(
+      this.articleRepository,
+      partenaire_id,
+    );
   }
 
   async createOrUpdateThematique(cmsWebhookAPI: CMSWebhookAPI) {
@@ -394,7 +369,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildArticleFromCMSData(hook: CMSWebhookAPI): ArticleDefinition {
-    const result: ArticleDefinition = {
+    const result = new ArticleDefinition({
       contenu: hook.entry.contenu,
       sources: hook.entry.sources
         ? hook.entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
@@ -443,7 +418,7 @@ export class CMSWebhookUsecase {
       codes_commune_from_partenaire: [],
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
-    };
+    });
 
     const computed =
       this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
@@ -503,7 +478,7 @@ export class CMSWebhookUsecase {
   }
 
   private buildAideFromCMSData(entry: CMSWebhookEntryAPI): AideDefinition {
-    const result = {
+    const result = new AideDefinition({
       content_id: entry.id.toString(),
       titre: entry.titre,
       date_expiration: entry.date_expiration
@@ -537,7 +512,7 @@ export class CMSWebhookUsecase {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
-    };
+    });
 
     const computed =
       this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
@@ -562,15 +537,24 @@ export class CMSWebhookUsecase {
     };
   }
 
+  /**
+   * FIXME: this function should be factorized with the equivalent one in the
+   * cms.import.usecase.ts to avoid code duplication, and therefore,
+   * desynchronization.
+   *
+   * @note for the moment, only some fields have been factorized with {@link ActionCMSDataHelper}
+   **/
   private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       titre: entry.titre,
-      titre_recherche: entry.titre ? entry.titre.replaceAll('*', '') : '',
+      titre_recherche: ActionCMSDataHelper.getTitreRcherche(entry.titre),
       sous_titre: entry.sous_titre,
-      consigne: entry.consigne,
-      label_compteur: entry.label_compteur,
+      consigne: ActionCMSDataHelper.getConsigne(entry.consigne),
+      label_compteur: ActionCMSDataHelper.getLabelCompteur(
+        entry.label_compteur,
+      ),
       pourquoi: entry.pourquoi,
       comment: entry.comment,
       quizz_felicitations: entry.felicitations,
@@ -599,17 +583,13 @@ export class CMSWebhookUsecase {
         : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
-      sources: entry.sources
-        ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
-        : [],
+      sources: ActionCMSDataHelper.getSources(entry.sources),
       tags_a_exclure: entry.tag_v2_excluants
         ? entry.tag_v2_excluants.map((elem) => elem.code)
         : [],
-
       selections: entry.selections
         ? entry.selections.map((elem) => elem.code)
         : [],
-
       tags_a_inclure: entry.tag_v2_incluants
         ? entry.tag_v2_incluants.map((elem) => elem.code)
         : [],

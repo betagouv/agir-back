@@ -296,6 +296,7 @@ describe('Actions Catalogue Offline (API test)', () => {
       score_recommandation: 0,
     });
   });
+
   it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
@@ -310,6 +311,30 @@ describe('Actions Catalogue Offline (API test)', () => {
 
     // WHEN
     const response = await TestUtil.GET('/actions?code_commune=21231');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.nombre_aides_disponibles).toEqual(1);
+  });
+
+  it(`GET /actions - liste le catalogue d'action : accroche nbre aide si code insee commune avec arrondissement`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.aide, {
+      content_id: '1',
+      besoin: 'composter',
+      partenaires_supp_ids: ['123'],
+      echelle: Echelle.Commune,
+      codes_commune_from_partenaire: ['75056'],
+    });
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?code_commune=75108');
 
     // THEN
     expect(response.status).toBe(200);

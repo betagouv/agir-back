@@ -43,7 +43,10 @@ describe('WinterUsecase', () => {
   let aideExpirationWarningRepository = new AideExpirationWarningRepository(
     TestUtil.prisma,
   );
-  let partenaireUsecase = new PartenaireUsecase(communeRepository);
+  let partenaireUsecase = new PartenaireUsecase(
+    communeRepository,
+    partenaireRepository,
+  );
   let compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
@@ -55,13 +58,13 @@ describe('WinterUsecase', () => {
   );
   let aidesUsecase = new AidesUsecase(
     aideExpirationWarningRepository,
-    emailSender,
     aideRepository,
-    partenaireRepository,
-    utilisateurRepository,
-    personalisator,
-    partenaireUsecase,
     aideVeloUsecase,
+    communeRepository,
+    emailSender,
+    partenaireUsecase,
+    personalisator,
+    utilisateurRepository,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,

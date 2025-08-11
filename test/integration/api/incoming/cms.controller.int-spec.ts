@@ -1150,6 +1150,57 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
   });
 
+  it('POST /api/incoming/cms - create a new action without label_compteur', async () => {
+    // GIVEN
+
+    // WHEN
+    const response = await TestUtil.POST('/api/incoming/cms').send({
+      ...CMS_DATA_ACTION,
+      entry: {
+        ...CMS_DATA_ACTION.entry,
+        label_compteur: undefined,
+      },
+    });
+
+    // THEN
+    const actions = await TestUtil.prisma.action.findMany({});
+
+    expect(response.status).toBe(201);
+    expect(actions).toHaveLength(1);
+    const action = actions[0];
+    expect(action.label_compteur).toEqual(
+      '**{NBR_ACTIONS}** actions réalisées par la communauté',
+    );
+
+    expect(action.titre).toEqual('titre');
+    expect(action.external_id).toEqual('ext_123');
+    expect(action.partenaire_id).toEqual('1');
+    expect(action.emoji).toEqual('🔥');
+    expect(action.sous_titre).toEqual('sous-titre');
+    expect(action.consigne).toEqual('Faites rapidement');
+    expect(action.besoins).toEqual(['composter', 'mieux_manger']);
+    expect(action.tags_a_inclure_v2).toEqual(['CC', 'DD']);
+    expect(action.tags_a_exclure_v2).toEqual(['AA', 'BB']);
+    expect(action.selections).toEqual(['S1', 'S2']);
+    expect(action.comment).toEqual('comment');
+    expect(action.quizz_felicitations).toEqual('Bravo !!');
+    expect(action.pourquoi).toEqual('pourquoi');
+    expect(action.quizz_ids).toEqual(['1', '2']);
+    expect(action.articles_ids).toEqual(['9', '10']);
+    expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
+    expect(action.faq_ids).toEqual(['5', '6']);
+    expect(action.lvo_action).toEqual('donner');
+    expect(action.lvo_objet).toEqual('phone');
+    expect(action.recette_categorie).toEqual('vegan');
+    expect(action.type).toEqual('quizz');
+    expect(action.code).toEqual('code');
+    expect(action.cms_id).toEqual('123');
+    expect(action.sources).toEqual([{ label: 'haha', url: 'hoho' }]);
+    expect(action.thematique).toEqual('alimentation');
+    expect(action.VISIBLE_PROD).toEqual(true);
+    expect(action.pdcn_categorie).toEqual(CategorieRecherche.circuit_court);
+  });
+
   it('POST /api/incoming/cms - create a new action bilan', async () => {
     // GIVEN
 

@@ -41,8 +41,12 @@ export class ThematiqueBoardUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    return await this.buildSyntheseFromCodeCommune(
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
+    );
+
+    return await this.buildSyntheseFromCodeCommune(
+      commune?.code,
       utilisateur.logement.code_postal,
     );
   }
@@ -134,7 +138,7 @@ export class ThematiqueBoardUsecase {
       transport_progression.getPourcent();
 
     const nombre_aides = await this.aidesUsecase.external_count_aides(
-      utilisateur.logement.code_commune,
+      commune?.code,
       utilisateur.logement.code_postal,
     );
     result.nombre_aides = nombre_aides;
@@ -147,7 +151,8 @@ export class ThematiqueBoardUsecase {
     code_commune?: string,
     code_postal?: string,
   ): Promise<{ nom_commune: string; thematiques: ThematiqueSynthese[] }> {
-    return await this.buildSyntheseFromCodeCommune(code_commune, code_postal);
+    const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+    return await this.buildSyntheseFromCodeCommune(commune?.code, code_postal);
   }
 
   private async buildSyntheseFromCodeCommune(

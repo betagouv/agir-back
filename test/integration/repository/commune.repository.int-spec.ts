@@ -349,4 +349,51 @@ describe('CommuneRepository', () => {
       }
     }
   });
+
+  describe('getCommuneByCodeINSEE', () => {
+    test('doit retourner la commune pour un code INSEE valide', async () => {
+      // WHEN
+      const result = communeRepository.getCommuneByCodeINSEE('21231');
+
+      // THEN
+      expect(result).toBeDefined();
+      expect(result.code).toEqual('21231');
+      expect(result.nom).toEqual('Dijon');
+    });
+
+    test('doit retourner undefined pour un code INSEE invalide', async () => {
+      // WHEN
+      const result = communeRepository.getCommuneByCodeINSEE('99999');
+
+      // THEN
+      expect(result).toBeUndefined();
+    });
+
+    test('doit retourner undefined pour un code INSEE undefined', async () => {
+      // WHEN
+      const result = communeRepository.getCommuneByCodeINSEE(undefined);
+
+      // THEN
+      expect(result).toBeUndefined();
+    });
+
+    test('doit retourner la commune pour un code INSEE correspondant à un arrondissement', async () => {
+      // WHEN
+      const result = communeRepository.getCommuneByCodeINSEE('75101');
+
+      // THEN
+      expect(result).toHaveProperty('code', '75056');
+      expect(result).toHaveProperty('nom', 'Paris');
+    });
+
+    test("doit retourner l'arrondissement pour un code INSEE correspondant à un arrondissement si flag activé", async () => {
+      // WHEN
+      const result = communeRepository.getCommuneByCodeINSEE('75101', true);
+
+      // THEN
+      expect(result).toBeDefined();
+      expect(result.code).toEqual('75101');
+      expect(result.nom).toEqual('Paris 1er Arrondissement');
+    });
+  });
 });

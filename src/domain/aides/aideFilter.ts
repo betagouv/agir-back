@@ -1,48 +1,65 @@
-import { CommuneRepository } from '../../infrastructure/repository/commune/commune.repository';
+import { GeographicFilter } from '../filtre/geographicFilter';
 import { Thematique } from '../thematique/thematique';
-import { Echelle } from './echelle';
 
-export class AideFilter {
+export class AideFilter extends GeographicFilter {
   maxNumber?: number;
   thematiques?: Thematique[];
   besoins?: string[];
-  code_postal?: string;
-  code_region?: string;
-  code_departement?: string;
-  code_commune?: string;
-  echelle?: Echelle;
   date_expiration?: Date;
-  commune_pour_partenaire?: string;
-  region_pour_partenaire?: string;
-  departement_pour_partenaire?: string;
-  cu_ca_cc_mode?: boolean;
 
-  constructor(filter?: AideFilter) {
+  private constructor(filter: AideFilter) {
+    super(filter.code_postal, filter.code_commune, filter.echelle);
     Object.assign(this, filter);
   }
 
-  public static buildBasicAideFilter(
+  public static create(
     code_postal: string,
     code_commune: string,
-    liste_thematiques?: Thematique[],
-    besoins?: string[],
+    aide: AideFilter,
   ) {
-    const dept_region =
-      CommuneRepository.findDepartementRegionByCodeCommune(code_commune);
+    const filtreLocalisation = new GeographicFilter(code_postal, code_commune);
 
     return new AideFilter({
-      code_postal: code_postal,
-      code_commune: code_commune,
+      ...filtreLocalisation,
+      ...aide,
       date_expiration: new Date(),
       thematiques:
-        liste_thematiques && liste_thematiques.length > 0
-          ? liste_thematiques
+        aide.thematiques && aide.thematiques.length > 0
+          ? aide.thematiques
           : undefined,
-      cu_ca_cc_mode: true,
-      commune_pour_partenaire: code_commune,
-      departement_pour_partenaire: dept_region?.code_departement,
-      region_pour_partenaire: dept_region?.code_region,
-      besoins: besoins,
     });
+  }
+
+  public static buildSearchQueryClauses(filter: AideFilter): any {
+    const clauses = GeographicFilter.getSearchClauses(filter);
+
+    if (filter.besoins) {
+      clauses.push({
+        besoin: { in: filter.besoins },
+      });
+    }
+
+    if (filter.thematiques) {
+      clauses.push({
+        thematiques: {
+          hasSome: filter.thematiques,
+        },
+      });
+    }
+
+    if (filter.date_expiration) {
+      clauses.push({
+        OR: [
+          { date_expiration: null },
+          {
+            date_expiration: {
+              gt: filter.date_expiration,
+            },
+          },
+        ],
+      });
+    }
+
+    return clauses;
   }
 }

@@ -1,12 +1,22 @@
+import { Echelle } from '../../../src/domain/aides/echelle';
 import { DifficultyLevel } from '../../../src/domain/contenu/difficultyLevel';
 import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponderationApplicative';
 import { Thematique } from '../../../src/domain/thematique/thematique';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
+import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
+import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
+import { PartenaireUsecase } from '../../../src/usecase/partenaire.usecase';
 import { DB, TestUtil } from '../../TestUtil';
 
 describe('ArticleRepository', () => {
   const OLD_ENV = process.env;
   const articleRepository = new ArticleRepository(TestUtil.prisma);
+  const partenaireRepository = new PartenaireRepository(TestUtil.prisma);
+  const communeRepository = new CommuneRepository(TestUtil.prisma);
+  const partenaireUsecase = new PartenaireUsecase(
+    communeRepository,
+    partenaireRepository,
+  );
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -314,8 +324,8 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_region: ['45', '46'],
       codes_postaux: [],
+      codes_region_from_partenaire: ['45', '46'],
     });
     await articleRepository.loadCache();
 
@@ -327,6 +337,7 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
+
   it('search : le filtre region match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -338,7 +349,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      region_pour_partenaire: '46',
+      code_region: '46',
     });
 
     // THEN
@@ -355,7 +366,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      departement_pour_partenaire: '47',
+      code_departement: '47',
     });
 
     // THEN
@@ -372,13 +383,15 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      departement_pour_partenaire: '46',
+      code_departement: '46',
     });
 
     // THEN
     expect(liste).toHaveLength(1);
   });
-  it('search : le filtre code commune no match ', async () => {
+
+  // NOTE: déprécié en faveur des partenaires
+  it.skip('search : le filtre code commune no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
@@ -396,7 +409,9 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(0);
   });
-  it('search : le filtre code commune match', async () => {
+
+  // NOTE: déprécié en faveur des partenaires
+  it.skip('search : le filtre code commune match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
@@ -414,6 +429,7 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exlusion no match ', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -432,6 +448,7 @@ describe('ArticleRepository', () => {
     // THEN
     expect(liste).toHaveLength(1);
   });
+
   it('search : le filtre code commune exclusion match', async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
@@ -449,5 +466,82 @@ describe('ArticleRepository', () => {
 
     // THEN
     expect(liste).toHaveLength(0);
+  });
+
+  it('search : le filtre commune pour partenaire match', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'partenaire1',
+      nom: 'Bordeaux Métropole',
+      echelle: Echelle.Métropole,
+      code_epci: '243300316',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      partenaire_id: 'partenaire1',
+      titre: 'Article Bordeaux',
+    });
+
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
+    await partenaireUsecase.updateFromPartenaireCodes(
+      articleRepository,
+      'partenaire1',
+    );
+
+    // WHEN
+    const bdx = await articleRepository.searchArticles({
+      code_commune: '33063',
+    });
+    const not_bdx = await articleRepository.searchArticles({
+      code_commune: '620001',
+    });
+
+    // THEN
+    expect(bdx).toHaveLength(1);
+    expect(not_bdx).toHaveLength(0);
+  });
+
+  it('search : le filtre commune pour partenaire match avec region', async () => {
+    // GIVEN
+    await TestUtil.create(DB.utilisateur);
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'partenaire1',
+      nom: 'Bordeaux Métropole',
+      echelle: Echelle.Métropole,
+      code_epci: '243300316',
+    });
+    await TestUtil.create(DB.partenaire, {
+      content_id: 'partenaire2',
+      nom: 'Nouvelle Aquitaine',
+      echelle: Echelle.Région,
+      code_region: '75',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '1',
+      partenaire_id: 'partenaire1',
+      titre: 'Article Bordeaux',
+    });
+    await TestUtil.create(DB.article, {
+      content_id: '2',
+      partenaire_id: 'partenaire2',
+      titre: 'Article Nouvelle Aquitaine',
+    });
+
+    await partenaireRepository.loadCache();
+    await articleRepository.loadCache();
+    await partenaireUsecase.updateFromPartenaireCodes(
+      articleRepository,
+      'partenaire1',
+    );
+
+    // WHEN
+    const bdx = await articleRepository.searchArticles({
+      code_commune: '33063',
+    });
+
+    // THEN
+    expect(bdx).toHaveLength(2);
   });
 });

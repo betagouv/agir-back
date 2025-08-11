@@ -9,8 +9,8 @@ import {
   SousCategorieRecherche,
 } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { ServiceRechercheID } from '../../../../domain/bibliotheque_services/recherche/serviceRechercheID';
-import { PartenaireDefinition } from '../../../../domain/contenu/partenaireDefinition';
 import { FAQDefinition } from '../../../../domain/faq/FAQDefinition';
+import { PartenaireDefinition } from '../../../../domain/partenaires/partenaireDefinition';
 import { ExplicationScore } from '../../../../domain/scoring/system_v2/ExplicationScore';
 import { Thematique } from '../../../../domain/thematique/thematique';
 import { PartenaireRepository } from '../../../repository/partenaire.repository';

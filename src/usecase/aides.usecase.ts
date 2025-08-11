@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AideRepository } from '../../src/infrastructure/repository/aide.repository';
-import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { Aide } from '../domain/aides/aide';
 import { AideFeedback } from '../domain/aides/aideFeedback';
 import { AideFilter } from '../domain/aides/aideFilter';
@@ -12,8 +10,11 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
 import { EmailSender } from '../infrastructure/email/emailSender';
 import { Personnalisator } from '../infrastructure/personnalisation/personnalisator';
+import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
+import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
+import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { AidesVeloUsecase } from './aidesVelo.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
@@ -26,13 +27,13 @@ const BAD_CHAR_REGEXP = new RegExp(`^[` + BAD_CHAR_LISTE + ']+$');
 export class AidesUsecase {
   constructor(
     private aideExpirationWarningRepository: AideExpirationWarningRepository,
-    private emailSender: EmailSender,
     private aideRepository: AideRepository,
-    private partenaireRepository: PartenaireRepository,
-    private utilisateurRepository: UtilisateurRepository,
-    private personnalisator: Personnalisator,
-    private partenaireUsecase: PartenaireUsecase,
     private aideVeloUsecase: AidesVeloUsecase,
+    private communeRepository: CommuneRepository,
+    private emailSender: EmailSender,
+    private partenaireUsecase: PartenaireUsecase,
+    private personnalisator: Personnalisator,
+    private utilisateurRepository: UtilisateurRepository,
   ) {}
 
   async getCatalogueAidesUtilisateur(
@@ -45,12 +46,18 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const code_commune = utilisateur.logement.code_commune;
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.logement.code_commune,
+    );
+    const code_commune = commune?.code;
 
-    const filtre = AideFilter.buildBasicAideFilter(
+    const filtre = AideFilter.create(
       utilisateur.logement.code_postal,
       code_commune,
-      filtre_thematiques,
+      {
+        date_expiration: new Date(),
+        thematiques: filtre_thematiques,
+      },
     );
 
     const aide_def_liste = await this.aideRepository.search(filtre);
@@ -309,30 +316,11 @@ export class AidesUsecase {
     return result;
   }
 
-  public async updatesAllAidesCommunes(block_size = 100) {
-    await this.partenaireRepository.loadCache();
-
-    const total_aide_count = await this.aideRepository.countAll();
-    for (let index = 0; index < total_aide_count; index = index + block_size) {
-      const current_aide_list = await this.aideRepository.listePaginated(
-        index,
-        block_size,
-      );
-
-      for (const aide of current_aide_list) {
-        const computed =
-          this.partenaireUsecase.external_compute_communes_departement_regions_from_liste_partenaires(
-            aide.partenaires_supp_ids,
-          );
-
-        await this.aideRepository.updateAideCodesFromPartenaire(
-          aide.content_id,
-          computed.codes_commune,
-          computed.codes_departement,
-          computed.codes_region,
-        );
-      }
-    }
+  public async updateAllPartenairesCodes(block_size = 100) {
+    await this.partenaireUsecase.updateAllFromPartenaireCodes(
+      this.aideRepository,
+      block_size,
+    );
   }
 
   async updateAllUserCouvertureAides(block_size = 200): Promise<{
@@ -374,12 +362,10 @@ export class AidesUsecase {
     thematique?: Thematique,
     besoins?: string[],
   ): Promise<number> {
-    const filtre = AideFilter.buildBasicAideFilter(
-      code_postal,
-      code_commune,
-      thematique ? [thematique] : undefined,
+    const filtre = AideFilter.create(code_postal, code_commune, {
+      thematiques: thematique ? [thematique] : undefined,
       besoins,
-    );
+    });
 
     return await this.aideRepository.count(filtre);
   }

@@ -17,8 +17,7 @@ export class Article extends ArticleDefinition implements TaggedContent {
   liste_partages?: Date[];
 
   constructor(data: ArticleDefinition) {
-    super();
-    Object.assign(this, data);
+    super(data);
 
     this.score = 0;
     this.pourcent_match = 0;
