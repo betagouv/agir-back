@@ -173,7 +173,7 @@ model Action {
   titre_recherche        String?
   sous_titre             String?
   consigne               String   @default("Réalisez cette action dans les prochaines semaines et partagez vos retours")
-  label_compteur         String   @default("**453 actions** réalisées par la communauté")
+  label_compteur         String   @default("**{NBR_ACTIONS}** actions réalisées par la communauté")
   quizz_felicitations    String?
   pourquoi               String?
   comment                String?

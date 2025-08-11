@@ -40,6 +40,7 @@ import { QuizzRepository } from '../infrastructure/repository/quizz.repository';
 import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { ActionCMSDataHelper } from './CMSDataHelper.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
 @Injectable()
@@ -536,15 +537,24 @@ export class CMSWebhookUsecase {
     };
   }
 
+  /**
+   * FIXME: this function should be factorized with the equivalent one in the
+   * cms.import.usecase.ts to avoid code duplication, and therefore,
+   * desynchronization.
+   *
+   * @note for the moment, only some fields have been factorized with {@link ActionCMSDataHelper}
+   **/
   private buildActionFromCMSData(entry: CMSWebhookEntryAPI): ActionDefinition {
     return new ActionDefinition({
       cms_id: entry.id.toString(),
       partenaire_id: entry.partenaire ? '' + entry.partenaire.id : null,
       titre: entry.titre,
-      titre_recherche: entry.titre ? entry.titre.replaceAll('*', '') : '',
+      titre_recherche: ActionCMSDataHelper.getTitreRcherche(entry.titre),
       sous_titre: entry.sous_titre,
-      consigne: entry.consigne,
-      label_compteur: entry.label_compteur,
+      consigne: ActionCMSDataHelper.getConsigne(entry.consigne),
+      label_compteur: ActionCMSDataHelper.getLabelCompteur(
+        entry.label_compteur,
+      ),
       pourquoi: entry.pourquoi,
       comment: entry.comment,
       quizz_felicitations: entry.felicitations,
@@ -573,17 +583,13 @@ export class CMSWebhookUsecase {
         : null,
       thematique: entry.thematique ? Thematique[entry.thematique.code] : null,
       code: entry.code,
-      sources: entry.sources
-        ? entry.sources.map((s) => ({ label: s.libelle, url: s.lien }))
-        : [],
+      sources: ActionCMSDataHelper.getSources(entry.sources),
       tags_a_exclure: entry.tag_v2_excluants
         ? entry.tag_v2_excluants.map((elem) => elem.code)
         : [],
-
       selections: entry.selections
         ? entry.selections.map((elem) => elem.code)
         : [],
-
       tags_a_inclure: entry.tag_v2_incluants
         ? entry.tag_v2_incluants.map((elem) => elem.code)
         : [],

@@ -87,6 +87,35 @@ export type ActionData = {
   updatedBy: number;
 };
 
+export class ActionCMSDataHelper {
+  static getTitreRcherche(titre?: string): string {
+    return titre ? titre.replaceAll('*', '') : '';
+  }
+
+  static getConsigne(consigne?: string): string {
+    return (
+      consigne ??
+      'Réalisez cette action dans les prochaines semaines et partagez vos retours'
+    );
+  }
+
+  static getLabelCompteur(label_compteur?: string): string {
+    return (
+      label_compteur ?? '**{NBR_ACTIONS}** actions réalisées par la communauté'
+    );
+  }
+
+  static getPartenaireId(partenaire?: PartenaireData): number {
+    return partenaire ? partenaire.id : null;
+  }
+
+  static getSources(sources?: SourceData[]): { label: string; url: string }[] {
+    return sources
+      ? sources.map((s) => ({ label: s.libelle, url: s.lien }))
+      : [];
+  }
+}
+
 export type AideData = {
   id: number; //3,
   titre?: string; //"Acheter un vélo",
