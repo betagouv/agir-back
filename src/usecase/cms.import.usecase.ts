@@ -40,6 +40,7 @@ import { PartenaireRepository } from '../infrastructure/repository/partenaire.re
 import { SelectionRepository } from '../infrastructure/repository/selection.repository';
 import { TagRepository } from '../infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
+import { ActionCMSDataHelper } from './CMSDataHelper.usecase';
 import { PartenaireUsecase } from './partenaire.usecase';
 
 const FULL_POPULATE_URL =
@@ -750,16 +751,14 @@ export class CMSImportUsecase {
           : null,
       code: entry.attributes.code,
       titre: entry.attributes.titre,
-      titre_recherche: entry.attributes.titre
-        ? entry.attributes.titre.replaceAll('*', '')
-        : '',
+      titre_recherche: ActionCMSDataHelper.getTitreRcherche(
+        entry.attributes.titre,
+      ),
       sous_titre: entry.attributes.sous_titre,
-      consigne:
-        entry.attributes.consigne ||
-        'Réalisez cette action dans les prochaines semaines et partagez vos retours',
-      label_compteur:
-        entry.attributes.label_compteur ||
-        '**{NBR_ACTIONS}** actions réalisées par la communauté',
+      consigne: ActionCMSDataHelper.getConsigne(entry.attributes.consigne),
+      label_compteur: ActionCMSDataHelper.getLabelCompteur(
+        entry.attributes.label_compteur,
+      ),
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       quizz_felicitations: entry.attributes.felicitations,
@@ -800,12 +799,7 @@ export class CMSImportUsecase {
       thematique: entry.attributes.thematique.data
         ? Thematique[entry.attributes.thematique.data.attributes.code]
         : null,
-      sources: entry.attributes.sources
-        ? entry.attributes.sources.map((s) => ({
-            label: s.libelle,
-            url: s.lien,
-          }))
-        : [],
+      sources: ActionCMSDataHelper.getSources(entry.attributes.sources),
       tags_a_exclure:
         entry.attributes.tag_v2_excluants &&
         entry.attributes.tag_v2_excluants.data.length > 0
