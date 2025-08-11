@@ -5,7 +5,7 @@ import { TagDefinition } from '../../domain/contenu/TagDefinition';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class TagRepository {
+export class TagRepository implements WithCache {
   constructor(private prisma: PrismaService) {
     TagRepository.catalogue = new Map();
   }
