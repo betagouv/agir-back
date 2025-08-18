@@ -27,6 +27,7 @@ import {
   Recommandation,
 } from '../../domain/actions/catalogueAction';
 import { TypeAction } from '../../domain/actions/typeAction';
+import { App } from '../../domain/app';
 import { Selection } from '../../domain/contenu/selection';
 import { Thematique } from '../../domain/thematique/thematique';
 import { ActionUsecase } from '../../usecase/actions.usecase';
@@ -62,7 +63,7 @@ export class ActionsController extends GenericControler {
 
   @Get('actions')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 11, ttl: 1000 } })
+  @Throttle({ default: { limit: App.isProd() ? 10 : 20, ttl: 1000 } })
   @Header('Cache-Control', 'max-age=60')
   @ApiOkResponse({
     type: CatalogueActionAPI,
@@ -479,6 +480,7 @@ export class ActionsController extends GenericControler {
   })
   async getSelectionsRef(): Promise<SelectionAPI[]> {
     const result: SelectionAPI[] = [];
+
     for (const select of Object.values(Selection)) {
       const select_def = SelectionRepository.getSelectionDefinition(select);
       if (select_def) {
