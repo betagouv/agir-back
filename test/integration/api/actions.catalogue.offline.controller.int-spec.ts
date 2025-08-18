@@ -248,6 +248,7 @@ describe('Actions Catalogue Offline (API test)', () => {
         selected: false,
       },
       { code: 'risques_naturels', label: 'risques_naturels', selected: false },
+      { code: 'semaine_mobilite', label: 'semaine_mobilite', selected: false },
     ]);
   });
 
@@ -426,6 +427,90 @@ describe('Actions Catalogue Offline (API test)', () => {
       label: 'actions_watt_watchers',
       selected: true,
     });
+  });
+
+  it(`GET /actions - liste le catalogue d'action - filtre selections semaine_mobilite`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.logement,
+      selections: [Selection.semaine_mobilite],
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      selections: ['BB'],
+    });
+    await TestUtil.create(DB.action, {
+      code: '3',
+      cms_id: '3',
+      type: TypeAction.classique,
+      type_code_id: 'classique_3',
+      thematique: Thematique.logement,
+      selections: [Selection.actions_watt_watchers],
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?selection=semaine_mobilite');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    expect(response.body.filtres).toEqual([
+      {
+        code: 'alimentation',
+        label: 'alimentation',
+        selected: false,
+      },
+      {
+        code: 'transport',
+        label: 'transport',
+        selected: false,
+      },
+      {
+        code: 'logement',
+        label: 'logement',
+        selected: false,
+      },
+      {
+        code: 'consommation',
+        label: 'consommation',
+        selected: false,
+      },
+      {
+        code: 'climat',
+        label: 'climat',
+        selected: false,
+      },
+      {
+        code: 'dechet',
+        label: 'dechet',
+        selected: false,
+      },
+      {
+        code: 'loisir',
+        label: 'loisir',
+        selected: false,
+      },
+    ]);
+    expect(response.body.selections).toEqual([
+      {
+        code: 'actions_watt_watchers',
+        label: 'actions_watt_watchers',
+        selected: false,
+      },
+      { code: 'risques_naturels', label: 'risques_naturels', selected: false },
+      { code: 'semaine_mobilite', label: 'semaine_mobilite', selected: true },
+    ]);
   });
 
   it(`GET /actions - liste le catalogue d'action - filtre avec une selection inconnue`, async () => {
