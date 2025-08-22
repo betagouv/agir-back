@@ -181,14 +181,12 @@ describe('AideVeloRepository', () => {
         expect(result['électrique'][0].libelle).toBe('Région Occitanie');
         expect(result['électrique'][1].libelle).toBe('Département Hérault');
         expect(result['adapté'].length).toBe(2);
-        expect(result['adapté'][0].libelle).toContain('Département Hérault');
-        expect(result['adapté'][0].description).toContain(
+        expect(result['adapté'][1].libelle).toContain('Département Hérault');
+        expect(result['adapté'][1].description).toContain(
           'Chèque Hérault Handi-Vélo',
         );
-        expect(result['adapté'][1].libelle).toContain(
-          'Montpellier Méditerranée Métropole',
-        );
-        expect(result['adapté'][1].description).toContain('adapté');
+        expect(result['adapté'][0].libelle).toContain('Région Occitanie');
+        expect(result['adapté'][0].description).toContain('adapté');
       });
     });
 
@@ -289,10 +287,12 @@ describe('AideVeloRepository', () => {
       expect(result[3].libelle).toContain('Département Hérault');
       expect(result[3].description).toContain('Chèque Hérault Handi-Vélo');
       expect(result[4].libelle).toContain('Montpellier Méditerranée Métropole');
-      expect(result[4].description).toContain("vélo électrique ou d'occasion");
+      expect(result[4].description).toContain(
+        "Jusqu'à 1000€ d'aide pour l'achat d'un vélo cargo ou triporteur à assistance électrique neuf",
+      );
       expect(result[5].libelle).toContain('Montpellier Méditerranée Métropole');
       expect(result[5].description).toContain(
-        'personnes en situation de handicap',
+        "vélo à assistance électrique d'occasion (VAE)",
       );
     });
   });
