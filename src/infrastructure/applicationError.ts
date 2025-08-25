@@ -836,7 +836,14 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
   static throwNoPRMFoundAtAddress(adresse: string) {
     this.throwAppError(
       '152',
-      `Pas de PRM ou de PRM unique trouvé à cette adresse : [${adresse}]`,
+      `Pas de PRM trouvé à cette adresse : [${adresse}]`,
+      404,
+    );
+  }
+  static throwNoUniquePRMFoundAtAddress(adresse: string) {
+    this.throwAppError(
+      '152',
+      `Pas de PRM unique trouvé à cette adresse : [${adresse}]`,
       404,
     );
   }

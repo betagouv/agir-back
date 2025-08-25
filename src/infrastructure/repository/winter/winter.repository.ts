@@ -65,8 +65,13 @@ export class WinterRepository {
       commune.nom,
     );
 
-    if (liste_prms.length !== 1) {
+    if (liste_prms.length === 0) {
       ApplicationError.throwNoPRMFoundAtAddress(
+        `${nom}, ${adresse}, ${code_postal} ${commune.nom}`,
+      );
+    }
+    if (liste_prms.length > 1) {
+      ApplicationError.throwNoUniquePRMFoundAtAddress(
         `${nom}, ${adresse}, ${code_postal} ${commune.nom}`,
       );
     }
