@@ -228,6 +228,11 @@ export class WinterAPIClient {
         } ms`,
       );
       console.log(error);
+      if (error.response && error.response.status === 404) {
+        ApplicationError.throwMissingPRMSouscription();
+      } else {
+        ApplicationError.throwWinterUsageUnknownError();
+      }
       return undefined;
     }
     console.log(`API_TIME:winter_usage/${ext_id}:${Date.now() - call_time}`);

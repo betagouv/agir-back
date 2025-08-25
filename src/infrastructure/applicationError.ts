@@ -959,6 +959,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwWinterUsageUnknownError() {
+    this.throwAppError(
+      '173',
+      `La décomposition par usage de votre consommation n'est disponible actuellement, ré-essayez plus tard`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
