@@ -314,13 +314,13 @@ describe('Aide Velo (API test)', () => {
         'Montpellier Méditerranée Métropole',
       );
       expect(response.body[4].description).toContain(
-        "vélo électrique ou d'occasion",
+        'vélo cargo ou triporteur à assistance électrique neuf',
       );
       expect(response.body[5].libelle).toContain(
         'Montpellier Méditerranée Métropole',
       );
       expect(response.body[5].description).toContain(
-        'personnes en situation de handicap',
+        "un vélo à assistance électrique d'occasion (VAE)",
       );
     });
   });
