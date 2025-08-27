@@ -149,7 +149,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
 
   private async callServiceAPI(
     filtre: FiltreRecherche,
-    categorie: string,
+    categorie,
   ): Promise<LVOResponse> {
     let response;
     const call_time = Date.now();

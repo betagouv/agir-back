@@ -9,7 +9,7 @@ export class LongueVieObjetsCategorieMapping {
   }[] = [
     {
       categorie: CategorieRecherche.vos_objets,
-      mapped_categorie: null,
+      mapped_categorie: undefined,
     },
     {
       categorie: CategorieRecherche.donner,
@@ -87,7 +87,7 @@ export class LongueVieObjetsCategorieMapping {
     interne: boolean,
   ): string {
     if (!categorie) {
-      return null;
+      return undefined;
     }
     let content;
     if (interne) {
@@ -99,7 +99,7 @@ export class LongueVieObjetsCategorieMapping {
         (m) => m.categorie === categorie,
       );
     }
-    if (!content) return null;
+    if (!content) return undefined;
     return content.mapped_categorie + '';
   }
 
