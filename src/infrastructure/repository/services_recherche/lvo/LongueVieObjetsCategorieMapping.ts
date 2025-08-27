@@ -43,7 +43,7 @@ export class LongueVieObjetsCategorieMapping {
   }[] = [
     {
       categorie: CategorieRecherche.vos_objets,
-      mapped_categorie: null,
+      mapped_categorie: undefined,
     },
     {
       categorie: CategorieRecherche.donner,
