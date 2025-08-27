@@ -194,6 +194,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
     let response;
     const call_time = Date.now();
     const params = {
+      rayon: filtre.rayon_metres ? filtre.rayon_metres : 5000,
       latitude: filtre.point.latitude,
       longitude: filtre.point.longitude,
       limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
