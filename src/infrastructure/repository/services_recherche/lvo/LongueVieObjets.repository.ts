@@ -161,7 +161,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
       limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
     };
 
-    if (categorie) {
+    if (categorie && categorie !== 'undefined') {
       params['actions'] = categorie;
     }
 
