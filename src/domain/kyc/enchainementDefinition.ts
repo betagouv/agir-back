@@ -78,7 +78,16 @@ const EnchainementDefinitionData: Record<
     { id: KYCID.KYC_type_chauffage_eau, is_mandatory: true },
     { id: KYCID.KYC_chauffage_reseau, is_mandatory: false },
     { id: KYCID.KYC_logement_reno_second_oeuvre, is_mandatory: false },
+    { id: KYCID.KYC_electro_petit_refrigerateur, is_mandatory: false },
     { id: KYCID.KYC_electro_refrigerateur, is_mandatory: false },
+    { id: KYCID.KYC_logement_frigo_americain, is_mandatory: false },
+    { id: KYCID.KYC_electro_congelateur, is_mandatory: false },
+    { id: KYCID.KYC_loisir_piscine_type, is_mandatory: false },
+    { id: KYCID.KYC_electro_cave_a_vin, is_mandatory: false },
+    { id: KYCID.KYC_appareil_television, is_mandatory: false },
+    { id: KYCID.KYC_appareil_console_salon, is_mandatory: false },
+    { id: KYCID.KYC_appareil_box_internet, is_mandatory: false },
+    { id: KYCID.KYC_electro_plaques, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_alimentation: [
     { id: KYCID.KYC_alimentation_regime, is_mandatory: false }, // manque quand import NGC Full

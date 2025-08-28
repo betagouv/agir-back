@@ -7,9 +7,9 @@ import { CommuneRepository } from '../commune/commune.repository';
 import {
   WinterAction,
   WinterAPIClient,
-  WinterHousingData,
   WinterUsageBreakdown,
 } from './winterAPIClient';
+import { WinterHousingData } from './winterHousingAPI';
 
 const MAPPED_KYCS: string[] = [
   KYCID.KYC_electro_refrigerateur,
@@ -223,12 +223,17 @@ export class WinterRepository {
 
     const electro_refrigerateur = getNumQ(KYCID.KYC_electro_refrigerateur);
     const electro_congelateur = getNumQ(KYCID.KYC_electro_congelateur);
+    const electro_cave_vin = getNumQ(KYCID.KYC_electro_cave_a_vin);
     const electro_petit_refrigerateur = getNumQ(
       KYCID.KYC_electro_petit_refrigerateur,
+    );
+    const logement_frigo_americain = getNumQ(
+      KYCID.KYC_logement_frigo_americain,
     );
     const loisir_piscine_type = getChoixU(KYCID.KYC_loisir_piscine_type);
     const appareil_television = getNumQ(KYCID.KYC_appareil_television);
     const appareil_console_salon = getNumQ(KYCID.KYC_appareil_console_salon);
+    const box_internet = getNumQ(KYCID.KYC_appareil_box_internet);
     const electro_plaques = getNumQ(KYCID.KYC_electro_plaques);
     const electro_lave_vaiselle = getNumQ(KYCID.KYC_electro_lave_vaiselle);
 
@@ -311,7 +316,10 @@ export class WinterRepository {
     return {
       nbClassicRefrigerator: electro_refrigerateur?.getValue(),
       nbOneDoorRefrigerator: electro_petit_refrigerateur?.getValue(),
+      nbAmericanRefrigerator: logement_frigo_americain?.getValue(),
       nbFreezer: electro_congelateur?.getValue(),
+
+      nbWineCave: electro_cave_vin?.getValue(),
       nbPool:
         loisir_piscine_type.getSelectedCode() === undefined ||
         loisir_piscine_type.getSelectedCode() === 'pas_piscine'
@@ -319,6 +327,7 @@ export class WinterRepository {
           : 1,
       nbTV: appareil_television?.getValue(),
       nbConsole: appareil_console_salon?.getValue(),
+      nbInternetBox: box_internet?.getValue(),
       hasElectricHotPlate: electro_plaques
         ? electro_plaques.getValue() > 1
         : undefined,
