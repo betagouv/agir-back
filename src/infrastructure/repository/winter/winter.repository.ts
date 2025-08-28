@@ -235,6 +235,11 @@ export class WinterRepository {
     const appareil_console_salon = getNumQ(KYCID.KYC_appareil_console_salon);
     const box_internet = getNumQ(KYCID.KYC_appareil_box_internet);
     const electro_plaques = getNumQ(KYCID.KYC_electro_plaques);
+    const electro_cuiseur_elec = getChoixU(KYCID.KYC_electro_cuiseur_elec);
+    const electro_four_elec = getChoixU(KYCID.KYC_electro_four_elec);
+    const electro_four_gaz = getChoixU(KYCID.KYC_electro_four_gaz);
+    const electro_four_externe = getChoixU(KYCID.KYC_electro_four_gaz);
+    const electro_plaques_gaz = getChoixU(KYCID.KYC_electro_plaques_gaz);
     const electro_lave_vaiselle = getNumQ(KYCID.KYC_electro_lave_vaiselle);
 
     const electro_lave_linge = getNumQ(KYCID.KYC_electro_lave_linge);
@@ -336,6 +341,11 @@ export class WinterRepository {
       nbDryer: electro_seche_linge?.getValue(),
       hasElectricHeater: chauffage?.isSelected('electricite'),
       hasHeatPump: chauffage_pompe_chaleur?.getSelectedCode() === 'oui',
+      hasElectricCooker: electro_cuiseur_elec?.getSelectedCode() === 'oui',
+      hasElectricOven: electro_four_elec?.getSelectedCode() === 'oui',
+      hasGasOven: electro_four_gaz?.getSelectedCode() === 'oui',
+      hasOvenInWorkingPlan: electro_four_externe?.getSelectedCode() === 'oui',
+      hasGasHotPlate: electro_plaques_gaz?.getSelectedCode() === 'oui',
       nbSolarPanel:
         photovoltaiques && photovoltaiques.getSelectedCode() === 'oui'
           ? 10

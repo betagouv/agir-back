@@ -22,11 +22,11 @@ export type WinterHousingData = {
   nbConsole?: number; // MAPPED (console de salon ?) KYC 125 => INCLUS ACTION
   nbInternetBox?: number; // MAPPED KYC 315 => INCLUS ACTION
   hasElectricHotPlate?: boolean; // MAPPED KYC 108 => INCLUS ACTION
-  hasElectricCooker?: boolean;
-  hasElectricOven?: boolean;
-  hasGasOven?: boolean;
-  hasOvenInWorkingPlan?: boolean;
-  hasGasHotPlate?: boolean;
+  hasElectricCooker?: boolean; // MAPPED KYC 316 => INCLUS ACTION
+  hasElectricOven?: boolean; // MAPPED KYC 317 => INCLUS ACTION
+  hasGasOven?: boolean; // MAPPED KYC 318 => INCLUS ACTION
+  hasOvenInWorkingPlan?: boolean; // MAPPED KYC 319 => INCLUS ACTION
+  hasGasHotPlate?: boolean; // MAPPED KYC 320 => INCLUS ACTION
   nbDishwasher?: number; // MAPPED KYC 105
   nbWashingMachine?: number; // MAPPED KYC 103
   nbDryer?: number; // MAPPED KYC104

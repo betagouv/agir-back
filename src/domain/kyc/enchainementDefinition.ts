@@ -88,6 +88,11 @@ const EnchainementDefinitionData: Record<
     { id: KYCID.KYC_appareil_console_salon, is_mandatory: false },
     { id: KYCID.KYC_appareil_box_internet, is_mandatory: false },
     { id: KYCID.KYC_electro_plaques, is_mandatory: false },
+    { id: KYCID.KYC_electro_cuiseur_elec, is_mandatory: false },
+    { id: KYCID.KYC_electro_four_elec, is_mandatory: false },
+    { id: KYCID.KYC_electro_four_gaz, is_mandatory: false },
+    { id: KYCID.KYC_electro_four_externe, is_mandatory: false },
+    { id: KYCID.KYC_electro_plaques_gaz, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_alimentation: [
     { id: KYCID.KYC_alimentation_regime, is_mandatory: false }, // manque quand import NGC Full
