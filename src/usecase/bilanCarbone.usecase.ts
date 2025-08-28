@@ -8,7 +8,7 @@ import {
 } from '../domain/bilan/bilanCarbone';
 import {
   EnchainementDefinition,
-  EnchainementType,
+  EnchainementID,
 } from '../domain/kyc/enchainementDefinition';
 import { KYCID } from '../domain/kyc/KYCID';
 import { KYCMosaicID } from '../domain/kyc/mosaicDefinition';
@@ -219,34 +219,34 @@ export class BilanCarboneUsecase {
   ): EnchainementRecap {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_mini_bilan_carbone
-        ],
+        EnchainementDefinition.getKycCodesByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_mini_bilan_carbone,
+        ),
       );
 
     let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_bilan_transport
-        ],
+        EnchainementDefinition.getKycCodesByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_bilan_transport,
+        ),
       );
     let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_bilan_logement
-        ],
+        EnchainementDefinition.getKycCodesByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_bilan_logement,
+        ),
       );
     let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_bilan_consommation
-        ],
+        EnchainementDefinition.getKycCodesByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_bilan_consommation,
+        ),
       );
     let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_bilan_alimentation
-        ],
+        EnchainementDefinition.getKycCodesByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_bilan_alimentation,
+        ),
       );
 
     // CLEAN

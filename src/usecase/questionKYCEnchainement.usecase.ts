@@ -3,7 +3,7 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import {
   EnchainementDefinition,
-  EnchainementType,
+  EnchainementID,
 } from '../domain/kyc/enchainementDefinition';
 import { EnchainementKYC } from '../domain/kyc/enchainementKYC';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
@@ -36,11 +36,13 @@ export class QuestionKYCEnchainementUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    if (!EnchainementType[enchainementId]) {
+    if (!EnchainementID[enchainementId]) {
       ApplicationError.throwUnkownEnchainement(enchainementId);
     }
 
-    const liste_kycs_codes = EnchainementDefinition[enchainementId];
+    const liste_kycs_codes = EnchainementDefinition.getKycCodesByEnchainementID(
+      EnchainementID[enchainementId],
+    );
 
     const result =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_codes);
@@ -151,7 +153,7 @@ export class QuestionKYCEnchainementUsecase {
     const is_enchainement_bilan = this.actionRepository.isBilan(actionCodeType);
 
     if (
-      !EnchainementType[enchainementId] &&
+      !EnchainementID[enchainementId] &&
       !is_enchainement_simulateur &&
       !is_enchainement_bilan
     ) {
@@ -177,7 +179,9 @@ export class QuestionKYCEnchainementUsecase {
     }
 
     return utilisateur.kyc_history.getListeKycsFromCodes(
-      EnchainementDefinition[enchainementId],
+      EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementID[enchainementId],
+      ),
     );
   }
 }

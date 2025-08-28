@@ -459,7 +459,7 @@ export class ActionUsecase {
           ]
         : undefined;
 
-    return EnchainementDefinition[enchainement_id] ?? [];
+    return EnchainementDefinition.getKycCodesByEnchainementID(enchainement_id);
   }
 
   public async calculeScoreQuizzAction(
