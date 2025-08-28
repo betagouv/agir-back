@@ -84,7 +84,7 @@ const EnchainementDefinitionData: Record<
     { id: KYCID.KYC_chauffage, is_mandatory: true },
     { id: KYCID.KYC_chauffage_installation_date, is_mandatory: false },
     { id: KYCID.KYC_type_chauffage_eau, is_mandatory: true },
-    { id: KYCID.KYC_chauffage_reseau, is_mandatory: false },
+    { id: KYCID.KYC_chauffage_reseau, is_mandatory: true },
     { id: KYCID.KYC_logement_reno_second_oeuvre, is_mandatory: false },
     { id: KYCID.KYC_electro_petit_refrigerateur, is_mandatory: false },
     { id: KYCID.KYC_electro_refrigerateur, is_mandatory: false },
