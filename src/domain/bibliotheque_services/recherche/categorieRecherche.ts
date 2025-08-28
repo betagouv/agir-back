@@ -37,6 +37,7 @@ export enum SousCategorieRecherche {
   sans_saumon_crevette_cabillaud = 'sans_saumon_crevette_cabillaud',
   sans_saumon = 'sans_saumon',
   sans_cuisson = 'sans_cuisson',
+  chaussures = 'chaussures',
 }
 
 export class CategorieRechercheManager {

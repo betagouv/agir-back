@@ -311,7 +311,7 @@ export class ActionRepository {
       besoins: action.besoins,
       kyc_codes: action.kyc_codes,
       lvo_action: CategorieRecherche[action.lvo_action],
-      lvo_objet: action.lvo_objet,
+      lvo_objet: SousCategorieRecherche[action.lvo_objet],
       quizz_ids: action.quizz_ids,
       recette_categorie: CategorieRecherche[action.recette_categorie],
       pdcn_categorie: CategorieRecherche[action.pdcn_categorie],

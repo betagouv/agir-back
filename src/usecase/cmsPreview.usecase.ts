@@ -59,7 +59,7 @@ export class CmsPreviewUsecase {
       liste_services.push({
         categorie: action_def.lvo_action,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
-        sous_categorie: undefined,
+        sous_categorie: action_def.lvo_objet,
       });
     }
 

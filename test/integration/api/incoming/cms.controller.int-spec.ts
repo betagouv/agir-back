@@ -118,7 +118,7 @@ describe('/api/incoming/cms (API test)', () => {
       pourquoi: 'pourquoi',
       felicitations: 'Bravo !!',
       comment: 'comment',
-      objet_lvo: 'phone',
+      objet_lvo: 'chaussures',
       action_lvo: 'donner',
       type_action: 'quizz',
       categorie_recettes: 'vegan',
@@ -1139,7 +1139,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
-    expect(action.lvo_objet).toEqual('phone');
+    expect(action.lvo_objet).toEqual('chaussures');
     expect(action.recette_categorie).toEqual('vegan');
     expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
@@ -1190,7 +1190,7 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
-    expect(action.lvo_objet).toEqual('phone');
+    expect(action.lvo_objet).toEqual('chaussures');
     expect(action.recette_categorie).toEqual('vegan');
     expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');
@@ -1278,9 +1278,8 @@ describe('/api/incoming/cms (API test)', () => {
     expect(action.kyc_codes).toEqual(['KYC01', 'KYC02']);
     expect(action.faq_ids).toEqual(['5', '6']);
     expect(action.lvo_action).toEqual('donner');
-    expect(action.lvo_objet).toEqual('phone');
+    expect(action.lvo_objet).toEqual('chaussures');
     expect(action.recette_categorie).toEqual('vegan');
-    expect(action.recette_sous_categorie).toEqual('sans_saumon');
     expect(action.recette_sous_categorie).toEqual('sans_saumon');
     expect(action.type).toEqual('quizz');
     expect(action.code).toEqual('code');

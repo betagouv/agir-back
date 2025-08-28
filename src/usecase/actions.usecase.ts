@@ -140,7 +140,7 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.lvo_action,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
-        sous_categorie: undefined,
+        sous_categorie: action_def.lvo_objet,
       });
     }
 
@@ -250,7 +250,7 @@ export class ActionUsecase {
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
-        sous_categorie: undefined,
+        sous_categorie: action_def.lvo_objet,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
       });
     }
