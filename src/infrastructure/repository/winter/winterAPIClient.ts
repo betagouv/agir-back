@@ -187,6 +187,7 @@ export class WinterAPIClient {
       city: nom_commune,
       address: rue,
     };
+    console.log(`Winter PRM search ${JSON.stringify(params)}`);
     try {
       response = await axios.get(SEARCH_PRM_URL, {
         timeout: API_TIMEOUT,
