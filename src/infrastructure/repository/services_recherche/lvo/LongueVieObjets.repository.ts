@@ -5,6 +5,7 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { ObjetLVAO } from '../../../../domain/lvao/objet_LVAO';
 import { ApplicationError } from '../../../applicationError';
 import { AddressesRepository } from '../addresses.repository';
 import { LongueVieObjetsCategorieMapping } from './LongueVieObjetsCategorieMapping';
@@ -205,6 +206,13 @@ export class LongueVieObjetsRepository implements FinderInterface {
 
     if (categorie && categorie !== 'undefined') {
       params['action'] = categorie;
+    }
+    if (filtre.sous_categorie) {
+      const objet = ObjetLVAO[filtre.sous_categorie];
+      if (!objet) {
+        ApplicationError.throwTypeObjetLVAOInconnu(filtre.sous_categorie);
+      }
+      params['objet'] = objet;
     }
 
     try {

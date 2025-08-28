@@ -973,6 +973,13 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwTypeObjetLVAOInconnu(objet: string) {
+    this.throwAppError(
+      '174',
+      `Le type d'objet [${objet}] n'est pas connu du service LVAO`,
+    );
+  }
+
   private static throwAppError(
     code: string,
     message: string,
