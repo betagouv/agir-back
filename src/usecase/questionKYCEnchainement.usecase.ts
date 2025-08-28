@@ -40,12 +40,13 @@ export class QuestionKYCEnchainementUsecase {
       ApplicationError.throwUnkownEnchainement(enchainementId);
     }
 
-    const liste_kycs_codes = EnchainementDefinition.getKycCodesByEnchainementID(
-      EnchainementID[enchainementId],
-    );
+    const liste_kyc_defs =
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID[enchainementId],
+      );
 
     const result =
-      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_codes);
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kyc_defs);
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -161,25 +162,25 @@ export class QuestionKYCEnchainementUsecase {
     }
 
     if (is_enchainement_simulateur) {
-      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+      const kyc_defs = this.actionUsecase.external_get_kyc_defs_from_action(
         TypeAction.simulateur,
         actionCodeType.code,
       );
 
-      return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
+      return utilisateur.kyc_history.getListeKycsFromKycDefs(kyc_defs);
     }
 
     if (is_enchainement_bilan) {
-      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+      const kyc_defs = this.actionUsecase.external_get_kyc_defs_from_action(
         TypeAction.bilan,
         actionCodeType.code,
       );
 
-      return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
+      return utilisateur.kyc_history.getListeKycsFromKycDefs(kyc_defs);
     }
 
-    return utilisateur.kyc_history.getListeKycsFromCodes(
-      EnchainementDefinition.getKycCodesByEnchainementID(
+    return utilisateur.kyc_history.getListeKycsFromKycDefs(
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
         EnchainementID[enchainementId],
       ),
     );

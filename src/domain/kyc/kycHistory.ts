@@ -1,6 +1,7 @@
 import { Categorie } from '../contenu/categorie';
 import { KYCHistory_v2 } from '../object_store/kyc/kycHistory_v2';
 import { Thematique } from '../thematique/thematique';
+import { KycDansEnchainement } from './enchainementDefinition';
 import { KycDefinition } from './kycDefinition';
 import { KYCID } from './KYCID';
 import { KYCMosaicID, MosaicCatalogue } from './mosaicDefinition';
@@ -253,18 +254,20 @@ export class KYCHistory {
   }
 
   public getEnchainementKYCsEligibles(
-    liste_kycs_codes: string[],
+    liste_kycs: KycDansEnchainement[],
   ): QuestionKYC[] {
     const result: QuestionKYC[] = [];
-    for (const kyc_id of liste_kycs_codes) {
-      if (MosaicCatalogue.isMosaicID(kyc_id)) {
-        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_id]);
+    for (const kyc_def of liste_kycs) {
+      if (MosaicCatalogue.isMosaicID(kyc_def.id)) {
+        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_def.id]);
         if (mosaic) {
+          mosaic.is_mandatory = kyc_def.is_mandatory;
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getQuestion(kyc_id);
+        const kyc = this.getQuestion(kyc_def.id);
         if (kyc && this.isKYCEligible(kyc)) {
+          kyc.is_mandatory = kyc_def.is_mandatory;
           result.push(kyc);
         }
       }
@@ -272,17 +275,21 @@ export class KYCHistory {
     return result;
   }
 
-  public getListeKycsFromCodes(liste_kycs_codes: string[]): QuestionKYC[] {
+  public getListeKycsFromKycDefs(
+    liste_kycs_defs: KycDansEnchainement[],
+  ): QuestionKYC[] {
     const result: QuestionKYC[] = [];
-    for (const kyc_code of liste_kycs_codes) {
-      if (MosaicCatalogue.isMosaicID(kyc_code)) {
-        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_code]);
+    for (const kyc_def of liste_kycs_defs) {
+      if (MosaicCatalogue.isMosaicID(kyc_def.id)) {
+        const mosaic = this.getUpToDateMosaicById(KYCMosaicID[kyc_def.id]);
         if (mosaic) {
+          mosaic.is_mandatory = kyc_def.is_mandatory;
           result.push(mosaic);
         }
       } else {
-        const kyc = this.getQuestion(kyc_code);
+        const kyc = this.getQuestion(kyc_def.id);
         if (kyc) {
+          kyc.is_mandatory = kyc_def.is_mandatory;
           result.push(kyc);
         }
       }

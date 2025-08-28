@@ -93,23 +93,23 @@ export class ThematiqueBoardUsecase {
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
 
     let transport_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition.getKycCodesByEnchainementID(
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
         EnchainementID.ENCHAINEMENT_KYC_personnalisation_transport,
       ),
     );
     let logement_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition.getKycCodesByEnchainementID(
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
         EnchainementID.ENCHAINEMENT_KYC_personnalisation_logement,
       ),
     );
     let conso_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition.getKycCodesByEnchainementID(
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
         EnchainementID.ENCHAINEMENT_KYC_personnalisation_consommation,
       ),
     );
     let alimentation_reco =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_personnalisation_alimentation,
         ),
       );

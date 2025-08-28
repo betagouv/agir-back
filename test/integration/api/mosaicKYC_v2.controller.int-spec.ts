@@ -264,6 +264,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre test',
       is_answered: true,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -392,6 +393,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -450,6 +452,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -685,6 +688,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_simple: {
         value: '1',
         unite: {
@@ -715,6 +719,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_simple: {
         value: '0',
         unite: {
@@ -875,6 +880,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'Titre test',
       is_NGC: false,
       is_answered: true,
+      is_mandatory: false,
       is_skipped: false,
       thematique: Thematique.alimentation,
       reponse_multiple: [
@@ -1037,6 +1043,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -1064,7 +1071,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie une mosaic depuis le catalogue, avec un KYC depuis l'historique, cas du non`, async () => {
+  it(`Gpuis l'historique, cas du non`, async () => {
     // GIVEN
     MosaicDefinition.TEST_MOSAIC_ID = {
       id: KYCMosaicID.TEST_MOSAIC_ID,
@@ -1154,6 +1161,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -1271,6 +1279,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {

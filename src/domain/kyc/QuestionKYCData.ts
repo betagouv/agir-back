@@ -86,6 +86,7 @@ export class QuestionKYCData implements TaggedContent {
   is_NGC: boolean;
   a_supprimer: boolean;
   is_answered: boolean;
+  is_mandatory: boolean;
   is_skipped: boolean;
   tags: Tag[];
   score: number;
@@ -121,6 +122,7 @@ export class QuestionKYCData implements TaggedContent {
     this.last_update = data.last_update;
     this.is_answered = false;
     this.is_skipped = false;
+    this.is_mandatory = false;
 
     this.reponse_simple = data.reponse_simple;
     this.reponse_complexe = data.reponse_complexe

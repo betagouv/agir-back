@@ -219,32 +219,32 @@ export class BilanCarboneUsecase {
   ): EnchainementRecap {
     const enchainement_mini_bilan =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_mini_bilan_carbone,
         ),
       );
 
     let enchainement_transport =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_bilan_transport,
         ),
       );
     let enchainement_logement =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_bilan_logement,
         ),
       );
     let enchainement_conso =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_bilan_consommation,
         ),
       );
     let enchainement_alimentation =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition.getKycCodesByEnchainementID(
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
           EnchainementID.ENCHAINEMENT_KYC_bilan_alimentation,
         ),
       );

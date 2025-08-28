@@ -20,7 +20,7 @@ export type GlobalKYCID = KYCID | KYCMosaicID;
 
 export class KycDansEnchainement {
   id: GlobalKYCID;
-  is_mandatory?: boolean;
+  is_mandatory: boolean;
 }
 
 const EnchainementDefinitionData: Record<
@@ -28,120 +28,141 @@ const EnchainementDefinitionData: Record<
   KycDansEnchainement[]
 > = {
   ENCHAINEMENT_KYC_1: [
-    { id: KYCID.KYC001 },
-    { id: KYCMosaicID.TEST_MOSAIC_ID },
+    { id: KYCID.KYC001, is_mandatory: false },
+    { id: KYCMosaicID.TEST_MOSAIC_ID, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_action_simulateur_voiture: [
-    { id: KYCID.KYC_transport_type_utilisateur },
-    { id: KYCID.KYC_transport_voiture_occasion },
-    { id: KYCID.KYC_transport_voiture_km },
-    { id: KYCID.KYC_transport_voiture_duree_detention },
-    { id: KYCID.KYC_transport_voiture_annee_fabrication },
-    { id: KYCID.KYC_transport_voiture_prix_achat },
-    { id: KYCID.KYC_transport_voiture_gabarit },
-    { id: KYCID.KYC_transport_voiture_motorisation },
-    { id: KYCID.KYC_transport_voiture_thermique_carburant },
-    { id: KYCID.KYC_transport_voiture_thermique_consomation_carburant },
-    { id: KYCID.KYC_transport_voiture_thermique_prix_carburant },
-    { id: KYCID.KYC_transport_voiture_electrique_consommation },
-    { id: KYCID.KYC_transport_voiture_electrique_prix_kwh },
-    { id: KYCID.KYC_transport_voiture_couts_entretien },
-    { id: KYCID.KYC_transport_voiture_couts_assurance },
-    { id: KYCID.KYC_transport_voiture_couts_stationnement },
-    { id: KYCID.KYC_transport_voiture_couts_peage },
+    { id: KYCID.KYC_transport_type_utilisateur, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_occasion, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_km, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_duree_detention, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_annee_fabrication, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_prix_achat, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_gabarit, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_motorisation, is_mandatory: false },
+    {
+      id: KYCID.KYC_transport_voiture_thermique_carburant,
+      is_mandatory: false,
+    },
+    {
+      id: KYCID.KYC_transport_voiture_thermique_consomation_carburant,
+      is_mandatory: false,
+    },
+    {
+      id: KYCID.KYC_transport_voiture_thermique_prix_carburant,
+      is_mandatory: false,
+    },
+    {
+      id: KYCID.KYC_transport_voiture_electrique_consommation,
+      is_mandatory: false,
+    },
+    {
+      id: KYCID.KYC_transport_voiture_electrique_prix_kwh,
+      is_mandatory: false,
+    },
+    { id: KYCID.KYC_transport_voiture_couts_entretien, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_couts_assurance, is_mandatory: false },
+    {
+      id: KYCID.KYC_transport_voiture_couts_stationnement,
+      is_mandatory: false,
+    },
+    { id: KYCID.KYC_transport_voiture_couts_peage, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_actions_watt_watchers: [
     { id: KYCID.KYC_type_logement, is_mandatory: true },
-    { id: KYCID.KYC_proprietaire },
+    { id: KYCID.KYC_proprietaire, is_mandatory: false },
     { id: KYCID.KYC_superficie, is_mandatory: true },
     { id: KYCID.KYC_logement_age, is_mandatory: true },
     { id: KYCID.KYC_menage, is_mandatory: true },
     { id: KYCID.KYC_chauffage, is_mandatory: true },
     { id: KYCID.KYC_type_chauffage_eau, is_mandatory: true },
-    { id: KYCID.KYC_chauffage_reseau },
-    { id: KYCID.KYC_logement_reno_second_oeuvre },
-    { id: KYCID.KYC_electro_refrigerateur },
+    { id: KYCID.KYC_chauffage_reseau, is_mandatory: false },
+    { id: KYCID.KYC_logement_reno_second_oeuvre, is_mandatory: false },
+    { id: KYCID.KYC_electro_refrigerateur, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_alimentation: [
-    { id: KYCID.KYC_alimentation_regime }, // manque quand import NGC Full
-    { id: KYCID.KYC_petitdej },
-    { id: KYCID.KYC_local_frequence },
-    { id: KYCID.KYC_saison_frequence },
-    { id: KYCID.KYC_alimentation_litres_alcool },
-    { id: KYCID.KYC_gaspillage_alimentaire_frequence },
-    { id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS },
+    { id: KYCID.KYC_alimentation_regime, is_mandatory: false }, // manque quand import NGC Full
+    { id: KYCID.KYC_petitdej, is_mandatory: false },
+    { id: KYCID.KYC_local_frequence, is_mandatory: false },
+    { id: KYCID.KYC_saison_frequence, is_mandatory: false },
+    { id: KYCID.KYC_alimentation_litres_alcool, is_mandatory: false },
+    { id: KYCID.KYC_gaspillage_alimentaire_frequence, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_consommation: [
-    { id: KYCID.KYC_consommation_type_consommateur }, // manque quand import NGC Full
-    { id: KYCMosaicID.MOSAIC_LOGEMENT_VACANCES },
-    { id: KYCID.KYC_consommation_relation_objets },
-    { id: KYCMosaicID.MOSAIC_ELECTROMENAGER },
-    { id: KYCMosaicID.MOSAIC_ANIMAUX },
-    { id: KYCMosaicID.MOSAIC_APPAREIL_NUM },
-    { id: KYCMosaicID.MOSAIC_MEUBLES },
-    { id: KYCID.KYC_raison_achat_vetements },
+    { id: KYCID.KYC_consommation_type_consommateur, is_mandatory: false }, // manque quand import NGC Full
+    { id: KYCMosaicID.MOSAIC_LOGEMENT_VACANCES, is_mandatory: false },
+    { id: KYCID.KYC_consommation_relation_objets, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_ELECTROMENAGER, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_ANIMAUX, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_APPAREIL_NUM, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_MEUBLES, is_mandatory: false },
+    { id: KYCID.KYC_raison_achat_vetements, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_logement: [
-    { id: KYCID.KYC_type_logement },
-    { id: KYCID.KYC_menage },
-    { id: KYCID.KYC_superficie },
-    { id: KYCID.KYC_logement_age },
-    { id: KYCMosaicID.MOSAIC_CHAUFFAGE },
-    { id: KYCID.KYC_temperature },
+    { id: KYCID.KYC_type_logement, is_mandatory: false },
+    { id: KYCID.KYC_menage, is_mandatory: false },
+    { id: KYCID.KYC_superficie, is_mandatory: false },
+    { id: KYCID.KYC_logement_age, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_CHAUFFAGE, is_mandatory: false },
+    { id: KYCID.KYC_temperature, is_mandatory: false },
     // TODO: { id : KYCID.KYC_conso_elec},
-    { id: KYCMosaicID.MOSAIC_RENO },
-    { id: KYCID.KYC_photovoltaiques },
-    { id: KYCMosaicID.MOSAIC_EXTERIEUR },
+    { id: KYCMosaicID.MOSAIC_RENO, is_mandatory: false },
+    { id: KYCID.KYC_photovoltaiques, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_EXTERIEUR, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_bilan_transport: [
-    { id: KYCID.KYC_transport_avion_3_annees },
-    { id: KYCID.KYC_transport_heures_avion_court },
-    { id: KYCID.KYC_transport_heures_avion_moyen },
-    { id: KYCID.KYC_transport_heures_avion_long },
-    { id: KYCID.KYC_transport_type_utilisateur },
-    { id: KYCID.KYC_transport_voiture_km },
-    { id: KYCID.KYC_transport_voiture_nbr_voyageurs },
-    { id: KYCID.KYC_transport_voiture_gabarit },
-    { id: KYCID.KYC_transport_voiture_motorisation },
-    { id: KYCID.KYC_transport_voiture_thermique_carburant },
+    { id: KYCID.KYC_transport_avion_3_annees, is_mandatory: false },
+    { id: KYCID.KYC_transport_heures_avion_court, is_mandatory: false },
+    { id: KYCID.KYC_transport_heures_avion_moyen, is_mandatory: false },
+    { id: KYCID.KYC_transport_heures_avion_long, is_mandatory: false },
+    { id: KYCID.KYC_transport_type_utilisateur, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_km, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_nbr_voyageurs, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_gabarit, is_mandatory: false },
+    { id: KYCID.KYC_transport_voiture_motorisation, is_mandatory: false },
+    {
+      id: KYCID.KYC_transport_voiture_thermique_carburant,
+      is_mandatory: false,
+    },
     // NOTE: attendre que tous les fronts aient implémenté la possibilité
     // de passer les questions.
     // { id : KYCID.KYC_transport_voiture_electrique_consommation},
     // { id : KYCID.KYC_transport_voiture_thermique_consomation_carburant},
-    { id: KYCID.KYC_transport_2roues_usager },
-    { id: KYCID.KYC_2roue_motorisation_type },
-    { id: KYCID.KYC_2roue_km },
+    { id: KYCID.KYC_transport_2roues_usager, is_mandatory: false },
+    { id: KYCID.KYC_2roue_motorisation_type, is_mandatory: false },
+    { id: KYCID.KYC_2roue_km, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_mini_bilan_carbone: [
-    { id: KYCID.KYC_transport_voiture_km },
-    { id: KYCID.KYC_transport_avion_3_annees },
-    { id: KYCMosaicID.MOSAIC_CHAUFFAGE },
-    { id: KYCID.KYC_superficie },
-    { id: KYCID.KYC_menage },
-    { id: KYCID.KYC_alimentation_regime },
-    { id: KYCID.KYC_consommation_type_consommateur },
+    { id: KYCID.KYC_transport_voiture_km, is_mandatory: false },
+    { id: KYCID.KYC_transport_avion_3_annees, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_CHAUFFAGE, is_mandatory: false },
+    { id: KYCID.KYC_superficie, is_mandatory: false },
+    { id: KYCID.KYC_menage, is_mandatory: false },
+    { id: KYCID.KYC_alimentation_regime, is_mandatory: false },
+    { id: KYCID.KYC_consommation_type_consommateur, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_personnalisation_alimentation: [
-    { id: KYCID.KYC_alimentation_regime },
-    { id: KYCID.KYC_saison_frequence },
-    { id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS },
-    { id: KYCID.KYC_local_frequence },
+    { id: KYCID.KYC_alimentation_regime, is_mandatory: false },
+    { id: KYCID.KYC_saison_frequence, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_REDUCTION_DECHETS, is_mandatory: false },
+    { id: KYCID.KYC_local_frequence, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_personnalisation_consommation: [
-    { id: KYCID.KYC_consommation_relation_objets },
-    { id: KYCID.KYC_consommation_type_consommateur },
+    { id: KYCID.KYC_consommation_relation_objets, is_mandatory: false },
+    { id: KYCID.KYC_consommation_type_consommateur, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_personnalisation_logement: [
-    { id: KYCID.KYC_type_logement },
-    { id: KYCID.KYC_proprietaire },
-    { id: KYCID.KYC_jardin },
-    { id: KYCMosaicID.MOSAIC_CHAUFFAGE },
-    { id: KYCMosaicID.MOSAIC_RENO },
+    { id: KYCID.KYC_type_logement, is_mandatory: false },
+    { id: KYCID.KYC_proprietaire, is_mandatory: false },
+    { id: KYCID.KYC_jardin, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_CHAUFFAGE, is_mandatory: false },
+    { id: KYCMosaicID.MOSAIC_RENO, is_mandatory: false },
   ],
   ENCHAINEMENT_KYC_personnalisation_transport: [
-    { id: KYCID.KYC_transport_avion_3_annees },
-    { id: KYCID.KYC003 },
-    { id: KYCID.KYC_possede_voiture_oui_non },
+    { id: KYCID.KYC_transport_avion_3_annees, is_mandatory: false },
+    { id: KYCID.KYC003, is_mandatory: false },
+    { id: KYCID.KYC_possede_voiture_oui_non, is_mandatory: false },
   ],
 };
 
@@ -155,6 +176,12 @@ export class EnchainementDefinition {
     } else {
       return [];
     }
+  }
+  public static getKycDefinitionsByEnchainementID(
+    enchainement_id: EnchainementID,
+  ): KycDansEnchainement[] {
+    const liste = EnchainementDefinitionData[enchainement_id];
+    return liste ? liste : [];
   }
 
   public static isKycMandatoryInEnchainement(

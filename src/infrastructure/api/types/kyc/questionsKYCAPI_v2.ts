@@ -65,6 +65,9 @@ export class QuestionKYCAPI_v2 {
   is_answered: boolean;
 
   @ApiProperty()
+  is_mandatory: boolean;
+
+  @ApiProperty()
   is_skipped: boolean;
 
   @ApiProperty({ type: ReponseUniqueAPI })
@@ -83,6 +86,7 @@ export class QuestionKYCAPI_v2 {
       reponse_unique: undefined,
       reponse_multiple: undefined,
       is_answered: question.is_answered,
+      is_mandatory: question.is_mandatory,
       is_skipped: question.is_skipped,
       categorie: question.categorie,
       points: question.points,
