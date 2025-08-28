@@ -88,6 +88,9 @@ export class LongueVieObjetsRepository implements FinderInterface {
     }
     if (App.isLVAOInnerService()) {
       const result = await this.callInnerServiceAPI(filtre, categorie_lvo);
+      if (!result) {
+        ApplicationError.throwExternalServiceError('Longue vie objets');
+      }
       const final_result: ResultatRecherche[] = result.map(
         (r) =>
           new ResultatRecherche({
