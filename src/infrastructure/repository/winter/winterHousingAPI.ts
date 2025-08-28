@@ -27,22 +27,22 @@ export type WinterHousingData = {
   hasGasOven?: boolean; // MAPPED KYC 318 => INCLUS ACTION
   hasOvenInWorkingPlan?: boolean; // MAPPED KYC 319 => INCLUS ACTION
   hasGasHotPlate?: boolean; // MAPPED KYC 320 => INCLUS ACTION
-  nbDishwasher?: number; // MAPPED KYC 105
-  nbWashingMachine?: number; // MAPPED KYC 103
-  nbDryer?: number; // MAPPED KYC104
-  nbMobileAirConditioner?: number;
-  hasElectricWaterHeater?: boolean;
-  hasElectricHeater?: boolean; // MAPPED KYC 59  => INCLUS ACTION ?
-  hasHeatPump?: boolean; // MAPPED KYC 81
-  heatPumpType?: 'air-air' | 'air-water' | 'geotermal';
-  hasWaterHeaterStorage?: boolean;
-  nbSolarPanel?: number; // MAPPED KYC 64
-  nbElectricCar?: number; // MAPPED KYC 141
-  nbElectricBike?: number; // MAPPED KYC 237
-  nbElectricScooter?: number; // MAPPED KYC 147
-  housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 309 => INCLUS ACTION
-  sharedWalls?: boolean;
-  livingArea?: number; //MAPPED KYC 62
+  nbDishwasher?: number; // MAPPED KYC 105 => INCLUS ACTION
+  nbWashingMachine?: number; // MAPPED KYC 103 => INCLUS ACTION
+  nbDryer?: number; // MAPPED KYC104 => INCLUS ACTION
+  nbMobileAirConditioner?: number; // MAPPED KYC 321 => INCLUS ACTION
+  hasElectricWaterHeater?: boolean; // MAPPED 110 => INCUS ACTION
+  hasElectricHeater?: boolean; // MAPPED KYC 59  => INCLUS ACTION
+  hasHeatPump?: boolean; // MAPPED KYC 81 => INCLUS ACTION
+  heatPumpType?: 'air-air' | 'air-water' | 'geotermal'; // MAPPED KYC 323 => INCLUS ACTION
+  hasWaterHeaterStorage?: boolean; // MAPPED KYC 324 => INCLUS ACTION
+  nbSolarPanel?: number; // MAPPED KYC 325  => INCLUS ACTION
+  nbElectricCar?: number; // MAPPED KYC 326 => INCLUS ACTION
+  nbElectricBike?: number; // MAPPED KYC 327 => INCLUS ACTION
+  nbElectricScooter?: number; // MAPPED KYC 328 => INCLUS ACTION
+  housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 56 => INCLUS ACTION
+  sharedWalls?: boolean; // MAPPED KYC 329 => INCLUS ACTION
+  livingArea?: number; //MAPPED KYC 62 => INCLUS ACTION
   housingYear?:
     | 'unknown'
     | 'before_48'
@@ -50,9 +50,9 @@ export type WinterHousingData = {
     | '89-11'
     | '12-21'
     | 'after_21'; // MAPPED KYC 191  => INCLUS ACTION
-  houseLevels?: number;
-  houseExteriorWalls?: number;
-  apartmentFloor?: 'ground' | 'intermediate' | 'last';
+  houseLevels?: number; // MAPPED KYC 330  => INCLUS ACTION
+  houseExteriorWalls?: number; // MAPPED KYC 331  => INCLUS ACTION
+  apartmentFloor?: 'ground' | 'intermediate' | 'last'; // MAPPED KYC 332  => INCLUS ACTION
   heatingType?: 'district_heating_network' | 'personal' | 'dont-know'; // MAPPED KYC 84  => INCLUS ACTION
   generatorTypeOther?: (
     | 'electric'
@@ -83,8 +83,8 @@ export type WinterHousingData = {
   >;
   hasAuxilaryGenerator?: boolean;
   renovatedGeneratorType?: 'air-air' | 'air-water';
-  hotWaterType?:
-    | 'electric_water_heater'
+  hotWaterType?: // MAPPED KYC 310 => INCLUS ACTION
+  | 'electric_water_heater'
     | 'heat_pump'
     | 'electric_water_heater_thermodynamic'
     | 'boiler_gaz'
@@ -92,14 +92,14 @@ export type WinterHousingData = {
     | 'urban_heating_or_biomass'
     | 'other'
     | 'dont-know';
-  boilerInstallationYear?: 'before-2010' | 'after-2010' | 'dont-know';
+  boilerInstallationYear?: 'before-2010' | 'after-2010' | 'dont-know'; // MAPPED KYC 333 => INCLUS ACTION
   recentlyRenovated?: // MAPPED KYC 158 => INCLUS ACTION
   'floor' | 'walls' | 'generator' | 'attics' | 'roof' | 'vents' | 'windows';
   hasDoneWorks?: boolean; // MAPPED KYC 158 => INCLUS ACTION
   renovatedWalls?: boolean;
-  highFloorType?: 'converted_attics' | 'attics';
-  windowType?: 'middle_class' | 'high_class';
-  ventTypev?: 'simple_vmc' | 'double_vmc';
+  highFloorType?: 'converted_attics' | 'attics'; // MAPPED KYC 334 => INCLUS ACTION
+  windowType?: 'middle_class' | 'high_class'; // MAPPED KYC_menage 335 => INCLUS ACTION
+  ventTypev?: 'simple_vmc' | 'double_vmc'; // MAPPED KYC 336 => INCLUS ACTION
   inhabitantType?: 'owner' | 'tenant' | 'lessor'; // MAPPED KYC 61  => INCLUS ACTION
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement

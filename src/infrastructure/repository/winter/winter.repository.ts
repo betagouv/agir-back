@@ -24,12 +24,53 @@ const MAPPED_KYCS: string[] = [
   KYCID.KYC_electro_seche_linge,
   KYCID.KYC_chauffage,
   KYCID.KYC_chauffage_pompe_chaleur,
-  KYCID.KYC_photovoltaiques,
-  KYCID.KYC_transport_voiture_motorisation,
-  KYCID.KYC_transport_vae_possede,
-  KYCID.KYC_2roue_motorisation_type,
   KYCID.KYC_logement_age,
   KYCID.KYC_logement_reno_second_oeuvre,
+  KYCID.KYC_type_logement,
+  KYCID.KYC_proprietaire,
+  KYCID.KYC_superficie,
+  KYCID.KYC_logement_nbr_etages,
+  KYCID.KYC_logement_nombre_murs_exterieurs,
+  KYCID.KYC_logement_etage,
+  KYCID.KYC_logement_age,
+  KYCID.KYC_logement_murs_commun,
+  KYCID.KYC_logement_combles_amenages,
+  KYCID.KYC_logement_vitrage,
+  KYCID.KYC_logement_vmc,
+  KYCID.KYC_menage,
+  KYCID.KYC_chauffage,
+  KYCID.KYC_chauffage_installation_date,
+  KYCID.KYC_type_chauffage_eau,
+  KYCID.KYC_chauffage_reseau,
+  KYCID.KYC_logement_reno_second_oeuvre,
+  KYCID.KYC_electro_petit_refrigerateur,
+  KYCID.KYC_electro_refrigerateur,
+  KYCID.KYC_logement_frigo_americain,
+  KYCID.KYC_electro_congelateur,
+  KYCID.KYC_loisir_piscine_type,
+  KYCID.KYC_electro_cave_a_vin,
+  KYCID.KYC_appareil_television,
+  KYCID.KYC_appareil_console_salon,
+  KYCID.KYC_appareil_box_internet,
+  KYCID.KYC_electro_plaques,
+  KYCID.KYC_electro_cuiseur_elec,
+  KYCID.KYC_electro_four_elec,
+  KYCID.KYC_electro_four_gaz,
+  KYCID.KYC_electro_four_externe,
+  KYCID.KYC_electro_plaques_gaz,
+  KYCID.KYC_electro_lave_vaiselle,
+  KYCID.KYC_electro_lave_linge,
+  KYCID.KYC_electro_seche_linge,
+  KYCID.KYC_electro_climatiseur_mobile,
+  KYCID.KYC_electro_bouilloire,
+  KYCID.KYC_chauffage_pompe_chaleur,
+  KYCID.KYC_chauffage_pompe_chaleur_type,
+  KYCID.KYC_chauffage_stockage_eau_chaude,
+  KYCID.KYC_photovoltaiques,
+  KYCID.KYC_elec_nbr_panneaux_solaires,
+  KYCID.KYC_transport_nbr_voitures_elec,
+  KYCID.KYC_transport_nbr_velo_elec,
+  KYCID.KYC_transport_nbr_scooter_elec,
 ];
 
 @Injectable()
@@ -233,6 +274,7 @@ export class WinterRepository {
     const loisir_piscine_type = getChoixU(KYCID.KYC_loisir_piscine_type);
     const appareil_television = getNumQ(KYCID.KYC_appareil_television);
     const appareil_console_salon = getNumQ(KYCID.KYC_appareil_console_salon);
+    const nbr_panneaux_solaires = getNumQ(KYCID.KYC_elec_nbr_panneaux_solaires);
     const box_internet = getNumQ(KYCID.KYC_appareil_box_internet);
     const electro_plaques = getNumQ(KYCID.KYC_electro_plaques);
     const electro_cuiseur_elec = getChoixU(KYCID.KYC_electro_cuiseur_elec);
@@ -240,15 +282,34 @@ export class WinterRepository {
     const electro_four_gaz = getChoixU(KYCID.KYC_electro_four_gaz);
     const electro_four_externe = getChoixU(KYCID.KYC_electro_four_gaz);
     const electro_plaques_gaz = getChoixU(KYCID.KYC_electro_plaques_gaz);
+    const combles_amenage_value = getChoixU(
+      KYCID.KYC_logement_combles_amenages,
+    );
+    const vitrage_value = getChoixU(KYCID.KYC_logement_vitrage);
+    const vmc_value = getChoixU(KYCID.KYC_logement_vmc);
+    const stockage_eau_chaude = getChoixU(
+      KYCID.KYC_chauffage_stockage_eau_chaude,
+    );
     const electro_lave_vaiselle = getNumQ(KYCID.KYC_electro_lave_vaiselle);
 
     const electro_lave_linge = getNumQ(KYCID.KYC_electro_lave_linge);
     const electro_seche_linge = getNumQ(KYCID.KYC_electro_seche_linge);
+    const electro_climatiseur_mobile = getNumQ(
+      KYCID.KYC_electro_climatiseur_mobile,
+    );
     const chauffage = user.kyc_history.getQuestionChoixMultiple(
       KYCID.KYC_chauffage,
     );
+    const type_pompe_chaleur = getChoixU(
+      KYCID.KYC_chauffage_pompe_chaleur_type,
+    );
+    const type_etage_logement = getChoixU(KYCID.KYC_logement_etage);
+
     const chauffage_reseau = getChoixU(KYCID.KYC_chauffage_reseau);
     const chauffage_eau = getChoixU(KYCID.KYC_type_chauffage_eau);
+    const epoque_chauffage_value = getChoixU(
+      KYCID.KYC_chauffage_installation_date,
+    );
 
     let hot_water_type = 'dont-know';
     if (chauffage_eau.isSelected('chauffe_eau_elec'))
@@ -272,6 +333,76 @@ export class WinterRepository {
       if (chauffage.isSelected('gaz')) gen_types.push('boiler_gas');
       if (chauffage.isSelected('ne_sais_pas')) gen_types.push('dont-know');
     }
+
+    let type_pompe_chaleur_value: 'air-air' | 'air-water' | 'geotermal';
+    if (type_pompe_chaleur) {
+      if (type_pompe_chaleur.isSelected('air_air')) {
+        type_pompe_chaleur_value = 'air-air';
+      }
+      if (type_pompe_chaleur.isSelected('air_eau')) {
+        type_pompe_chaleur_value = 'air-water';
+      }
+      if (type_pompe_chaleur.isSelected('geothermique')) {
+        type_pompe_chaleur_value = 'geotermal';
+      }
+    }
+
+    let type_etage: 'ground' | 'intermediate' | 'last';
+    if (type_etage_logement) {
+      if (type_etage_logement.isSelected('rez_chaussee')) {
+        type_etage = 'ground';
+      }
+      if (type_etage_logement.isSelected('intermediaire')) {
+        type_etage = 'intermediate';
+      }
+      if (type_etage_logement.isSelected('dernier_etage')) {
+        type_etage = 'last';
+      }
+    }
+
+    let combles: 'converted_attics' | 'attics';
+    if (combles_amenage_value) {
+      if (combles_amenage_value.isSelected('oui')) {
+        combles = 'converted_attics';
+      }
+      if (combles_amenage_value.isSelected('non')) {
+        combles = 'attics';
+      }
+    }
+
+    let vitrage: 'middle_class' | 'high_class';
+    if (vitrage_value) {
+      if (vitrage_value.isSelected('simple_vitrage')) {
+        vitrage = 'middle_class';
+      }
+      if (vitrage_value.isSelected('double_vitrage')) {
+        vitrage = 'high_class';
+      }
+    }
+
+    let vmc: 'simple_vmc' | 'double_vmc';
+    if (vmc_value) {
+      if (vmc_value.isSelected('simple')) {
+        vmc = 'simple_vmc';
+      }
+      if (vmc_value.isSelected('double')) {
+        vmc = 'double_vmc';
+      }
+    }
+
+    let epoque_chauffage: 'before-2010' | 'after-2010' | 'dont-know';
+    if (epoque_chauffage_value) {
+      if (epoque_chauffage_value.isSelected('avant_2010')) {
+        epoque_chauffage = 'before-2010';
+      }
+      if (epoque_chauffage_value.isSelected('apres_2010')) {
+        epoque_chauffage = 'after-2010';
+      }
+      if (epoque_chauffage_value.isSelected('ne_sais_pas')) {
+        epoque_chauffage = 'dont-know';
+      }
+    }
+
     if (gen_types.length === 0) {
       gen_types.push('dont-know');
     }
@@ -279,13 +410,13 @@ export class WinterRepository {
     const chauffage_pompe_chaleur = getChoixU(
       KYCID.KYC_chauffage_pompe_chaleur,
     );
-    const photovoltaiques = getChoixU(KYCID.KYC_photovoltaiques);
-    const transport_voiture_motorisation = getChoixU(
-      KYCID.KYC_transport_voiture_motorisation,
+    const bouilloire_elec = getNumQ(KYCID.KYC_electro_bouilloire);
+    const transport_nbr_voitures_elec = getNumQ(
+      KYCID.KYC_transport_nbr_voitures_elec,
     );
-    const transport_vae_possede = getChoixU(KYCID.KYC_transport_vae_possede);
-    const deuxroue_motorisation_type = getChoixU(
-      KYCID.KYC_2roue_motorisation_type,
+    const transport_nbr_velo_elec = getNumQ(KYCID.KYC_transport_nbr_velo_elec);
+    const transport_nbr_scooter_elec = getNumQ(
+      KYCID.KYC_transport_nbr_scooter_elec,
     );
     const logement_age = getNumQ(KYCID.KYC_logement_age);
 
@@ -311,7 +442,12 @@ export class WinterRepository {
 
     const logement_proprio = getChoixU(KYCID.KYC_proprietaire);
     const logement_type = getChoixU(KYCID.KYC_type_logement);
+    const murs_communs = getChoixU(KYCID.KYC_logement_murs_commun);
     const logement_superficie = getNumQ(KYCID.KYC_superficie);
+    const nombre_niveaux = getNumQ(KYCID.KYC_logement_nbr_etages);
+    const nombre_murs_exterieurs = getNumQ(
+      KYCID.KYC_logement_nombre_murs_exterieurs,
+    );
 
     const logement_habitants = getNumQ(KYCID.KYC_menage);
 
@@ -336,36 +472,39 @@ export class WinterRepository {
       hasElectricHotPlate: electro_plaques
         ? electro_plaques.getValue() > 1
         : undefined,
+      hasElectricWaterHeater: bouilloire_elec
+        ? bouilloire_elec.getValue() > 1
+        : undefined,
       nbDishwasher: electro_lave_vaiselle?.getValue(),
       nbWashingMachine: electro_lave_linge?.getValue(),
       nbDryer: electro_seche_linge?.getValue(),
+      nbMobileAirConditioner: electro_climatiseur_mobile?.getValue(),
       hasElectricHeater: chauffage?.isSelected('electricite'),
       hasHeatPump: chauffage_pompe_chaleur?.getSelectedCode() === 'oui',
+      heatPumpType: type_pompe_chaleur_value,
       hasElectricCooker: electro_cuiseur_elec?.getSelectedCode() === 'oui',
       hasElectricOven: electro_four_elec?.getSelectedCode() === 'oui',
       hasGasOven: electro_four_gaz?.getSelectedCode() === 'oui',
       hasOvenInWorkingPlan: electro_four_externe?.getSelectedCode() === 'oui',
       hasGasHotPlate: electro_plaques_gaz?.getSelectedCode() === 'oui',
-      nbSolarPanel:
-        photovoltaiques && photovoltaiques.getSelectedCode() === 'oui'
-          ? 10
-          : undefined,
-      nbElectricCar:
-        transport_voiture_motorisation?.getSelectedCode() === 'electrique'
-          ? 1
-          : undefined,
-      nbElectricBike:
-        transport_vae_possede?.getSelectedCode() === 'oui' ? 1 : undefined,
-      nbElectricScooter:
-        deuxroue_motorisation_type?.getSelectedCode() === 'scoot_elec'
-          ? 1
-          : undefined,
+      hasWaterHeaterStorage: stockage_eau_chaude?.getSelectedCode() === 'oui',
+      nbSolarPanel: nbr_panneaux_solaires?.getValue(),
+      nbElectricCar: transport_nbr_voitures_elec?.getValue(),
+      nbElectricBike: transport_nbr_velo_elec?.getValue(),
+      nbElectricScooter: transport_nbr_scooter_elec?.getValue(),
       housingYear: fourchette_annee_logement as any,
-      housingType: logement_type.isSelected('type_maison')
+      housingType: logement_type?.isSelected('type_maison')
         ? 'house'
         : 'apartment',
+      sharedWalls: murs_communs?.isSelected('oui'),
       livingArea: logement_superficie.getValue(),
+      highFloorType: combles,
+      houseLevels: nombre_niveaux?.getValue(),
+      houseExteriorWalls: nombre_murs_exterieurs?.getValue(),
+      apartmentFloor: type_etage,
+      ventTypev: vmc,
       hotWaterType: hot_water_type as any,
+      boilerInstallationYear: epoque_chauffage,
       heatingType: chauffage_reseau.isSelected('oui')
         ? 'district_heating_network'
         : 'personal',
