@@ -346,7 +346,7 @@ export class BilanCarboneUsecase {
         },
         {
           image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
+            'https://res.cloudinary.com/dq023imd8/image/upload/v1732864046/conso_9ac33f4ee7.svg',
           thematique: Thematique.consommation,
           nombre_total_question: recap.enchainement_conso_progression.target,
           pourcentage_progression: Math.round(
