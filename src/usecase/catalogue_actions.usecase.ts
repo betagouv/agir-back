@@ -117,7 +117,6 @@ export class CatalogueActionUsecase {
     );
 
     Utilisateur.checkState(utilisateur);
-
     return await this.external_get_utilisateur_catalogue(
       utilisateur,
       liste_thematiques,
@@ -150,6 +149,9 @@ export class CatalogueActionUsecase {
 
     const filtre: ActionFilter = {};
 
+    const start = Date.now();
+    console.log(`T1 ${Date.now() - start}`);
+
     filtre.recommandation = recommandation;
     filtre.realisation = realisation;
     filtre.consultation = consultation;
@@ -172,11 +174,13 @@ export class CatalogueActionUsecase {
       filtre.recommandation = Recommandation.recommandee;
     }
 
+    console.log(`T2 ${Date.now() - start}`);
     catalogue.actions = await this.external_get_user_actions(
       utilisateur,
       filtre,
     );
 
+    console.log(`T3 ${Date.now() - start}`);
     catalogue.consultation = consultation;
     catalogue.realisation = realisation;
     catalogue.recommandation = recommandation;
@@ -184,15 +188,19 @@ export class CatalogueActionUsecase {
     this.setFiltreThematiqueToCatalogue(catalogue, liste_thematiques);
     this.setFiltreSelectionToCatalogue(catalogue, liste_selections);
 
+    console.log(`T4 ${Date.now() - start}`);
     for (const action of catalogue.actions) {
       this.setCompteurActionsEtLabel(action);
     }
 
+    console.log(`T5 ${Date.now() - start}`);
     this.setMontantEconomiesEuros(catalogue.actions, utilisateur);
 
+    console.log(`T6 ${Date.now() - start}`);
     catalogue.setNombreResultatsDispo(catalogue.actions.length);
 
     catalogue.actions = catalogue.actions.slice(skip, skip + take);
+    console.log(`T7 ${Date.now() - start}`);
 
     return catalogue;
   }
@@ -201,17 +209,24 @@ export class CatalogueActionUsecase {
     utilisateur: Utilisateur,
     filtre: ActionFilter,
   ): Promise<Action[]> {
+    const start = Date.now();
+    console.log(`TS1 ${Date.now() - start}`);
+
     if (filtre.exclure_rejets_utilisateur) {
       filtre.type_codes_exclus =
         utilisateur.thematique_history.getAllTypeCodeActionsExclues();
     }
+    console.log(`TS2 ${Date.now() - start}`);
 
     const liste_actions = await this.actionRepository.list(filtre);
+    console.log(`TS3 ${Date.now() - start}`);
 
     let actions_resultat: Action[] = [];
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
+
+    console.log(`TS4 ${Date.now() - start}`);
 
     for (const action_def of liste_actions) {
       const count_aides = await this.aidesUsecase.external_count_aides(
@@ -226,15 +241,20 @@ export class CatalogueActionUsecase {
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       actions_resultat.push(action);
     }
+    console.log(`TS5 ${Date.now() - start}`);
 
     utilisateur.thematique_history.tagguerActionRecommandeesDynamiquement(
       actions_resultat,
     );
 
+    console.log(`TS6 ${Date.now() - start}`);
+
     const filtered_reco_actions =
       utilisateur.recommandation.trierEtFiltrerRecommandations(
         actions_resultat,
       );
+
+    console.log(`TS7 ${Date.now() - start}`);
 
     if (filtre.recommandation === Recommandation.recommandee) {
       const new_action_set = [];
@@ -248,6 +268,7 @@ export class CatalogueActionUsecase {
     if (filtre.recommandation === Recommandation.recommandee_et_neutre) {
       actions_resultat = filtered_reco_actions;
     }
+    console.log(`TS8 ${Date.now() - start}`);
 
     actions_resultat = this.filtreParConsultationRealisation(
       actions_resultat,
@@ -255,6 +276,7 @@ export class CatalogueActionUsecase {
       filtre.realisation,
       utilisateur,
     );
+    console.log(`TS9 ${Date.now() - start}`);
 
     return actions_resultat;
   }
