@@ -114,6 +114,7 @@ export class WinterAPIClient {
           Authorization: `Bearer ${App.getWinterAPIKey()}`,
         },
       });
+      console.log(JSON.stringify(response.data));
     } catch (error) {
       console.log(
         `Error calling [winter_usage ${ext_id}] after ${
