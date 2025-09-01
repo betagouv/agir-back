@@ -20,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
 import { MigrationUsecase } from '../../../src/usecase/migration.usescase';
-import { ServiceUsecase } from '../../../src/usecase/service.usecase';
 import { App } from '../../domain/app';
 import { EmailNotification } from '../../domain/notification/notificationHistory';
 import { PushNotificationMessage } from '../../domain/notification/pushNotificationMessage';
@@ -36,7 +35,6 @@ import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecas
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from '../../usecase/recommandation.usecase';
-import { ReferentielUsecase } from '../../usecase/referentiels/referentiel.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -60,13 +58,11 @@ export class AdminController extends GenericControler {
     private migrationUsecase: MigrationUsecase,
     private rechercheServicesUsecase: RechercheServicesUsecase,
     private profileUsecase: ProfileUsecase,
-    private serviceUsecase: ServiceUsecase,
     private adminUsecase: AdminUsecase,
     private aidesUsecase: AidesUsecase,
     private articleUsecase: ArticlesUsecase,
     private communesUsecase: CommunesUsecase,
     private actionUsecase: ActionUsecase,
-    private referentielUsecase: ReferentielUsecase,
     private contactUsecase: ContactUsecase,
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
@@ -109,13 +105,6 @@ export class AdminController extends GenericControler {
     await this.profileUsecase.deleteUtilisateur(utilisateurId);
   }
 
-  @Post('services/refresh_dynamic_data')
-  @ApiOkResponse({ type: [String] })
-  async refreshServiceDynamicData(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.serviceUsecase.refreshScheduledServices();
-  }
-
   @Post('admin/re_inject_situations_NGC')
   @ApiOkResponse({ type: [String] })
   async re_inject_situations_NGC(@Request() req) {
@@ -128,23 +117,6 @@ export class AdminController extends GenericControler {
   async compute_stats(@Request() req) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.rechercheServicesUsecase.computeStatsFavoris();
-  }
-
-  @Post('services/process_async_service')
-  @ApiOkResponse({ type: [String] })
-  async processAsyncService(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    return await this.serviceUsecase.processAsyncServices();
-  }
-
-  @Post('/admin/upsert_service_definitions')
-  @ApiOperation({
-    summary:
-      'Upsert toutes les définitions de services à partir du fichier service_catalogue.ts',
-  })
-  async upsertAllServices(@Request() req) {
-    this.checkCronAPIProtectedEndpoint(req);
-    await this.referentielUsecase.upsertServicesDefinitions();
   }
 
   @Post('/admin/migrate_users')

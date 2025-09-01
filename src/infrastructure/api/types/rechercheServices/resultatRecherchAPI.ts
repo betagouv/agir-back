@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CategorieRechercheManager } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
-import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import {
+  FruitLegume,
+  ResultatRecherche,
+} from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { Day } from '../../../../domain/bibliotheque_services/types/days';
 import { NiveauRisqueLogement } from '../../../../domain/logement/NiveauRisque';
 import { TypeRisqueLogement } from '../../../../domain/logement/TypeRisque';
-import { FruitLegume } from '../../../service/fruits/fruitEtLegumesServiceManager';
 
 export class OpenHourAPI {
   @ApiProperty({ enum: Day }) jour: Day;

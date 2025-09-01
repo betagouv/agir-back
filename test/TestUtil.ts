@@ -18,14 +18,7 @@ import {
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  Aide,
-  Article,
-  Quizz,
-  Service,
-  ServiceDefinition,
-  Utilisateur,
-} from '@prisma/client';
+import { Aide, Article, Quizz, Utilisateur } from '@prisma/client';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeAction } from '../src/domain/actions/typeAction';
@@ -56,7 +49,6 @@ import { ProfileRecommandationUtilisateur_v0 } from '../src/domain/object_store/
 import { ThematiqueHistory_v0 } from '../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Tag_v2 } from '../src/domain/scoring/system_v2/Tag_v2';
 import { Tag } from '../src/domain/scoring/tag';
-import { ServiceStatus } from '../src/domain/service/service';
 import { Thematique } from '../src/domain/thematique/thematique';
 import {
   GlobalUserVersion,
@@ -94,8 +86,6 @@ export enum DB {
   tag = 'tag',
   selection = 'selection',
   conformite = 'conformite',
-  service = 'service',
-  serviceDefinition = 'serviceDefinition',
   thematique = 'thematique',
   article = 'article',
   partenaire = 'partenaire',
@@ -117,8 +107,6 @@ export class TestUtil {
     aide: TestUtil.aideData,
     conformite: TestUtil.conformiteData,
     action: TestUtil.actionData,
-    service: TestUtil.serviceData,
-    serviceDefinition: TestUtil.serviceDefinitionData,
     thematique: TestUtil.thematiqueData,
     article: TestUtil.articleData,
     partenaire: TestUtil.partenaireData,
@@ -205,8 +193,6 @@ export class TestUtil {
   }
 
   static async deleteAll() {
-    await this.prisma.service.deleteMany();
-    await this.prisma.serviceDefinition.deleteMany();
     await this.prisma.utilisateur.deleteMany();
     await this.prisma.situationNGC.deleteMany();
     await this.prisma.thematique.deleteMany();
@@ -814,42 +800,6 @@ export class TestUtil {
       last_month_sent: false,
       last_week: false,
       last_week_sent: false,
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-  static serviceData(override?: Partial<Service>): Service {
-    return {
-      id: 'service-id',
-      utilisateurId: 'utilisateur-id',
-      serviceDefinitionId: 'dummy_live',
-      configuration: {},
-      status: ServiceStatus.CREATED,
-      created_at: undefined,
-      updated_at: undefined,
-      ...override,
-    };
-  }
-  static serviceDefinitionData(
-    override?: Partial<ServiceDefinition>,
-  ): ServiceDefinition {
-    return {
-      id: 'dummy_live',
-      titre: 'titre',
-      url: 'url',
-      icon_url: 'icon_url',
-      image_url: 'image_url',
-      is_local: true,
-      is_url_externe: true,
-      minute_period: 20,
-      scheduled_refresh: null,
-      dynamic_data: {},
-      last_refresh: null,
-      description: 'desc',
-      sous_description: 'sous desc',
-      parametrage_requis: true,
-      thematiques: ['climat', 'logement'],
       created_at: undefined,
       updated_at: undefined,
       ...override,

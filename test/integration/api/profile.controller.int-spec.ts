@@ -62,7 +62,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.serviceDefinition);
     await TestUtil.create(DB.thematique);
 
     // WHEN
@@ -104,7 +103,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     TestUtil.token = process.env.CRON_API_KEY;
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.situationNGC);
-    await TestUtil.create(DB.serviceDefinition);
     await TestUtil.create(DB.thematique);
 
     // WHEN
@@ -1633,8 +1631,6 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
   it(`POST /utilisateurs/id/reset reset d'un utilisateur donné`, async () => {
     // GIVEN
     await TestUtil.create(DB.utilisateur);
-    await TestUtil.create(DB.serviceDefinition);
-    await TestUtil.create(DB.service);
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/reset',
@@ -1642,16 +1638,8 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
       confirmation: 'CONFIRMATION RESET',
     });
 
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
-    const servicesDB = await TestUtil.prisma.service.findMany();
-    const servicesDefDB = await TestUtil.prisma.serviceDefinition.findMany();
-
     // THEN
     expect(response.status).toBe(201);
-    expect(servicesDB).toHaveLength(0);
-    expect(servicesDefDB).toHaveLength(1);
   });
 
   it(`POST /utilisateurs/id/reset erreur si pas la bonne phrase de confirmation`, async () => {

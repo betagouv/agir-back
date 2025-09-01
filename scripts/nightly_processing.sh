@@ -1,8 +1,4 @@
-## npm run execute upsert_service_definitions
-
 ## npm run execute unsubscribe_oprhan_prms
-
-## npm run execute service_statistique
 
 npm run execute update_user_couverture
 

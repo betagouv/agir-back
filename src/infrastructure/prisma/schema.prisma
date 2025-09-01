@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views", "orderByNulls"]
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -56,7 +56,6 @@ model Utilisateur {
   prevent_checkcode_before   DateTime   @default(now())
   sent_email_count           Int        @default(0)
   prevent_sendemail_before   DateTime   @default(now())
-  services                   Service[]
   parts                      Decimal?   @db.Decimal(4, 2)
   abonnement_ter_loire       Boolean    @default(false)
   version                    Int        @default(0)
@@ -426,40 +425,4 @@ model SituationNGC {
   situation     Json?
   created_at    DateTime @default(now()) @db.Timestamptz(3)
   updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-}
-
-model Service {
-  id                  String             @id
-  serviceDefinitionId String
-  serviceDefinition   ServiceDefinition? @relation(fields: [serviceDefinitionId], references: [id])
-  utilisateurId       String
-  utilisateur         Utilisateur        @relation(fields: [utilisateurId], references: [id])
-  configuration       Json               @default("{}")
-  status              String             @default("CREATED")
-
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@unique([serviceDefinitionId, utilisateurId])
-}
-
-model ServiceDefinition {
-  id                 String    @id
-  titre              String
-  icon_url           String?
-  image_url          String?
-  url                String?
-  is_url_externe     Boolean?
-  is_local           Boolean   @default(false)
-  minute_period      Int?
-  scheduled_refresh  DateTime? @db.Timestamptz(3)
-  last_refresh       DateTime? @db.Timestamptz(3)
-  dynamic_data       Json      @default("{}")
-  thematiques        String[]  @default([])
-  description        String?
-  sous_description   String?
-  parametrage_requis Boolean   @default(false)
-  created_at         DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
-  services           Service[]
 }

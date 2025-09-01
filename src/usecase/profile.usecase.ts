@@ -5,9 +5,7 @@ import { PasswordManager } from '../domain/utilisateur/manager/passwordManager';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { UtilisateurUpdateProfileAPI } from '../infrastructure/api/types/utilisateur/utilisateurProfileAPI';
 import { ApplicationError } from '../infrastructure/applicationError';
-import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
 import { OIDCStateRepository } from '../infrastructure/repository/oidcState.repository';
-import { ServiceRepository } from '../infrastructure/repository/service.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { ContactUsecase } from './contact.usecase';
 import { FranceConnectUsecase } from './franceConnect.usecase';
@@ -23,10 +21,8 @@ export type Phrase = {
 export class ProfileUsecase {
   constructor(
     private utilisateurRepository: UtilisateurRepository,
-    private serviceRepository: ServiceRepository,
     private oIDCStateRepository: OIDCStateRepository,
     private contactUsecase: ContactUsecase,
-    private communeRepository: CommuneRepository,
     private franceConnectUsecase: FranceConnectUsecase,
   ) {}
 
@@ -242,8 +238,6 @@ export class ProfileUsecase {
 
     utilisateur.resetAllHistory();
 
-    await this.serviceRepository.deleteAllUserServices(utilisateurId);
-
     await this.utilisateurRepository.updateUtilisateur(utilisateur);
   }
 
@@ -265,7 +259,6 @@ export class ProfileUsecase {
     result.fc_logout_url = logout_url.fc_logout_url;
 
     await this.oIDCStateRepository.delete(utilisateurId);
-    await this.serviceRepository.deleteAllUserServices(utilisateurId);
     await this.utilisateurRepository.delete(utilisateurId);
 
     await this.contactUsecase.delete(utilisateur.email);

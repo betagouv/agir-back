@@ -41,7 +41,6 @@ import './repository/commune.repository.int-spec';
 import './repository/compteurActions.repository.int-spec';
 import './repository/emailTemplate.repository.int-spec';
 import './repository/quizz.repository.int-spec';
-import './repository/service.repository.int-spec';
 import './repository/services_recherche/presdechevous.repository.int-spec';
 import './repository/utilisateur.repository.int-spec';
 import './repository/utilisateurBoard.repository.int-spec';

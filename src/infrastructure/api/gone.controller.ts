@@ -1,4 +1,12 @@
-import { Controller, Get, Patch, Post, Put, Request } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApplicationError } from '../applicationError';
 import { GenericControler } from './genericControler';
@@ -316,6 +324,22 @@ export class GoneController extends GenericControler {
     summary: 'utiliser /recommandations_v3',
   })
   async getUserRecommandationThematique(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Get('utilisateurs/:utilisateurId/services/:serviceDefinitionId')
+  @ApiOperation({
+    summary: 'no more',
+  })
+  async getServiceOfUtilisateur(@Request() req) {
+    ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
+  }
+
+  @Delete('utilisateurs/:utilisateurId/services/:serviceId')
+  @ApiOperation({
+    summary: 'no more',
+  })
+  async deleteServiceFromUtilisateur(@Request() req) {
     ApplicationError.throwThatURLIsGone(this.getURLFromRequest(req));
   }
 }
