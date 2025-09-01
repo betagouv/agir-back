@@ -26,6 +26,7 @@ import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { NGCCalculator } from '../infrastructure/ngc/NGCCalculator';
 import { KycRepository } from '../infrastructure/repository/kyc.repository';
 import { SituationNGCRepository } from '../infrastructure/repository/situationNGC.repository';
+import { ThematiqueRepository } from '../infrastructure/repository/thematique.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const SEUIL_POURCENTAGE_BILAN_COMPLET = 99;
@@ -317,8 +318,9 @@ export class BilanCarboneUsecase {
         recap.pourcentage_prog_totale_sans_mini_bilan,
       liens_bilans_thematiques: [
         {
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
+          image_url: ThematiqueRepository.getThematiqueImageUrl(
+            Thematique.transport,
+          ),
           thematique: Thematique.transport,
           nombre_total_question:
             recap.enchainement_transport_progression.target,
@@ -331,8 +333,9 @@ export class BilanCarboneUsecase {
           temps_minutes: 5,
         },
         {
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
+          image_url: ThematiqueRepository.getThematiqueImageUrl(
+            Thematique.alimentation,
+          ),
           thematique: Thematique.alimentation,
           nombre_total_question:
             recap.enchainement_alimentation_progression.target,
@@ -345,8 +348,9 @@ export class BilanCarboneUsecase {
           temps_minutes: 3,
         },
         {
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1732864046/conso_9ac33f4ee7.svg',
+          image_url: ThematiqueRepository.getThematiqueImageUrl(
+            Thematique.consommation,
+          ),
           thematique: Thematique.consommation,
           nombre_total_question: recap.enchainement_conso_progression.target,
           pourcentage_progression: Math.round(
@@ -358,8 +362,9 @@ export class BilanCarboneUsecase {
           temps_minutes: 10,
         },
         {
-          image_url:
-            'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
+          image_url: ThematiqueRepository.getThematiqueImageUrl(
+            Thematique.logement,
+          ),
           thematique: Thematique.logement,
           nombre_total_question: recap.enchainement_logement_progression.target,
           pourcentage_progression: Math.round(
