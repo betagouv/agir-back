@@ -84,13 +84,16 @@ export class RisquesUsecase {
     }
     let commune: Commune;
     if (code_commune) {
-      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
 
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }
     } else {
-      commune = this.communeRepository.getCommuneByCodeINSEE(
+      commune = this.communeRepository.getCommuneByCodeINSEESansArrondissement(
         utilisateur.logement.code_commune,
       );
     }

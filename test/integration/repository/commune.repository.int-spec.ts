@@ -26,17 +26,20 @@ describe('CommuneRepository', () => {
 
   it('checkCodePostal : revoie true si le code postal existe', async () => {
     // WHEN
-    const result = CommuneRepository.checkCodePostal('91120');
-
-    // THEN
-    expect(result).toStrictEqual(true);
+    try {
+      CommuneRepository.checkCodePostalExists('91120');
+    } catch (error) {
+      fail();
+    }
   });
   it('checkCodePostal : revoie false si le code postal non existant', async () => {
     // WHEN
-    const result = CommuneRepository.checkCodePostal('99999');
-
-    // THEN
-    expect(result).toStrictEqual(false);
+    try {
+      CommuneRepository.checkCodePostalExists('99999');
+      fail();
+    } catch (error) {
+      expect(error.code).toEqual('077');
+    }
   });
   it('getListCommunesParCodePostal : revoie liste vide si le code postal non existant', async () => {
     // WHEN
@@ -353,7 +356,8 @@ describe('CommuneRepository', () => {
   describe('getCommuneByCodeINSEE', () => {
     test('doit retourner la commune pour un code INSEE valide', async () => {
       // WHEN
-      const result = communeRepository.getCommuneByCodeINSEE('21231');
+      const result =
+        communeRepository.getCommuneByCodeINSEESansArrondissement('21231');
 
       // THEN
       expect(result).toBeDefined();
@@ -363,7 +367,8 @@ describe('CommuneRepository', () => {
 
     test('doit retourner undefined pour un code INSEE invalide', async () => {
       // WHEN
-      const result = communeRepository.getCommuneByCodeINSEE('99999');
+      const result =
+        communeRepository.getCommuneByCodeINSEESansArrondissement('99999');
 
       // THEN
       expect(result).toBeUndefined();
@@ -371,7 +376,8 @@ describe('CommuneRepository', () => {
 
     test('doit retourner undefined pour un code INSEE undefined', async () => {
       // WHEN
-      const result = communeRepository.getCommuneByCodeINSEE(undefined);
+      const result =
+        communeRepository.getCommuneByCodeINSEESansArrondissement(undefined);
 
       // THEN
       expect(result).toBeUndefined();
@@ -379,21 +385,12 @@ describe('CommuneRepository', () => {
 
     test('doit retourner la commune pour un code INSEE correspondant à un arrondissement', async () => {
       // WHEN
-      const result = communeRepository.getCommuneByCodeINSEE('75101');
+      const result =
+        communeRepository.getCommuneByCodeINSEESansArrondissement('75101');
 
       // THEN
       expect(result).toHaveProperty('code', '75056');
       expect(result).toHaveProperty('nom', 'Paris');
-    });
-
-    test("doit retourner l'arrondissement pour un code INSEE correspondant à un arrondissement si flag activé", async () => {
-      // WHEN
-      const result = communeRepository.getCommuneByCodeINSEE('75101', true);
-
-      // THEN
-      expect(result).toBeDefined();
-      expect(result.code).toEqual('75101');
-      expect(result.nom).toEqual('Paris 1er Arrondissement');
     });
   });
 });

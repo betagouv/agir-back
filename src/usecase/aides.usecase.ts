@@ -52,9 +52,10 @@ export class AidesUsecase {
       filtre_thematiques,
     );
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     const code_commune = commune?.code;
 
     const aides_nationales: Aide[] = [];
@@ -90,9 +91,10 @@ export class AidesUsecase {
     utilisateur: Utilisateur,
     filtre_thematiques: Thematique[],
   ): Promise<AideDefinition[]> {
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     const code_commune = commune?.code;
 
     const filtre = AideFilter.create(

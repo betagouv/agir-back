@@ -107,9 +107,10 @@ export class ActionUsecase {
 
     utilisateur.recommandation.trierEtFiltrerRecommandations([action]);
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     action.nom_commune = commune.nom;
 
     const filtre_aides = AideFilter.create(
@@ -210,7 +211,10 @@ export class ActionUsecase {
 
     let commune: Commune;
     if (code_commune) {
-      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }

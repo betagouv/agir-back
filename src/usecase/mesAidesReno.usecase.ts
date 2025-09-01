@@ -159,7 +159,10 @@ export class MesAidesRenoUsecase {
     // calls to the commune repository.
     if (utilisateur.logement.code_commune) {
       const code_insee = utilisateur.logement.code_commune;
-      const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
+      const commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_insee,
+        );
       const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(
         commune.code,
       );
@@ -292,7 +295,10 @@ export class MesAidesRenoUsecase {
     [MesAidesRenoRuleNames.logementCommuneCodeInsee]: [
       (utilisateur, value, estLogementPrincipal) => {
         if (estLogementPrincipal && typeof value === 'string') {
-          const commune = this.communeRepository.getCommuneByCodeINSEE(value);
+          const commune =
+            this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+              value,
+            );
           if (commune) {
             utilisateur.logement.code_commune = commune.code;
             // FIXME : ce n'est pas déterministe

@@ -44,9 +44,12 @@ export class AdminUsecase {
         const communes =
           this.communeRepository.getCommunesForCodePostal(code_postal);
         for (const com of communes) {
-          const code_to_check = this.getCommuneGlobale(com.INSEE);
-          if (code_to_check) {
-            liste_codes_communes.add(this.getCommuneGlobale(com.INSEE));
+          const commune_to_check =
+            this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+              com.INSEE,
+            );
+          if (commune_to_check) {
+            liste_codes_communes.add(commune_to_check.code);
           }
         }
       }
@@ -61,7 +64,9 @@ export class AdminUsecase {
         } else {
           aide.liste_codes_communes_hors_EPCI.push({
             code: code_commune,
-            nom: this.communeRepository.getCommuneByCodeINSEE(code_commune).nom,
+            nom: this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+              code_commune,
+            ).nom,
           });
         }
       }
@@ -202,7 +207,10 @@ export class AdminUsecase {
   }
 
   private getCommuneGlobale(code_commune: string): string {
-    const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        code_commune,
+      );
     if (commune) {
       return commune.commune ? commune.commune : code_commune;
     }

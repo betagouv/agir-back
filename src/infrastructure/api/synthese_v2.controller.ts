@@ -146,7 +146,9 @@ export class Synthese_v2Controller extends GenericControler {
       liste_codes_communes_of_input = [code_input];
       code_commune_cible_ou_exemple = code_input;
       const commune_cible =
-        this.communeRepository.getCommuneByCodeINSEE(code_input);
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_input,
+        );
       if (!commune_cible) {
         ApplicationError.throwSirenOuCodeInseeNotFound(code_input);
       }

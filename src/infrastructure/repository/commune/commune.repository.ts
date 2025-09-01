@@ -4,6 +4,7 @@ import _epci from '@etalab/decoupage-administratif/data/epci.json';
 import _regions from '@etalab/decoupage-administratif/data/regions.json';
 import { Injectable } from '@nestjs/common';
 import { CommunesAndEPCI } from '@prisma/client';
+import { ApplicationError } from '../../applicationError';
 import { PrismaService } from '../../prisma/prisma.service';
 import _codes_postaux from './codes_postaux.json';
 import _typologie_communes from './typologie_communes.json';
@@ -272,8 +273,29 @@ export class CommuneRepository {
     return result ? result.nom : 'INCONNU';
   }
 
-  public static checkCodePostal(code_postal: string): boolean {
-    return _codes_postaux[code_postal] !== undefined;
+  public static checkCodePostalExists(code_postal: string) {
+    if (_codes_postaux[code_postal] === undefined) {
+      ApplicationError.throwCodePostalIncorrect(code_postal);
+    }
+  }
+
+  public static checkCodeCommuneExists(code_commune: string) {
+    if (map_code_commune_to_commune.get(code_commune) === undefined) {
+      ApplicationError.throwCodeCommuneNotFound(code_commune);
+    }
+  }
+  public static checkCodeCommuneEtCodePostalCoherent(
+    code_commune: string,
+    code_postal: string,
+  ) {
+    const commune = map_code_commune_to_commune.get(code_commune);
+
+    if (!commune || !commune.codesPostaux.includes(code_postal)) {
+      ApplicationError.throwBadCodePostalAndCommuneAssociation(
+        code_postal,
+        code_commune,
+      );
+    }
   }
 
   // PERF: could we use a more clever data structure to have a O(1) lookup?
@@ -400,7 +422,7 @@ export class CommuneRepository {
       };
     }
 
-    let commune = this.getCommuneByCodeINSEE(liste[0].INSEE);
+    let commune = this.getCommuneByCodeINSEESansArrondissement(liste[0].INSEE);
     if (!commune) {
       for (const commune_insee of LISTE_COMMUNES) {
         if (commune_insee.codesPostaux.includes(code_postal)) {
@@ -464,7 +486,7 @@ export class CommuneRepository {
 
   public estDromCom(code_commune: string): boolean {
     if (!code_commune) return false;
-    const commune = this.getCommuneByCodeINSEE(code_commune);
+    const commune = this.getCommuneByCodeINSEESansArrondissement(code_commune);
     if (!commune) return false;
     return commune.zone === 'com' || commune.zone === 'drom';
   }
@@ -473,29 +495,13 @@ export class CommuneRepository {
    * Get the commune OR A DISTRICT by its INSEE code.
    *
    * @param inseeCode The INSEE code of the commune (e.g. "75056").
-   * @param avec_arrondissement If `false`, it will return the commune without
-   * arrondissement (e.g. "75056" instead of "75101" for "Paris 1er
-   * arrondissement"). If `true`, it will return the commune or the
-   * arrondissement municipal if the INSEE code refers to an arrondissement.
    * @returns The commune if found, `undefined` otherwise.
    *
    * @note The INSEE code is not the same as the postal code. It's a unique
    * identifier for each commune in France in contrast to the postal code which
    * can be shared by multiple communes.
    */
-  getCommuneByCodeINSEE(
-    code_insee: string,
-    avec_arrondissement: boolean = false,
-  ): Commune | undefined {
-    return avec_arrondissement
-      ? CommuneRepository.getCommuneByCodeINSEE_static(code_insee)
-      : this.getCommuneByCodeINSEESansArrondissement(code_insee);
-  }
-
-  // FIXME : passer tout en static, re - intégrer ce faux repository dans le domaine
-  public static getCommuneByCodeINSEE_static(
-    code_insee: string,
-  ): Commune | undefined {
+  public getCommuneByCodeINSEE(code_insee: string): Commune | undefined {
     return map_code_commune_to_commune.get(code_insee);
   }
 
@@ -511,16 +517,16 @@ export class CommuneRepository {
    * const commune = getCommuneByCodeINSEE('69386'); // 'Lyon 6e arrondissement'
    * commune.code; // '69123' (lyon)
    */
-  private getCommuneByCodeINSEESansArrondissement(
+  public getCommuneByCodeINSEESansArrondissement(
     code_insee: string,
   ): Commune | undefined {
-    const commune = CommuneRepository.getCommuneByCodeINSEE_static(code_insee);
+    const commune = map_code_commune_to_commune.get(code_insee);
     if (commune === undefined) {
       return undefined;
     }
 
     return commune.type === 'arrondissement-municipal'
-      ? CommuneRepository.getCommuneByCodeINSEE_static(commune.commune)
+      ? map_code_commune_to_commune.get(commune.commune)
       : commune;
   }
 

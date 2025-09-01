@@ -59,7 +59,10 @@ export class CatalogueActionUsecase {
     let catalogue = new CatalogueAction();
     let commune: Commune;
     if (code_commune) {
-      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }

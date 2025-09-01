@@ -99,9 +99,10 @@ export class BibliothequeUsecase {
       });
     }
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     const code_commune = commune?.code;
     const dept_region =
       CommuneRepository.findDepartementRegionByCodeCommune(code_commune);

@@ -94,7 +94,8 @@ export class WinterRepository {
       ApplicationError.throwWinterDisabled();
     }
 
-    const commune = this.commune_repo.getCommuneByCodeINSEE(code_commune);
+    const commune =
+      this.commune_repo.getCommuneByCodeINSEESansArrondissement(code_commune);
     if (!commune) {
       ApplicationError.throwCodeCommuneNotFound(code_commune);
     }
