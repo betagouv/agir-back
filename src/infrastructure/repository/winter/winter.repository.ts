@@ -502,7 +502,7 @@ export class WinterRepository {
       houseLevels: nombre_niveaux?.getValue(),
       houseExteriorWalls: nombre_murs_exterieurs?.getValue(),
       apartmentFloor: type_etage,
-      ventTypev: vmc,
+      ventType: vmc,
       hotWaterType: hot_water_type as any,
       boilerInstallationYear: epoque_chauffage,
       heatingType: chauffage_reseau.isSelected('oui')
