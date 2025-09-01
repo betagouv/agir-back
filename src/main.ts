@@ -39,7 +39,8 @@ async function bootstrap() {
   });
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new SentryFilter(httpAdapter));
-  //app.use(bodyParser.json({ limit: '50mb' }));
+  const bodyParser = require('body-parser');
+  app.use(bodyParser.json({ limit: '5mb' }));
   //app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   // Activation des requetes cross origin pour le front
   app.enableCors();
