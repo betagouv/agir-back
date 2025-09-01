@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Aide } from '../domain/aides/aide';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { AideFeedback } from '../domain/aides/aideFeedback';
 import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
@@ -46,21 +47,15 @@ export class AidesUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
+    const aide_def_liste = await this.external_get_aides_utilisateur(
+      utilisateur,
+      filtre_thematiques,
+    );
+
     const commune = this.communeRepository.getCommuneByCodeINSEE(
       utilisateur.logement.code_commune,
     );
     const code_commune = commune?.code;
-
-    const filtre = AideFilter.create(
-      utilisateur.logement.code_postal,
-      code_commune,
-      {
-        date_expiration: new Date(),
-        thematiques: filtre_thematiques,
-      },
-    );
-
-    const aide_def_liste = await this.aideRepository.search(filtre);
 
     const aides_nationales: Aide[] = [];
     const aides_locales: Aide[] = [];
@@ -89,6 +84,27 @@ export class AidesUsecase {
       ),
       utilisateur: utilisateur,
     };
+  }
+
+  public async external_get_aides_utilisateur(
+    utilisateur: Utilisateur,
+    filtre_thematiques: Thematique[],
+  ): Promise<AideDefinition[]> {
+    const commune = this.communeRepository.getCommuneByCodeINSEE(
+      utilisateur.logement.code_commune,
+    );
+    const code_commune = commune?.code;
+
+    const filtre = AideFilter.create(
+      utilisateur.logement.code_postal,
+      code_commune,
+      {
+        date_expiration: new Date(),
+        thematiques: filtre_thematiques,
+      },
+    );
+
+    return await this.aideRepository.search(filtre);
   }
 
   async getAideUniqueByIdCMS(cms_id: string): Promise<Aide> {
