@@ -51,7 +51,6 @@ export class AdresseUsecase {
     adresse.date_creation = new Date();
 
     utilisateur.logement.liste_adresses_recentes.push(adresse);
-    console.log(utilisateur.logement.liste_adresses_recentes);
 
     await this.utilisateurRepository.updateUtilisateurNoConcurency(
       utilisateur,
