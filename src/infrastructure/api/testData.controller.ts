@@ -122,11 +122,6 @@ export class TestDataController extends GenericControler {
   }
 
   async deleteUtilisateur(utilisateurId: string) {
-    await this.prisma.service.deleteMany({
-      where: {
-        utilisateurId,
-      },
-    });
     await this.prisma.utilisateur.deleteMany({
       where: { id: utilisateurId },
     });
