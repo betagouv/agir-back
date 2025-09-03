@@ -42,6 +42,11 @@ const NO_MOSAIC = {
   MOSAIC_APPAREIL_NUM: undefined,
   MOSAIC_MEUBLES: undefined,
   MOSAIC_VETEMENTS: undefined,
+  MOSAIC_SALON_WINTER: undefined,
+  MOSAIC_ELECTRO_CUISSON_WINTER: undefined,
+  MOSAIC_ELECTRO_FROID_WINTER: undefined,
+  MOSAIC_LAVAGE_WINTER: undefined,
+  MOSAIC_MOBILITE_ELEC_WINTER: undefined,
 };
 
 const MOSAIC_DEF_BACKUP = { ...MosaicDefinition };

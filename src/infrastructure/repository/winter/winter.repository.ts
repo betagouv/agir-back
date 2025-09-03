@@ -298,8 +298,11 @@ export class WinterRepository {
     const electro_climatiseur_mobile = getNumQ(
       KYCID.KYC_electro_climatiseur_mobile,
     );
-    const chauffage = user.kyc_history.getQuestionChoixMultiple(
-      KYCID.KYC_chauffage,
+    const chauffage = getChoixU(KYCID.KYC_logement_chauffage_principal);
+    const type_residence = getChoixU(KYCID.KYC_logement_type_residence);
+
+    const chauffage_secondaire = user.kyc_history.getQuestionChoixMultiple(
+      KYCID.KYC_logement_chauffage_secondaire,
     );
     const type_pompe_chaleur = getChoixU(
       KYCID.KYC_chauffage_pompe_chaleur_type,
@@ -327,12 +330,36 @@ export class WinterRepository {
     if (chauffage_eau.isSelected('ne_sais_pas')) hot_water_type = 'dont-know';
 
     const gen_types = [];
+    if (chauffage_secondaire) {
+      if (chauffage_secondaire.isSelected('rad_elec'))
+        gen_types.push('electric');
+      if (chauffage_secondaire.isSelected('pompe_chaleur'))
+        gen_types.push('heat_pump');
+      if (chauffage_secondaire.isSelected('bois'))
+        gen_types.push('boiler_wood');
+      if (chauffage_secondaire.isSelected('fioul'))
+        gen_types.push('boiler_fuel');
+      if (chauffage_secondaire.isSelected('chaudiere_gaz'))
+        gen_types.push('boiler_gas');
+      if (chauffage_secondaire.isSelected('ne_sais_pas'))
+        gen_types.push('dont-know');
+      if (chauffage_secondaire.isSelected('autres')) gen_types.push('other');
+    }
+    let main_chauffage:
+      | 'boiler_gas'
+      | 'boiler_wood'
+      | 'boiler_fuel'
+      | 'electric'
+      | 'other'
+      | 'dont-know'
+      | 'heat_pump' = 'dont-know';
     if (chauffage) {
-      if (chauffage.isSelected('electricite')) gen_types.push('electric');
-      if (chauffage.isSelected('bois')) gen_types.push('boiler_wood');
-      if (chauffage.isSelected('fioul')) gen_types.push('boiler_fuel');
-      if (chauffage.isSelected('gaz')) gen_types.push('boiler_gas');
-      if (chauffage.isSelected('ne_sais_pas')) gen_types.push('dont-know');
+      if (chauffage.isSelected('rad_elec')) main_chauffage = 'electric';
+      if (chauffage.isSelected('pompe_chaleur')) main_chauffage = 'heat_pump';
+      if (chauffage.isSelected('chaudiere_gaz')) main_chauffage = 'boiler_gas';
+      if (chauffage.isSelected('bois')) main_chauffage = 'boiler_wood';
+      if (chauffage.isSelected('fioul')) main_chauffage = 'boiler_fuel';
+      if (chauffage.isSelected('autres')) main_chauffage = 'other';
     }
 
     let type_pompe_chaleur_value: 'air-air' | 'air-water' | 'geotermal';
@@ -403,7 +430,6 @@ export class WinterRepository {
         epoque_chauffage = 'dont-know';
       }
     }
-
     if (gen_types.length === 0) {
       gen_types.push('dont-know');
     }
@@ -442,7 +468,7 @@ export class WinterRepository {
     }
 
     const logement_proprio = getChoixU(KYCID.KYC_proprietaire);
-    const logement_type = getChoixU(KYCID.KYC_type_logement);
+    const logement_type = getChoixU(KYCID.KYC_logement_type_maison);
     const murs_communs = getChoixU(KYCID.KYC_logement_murs_commun);
     const logement_superficie = getNumQ(KYCID.KYC_superficie);
     const nombre_niveaux = getNumQ(KYCID.KYC_logement_nbr_etages);
@@ -455,6 +481,23 @@ export class WinterRepository {
     const logement_reno_second_oeuvre = getChoixU(
       KYCID.KYC_logement_reno_second_oeuvre,
     );
+
+    let type_maison: 'terraced-house' | 'house' | 'apartment' | 'office';
+    if (logement_type) {
+      if (logement_type.isSelected('maison')) {
+        type_maison = 'house';
+      }
+      if (logement_type.isSelected('maison_mitoyenne')) {
+        type_maison = 'terraced-house';
+      }
+      if (logement_type.isSelected('appartement')) {
+        type_maison = 'apartment';
+      }
+      if (logement_type.isSelected('bureaux')) {
+        type_maison = 'office';
+      }
+    }
+
     return {
       nbClassicRefrigerator: electro_refrigerateur?.getValue(),
       nbOneDoorRefrigerator: electro_petit_refrigerateur?.getValue(),
@@ -494,9 +537,7 @@ export class WinterRepository {
       nbElectricBike: transport_nbr_velo_elec?.getValue(),
       nbElectricScooter: transport_nbr_scooter_elec?.getValue(),
       housingYear: fourchette_annee_logement as any,
-      housingType: logement_type?.isSelected('type_maison')
-        ? 'house'
-        : 'apartment',
+      housingType: type_maison,
       sharedWalls: murs_communs?.isSelected('oui'),
       livingArea: logement_superficie.getValue(),
       highFloorType: combles,
@@ -515,8 +556,12 @@ export class WinterRepository {
       nbInhabitant: logement_habitants.getValue()
         ? logement_habitants.getValue()
         : 2,
-      //nbAdult: nbr_adultes,
+      nbAdult: getNumQ(KYCID.KYC_logement_nombre_adultes)?.getValue(),
       inhabitantType: logement_proprio.isSelected('oui') ? 'owner' : 'tenant',
+      windowType: vitrage,
+      inhabitantHousing: type_residence.isSelected('principale')
+        ? 'main'
+        : 'secondary',
     };
   }
 }

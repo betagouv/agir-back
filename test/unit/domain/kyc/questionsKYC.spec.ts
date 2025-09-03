@@ -1837,10 +1837,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it(`listMosaicIDs : bon nombre `, () => {
     // THEN
-    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(11);
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(16);
     // GIVEN
     process.env.IS_PROD = 'true';
-    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(10);
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(15);
     process.env.IS_PROD = 'false';
   });
 });

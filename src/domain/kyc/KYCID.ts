@@ -23,6 +23,8 @@ export enum KYCID {
   KYC012 = 'KYC012', //Effectuez-vous quotidiennement des trajets de moins de 10 min en voiture ?
   KYC013 = 'KYC013', //Qu'est-ce qui vous intéresse sur le sujet des transports ?
   KYC_menage = 'KYC_menage',
+  KYC_logement_nombre_adultes = 'KYC_logement_nombre_adultes',
+  KYC_logement_nombre_enfants = 'KYC_logement_nombre_enfants',
   KYC_changer_voiture = 'KYC_changer_voiture',
   KYC_conso_elec = 'KYC_conso_elec',
   KYC_temperature = 'KYC_temperature',
@@ -53,6 +55,8 @@ export enum KYCID {
   KYC_chauffage_fioul = 'KYC_chauffage_fioul',
   KYC_chauffage_gaz = 'KYC_chauffage_gaz',
   KYC_chauffage = 'KYC_chauffage',
+  KYC_logement_chauffage_principal = 'KYC_logement_chauffage_principal',
+  KYC_logement_chauffage_secondaire = 'KYC_logement_chauffage_secondaire',
   KYC_chauffage_pompe_chaleur = 'KYC_chauffage_pompe_chaleur',
   KYC_chauffage_reseau = 'KYC_chauffage_reseau',
   KYC_DPE = 'KYC_DPE',
@@ -152,6 +156,8 @@ export enum KYCID {
   KYC_transport_nbr_velo_elec = 'KYC_transport_nbr_velo_elec',
   KYC_transport_nbr_scooter_elec = 'KYC_transport_nbr_scooter_elec',
   KYC_type_logement = 'KYC_type_logement',
+  KYC_logement_type_maison = 'KYC_logement_type_maison',
+  KYC_logement_type_residence = 'KYC_logement_type_residence',
   KYC_logement_murs_commun = 'KYC_logement_murs_commun',
   KYC_logement_nbr_etages = 'KYC_logement_nbr_etages',
   KYC_logement_nombre_murs_exterieurs = 'KYC_logement_nombre_murs_exterieurs',
@@ -184,7 +190,5 @@ export enum KYCID {
   KYC_loisir_piscine_type = 'KYC_loisir_piscine_type',
   KYC_raison_achat_vetements = 'KYC_raison_achat_vetements',
   KYC_type_chauffage_eau = 'KYC_type_chauffage_eau',
-  KYC_logement_nombre_adultes = 'KYC_logement_nombre_adultes',
-  KYC_logement_nombre_enfants = 'KYC_logement_nombre_enfants',
   KYC_logement_frigo_americain = 'KYC_logement_frigo_americain',
 }
