@@ -224,6 +224,9 @@ export class WinterAPIClient {
         } ms`,
       );
       console.log(error);
+      if (error.response && error.response.status === 404) {
+        ApplicationError.throwMissingPRMToDelete();
+      }
       ApplicationError.throwErrorSuppressionPRM();
     }
     console.log(

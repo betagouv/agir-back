@@ -1,4 +1,5 @@
 export type LinkyConsent = {
+  id: string;
   utilisateurId: string;
   date_consentement: Date;
   date_fin_consentement: Date;
@@ -8,4 +9,5 @@ export type LinkyConsent = {
   prm: string;
   ip_address: string;
   user_agent: string;
+  unsubscribed_prm: boolean;
 };

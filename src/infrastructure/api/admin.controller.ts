@@ -35,6 +35,7 @@ import { NotificationEmailUsecase } from '../../usecase/notificationEmail.usecas
 import { ProfileUsecase } from '../../usecase/profile.usecase';
 import { RechercheServicesUsecase } from '../../usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from '../../usecase/recommandation.usecase';
+import { WinterUsecase } from '../../usecase/winter.usecase';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushNotificator } from '../push_notifications/pushNotificator';
 import { GenericControler } from './genericControler';
@@ -67,6 +68,7 @@ export class AdminController extends GenericControler {
     private mailerUsecase: NotificationEmailUsecase,
     private bilanCarboneUsecase: BilanCarboneUsecase,
     private recommandationUsecase: RecommandationUsecase,
+    private winterUsecase: WinterUsecase,
     private prisma: PrismaService,
     private readonly connexion_v2_Usecase: Connexion_v2_Usecase,
   ) {
@@ -205,6 +207,15 @@ export class AdminController extends GenericControler {
   async validerPrenoms(@Request() req, @Body() body: ValiderPseudoAPI[]) {
     this.checkCronAPIProtectedEndpoint(req);
     return await this.profileUsecase.validerPseudos(body);
+  }
+
+  @Post('/admin/delete_orphan_prms')
+  @ApiOperation({
+    summary: `supprimer côté winter les prms orphelins`,
+  })
+  async delete_orphan_prms(@Request() req) {
+    this.checkCronAPIProtectedEndpoint(req);
+    return await this.winterUsecase.supprimerInscriptionsOrphelines();
   }
 
   @Post('/admin/send_all_emails_as_test/:utilisateurId')

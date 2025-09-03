@@ -980,6 +980,10 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
     );
   }
 
+  static throwMissingPRMToDelete() {
+    this.throwAppError('175', `Pas possible de supprimer un PRM non souscrit`);
+  }
+
   private static throwAppError(
     code: string,
     message: string,

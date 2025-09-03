@@ -19,3 +19,6 @@ npm run execute load_communes_and_epci
 npm run execute compute_all_aides_communes_from_partenaires
 
 npm run execute compute_all_articles_communes_from_partenaires
+
+npm run execute delete_orphan_prms
+

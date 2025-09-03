@@ -12,6 +12,7 @@ import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase'
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
+import { WinterUsecase } from './usecase/winter.usecase';
 
 export const appCommands: Record<
   string,
@@ -119,6 +120,9 @@ export const appCommands: Record<
   },
   compute_all_articles_communes_from_partenaires: async (app) => {
     return await app.get(ArticlesUsecase).updateAllPartenairesCodes();
+  },
+  delete_orphan_prms: async (app) => {
+    return await app.get(WinterUsecase).supprimerInscriptionsOrphelines();
   },
 };
 

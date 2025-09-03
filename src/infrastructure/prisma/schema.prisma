@@ -129,6 +129,7 @@ model LinkyConsentement {
   prm                   String
   ip_address            String   @default("unknown")
   user_agent            String   @default("unknown")
+  unsubscribed_prm      Boolean  @default(false)
   created_at            DateTime @default(now()) @db.Timestamptz(3)
   updated_at            DateTime @updatedAt @db.Timestamptz(3)
 }
