@@ -34,6 +34,40 @@ export type KycToTagMapper<T extends KYCID> = {
 export const KYC_TAG_MAPPER_COLLECTION: {
   [key in KYCID]?: KycToTagMapper<key>;
 } = {
+  KYC_type_logement: {
+    are_codes: [
+      {
+        code: 'type_maison',
+        oui: [Tag_v2.vit_en_maison, Tag_v2.ne_vit_pas_en_appart],
+      },
+      {
+        code: 'type_appartement',
+        oui: [Tag_v2.vit_en_appart, Tag_v2.ne_vit_pas_en_maison],
+      },
+    ],
+  },
+  KYC_logement_type_maison: {
+    are_codes: [
+      {
+        code: 'maison',
+        oui: [Tag_v2.vit_en_maison, Tag_v2.ne_vit_pas_en_appart],
+      },
+      {
+        code: 'maison_mitoyenne',
+        oui: [Tag_v2.vit_en_maison, Tag_v2.ne_vit_pas_en_appart],
+      },
+      {
+        code: 'appartement',
+        oui: [Tag_v2.vit_en_appart, Tag_v2.ne_vit_pas_en_maison],
+      },
+    ],
+  },
+  KYC_DPE: {
+    one_of: {
+      set: ['F', 'G'],
+      oui: [Tag_v2.logement_passoire_thermique],
+    },
+  },
   KYC_proprietaire: {
     oui_non: {
       oui: [Tag_v2.est_proprietaire],
