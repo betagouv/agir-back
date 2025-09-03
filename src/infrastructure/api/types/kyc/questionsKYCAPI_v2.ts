@@ -62,6 +62,9 @@ export class QuestionKYCAPI_v2 {
   question: string;
 
   @ApiProperty()
+  sous_titre: string;
+
+  @ApiProperty()
   is_answered: boolean;
 
   @ApiProperty()
@@ -83,6 +86,7 @@ export class QuestionKYCAPI_v2 {
     let result: QuestionKYCAPI_v2 = {
       code: question.code,
       question: question.question,
+      sous_titre: question.sous_titre,
       reponse_unique: undefined,
       reponse_multiple: undefined,
       is_answered: question.is_answered,

@@ -63,6 +63,7 @@ const kyc: KYCHistory_v2 = {
       id_cms: 1,
       code: KYCID.KYC_preference,
       question: `Quel est votre sujet principal d'intéret ?`,
+      sous_titre: 'sous',
       type: TypeReponseQuestionKYC.choix_multiple,
       is_NGC: false,
       categorie: Categorie.test,
@@ -190,6 +191,7 @@ describe('Objet Utilisateur', () => {
       type: TypeReponseQuestionKYC.choix_unique,
       is_NGC: false,
       a_supprimer: false,
+      sous_titre: 'sous',
       reponse_complexe: [
         {
           label: 'autre',

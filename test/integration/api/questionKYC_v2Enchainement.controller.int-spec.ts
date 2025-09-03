@@ -34,6 +34,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -70,6 +71,7 @@ const dbKYC: KYC = {
   a_supprimer: false,
   points: 20,
   question: 'The question !',
+  sous_titre: 'sous',
   tags: [Tag.possede_voiture],
   thematique: Thematique.alimentation,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -169,6 +171,8 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       {
         code: 'KYC001',
         question: 'quest 1',
+        sous_titre: 'sous',
+
         is_answered: false,
         is_skipped: false,
         is_mandatory: true,
@@ -299,6 +303,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'Quel est le type de votre logement ?',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -368,6 +373,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_answered: false,
         is_mandatory: false,
         is_skipped: false,
+        sous_titre: 'sous',
         points: 20,
         question: 'Quel est votre moyen de transport principal ?',
         reponse_multiple: [
@@ -470,6 +476,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 2',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -592,6 +599,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 1',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -693,6 +701,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 3',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -801,6 +810,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 3',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -910,6 +920,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1018,6 +1029,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1119,6 +1131,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
+        sous_titre: 'sous',
         code: 'KYC002',
         is_NGC: true,
         is_answered: true,
@@ -1280,6 +1293,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
+        sous_titre: 'sous',
         code: 'KYC003',
         is_NGC: true,
         is_answered: true,
@@ -1388,6 +1402,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 1',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1497,6 +1512,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',

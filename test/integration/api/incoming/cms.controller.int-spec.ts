@@ -245,6 +245,7 @@ describe('/api/incoming/cms (API test)', () => {
     entry: {
       id: 123,
       question: 'question',
+      sous_titre: 'sous_titre',
       short_question: 'short question',
       code: KYCID.KYC001,
       type: TypeReponseQuestionKYC.choix_multiple,
@@ -1016,6 +1017,7 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.code).toEqual('KYC001');
     expect(item.question).toEqual('question');
+    expect(item.sous_titre).toEqual('sous_titre');
     expect(item.short_question).toEqual('short question');
     expect(item.image_url).toEqual('https://');
     expect(item.id_cms).toEqual(123);
@@ -1070,6 +1072,7 @@ describe('/api/incoming/cms (API test)', () => {
 
     expect(item.code).toEqual('KYC001');
     expect(item.question).toEqual('question');
+    expect(item.sous_titre).toEqual('sous_titre');
     expect(item.short_question).toEqual('short question');
     expect(item.image_url).toEqual('https://');
     expect(item.id_cms).toEqual(123);

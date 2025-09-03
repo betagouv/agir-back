@@ -845,6 +845,7 @@ export class CMSImportUsecase {
       a_supprimer: !!entry.attributes.A_SUPPRIMER,
       ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,
+      sous_titre: entry.attributes.sous_titre,
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,

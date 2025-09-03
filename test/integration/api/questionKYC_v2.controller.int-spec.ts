@@ -56,6 +56,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
+  sous_titre: 'sous_titre',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -101,6 +102,7 @@ const KYC_DB_DATA: KYC = {
   type: TypeReponseQuestionKYC.choix_multiple,
   code: KYCID._2,
   question: `Quel est votre sujet principal d'intéret ?`,
+  sous_titre: 'sous_titre',
   reponses: [
     { label: 'Le climat', code: Thematique.climat },
     { label: 'Mon logement', code: Thematique.logement },
@@ -172,6 +174,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous_titre',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -280,6 +283,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous_titre',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -327,6 +331,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       is_mandatory: false,
       is_skipped: false,
       question: 'quest 1',
+      sous_titre: 'sous_titre',
       reponse_multiple: [
         {
           code: 'oui',
@@ -423,6 +428,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           last_update: undefined,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
+          sous_titre: 'sous_titre',
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
           a_supprimer: false,
@@ -475,6 +481,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
       unite: { abreviation: 'kg' },
       type: TypeReponseQuestionKYC.choix_multiple,
       question: `Quel est votre sujet principal d'intéret ?`,
+      sous_titre: 'sous_titre',
       reponses: [
         { label: 'Le climat', code: Thematique.climat },
         { label: 'Mon logement', code: Thematique.logement },
@@ -1458,6 +1465,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
+      sous_titre: 'sous_titre',
       reponse_multiple: [
         { code: 'climat', label: 'Le climat', selected: true },
         { code: 'logement', label: 'Mon logement', selected: false },
@@ -1498,6 +1506,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
+      sous_titre: 'sous_titre',
       reponse_multiple: [
         { code: 'climat', label: 'Le climat', selected: false },
         { code: 'logement', label: 'Mon logement', selected: false },
@@ -1543,6 +1552,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
+      sous_titre: 'sous_titre',
       reponse_unique: {
         unite: { abreviation: 'kg' },
       },
@@ -2105,6 +2115,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           last_update: undefined,
           id_cms: 2,
           question: `Quel est votre sujet principal d'intéret ?`,
+          sous_titre: 'sous_titre',
           type: TypeReponseQuestionKYC.choix_multiple,
           is_NGC: false,
           a_supprimer: false,

@@ -49,6 +49,7 @@ export class QuestionKYC_v2 {
   code: string;
   id_cms: number;
   question: string;
+  sous_titre: string;
   type: TypeReponseQuestionKYC;
   categorie: Categorie;
   points: number;
@@ -72,6 +73,7 @@ export class QuestionKYC_v2 {
       last_update: elem.last_update,
       code: elem.code,
       question: elem.question,
+      sous_titre: elem.sous_titre,
       type: elem.type,
       categorie: elem.categorie,
       points: elem.points,
@@ -139,6 +141,7 @@ export class KYCHistory_v2 extends Versioned_v2 {
         let new_question: QuestionKYC_v2 = {
           last_update: undefined,
           code: question.code,
+          sous_titre: undefined,
           id_cms: question.id_cms,
           categorie: question.categorie,
           conditions: question.conditions,

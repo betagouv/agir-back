@@ -399,6 +399,7 @@ model KYC {
   a_supprimer    Boolean  @default(false)
   ngc_key        String?
   question       String
+  sous_titre     String?
   short_question String?
   reponses       Json     @default("{}")
   thematique     String
