@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { readFileSync, writeFileSync } from 'fs';
+import { normalizeWithoutAccent } from '../infrastructure/repository/action.repository';
 
 export type SourceData = {
   id: number;
@@ -89,7 +90,7 @@ export type ActionData = {
 
 export class ActionCMSDataHelper {
   static getTitreRcherche(titre?: string): string {
-    return titre ? titre.replaceAll('*', '') : '';
+    return titre ? normalizeWithoutAccent(titre.replaceAll('*', '')) : '';
   }
 
   static getConsigne(consigne?: string): string {

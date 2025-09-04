@@ -149,6 +149,38 @@ describe('Actions Catalogue Offline (API test)', () => {
 
     expect(action.code).toEqual('2');
   });
+  it(`GET /actions - liste le catalogue recherche texte titre avec accent`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: '1',
+      cms_id: '1',
+      type: TypeAction.classique,
+      type_code_id: 'classique_1',
+      thematique: Thematique.alimentation,
+      titre_recherche: 'Une belle energie',
+    });
+    await TestUtil.create(DB.action, {
+      code: '2',
+      cms_id: '2',
+      type: TypeAction.classique,
+      type_code_id: 'classique_2',
+      thematique: Thematique.logement,
+      titre_recherche: 'Une action toute nulle',
+    });
+
+    await actionRepository.onApplicationBootstrap();
+
+    // WHEN
+    const response = await TestUtil.GET('/actions?titre=éner');
+
+    // THEN
+    expect(response.status).toBe(200);
+    expect(response.body.actions.length).toBe(1);
+
+    const action: ActionLightAPI = response.body.actions[0];
+
+    expect(action.code).toEqual('1');
+  });
   it(`GET /actions - liste le catalogue recherche texte titre malgré markdown`, async () => {
     // GIVEN
     await TestUtil.create(DB.action, {
