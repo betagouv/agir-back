@@ -29,7 +29,10 @@ for (const liste_communes of Object.values(_codes_postaux)) {
   }
 }
 for (const com of LISTE_COMMUNES) {
-  map_code_commune_to_commune.set(com.code, com);
+  // on ignore les communes sans codes postaux
+  if (com.codesPostaux) {
+    map_code_commune_to_commune.set(com.code, com);
+  }
 }
 for (const une_epci of LISTE_EPCIS) {
   map_code_EPCI_to_EPCI.set(une_epci.code, une_epci);
@@ -201,11 +204,13 @@ export class CommuneRepository {
     }
 
     for (const une_commune of LISTE_COMMUNES) {
-      await this.upsertCommune(
-        une_commune.nom,
-        une_commune.code,
-        une_commune.codesPostaux,
-      );
+      if (une_commune.codesPostaux) {
+        await this.upsertCommune(
+          une_commune.nom,
+          une_commune.code,
+          une_commune.codesPostaux,
+        );
+      }
     }
   }
 
@@ -412,41 +417,6 @@ export class CommuneRepository {
       return epci.membres.findIndex((c) => c.code === code_commune) >= 0;
     }
     return false;
-  }
-
-  findDepartementRegionByCodePostal(code_postal: string): {
-    code_departement: string;
-    code_region: string;
-  } {
-    const liste = this.getCommunesForCodePostal(code_postal);
-    if (liste.length === 0) {
-      return {
-        code_departement: undefined,
-        code_region: undefined,
-      };
-    }
-
-    let commune = this.getCommuneByCodeINSEESansArrondissement(liste[0].INSEE);
-    if (!commune) {
-      for (const commune_insee of LISTE_COMMUNES) {
-        if (commune_insee.codesPostaux.includes(code_postal)) {
-          commune = commune_insee;
-          break;
-        }
-      }
-    }
-
-    if (commune) {
-      return {
-        code_departement: commune.departement,
-        code_region: commune.region,
-      };
-    } else {
-      return {
-        code_departement: undefined,
-        code_region: undefined,
-      };
-    }
   }
 
   public static findDepartementRegionByCodeCommune(code_commune: string): {
