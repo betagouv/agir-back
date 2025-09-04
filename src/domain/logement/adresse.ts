@@ -84,38 +84,23 @@ export class Adresse extends AdresseData {
     if (!this.code_commune) {
       return;
     }
-    const commune = CommuneRepository.getCommuneByCodeINSEE_static(
-      this.code_commune,
-    );
-    if (!commune) {
-      ApplicationError.throwCodeCommuneNotFound(this.code_commune);
-    }
+    CommuneRepository.checkCodeCommuneExists(this.code_commune);
   }
 
   public checkCodePostalOK() {
     if (!this.code_postal) {
       return;
     }
-    CommuneRepository.getCommuneByCodeINSEE_static;
-    if (!CommuneRepository.checkCodePostal(this.code_postal)) {
-      ApplicationError.throwCodePostalIncorrect(this.code_postal);
-    }
+    CommuneRepository.checkCodePostalExists(this.code_postal);
   }
 
   public checkCodeCommuneAndCodePostalCoherent() {
     if (this.code_commune && this.code_postal) {
-      const commune = CommuneRepository.getCommuneByCodeINSEE_static(
+      CommuneRepository.checkCodeCommuneExists(this.code_commune);
+      CommuneRepository.checkCodeCommuneEtCodePostalCoherent(
         this.code_commune,
+        this.code_postal,
       );
-      if (!commune) {
-        ApplicationError.throwCodeCommuneNotFound(this.code_commune);
-      }
-      if (!commune.codesPostaux.includes(this.code_postal)) {
-        ApplicationError.throwBadCodePostalAndCommuneAssociation(
-          this.code_postal,
-          this.code_commune,
-        );
-      }
     }
   }
 

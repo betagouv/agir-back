@@ -5,9 +5,11 @@ import { CategorieRecherche } from '../../../../domain/bibliotheque_services/rec
 import { FiltreRecherche } from '../../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../../domain/bibliotheque_services/recherche/finderInterface';
 import { ResultatRecherche } from '../../../../domain/bibliotheque_services/recherche/resultatRecherche';
+import { ObjetLVAO } from '../../../../domain/lvao/objet_LVAO';
 import { ApplicationError } from '../../../applicationError';
 import { AddressesRepository } from '../addresses.repository';
 import { LongueVieObjetsCategorieMapping } from './LongueVieObjetsCategorieMapping';
+import { ActeurLVAO_API } from './lvaoInternalAPI';
 
 export type LVOResponse = {
   items: [
@@ -72,6 +74,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
     const categorie_lvo =
       LongueVieObjetsCategorieMapping.getFiltreFromCategorie(
         CategorieRecherche[filtre.categorie],
+        App.isLVAOInnerService(),
       );
     if (!filtre.hasPoint()) {
       const location =
@@ -84,42 +87,73 @@ export class LongueVieObjetsRepository implements FinderInterface {
       }
       filtre.point = location;
     }
+    if (App.isLVAOInnerService()) {
+      const result = await this.callInnerServiceAPI(filtre, categorie_lvo);
+      if (!result) {
+        ApplicationError.throwExternalServiceError('Longue vie objets');
+      }
+      const final_result: ResultatRecherche[] = result.map(
+        (r) =>
+          new ResultatRecherche({
+            id: r.id,
+            nbr_resultats_max_dispo: 286000,
+            titre: r.nom,
+            adresse_rue: r.adresse,
+            adresse_complete: r.adresse + ', ' + r.code_postal + ' ' + r.ville,
+            siret: r.siret,
+            distance_metres: r.distance_metres,
+            latitude: r.latitude,
+            longitude: r.longitude,
+            categories: r.detail_services
+              ? r.detail_services
+                  .map((detail) =>
+                    LongueVieObjetsCategorieMapping.getCategorieFromActionLVAO(
+                      detail.action,
+                    ),
+                  )
+                  .filter((a) => !!a)
+              : [],
+            sources_lvao: r.sources,
+          }),
+      );
+      return final_result;
+    } else {
+      const result = await this.callServiceAPI(filtre, categorie_lvo);
 
-    const result = await this.callServiceAPI(filtre, categorie_lvo);
-
-    if (!result) {
-      ApplicationError.throwExternalServiceError('Longue vie objets');
+      if (!result) {
+        ApplicationError.throwExternalServiceError('Longue vie objets');
+      }
+      const final_result: ResultatRecherche[] = result.items.map(
+        (r) =>
+          new ResultatRecherche({
+            id: r.identifiant_unique,
+            nbr_resultats_max_dispo: result.count,
+            titre: r.nom,
+            adresse_rue: r.adresse,
+            adresse_complete: r.adresse,
+            siret: r.siret,
+            distance_metres: r.distance ? Math.round(r.distance) : undefined,
+            latitude: r.latitude,
+            longitude: r.longitude,
+            categories: r.actions
+              ? r.actions
+                  .map((a) =>
+                    LongueVieObjetsCategorieMapping.getCategorieFromAction(
+                      a.id,
+                    ),
+                  )
+                  .filter((a) => !!a)
+              : [],
+            sources_lvao: r.sources,
+          }),
+      );
+      return final_result;
     }
-
-    const final_result: ResultatRecherche[] = result.items.map(
-      (r) =>
-        new ResultatRecherche({
-          id: r.identifiant_unique,
-          nbr_resultats_max_dispo: result.count,
-          titre: r.nom,
-          adresse_rue: r.adresse,
-          adresse_complete: r.adresse,
-          siret: r.siret,
-          distance_metres: r.distance ? Math.round(r.distance) : undefined,
-          latitude: r.latitude,
-          longitude: r.longitude,
-          categories: r.actions
-            ? r.actions
-                .map((a) =>
-                  LongueVieObjetsCategorieMapping.getCategorieFromAction(a.id),
-                )
-                .filter((a) => !!a)
-            : [],
-          sources_lvao: r.sources,
-        }),
-    );
-
-    return final_result;
   }
 
   private async callServiceAPI(
     filtre: FiltreRecherche,
-    categorie: number,
+    categorie,
   ): Promise<LVOResponse> {
     let response;
     const call_time = Date.now();
@@ -131,7 +165,7 @@ export class LongueVieObjetsRepository implements FinderInterface {
       limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
     };
 
-    if (categorie) {
+    if (categorie && categorie !== 'undefined') {
       params['actions'] = categorie;
     }
 
@@ -153,6 +187,55 @@ export class LongueVieObjetsRepository implements FinderInterface {
       return null;
     }
     console.log(`API_TIME:lvo:${Date.now() - call_time}`);
+
+    return response.data;
+  }
+
+  private async callInnerServiceAPI(
+    filtre: FiltreRecherche,
+    categorie: string,
+  ): Promise<ActeurLVAO_API[]> {
+    let response;
+    const call_time = Date.now();
+    const params = {
+      rayon_metres: filtre.rayon_metres ? filtre.rayon_metres : 5000,
+      latitude: filtre.point.latitude,
+      longitude: filtre.point.longitude,
+      limit: filtre.nombre_max_resultats ? filtre.nombre_max_resultats : 10,
+    };
+
+    if (categorie && categorie !== 'undefined') {
+      params['action'] = categorie;
+    }
+    if (filtre.sous_categorie) {
+      const objet = ObjetLVAO[filtre.sous_categorie];
+      if (!objet) {
+        ApplicationError.throwTypeObjetLVAOInconnu(filtre.sous_categorie);
+      }
+      params['objet'] = objet;
+    }
+
+    try {
+      response = await axios.get(App.getLVO_API_INTERNAL_URL(), {
+        timeout: LongueVieObjetsRepository.API_TIMEOUT,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${App.getLVO_API_INTERNAL_KEY()}`,
+        },
+        params: params,
+      });
+    } catch (error) {
+      console.log(
+        `Error calling [lvo interne] after ${Date.now() - call_time} ms`,
+      );
+      if (error.response) {
+        console.error(error.response);
+      } else if (error.request) {
+        console.error(error.request);
+      }
+      return null;
+    }
+    console.log(`API_TIME:lvo_interne:${Date.now() - call_time}`);
 
     return response.data;
   }

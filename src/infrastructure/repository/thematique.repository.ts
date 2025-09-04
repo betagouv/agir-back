@@ -62,6 +62,11 @@ export class ThematiqueRepository {
       ThematiqueRepository.catalogue_thematiques_by_thematiques.get(thematique);
     return def ? def.titre : thematique.toString();
   }
+  static getThematiqueImageUrl(thematique: Thematique) {
+    const def =
+      ThematiqueRepository.catalogue_thematiques_by_thematiques.get(thematique);
+    return def?.image_url;
+  }
   static getLabelThematique(thematique: Thematique) {
     const def =
       ThematiqueRepository.catalogue_thematiques_by_thematiques.get(thematique);

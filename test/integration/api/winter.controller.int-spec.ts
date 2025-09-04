@@ -10,7 +10,6 @@ import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_
 import { ThematiqueHistory_v0 } from '../../../src/domain/object_store/thematique/thematiqueHistory_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
-import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { DB, TestUtil } from '../../TestUtil';
 
@@ -18,8 +17,6 @@ describe('Winter (API test)', () => {
   const OLD_ENV = process.env;
   const utilisateurRepository = new UtilisateurRepository(TestUtil.prisma);
   const actionRepository = new ActionRepository(TestUtil.prisma);
-  const risquesNaturelsCommunesRepository =
-    new RisquesNaturelsCommunesRepository(TestUtil.prisma);
 
   beforeAll(async () => {
     await TestUtil.appinit();
@@ -606,5 +603,102 @@ describe('Winter (API test)', () => {
     expect(response.status).toBe(200);
     expect(response.body.nombre_actions_associees).toEqual(0);
     expect(response.body.economies_realisees_euros).toEqual(33);
+  });
+
+  it(`POST /admin/delete_orphan_prms - suppression d'un PRM auprès de winter si utilisateur supprimé`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.prisma.linkyConsentement.create({
+      data: {
+        id: '1',
+        date_consentement: new Date(1),
+        date_fin_consentement: new Date(2),
+        email: 'a@b.com',
+        nom: 'NOM',
+        prm: '12345',
+        texte_signature: 'haha',
+        utilisateurId: '123',
+        created_at: undefined,
+        updated_at: undefined,
+        ip_address: '127.0.0.1',
+        user_agent: 'chrome',
+        unsubscribed_prm: false,
+      },
+    });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/delete_orphan_prms');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    expect(response.body).toEqual([
+      'deleted orphan PRM [12345] for deleted user [123]',
+    ]);
+  });
+  it(`POST /admin/delete_orphan_prms - non suppression d'un PRM auprès de winter si utilisateur existe`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.create(DB.utilisateur, { id: '123' });
+    await TestUtil.prisma.linkyConsentement.create({
+      data: {
+        id: '1',
+        date_consentement: new Date(1),
+        date_fin_consentement: new Date(2),
+        email: 'a@b.com',
+        nom: 'NOM',
+        prm: '12345',
+        texte_signature: 'haha',
+        utilisateurId: '123',
+        created_at: undefined,
+        updated_at: undefined,
+        ip_address: '127.0.0.1',
+        user_agent: 'chrome',
+        unsubscribed_prm: false,
+      },
+    });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/delete_orphan_prms');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    expect(response.body).toEqual([]);
+  });
+  it(`POST /admin/delete_orphan_prms - non suppression d'un PRM auprès de winter si suppression deja realisee`, async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    await TestUtil.prisma.linkyConsentement.create({
+      data: {
+        id: '1',
+        date_consentement: new Date(1),
+        date_fin_consentement: new Date(2),
+        email: 'a@b.com',
+        nom: 'NOM',
+        prm: '12345',
+        texte_signature: 'haha',
+        utilisateurId: '123',
+        created_at: undefined,
+        updated_at: undefined,
+        ip_address: '127.0.0.1',
+        user_agent: 'chrome',
+        unsubscribed_prm: true,
+      },
+    });
+
+    process.env.WINTER_API_ENABLED = 'fake';
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/delete_orphan_prms');
+
+    // THEN
+    expect(response.status).toBe(201);
+
+    expect(response.body).toEqual([]);
   });
 });

@@ -15,7 +15,10 @@ import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
-import { EnchainementDefinition } from '../domain/kyc/enchainementDefinition';
+import {
+  EnchainementDefinition,
+  KycDansEnchainement,
+} from '../domain/kyc/enchainementDefinition';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -104,9 +107,10 @@ export class ActionUsecase {
 
     utilisateur.recommandation.trierEtFiltrerRecommandations([action]);
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     action.nom_commune = commune.nom;
 
     const filtre_aides = AideFilter.create(
@@ -137,7 +141,7 @@ export class ActionUsecase {
       liste_services.push({
         categorie: action_def.lvo_action,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
-        sous_categorie: undefined,
+        sous_categorie: action_def.lvo_objet,
       });
     }
 
@@ -165,12 +169,12 @@ export class ActionUsecase {
       action_def.type === TypeAction.bilan ||
       action_def.type === TypeAction.simulateur
     ) {
-      const kyc_codes = this.external_get_kyc_codes_from_action(
+      const kyc_defs = this.external_get_kyc_defs_from_action(
         action_def.type,
         action_def.code,
       );
       action.kycs =
-        utilisateur.kyc_history.getEnchainementKYCsEligibles(kyc_codes);
+        utilisateur.kyc_history.getEnchainementKYCsEligibles(kyc_defs);
     }
 
     this.setCompteurActionsEtLabel(action);
@@ -207,7 +211,10 @@ export class ActionUsecase {
 
     let commune: Commune;
     if (code_commune) {
-      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }
@@ -247,7 +254,7 @@ export class ActionUsecase {
     if (action_def.lvo_action) {
       liste_services.push({
         categorie: action_def.lvo_action,
-        sous_categorie: undefined,
+        sous_categorie: action_def.lvo_objet,
         recherche_service_id: ServiceRechercheID.longue_vie_objets,
       });
     }
@@ -446,10 +453,10 @@ export class ActionUsecase {
     }
   }
 
-  public external_get_kyc_codes_from_action(
+  public external_get_kyc_defs_from_action(
     action_type: TypeAction,
     action_code: string,
-  ): string[] {
+  ): KycDansEnchainement[] {
     const enchainement_id =
       action_type === TypeAction.bilan
         ? ACTION_BILAN_MAPPING_ENCHAINEMENTS[ActionBilanID[action_code]]
@@ -459,7 +466,9 @@ export class ActionUsecase {
           ]
         : undefined;
 
-    return EnchainementDefinition[enchainement_id] ?? [];
+    return EnchainementDefinition.getKycDefinitionsByEnchainementID(
+      enchainement_id,
+    );
   }
 
   public async calculeScoreQuizzAction(

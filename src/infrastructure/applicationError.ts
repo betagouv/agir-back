@@ -836,7 +836,14 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
   static throwNoPRMFoundAtAddress(adresse: string) {
     this.throwAppError(
       '152',
-      `Pas de PRM ou de PRM unique trouvé à cette adresse : [${adresse}]`,
+      `Pas de PRM trouvé à cette adresse : [${adresse}]`,
+      404,
+    );
+  }
+  static throwNoUniquePRMFoundAtAddress(adresse: string) {
+    this.throwAppError(
+      '152',
+      `Pas de PRM unique trouvé à cette adresse : [${adresse}]`,
       404,
     );
   }
@@ -957,6 +964,24 @@ suite à un problème technique, vous ne pouvez pas vous inscrire au service J'a
       `Les arguments utilisés dans cette API ne sont plus à jour : ${message}`,
       410,
     );
+  }
+
+  static throwWinterUsageUnknownError() {
+    this.throwAppError(
+      '173',
+      `La décomposition par usage de votre consommation n'est disponible actuellement, ré-essayez plus tard`,
+    );
+  }
+
+  static throwTypeObjetLVAOInconnu(objet: string) {
+    this.throwAppError(
+      '174',
+      `Le type d'objet [${objet}] n'est pas connu du service LVAO`,
+    );
+  }
+
+  static throwMissingPRMToDelete() {
+    this.throwAppError('175', `Pas possible de supprimer un PRM non souscrit`);
   }
 
   private static throwAppError(

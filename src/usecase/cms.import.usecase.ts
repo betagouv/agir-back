@@ -762,7 +762,9 @@ export class CMSImportUsecase {
       pourquoi: entry.attributes.pourquoi,
       comment: entry.attributes.comment,
       quizz_felicitations: entry.attributes.felicitations,
-      lvo_objet: entry.attributes.objet_lvo,
+      lvo_objet: entry.attributes.objet_lvo
+        ? SousCategorieRecherche[entry.attributes.objet_lvo]
+        : null,
       lvo_action: entry.attributes.action_lvo
         ? CategorieRecherche[entry.attributes.action_lvo]
         : null,
@@ -843,6 +845,7 @@ export class CMSImportUsecase {
       a_supprimer: !!entry.attributes.A_SUPPRIMER,
       ngc_key: entry.attributes.ngc_key,
       question: entry.attributes.question,
+      sous_titre: entry.attributes.sous_titre,
       reponses: entry.attributes.reponses
         ? entry.attributes.reponses.map((r) => ({
             label: r.reponse,

@@ -3,7 +3,7 @@ import { ActionDefinition } from '../domain/actions/actionDefinition';
 import { TypeAction } from '../domain/actions/typeAction';
 import {
   EnchainementDefinition,
-  EnchainementType,
+  EnchainementID,
 } from '../domain/kyc/enchainementDefinition';
 import { EnchainementKYC } from '../domain/kyc/enchainementKYC';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
@@ -36,14 +36,17 @@ export class QuestionKYCEnchainementUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    if (!EnchainementType[enchainementId]) {
+    if (!EnchainementID[enchainementId]) {
       ApplicationError.throwUnkownEnchainement(enchainementId);
     }
 
-    const liste_kycs_codes = EnchainementDefinition[enchainementId];
+    const liste_kyc_defs =
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID[enchainementId],
+      );
 
     const result =
-      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kycs_codes);
+      utilisateur.kyc_history.getEnchainementKYCsEligibles(liste_kyc_defs);
 
     return this.personnalisator.personnaliser(result, utilisateur, [
       CLE_PERSO.espace_insecable,
@@ -151,7 +154,7 @@ export class QuestionKYCEnchainementUsecase {
     const is_enchainement_bilan = this.actionRepository.isBilan(actionCodeType);
 
     if (
-      !EnchainementType[enchainementId] &&
+      !EnchainementID[enchainementId] &&
       !is_enchainement_simulateur &&
       !is_enchainement_bilan
     ) {
@@ -159,25 +162,27 @@ export class QuestionKYCEnchainementUsecase {
     }
 
     if (is_enchainement_simulateur) {
-      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+      const kyc_defs = this.actionUsecase.external_get_kyc_defs_from_action(
         TypeAction.simulateur,
         actionCodeType.code,
       );
 
-      return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
+      return utilisateur.kyc_history.getListeKycsFromKycDefs(kyc_defs);
     }
 
     if (is_enchainement_bilan) {
-      const kyc_codes = this.actionUsecase.external_get_kyc_codes_from_action(
+      const kyc_defs = this.actionUsecase.external_get_kyc_defs_from_action(
         TypeAction.bilan,
         actionCodeType.code,
       );
 
-      return utilisateur.kyc_history.getListeKycsFromCodes(kyc_codes);
+      return utilisateur.kyc_history.getListeKycsFromKycDefs(kyc_defs);
     }
 
-    return utilisateur.kyc_history.getListeKycsFromCodes(
-      EnchainementDefinition[enchainementId],
+    return utilisateur.kyc_history.getListeKycsFromKycDefs(
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID[enchainementId],
+      ),
     );
   }
 }

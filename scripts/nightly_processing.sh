@@ -1,8 +1,4 @@
-## npm run execute upsert_service_definitions
-
 ## npm run execute unsubscribe_oprhan_prms
-
-## npm run execute service_statistique
 
 npm run execute update_user_couverture
 
@@ -23,3 +19,6 @@ npm run execute load_communes_and_epci
 npm run execute compute_all_aides_communes_from_partenaires
 
 npm run execute compute_all_articles_communes_from_partenaires
+
+npm run execute delete_orphan_prms
+

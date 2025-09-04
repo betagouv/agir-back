@@ -3,7 +3,7 @@ import { Action } from '../domain/actions/action';
 import { TypeCodeAction } from '../domain/actions/actionDefinition';
 import { Realisation, Recommandation } from '../domain/actions/catalogueAction';
 import { TypeAction } from '../domain/actions/typeAction';
-import { EnchainementType } from '../domain/kyc/enchainementDefinition';
+import { EnchainementID } from '../domain/kyc/enchainementDefinition';
 import { KycToTags_v2 } from '../domain/scoring/system_v2/kycToTagsV2';
 import { DetailThematique } from '../domain/thematique/history/detailThematique';
 import { Thematique } from '../domain/thematique/thematique';
@@ -16,12 +16,12 @@ import { CatalogueActionUsecase } from './catalogue_actions.usecase';
 import { ThematiqueBoardUsecase } from './thematiqueBoard.usecase';
 
 const THEMATIQUE_ENCHAINEMENT_MAPPING: {
-  [key in Thematique]?: EnchainementType;
+  [key in Thematique]?: EnchainementID;
 } = {
-  alimentation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_alimentation,
-  consommation: EnchainementType.ENCHAINEMENT_KYC_personnalisation_consommation,
-  logement: EnchainementType.ENCHAINEMENT_KYC_personnalisation_logement,
-  transport: EnchainementType.ENCHAINEMENT_KYC_personnalisation_transport,
+  alimentation: EnchainementID.ENCHAINEMENT_KYC_personnalisation_alimentation,
+  consommation: EnchainementID.ENCHAINEMENT_KYC_personnalisation_consommation,
+  logement: EnchainementID.ENCHAINEMENT_KYC_personnalisation_logement,
+  transport: EnchainementID.ENCHAINEMENT_KYC_personnalisation_transport,
 };
 
 @Injectable()
@@ -64,9 +64,10 @@ export class ThematiqueUsecase {
       utilisateur.logement.code_commune,
     );
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
 
     const thematique_synthese =
       await this.thematiqueBoardUsecase.external_thematique_synthese(

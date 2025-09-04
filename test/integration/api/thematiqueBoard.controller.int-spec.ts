@@ -465,6 +465,7 @@ describe('Thematique Board (API test)', () => {
       answered_questions: [
         {
           code: 'KYC_saison_frequence',
+          sous_titre: 'sous',
           last_update: undefined,
           id_cms: 21,
           question: `À quelle fréquence mangez-vous de saison ? `,
@@ -506,6 +507,7 @@ describe('Thematique Board (API test)', () => {
         },
         {
           code: 'KYC_alimentation_regime',
+          sous_titre: 'sous',
           id_cms: 1,
           last_update: undefined,
           question: `Votre regime`,
@@ -555,6 +557,7 @@ describe('Thematique Board (API test)', () => {
 
     await TestUtil.create(DB.kYC, {
       code: 'KYC_saison_frequence',
+      sous_titre: 'sous',
       id_cms: 21,
       question: `À quelle fréquence mangez-vous de saison ? `,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -656,6 +659,7 @@ describe('Thematique Board (API test)', () => {
       skipped_questions: [
         {
           code: 'KYC_saison_frequence',
+          sous_titre: 'sous',
           last_update: undefined,
           id_cms: 21,
           question: `À quelle fréquence mangez-vous de saison ? `,
@@ -677,6 +681,7 @@ describe('Thematique Board (API test)', () => {
         },
         {
           code: 'KYC_alimentation_regime',
+          sous_titre: 'sous',
           id_cms: 1,
           last_update: undefined,
           question: `Votre regime`,
@@ -702,6 +707,7 @@ describe('Thematique Board (API test)', () => {
 
     await TestUtil.create(DB.kYC, {
       code: 'KYC_saison_frequence',
+      sous_titre: 'sous',
       id_cms: 21,
       question: `À quelle fréquence mangez-vous de saison ? `,
       type: TypeReponseQuestionKYC.choix_unique,

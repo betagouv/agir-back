@@ -36,6 +36,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   id_cms: 11,
   last_update: undefined,
   question: `question`,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -81,45 +82,6 @@ describe('Admin (API test)', () => {
     await TestUtil.appclose();
   });
 
-  it('POST /admin/upsert_service_definitions integre correctement les services', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.POST('/admin/upsert_service_definitions');
-
-    // THEN
-    expect(response.status).toBe(201);
-
-    const services = await TestUtil.prisma.serviceDefinition.findMany();
-    expect(services).toHaveLength(1);
-
-    const service = await TestUtil.prisma.serviceDefinition.findUnique({
-      where: { id: 'linky' },
-    });
-    expect(service.image_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335771/services/multiprise-electricite-incendie-dangers.png',
-    );
-    expect(service.titre).toEqual(
-      `Votre consommation électrique au jour le jour`,
-    );
-    expect(service.url).toEqual(
-      'https://www.enedis.fr/le-compteur-linky-un-outil-pour-la-transition-ecologique',
-    );
-    expect(service.icon_url).toEqual(
-      'https://res.cloudinary.com/dq023imd8/image/upload/v1708335751/services/compteur-linky.jpg',
-    );
-    expect(service.is_url_externe).toEqual(true);
-    expect(service.is_local).toEqual(false);
-    expect(service.thematiques).toEqual(['logement']);
-    expect(service.minute_period).toEqual(null);
-    expect(service.description).toEqual(
-      'Conseils et suivi de consommation, en un seul endroit',
-    );
-    expect(service.sous_description).toEqual(
-      'Suivez votre consommation électrique au quotidien en un clic : analysez vos habitudes, identifiez et éliminez les gaspillages pour une efficacité énergétique optimale !',
-    );
-  });
   it('POST /admin/lock_user_migration retourne une 403 si pas le bon id d utilisateur', async () => {
     // GIVEN
     await TestUtil.generateAuthorizationToken('bad_id');
@@ -1495,6 +1457,7 @@ describe('Admin (API test)', () => {
       id_cms: 1,
       categorie: undefined,
       question: '',
+      sous_titre: 'sous',
       reponse_simple: {
         value: '1',
       },
@@ -1571,6 +1534,7 @@ describe('Admin (API test)', () => {
       ngc_key: 'a . b . c',
       points: 123,
       short_question: 'short',
+      sous_titre: 'sous',
       tags: ['A'],
       thematique: Thematique.dechet,
       unite: { abreviation: 'kg' },
@@ -1638,6 +1602,7 @@ describe('Admin (API test)', () => {
       categorie: Categorie.recommandation,
       points: 0,
       is_ngc: false,
+      sous_titre: 'sous',
       tags: [],
       thematique: Thematique.logement,
       conditions: undefined,
@@ -1757,89 +1722,6 @@ describe('Admin (API test)', () => {
     const userDB = await TestUtil.prisma.utilisateur.findMany({});
     expect(userDB[0].migration_enabled).toStrictEqual(true);
     expect(userDB[1].migration_enabled).toStrictEqual(true);
-  });
-
-  it('POST /services/refresh_dynamic_data 401 si pas header authorization', async () => {
-    // GIVEN
-    // WHEN
-    const response = await TestUtil.getServer().post(
-      '/services/refresh_dynamic_data',
-    );
-
-    // THEN
-    expect(response.status).toBe(401);
-  });
-  it('POST /services/refresh_dynamic_data 403 si mauvais token', async () => {
-    // GIVEN
-    TestUtil.token = 'bad';
-
-    // WHEN
-    const response = await TestUtil.POST('/services/refresh_dynamic_data');
-
-    // THEN
-    expect(response.status).toBe(403);
-  });
-  it('POST /services/refresh_dynamic_data appel ok, renvoie liste vide quand aucun service en base', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-
-    // WHEN
-    const response = await TestUtil.POST('/services/refresh_dynamic_data');
-
-    // THEN
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(0);
-  });
-
-  it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible, donnée mises à jour', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'dummy_scheduled',
-      scheduled_refresh: new Date(Date.now() - 1000),
-      minute_period: 30,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/refresh_dynamic_data');
-
-    // THEN
-    const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
-
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
-    expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');
-    expect(
-      Math.round(
-        (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
-      ),
-    ).toEqual(30 * 60);
-  });
-  it('POST /services/refresh_dynamic_data appel ok, renvoie 1 quand 1 service cible avec period de refresh, mais pas de scheduled_refresh, donnée mises à jour', async () => {
-    // GIVEN
-    TestUtil.token = process.env.CRON_API_KEY;
-    await TestUtil.create(DB.serviceDefinition, {
-      id: 'dummy_scheduled',
-      scheduled_refresh: null,
-      minute_period: 30,
-    });
-
-    // WHEN
-    const response = await TestUtil.POST('/services/refresh_dynamic_data');
-
-    // THEN
-    const serviceDefDB = await TestUtil.prisma.serviceDefinition.findFirst();
-
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toEqual('REFRESHED OK : dummy_scheduled');
-    expect(serviceDefDB.dynamic_data['label']).toEqual('En construction 🚧');
-    expect(
-      Math.round(
-        (serviceDefDB.scheduled_refresh.getTime() - Date.now()) / 1000,
-      ),
-    ).toEqual(30 * 60);
   });
 
   it('POST /admin/contacts/synchronize - synchro user dans Brevo', async () => {
@@ -2083,6 +1965,7 @@ describe('Admin (API test)', () => {
         {
           code: KYCID.KYC_transport_voiture_km,
           question: `km voituyre`,
+          sous_titre: 'sous',
           type: TypeReponseQuestionKYC.entier,
           is_NGC: true,
           categorie: Categorie.test,

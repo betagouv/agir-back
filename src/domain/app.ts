@@ -135,6 +135,12 @@ export class App {
   public static getLVO_API_URL(): string {
     return process.env.LVO_API_URL || '';
   }
+  public static getLVO_API_INTERNAL_URL(): string {
+    return process.env.LVO_API_INTERNAL_URL || '';
+  }
+  public static getLVO_API_INTERNAL_KEY(): string {
+    return process.env.LVO_API_INTERNAL_KEY || '';
+  }
   public static getMaifAPILogin(): string {
     return process.env.MAIF_API_LOGIN;
   }
@@ -143,6 +149,9 @@ export class App {
   }
   public static getThrottleLimit(): number {
     return parseInt(process.env.THROTTLE_LIMIT) ?? 2;
+  }
+  public static isLVAOInnerService(): boolean {
+    return process.env.IS_INTERNAL_LVAO === 'true';
   }
 
   public static getBasicLoginPwdBase64(): string {

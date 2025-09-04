@@ -54,7 +54,10 @@ export class AidesVeloUsecase {
     const nb_parts_fiscales = utilisateur.getNombrePartsFiscalesOuEstimee();
     const code_insee = utilisateur.logement.code_commune;
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(code_insee);
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        code_insee,
+      );
     const epci = this.communeRepository.getEPCIByCommuneCodeINSEE(code_insee);
     const age = utilisateur.annee_naissance
       ? new Date().getFullYear() - utilisateur.annee_naissance
@@ -120,14 +123,16 @@ export class AidesVeloUsecase {
     const isEPCI = this.communeRepository.isCodeSirenEPCI(code);
     const commune: Commune | undefined = isEPCI
       ? undefined
-      : this.communeRepository.getCommuneByCodeINSEE(code);
+      : this.communeRepository.getCommuneByCodeINSEESansArrondissement(code);
     const epci: EPCI | undefined = isEPCI
       ? this.communeRepository.getEPCIBySIRENCode(code)
       : this.communeRepository.getEPCIByCommuneCodeINSEE(code);
 
     const codeCommuneDeEPCI = epci?.membres[0].code;
     const communeDeEPCI =
-      this.communeRepository.getCommuneByCodeINSEE(codeCommuneDeEPCI);
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        codeCommuneDeEPCI,
+      );
     const region = isEPCI ? communeDeEPCI?.region : commune?.region;
     const departement = isEPCI
       ? communeDeEPCI?.departement

@@ -516,6 +516,7 @@ describe('Actions (API test)', () => {
           is_NGC: false,
           last_update: undefined,
           reponse_complexe: [],
+          sous_titre: undefined,
         },
       ],
     };
@@ -569,6 +570,7 @@ describe('Actions (API test)', () => {
           is_NGC: false,
           last_update: undefined,
           reponse_complexe: [],
+          sous_titre: undefined,
         },
       ],
     };

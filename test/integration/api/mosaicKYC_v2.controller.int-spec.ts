@@ -61,6 +61,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -145,6 +146,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -189,6 +191,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_1',
           question: 'quest 1',
+          sous_titre: 'sous',
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -219,6 +222,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_2',
           question: 'quest 2',
+          sous_titre: 'sous',
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -264,6 +268,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre test',
       is_answered: true,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -329,6 +334,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -385,6 +391,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(dbUser.kyc_history.getAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
+      sous_titre: 'sous',
       type: 'choix_unique',
       categorie: 'recommandation',
       points: 20,
@@ -392,6 +399,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -443,6 +451,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(dbUser.kyc_history.getAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
+      sous_titre: 'sous',
       type: 'choix_unique',
       categorie: 'recommandation',
       points: 20,
@@ -450,6 +459,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_complexe: [
         {
           code: 'oui',
@@ -511,6 +521,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -567,6 +578,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -626,6 +638,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.entier,
@@ -678,6 +691,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(dbUser.kyc_history.getAnsweredKYCs()[0]).toEqual({
       code: '_1',
       question: 'quest 1',
+      sous_titre: 'sous',
       type: 'entier',
       categorie: 'recommandation',
       points: 20,
@@ -685,6 +699,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_simple: {
         value: '1',
         unite: {
@@ -708,6 +723,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     expect(dbUser.kyc_history.getAnsweredKYCs()[1]).toEqual({
       code: '_2',
       question: 'quest 2',
+      sous_titre: 'sous',
       type: 'entier',
       categorie: 'recommandation',
       points: 20,
@@ -715,6 +731,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       is_skipped: false,
       is_answered: false,
+      is_mandatory: false,
       reponse_simple: {
         value: '0',
         unite: {
@@ -778,6 +795,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.entier,
@@ -819,6 +837,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: '_1',
           last_update: undefined,
           question: 'quest 1',
+          sous_titre: 'sous',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
           points: 20,
@@ -840,6 +859,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
           code: '_2',
           last_update: undefined,
           question: 'quest 2',
+          sous_titre: 'sous',
           type: TypeReponseQuestionKYC.entier,
           categorie: Categorie.recommandation,
           points: 20,
@@ -875,6 +895,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       question: 'Titre test',
       is_NGC: false,
       is_answered: true,
+      is_mandatory: false,
       is_skipped: false,
       thematique: Thematique.alimentation,
       reponse_multiple: [
@@ -916,6 +937,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     ngc_key: 'a . b . c',
     points: 123,
     short_question: 'short',
+    sous_titre: 'sous',
     tags: [TagUtilisateur.appetence_bouger_sante],
     thematique: Thematique.dechet,
     unite: { abreviation: 'kg' },
@@ -936,6 +958,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     id_cms: 11,
     last_update: undefined,
     question: `question`,
+    sous_titre: 'sous',
     type: TypeReponseQuestionKYC.choix_unique,
     is_NGC: false,
     a_supprimer: false,
@@ -1037,6 +1060,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -1064,7 +1088,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     });
   });
 
-  it(`GET /utilisateurs/id/questionsKYC-V2/question - renvoie une mosaic depuis le catalogue, avec un KYC depuis l'historique, cas du non`, async () => {
+  it(`Gpuis l'historique, cas du non`, async () => {
     // GIVEN
     MosaicDefinition.TEST_MOSAIC_ID = {
       id: KYCMosaicID.TEST_MOSAIC_ID,
@@ -1154,6 +1178,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -1271,6 +1296,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       code: 'TEST_MOSAIC_ID',
       question: 'Titre mosaic',
       is_answered: false,
+      is_mandatory: false,
       is_skipped: false,
       reponse_multiple: [
         {
@@ -1475,6 +1501,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
       a_supprimer: false,
       points: 20,
       question: 'The question !',
+      sous_titre: 'sous',
       tags: [Tag.possede_voiture],
       thematique: Thematique.alimentation,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -1519,6 +1546,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_1',
           question: 'quest 1',
+          sous_titre: 'sous',
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,
@@ -1549,6 +1577,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
         {
           code: '_2',
           question: 'quest 2',
+          sous_titre: 'sous',
           last_update: undefined,
           type: TypeReponseQuestionKYC.choix_unique,
           categorie: Categorie.recommandation,

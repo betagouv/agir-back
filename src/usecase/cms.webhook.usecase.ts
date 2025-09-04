@@ -561,7 +561,9 @@ export class CMSWebhookUsecase {
       lvo_action: entry.action_lvo
         ? CategorieRecherche[entry.action_lvo]
         : null,
-      lvo_objet: entry.objet_lvo,
+      lvo_objet: entry.objet_lvo
+        ? SousCategorieRecherche[entry.objet_lvo]
+        : null,
       type: TypeAction[entry.type_action],
       besoins: entry.besoins ? entry.besoins.map((elem) => elem.code) : [],
       quizz_ids: entry.quizzes
@@ -679,6 +681,7 @@ export class CMSWebhookUsecase {
       emoji: entry.emoji,
       unite: parseUnite(entry.unite),
       question: entry.question,
+      sous_titre: entry.sous_titre,
       thematique: entry.thematique
         ? Thematique[entry.thematique.code]
         : Thematique.climat,

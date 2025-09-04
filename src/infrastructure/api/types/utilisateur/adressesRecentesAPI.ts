@@ -3,7 +3,6 @@ import { Adresse } from '../../../../domain/logement/adresse';
 import { CommuneRepository } from '../../../repository/commune/commune.repository';
 
 export class AdressesRecentesInputAPI {
-  @ApiProperty() id: string;
   @ApiProperty() code_commune: string;
   @ApiProperty() code_postal: string;
   @ApiProperty() numero_rue: string;

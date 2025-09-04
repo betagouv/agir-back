@@ -1,8 +1,8 @@
-import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { BibliothequeServices } from '../../bibliotheque_services/bibliothequeServices';
 import { FavorisRecherche } from '../../bibliotheque_services/recherche/favorisRecherche';
 import {
   EtapeRecette,
+  FruitLegume,
   IngredientRecette,
   ResultatRecherche,
 } from '../../bibliotheque_services/recherche/resultatRecherche';

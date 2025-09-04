@@ -135,6 +135,7 @@ describe('BilanCarboneUsecase', () => {
       answered_questions: [
         {
           code: KYCID.KYC_transport_voiture_km,
+          sous_titre: 'sous',
           id_cms: 1,
           conditions: [],
           last_update: new Date(1),

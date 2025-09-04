@@ -1,10 +1,9 @@
-import { ServiceExterneID } from './serviceExterneID';
-import { ServiceRechercheID } from './recherche/serviceRechercheID';
-import { ServiceAsyncID } from './serviceAsyncID';
 import { Thematique } from '../thematique/thematique';
+import { ServiceRechercheID } from './recherche/serviceRechercheID';
+import { ServiceExterneID } from './serviceExterneID';
 
 export type NewServiceDefinition = {
-  id: ServiceRechercheID | ServiceExterneID | ServiceAsyncID;
+  id: ServiceRechercheID | ServiceExterneID;
   titre: string;
   sous_titre: string;
   icon_url: string;

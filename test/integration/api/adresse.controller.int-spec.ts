@@ -102,7 +102,6 @@ describe('/utilisateurs/adresses_recentes  (API test)', () => {
     const payload: AdressesRecentesInputAPI = {
       code_commune: '21231',
       code_postal: '21000',
-      id: '123',
       latitude: 40,
       longitude: 2,
       numero_rue: '16',
@@ -137,7 +136,7 @@ describe('/utilisateurs/adresses_recentes  (API test)', () => {
       rue: 'boulevard thiers',
     });
   });
-  it(`POST /utilisateurs/id/adresses_recentes - max 5 adresses`, async () => {
+  it(`POST /utilisateurs/id/adresses_recentes - max 5 adresses => supprime la plus ancienne`, async () => {
     // GIVEN
     const adresse_v0 = {
       code_commune: '21231',
@@ -170,18 +169,17 @@ describe('/utilisateurs/adresses_recentes  (API test)', () => {
       est_prm_obsolete: false,
       est_prm_par_adresse: true,
       liste_adresses_recentes: [
-        adresse_v0,
-        adresse_v0,
-        adresse_v0,
-        adresse_v0,
-        adresse_v0,
+        { ...adresse_v0, id: '1' },
+        { ...adresse_v0, id: '2' },
+        { ...adresse_v0, id: '3' },
+        { ...adresse_v0, id: '4' },
+        { ...adresse_v0, id: '5' },
       ],
     };
     await TestUtil.create(DB.utilisateur, { logement: logement_91120 as any });
     const payload: AdressesRecentesInputAPI = {
       code_commune: '21231',
       code_postal: '21000',
-      id: '123',
       latitude: 40,
       longitude: 2,
       numero_rue: '16',
@@ -193,10 +191,12 @@ describe('/utilisateurs/adresses_recentes  (API test)', () => {
     ).send(payload);
 
     // THEN
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe(
-      `Il n'est pas possible d'avoir plus de [5] adresses récentes`,
-    );
+    expect(response.status).toBe(201);
+    const userDB = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.logement,
+    ]);
+    expect(userDB.logement.liste_adresses_recentes).toHaveLength(5);
+    expect(userDB.logement.liste_adresses_recentes[0].id).toEqual('2');
   });
 
   it(`DELETE /utilisateurs/id/adresses_recentes/id - supprime une adresse récente par ID`, async () => {

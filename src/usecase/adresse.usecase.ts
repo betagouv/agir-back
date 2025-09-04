@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Adresse, AdresseData } from '../domain/logement/adresse';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
-import { ApplicationError } from '../infrastructure/applicationError';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 
 const NBR_MAX_ADRESSES = 5;
@@ -35,17 +34,18 @@ export class AdresseUsecase {
 
     const adresse = new Adresse(input_adresse);
 
-    if (
-      utilisateur.logement.liste_adresses_recentes.length >
-      NBR_MAX_ADRESSES - 1
-    ) {
-      ApplicationError.throwTropAdressesRecentes(NBR_MAX_ADRESSES);
-    }
-
     adresse.checkAllFieldsMandatory();
     adresse.checkAllFieldsSize();
     adresse.checkCoordinatesOK();
     adresse.checkCodeCommuneAndCodePostalCoherent();
+
+    if (
+      utilisateur.logement.liste_adresses_recentes.length === NBR_MAX_ADRESSES
+    ) {
+      this.supprimerAddresLaPlusAncienne(
+        utilisateur.logement.liste_adresses_recentes,
+      );
+    }
 
     adresse.id = uuidv4();
     adresse.date_creation = new Date();
@@ -83,5 +83,10 @@ export class AdresseUsecase {
     );
 
     return utilisateur.logement.liste_adresses_recentes;
+  }
+
+  private supprimerAddresLaPlusAncienne(liste: Adresse[]) {
+    // l'adresse la plus vieille et simplement la première dans le tableau ^^
+    liste.splice(0, 1);
   }
 }

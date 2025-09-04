@@ -20,6 +20,7 @@ export class KycDefinition {
   a_supprimer: boolean;
   ngc_key: string;
   question: string;
+  sous_titre: string;
   short_question: string;
   reponses?: ReponseDefinition[];
   thematique: Thematique;

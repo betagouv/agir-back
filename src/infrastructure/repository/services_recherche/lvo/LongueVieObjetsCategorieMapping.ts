@@ -1,4 +1,5 @@
 import { CategorieRecherche } from '../../../../domain/bibliotheque_services/recherche/categorieRecherche';
+import { ActionLVAO } from '../../../../domain/lvao/action_LVAO';
 import { CategoriesLongueVieObjets } from './categoriesLongueVieObjets';
 
 export class LongueVieObjetsCategorieMapping {
@@ -8,7 +9,7 @@ export class LongueVieObjetsCategorieMapping {
   }[] = [
     {
       categorie: CategorieRecherche.vos_objets,
-      mapped_categorie: null,
+      mapped_categorie: undefined,
     },
     {
       categorie: CategorieRecherche.donner,
@@ -36,17 +37,70 @@ export class LongueVieObjetsCategorieMapping {
     },
   ];
 
+  public static readonly mappings_interne: {
+    categorie: CategorieRecherche;
+    mapped_categorie: ActionLVAO;
+  }[] = [
+    {
+      categorie: CategorieRecherche.vos_objets,
+      mapped_categorie: undefined,
+    },
+    {
+      categorie: CategorieRecherche.donner,
+      mapped_categorie: ActionLVAO.donner,
+    },
+    {
+      categorie: CategorieRecherche.reparer,
+      mapped_categorie: ActionLVAO.reparer,
+    },
+    {
+      categorie: CategorieRecherche.vendre,
+      mapped_categorie: ActionLVAO.revendre,
+    },
+    {
+      categorie: CategorieRecherche.louer,
+      mapped_categorie: ActionLVAO.louer,
+    },
+    {
+      categorie: CategorieRecherche.acheter,
+      mapped_categorie: ActionLVAO.acheter,
+    },
+    {
+      categorie: CategorieRecherche.emprunter,
+      mapped_categorie: ActionLVAO.emprunter,
+    },
+  ];
+
+  public static ACTION_CAT_RECHERCHE_MAPPING: {
+    [key in ActionLVAO]?: CategorieRecherche;
+  } = {
+    donner: CategorieRecherche.donner,
+    reparer: CategorieRecherche.reparer,
+    revendre: CategorieRecherche.vendre,
+    louer: CategorieRecherche.louer,
+    acheter: CategorieRecherche.acheter,
+    emprunter: CategorieRecherche.emprunter,
+  };
+
   public static getFiltreFromCategorie(
     categorie: CategorieRecherche,
-  ): CategoriesLongueVieObjets {
+    interne: boolean,
+  ): string {
     if (!categorie) {
-      return null;
+      return undefined;
     }
-    const content = LongueVieObjetsCategorieMapping.mappings.find(
-      (m) => m.categorie === categorie,
-    );
-    if (!content) return null;
-    return content.mapped_categorie;
+    let content;
+    if (interne) {
+      content = LongueVieObjetsCategorieMapping.mappings_interne.find(
+        (m) => m.categorie === categorie,
+      );
+    } else {
+      content = LongueVieObjetsCategorieMapping.mappings.find(
+        (m) => m.categorie === categorie,
+      );
+    }
+    if (!content) return undefined;
+    return content.mapped_categorie + '';
   }
 
   public static getCategorieFromAction(
@@ -60,5 +114,10 @@ export class LongueVieObjetsCategorieMapping {
     );
     if (!content) return null;
     return content.categorie;
+  }
+  public static getCategorieFromActionLVAO(
+    action: ActionLVAO,
+  ): CategorieRecherche {
+    return this.ACTION_CAT_RECHERCHE_MAPPING[action];
   }
 }

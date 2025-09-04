@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Consultation,
   Realisation,
@@ -71,6 +72,48 @@ export class WinterUsecase {
     private linkyConsentRepository: LinkyConsentRepository,
     private catalogueActionUsecase: CatalogueActionUsecase,
   ) {}
+
+  public async supprimerInscriptionsOrphelines(
+    block_size = 100,
+  ): Promise<string[]> {
+    const result = [];
+    const total_user_count = await this.linkyConsentRepository.countAll();
+
+    for (let index = 0; index < total_user_count; index = index + block_size) {
+      const consent_list =
+        await this.linkyConsentRepository.listPaginatedActivePRMs(
+          index,
+          block_size,
+        );
+
+      for (const consent of consent_list) {
+        const exists = await this.utilisateurRepository.exists(
+          consent.utilisateurId,
+        );
+        if (!exists) {
+          try {
+            await this.winterRepository.supprimerPRM(consent.utilisateurId);
+            result.push(
+              `deleted orphan PRM [${consent.prm}] for deleted user [${consent.utilisateurId}]`,
+            );
+            await this.linkyConsentRepository.unsunbscribe_prm(consent.id);
+          } catch (error) {
+            if (error.code === '175') {
+              result.push(
+                `Already deleted orphan PRM [${consent.prm}] for deleted user [${consent.utilisateurId}]`,
+              );
+              await this.linkyConsentRepository.unsunbscribe_prm(consent.id);
+            } else {
+              result.push(
+                `failed deleting orphan PRM [${consent.prm}] for deleted user [${consent.utilisateurId}]`,
+              );
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
 
   public async inscrireAdresse(
     utilisateurId: string,
@@ -322,6 +365,7 @@ export class WinterUsecase {
     user_agent: string,
   ): LinkyConsent {
     return {
+      id: uuidv4(),
       date_consentement: new Date(),
       date_fin_consentement: new Date(Date.now() + TROIS_ANS),
       email: email,
@@ -331,6 +375,7 @@ export class WinterUsecase {
       utilisateurId: utilisateurId,
       ip_address: ip,
       user_agent: user_agent,
+      unsubscribed_prm: false,
     };
   }
 

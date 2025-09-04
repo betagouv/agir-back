@@ -23,6 +23,7 @@ const QUESTION_TEST: QuestionKYC_v2 = {
   id_cms: 1,
   code: KYCID.KYC001,
   question: `question`,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -61,6 +62,7 @@ const KYC_DEF = {
   a_supprimer: false,
   points: 10,
   question: 'The question !',
+  sous_titre: 'sous_titre',
   tags: [Tag.possede_voiture],
   thematique: Thematique.alimentation,
   thematiques: [],
@@ -1837,10 +1839,10 @@ describe('QuestionsQYC && CollectionQuestionsKYC', () => {
 
   it(`listMosaicIDs : bon nombre `, () => {
     // THEN
-    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(11);
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(16);
     // GIVEN
     process.env.IS_PROD = 'true';
-    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(10);
+    expect(MosaicCatalogue.listMosaicIDs()).toHaveLength(15);
     process.env.IS_PROD = 'false';
   });
 });

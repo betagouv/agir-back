@@ -74,6 +74,7 @@ export class QuestionKYCData implements TaggedContent {
   id_cms: number;
   last_update: Date;
   question: string;
+  sous_titre: string;
   short_question: string;
   emoji: string;
   image_url: string;
@@ -86,6 +87,7 @@ export class QuestionKYCData implements TaggedContent {
   is_NGC: boolean;
   a_supprimer: boolean;
   is_answered: boolean;
+  is_mandatory: boolean;
   is_skipped: boolean;
   tags: Tag[];
   score: number;
@@ -102,6 +104,7 @@ export class QuestionKYCData implements TaggedContent {
     this.code = data.code;
     this.id_cms = data.id_cms;
     this.question = data.question;
+    this.sous_titre = data.sous_titre;
     this.short_question = data.short_question;
     this.emoji = data.emoji;
     this.unite = data.unite;
@@ -121,6 +124,7 @@ export class QuestionKYCData implements TaggedContent {
     this.last_update = data.last_update;
     this.is_answered = false;
     this.is_skipped = false;
+    this.is_mandatory = false;
 
     this.reponse_simple = data.reponse_simple;
     this.reponse_complexe = data.reponse_complexe
@@ -219,6 +223,7 @@ export class QuestionKYCData implements TaggedContent {
       ngc_key: def.ngc_key,
       thematique: def.thematique,
       question: def.question,
+      sous_titre: def.sous_titre,
       conditions: def.conditions ? def.conditions : [],
       a_supprimer: !!def.a_supprimer,
       reponse_simple: null,
@@ -262,6 +267,7 @@ export class QuestionKYCData implements TaggedContent {
     const result = new QuestionKYCData({
       id_cms: undefined,
       question: def.titre,
+      sous_titre: undefined,
       thematique: def.thematique,
       categorie: def.categorie,
       code: def.id,

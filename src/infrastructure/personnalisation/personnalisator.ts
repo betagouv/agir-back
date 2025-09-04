@@ -125,9 +125,10 @@ export class Personnalisator {
   }
 
   private formatCommune(utilisateur: Utilisateur): string {
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     return commune.nom;
   }
 

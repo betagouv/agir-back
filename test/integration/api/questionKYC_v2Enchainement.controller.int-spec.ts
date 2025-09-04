@@ -13,7 +13,10 @@ import {
   ActionSimulateurID,
   TypeAction,
 } from '../../../src/domain/actions/typeAction';
-import { EnchainementDefinition } from '../../../src/domain/kyc/enchainementDefinition';
+import {
+  EnchainementDefinition,
+  EnchainementID,
+} from '../../../src/domain/kyc/enchainementDefinition';
 import {
   KYCMosaicID,
   MosaicDefinition,
@@ -31,6 +34,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -67,6 +71,7 @@ const dbKYC: KYC = {
   a_supprimer: false,
   points: 20,
   question: 'The question !',
+  sous_titre: 'sous',
   tags: [Tag.possede_voiture],
   thematique: Thematique.alimentation,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -106,12 +111,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
     process.env = OLD_ENV;
   });
 
-  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de quesitions', async () => {
+  it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - liste un enchainement de questions', async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCMosaicID.TEST_MOSAIC_ID,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: true },
+        { id: KYCMosaicID.TEST_MOSAIC_ID, is_mandatory: false },
+      ],
+    );
 
     MosaicDefinition.TEST_MOSAIC_ID = {
       id: KYCMosaicID.TEST_MOSAIC_ID,
@@ -163,8 +171,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       {
         code: 'KYC001',
         question: 'quest 1',
+        sous_titre: 'sous',
+
         is_answered: false,
         is_skipped: false,
+        is_mandatory: true,
         reponse_multiple: [
           {
             code: 'oui',
@@ -192,6 +203,7 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'TEST_MOSAIC_ID',
         question: 'Titre test',
         is_NGC: false,
+        is_mandatory: false,
         reponse_multiple: [
           {
             code: 'KYC002',
@@ -222,9 +234,13 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it('GET /utilisateurs/id/enchainementQuestionsKYC_v2/id - enchainement qui existe pas', async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1[
-      (KYCID.KYC001, KYCMosaicID.TEST_MOSAIC_ID)
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCMosaicID.TEST_MOSAIC_ID, is_mandatory: false },
+      ],
+    );
 
     await TestUtil.create(DB.utilisateur);
 
@@ -283,9 +299,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: KYCID.KYC_type_logement,
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'Quel est le type de votre logement ?',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -353,7 +371,9 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: KYCID.KYC_transport_type_utilisateur,
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
+        sous_titre: 'sous',
         points: 20,
         question: 'Quel est votre moyen de transport principal ?',
         reponse_multiple: [
@@ -381,11 +401,14 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement non répondu`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -449,9 +472,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC002',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 2',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -477,11 +502,14 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement quand tout est déjà répondu`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -567,9 +595,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: true,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 1',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -595,11 +625,14 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first_to_answer_eligible - premier element d'un enchainement non répondu et eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -664,9 +697,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC003',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 3',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -692,11 +727,14 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/first - premier element d'un enchainement eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -768,9 +806,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC003',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 3',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -796,12 +836,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following_eligible/following - element suivant d'un enchainement eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -873,9 +916,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -901,12 +946,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following zappe une non eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -977,9 +1025,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1005,12 +1055,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - element deja repondu renvoyé quand même`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1078,9 +1131,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
+        sous_titre: 'sous',
         code: 'KYC002',
         is_NGC: true,
         is_answered: true,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 2',
@@ -1109,7 +1164,13 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following - dépasse dernier élément`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [KYCID.KYC001, KYCID.KYC002];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+      ],
+    );
 
     await TestUtil.create(DB.kYC, {
       ...dbKYC,
@@ -1146,12 +1207,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding - recule sur une question deja repondu`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1229,9 +1293,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
       is_out_of_range: false,
       question_courante: {
         categorie: 'recommandation',
+        sous_titre: 'sous',
         code: 'KYC003',
         is_NGC: true,
         is_answered: true,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 3',
@@ -1260,11 +1326,14 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/preceding/XXX - element precedent d'un enchainement, zappe non eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1329,9 +1398,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC001',
         is_NGC: true,
         is_answered: true,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 1',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',
@@ -1357,12 +1428,15 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
 
   it(`GET /utilisateurs/id/enchainementQuestionsKYC_v2/id/following/XXX - zapp 2 non eligible`, async () => {
     // GIVEN
-    EnchainementDefinition.ENCHAINEMENT_KYC_1 = [
-      KYCID.KYC001,
-      KYCID.KYC002,
-      KYCID.KYC003,
-      KYCID.KYC004,
-    ];
+    EnchainementDefinition.set_definition_for_test_only(
+      EnchainementID.ENCHAINEMENT_KYC_1,
+      [
+        { id: KYCID.KYC001, is_mandatory: false },
+        { id: KYCID.KYC002, is_mandatory: false },
+        { id: KYCID.KYC003, is_mandatory: false },
+        { id: KYCID.KYC004, is_mandatory: false },
+      ],
+    );
 
     const kyc: KYCHistory_v2 = {
       version: 2,
@@ -1434,9 +1508,11 @@ describe('/utilisateurs/id/enchainementQuestionsKYC_v2 (API test)', () => {
         code: 'KYC004',
         is_NGC: true,
         is_answered: false,
+        is_mandatory: false,
         is_skipped: false,
         points: 20,
         question: 'quest 4',
+        sous_titre: 'sous',
         reponse_multiple: [
           {
             code: 'oui',

@@ -1,4 +1,3 @@
-import { FruitLegume } from '../../../infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { NiveauRisqueLogement } from '../../logement/NiveauRisque';
 import { TypeRisqueLogement } from '../../logement/TypeRisque';
 import {
@@ -27,6 +26,12 @@ export class EtapeRecette {
   constructor(res: EtapeRecette_v0) {
     Object.assign(this, res);
   }
+}
+
+export enum FruitLegume {
+  fruit = 'fruit',
+  legume = 'legume',
+  fruit_et_legume = 'fruit_et_legume',
 }
 
 export class ResultatRecherche {

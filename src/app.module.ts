@@ -49,7 +49,6 @@ import { QuestionsKYCEnchainementController } from './infrastructure/api/questio
 import { RechecheServicesController } from './infrastructure/api/rechercheServices.controller';
 import { RecommandationsController } from './infrastructure/api/recommandations.controller';
 import { RisqesController } from './infrastructure/api/risques.controller';
-import { ServiceController } from './infrastructure/api/service.controller';
 import { SimulateurVoitureController } from './infrastructure/api/simulateurVoiture.controller';
 import { Synthese_v2Controller } from './infrastructure/api/synthese_v2.controller';
 import { TagController } from './infrastructure/api/tag.controller';
@@ -80,7 +79,6 @@ import { PartenaireRepository } from './infrastructure/repository/partenaire.rep
 import { QuizzRepository } from './infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from './infrastructure/repository/risquesNaturelsCommunes.repository';
 import { SelectionRepository } from './infrastructure/repository/selection.repository';
-import { ServiceRepository } from './infrastructure/repository/service.repository';
 import { ServiceFavorisStatistiqueRepository } from './infrastructure/repository/serviceFavorisStatistique.repository';
 import { AddressesRepository } from './infrastructure/repository/services_recherche/addresses.repository';
 import { DistancesRepository } from './infrastructure/repository/services_recherche/distances.repository';
@@ -100,7 +98,6 @@ import { UtilisateurSecurityRepository } from './infrastructure/repository/utili
 import { UtilisateurBoardRepository } from './infrastructure/repository/utilisateurBoard.repository';
 import { WinterRepository } from './infrastructure/repository/winter/winter.repository';
 import { WinterAPIClient } from './infrastructure/repository/winter/winterAPIClient';
-import { FruitsEtLegumesServiceManager } from './infrastructure/service/fruits/fruitEtLegumesServiceManager';
 import { ActionUsecase } from './usecase/actions.usecase';
 import { AdminUsecase } from './usecase/admin.usecase';
 import { AdresseUsecase } from './usecase/adresse.usecase';
@@ -131,9 +128,7 @@ import { QuestionKYCEnchainementUsecase } from './usecase/questionKYCEnchainemen
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
 import { NewServiceCatalogue } from './usecase/referentiels/newServiceCatalogue';
-import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
 import { RisquesUsecase } from './usecase/risques.usecase';
-import { ServiceUsecase } from './usecase/service.usecase';
 import { SimulateurVoitureUsecase } from './usecase/simulateurVoiture.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
 import { ThematiqueUsecase } from './usecase/thematique.usecase';
@@ -151,7 +146,6 @@ function getControllers(): any[] {
     AidesController,
     CMSController,
     CommunesController,
-    ServiceController,
     EventController,
     GamificationController,
     AdminController,
@@ -224,10 +218,7 @@ function getControllers(): any[] {
     UtilisateurSecurityRepository,
     SecurityEmailManager,
     PasswordManager,
-    ServiceUsecase,
-    ServiceRepository,
     ThematiqueRepository,
-    FruitsEtLegumesServiceManager,
     EventUsecase,
     GamificationUsecase,
     QuestionKYCUsecase,
@@ -237,7 +228,6 @@ function getControllers(): any[] {
     ContactUsecase,
     BrevoRepository,
     MigrationUsecase,
-    ReferentielUsecase,
     BibliothequeUsecase,
     InscriptionUsecase,
     AideRepository,

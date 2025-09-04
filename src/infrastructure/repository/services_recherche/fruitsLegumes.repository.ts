@@ -4,9 +4,12 @@ import { App } from '../../../domain/app';
 import { CategorieRecherche } from '../../../domain/bibliotheque_services/recherche/categorieRecherche';
 import { FiltreRecherche } from '../../../domain/bibliotheque_services/recherche/filtreRecherche';
 import { FinderInterface } from '../../../domain/bibliotheque_services/recherche/finderInterface';
-import { ResultatRecherche } from '../../../domain/bibliotheque_services/recherche/resultatRecherche';
-import { FruitsEtLegumesServiceManager } from '../../service/fruits/fruitEtLegumesServiceManager';
+import {
+  FruitLegume,
+  ResultatRecherche,
+} from '../../../domain/bibliotheque_services/recherche/resultatRecherche';
 import { ApplicationError } from '../../applicationError';
+import fruits_legumes from './fruits_legumes.json';
 
 const API_URL = 'https://impactco2.fr/api/v1/fruitsetlegumes';
 
@@ -21,13 +24,35 @@ export type FruitsLegumesResponse = {
   ];
 };
 
+export type rawEntry = {
+  label: Record<'fr', string>;
+  months: number[];
+  emoji: string;
+  local: boolean;
+  pef: number;
+  CO2: number;
+  suggestions?: boolean;
+  type?: FruitLegume;
+  img?: string;
+};
+
 @Injectable()
 export class FruitsLegumesRepository implements FinderInterface {
   static API_TIMEOUT = 4000;
+  private entriesByNameMap: Map<string, rawEntry>;
 
-  constructor(
-    private fruitsEtLegumesServiceManager: FruitsEtLegumesServiceManager,
-  ) {}
+  constructor() {
+    this.loadFruitsData(fruits_legumes as rawEntry[]);
+  }
+  private loadFruitsData(fruits: rawEntry[]) {
+    this.entriesByNameMap = new Map();
+
+    for (let month = 0; month < 12; month++) {
+      fruits.forEach((entry) => {
+        this.entriesByNameMap.set(entry.label.fr, entry);
+      });
+    }
+  }
 
   public getMaxResultOfCategorie(cat: CategorieRecherche): number {
     return 999999999;
@@ -55,17 +80,6 @@ export class FruitsLegumesRepository implements FinderInterface {
 
     if (!result) {
       ApplicationError.throwExternalServiceError('Fruits et légumes de saison');
-      /*
-      return [
-        new ResultatRecherche({
-          id: '9999',
-          titre: 'Service temporairement indisponible 😅',
-          impact_carbone_kg: 0,
-          emoji: '🚫',
-          type_fruit_legume: FruitLegume.fruit_et_legume,
-        }),
-      ];
-      */
     }
     const mapped_result = result.data.map(
       (r) =>
@@ -73,12 +87,12 @@ export class FruitsLegumesRepository implements FinderInterface {
           id: r.slug,
           titre: r.name,
           impact_carbone_kg: r.ecv,
-          emoji: this.fruitsEtLegumesServiceManager.getEmoji(r.name),
-          type_fruit_legume: this.fruitsEtLegumesServiceManager.getType(r.name),
+          emoji: this.getEmoji(r.name),
+          type_fruit_legume: this.getType(r.name),
           image_url:
             App.getBaseURLFront() +
             '/impact_co2_img_fruits_legumes/' +
-            this.fruitsEtLegumesServiceManager.getImageFileName(r.name),
+            this.getImageFileName(r.name),
         }),
     );
 
@@ -126,5 +140,19 @@ export class FruitsLegumesRepository implements FinderInterface {
       `API_TIME:impactco2.fr/api/v1/fruitsetlegumes:${Date.now() - call_time}`,
     );
     return response.data;
+  }
+
+  private getEmoji(nom: string): string {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.emoji : null;
+  }
+
+  private getType(nom: string): FruitLegume {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.type : null;
+  }
+  private getImageFileName(nom: string): string {
+    const entry = this.entriesByNameMap.get(nom);
+    return entry ? entry.img : null;
   }
 }

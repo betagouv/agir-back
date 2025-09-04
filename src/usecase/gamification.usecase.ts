@@ -66,9 +66,10 @@ export class GamificationUsecase {
         utilisateur: null,
         classement_utilisateur: null,
         code_postal: utilisateur.logement.code_postal,
-        commune_label: this.communeRepository.getCommuneByCodeINSEE(
-          utilisateur.code_commune_classement,
-        )?.nom,
+        commune_label:
+          this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+            utilisateur.code_commune_classement,
+          )?.nom,
         badges: utilisateur.gamification.getBadges(),
       };
     }

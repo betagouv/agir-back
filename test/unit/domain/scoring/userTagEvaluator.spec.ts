@@ -40,6 +40,7 @@ describe('UseragEvaluator', () => {
         a_supprimer: false,
         points: 10,
         question: 'The question !',
+        sous_titre: 'sous_titre',
         tags: [Tag.possede_voiture],
         thematique: Thematique.climat,
         type: TypeReponseQuestionKYC.choix_multiple,
@@ -97,6 +98,7 @@ describe('UseragEvaluator', () => {
 
         points: 10,
         question: 'The question !',
+        sous_titre: 'sous_titre',
         tags: [Tag.possede_voiture],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',
@@ -161,6 +163,7 @@ describe('UseragEvaluator', () => {
 
         points: 10,
         question: 'The question !',
+        sous_titre: 'sous_titre',
         tags: [Tag.possede_voiture],
         thematique: Thematique.climat,
         ngc_key: 'a . b . c',

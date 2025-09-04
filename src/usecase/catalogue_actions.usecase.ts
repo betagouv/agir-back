@@ -7,6 +7,7 @@ import {
   Realisation,
   Recommandation,
 } from '../domain/actions/catalogueAction';
+import { AideDefinition } from '../domain/aides/aideDefinition';
 import { Echelle } from '../domain/aides/echelle';
 import { Selection } from '../domain/contenu/selection';
 import { Thematique } from '../domain/thematique/thematique';
@@ -58,7 +59,10 @@ export class CatalogueActionUsecase {
     let catalogue = new CatalogueAction();
     let commune: Commune;
     if (code_commune) {
-      commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+      commune =
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }
@@ -117,7 +121,6 @@ export class CatalogueActionUsecase {
     );
 
     Utilisateur.checkState(utilisateur);
-
     return await this.external_get_utilisateur_catalogue(
       utilisateur,
       liste_thematiques,
@@ -209,19 +212,19 @@ export class CatalogueActionUsecase {
     const liste_actions = await this.actionRepository.list(filtre);
 
     let actions_resultat: Action[] = [];
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+
+    const liste_aides_utilisateur =
+      await this.aidesUsecase.external_get_aides_utilisateur(
+        utilisateur,
+        undefined,
+      );
 
     for (const action_def of liste_actions) {
-      const count_aides = await this.aidesUsecase.external_count_aides(
-        commune.code,
-        commune.codesPostaux[0],
-        undefined,
-        action_def.besoins,
-      );
       const action = new Action(action_def);
-      action.nombre_aides = count_aides;
+      action.nombre_aides = this.countAidesSurBesoins(
+        action_def.besoins,
+        liste_aides_utilisateur,
+      );
       action.deja_vue = utilisateur.thematique_history.isActionVue(action);
       action.deja_faite = utilisateur.thematique_history.isActionFaite(action);
       actions_resultat.push(action);
@@ -342,5 +345,18 @@ export class CatalogueActionUsecase {
       '{NBR_ACTIONS}',
       '' + nbr_faites,
     );
+  }
+
+  private countAidesSurBesoins(
+    besoins: string[],
+    aides: AideDefinition[],
+  ): number {
+    let counter = 0;
+    for (const aide of aides) {
+      if (besoins.includes(aide.besoin)) {
+        counter++;
+      }
+    }
+    return counter;
   }
 }

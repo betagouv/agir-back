@@ -34,7 +34,7 @@ export class ActionDefinitionData {
   kyc_codes: string[];
   faq_ids: string[];
   lvo_action: CategorieRecherche;
-  lvo_objet: string;
+  lvo_objet: SousCategorieRecherche;
   article_ids: string[];
   quizz_ids: string[];
   recette_categorie: CategorieRecherche;

@@ -68,6 +68,15 @@ export class UtilisateurRepository {
     });
   }
 
+  async exists(utilisateurId: string): Promise<boolean> {
+    const id = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        id: true,
+      },
+    });
+    return id !== null;
+  }
   async validerPseudo(utilisateurId: string, pseudo: string) {
     await this.prisma.utilisateur.update({
       where: { id: utilisateurId },

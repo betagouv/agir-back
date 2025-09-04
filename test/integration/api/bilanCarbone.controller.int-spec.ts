@@ -24,6 +24,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   code: 'KYC_saison_frequence',
   id_cms: 21,
   question: `À quelle fréquence mangez-vous de saison ? `,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: true,
   a_supprimer: false,
@@ -448,6 +449,7 @@ describe('/bilan (API test)', () => {
           last_update: undefined,
           id_cms: 21,
           question: `À quelle fréquence mangez-vous de saison ? `,
+          sous_titre: 'sous',
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: true,
           a_supprimer: false,
@@ -489,6 +491,7 @@ describe('/bilan (API test)', () => {
           id_cms: 1,
           last_update: undefined,
           question: `Votre regime`,
+          sous_titre: 'sous',
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
           a_supprimer: false,
@@ -537,6 +540,7 @@ describe('/bilan (API test)', () => {
       code: 'KYC_saison_frequence',
       id_cms: 21,
       question: `À quelle fréquence mangez-vous de saison ? `,
+      sous_titre: 'sous',
       type: TypeReponseQuestionKYC.choix_unique,
       categorie: Categorie.mission,
       points: 10,
@@ -591,19 +595,19 @@ describe('/bilan (API test)', () => {
       id_cms: 3,
       code: Thematique.consommation,
       titre: 'Consommation',
-      image_url: 'bbbb',
+      image_url: 'cccc',
     });
     await TestUtil.create(DB.thematique, {
       id_cms: 4,
       code: Thematique.alimentation,
       titre: 'Alimentation',
-      image_url: 'bbbb',
+      image_url: 'dddd',
     });
     await TestUtil.create(DB.thematique, {
       id_cms: 5,
       code: Thematique.services_societaux,
       titre: 'Services sociétaux',
-      image_url: 'bbbb',
+      image_url: 'eeee',
     });
     await thematiqueRepository.loadCache();
     await kycRepository.loadCache();
@@ -619,8 +623,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.liens_bilans_thematique).toEqual([
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_transport',
-        image_url:
-          'https://res.cloudinary.com/dq023imd8/image/upload/v1728466903/Mobilite_df75aefd09.svg',
+        image_url: 'aaaa',
         nombre_total_question: 0,
         pourcentage_progression: null,
         thematique: 'transport',
@@ -628,8 +631,7 @@ describe('/bilan (API test)', () => {
       },
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_alimentation',
-        image_url:
-          'https://res.cloudinary.com/dq023imd8/image/upload/v1728466523/cuisine_da54797693.svg',
+        image_url: 'dddd',
         nombre_total_question: 3,
         pourcentage_progression: 67,
         thematique: 'alimentation',
@@ -637,8 +639,7 @@ describe('/bilan (API test)', () => {
       },
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_consommation',
-        image_url:
-          'https://res.cloudinary.com/dq023imd8/image/upload/v1728468852/conso_7522b1950d.svg',
+        image_url: 'cccc',
         nombre_total_question: 5,
         pourcentage_progression: 0,
         thematique: 'consommation',
@@ -646,8 +647,7 @@ describe('/bilan (API test)', () => {
       },
       {
         id_enchainement_kyc: 'ENCHAINEMENT_KYC_bilan_logement',
-        image_url:
-          'https://res.cloudinary.com/dq023imd8/image/upload/v1728468978/maison_80242d91f3.svg',
+        image_url: 'bbbb',
         nombre_total_question: 3,
         pourcentage_progression: 0,
         thematique: 'logement',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { App } from '../domain/app';
 import {
   EnchainementDefinition,
-  EnchainementType,
+  EnchainementID,
 } from '../domain/kyc/enchainementDefinition';
 import { Progression } from '../domain/kyc/Progression';
 import { QuestionKYC } from '../domain/kyc/questionKYC';
@@ -41,9 +41,10 @@ export class ThematiqueBoardUsecase {
     );
     Utilisateur.checkState(utilisateur);
 
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
 
     return await this.buildSyntheseFromCodeCommune(
       commune?.code,
@@ -68,9 +69,10 @@ export class ThematiqueBoardUsecase {
     }
 
     const result = new HomeBoard();
-    const commune = this.communeRepository.getCommuneByCodeINSEE(
-      utilisateur.logement.code_commune,
-    );
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        utilisateur.logement.code_commune,
+      );
     result.nom_commune = commune?.nom;
     result.est_utilisateur_ngc = utilisateur.vientDeNGC();
 
@@ -93,25 +95,25 @@ export class ThematiqueBoardUsecase {
       recap_progression.pourcentage_prog_totale_sans_mini_bilan;
 
     let transport_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition[
-        EnchainementType.ENCHAINEMENT_KYC_personnalisation_transport
-      ],
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID.ENCHAINEMENT_KYC_personnalisation_transport,
+      ),
     );
     let logement_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition[
-        EnchainementType.ENCHAINEMENT_KYC_personnalisation_logement
-      ],
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID.ENCHAINEMENT_KYC_personnalisation_logement,
+      ),
     );
     let conso_reco = utilisateur.kyc_history.getEnchainementKYCsEligibles(
-      EnchainementDefinition[
-        EnchainementType.ENCHAINEMENT_KYC_personnalisation_consommation
-      ],
+      EnchainementDefinition.getKycDefinitionsByEnchainementID(
+        EnchainementID.ENCHAINEMENT_KYC_personnalisation_consommation,
+      ),
     );
     let alimentation_reco =
       utilisateur.kyc_history.getEnchainementKYCsEligibles(
-        EnchainementDefinition[
-          EnchainementType.ENCHAINEMENT_KYC_personnalisation_alimentation
-        ],
+        EnchainementDefinition.getKycDefinitionsByEnchainementID(
+          EnchainementID.ENCHAINEMENT_KYC_personnalisation_alimentation,
+        ),
       );
 
     const alimentation_progression =
@@ -151,7 +153,10 @@ export class ThematiqueBoardUsecase {
     code_commune?: string,
     code_postal?: string,
   ): Promise<{ nom_commune: string; thematiques: ThematiqueSynthese[] }> {
-    const commune = this.communeRepository.getCommuneByCodeINSEE(code_commune);
+    const commune =
+      this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+        code_commune,
+      );
     return await this.buildSyntheseFromCodeCommune(commune?.code, code_postal);
   }
 
@@ -166,7 +171,9 @@ export class ThematiqueBoardUsecase {
 
     if (code_commune) {
       const commune =
-        this.communeRepository.getCommuneByCodeINSEE(code_commune);
+        this.communeRepository.getCommuneByCodeINSEESansArrondissement(
+          code_commune,
+        );
       if (!commune) {
         ApplicationError.throwCodeCommuneNotFound(code_commune);
       }

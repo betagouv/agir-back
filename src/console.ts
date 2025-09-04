@@ -11,17 +11,13 @@ import { NotificationEmailUsecase } from './usecase/notificationEmail.usecase';
 import { NotificationMobileUsecase } from './usecase/notificationMobile.usecase';
 import { RechercheServicesUsecase } from './usecase/rechercheServices.usecase';
 import { RecommandationUsecase } from './usecase/recommandation.usecase';
-import { ReferentielUsecase } from './usecase/referentiels/referentiel.usecase';
-import { ServiceUsecase } from './usecase/service.usecase';
 import { DuplicateBDDForStatsUsecase } from './usecase/stats/new/duplicateBDD.usecase';
+import { WinterUsecase } from './usecase/winter.usecase';
 
 export const appCommands: Record<
   string,
   (app: INestApplicationContext, ...args: string[]) => Promise<any>
 > = {
-  upsert_service_definitions: async (app) => {
-    return await app.get(ReferentielUsecase).upsertServicesDefinitions();
-  },
   service_statistique: async (app) => {
     return await app.get(RechercheServicesUsecase).computeStatsFavoris();
   },
@@ -46,9 +42,6 @@ export const appCommands: Record<
   },
   update_brevo_contacts: async (app) => {
     return await app.get(ContactUsecase).batchUpdate();
-  },
-  process_async_service: async (app) => {
-    return await app.get(ServiceUsecase).processAsyncServices();
   },
   send_welcomes: async (app) => {
     return await app.get(NotificationEmailUsecase).envoyerEmailsWelcome();
@@ -127,6 +120,9 @@ export const appCommands: Record<
   },
   compute_all_articles_communes_from_partenaires: async (app) => {
     return await app.get(ArticlesUsecase).updateAllPartenairesCodes();
+  },
+  delete_orphan_prms: async (app) => {
+    return await app.get(WinterUsecase).supprimerInscriptionsOrphelines();
   },
 };
 

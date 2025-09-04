@@ -9,6 +9,7 @@ import {
 } from '../../../src/domain/logement/logement';
 import { Logement_v0 } from '../../../src/domain/object_store/logement/logement_v0';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import { ApplicationError } from '../../../src/infrastructure/applicationError';
 import { EmailSender } from '../../../src/infrastructure/email/emailSender';
 import { Personnalisator } from '../../../src/infrastructure/personnalisation/personnalisator';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
@@ -214,6 +215,7 @@ J'autorise J'Agis et son partenaire Watt Watchers à recueillir mon historique d
 ainsi qu'à analyser mes consommations tant que j'ai un compte`,
       user_agent: 'chrome',
       utilisateurId: 'utilisateur-id',
+      unsubscribed_prm: false,
     });
 
     expect(id).toHaveLength(36);
@@ -643,5 +645,82 @@ ainsi qu'à analyser mes consommations tant que j'ai un compte`,
 
     expect(result).toHaveLength(0);
     expect(userDB.thematique_history.getNombreActionsWinter()).toEqual(0);
+  });
+
+  it('supprimerInscriptionsOrphelines : flag supprimé si erreur 175 à la suppresion côté winter', async () => {
+    // GIVEN
+
+    await TestUtil.prisma.linkyConsentement.create({
+      data: {
+        id: '1',
+        date_consentement: new Date(1),
+        date_fin_consentement: new Date(2),
+        email: 'a@b.com',
+        nom: 'NOM',
+        prm: '12345',
+        texte_signature: 'haha',
+        utilisateurId: '123',
+        created_at: undefined,
+        updated_at: undefined,
+        ip_address: '127.0.0.1',
+        user_agent: 'chrome',
+        unsubscribed_prm: false,
+      },
+    });
+
+    winterRepository.supprimerPRM.mockImplementation(() => {
+      ApplicationError.throwMissingPRMToDelete();
+    });
+
+    // WHEN
+    const result = await winterUsecase.supprimerInscriptionsOrphelines();
+
+    const consent = await TestUtil.prisma.linkyConsentement.findUnique({
+      where: {
+        id: '1',
+      },
+    });
+    expect(consent.unsubscribed_prm).toEqual(true);
+    expect(result).toEqual([
+      'Already deleted orphan PRM [12345] for deleted user [123]',
+    ]);
+  });
+  it('supprimerInscriptionsOrphelines : flag NON supprimé si erreur inconnue à la suppression', async () => {
+    // GIVEN
+
+    await TestUtil.prisma.linkyConsentement.create({
+      data: {
+        id: '1',
+        date_consentement: new Date(1),
+        date_fin_consentement: new Date(2),
+        email: 'a@b.com',
+        nom: 'NOM',
+        prm: '12345',
+        texte_signature: 'haha',
+        utilisateurId: '123',
+        created_at: undefined,
+        updated_at: undefined,
+        ip_address: '127.0.0.1',
+        user_agent: 'chrome',
+        unsubscribed_prm: false,
+      },
+    });
+
+    winterRepository.supprimerPRM.mockImplementation(() => {
+      throw new Error('haha');
+    });
+
+    // WHEN
+    const result = await winterUsecase.supprimerInscriptionsOrphelines();
+
+    const consent = await TestUtil.prisma.linkyConsentement.findUnique({
+      where: {
+        id: '1',
+      },
+    });
+    expect(consent.unsubscribed_prm).toEqual(false);
+    expect(result).toEqual([
+      `failed deleting orphan PRM [12345] for deleted user [123]`,
+    ]);
   });
 });

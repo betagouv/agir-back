@@ -44,6 +44,7 @@ const KYC_DATA: QuestionKYC_v2 = {
   last_update: undefined,
   id_cms: 11,
   question: `question`,
+  sous_titre: 'sous',
   type: TypeReponseQuestionKYC.choix_unique,
   is_NGC: false,
   a_supprimer: false,
@@ -103,6 +104,7 @@ const kyc_histo: KYCHistory_v2 = {
 
 const kyc_part_of_histo: KYC = {
   code: 'KYC_saison_frequence',
+  sous_titre: 'sous',
   id_cms: 21,
   question: `À quelle fréquence mangez-vous de saison ? `,
   type: TypeReponseQuestionKYC.choix_unique,
@@ -1001,6 +1003,7 @@ describe('Duplicate Usecase', () => {
 
     await TestUtil.create(DB.kYC, {
       code: 'KYC_saison_frequence',
+      sous_titre: 'sous',
       id_cms: 21,
       question: `À quelle fréquence mangez-vous de saison ? `,
       type: TypeReponseQuestionKYC.choix_unique,
@@ -1246,6 +1249,7 @@ describe('Duplicate Usecase', () => {
 
     await TestUtil.create(DB.kYC, {
       code: 'KYC alcool_bad',
+      sous_titre: 'sous',
       id_cms: 1,
       question: `Combien de litres ^^`,
       type: TypeReponseQuestionKYC.entier,
@@ -1285,6 +1289,7 @@ describe('Duplicate Usecase', () => {
       a_supprimer: false,
       thematique: 'alimentation',
       updated_at: undefined,
+      sous_titre: 'sous',
       emoji: '🔥',
     } as KYC);
 
