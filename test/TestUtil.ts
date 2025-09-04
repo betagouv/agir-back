@@ -68,6 +68,7 @@ import { CompteurActionsRepository } from '../src/infrastructure/repository/comp
 import { ConformiteRepository } from '../src/infrastructure/repository/conformite.repository';
 import { FAQRepository } from '../src/infrastructure/repository/faq.repository';
 import { KycRepository } from '../src/infrastructure/repository/kyc.repository';
+import { OfflineCounterRepository } from '../src/infrastructure/repository/offlineCounter.repository';
 import { PartenaireRepository } from '../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../src/infrastructure/repository/quizz.repository';
 import { RisquesNaturelsCommunesRepository } from '../src/infrastructure/repository/risquesNaturelsCommunes.repository';
@@ -217,6 +218,7 @@ export class TestUtil {
     await this.prisma.risquesNaturelsCommunes.deleteMany();
     await this.prisma.tag.deleteMany();
     await this.prisma.selection.deleteMany();
+    await this.prisma.offlineCounter.deleteMany();
 
     await this.prisma_stats.utilisateurCopy.deleteMany();
     await this.prisma_stats.kYCCopy.deleteMany();
@@ -244,6 +246,7 @@ export class TestUtil {
     RisquesNaturelsCommunesRepository.resetCache();
     TagRepository.resetCache();
     SelectionRepository.resetCache();
+    OfflineCounterRepository.resetCache();
   }
 
   static getDate(date: string) {

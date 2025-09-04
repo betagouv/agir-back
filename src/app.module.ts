@@ -135,6 +135,7 @@ import { ThematiqueUsecase } from './usecase/thematique.usecase';
 import { ThematiqueBoardUsecase } from './usecase/thematiqueBoard.usecase';
 import { WinterUsecase } from './usecase/winter.usecase';
 
+import { OfflineCounterRepository } from './infrastructure/repository/offlineCounter.repository';
 import { ArticlesUsecase } from './usecase/articles.usecase';
 
 const SESSION_LIFETIME = '30 days';
@@ -292,6 +293,7 @@ function getControllers(): any[] {
     PartenaireUsecase,
     AdresseUsecase,
     ArticlesUsecase,
+    OfflineCounterRepository,
   ],
 })
 export class AppModule {}

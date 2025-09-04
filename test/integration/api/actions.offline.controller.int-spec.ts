@@ -7,7 +7,7 @@ import { ArticleRepository } from '../../../src/infrastructure/repository/articl
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../../../src/infrastructure/repository/faq.repository';
-import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
+import { OfflineCounterRepository } from '../../../src/infrastructure/repository/offlineCounter.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { QuizzRepository } from '../../../src/infrastructure/repository/quizz.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -23,7 +23,9 @@ describe('Single Actions Offline (API test)', () => {
   const fAQRepository = new FAQRepository(TestUtil.prisma);
   const articleRepository = new ArticleRepository(TestUtil.prisma);
   const quizzRepository = new QuizzRepository(TestUtil.prisma);
-  const kycRepository = new KycRepository(TestUtil.prisma);
+  const offlineCounterRepository = new OfflineCounterRepository(
+    TestUtil.prisma,
+  );
   let blockTextRepository = new BlockTextRepository(TestUtil.prisma);
 
   beforeAll(async () => {
@@ -57,6 +59,7 @@ describe('Single Actions Offline (API test)', () => {
       label_compteur: '{NBR_ACTIONS} haha',
       pourquoi: 'en quelques mots {block_123}',
       sources: [{ url: 'haha', label: 'hoho' }],
+      cms_id: '111',
     });
     await TestUtil.create(DB.compteurActions, {
       code: 'code_fonct',
@@ -67,12 +70,21 @@ describe('Single Actions Offline (API test)', () => {
     });
     await actionRepository.onApplicationBootstrap();
     await compteurActionsRepository.loadCache();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/code_fonct');
 
     // THEN
     expect(response.status).toBe(200);
+
+    const counters = await TestUtil.prisma.offlineCounter.findMany();
+    expect(counters).toHaveLength(1);
+    expect(counters[0].code).toEqual('code_fonct');
+    expect(counters[0].type_action).toEqual('classique');
+    expect(counters[0].type).toEqual('action');
+    expect(counters[0].id_cms).toEqual('111');
+    expect(counters[0].nombre_vues).toEqual(1);
 
     const action: ActionAPI = response.body;
 
@@ -129,9 +141,36 @@ describe('Single Actions Offline (API test)', () => {
     });
   });
 
+  it(`GET /actions/type/id - compte bien 2 consultations`, async () => {
+    // GIVEN
+    await TestUtil.create(DB.action, {
+      code: 'code_fonct',
+      type: TypeAction.classique,
+      type_code_id: 'classique_code_fonct',
+      cms_id: '111',
+    });
+    await actionRepository.loadCache();
+
+    // WHEN
+    await TestUtil.GET('/actions/classique/code_fonct');
+    await offlineCounterRepository.loadCache();
+    await TestUtil.GET('/actions/classique/code_fonct');
+
+    // THEN
+
+    const counters = await TestUtil.prisma.offlineCounter.findMany();
+    expect(counters).toHaveLength(1);
+    expect(counters[0].nombre_vues).toEqual(2);
+  });
+
   it(`GET /actions/id - accorche les aides par le besoin - seulement nationales si pas de code insee de commune en argument`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
@@ -147,6 +186,8 @@ describe('Single Actions Offline (API test)', () => {
     });
 
     await TestUtil.create(DB.partenaire);
+    await actionRepository.loadCache();
+
     await partenaireRepository.loadCache();
 
     // WHEN
@@ -173,7 +214,12 @@ describe('Single Actions Offline (API test)', () => {
   });
   it(`GET /actions/id - pas d'aide nationnale expirée`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
@@ -181,6 +227,7 @@ describe('Single Actions Offline (API test)', () => {
       echelle: Echelle.National,
       date_expiration: new Date(1),
     });
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -195,13 +242,19 @@ describe('Single Actions Offline (API test)', () => {
 
   it(`GET /actions/id - accroche les aides par le besoin - pas d'aide non nationales si pas de code insee de commune en argument`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
       partenaires_supp_ids: ['123'],
       echelle: Echelle.Département,
     });
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -215,10 +268,16 @@ describe('Single Actions Offline (API test)', () => {
   });
   it(`GET /actions/id - les éléments de FAQ`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', faq_ids: ['456'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      faq_ids: ['456'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.fAQ, { id_cms: '456' });
 
     await fAQRepository.loadCache();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -237,12 +296,18 @@ describe('Single Actions Offline (API test)', () => {
   });
   it(`GET /actions/id - les articles miés`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', articles_ids: ['1', '2'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      articles_ids: ['1', '2'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.article, { content_id: '1', image_url: 'a' });
     await TestUtil.create(DB.article, { content_id: '2', image_url: 'b' });
     await TestUtil.create(DB.article, { content_id: '3', image_url: 'c' });
 
     await articleRepository.loadCache();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/123');
@@ -274,7 +339,12 @@ describe('Single Actions Offline (API test)', () => {
 
   it(`GET /actions/id - accorche une aide qui match un code insee de commune`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'composter',
@@ -290,6 +360,7 @@ describe('Single Actions Offline (API test)', () => {
       codes_departement: ['21'],
       codes_postaux: [],
     });
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -307,7 +378,12 @@ describe('Single Actions Offline (API test)', () => {
 
   it(`GET /actions/id - pas d'aide expirée locale`, async () => {
     // GIVEN
-    await TestUtil.create(DB.action, { code: '123', besoins: ['composter'] });
+    await TestUtil.create(DB.action, {
+      code: '123',
+      besoins: ['composter'],
+      type_code_id: 'classique_123',
+      type: 'classique',
+    });
     await TestUtil.create(DB.aide, {
       content_id: '1',
       besoin: 'chauffer',
@@ -316,6 +392,7 @@ describe('Single Actions Offline (API test)', () => {
       codes_postaux: ['21000'],
       date_expiration: new Date(1),
     });
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(
@@ -334,7 +411,7 @@ describe('Single Actions Offline (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.action);
 
-    await actionRepository.onApplicationBootstrap();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/classique/bad_code');
@@ -346,7 +423,7 @@ describe('Single Actions Offline (API test)', () => {
     // GIVEN
     await TestUtil.create(DB.action);
 
-    await actionRepository.onApplicationBootstrap();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions/truc/code_fonct');
@@ -370,8 +447,7 @@ describe('Single Actions Offline (API test)', () => {
       code: 'code2',
       thematique: Thematique.consommation,
     });
-
-    await actionRepository.onApplicationBootstrap();
+    await actionRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET('/actions?thematique=bad_thematique');
