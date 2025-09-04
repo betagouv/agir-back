@@ -290,7 +290,11 @@ export class CommuneRepository {
   ) {
     const commune = map_code_commune_to_commune.get(code_commune);
 
-    if (!commune || !commune.codesPostaux.includes(code_postal)) {
+    if (
+      !commune ||
+      !commune.codesPostaux ||
+      !commune.codesPostaux.includes(code_postal)
+    ) {
       ApplicationError.throwBadCodePostalAndCommuneAssociation(
         code_postal,
         code_commune,
