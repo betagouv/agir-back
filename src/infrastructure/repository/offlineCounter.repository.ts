@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { OfflineCounter } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 import { ActionDefinition } from '../../domain/actions/actionDefinition';
 import { TypeAction } from '../../domain/actions/typeAction';
 import {
   OfflineCounterDefinition,
+  OfflineCounterInitialisator,
   OfflineCounterType,
 } from '../../domain/contenu/offlineCounterDefinition';
 import { PrismaService } from '../prisma/prisma.service';
@@ -50,36 +52,30 @@ export class OfflineCounterRepository {
     );
   }
 
-  async upsert(vue_def: OfflineCounterDefinition): Promise<void> {
+  async insertOrIncrementCounter(
+    vue_def: OfflineCounterInitialisator,
+  ): Promise<void> {
     const vue_db: OfflineCounter = {
-      id: vue_def.id,
+      composite_id: this.getUniqueFonctionnalIdFromVue(vue_def),
       id_cms: vue_def.id_cms,
       code: vue_def.code,
-      type: vue_def.type_contenu,
-      nombre_vues: vue_def.nombre_vues,
+      type_contenu: vue_def.type_contenu,
       type_action: vue_def.type_action,
+      id: undefined,
       created_at: undefined,
       updated_at: undefined,
+      nombre_vues: undefined,
     };
     await this.prisma.offlineCounter.upsert({
       where: {
-        id: vue_db.id,
+        composite_id: vue_db.composite_id,
       },
       create: {
         ...vue_db,
+        id: uuidv4(),
+        nombre_vues: 1,
       },
       update: {
-        ...vue_db,
-      },
-    });
-  }
-
-  async incrementVues(id: string): Promise<void> {
-    await this.prisma.offlineCounter.update({
-      where: {
-        id: id,
-      },
-      data: {
         nombre_vues: { increment: 1 },
       },
     });
@@ -89,17 +85,19 @@ export class OfflineCounterRepository {
     vueDB: OfflineCounter,
   ): OfflineCounterDefinition {
     if (vueDB === null) return undefined;
-    return new OfflineCounterDefinition({
+    return {
       id_cms: vueDB.id_cms,
       code: vueDB.code,
-      type_contenu: OfflineCounterType[vueDB.type],
+      type_contenu: OfflineCounterType[vueDB.type_contenu],
       id: vueDB.id,
       nombre_vues: vueDB.nombre_vues,
       type_action: TypeAction[vueDB.type_action],
-    });
+    };
   }
 
-  private getUniqueFonctionnalIdFromVue(vue: OfflineCounterDefinition): string {
+  private getUniqueFonctionnalIdFromVue(
+    vue: OfflineCounterDefinition | OfflineCounterInitialisator,
+  ): string {
     return vue.type_contenu + '_' + vue.code + '_' + vue.id_cms;
   }
   private getUniqueFonctionnalIdFromAction(

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { uuid4 } from '@sentry/core';
 import { Action, ActionService } from '../domain/actions/action';
 import { ActionDefinition } from '../domain/actions/actionDefinition';
 import {
@@ -622,18 +621,11 @@ export class ActionUsecase {
   }
 
   private async incrementOfflineActionCounter(action_def: ActionDefinition) {
-    const counter = this.offlineCounter.getCounterForAction(action_def);
-    if (!counter) {
-      await this.offlineCounter.upsert({
-        id: uuid4(),
-        code: action_def.code,
-        type_contenu: OfflineCounterType.action,
-        id_cms: action_def.cms_id,
-        nombre_vues: 1,
-        type_action: action_def.type,
-      });
-    } else {
-      await this.offlineCounter.incrementVues(counter.id);
-    }
+    await this.offlineCounter.insertOrIncrementCounter({
+      code: action_def.code,
+      type_contenu: OfflineCounterType.action,
+      id_cms: action_def.cms_id,
+      type_action: action_def.type,
+    });
   }
 }

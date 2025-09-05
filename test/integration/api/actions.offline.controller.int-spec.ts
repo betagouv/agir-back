@@ -82,8 +82,9 @@ describe('Single Actions Offline (API test)', () => {
     expect(counters).toHaveLength(1);
     expect(counters[0].code).toEqual('code_fonct');
     expect(counters[0].type_action).toEqual('classique');
-    expect(counters[0].type).toEqual('action');
+    expect(counters[0].type_contenu).toEqual('action');
     expect(counters[0].id_cms).toEqual('111');
+    expect(counters[0].composite_id).toEqual('action_code_fonct_111');
     expect(counters[0].nombre_vues).toEqual(1);
 
     const action: ActionAPI = response.body;
@@ -153,7 +154,6 @@ describe('Single Actions Offline (API test)', () => {
 
     // WHEN
     await TestUtil.GET('/actions/classique/code_fonct');
-    await offlineCounterRepository.loadCache();
     await TestUtil.GET('/actions/classique/code_fonct');
 
     // THEN

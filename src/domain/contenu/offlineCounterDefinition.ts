@@ -6,15 +6,14 @@ export enum OfflineCounterType {
   aide = 'aide',
 }
 
-export class OfflineCounterDefinition {
-  id: string;
+export type OfflineCounterInitialisator = {
   id_cms: string;
   type_contenu: OfflineCounterType;
   type_action: TypeAction;
   code: string;
-  nombre_vues: number;
+};
 
-  constructor(data: OfflineCounterDefinition) {
-    Object.assign(this, data);
-  }
-}
+export type OfflineCounterDefinition = {
+  id: string;
+  nombre_vues: number;
+} & OfflineCounterInitialisator;
