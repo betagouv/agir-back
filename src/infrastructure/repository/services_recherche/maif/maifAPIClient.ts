@@ -15,13 +15,13 @@ export enum SCORE_API_NAME {
   'score_radon' = 'score_radon',
 }
 const NAME_URL_MAPPING_suffix: Record<SCORE_API_NAME, string> = {
-  score_argile: 'v2/risques/naturels/argiles/scores',
-  score_inondation: 'v1/risques/naturels/inondations/scores',
-  score_radon: 'v1/risques/naturels/radon/scores',
-  score_secheresse: 'v1/risques/naturels/secheresses/scores',
-  score_seisme: 'v1/risques/naturels/seismes/scores',
-  score_submersion: 'v1/risques/naturels/submersions/scores',
-  score_tempete: 'v1/risques/naturels/tempetes/scores',
+  score_argile: '/v2/risques/naturels/argiles/scores',
+  score_inondation: '/v1/risques/naturels/inondations/scores',
+  score_radon: '/v1/risques/naturels/radon/scores',
+  score_secheresse: '/v1/risques/naturels/secheresses/scores',
+  score_seisme: '/v1/risques/naturels/seismes/scores',
+  score_submersion: '/v1/risques/naturels/submersions/scores',
+  score_tempete: '/v1/risques/naturels/tempetes/scores',
 };
 
 const API_TIMEOUT = 4000;
