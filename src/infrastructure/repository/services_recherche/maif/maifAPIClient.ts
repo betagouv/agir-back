@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { App } from '../../../../domain/app';
 
-const API_URL_COMMUNE_SYNTHESE =
-  'https://api.aux-alentours.dev.1934.io/v1/risques/CODE_COMMUNE?fields=naturels.catnat,naturels.argiles,naturels.inondations.scores';
+const API_URL_COMMUNE_SYNTHESE_suffix =
+  '/v1/risques/CODE_COMMUNE?fields=naturels.catnat,naturels.argiles,naturels.inondations.scores';
 
 export enum SCORE_API_NAME {
   'score_seisme' = 'score_seisme',
@@ -14,21 +14,14 @@ export enum SCORE_API_NAME {
   'score_argile' = 'score_argile',
   'score_radon' = 'score_radon',
 }
-const NAME_URL_MAPPING: Record<SCORE_API_NAME, string> = {
-  score_argile:
-    'https://api.aux-alentours.dev.1934.io/v2/risques/naturels/argiles/scores',
-  score_inondation:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/inondations/scores',
-  score_radon:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/radon/scores',
-  score_secheresse:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/secheresses/scores',
-  score_seisme:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/seismes/scores',
-  score_submersion:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/submersions/scores',
-  score_tempete:
-    'https://api.aux-alentours.dev.1934.io/v1/risques/naturels/tempetes/scores',
+const NAME_URL_MAPPING_suffix: Record<SCORE_API_NAME, string> = {
+  score_argile: 'v2/risques/naturels/argiles/scores',
+  score_inondation: 'v1/risques/naturels/inondations/scores',
+  score_radon: 'v1/risques/naturels/radon/scores',
+  score_secheresse: 'v1/risques/naturels/secheresses/scores',
+  score_seisme: 'v1/risques/naturels/seismes/scores',
+  score_submersion: 'v1/risques/naturels/submersions/scores',
+  score_tempete: 'v1/risques/naturels/tempetes/scores',
 };
 
 const API_TIMEOUT = 4000;
@@ -295,7 +288,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<GenericScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_secheresse,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_secheresse,
       SCORE_API_NAME.score_secheresse,
       {
         lat: latitude,
@@ -310,7 +303,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<GenericScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_inondation,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_inondation,
       SCORE_API_NAME.score_inondation,
       {
         lat: latitude,
@@ -325,7 +318,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<RadonScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_radon,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_radon,
       SCORE_API_NAME.score_radon,
       {
         lat: latitude,
@@ -340,7 +333,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<GenericScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_submersion,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_submersion,
       SCORE_API_NAME.score_submersion,
       {
         lat: latitude,
@@ -355,7 +348,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<GenericScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_submersion,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_submersion,
       SCORE_API_NAME.score_tempete,
       {
         lat: latitude,
@@ -370,7 +363,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<SeismeScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_seisme,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_seisme,
       SCORE_API_NAME.score_seisme,
       {
         lat: latitude,
@@ -386,7 +379,7 @@ export class MaifAPIClient {
     latitude: number,
   ): Promise<ArgileScoreResponseAPI> {
     const result = await this.callAPI(
-      NAME_URL_MAPPING.score_argile,
+      App.getMaifAPIURL() + NAME_URL_MAPPING_suffix.score_argile,
       SCORE_API_NAME.score_argile,
       {
         lat: latitude,
@@ -400,7 +393,8 @@ export class MaifAPIClient {
     code_commune: string,
   ): Promise<ScoringCommuneAPI> {
     const result = await this.callAPI(
-      API_URL_COMMUNE_SYNTHESE.replace('CODE_COMMUNE', code_commune),
+      App.getMaifAPIURL() +
+        API_URL_COMMUNE_SYNTHESE_suffix.replace('CODE_COMMUNE', code_commune),
       'synthese_risques_communes',
       {},
     );
