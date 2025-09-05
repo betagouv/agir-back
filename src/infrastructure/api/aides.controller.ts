@@ -133,7 +133,7 @@ export class AidesController extends GenericControler {
     @Param('aideId') aideId: string,
     @Request() req,
   ): Promise<AideAPI> {
-    const aide = await this.aidesUsecase.getAideUniqueByIdCMS(aideId);
+    const aide = await this.aidesUsecase.getOfflineAideUniqueByIdCMS(aideId);
     return AideAPI.mapToAPI(aide);
   }
 

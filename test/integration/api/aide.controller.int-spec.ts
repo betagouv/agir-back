@@ -1098,6 +1098,15 @@ describe('Aide (API test)', () => {
       echelle: 'National',
       est_gratuit: false,
     });
+
+    const counters = await TestUtil.prisma.offlineCounter.findMany();
+    expect(counters).toHaveLength(1);
+    expect(counters[0].code).toEqual('');
+    expect(counters[0].type_action).toEqual(null);
+    expect(counters[0].type_contenu).toEqual('aide');
+    expect(counters[0].id_cms).toEqual('1');
+    expect(counters[0].composite_id).toEqual('aide__1');
+    expect(counters[0].nombre_vues).toEqual(1);
   });
 
   it(`GET /aides/id_cms récupère une aide unique d'un utilisateur donnée`, async () => {

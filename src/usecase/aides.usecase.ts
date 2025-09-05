@@ -6,6 +6,7 @@ import { AideFeedback } from '../domain/aides/aideFeedback';
 import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
 import { App } from '../domain/app';
+import { OfflineCounterType } from '../domain/contenu/offlineCounterDefinition';
 import { Thematique } from '../domain/thematique/thematique';
 import { Scope, Utilisateur } from '../domain/utilisateur/utilisateur';
 import { ApplicationError } from '../infrastructure/applicationError';
@@ -14,6 +15,7 @@ import { Personnalisator } from '../infrastructure/personnalisation/personnalisa
 import { AideRepository } from '../infrastructure/repository/aide.repository';
 import { AideExpirationWarningRepository } from '../infrastructure/repository/aideExpirationWarning.repository';
 import { CommuneRepository } from '../infrastructure/repository/commune/commune.repository';
+import { OfflineCounterRepository } from '../infrastructure/repository/offlineCounter.repository';
 import { PartenaireRepository } from '../infrastructure/repository/partenaire.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { AidesVeloUsecase } from './aidesVelo.usecase';
@@ -35,6 +37,7 @@ export class AidesUsecase {
     private partenaireUsecase: PartenaireUsecase,
     private personnalisator: Personnalisator,
     private utilisateurRepository: UtilisateurRepository,
+    private offlineCounterRepository: OfflineCounterRepository,
   ) {}
 
   async getCatalogueAidesUtilisateur(
@@ -109,7 +112,7 @@ export class AidesUsecase {
     return await this.aideRepository.search(filtre);
   }
 
-  async getAideUniqueByIdCMS(cms_id: string): Promise<Aide> {
+  async getOfflineAideUniqueByIdCMS(cms_id: string): Promise<Aide> {
     const aide_def = this.aideRepository.getAide(cms_id);
 
     if (!aide_def) {
@@ -118,6 +121,8 @@ export class AidesUsecase {
 
     const aide = new Aide(aide_def);
     this.setPartenaire(aide, null);
+
+    await this.incrementOfflineAideCounter(aide_def);
 
     return this.personnalisator.personnaliser(aide);
   }
@@ -462,5 +467,14 @@ export class AidesUsecase {
         }
       }
     }
+  }
+
+  private async incrementOfflineAideCounter(aide_def: AideDefinition) {
+    await this.offlineCounterRepository.insertOrIncrementCounter({
+      code: '',
+      type_contenu: OfflineCounterType.aide,
+      id_cms: aide_def.content_id,
+      type_action: undefined,
+    });
   }
 }

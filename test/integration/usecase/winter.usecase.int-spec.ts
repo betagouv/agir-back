@@ -18,6 +18,7 @@ import { AideExpirationWarningRepository } from '../../../src/infrastructure/rep
 import { CommuneRepository } from '../../../src/infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
 import { LinkyConsentRepository } from '../../../src/infrastructure/repository/linkyConsent.repository';
+import { OfflineCounterRepository } from '../../../src/infrastructure/repository/offlineCounter.repository';
 import { PartenaireRepository } from '../../../src/infrastructure/repository/partenaire.repository';
 import { RisquesNaturelsCommunesRepository } from '../../../src/infrastructure/repository/risquesNaturelsCommunes.repository';
 import { MaifRepository } from '../../../src/infrastructure/repository/services_recherche/maif/maif.repository';
@@ -52,6 +53,7 @@ describe('WinterUsecase', () => {
     TestUtil.prisma,
   );
   let aideVeloRepository = new AidesVeloRepository();
+  let offlineCounterRepository = new OfflineCounterRepository(TestUtil.prisma);
   let aideVeloUsecase = new AidesVeloUsecase(
     aideVeloRepository,
     utilisateurRepository,
@@ -66,6 +68,7 @@ describe('WinterUsecase', () => {
     partenaireUsecase,
     personalisator,
     utilisateurRepository,
+    offlineCounterRepository,
   );
   let catalogueActionUsecase = new CatalogueActionUsecase(
     actionRepository,
