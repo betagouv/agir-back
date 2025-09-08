@@ -186,6 +186,29 @@ describe('/utilisateurs - Magic link - (API test)', () => {
     expect(userDB.code.length).toEqual(6);
   });
 
+  it(`POST /utilisateurs/send_magic_link - ancienne source web_ngc basculé en referer`, async () => {
+    // GIVEN
+    process.env.IS_PROD = 'true';
+
+    // WHEN
+    const response = await TestUtil.getServer()
+      .post('/utilisateurs/send_magic_link')
+      .send({
+        email: 'ww@w.com',
+        source_inscription: SourceInscription.web_ngc,
+      });
+    // THEN
+    expect(response.status).toBe(201);
+
+    const userDB = await TestUtil.prisma.utilisateur.findFirst({
+      where: { email: 'ww@w.com' },
+    });
+
+    expect(userDB.source_inscription).toEqual(SourceInscription.web);
+    expect(userDB.referer).toEqual('ngc');
+    expect(userDB.mode_inscription).toEqual(ModeInscription.magic_link);
+  });
+
   it(`POST /utilisateurs/send_magic_link - le code change à chaque fois`, async () => {
     // GIVEN
     process.env.IS_PROD = 'true';
