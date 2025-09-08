@@ -215,7 +215,7 @@ describe('/simulateur_voiture (API test)', () => {
           est_applicable: true,
         },
         couts: 5361.051382418858,
-        empreinte: 4232.090025601444,
+        empreinte: 4232.091181104764,
         est_occasion: false,
         params: [
           {
@@ -296,7 +296,7 @@ describe('/simulateur_voiture (API test)', () => {
           est_applicable: true,
         },
         couts: 3303.9428059958586,
-        empreinte: 3436.380960284275,
+        empreinte: 3436.3507857871646,
         est_occasion: true,
         params: [
           {
@@ -393,7 +393,7 @@ describe('/simulateur_voiture (API test)', () => {
           est_applicable: true,
         },
         couts: 3303.9428059958586,
-        empreinte: 3436.380960284275,
+        empreinte: 3436.3507857871646,
         est_occasion: false,
         params: [
           {
