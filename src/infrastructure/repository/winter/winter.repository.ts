@@ -22,10 +22,12 @@ const MAPPED_KYCS: string[] = [
   KYCID.KYC_proprietaire,
   KYCID.KYC_menage,
   KYCID.KYC_logement_nombre_adultes,
+  KYCID.KYC_logement_tranches_age,
   KYCID.KYC_logement_age,
   KYCID.KYC_logement_murs_commun,
   KYCID.KYC_logement_reno_second_oeuvre,
   KYCID.KYC_logement_combles_amenages,
+  KYCID.KYC_logement_isolation_murs,
   KYCID.KYC_logement_vitrage,
   KYCID.KYC_logement_vmc,
   KYCID.KYC_logement_chauffage_principal,
@@ -140,6 +142,9 @@ export class WinterRepository {
       return;
     }
 
+    const data = this.generateHousingData(utilisateur);
+    console.log(JSON.stringify(data));
+
     if (App.isWinterFaked()) {
       return;
     }
@@ -147,8 +152,6 @@ export class WinterRepository {
     if (!App.isWinterAPIEnabled()) {
       ApplicationError.throwWinterDisabled();
     }
-
-    const data = this.generateHousingData(utilisateur);
 
     await this.winterAPIClient.pushHousingData(utilisateur.id, data);
   }
@@ -250,6 +253,8 @@ export class WinterRepository {
     const getNumQ = (kyc: KYCID) => user.kyc_history.getQuestionNumerique(kyc);
     const getChoixU = (kyc: KYCID) =>
       user.kyc_history.getQuestionChoixUnique(kyc);
+    const getChoixM = (kyc: KYCID) =>
+      user.kyc_history.getQuestionChoixMultiple(kyc);
 
     const electro_refrigerateur = getNumQ(KYCID.KYC_electro_refrigerateur);
     const electro_congelateur = getNumQ(KYCID.KYC_electro_congelateur);
@@ -274,6 +279,7 @@ export class WinterRepository {
     const combles_amenage_value = getChoixU(
       KYCID.KYC_logement_combles_amenages,
     );
+    const isolation_murs_value = getChoixU(KYCID.KYC_logement_isolation_murs);
     const vitrage_value = getChoixU(KYCID.KYC_logement_vitrage);
     const vmc_value = getChoixU(KYCID.KYC_logement_vmc);
     const stockage_eau_chaude = getChoixU(
@@ -289,7 +295,7 @@ export class WinterRepository {
     const chauffage = getChoixU(KYCID.KYC_logement_chauffage_principal);
     const type_residence = getChoixU(KYCID.KYC_logement_type_residence);
 
-    const chauffage_secondaire = user.kyc_history.getQuestionChoixMultiple(
+    const chauffage_secondaire = getChoixM(
       KYCID.KYC_logement_chauffage_secondaire,
     );
     const type_pompe_chaleur = getChoixU(
@@ -302,6 +308,12 @@ export class WinterRepository {
     const epoque_chauffage_value = getChoixU(
       KYCID.KYC_chauffage_installation_date,
     );
+
+    const tranche_age_values = getChoixM(KYCID.KYC_type_chauffage_eau);
+    let tranches_ages: ('0-18' | '18-60' | '60+')[] = [];
+    if (tranche_age_values.isSelected('age_0_18')) tranches_ages.push('0-18');
+    if (tranche_age_values.isSelected('age_18_60')) tranches_ages.push('18-60');
+    if (tranche_age_values.isSelected('age_60_plus')) tranches_ages.push('60+');
 
     let hot_water_type = 'dont-know';
     if (chauffage_eau.isSelected('chauffe_eau_elec'))
@@ -318,21 +330,17 @@ export class WinterRepository {
     if (chauffage_eau.isSelected('ne_sais_pas')) hot_water_type = 'dont-know';
 
     const gen_types = [];
-    if (chauffage_secondaire) {
-      if (chauffage_secondaire.isSelected('rad_elec'))
-        gen_types.push('electric');
-      if (chauffage_secondaire.isSelected('pompe_chaleur'))
-        gen_types.push('heat_pump');
-      if (chauffage_secondaire.isSelected('bois'))
-        gen_types.push('boiler_wood');
-      if (chauffage_secondaire.isSelected('fioul'))
-        gen_types.push('boiler_fuel');
-      if (chauffage_secondaire.isSelected('chaudiere_gaz'))
-        gen_types.push('boiler_gas');
-      if (chauffage_secondaire.isSelected('ne_sais_pas'))
-        gen_types.push('dont-know');
-      if (chauffage_secondaire.isSelected('autres')) gen_types.push('other');
-    }
+    if (chauffage_secondaire.isSelected('rad_elec')) gen_types.push('electric');
+    if (chauffage_secondaire.isSelected('pompe_chaleur'))
+      gen_types.push('heat_pump');
+    if (chauffage_secondaire.isSelected('bois')) gen_types.push('boiler_wood');
+    if (chauffage_secondaire.isSelected('fioul')) gen_types.push('boiler_fuel');
+    if (chauffage_secondaire.isSelected('chaudiere_gaz'))
+      gen_types.push('boiler_gas');
+    if (chauffage_secondaire.isSelected('ne_sais_pas'))
+      gen_types.push('dont-know');
+    if (chauffage_secondaire.isSelected('autres')) gen_types.push('other');
+
     let main_chauffage:
       | 'boiler_gas'
       | 'boiler_wood'
@@ -341,83 +349,78 @@ export class WinterRepository {
       | 'other'
       | 'dont-know'
       | 'heat_pump' = 'dont-know';
-    if (chauffage) {
-      if (chauffage.isSelected('rad_elec')) main_chauffage = 'electric';
-      if (chauffage.isSelected('pompe_chaleur')) main_chauffage = 'heat_pump';
-      if (chauffage.isSelected('chaudiere_gaz')) main_chauffage = 'boiler_gas';
-      if (chauffage.isSelected('bois')) main_chauffage = 'boiler_wood';
-      if (chauffage.isSelected('fioul')) main_chauffage = 'boiler_fuel';
-      if (chauffage.isSelected('autres')) main_chauffage = 'other';
-    }
+    if (chauffage.isSelected('rad_elec')) main_chauffage = 'electric';
+    if (chauffage.isSelected('pompe_chaleur')) main_chauffage = 'heat_pump';
+    if (chauffage.isSelected('chaudiere_gaz')) main_chauffage = 'boiler_gas';
+    if (chauffage.isSelected('bois')) main_chauffage = 'boiler_wood';
+    if (chauffage.isSelected('fioul')) main_chauffage = 'boiler_fuel';
+    if (chauffage.isSelected('autres')) main_chauffage = 'other';
 
     let type_pompe_chaleur_value: 'air-air' | 'air-water' | 'geotermal';
-    if (type_pompe_chaleur) {
-      if (type_pompe_chaleur.isSelected('air_air')) {
-        type_pompe_chaleur_value = 'air-air';
-      }
-      if (type_pompe_chaleur.isSelected('air_eau')) {
-        type_pompe_chaleur_value = 'air-water';
-      }
-      if (type_pompe_chaleur.isSelected('geothermique')) {
-        type_pompe_chaleur_value = 'geotermal';
-      }
+    if (type_pompe_chaleur.isSelected('air_air')) {
+      type_pompe_chaleur_value = 'air-air';
+    }
+    if (type_pompe_chaleur.isSelected('air_eau')) {
+      type_pompe_chaleur_value = 'air-water';
+    }
+    if (type_pompe_chaleur.isSelected('geothermique')) {
+      type_pompe_chaleur_value = 'geotermal';
     }
 
     let type_etage: 'ground' | 'intermediate' | 'last';
-    if (type_etage_logement) {
-      if (type_etage_logement.isSelected('rez_chaussee')) {
-        type_etage = 'ground';
-      }
-      if (type_etage_logement.isSelected('intermediaire')) {
-        type_etage = 'intermediate';
-      }
-      if (type_etage_logement.isSelected('dernier_etage')) {
-        type_etage = 'last';
-      }
+    if (type_etage_logement.isSelected('rez_chaussee')) {
+      type_etage = 'ground';
+    }
+    if (type_etage_logement.isSelected('intermediaire')) {
+      type_etage = 'intermediate';
+    }
+    if (type_etage_logement.isSelected('dernier_etage')) {
+      type_etage = 'last';
     }
 
     let combles: 'converted_attics' | 'attics';
-    if (combles_amenage_value) {
-      if (combles_amenage_value.isSelected('oui')) {
-        combles = 'converted_attics';
-      }
-      if (combles_amenage_value.isSelected('non')) {
-        combles = 'attics';
-      }
+    if (combles_amenage_value.isSelected('oui')) {
+      combles = 'converted_attics';
+    }
+    if (combles_amenage_value.isSelected('non')) {
+      combles = 'attics';
     }
 
     let vitrage: 'middle_class' | 'high_class';
-    if (vitrage_value) {
-      if (vitrage_value.isSelected('simple_vitrage')) {
-        vitrage = 'middle_class';
-      }
-      if (vitrage_value.isSelected('double_vitrage')) {
-        vitrage = 'high_class';
-      }
+    if (vitrage_value.isSelected('simple_vitrage')) {
+      vitrage = 'middle_class';
+    }
+    if (vitrage_value.isSelected('double_vitrage')) {
+      vitrage = 'high_class';
+    }
+
+    let isolation_murs: 'walls_outside' | 'walls_inside';
+    if (isolation_murs_value.isSelected('exterieur')) {
+      isolation_murs = 'walls_outside';
+    }
+    if (isolation_murs_value.isSelected('interieur')) {
+      isolation_murs = 'walls_inside';
     }
 
     let vmc: 'simple_vmc' | 'double_vmc';
-    if (vmc_value) {
-      if (vmc_value.isSelected('simple')) {
-        vmc = 'simple_vmc';
-      }
-      if (vmc_value.isSelected('double')) {
-        vmc = 'double_vmc';
-      }
+    if (vmc_value.isSelected('simple')) {
+      vmc = 'simple_vmc';
+    }
+    if (vmc_value.isSelected('double')) {
+      vmc = 'double_vmc';
     }
 
     let epoque_chauffage: 'before-2010' | 'after-2010' | 'dont-know';
-    if (epoque_chauffage_value) {
-      if (epoque_chauffage_value.isSelected('avant_2010')) {
-        epoque_chauffage = 'before-2010';
-      }
-      if (epoque_chauffage_value.isSelected('apres_2010')) {
-        epoque_chauffage = 'after-2010';
-      }
-      if (epoque_chauffage_value.isSelected('ne_sais_pas')) {
-        epoque_chauffage = 'dont-know';
-      }
+    if (epoque_chauffage_value.isSelected('avant_2010')) {
+      epoque_chauffage = 'before-2010';
     }
+    if (epoque_chauffage_value.isSelected('apres_2010')) {
+      epoque_chauffage = 'after-2010';
+    }
+    if (epoque_chauffage_value.isSelected('ne_sais_pas')) {
+      epoque_chauffage = 'dont-know';
+    }
+
     if (gen_types.length === 0) {
       gen_types.push('dont-know');
     }
@@ -464,6 +467,11 @@ export class WinterRepository {
       KYCID.KYC_logement_nombre_murs_exterieurs,
     );
 
+    let nbr_murs_partage;
+    if (murs_communs.isSelected('un')) nbr_murs_partage = 1;
+    if (murs_communs.isSelected('deux')) nbr_murs_partage = 2;
+    if (murs_communs.isSelected('trois')) nbr_murs_partage = 3;
+
     const logement_habitants = getNumQ(KYCID.KYC_menage);
 
     const logement_reno_second_oeuvre = getChoixU(
@@ -471,19 +479,17 @@ export class WinterRepository {
     );
 
     let type_maison: 'terraced-house' | 'house' | 'apartment' | 'office';
-    if (logement_type) {
-      if (logement_type.isSelected('maison')) {
-        type_maison = 'house';
-      }
-      if (logement_type.isSelected('maison_mitoyenne')) {
-        type_maison = 'terraced-house';
-      }
-      if (logement_type.isSelected('appartement')) {
-        type_maison = 'apartment';
-      }
-      if (logement_type.isSelected('bureaux')) {
-        type_maison = 'office';
-      }
+    if (logement_type.isSelected('maison')) {
+      type_maison = 'house';
+    }
+    if (logement_type.isSelected('maison_mitoyenne')) {
+      type_maison = 'terraced-house';
+    }
+    if (logement_type.isSelected('appartement')) {
+      type_maison = 'apartment';
+    }
+    if (logement_type.isSelected('bureaux')) {
+      type_maison = 'office';
     }
 
     return {
@@ -526,7 +532,7 @@ export class WinterRepository {
       nbElectricScooter: transport_nbr_scooter_elec?.getValue(),
       housingYear: fourchette_annee_logement as any,
       housingType: type_maison,
-      sharedWalls: murs_communs?.isSelected('oui'),
+      sharedWalls: nbr_murs_partage,
       livingArea: logement_superficie.getValue(),
       highFloorType: combles,
       houseLevels: nombre_niveaux?.getValue(),
@@ -539,7 +545,7 @@ export class WinterRepository {
         ? 'district_heating_network'
         : 'personal',
       generatorTypeOther: gen_types,
-      mainGenerator: gen_types[0], // FIXME : manque une question plus spécifique
+      mainGenerator: main_chauffage,
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
       nbInhabitant: logement_habitants.getValue()
         ? logement_habitants.getValue()
@@ -550,6 +556,7 @@ export class WinterRepository {
       inhabitantHousing: type_residence.isSelected('principale')
         ? 'main'
         : 'secondary',
+      renovatedWalls: isolation_murs,
     };
   }
 }

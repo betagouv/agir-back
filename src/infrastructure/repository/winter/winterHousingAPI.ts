@@ -41,7 +41,7 @@ export type WinterHousingData = {
   nbElectricBike?: number; // MAPPED KYC 327 => INCLUS ACTION
   nbElectricScooter?: number; // MAPPED KYC 328 => INCLUS ACTION
   housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 56 => INCLUS ACTION
-  sharedWalls?: boolean; // MAPPED KYC 329 => INCLUS ACTION
+  sharedWalls?: number; // MAPPED KYC 329 => INCLUS ACTION
   livingArea?: number; //MAPPED KYC 62 => INCLUS ACTION
   housingYear?:
     | 'unknown'
@@ -96,7 +96,7 @@ export type WinterHousingData = {
   recentlyRenovated?: // MAPPED KYC 158 => INCLUS ACTION
   'floor' | 'walls' | 'generator' | 'attics' | 'roof' | 'vents' | 'windows';
   hasDoneWorks?: boolean; // MAPPED KYC 158 => INCLUS ACTION
-  renovatedWalls?: boolean;
+  renovatedWalls?: 'walls_outside' | 'walls_inside';
   highFloorType?: 'converted_attics' | 'attics'; // MAPPED KYC 334 => INCLUS ACTION
   windowType?: 'middle_class' | 'high_class'; // MAPPED KYC_menage 335 => INCLUS ACTION
   ventType?: 'simple_vmc' | 'double_vmc'; // MAPPED KYC 336 => INCLUS ACTION
@@ -104,5 +104,5 @@ export type WinterHousingData = {
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement
   nbAdult?: number; // MAPPED KYC_menage 58 => INCLUS ACTION
-  inhabitantAges?: '0-18' | '18-60' | '60+';
+  inhabitantAges?: ('0-18' | '18-60' | '60+')[];
 };

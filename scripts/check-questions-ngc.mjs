@@ -7,7 +7,7 @@ const engine = new Engine(rules);
 const parsedRules = engine.getParsedRules();
 let questions = Object.values(parsedRules).filter(
   ({ rawNode, dottedName }) =>
-    (rawNode['question'] || rawNode['par défaut']) &&
+    rawNode['question'] &&
     !rawNode['mosaique'] &&
     !dottedName.startsWith('futureco-data'),
 );
@@ -25,7 +25,7 @@ kycs
     if (ruleName in parsedRules) {
       questions = questions.filter(({ dottedName }) => dottedName !== ruleName);
     } else {
-      errors.push([
+      return errors.push([
         'KYC with invalid NGC key:',
         {
           code: attributes.code,

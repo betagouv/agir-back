@@ -8,6 +8,7 @@ export enum Tag_v2 {
   n_a_pas_de_voiture = 'n_a_pas_de_voiture',
   ne_prend_pas_avion = 'ne_prend_pas_avion',
   a_un_velo = 'a_un_velo',
+  n_a_pas_de_velo = 'n_a_pas_de_velo',
   a_une_voiture_thermique = 'a_une_voiture_thermique',
   a_une_voiture_electrique = 'a_une_voiture_electrique',
   ne_mange_pas_de_viande_rouge = 'ne_mange_pas_de_viande_rouge',
