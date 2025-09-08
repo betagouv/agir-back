@@ -171,7 +171,7 @@ describe('/bilan (API test)', () => {
           emoji: '🏠',
           pourcentage: 25,
           thematique: 'logement',
-          impact_kg_annee: 2159.945192079794,
+          impact_kg_annee: NGCCalculator.DEFAULT_LOGEMENT_KG,
           details: [
             {
               label: 'Construction',
@@ -189,7 +189,7 @@ describe('/bilan (API test)', () => {
             },
             {
               emoji: '🏖',
-              impact_kg_annee: 152.08397947045933,
+              impact_kg_annee: 158.5559256566012,
               label: 'Vacances',
               pourcentage: 2,
               pourcentage_categorie: 7,
@@ -362,7 +362,7 @@ describe('/bilan (API test)', () => {
               label: 'Textile',
               pourcentage: 4,
               pourcentage_categorie: 33,
-              impact_kg_annee: 325.3104046196099,
+              impact_kg_annee: 320.99722581159847,
               emoji: '👕',
             },
             {
@@ -661,7 +661,7 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8684.344589438393,
+      impact_kg_annee: 8686.503356816524,
       top_3: [
         {
           emoji: '🚘️',
@@ -674,7 +674,7 @@ describe('/bilan (API test)', () => {
           emoji: '🏛',
           impact_kg_annee: 1259.4428717769142,
           label: 'Services publics',
-          pourcentage: 15,
+          pourcentage: 14,
           pourcentage_categorie: 87,
         },
         {
@@ -687,9 +687,10 @@ describe('/bilan (API test)', () => {
       ],
       impact_thematique: [
         {
+          emoji: '🏠',
+          impact_kg_annee: NGCCalculator.DEFAULT_LOGEMENT_KG,
           pourcentage: 25,
           thematique: 'logement',
-          impact_kg_annee: 2159.945192079794,
           details: [
             {
               label: 'Construction',
@@ -706,11 +707,11 @@ describe('/bilan (API test)', () => {
               pourcentage_categorie: 38,
             },
             {
+              emoji: '🏖',
+              impact_kg_annee: 158.5559256566012,
               label: 'Vacances',
               pourcentage: 2,
               pourcentage_categorie: 7,
-              impact_kg_annee: 152.08397947045933,
-              emoji: '🏖',
             },
             {
               label: 'Electricité',
@@ -741,7 +742,6 @@ describe('/bilan (API test)', () => {
               emoji: '🏊',
             },
           ],
-          emoji: '🏠',
         },
         {
           details: [
@@ -860,7 +860,7 @@ describe('/bilan (API test)', () => {
               emoji: '🏛',
               impact_kg_annee: 1259.4428717769142,
               label: 'Services publics',
-              pourcentage: 15,
+              pourcentage: 14,
               pourcentage_categorie: 87,
             },
             {
@@ -878,7 +878,7 @@ describe('/bilan (API test)', () => {
               label: 'Textile',
               pourcentage: 4,
               pourcentage_categorie: 33,
-              impact_kg_annee: 325.3104046196099,
+              impact_kg_annee: 320.99722581159847,
               emoji: '👕',
             },
             {
@@ -984,7 +984,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11036.427070447731,
+      11038.585837825864,
     );
   });
 

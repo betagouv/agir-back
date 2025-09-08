@@ -127,11 +127,11 @@ export type ValeursServicesSocietaux = {
 export class NGCCalculator {
   private engine: Engine;
 
-  public static DEFAULT_TOTAL_KG = 8719.051817969366;
+  public static DEFAULT_TOTAL_KG = 8721.210585347497;
   public static DEFAULT_ALIMENTATION_KG = 2043.6891821;
   public static DEFAULT_TRANSPORT_KG = 2075.4519241191;
-  public static DEFAULT_CONSOMMATION_KG = 989.0602932841089;
-  public static DEFAULT_LOGEMENT_KG = 2159.945192079794;
+  public static DEFAULT_CONSOMMATION_KG = 984.7471144760973;
+  public static DEFAULT_LOGEMENT_KG = 2166.417138265936;
 
   public static DEFAULT_TOTAL_KG_ROUND = Math.floor(
     NGCCalculator.DEFAULT_TOTAL_KG,
