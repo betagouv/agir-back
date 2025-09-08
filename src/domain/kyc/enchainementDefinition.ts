@@ -79,6 +79,7 @@ const EnchainementDefinitionData: Record<
     { id: KYCID.KYC_proprietaire, is_mandatory: false },
     { id: KYCID.KYC_menage, is_mandatory: true },
     { id: KYCID.KYC_logement_nombre_adultes, is_mandatory: true },
+    { id: KYCID.KYC_logement_tranches_age, is_mandatory: false },
 
     { id: KYCID.KYC_logement_age, is_mandatory: true },
     { id: KYCID.KYC_logement_reno_second_oeuvre, is_mandatory: false },

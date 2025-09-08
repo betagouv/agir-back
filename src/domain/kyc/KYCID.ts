@@ -25,6 +25,7 @@ export enum KYCID {
   KYC_menage = 'KYC_menage',
   KYC_logement_nombre_adultes = 'KYC_logement_nombre_adultes',
   KYC_logement_nombre_enfants = 'KYC_logement_nombre_enfants',
+  KYC_logement_tranches_age = 'KYC_logement_tranches_age',
   KYC_changer_voiture = 'KYC_changer_voiture',
   KYC_conso_elec = 'KYC_conso_elec',
   KYC_temperature = 'KYC_temperature',

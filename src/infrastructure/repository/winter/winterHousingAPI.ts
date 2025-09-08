@@ -104,5 +104,5 @@ export type WinterHousingData = {
   inhabitantHousing?: 'main' | 'secondary';
   nbInhabitant?: number; // MAPPED Profil->logement
   nbAdult?: number; // MAPPED KYC_menage 58 => INCLUS ACTION
-  inhabitantAges?: '0-18' | '18-60' | '60+';
+  inhabitantAges?: ('0-18' | '18-60' | '60+')[];
 };
