@@ -377,7 +377,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8719.051817969366,
+      bilan_carbone_total_kg: 8721.210585347497,
       est_utilisateur_ngc: false,
       nombre_aides: 2,
       nombre_recettes: 1150,
@@ -621,7 +621,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8684.344589438393,
+      bilan_carbone_total_kg: 8686.503356816524,
       est_utilisateur_ngc: false,
       nombre_aides: 0,
       nombre_recettes: 1150,
@@ -771,19 +771,19 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
+      bilan_carbone_total_kg: 8721.210585347497,
+      est_utilisateur_ngc: false,
+      nombre_aides: 0,
+      nombre_recettes: 1150,
       nom_commune: 'Dijon',
-      pourcentage_bilan_done: 18,
-      bilan_carbone_total_kg: 8719.051817969366,
-      total_national_actions_faites: 0,
       pourcentage_alimentation_reco_done: 67,
+      pourcentage_bilan_done: 18,
       pourcentage_consommation_reco_done: 0,
       pourcentage_global_reco_done: 40,
       pourcentage_logement_reco_done: 0,
       pourcentage_transport_reco_done: 0,
+      total_national_actions_faites: 0,
       total_utilisateur_actions_faites: 0,
-      nombre_aides: 0,
-      nombre_recettes: 1150,
-      est_utilisateur_ngc: false,
     });
   });
 });
