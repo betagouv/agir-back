@@ -41,7 +41,7 @@ export type WinterHousingData = {
   nbElectricBike?: number; // MAPPED KYC 327 => INCLUS ACTION
   nbElectricScooter?: number; // MAPPED KYC 328 => INCLUS ACTION
   housingType?: 'terraced-house' | 'house' | 'apartment' | 'office'; // MAPPED KYC 56 => INCLUS ACTION
-  sharedWalls?: boolean; // MAPPED KYC 329 => INCLUS ACTION
+  sharedWalls?: number; // MAPPED KYC 329 => INCLUS ACTION
   livingArea?: number; //MAPPED KYC 62 => INCLUS ACTION
   housingYear?:
     | 'unknown'

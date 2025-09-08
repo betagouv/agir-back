@@ -467,6 +467,11 @@ export class WinterRepository {
       KYCID.KYC_logement_nombre_murs_exterieurs,
     );
 
+    let nbr_murs_partage;
+    if (murs_communs.isSelected('un')) nbr_murs_partage = 1;
+    if (murs_communs.isSelected('deux')) nbr_murs_partage = 2;
+    if (murs_communs.isSelected('trois')) nbr_murs_partage = 3;
+
     const logement_habitants = getNumQ(KYCID.KYC_menage);
 
     const logement_reno_second_oeuvre = getChoixU(
@@ -527,7 +532,7 @@ export class WinterRepository {
       nbElectricScooter: transport_nbr_scooter_elec?.getValue(),
       housingYear: fourchette_annee_logement as any,
       housingType: type_maison,
-      sharedWalls: murs_communs?.isSelected('oui'),
+      sharedWalls: nbr_murs_partage,
       livingArea: logement_superficie.getValue(),
       highFloorType: combles,
       houseLevels: nombre_niveaux?.getValue(),
