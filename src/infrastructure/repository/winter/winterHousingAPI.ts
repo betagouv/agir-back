@@ -96,7 +96,7 @@ export type WinterHousingData = {
   recentlyRenovated?: // MAPPED KYC 158 => INCLUS ACTION
   'floor' | 'walls' | 'generator' | 'attics' | 'roof' | 'vents' | 'windows';
   hasDoneWorks?: boolean; // MAPPED KYC 158 => INCLUS ACTION
-  renovatedWalls?: boolean;
+  renovatedWalls?: 'walls_outside' | 'walls_inside';
   highFloorType?: 'converted_attics' | 'attics'; // MAPPED KYC 334 => INCLUS ACTION
   windowType?: 'middle_class' | 'high_class'; // MAPPED KYC_menage 335 => INCLUS ACTION
   ventType?: 'simple_vmc' | 'double_vmc'; // MAPPED KYC 336 => INCLUS ACTION

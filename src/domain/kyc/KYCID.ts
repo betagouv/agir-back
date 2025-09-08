@@ -30,6 +30,7 @@ export enum KYCID {
   KYC_temperature = 'KYC_temperature',
   KYC_logement_reno_second_oeuvre = 'KYC_logement_reno_second_oeuvre',
   KYC_logement_reno_isolation = 'KYC_logement_reno_isolation',
+  KYC_logement_isolation_murs = 'KYC_logement_isolation_murs',
   KYC_logement_reno_chauffage = 'KYC_logement_reno_chauffage',
   KYC_logement_reno_extension = 'KYC_logement_reno_extension',
   KYC_chauffage_pompe_chaleur_type = 'KYC_chauffage_pompe_chaleur_type',

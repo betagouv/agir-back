@@ -26,6 +26,7 @@ const MAPPED_KYCS: string[] = [
   KYCID.KYC_logement_murs_commun,
   KYCID.KYC_logement_reno_second_oeuvre,
   KYCID.KYC_logement_combles_amenages,
+  KYCID.KYC_logement_isolation_murs,
   KYCID.KYC_logement_vitrage,
   KYCID.KYC_logement_vmc,
   KYCID.KYC_logement_chauffage_principal,
@@ -140,6 +141,9 @@ export class WinterRepository {
       return;
     }
 
+    const data = this.generateHousingData(utilisateur);
+    console.log(JSON.stringify(data));
+
     if (App.isWinterFaked()) {
       return;
     }
@@ -147,8 +151,6 @@ export class WinterRepository {
     if (!App.isWinterAPIEnabled()) {
       ApplicationError.throwWinterDisabled();
     }
-
-    const data = this.generateHousingData(utilisateur);
 
     await this.winterAPIClient.pushHousingData(utilisateur.id, data);
   }
@@ -274,6 +276,7 @@ export class WinterRepository {
     const combles_amenage_value = getChoixU(
       KYCID.KYC_logement_combles_amenages,
     );
+    const isolation_murs_value = getChoixU(KYCID.KYC_logement_isolation_murs);
     const vitrage_value = getChoixU(KYCID.KYC_logement_vitrage);
     const vmc_value = getChoixU(KYCID.KYC_logement_vmc);
     const stockage_eau_chaude = getChoixU(
@@ -393,6 +396,16 @@ export class WinterRepository {
       }
       if (vitrage_value.isSelected('double_vitrage')) {
         vitrage = 'high_class';
+      }
+    }
+
+    let isolation_murs: 'walls_outside' | 'walls_inside';
+    if (isolation_murs_value) {
+      if (isolation_murs_value.isSelected('exterieur')) {
+        isolation_murs = 'walls_outside';
+      }
+      if (isolation_murs_value.isSelected('interieur')) {
+        isolation_murs = 'walls_inside';
       }
     }
 
@@ -539,7 +552,7 @@ export class WinterRepository {
         ? 'district_heating_network'
         : 'personal',
       generatorTypeOther: gen_types,
-      mainGenerator: gen_types[0], // FIXME : manque une question plus spécifique
+      mainGenerator: main_chauffage,
       hasDoneWorks: logement_reno_second_oeuvre?.getSelectedCode() === 'oui',
       nbInhabitant: logement_habitants.getValue()
         ? logement_habitants.getValue()
@@ -550,6 +563,7 @@ export class WinterRepository {
       inhabitantHousing: type_residence.isSelected('principale')
         ? 'main'
         : 'secondary',
+      renovatedWalls: isolation_murs,
     };
   }
 }
