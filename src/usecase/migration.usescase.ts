@@ -718,6 +718,33 @@ export class MigrationUsecase {
     ]);
 
     // DO SOMETHING
+    if (utilisateur.source_inscription === SourceInscription.web_ngc) {
+      utilisateur.source_inscription = SourceInscription.web;
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `done`,
+    };
+  }
+  private async migrate_28(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+
+    // DO SOMETHING
 
     // VALIDATE VERSION VALUE
     utilisateur.version = version;
