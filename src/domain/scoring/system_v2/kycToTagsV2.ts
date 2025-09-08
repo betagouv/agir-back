@@ -366,32 +366,36 @@ export class KycToTags_v2 {
 
     if (this.logement) {
       if (this.logement.code_commune) {
-        const code_commune_sans_arrondissement =
+        const commune_sans_arrondissement =
           this.commune_repo.getCommuneByCodeINSEESansArrondissement(
             this.logement.code_commune,
           );
-        const niveau = this.commune_repo.getNiveauUrbainCommune(
-          code_commune_sans_arrondissement.code,
-        );
-        switch (niveau) {
-          case TypeCommune.Rural:
-            this.setTags([Tag_v2.habite_zone_rurale]);
-            break;
-          case TypeCommune.Urbain:
-            this.setTags([Tag_v2.habite_zone_urbaine]);
-            break;
-          case TypeCommune['Péri-urbain']:
-            this.setTags([Tag_v2.habite_zone_peri_urbaine]);
-            break;
-        }
+        if (commune_sans_arrondissement) {
+          const niveau = this.commune_repo.getNiveauUrbainCommune(
+            commune_sans_arrondissement.code,
+          );
+          switch (niveau) {
+            case TypeCommune.Rural:
+              this.setTags([Tag_v2.habite_zone_rurale]);
+              break;
+            case TypeCommune.Urbain:
+              this.setTags([Tag_v2.habite_zone_urbaine]);
+              break;
+            case TypeCommune['Péri-urbain']:
+              this.setTags([Tag_v2.habite_zone_peri_urbaine]);
+              break;
+          }
 
-        const est_drom_com = this.commune_repo.estDromCom(
-          code_commune_sans_arrondissement.code,
-        );
-        if (est_drom_com) {
-          this.setTags([Tag_v2.habite_en_outre_mer]);
+          const est_drom_com = this.commune_repo.estDromCom(
+            commune_sans_arrondissement.code,
+          );
+          if (est_drom_com) {
+            this.setTags([Tag_v2.habite_en_outre_mer]);
+          } else {
+            this.setTags([Tag_v2.habite_en_metropole]);
+          }
         } else {
-          this.setTags([Tag_v2.habite_en_metropole]);
+          console.log(`Missing commune : ${this.logement.code_commune}`);
         }
 
         const risque_commune =

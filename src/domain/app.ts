@@ -144,6 +144,9 @@ export class App {
   public static getMaifAPILogin(): string {
     return process.env.MAIF_API_LOGIN;
   }
+  public static getMaifAPIURL(): string {
+    return process.env.MAIF_API_URL;
+  }
   public static getMaifAPIPassword(): string {
     return process.env.MAIF_API_PASSWORD;
   }

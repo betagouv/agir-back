@@ -432,7 +432,7 @@ export class ActionsController extends GenericControler {
 
   @Get('actions/:type_action/:code_action')
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 10, ttl: 2000 } })
+  @Throttle({ default: { limit: 15, ttl: 2000 } })
   @ApiOkResponse({
     type: ActionAPI,
   })

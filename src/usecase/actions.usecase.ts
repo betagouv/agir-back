@@ -15,6 +15,7 @@ import { AideFilter } from '../domain/aides/aideFilter';
 import { Echelle } from '../domain/aides/echelle';
 import { ServiceRechercheID } from '../domain/bibliotheque_services/recherche/serviceRechercheID';
 import { Article } from '../domain/contenu/article';
+import { OfflineCounterType } from '../domain/contenu/offlineCounterDefinition';
 import {
   EnchainementDefinition,
   KycDansEnchainement,
@@ -35,6 +36,7 @@ import {
 } from '../infrastructure/repository/commune/commune.repository';
 import { CompteurActionsRepository } from '../infrastructure/repository/compteurActions.repository';
 import { FAQRepository } from '../infrastructure/repository/faq.repository';
+import { OfflineCounterRepository } from '../infrastructure/repository/offlineCounter.repository';
 import { UtilisateurRepository } from '../infrastructure/repository/utilisateur/utilisateur.repository';
 import { BibliothequeUsecase } from './bibliotheque.usecase';
 
@@ -65,6 +67,7 @@ export class ActionUsecase {
     private fAQRepository: FAQRepository,
     private personnalisator: Personnalisator,
     private bibliothequeUsecase: BibliothequeUsecase,
+    private offlineCounter: OfflineCounterRepository,
   ) {}
 
   static MAX_FEEDBACK_LENGTH = 500;
@@ -198,10 +201,10 @@ export class ActionUsecase {
     type: TypeAction,
     code_commune: string,
   ): Promise<Action> {
-    const action_def = await this.actionRepository.getByCodeAndTypeFromDB(
-      code,
-      type,
-    );
+    const action_def = this.actionRepository.getActionDefinitionByTypeCode({
+      code: code,
+      type: type,
+    });
 
     if (!action_def) {
       ApplicationError.throwActionNotFound(code, type);
@@ -274,6 +277,8 @@ export class ActionUsecase {
     action.services = liste_services;
 
     this.setCompteurActionsEtLabel(action);
+
+    await this.incrementOfflineActionCounter(action_def);
 
     return this.personnalisator.personnaliser(action, undefined, [
       CLE_PERSO.espace_insecable,
@@ -613,5 +618,14 @@ export class ActionUsecase {
       '{NBR_ACTIONS}',
       '' + nbr_faites,
     );
+  }
+
+  private async incrementOfflineActionCounter(action_def: ActionDefinition) {
+    await this.offlineCounter.insertOrIncrementCounter({
+      code: action_def.code,
+      type_contenu: OfflineCounterType.action,
+      id_cms: action_def.cms_id,
+      type_action: action_def.type,
+    });
   }
 }
