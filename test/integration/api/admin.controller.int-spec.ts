@@ -1713,6 +1713,43 @@ describe('Admin (API test)', () => {
     expect(user1.referer).toEqual('ngc');
     expect(user1.source_inscription).toEqual(SourceInscription.web_ngc);
   });
+
+  it('migration V27 OK - web_ngc => web', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 27;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 26,
+      migration_enabled: true,
+      source_inscription: SourceInscription.web_ngc,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        migrations: [
+          {
+            info: 'done',
+            ok: true,
+            version: 27,
+          },
+        ],
+        user_id: 'utilisateur-id',
+      },
+    ]);
+
+    const user1 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user1.version).toEqual(27);
+    expect(user1.source_inscription).toEqual('web');
+  });
+
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

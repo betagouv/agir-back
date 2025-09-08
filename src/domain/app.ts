@@ -1,7 +1,7 @@
 import metadata from './metadata.json';
 
 export class App {
-  static USER_CURRENT_VERSION = 26;
+  static USER_CURRENT_VERSION = 27;
   static BACK_CURRENT_VERSION = '1';
 
   public static isInscriptionDown(): boolean {
