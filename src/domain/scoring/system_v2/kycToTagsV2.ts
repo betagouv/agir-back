@@ -83,8 +83,26 @@ export const KYC_TAG_MAPPER_COLLECTION: {
   KYC003: {
     oui_non: {
       oui: [Tag_v2.a_un_velo],
+      non: [Tag_v2.n_a_pas_de_velo],
     },
   },
+  KYC_transport_velo_usage: {
+    oui_non: {
+      oui: [Tag_v2.a_un_velo],
+    },
+  },
+  KYC_transport_vae_possede: {
+    oui_non: {
+      oui: [Tag_v2.a_un_velo],
+    },
+  },
+  KYC_transport_nbr_velo_elec: {
+    is_greater_than: {
+      value: 0,
+      oui: [Tag_v2.a_un_velo],
+    },
+  },
+
   // NOTE(@EmileRolley): quid des deux autres questions sur la possession de voiture ?
   KYC_possede_voiture_oui_non: {
     oui_non: {

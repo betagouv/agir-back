@@ -25,7 +25,10 @@ import { ApplicativePonderationSetName } from '../../../src/domain/scoring/ponde
 import { Tag_v2 } from '../../../src/domain/scoring/system_v2/Tag_v2';
 import { TagUtilisateur } from '../../../src/domain/scoring/tagUtilisateur';
 import { Thematique } from '../../../src/domain/thematique/thematique';
-import { Scope } from '../../../src/domain/utilisateur/utilisateur';
+import {
+  Scope,
+  SourceInscription,
+} from '../../../src/domain/utilisateur/utilisateur';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
 import { KycRepository } from '../../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../../src/infrastructure/repository/utilisateur/utilisateur.repository';
@@ -1674,6 +1677,42 @@ describe('Admin (API test)', () => {
     ]);
   });
 
+  it('migration V26 OK - web_ngc => referer = ngc', async () => {
+    // GIVEN
+    TestUtil.token = process.env.CRON_API_KEY;
+    App.USER_CURRENT_VERSION = 26;
+
+    await TestUtil.create(DB.utilisateur, {
+      version: 25,
+      migration_enabled: true,
+      source_inscription: SourceInscription.web_ngc,
+    });
+
+    // WHEN
+    const response = await TestUtil.POST('/admin/migrate_users');
+
+    // THEN
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual([
+      {
+        migrations: [
+          {
+            info: 'done',
+            ok: true,
+            version: 26,
+          },
+        ],
+        user_id: 'utilisateur-id',
+      },
+    ]);
+
+    const user1 = await utilisateurRepository.getById('utilisateur-id', [
+      Scope.ALL,
+    ]);
+    expect(user1.version).toEqual(26);
+    expect(user1.referer).toEqual('ngc');
+    expect(user1.source_inscription).toEqual(SourceInscription.web_ngc);
+  });
   it('POST /admin/lock_user_migration lock les utilisateur', async () => {
     // GIVEN
     TestUtil.token = process.env.CRON_API_KEY;

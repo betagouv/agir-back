@@ -156,6 +156,7 @@ export enum KYCID {
   KYC_transport_voiture_nbr_voyageurs = 'KYC_transport_voiture_nbr_voyageurs',
   KYC_transport_nbr_voitures_elec = 'KYC_transport_nbr_voitures_elec',
   KYC_transport_nbr_velo_elec = 'KYC_transport_nbr_velo_elec',
+  KYC_transport_velo_usage = 'KYC_transport_velo_usage',
   KYC_transport_nbr_scooter_elec = 'KYC_transport_nbr_scooter_elec',
   KYC_type_logement = 'KYC_type_logement',
   KYC_logement_type_maison = 'KYC_logement_type_maison',

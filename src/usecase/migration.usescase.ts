@@ -3,7 +3,11 @@ import { KYCID } from '../../src/domain/kyc/KYCID';
 import { KycToKycSynch } from '../../src/domain/kyc/synchro/kycToKycSynch';
 import { KycToTags_v2 } from '../../src/domain/scoring/system_v2/kycToTagsV2';
 import { Tag_v2 } from '../../src/domain/scoring/system_v2/Tag_v2';
-import { Scope, Utilisateur } from '../../src/domain/utilisateur/utilisateur';
+import {
+  Scope,
+  SourceInscription,
+  Utilisateur,
+} from '../../src/domain/utilisateur/utilisateur';
 import { KycRepository } from '../../src/infrastructure/repository/kyc.repository';
 import { UtilisateurRepository } from '../../src/infrastructure/repository/utilisateur/utilisateur.repository';
 import { App } from '../domain/app';
@@ -678,6 +682,33 @@ export class MigrationUsecase {
   }
 
   private async migrate_26(
+    user_id: string,
+    version: number,
+    _this: MigrationUsecase,
+  ): Promise<{ ok: boolean; info: string }> {
+    const utilisateur = await _this.utilisateurRepository.getById(user_id, [
+      Scope.core,
+    ]);
+
+    // DO SOMETHING
+    if (utilisateur.source_inscription === SourceInscription.web_ngc) {
+      utilisateur.referer = 'ngc';
+    }
+
+    // VALIDATE VERSION VALUE
+    utilisateur.version = version;
+
+    await _this.utilisateurRepository.updateUtilisateurNoConcurency(
+      utilisateur,
+      [Scope.core],
+    );
+
+    return {
+      ok: true,
+      info: `done`,
+    };
+  }
+  private async migrate_27(
     user_id: string,
     version: number,
     _this: MigrationUsecase,
