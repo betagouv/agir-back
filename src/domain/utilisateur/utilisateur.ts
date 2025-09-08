@@ -149,7 +149,7 @@ export class Utilisateur extends UtilisateurData {
     referer?: string,
     referer_keyword?: string,
   ): Utilisateur {
-    return new Utilisateur({
+    const result = new Utilisateur({
       id: uuidv4(),
       pseudo: null,
       nom: null,
@@ -209,6 +209,14 @@ export class Utilisateur extends UtilisateurData {
       referer: referer,
       referer_keyword: referer_keyword,
     });
+    if (
+      result.source_inscription === SourceInscription.web_ngc &&
+      !result.referer
+    ) {
+      result.referer = 'ngc';
+      result.source_inscription = SourceInscription.web;
+    }
+    return result;
   }
 
   public resetPourLancementNational() {
@@ -267,7 +275,10 @@ export class Utilisateur extends UtilisateurData {
     );
   }
   public vientDeNGC() {
-    return this.source_inscription === SourceInscription.web_ngc;
+    return (
+      this.source_inscription === SourceInscription.web_ngc ||
+      this.referer === 'ngc'
+    );
   }
 
   public isMobileNotificationSet(): boolean {
