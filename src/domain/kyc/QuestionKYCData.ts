@@ -333,6 +333,7 @@ export class QuestionKYCData implements TaggedContent {
     this.emoji = def.emoji;
     this.image_url = def.image_url;
     this.unite = def.unite;
+    this.sous_titre = def.sous_titre;
     this.short_question = def.short_question;
   }
 

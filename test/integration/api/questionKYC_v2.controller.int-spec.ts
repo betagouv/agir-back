@@ -1420,6 +1420,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
           code: KYCID._2,
           id_cms: 1,
           question: `Quel est votre sujet principal d'intéret ????`,
+
           type: TypeReponseQuestionKYC.choix_unique,
           is_NGC: false,
           categorie: Categorie.test,
@@ -1465,7 +1466,7 @@ describe('/utilisateurs/id/questionsKYC_v2 (API test)', () => {
     expect(response.body).toEqual({
       code: '_2',
       question: "Quel est votre sujet principal d'intéret ?",
-      sous_titre: 'sous_titre',
+      sous_titre: 'The sous titre !',
       reponse_multiple: [
         { code: 'climat', label: 'Le climat', selected: true },
         { code: 'logement', label: 'Mon logement', selected: false },
