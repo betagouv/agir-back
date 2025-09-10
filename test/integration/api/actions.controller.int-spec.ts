@@ -23,6 +23,7 @@ import { Thematique } from '../../../src/domain/thematique/thematique';
 import { Scope } from '../../../src/domain/utilisateur/utilisateur';
 import { ActionAPI } from '../../../src/infrastructure/api/types/actions/ActionAPI';
 import { ActionRepository } from '../../../src/infrastructure/repository/action.repository';
+import { AideRepository } from '../../../src/infrastructure/repository/aide.repository';
 import { ArticleRepository } from '../../../src/infrastructure/repository/article.repository';
 import { BlockTextRepository } from '../../../src/infrastructure/repository/blockText.repository';
 import { CompteurActionsRepository } from '../../../src/infrastructure/repository/compteurActions.repository';
@@ -58,6 +59,7 @@ const logement: Logement_v0 = {
 
 describe('Actions (API test)', () => {
   const actionRepository = new ActionRepository(TestUtil.prisma);
+  const aideRepository = new AideRepository(TestUtil.prisma);
   const compteurActionsRepository = new CompteurActionsRepository(
     TestUtil.prisma,
   );
@@ -383,6 +385,7 @@ describe('Actions (API test)', () => {
     });
 
     await actionRepository.loadCache();
+    await aideRepository.loadCache();
 
     // WHEN
     const response = await TestUtil.GET(

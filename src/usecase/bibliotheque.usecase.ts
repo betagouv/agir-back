@@ -103,20 +103,14 @@ export class BibliothequeUsecase {
       this.communeRepository.getCommuneByCodeINSEESansArrondissement(
         utilisateur.logement.code_commune,
       );
-    const code_commune = commune?.code;
-    const dept_region =
-      CommuneRepository.findDepartementRegionByCodeCommune(code_commune);
 
-    const filter = ArticleFilter.create(
-      utilisateur.logement?.code_postal,
-      commune.code,
-      {
-        include_ids: articles_candidats_ids,
-        thematiques:
-          filtre_thematiques.length === 0 ? undefined : filtre_thematiques,
-        titre_fragment: titre,
-      },
-    );
+    const filter: ArticleFilter = {
+      code_postal: utilisateur.logement?.code_postal,
+      code_commune: commune.code,
+      include_ids: articles_candidats_ids,
+      thematiques: filtre_thematiques,
+      titre_fragment: titre,
+    };
 
     const articles = await this.articleRepository.searchArticles(filter);
 

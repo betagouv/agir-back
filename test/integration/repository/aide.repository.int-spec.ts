@@ -310,8 +310,7 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      code_commune: '21000',
-      code_region: '47',
+      code_commune: '21231',
     });
 
     // THEN
@@ -323,14 +322,13 @@ describe('AideRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_region_from_partenaire: ['45', '46'],
+      codes_region_from_partenaire: ['27', '46'],
       codes_commune_from_partenaire: [],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_commune: '21000',
-      code_region: '46',
+      code_commune: '21231',
     });
 
     // THEN
@@ -342,14 +340,12 @@ describe('AideRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_region: ['45', '46'],
       codes_commune_from_partenaire: ['92120'],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_commune: '21000',
-      code_region: '46',
+      code_commune: '21231',
     });
 
     // THEN
@@ -366,7 +362,7 @@ describe('AideRepository', () => {
 
     // WHEN
     const liste = await aideRepository.search({
-      code_departement: '47',
+      code_commune: '21231',
     });
 
     // THEN
@@ -378,12 +374,12 @@ describe('AideRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.aide, {
       content_id: '1',
-      codes_departement_from_partenaire: ['45', '46'],
+      codes_departement_from_partenaire: ['21', '46'],
     });
 
     // WHEN
     const liste = await aideRepository.search({
-      code_departement: '46',
+      code_commune: '21231',
     });
 
     // THEN

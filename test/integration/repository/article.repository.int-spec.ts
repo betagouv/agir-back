@@ -331,7 +331,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_region: '47',
+      code_commune: '21231',
     });
 
     // THEN
@@ -343,13 +343,13 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_region_from_partenaire: ['45', '46'],
+      codes_region_from_partenaire: ['27', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_region: '46',
+      code_commune: '21231',
     });
 
     // THEN
@@ -366,7 +366,7 @@ describe('ArticleRepository', () => {
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_departement: '47',
+      code_commune: '21231',
     });
 
     // THEN
@@ -377,13 +377,13 @@ describe('ArticleRepository', () => {
     await TestUtil.create(DB.utilisateur);
     await TestUtil.create(DB.article, {
       content_id: '1',
-      codes_departement_from_partenaire: ['45', '46'],
+      codes_departement_from_partenaire: ['21', '46'],
     });
     await articleRepository.loadCache();
 
     // WHEN
     const liste = await articleRepository.searchArticles({
-      code_departement: '46',
+      code_commune: '21231',
     });
 
     // THEN

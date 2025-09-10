@@ -100,14 +100,12 @@ export class AidesUsecase {
       );
     const code_commune = commune?.code;
 
-    const filtre = AideFilter.create(
-      utilisateur.logement.code_postal,
-      code_commune,
-      {
-        date_expiration: new Date(),
-        thematiques: filtre_thematiques,
-      },
-    );
+    const filtre: AideFilter = {
+      code_postal: utilisateur.logement.code_postal,
+      code_commune: code_commune,
+      date_expiration: new Date(),
+      thematiques: filtre_thematiques,
+    };
 
     return await this.aideRepository.search(filtre);
   }
@@ -385,10 +383,12 @@ export class AidesUsecase {
     thematique?: Thematique,
     besoins?: string[],
   ): Promise<number> {
-    const filtre = AideFilter.create(code_postal, code_commune, {
+    const filtre: AideFilter = {
+      code_postal: code_postal,
+      code_commune: code_commune,
       thematiques: thematique ? [thematique] : undefined,
-      besoins,
-    });
+      besoins: besoins,
+    };
 
     return await this.aideRepository.count(filtre);
   }

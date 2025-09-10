@@ -1,50 +1,37 @@
-import { CommuneRepository } from '../../infrastructure/repository/commune/commune.repository';
-import { Echelle } from '../aides/echelle';
+import { Echelle } from '../../domain/aides/echelle';
+import { CommuneRepository } from './commune/commune.repository';
 
-export class GeographicFilter {
-  code_postal?: string;
-  code_commune?: string;
-  code_departement?: string;
-  code_region?: string;
-  echelle?: Echelle;
-
-  protected constructor(
+export class GeographicSQLFilter {
+  public static generateClauses(
     code_postal: string,
     code_commune: string,
     echelle?: Echelle,
-  ) {
-    const dep =
-      CommuneRepository.findDepartementRegionByCodeCommune(code_commune);
-    this.code_postal = code_postal;
-    this.code_commune = code_commune;
-    this.code_departement = dep?.code_departement;
-    this.code_region = dep?.code_region;
-    this.echelle = echelle;
-  }
-
-  // NOTE: pour plus d'information sur les règles de filtration, voir /docs/filtre-geographique.md.
-  // (Penser à mettre à jour ce fichier si vous modifiez les règles de filtration).
-  protected static getSearchClauses(filtre: GeographicFilter): any[] {
+  ): any[] {
     const clauses = [];
 
-    if (filtre.echelle) {
+    const dep =
+      CommuneRepository.findDepartementRegionByCodeCommune(code_commune);
+    const code_departement = dep?.code_departement;
+    const code_region = dep?.code_region;
+
+    if (echelle) {
       clauses.push({
-        echelle: filtre.echelle,
+        echelle: echelle,
       });
     }
 
-    if (filtre.code_commune) {
+    if (code_commune) {
       clauses.push({
         OR: [
           { exclude_codes_commune: { isEmpty: true } },
-          { NOT: { exclude_codes_commune: { has: filtre.code_commune } } },
+          { NOT: { exclude_codes_commune: { has: code_commune } } },
         ],
       });
       clauses.push({
         OR: [
           {
             codes_commune_from_partenaire: {
-              has: filtre.code_commune,
+              has: code_commune,
             },
           },
           { codes_commune_from_partenaire: { isEmpty: true } },
@@ -63,22 +50,22 @@ export class GeographicFilter {
 
     // NOTE: pour les CC on utilise uniquement les codes postaux pour filtrer.
     // FIXME: nous devrions utiliser les codes INSEE ou les partenaires.
-    if (filtre.code_postal) {
+    if (code_postal) {
       clauses.push({
         OR: [
-          { codes_postaux: { has: filtre.code_postal } },
+          { codes_postaux: { has: code_postal } },
           { codes_postaux: { isEmpty: true } },
           { NOT: { echelle: Echelle['Communauté de communes'] } },
         ],
       });
     }
 
-    if (filtre.code_departement) {
+    if (code_departement) {
       clauses.push({
         OR: [
           {
             codes_departement_from_partenaire: {
-              has: filtre.code_departement,
+              has: code_departement,
             },
           },
           { codes_departement_from_partenaire: { isEmpty: true } },
@@ -86,12 +73,12 @@ export class GeographicFilter {
       });
     }
 
-    if (filtre.code_region) {
+    if (code_region) {
       clauses.push({
         OR: [
           {
             codes_region_from_partenaire: {
-              has: filtre.code_region,
+              has: code_region,
             },
           },
           { codes_region_from_partenaire: { isEmpty: true } },

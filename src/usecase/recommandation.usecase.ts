@@ -138,16 +138,14 @@ export class RecommandationUsecase {
       est_lu: true,
     });
 
-    const filtre = ArticleFilter.create(
-      utilisateur.logement.code_postal,
-      utilisateur.logement.code_commune,
-      {
-        exclude_ids: articles_lus,
-        categorie: Categorie.recommandation,
-        date: new Date(),
-        thematiques: thematique ? [Thematique[thematique]] : undefined,
-      },
-    );
+    const filtre: ArticleFilter = {
+      code_postal: utilisateur.logement.code_postal,
+      code_commune: utilisateur.logement.code_commune,
+      exclude_ids: articles_lus,
+      categorie: Categorie.recommandation,
+      date: new Date(),
+      thematiques: thematique ? [Thematique[thematique]] : undefined,
+    };
 
     const articles_defs = await this.articleRepository.searchArticles(filtre);
 

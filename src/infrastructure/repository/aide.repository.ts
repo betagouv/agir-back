@@ -7,6 +7,7 @@ import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
+import { GeographicSQLFilter } from './geographicFilter';
 
 @Injectable()
 export class AideRepository
@@ -172,7 +173,7 @@ export class AideRepository
   }
 
   public buildSearchQuery(filter: AideFilter): any {
-    const clauses = AideFilter.buildSearchQueryClauses(filter);
+    const clauses = this.buildSearchQueryClauses(filter);
 
     if (App.isProd()) {
       clauses.push({
@@ -218,5 +219,42 @@ export class AideRepository
       codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
       VISIBLE_PROD: aideDB.VISIBLE_PROD,
     });
+  }
+
+  private buildSearchQueryClauses(filter: AideFilter): any {
+    const clauses = GeographicSQLFilter.generateClauses(
+      filter.code_postal,
+      filter.code_commune,
+      filter.echelle,
+    );
+
+    if (filter.besoins) {
+      clauses.push({
+        besoin: { in: filter.besoins },
+      });
+    }
+
+    if (filter.thematiques && filter.thematiques.length > 0) {
+      clauses.push({
+        thematiques: {
+          hasSome: filter.thematiques,
+        },
+      });
+    }
+
+    if (filter.date_expiration) {
+      clauses.push({
+        OR: [
+          { date_expiration: null },
+          {
+            date_expiration: {
+              gt: filter.date_expiration,
+            },
+          },
+        ],
+      });
+    }
+
+    return clauses;
   }
 }

@@ -8,8 +8,10 @@ import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
 import { Article } from '../../domain/contenu/article';
 import { ArticleDefinition } from '../../domain/contenu/articleDefinition';
+import { DifficultyLevel } from '../../domain/contenu/difficultyLevel';
 import { Thematique } from '../../domain/thematique/thematique';
 import { PrismaService } from '../prisma/prisma.service';
+import { GeographicSQLFilter } from './geographicFilter';
 
 @Injectable()
 export class ArticleRepository
@@ -116,7 +118,7 @@ export class ArticleRepository
   }
 
   async searchArticles(filter: ArticleFilter): Promise<ArticleDefinition[]> {
-    const filter_clauses = ArticleFilter.buildSearchQueryClauses(filter);
+    const filter_clauses = this.buildSearchQueryClauses(filter);
 
     if (App.isProd()) {
       filter_clauses.push({
@@ -247,5 +249,68 @@ export class ArticleRepository
       },
     });
     return results.map((r) => this.buildArticleFromDB(r));
+  }
+
+  private buildSearchQueryClauses(filter: ArticleFilter): any[] {
+    const filter_clauses = GeographicSQLFilter.generateClauses(
+      filter.code_postal,
+      filter.code_commune,
+      filter.echelle,
+    );
+
+    if (filter.date) {
+      filter_clauses.push({
+        OR: [
+          { mois: { has: filter.date.getMonth() + 1 } },
+          { mois: { isEmpty: true } },
+        ],
+      });
+    }
+
+    if (filter.difficulty !== undefined && filter.difficulty !== null) {
+      filter_clauses.push({
+        difficulty:
+          filter.difficulty === DifficultyLevel.ANY
+            ? undefined
+            : filter.difficulty,
+      });
+    }
+
+    if (filter.exclude_ids) {
+      filter_clauses.push({
+        content_id: { not: { in: filter.exclude_ids } },
+      });
+    }
+
+    if (filter.include_ids) {
+      filter_clauses.push({
+        content_id: { in: filter.include_ids },
+      });
+    }
+
+    if (filter.titre_fragment) {
+      filter_clauses.push({
+        titre: {
+          contains: filter.titre_fragment,
+          mode: 'insensitive',
+        },
+      });
+    }
+
+    if (filter.categorie) {
+      filter_clauses.push({
+        categorie: filter.categorie,
+      });
+    }
+
+    if (filter.thematiques && filter.thematiques.length > 0) {
+      filter_clauses.push({
+        thematiques: {
+          hasSome: filter.thematiques,
+        },
+      });
+    }
+
+    return filter_clauses;
   }
 }
