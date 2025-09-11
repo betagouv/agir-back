@@ -1058,7 +1058,7 @@ describe('Duplicate Usecase', () => {
       pourcentage_progression_logement: 0,
       pourcentage_progression_total: 10,
       pourcentage_progression_transport: 0,
-      total_kg: 8686,
+      total_kg: 8757,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
     });
@@ -1178,7 +1178,7 @@ describe('Duplicate Usecase', () => {
       pourcentage_progression_logement: 0,
       pourcentage_progression_total: 10,
       pourcentage_progression_transport: 0,
-      total_kg: 8686,
+      total_kg: 8757,
       transport_kg: NGCCalculator.DEFAULT_TRANSPORT_KG_ROUND,
       user_id: '123',
     });

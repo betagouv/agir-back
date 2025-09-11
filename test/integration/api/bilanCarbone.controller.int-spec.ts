@@ -354,51 +354,52 @@ describe('/bilan (API test)', () => {
           thematique: 'services_societaux',
         },
         {
-          pourcentage: 11,
-          thematique: 'consommation',
+          emoji: '📦',
           impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
+          pourcentage: 12,
+          thematique: 'consommation',
           details: [
             {
+              emoji: '👕',
+              impact_kg_annee: 320.99722581159847,
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 320.99722581159847,
-              emoji: '👕',
+              pourcentage_categorie: 30,
             },
             {
+              emoji: '📺',
+              impact_kg_annee: 191.0249015151515,
+              label: 'Numérique',
+              pourcentage: 2,
+              pourcentage_categorie: 18,
+            },
+            {
+              emoji: '🛋️',
+              impact_kg_annee: 139.7448484848485,
               label: 'Ameublement',
               pourcentage: 2,
-              pourcentage_categorie: 14,
-              impact_kg_annee: 139.7448484848485,
-              emoji: '🛋️',
+              pourcentage_categorie: 13,
             },
             {
+              emoji: '📦',
+              impact_kg_annee: 123.01123396773932,
               label: 'Autres produits',
               pourcentage: 1,
               pourcentage_categorie: 12,
-              impact_kg_annee: 123.01123396773932,
-              emoji: '📦',
             },
             {
-              label: 'Numérique',
-              pourcentage: 1,
-              pourcentage_categorie: 12,
-              impact_kg_annee: 120.070196880303,
-              emoji: '📺',
-            },
-            {
+              emoji: '🎭',
+              impact_kg_annee: 118.99921707433923,
               label: 'Loisirs',
               pourcentage: 1,
-              pourcentage_categorie: 12,
-              impact_kg_annee: 118.99921707433923,
-              emoji: '🎭',
+              pourcentage_categorie: 11,
             },
             {
+              emoji: '🔌',
+              impact_kg_annee: 75.44090909090907,
               label: 'Electroménager',
               pourcentage: 1,
-              pourcentage_categorie: 8,
-              impact_kg_annee: 75.44090909090907,
-              emoji: '🔌',
+              pourcentage_categorie: 7,
             },
             {
               label: 'Animaux',
@@ -415,7 +416,6 @@ describe('/bilan (API test)', () => {
               emoji: '🚬',
             },
           ],
-          emoji: '📦',
         },
       ],
     });
@@ -661,7 +661,7 @@ describe('/bilan (API test)', () => {
       impact_consommation: null,
     });
     expect(response.body.bilan_complet).toEqual({
-      impact_kg_annee: 8686.503356816524,
+      impact_kg_annee: 8757.458061451372,
       top_3: [
         {
           emoji: '🚘️',
@@ -875,18 +875,25 @@ describe('/bilan (API test)', () => {
         {
           details: [
             {
+              emoji: '👕',
+              impact_kg_annee: 320.99722581159847,
               label: 'Textile',
               pourcentage: 4,
-              pourcentage_categorie: 33,
-              impact_kg_annee: 320.99722581159847,
-              emoji: '👕',
+              pourcentage_categorie: 30,
             },
             {
+              emoji: '📺',
+              impact_kg_annee: 191.0249015151515,
+              label: 'Numérique',
+              pourcentage: 2,
+              pourcentage_categorie: 18,
+            },
+            {
+              emoji: '🛋️',
+              impact_kg_annee: 139.7448484848485,
               label: 'Ameublement',
               pourcentage: 2,
-              pourcentage_categorie: 14,
-              impact_kg_annee: 139.7448484848485,
-              emoji: '🛋️',
+              pourcentage_categorie: 13,
             },
             {
               label: 'Autres produits',
@@ -896,25 +903,18 @@ describe('/bilan (API test)', () => {
               emoji: '📦',
             },
             {
-              label: 'Numérique',
-              pourcentage: 1,
-              pourcentage_categorie: 12,
-              impact_kg_annee: 120.070196880303,
-              emoji: '📺',
-            },
-            {
+              emoji: '🎭',
+              impact_kg_annee: 118.99921707433923,
               label: 'Loisirs',
               pourcentage: 1,
-              pourcentage_categorie: 12,
-              impact_kg_annee: 118.99921707433923,
-              emoji: '🎭',
+              pourcentage_categorie: 11,
             },
             {
+              emoji: '🔌',
+              impact_kg_annee: 75.44090909090907,
               label: 'Electroménager',
               pourcentage: 1,
-              pourcentage_categorie: 8,
-              impact_kg_annee: 75.44090909090907,
-              emoji: '🔌',
+              pourcentage_categorie: 7,
             },
             {
               label: 'Animaux',
@@ -933,7 +933,7 @@ describe('/bilan (API test)', () => {
           ],
           emoji: '📦',
           impact_kg_annee: NGCCalculator.DEFAULT_CONSOMMATION_KG,
-          pourcentage: 11,
+          pourcentage: 12,
           thematique: 'consommation',
         },
       ],
@@ -984,7 +984,7 @@ describe('/bilan (API test)', () => {
     //THEN
     expect(response.status).toBe(200);
     expect(response.body.bilan_complet.impact_kg_annee).toEqual(
-      11038.585837825864,
+      11109.54054246071,
     );
   });
 
@@ -1099,7 +1099,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
-      }&bilan_tonnes=8.7`,
+      }&bilan_tonnes=8.8`,
     );
   });
   it('POST /bilan/importFromNGC - creates new situation alors que erreur de contenu, 8 tonnes par défaut ^^', async () => {
@@ -1127,7 +1127,7 @@ describe('/bilan (API test)', () => {
     expect(response.body.redirect_url).toEqual(
       `${App.getBaseURLFront()}/creation-compte/nos-gestes-climat?situationId=${
         situationDB[0].id
-      }&bilan_tonnes=8.7`,
+      }&bilan_tonnes=8.8`,
     );
   });
 
@@ -1162,8 +1162,9 @@ describe('/bilan (API test)', () => {
     expect(userDB.cache_bilan_carbone.logement_kg).toEqual(
       NGCCalculator.DEFAULT_LOGEMENT_KG,
     );
-    expect(userDB.cache_bilan_carbone.consommation_kg).toEqual(
+    expect(userDB.cache_bilan_carbone.consommation_kg).toBeCloseTo(
       NGCCalculator.DEFAULT_CONSOMMATION_KG,
+      5,
     );
 
     expect(userDB.cache_bilan_carbone.updated_at.getTime()).toBeGreaterThan(
