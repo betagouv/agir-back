@@ -35,6 +35,10 @@ export type ActionFilter = {
   realisation?: Realisation;
 };
 
+export function normalizeWithoutAccent(text: string): string {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 @Injectable()
 export class ActionRepository {
   constructor(private prisma: PrismaService) {
@@ -237,7 +241,7 @@ export class ActionRepository {
     if (filtre.titre_fragment) {
       main_filter.push({
         titre_recherche: {
-          contains: filtre.titre_fragment,
+          contains: normalizeWithoutAccent(filtre.titre_fragment),
           mode: 'insensitive',
         },
       });
