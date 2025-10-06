@@ -84,13 +84,8 @@ export class FranceConnectUsecase {
       ApplicationError.throwSecurityTechnicalProblemDetected(message);
     }
 
-    console.log(state);
-
     // Récupération ACCESS_TOKEN
     const tokens = await this.oidcService.getAccessAndIdTokens(oidc_code);
-
-    console.log(`access token : [${tokens.access_token}]`);
-    console.log(`id token : [${tokens.id_token}]`);
 
     // Vérification NONCE
     const id_token_data = this.oidcService.decodeIdToken(tokens.id_token);
@@ -106,7 +101,6 @@ export class FranceConnectUsecase {
     const user_info = await this.oidcService.getUserInfoByAccessToken(
       tokens.access_token,
     );
-    console.log(user_info);
 
     // RAPPROCHEMENT avec pivot technique France Connect - SUB
     const fc_user = await this.utilisateurRepository.getByFranceConnectSub(

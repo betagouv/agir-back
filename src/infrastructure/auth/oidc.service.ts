@@ -57,8 +57,6 @@ export class OidcService {
     params.append('state', state);
     params.append('nonce', nonce);
 
-    console.log(redirect_url);
-
     return { url: redirect_url, state: state, nonce: nonce };
   }
 
@@ -102,7 +100,6 @@ export class OidcService {
       console.log(error.response.headers);
       return null;
     }
-    console.log(response.data);
 
     return {
       access_token: response.data.access_token,
@@ -129,15 +126,11 @@ export class OidcService {
 
     const user_data_base64: string = response.data;
 
-    console.log('THIS IS USER DATA BASE64');
-    console.log(user_data_base64);
-
     const blocks = user_data_base64.split('.');
     const charge_utile = blocks[1];
     const json_user_data = Buffer.from(charge_utile, 'base64').toString(
       'utf-8',
     );
-    console.log(json_user_data);
     const user_info: FCUserInfo = JSON.parse(json_user_data);
 
     return user_info;

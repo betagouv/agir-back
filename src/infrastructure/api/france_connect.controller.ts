@@ -93,9 +93,6 @@ export class FranceConnectController extends GenericControler {
   async login_callback(
     @Body() body: CodeStateInputAPI,
   ): Promise<LoggedUtilisateurAPI> {
-    console.log(`oidc_code : [${body.oidc_code}]`);
-    console.log(`oidc_state : [${body.oidc_state}]`);
-
     const user_data = await this.franceConnectUsecase.connecterOuInscrire(
       body.oidc_state,
       body.oidc_code,
