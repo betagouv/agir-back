@@ -48,7 +48,7 @@
     "@betagouv/publicodes-voiture": "^0.3.8",
     "@etalab/decoupage-administratif": "^5.2.0",
     "@getbrevo/brevo": "^1.0.1",
-    "@incubateur-ademe/nosgestesclimat": "^3.11.1",
+    "@incubateur-ademe/nosgestesclimat": "^4.0.0",
     "@nestjs/common": "^10.4.15",
     "@nestjs/core": "^10.4.15",
     "@nestjs/jwt": "^10.2.0",
