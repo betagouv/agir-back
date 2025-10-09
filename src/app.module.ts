@@ -90,6 +90,7 @@ import { MaifAPIClient } from './infrastructure/repository/services_recherche/ma
 import { PresDeChezNousRepository } from './infrastructure/repository/services_recherche/pres_de_chez_nous/presDeChezNous.repository';
 import { RecettesRepository } from './infrastructure/repository/services_recherche/recettes/recettes.repository';
 import { SimulateurVoitureRepository } from './infrastructure/repository/simulateurVoiture.repository';
+import { SimulateurVoitureRepository_v2 } from './infrastructure/repository/simulateurVoiture_v2.repository';
 import { StatistiqueExternalRepository } from './infrastructure/repository/statitstique.external.repository';
 import { TagRepository } from './infrastructure/repository/tag.repository';
 import { ThematiqueRepository } from './infrastructure/repository/thematique.repository';
@@ -267,6 +268,7 @@ function getControllers(): any[] {
     ThematiqueBoardUsecase,
     SimulateurVoitureUsecase,
     SimulateurVoitureRepository,
+    SimulateurVoitureRepository_v2,
     FAQRepository,
     BlockTextRepository,
     AidesVeloUsecase,

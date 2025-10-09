@@ -1,3 +1,4 @@
+import { AlternativeAPI_v2 } from 'src/infrastructure/api/types/simulateur_voiture/SimulateurVoitureResultatAPI_v2';
 import { KYCID } from '../../../src/domain/kyc/KYCID';
 import { KYCComplexValues } from '../../../src/domain/kyc/publicodesMapping';
 import { TypeReponseQuestionKYC } from '../../../src/domain/kyc/questionKYC';
@@ -189,6 +190,265 @@ describe('/simulateur_voiture (API test)', () => {
     });
   });
 
+  describe('GET /utilisateurs/id/simulateur_voiture/resultat_v2/voiture_actuelle', () => {
+    test('renvoie un résultat avec les valeur par défaut', async () => {
+      // GIVEN
+      await TestUtil.create(DB.utilisateur);
+
+      // WHEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/voiture_actuelle',
+      );
+
+      // THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        gabarit: { valeur: 'berline', label: 'Berline', est_applicable: true },
+        motorisation: {
+          valeur: 'thermique',
+          label: 'Thermique',
+          est_applicable: true,
+        },
+        carburant: {
+          valeur: 'essence E5 ou E10',
+          label: 'Essence',
+          est_applicable: true,
+        },
+        couts: 5361.051382418858,
+        empreinte: 4232.091181104764,
+        est_occasion: false,
+        params: [
+          {
+            id: 'voiture . thermique . consommation carburant',
+            nom: 'Consommation carburant',
+            valeur: '8,54',
+            unite: 'l/100km',
+          },
+          {
+            id: 'voiture . thermique . prix carburant',
+            nom: 'Prix carburant',
+            valeur: '1,65',
+            unite: '€/l',
+          },
+          {
+            id: 'coûts . coûts de possession . entretien',
+            nom: 'Entretien',
+            valeur: '1 250',
+            unite: '€/an',
+          },
+          {
+            id: 'coûts . coûts de possession . assurance',
+            nom: 'Assurance',
+            valeur: '640',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . stationnement",
+            nom: 'Stationnement',
+            valeur: '600',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . péage",
+            nom: 'Péages',
+            valeur: '721',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . contraventions",
+            nom: 'Contraventions',
+            valeur: '46',
+            unite: '€/an',
+          },
+        ],
+      });
+    });
+
+    test('prend correctement en compte les KYCs', async () => {
+      // GIVEN
+      // NOTE: could only be done once for all tests?
+      await createKYCs();
+      await TestUtil.create(DB.utilisateur);
+      await kycRepository.loadCache();
+
+      // WHEN
+      await setMotorisation('hybride_non_rechargeable');
+      await setCarburant('essence_E85');
+      await setGabarit('SUV');
+      await setVoitureOccasion(true);
+
+      // THEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/voiture_actuelle',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        gabarit: { valeur: 'SUV', label: 'SUV', est_applicable: true },
+        motorisation: {
+          valeur: 'hybride',
+          label: 'Hybride',
+          est_applicable: true,
+        },
+        carburant: {
+          valeur: 'essence E85',
+          label: 'Essence (E85)',
+          est_applicable: true,
+        },
+        couts: 3303.9428059958586,
+        empreinte: 3436.3507857871646,
+        est_occasion: true,
+        params: [
+          {
+            id: 'voiture . électrique . consommation électricité',
+            nom: 'Consommation électricité',
+            valeur: '26,76',
+            unite: 'kWh/100km',
+          },
+          {
+            id: 'voiture . électrique . prix kWh',
+            nom: 'Prix kWh',
+            valeur: '0,19',
+            unite: '€/kWh',
+          },
+          {
+            id: 'voiture . thermique . prix carburant',
+            nom: 'Prix carburant',
+            valeur: '0,74',
+            unite: '€/l',
+          },
+          {
+            id: 'coûts . coûts de possession . entretien',
+            nom: 'Entretien',
+            valeur: '1 125',
+            unite: '€/an',
+          },
+          {
+            id: 'coûts . coûts de possession . assurance',
+            nom: 'Assurance',
+            valeur: '640',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . stationnement",
+            nom: 'Stationnement',
+            valeur: '600',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . péage",
+            nom: 'Péages',
+            valeur: '606',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . contraventions",
+            nom: 'Contraventions',
+            valeur: '46',
+            unite: '€/an',
+          },
+        ],
+      });
+
+      // WHEN
+      await setKmParcourus(0);
+
+      const response2 = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/voiture_actuelle',
+      );
+      expect(response2.status).toBe(200);
+      expect(response2.body.empreinte).toEqual(0);
+      expect(response2.body.motorisation.valeur).toEqual('hybride');
+    });
+
+    test('ne prend pas en compte le bonus écologique pour la voiture actuelle', async () => {
+      // GIVEN
+      // NOTE: could only be done once for all tests?
+      await createKYCs();
+      await TestUtil.create(DB.utilisateur);
+      await kycRepository.loadCache();
+
+      // WHEN
+      await setMotorisation('hybride_non_rechargeable');
+      await setCarburant('essence_E85');
+      await setGabarit('SUV');
+      await setVoitureOccasion(false);
+
+      // THEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/voiture_actuelle',
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        gabarit: { valeur: 'SUV', label: 'SUV', est_applicable: true },
+        motorisation: {
+          valeur: 'hybride',
+          label: 'Hybride',
+          est_applicable: true,
+        },
+        carburant: {
+          valeur: 'essence E85',
+          label: 'Essence (E85)',
+          est_applicable: true,
+        },
+        couts: 3303.9428059958586,
+        empreinte: 3436.3507857871646,
+        est_occasion: false,
+        params: [
+          {
+            id: 'voiture . électrique . consommation électricité',
+            nom: 'Consommation électricité',
+            valeur: '26,76',
+            unite: 'kWh/100km',
+          },
+          {
+            id: 'voiture . électrique . prix kWh',
+            nom: 'Prix kWh',
+            valeur: '0,19',
+            unite: '€/kWh',
+          },
+          {
+            id: 'voiture . thermique . prix carburant',
+            nom: 'Prix carburant',
+            valeur: '0,74',
+            unite: '€/l',
+          },
+          {
+            id: 'coûts . coûts de possession . entretien',
+            nom: 'Entretien',
+            valeur: '1 125',
+            unite: '€/an',
+          },
+          {
+            id: 'coûts . coûts de possession . assurance',
+            nom: 'Assurance',
+            valeur: '640',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . stationnement",
+            nom: 'Stationnement',
+            valeur: '600',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . péage",
+            nom: 'Péages',
+            valeur: '606',
+            unite: '€/an',
+          },
+          {
+            id: "coûts . coûts d'utilisation . contraventions",
+            nom: 'Contraventions',
+            valeur: '46',
+            unite: '€/an',
+          },
+        ],
+      });
+    });
+  });
+
   describe('GET /utilisateurs/id/simulateur_voiture/resultat/voiture_cible', () => {
     test('renvoie un résultat avec les valeur par défaut', async () => {
       // GIVEN
@@ -302,6 +562,49 @@ describe('/simulateur_voiture (API test)', () => {
         expect(alternative.empreinte).toBeGreaterThanOrEqual(
           voiture_actuelle.body.empreinte,
         );
+      });
+    });
+  });
+
+  describe('GET /utilisateurs/id/simulateur_voiture/resultat_v2/alternatives', () => {
+    test('renvoie un résultat cohérent avec les valeur par défaut', async () => {
+      // GIVEN
+      await TestUtil.create(DB.utilisateur);
+
+      // WHEN
+      const response = await TestUtil.GET(
+        '/utilisateurs/utilisateur-id/simulateur_voiture/resultat_v2/alternatives',
+      );
+
+      // THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(90);
+      response.body.forEach((alternative: AlternativeAPI_v2) => {
+        expect(alternative.type).toEqual('voiture-individuelle');
+        expect(alternative.couts).toBeGreaterThan(0);
+        expect(alternative.empreinte).toBeGreaterThan(0);
+        expect(alternative.est_occasion).toBeDefined();
+        expect(alternative.gabarit.valeur).toBeDefined();
+        expect(alternative.gabarit.valeur).toBeTruthy();
+        expect(alternative.motorisation.valeur).toBeDefined();
+        expect(alternative.motorisation.est_applicable).toBeTruthy();
+        if (alternative.motorisation.valeur !== 'électrique') {
+          expect(alternative.carburant?.valeur).toBeDefined();
+          expect(alternative.carburant?.est_applicable).toBeTruthy();
+        } else {
+          expect(alternative.carburant).toBeUndefined();
+        }
+        expect(alternative.diff_couts).toBeDefined();
+        expect(alternative.diff_emissions).toBeDefined();
+        expect(alternative.economies_totales.valeur).toEqual(
+          alternative.diff_couts * 10,
+        );
+        expect(alternative.diff_emissions).toBeDefined();
+        expect(alternative.montant_aides.est_applicable).toEqual(
+          alternative.est_occasion === false &&
+            alternative.motorisation.valeur !== 'thermique',
+        );
+        expect(alternative.valeur_revente_actuelle.valeur).toBeDefined();
       });
     });
   });
