@@ -1664,13 +1664,12 @@ describe('/utilisateurs - Compte utilisateur (API test)', () => {
     await TestUtil.create(DB.utilisateur);
 
     // WHEN
-    const response = await TestUtil.POST('/utilisateurs/utilisateur-id/reset');
+    const response = await TestUtil.POST(
+      '/utilisateurs/utilisateur-id/reset',
+    ).send({});
 
     // THEN
     expect(response.status).toBe(400);
-    const userDB = await utilisateurRepository.getById('utilisateur-id', [
-      Scope.ALL,
-    ]);
   });
   it(`POST /utilisateurs/update_user_couverture`, async () => {
     // GIVEN

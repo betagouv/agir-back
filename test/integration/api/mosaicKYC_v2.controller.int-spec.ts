@@ -317,7 +317,7 @@ describe('/utilisateurs/id/mosaicsKYC (API test)', () => {
     // WHEN
     const response = await TestUtil.PUT(
       '/utilisateurs/utilisateur-id/questionsKYC_v2/bad',
-    );
+    ).send({});
 
     // THEN
     expect(response.status).toBe(404);

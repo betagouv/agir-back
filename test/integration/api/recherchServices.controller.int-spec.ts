@@ -199,7 +199,7 @@ describe('RechercheServices (API test)', () => {
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/bad_service/search2',
-    );
+    ).send({});
 
     // THEN
     expect(response.status).toBe(404);
@@ -220,7 +220,7 @@ describe('RechercheServices (API test)', () => {
     // WHEN
     const response = await TestUtil.POST(
       '/utilisateurs/utilisateur-id/recherche_services/proximite/search2',
-    );
+    ).send({});
 
     // THEN
     expect(response.status).toBe(400);

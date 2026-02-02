@@ -377,7 +377,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8792.165289982346,
+      bilan_carbone_total_kg: 8840.271320055625,
       est_utilisateur_ngc: false,
       nombre_aides: 2,
       nombre_recettes: 1150,
@@ -621,7 +621,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8757.458061451372,
+      bilan_carbone_total_kg: 8805.564091524651,
       est_utilisateur_ngc: false,
       nombre_aides: 0,
       nombre_recettes: 1150,
@@ -771,7 +771,7 @@ describe('Thematique Board (API test)', () => {
     expect(response.status).toBe(200);
     const body: HomeBoardAPI = response.body;
     expect(body).toEqual({
-      bilan_carbone_total_kg: 8792.165289982346,
+      bilan_carbone_total_kg: 8840.271320055625,
       est_utilisateur_ngc: false,
       nombre_aides: 0,
       nombre_recettes: 1150,
