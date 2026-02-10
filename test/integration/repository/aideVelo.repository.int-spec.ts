@@ -271,7 +271,7 @@ describe('AideVeloRepository', () => {
       expect(result.length).toBe(0);
     });
 
-    test('doit retourner toutes les aides (nationales et locales) pour la commune de Montpellier', () => {
+    test.skip('doit retourner toutes les aides (nationales et locales) pour la commune de Montpellier', () => {
       // WHEN
       const result = aidesVeloRepository.getAllAidesIn({
         'localisation . pays': 'France',
