@@ -18,7 +18,7 @@ export class AdminUsecase {
 
   async exportAides(): Promise<AideExport[]> {
     const result: AideExport[] = [];
-    const liste = await this.aideRepository.listAll();
+    const liste = await this.aideRepository.listeAll();
     for (const aide_def of liste) {
       const aide = new AideExport(aide_def);
       aide.liste_partenaires = [];

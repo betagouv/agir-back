@@ -68,6 +68,14 @@ export type CMSWebhookPopulateAPI = {
     reponse: string;
     short_question: string;
     pourquoi: string;
+    question_accroche: string;
+    explication: string;
+    conditions_eligibilite: string;
+    equipements_eligibles: string;
+    travaux_eligibles: string;
+    montant: string;
+    en_savoir_plus: string;
+    description_courte: string;
     description: string;
     source: string;
     sources: [

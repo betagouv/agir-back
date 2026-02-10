@@ -648,7 +648,7 @@ export class CMSImportUsecase {
     entry: CMSWebhookPopulateAPI,
     partenaireUsecase: PartenaireUsecase,
   ): AideDefinition {
-    const result = {
+    const result: AideDefinition = {
       content_id: entry.id.toString(),
       titre: entry.attributes.titre,
       codes_postaux: CMSImportUsecase.split(entry.attributes.codes_postaux),
@@ -699,6 +699,15 @@ export class CMSImportUsecase {
       VISIBLE_PROD: CMSImportUsecase.trueIfUndefinedOrNull(
         entry.attributes.VISIBLE_PROD,
       ),
+      question_accroche: entry.attributes.question_accroche,
+      introduction: entry.attributes.introduction,
+      explication: entry.attributes.explication,
+      conditions_eligibilite: entry.attributes.conditions_eligibilite,
+      equipements_eligibles: entry.attributes.equipements_eligibles,
+      travaux_eligibles: entry.attributes.travaux_eligibles,
+      montant: entry.attributes.montant,
+      en_savoir_plus: entry.attributes.en_savoir_plus,
+      description_courte: entry.attributes.description_courte,
     };
 
     const computed =

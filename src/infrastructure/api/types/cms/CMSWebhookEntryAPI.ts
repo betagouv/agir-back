@@ -211,6 +211,14 @@ export class CMSWebhookEntryAPI {
   @ApiProperty({ type: CMSWebhookBesoinAPI })
   besoin: CMSWebhookBesoinAPI;
   @ApiProperty() duree: string;
+  @ApiProperty() question_accroche: string;
+  @ApiProperty() explication: string;
+  @ApiProperty() conditions_eligibilite: string;
+  @ApiProperty() equipements_eligibles: string;
+  @ApiProperty() travaux_eligibles: string;
+  @ApiProperty() montant: string;
+  @ApiProperty() en_savoir_plus: string;
+  @ApiProperty() description_courte: string;
   @ApiProperty() astuces: string;
   @ApiProperty() pourquoi: string;
   @ApiProperty() comment: string;

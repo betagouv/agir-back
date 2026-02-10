@@ -281,7 +281,7 @@ export class AidesUsecase {
 
   public async reportAideSoonExpired(): Promise<string[]> {
     const result = [];
-    const liste_aide_all = await this.aideRepository.listAll();
+    const liste_aide_all = await this.aideRepository.listeAll();
 
     const day = 1000 * 60 * 60 * 24;
     const week = day * 7;

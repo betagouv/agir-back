@@ -339,6 +339,15 @@ describe('/api/incoming/cms (API test)', () => {
       codes_departement: '78',
       codes_region: '25',
       est_gratuit: true,
+      question_accroche: 'question_accroche',
+      introduction: 'introduction',
+      explication: 'explication',
+      conditions_eligibilite: 'conditions_eligibilite',
+      equipements_eligibles: 'equipements_eligibles',
+      travaux_eligibles: 'travaux_eligibles',
+      montant: 'montant',
+      en_savoir_plus: 'en_savoir_plus',
+      description_courte: 'description_courte',
     } as CMSWebhookEntryAPI,
   };
 
@@ -997,6 +1006,15 @@ describe('/api/incoming/cms (API test)', () => {
       url_simulateur: '/aide/velo',
       url_source: 'haha',
       VISIBLE_PROD: true,
+      question_accroche: 'question_accroche',
+      introduction: 'introduction',
+      explication: 'explication',
+      conditions_eligibilite: 'conditions_eligibilite',
+      equipements_eligibles: 'equipements_eligibles',
+      travaux_eligibles: 'travaux_eligibles',
+      montant: 'montant',
+      en_savoir_plus: 'en_savoir_plus',
+      description_courte: 'description_courte',
     });
   });
   it('POST /api/incoming/cms - create a new kyc', async () => {
@@ -1342,6 +1360,15 @@ describe('/api/incoming/cms (API test)', () => {
       url_simulateur: '/aide/velo',
       url_source: 'haha',
       VISIBLE_PROD: true,
+      question_accroche: 'question_accroche',
+      introduction: 'introduction',
+      explication: 'explication',
+      conditions_eligibilite: 'conditions_eligibilite',
+      equipements_eligibles: 'equipements_eligibles',
+      travaux_eligibles: 'travaux_eligibles',
+      montant: 'montant',
+      en_savoir_plus: 'en_savoir_plus',
+      description_courte: 'description_courte',
     });
   });
 

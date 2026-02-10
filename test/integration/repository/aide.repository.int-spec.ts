@@ -23,7 +23,7 @@ describe('AideRepository', () => {
   });
 
   it('countAll()', async () => {
-    expect(await aideRepository.listAll()).toHaveLength(0);
+    expect(await aideRepository.listeAll()).toHaveLength(0);
     expect(await aideRepository.countAll()).toEqual(0);
 
     await TestUtil.create(DB.aide, {
@@ -54,7 +54,7 @@ describe('AideRepository', () => {
     });
     await aideRepository.loadCache();
 
-    expect(await aideRepository.listAll()).toHaveLength(1);
+    expect(await aideRepository.listeAll()).toHaveLength(1);
     expect(await aideRepository.countAll()).toEqual(1);
   });
 

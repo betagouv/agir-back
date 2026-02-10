@@ -115,7 +115,7 @@ export class Synthese_v2Controller extends GenericControler {
   async code_postal_synthese(
     @Param('code') code_input: string,
   ): Promise<SyntheseAPI> {
-    const liste_aides = await this.aideRepository.listAll();
+    const liste_aides = await this.aideRepository.listeAll();
     const liste_articles = await this.articleRepository.searchArticles({});
 
     const IS_CODE_EPCI = this.communeRepository.isCodeSirenEPCI(code_input);

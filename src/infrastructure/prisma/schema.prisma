@@ -162,6 +162,15 @@ model Aide {
   created_at                        DateTime  @default(now()) @db.Timestamptz(3)
   updated_at                        DateTime  @updatedAt @db.Timestamptz(3)
   VISIBLE_PROD                      Boolean   @default(true)
+  question_accroche                 String?
+  introduction                      String?
+  explication                       String?
+  conditions_eligibilite            String?
+  equipements_eligibles             String?
+  travaux_eligibles                 String?
+  montant                           String?
+  en_savoir_plus                    String?
+  description_courte                String?
 }
 
 model Action {

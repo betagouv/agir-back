@@ -30,6 +30,15 @@ const aide_def = new AideDefinition({
   codes_departement_from_partenaire: [],
   codes_region_from_partenaire: [],
   VISIBLE_PROD: true,
+  conditions_eligibilite: 'a',
+  description_courte: 'b',
+  en_savoir_plus: 'c',
+  equipements_eligibles: 'd',
+  explication: 'e',
+  introduction: 'f',
+  montant: 'g',
+  question_accroche: 'h',
+  travaux_eligibles: 'i',
 });
 
 const part_def = {

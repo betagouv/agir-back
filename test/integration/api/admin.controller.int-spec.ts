@@ -2426,6 +2426,15 @@ describe('Admin (API test)', () => {
       url_demande: 'c',
       url_simulateur: 'a',
       url_source: 'b',
+      question_accroche: 'question_accroche',
+      introduction: 'introduction',
+      explication: 'explication',
+      conditions_eligibilite: 'conditions_eligibilite',
+      equipements_eligibles: 'equipements_eligibles',
+      travaux_eligibles: 'travaux_eligibles',
+      montant: 'montant',
+      en_savoir_plus: 'en_savoir_plus',
+      description_courte: 'description_courte',
     });
 
     await TestUtil.create(DB.partenaire, {
@@ -2473,6 +2482,15 @@ describe('Admin (API test)', () => {
       url_simulateur: 'a',
       url_source: 'b',
       VISIBLE_PROD: true,
+      question_accroche: 'question_accroche',
+      introduction: 'introduction',
+      explication: 'explication',
+      conditions_eligibilite: 'conditions_eligibilite',
+      equipements_eligibles: 'equipements_eligibles',
+      travaux_eligibles: 'travaux_eligibles',
+      montant: 'montant',
+      en_savoir_plus: 'en_savoir_plus',
+      description_courte: 'description_courte',
     });
   });
 

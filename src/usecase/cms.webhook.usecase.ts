@@ -512,6 +512,15 @@ export class CMSWebhookUsecase {
       codes_departement_from_partenaire: [],
       codes_region_from_partenaire: [],
       VISIBLE_PROD: this.trueIfUndefinedOrNull(entry.VISIBLE_PROD),
+      question_accroche: entry.question_accroche,
+      introduction: entry.introduction,
+      explication: entry.explication,
+      conditions_eligibilite: entry.conditions_eligibilite,
+      equipements_eligibles: entry.equipements_eligibles,
+      travaux_eligibles: entry.travaux_eligibles,
+      montant: entry.montant,
+      en_savoir_plus: entry.en_savoir_plus,
+      description_courte: entry.description_courte,
     });
 
     const computed =

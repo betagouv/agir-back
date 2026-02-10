@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Aide as AideDB } from '@prisma/client';
 import { AideDefinition } from '../../domain/aides/aideDefinition';
+import { AideDefinitionEtPartenaires } from '../../domain/aides/aideDefinitionEtPartenaires';
 import { AideFilter } from '../../domain/aides/aideFilter';
 import { Echelle } from '../../domain/aides/echelle';
 import { App } from '../../domain/app';
@@ -14,7 +15,7 @@ export class AideRepository
   implements
     WithCache,
     Paginated<AideDefinition>,
-    WithPartenaireCodes<AideDefinition>
+    WithPartenaireCodes<AideDefinitionEtPartenaires>
 {
   private static catalogue_aides: Map<string, AideDefinition>;
 
@@ -54,7 +55,7 @@ export class AideRepository
 
   public async findByPartenaireId(
     partenaire_id: string,
-  ): Promise<AideDefinition[]> {
+  ): Promise<AideDefinitionEtPartenaires[]> {
     const result = await this.prisma.aide.findMany({
       where: {
         partenaires_supp_ids: {
@@ -62,7 +63,9 @@ export class AideRepository
         },
       },
     });
-    return result.map((r) => this.buildAideFromDB(r));
+    return result.map(
+      (r) => new AideDefinitionEtPartenaires(this.buildAideFromDB(r)),
+    );
   }
 
   public async updateCodesFromPartenaireFor(
@@ -120,14 +123,11 @@ export class AideRepository
   }
 
   // FIXME: doublon
-  async listAll(): Promise<AideDefinition[]> {
+  async listeAll(): Promise<AideDefinitionEtPartenaires[]> {
     const liste_aides = await this.prisma.aide.findMany();
-    return liste_aides.map((a) => this.buildAideFromDB(a));
-  }
-
-  async listeAll(): Promise<AideDefinition[]> {
-    const liste_aides = await this.prisma.aide.findMany();
-    return liste_aides.map((a) => this.buildAideFromDB(a));
+    return liste_aides.map(
+      (a) => new AideDefinitionEtPartenaires(this.buildAideFromDB(a)),
+    );
   }
 
   async countAll(): Promise<number> {
@@ -135,7 +135,10 @@ export class AideRepository
     return Number(count);
   }
 
-  async listePaginated(skip: number, take: number): Promise<AideDefinition[]> {
+  async listePaginated(
+    skip: number,
+    take: number,
+  ): Promise<AideDefinitionEtPartenaires[]> {
     const results = await this.prisma.aide.findMany({
       skip: skip,
       take: take,
@@ -143,7 +146,9 @@ export class AideRepository
         content_id: 'desc',
       },
     });
-    return results.map((r) => this.buildAideFromDB(r));
+    return results.map(
+      (r) => new AideDefinitionEtPartenaires(this.buildAideFromDB(r)),
+    );
   }
 
   async isCodePostalCouvert(code_postal: string): Promise<boolean> {
@@ -218,6 +223,15 @@ export class AideRepository
         aideDB.codes_departement_from_partenaire,
       codes_region_from_partenaire: aideDB.codes_region_from_partenaire,
       VISIBLE_PROD: aideDB.VISIBLE_PROD,
+      question_accroche: aideDB.question_accroche,
+      introduction: aideDB.introduction,
+      explication: aideDB.explication,
+      conditions_eligibilite: aideDB.conditions_eligibilite,
+      equipements_eligibles: aideDB.equipements_eligibles,
+      travaux_eligibles: aideDB.travaux_eligibles,
+      montant: aideDB.montant,
+      en_savoir_plus: aideDB.en_savoir_plus,
+      description_courte: aideDB.description_courte,
     });
   }
 

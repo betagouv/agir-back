@@ -374,6 +374,16 @@ export class TestUtil {
       codes_region_from_partenaire: [],
       est_gratuit: false,
       VISIBLE_PROD: true,
+      question_accroche: 'A',
+      introduction: 'B',
+      explication: 'C',
+      conditions_eligibilite: 'D',
+      equipements_eligibles: 'E',
+      travaux_eligibles: 'F',
+      montant: 'G',
+      en_savoir_plus: 'H',
+      description_courte: 'I',
+
       ...override,
     };
   }
