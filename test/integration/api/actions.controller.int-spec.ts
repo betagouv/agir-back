@@ -491,7 +491,7 @@ describe('Actions (API test)', () => {
     // GIVEN
     const KYC2 = {
       id_cms: 1,
-      code: KYCID.KYC_transport_type_utilisateur,
+      code: KYCID.KYC_possede_voiture_oui_non,
       question: 'Quel est votre moyen de transport principal ?',
       type: TypeReponseQuestionKYC.entier,
       categorie: Categorie.test,

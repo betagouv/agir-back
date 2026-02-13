@@ -13,6 +13,10 @@ import {
   VoitureCibleAPI,
   VoitureInfosAPI,
 } from './types/simulateur_voiture/SimulateurVoitureResultatAPI';
+import {
+  AlternativeAPI_v2,
+  VoitureInfosAPI_v2,
+} from './types/simulateur_voiture/SimulateurVoitureResultatAPI_v2';
 
 @Controller()
 @ApiBearerAuth()
@@ -29,6 +33,7 @@ export class SimulateurVoitureController extends GenericControler {
     'utilisateurs/:utilisateurId/simulateur_voiture/resultat/voiture_actuelle',
   )
   @ApiOperation({
+    deprecated: true,
     summary:
       "Renvoie le résultat pour la voiture actuelle de l'utilisateur donné",
   })
@@ -86,5 +91,53 @@ export class SimulateurVoitureController extends GenericControler {
     );
 
     return VoitureCibleAPI.mapToAPI(results);
+  }
+
+  @ApiOkResponse({ type: VoitureInfosAPI })
+  @Get(
+    'utilisateurs/:utilisateurId/simulateur_voiture/resultat_v2/voiture_actuelle',
+  )
+  @ApiOperation({
+    summary:
+      "Renvoie le résultat pour la voiture actuelle de l'utilisateur donné",
+  })
+  @UseGuards(AuthGuard)
+  async getResultatVoitureActuelle_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<VoitureInfosAPI_v2> {
+    this.checkCallerId(req, utilisateurId);
+
+    const results =
+      await this.simulateurVoitureUsecase.calculerVoitureActuelle_v2(
+        utilisateurId,
+      );
+
+    return VoitureInfosAPI_v2.mapToAPI(results);
+  }
+
+  @ApiOkResponse({ type: [AlternativeAPI] })
+  @Get(
+    'utilisateurs/:utilisateurId/simulateur_voiture/resultat_v2/alternatives',
+  )
+  @ApiOperation({
+    summary:
+      "Renvoie le résultat pour les alternatives à l'achat de la voiture actuelle de l'utilisateur donné",
+    description:
+      'Le premier appel effectué pour un utilisateur donné, va effectuer le calcul qui est une opération lourde.',
+  })
+  @UseGuards(AuthGuard)
+  async getResultat_v2(
+    @Request() req,
+    @Param('utilisateurId') utilisateurId: string,
+  ): Promise<AlternativeAPI[]> {
+    this.checkCallerId(req, utilisateurId);
+
+    const results =
+      await this.simulateurVoitureUsecase.calculerVoitureAlternatives_v2(
+        utilisateurId,
+      );
+
+    return results.map(AlternativeAPI_v2.mapToAPI);
   }
 }

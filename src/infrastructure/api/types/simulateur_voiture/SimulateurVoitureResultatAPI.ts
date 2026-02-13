@@ -1,15 +1,15 @@
-import {
-  Alternative,
-  EvaluatedCarInfos,
-  EvaluatedRuleInfos,
-  TargetInfos,
-} from '@betagouv/publicodes-voiture';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   VoitureCarburant,
   VoitureGabarit,
   VoitureMotorisation,
 } from 'src/domain/simulateur_voiture/resultats';
+import type {
+  Alternative,
+  EvaluatedCarInfos,
+  EvaluatedRuleInfos,
+  TargetInfos,
+} from '../../../../../node_modules/@betagouv/publicodes-voiture';
 
 export class ValeurCalculeeAPI<T> {
   @ApiProperty({
@@ -25,23 +25,6 @@ export class ValeurCalculeeAPI<T> {
     required: false,
   })
   label?: string;
-
-  // @ApiProperty({
-  //   description: 'Unité de la valeur calculée',
-  //   type: String,
-  //   required: false,
-  //   example: 'kgCO2e/an',
-  // })
-  // unite?: string;
-  //
-  // @ApiProperty({
-  //   description:
-  //     "Si la valeur correspond à une énumération (mécanisme 'une possibilité' de Publicodes)",
-  //   example: true,
-  //   type: Boolean,
-  //   required: false,
-  // })
-  // enum?: boolean;
 
   public static mapToAPI<T>(
     valeur: EvaluatedRuleInfos<T>,
@@ -173,33 +156,3 @@ export class VoitureCibleAPI {
     };
   }
 }
-
-// export class SimulateurVoitureResultatAPI {
-//   @ApiProperty({
-//     description: 'Résultats calculées pour la voiture actuelle',
-//     type: VoitureInfosAPI,
-//   })
-//   voiture_actuelle: VoitureInfosAPI;
-//
-//   @ApiProperty({
-//     description: "Liste des alternatives à l'achat de la voiture actuelle",
-//     type: [AlternativeAPI],
-//   })
-//   alternatives: AlternativeAPI[];
-//
-//   @ApiProperty({
-//     description: 'Informations sur la voiture cible (à acheter)',
-//     type: VoitureCibleAPI,
-//   })
-//   voiture_cible: VoitureCibleAPI;
-//
-//   public static mapToAPI(
-//     resultat: SimulateurVoitureResultat,
-//   ): SimulateurVoitureResultatAPI {
-//     return {
-//       voiture_actuelle: VoitureInfosAPI.mapToAPI(resultat.voiture_actuelle),
-//       alternatives: resultat.alternatives.map(AlternativeAPI.mapToAPI),
-//       voiture_cible: VoitureCibleAPI.mapToAPI(resultat.voiture_cible),
-//     };
-//   }
-// }
